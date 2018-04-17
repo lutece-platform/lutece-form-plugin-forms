@@ -1,0 +1,30 @@
+<#include "manageforms_tabs.html" />
+<@tabs2 tab="form" />
+<@box>
+	<@boxHeader title='#i18n{forms.create_form.title}' />
+	<@boxBody>
+    <@tform name='create_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
+
+        <@messages errors=errors />
+        <input type="hidden" id="id" name="id"/>
+        
+				<@formGroup labelKey='#i18n{forms.create_form.labelTitle}' helpKey='#i18n{forms.create_form.labelTitle.help}' mandatory=true>
+					<@input type='text' name='title' value='${form.title!\'\'}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelDescription}' helpKey='#i18n{forms.create_form.labelDescription.help}' >
+					<@input type='text' name='description' value='${form.description!\'\'}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelCreationDate}' helpKey='#i18n{forms.create_form.labelCreationDate.help}' >
+					<@input type='text' name='creation_date' value='${form.creationDate!\'\'}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelStartDate}' helpKey='#i18n{forms.create_form.labelStartDate.help}' >
+					<@input type='text' name='start_date' value='${form.startDate!\'\'}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelEndDate}' helpKey='#i18n{forms.create_form.labelEndDate.help}' >
+					<@input type='text' name='end_date' value='${form.endDate!\'\'}' />
+				</@formGroup>
+				
+				<@actionButtons button1Name="action_createForm" button2Name="view_manageForm"/>
+    </@tform>
+	</@boxBody>
+</@box>

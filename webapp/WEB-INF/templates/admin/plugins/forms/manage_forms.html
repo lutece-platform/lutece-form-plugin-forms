@@ -1,0 +1,56 @@
+<#include "manageforms_tabs.html" />
+<@tabs2 tab="form" />
+
+<@box>
+	<@boxHeader title='#i18n{forms.manage_form.title}' boxTools=true>
+		<@tform class='form-inline pull-right' name='manage_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
+			<@button type='submit' name='view_createForm' buttonIcon='plus' title='#i18n{forms.manage_forms.buttonAdd}' />
+		</@tform>
+	</@boxHeader>
+	<@boxBody>    
+    <@messages infos=infos />
+    <@paginationAdmin paginator=paginator combo=1 />
+    <div class="clearfix"></div>
+    <@table>
+        <tr>
+            <input type="hidden" id="id" name="id"/>
+            <th>#i18n{forms.manage_forms.columnTitle}</th>
+            <th>#i18n{forms.manage_forms.columnDescription}</th>
+            <th>#i18n{forms.manage_forms.columnCreationDate}</th>
+            <th>#i18n{forms.manage_forms.columnStartDate}</th>
+            <th>#i18n{forms.manage_forms.columnEndDate}</th>
+            <th>#i18n{portal.util.labelActions}</th>
+        </tr>
+        <@tableHeadBodySeparator />
+            <#list form_list as form >
+        <tr>
+            <input type="hidden" id="id" name="id"/>
+            <td>
+                ${form.title}
+            </td>
+            <td>
+                ${form.description}
+            </td>
+            <td>
+                ${form.creationDate}
+            </td>
+            <td>
+                ${form.startDate}
+            </td>
+            <td>
+                ${form.endDate}
+            </td>
+        <td>
+			<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id=${form.id}' title='#i18n{portal.util.labelModify}' buttonIcon='pencil' showTitle=false />
+						
+			<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?action=confirmRemoveForm&id=${form.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='btn-danger' showTitle=false />
+
+        </td>
+        </tr>
+        </#list>
+    </@table>
+
+    <@paginationAdmin paginator=paginator />
+
+  </@boxBody>
+</@box>

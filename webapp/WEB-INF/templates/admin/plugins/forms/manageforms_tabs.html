@@ -1,0 +1,10 @@
+<#macro tabs2 tab >
+<@tabs>
+	<@listTabs>
+			<li <#if tab="form">class="active"</#if>>
+				<a href="jsp/admin/plugins/forms/ManageForms.jsp">#i18n{forms.manage_forms.pageTitle}</a>
+			</li>
+	</@listTabs>
+</@tabs>
+
+</#macro>

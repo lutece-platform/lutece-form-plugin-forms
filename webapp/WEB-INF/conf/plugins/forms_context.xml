@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" >
+
+    <bean id="forms.formDAO" class="fr.paris.lutece.plugins.forms.business.FormDAO" />
+    <bean id="forms.stepDAO" class="fr.paris.lutece.plugins.forms.business.StepDAO" />
+    <bean id="forms.transitionDAO" class="fr.paris.lutece.plugins.forms.business.TransitionDAO" />
+    <bean id="forms.questionDAO" class="fr.paris.lutece.plugins.forms.business.QuestionDAO" />
+    <bean id="forms.groupDAO" class="fr.paris.lutece.plugins.forms.business.GroupDAO" />
+
+
+</beans>
