@@ -37,6 +37,7 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.test.LuteceTestCase;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  * This is the business class test for the object Form
@@ -47,12 +48,12 @@ public class FormBusinessTest extends LuteceTestCase
     private static final String TITLE2 = "Title2";
     private static final String DESCRIPTION1 = "Description1";
     private static final String DESCRIPTION2 = "Description2";
-    private static final Date CREATIONDATE1 = new Date( 1000000l );
-    private static final Date CREATIONDATE2 = new Date( 2000000l );
-    private static final Date STARTDATE1 = new Date( 1000000l );
-    private static final Date STARTDATE2 = new Date( 2000000l );
-    private static final Date ENDDATE1 = new Date( 1000000l );
-    private static final Date ENDDATE2 = new Date( 2000000l );
+    private static final Timestamp CREATIONDATE1 = new Timestamp( 1000000l );
+    private static final Timestamp CREATIONDATE2 = new Timestamp( 2000000l );
+    private static final Date STARTDATE1 = java.sql.Date.valueOf("1970-01-01");
+    private static final Date STARTDATE2 = java.sql.Date.valueOf("1970-01-02");
+    private static final Date ENDDATE1 = java.sql.Date.valueOf("1970-01-05");
+    private static final Date ENDDATE2 = java.sql.Date.valueOf("1970-01-06");
 
     /**
      * test Form
@@ -64,8 +65,8 @@ public class FormBusinessTest extends LuteceTestCase
         form.setTitle( TITLE1 );
         form.setDescription( DESCRIPTION1 );
         form.setCreationDate( CREATIONDATE1 );
-        form.setStartDate( STARTDATE1 );
-        form.setEndDate( ENDDATE1 );
+        form.setAvailabilityStartDate( STARTDATE1 );
+        form.setAvailabilityEndDate( ENDDATE1 );
 
         // Create test
         FormHome.create( form );
@@ -73,22 +74,22 @@ public class FormBusinessTest extends LuteceTestCase
         assertEquals( formStored.getTitle( ), form.getTitle( ) );
         assertEquals( formStored.getDescription( ), form.getDescription( ) );
         assertEquals( formStored.getCreationDate( ), form.getCreationDate( ) );
-        assertEquals( formStored.getStartDate( ), form.getStartDate( ) );
-        assertEquals( formStored.getEndDate( ), form.getEndDate( ) );
+        assertEquals( formStored.getAvailabilityStartDate( ).getTime( ), form.getAvailabilityStartDate( ).getTime( ) );
+        assertEquals( formStored.getAvailabilityEndDate( ), form.getAvailabilityEndDate( ) );
 
         // Update test
         form.setTitle( TITLE2 );
         form.setDescription( DESCRIPTION2 );
         form.setCreationDate( CREATIONDATE2 );
-        form.setStartDate( STARTDATE2 );
-        form.setEndDate( ENDDATE2 );
+        form.setAvailabilityStartDate( STARTDATE2 );
+        form.setAvailabilityEndDate( ENDDATE2 );
         FormHome.update( form );
         formStored = FormHome.findByPrimaryKey( form.getId( ) );
         assertEquals( formStored.getTitle( ), form.getTitle( ) );
         assertEquals( formStored.getDescription( ), form.getDescription( ) );
         assertEquals( formStored.getCreationDate( ), form.getCreationDate( ) );
-        assertEquals( formStored.getStartDate( ), form.getStartDate( ) );
-        assertEquals( formStored.getEndDate( ), form.getEndDate( ) );
+        assertEquals( formStored.getAvailabilityStartDate( ), form.getAvailabilityStartDate( ) );
+        assertEquals( formStored.getAvailabilityEndDate( ), form.getAvailabilityEndDate( ) );
 
         // List test
         FormHome.getFormsList( );

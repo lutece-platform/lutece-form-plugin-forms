@@ -48,11 +48,11 @@ import java.util.List;
 public final class FormDAO implements IFormDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_form, title, description, creation_date, start_date, end_date FROM forms_form WHERE id_form = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, creation_date, start_date, end_date ) VALUES ( ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = "SELECT id_form, title, description, creation_date, availability_start_date, availability_end_date FROM forms_form WHERE id_form = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, creation_date, availability_start_date, availability_end_date ) VALUES ( ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, creation_date = ?, start_date = ?, end_date = ? WHERE id_form = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date, start_date, end_date FROM forms_form";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, creation_date = ?, availability_start_date = ?, availability_end_date = ? WHERE id_form = ?";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date, availability_start_date, availability_end_date FROM forms_form";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_form FROM forms_form";
 
     /**
@@ -67,9 +67,9 @@ public final class FormDAO implements IFormDAO
             int nIndex = 1;
             daoUtil.setString( nIndex++, form.getTitle( ) );
             daoUtil.setString( nIndex++, form.getDescription( ) );
-            daoUtil.setDate( nIndex++, form.getCreationDate( ) );
-            daoUtil.setDate( nIndex++, form.getStartDate( ) );
-            daoUtil.setDate( nIndex++, form.getEndDate( ) );
+            daoUtil.setTimestamp( nIndex++, form.getCreationDate( ) );
+            daoUtil.setDate( nIndex++, form.getAvailabilityStartDate( ) );
+            daoUtil.setDate( nIndex++, form.getAvailabilityEndDate( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -80,6 +80,8 @@ public final class FormDAO implements IFormDAO
         finally
         {
             daoUtil.free( );
+            daoUtil.close( );
+
         }
     }
 
@@ -102,12 +104,14 @@ public final class FormDAO implements IFormDAO
             form.setId( daoUtil.getInt( nIndex++ ) );
             form.setTitle( daoUtil.getString( nIndex++ ) );
             form.setDescription( daoUtil.getString( nIndex++ ) );
-            form.setCreationDate( daoUtil.getDate( nIndex++ ) );
-            form.setStartDate( daoUtil.getDate( nIndex++ ) );
-            form.setEndDate( daoUtil.getDate( nIndex++ ) );
+            form.setCreationDate( daoUtil.getTimestamp( nIndex++ ) );
+            form.setAvailabilityStartDate( daoUtil.getDate( nIndex++ ) );
+            form.setAvailabilityEndDate( daoUtil.getDate( nIndex++ ) );
         }
 
         daoUtil.free( );
+        daoUtil.close( );
+
         return form;
     }
 
@@ -121,6 +125,8 @@ public final class FormDAO implements IFormDAO
         daoUtil.setInt( 1, nKey );
         daoUtil.executeUpdate( );
         daoUtil.free( );
+        daoUtil.close( );
+
     }
 
     /**
@@ -135,13 +141,14 @@ public final class FormDAO implements IFormDAO
         daoUtil.setInt( nIndex++, form.getId( ) );
         daoUtil.setString( nIndex++, form.getTitle( ) );
         daoUtil.setString( nIndex++, form.getDescription( ) );
-        daoUtil.setDate( nIndex++, form.getCreationDate( ) );
-        daoUtil.setDate( nIndex++, form.getStartDate( ) );
-        daoUtil.setDate( nIndex++, form.getEndDate( ) );
+        daoUtil.setTimestamp( nIndex++, form.getCreationDate( ) );
+        daoUtil.setDate( nIndex++, form.getAvailabilityStartDate( ) );
+        daoUtil.setDate( nIndex++, form.getAvailabilityEndDate( ) );
         daoUtil.setInt( nIndex, form.getId( ) );
 
         daoUtil.executeUpdate( );
         daoUtil.free( );
+        daoUtil.close( );
     }
 
     /**
@@ -162,14 +169,16 @@ public final class FormDAO implements IFormDAO
             form.setId( daoUtil.getInt( nIndex++ ) );
             form.setTitle( daoUtil.getString( nIndex++ ) );
             form.setDescription( daoUtil.getString( nIndex++ ) );
-            form.setCreationDate( daoUtil.getDate( nIndex++ ) );
-            form.setStartDate( daoUtil.getDate( nIndex++ ) );
-            form.setEndDate( daoUtil.getDate( nIndex++ ) );
+            form.setCreationDate( daoUtil.getTimestamp( nIndex++ ) );
+            form.setAvailabilityStartDate( daoUtil.getDate( nIndex++ ) );
+            form.setAvailabilityEndDate( daoUtil.getDate( nIndex++ ) );
 
             formList.add( form );
         }
 
         daoUtil.free( );
+        daoUtil.close( );
+
         return formList;
     }
 
@@ -189,6 +198,8 @@ public final class FormDAO implements IFormDAO
         }
 
         daoUtil.free( );
+        daoUtil.close( );
+
         return formList;
     }
 
@@ -208,6 +219,7 @@ public final class FormDAO implements IFormDAO
         }
 
         daoUtil.free( );
+        daoUtil.close( );
         return formList;
     }
 }

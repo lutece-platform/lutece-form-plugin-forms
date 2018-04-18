@@ -8,9 +8,9 @@ CREATE TABLE forms_form (
 id_form int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
 description varchar(255) default '',
-creation_date date,
-start_date date,
-end_date date,
+creation_date timestamp NOT NULL,
+availability_start_date date,
+availability_end_date date,
 PRIMARY KEY (id_form)
 );
 
@@ -24,6 +24,7 @@ id_step int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
 description varchar(255) default '',
 id_form int default '0' NOT NULL,
+is_final SMALLINT,
 PRIMARY KEY (id_step)
 );
 

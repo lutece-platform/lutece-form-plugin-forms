@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  * This is the business class for the object Form
@@ -55,11 +56,11 @@ public class Form implements Serializable
     @Size( max = 255, message = "#i18n{forms.validation.form.Description.size}" )
     private String _strDescription;
 
-    private Date _dateCreationDate;
+    private Timestamp _tCreationDate;
 
-    private Date _dateStartDate;
+    private Date _dateAvailabilityStartDate;
 
-    private Date _dateEndDate;
+    private Date _dateAvailabilityEndDate;
 
     /**
      * Returns the Id
@@ -129,9 +130,9 @@ public class Form implements Serializable
      * 
      * @return The CreationDate
      */
-    public Date getCreationDate( )
+    public Timestamp getCreationDate( )
     {
-        return _dateCreationDate;
+        return _tCreationDate;
     }
 
     /**
@@ -140,50 +141,50 @@ public class Form implements Serializable
      * @param dateCreationDate
      *            The CreationDate
      */
-    public void setCreationDate( Date dateCreationDate )
+    public void setCreationDate( Timestamp creationDate )
     {
-        _dateCreationDate = dateCreationDate;
+        _tCreationDate = creationDate;
     }
 
     /**
-     * Returns the StartDate
+     * Returns the AvailabilityStartDate
      * 
-     * @return The StartDate
+     * @return The AvailabilityStartDate
      */
-    public Date getStartDate( )
+    public Date getAvailabilityStartDate( )
     {
-        return _dateStartDate;
+        return _dateAvailabilityStartDate;
     }
 
     /**
-     * Sets the StartDate
+     * Sets the AvailabilityStartDate
      * 
-     * @param dateStartDate
-     *            The StartDate
+     * @param dateAvailabilityStartDate
+     *            The AvailabilityStartDate
      */
-    public void setStartDate( Date dateStartDate )
+    public void setAvailabilityStartDate( Date dateAvailabilityStartDate )
     {
-        _dateStartDate = dateStartDate;
+        _dateAvailabilityStartDate = dateAvailabilityStartDate;
     }
 
     /**
-     * Returns the EndDate
+     * Returns the AvailabilityEndDate
      * 
-     * @return The EndDate
+     * @return The AvailabilityEndDate
      */
-    public Date getEndDate( )
+    public Date getAvailabilityEndDate( )
     {
-        return _dateEndDate;
+        return _dateAvailabilityEndDate;
     }
 
     /**
-     * Sets the EndDate
+     * Sets the AvailabilityEndDate
      * 
-     * @param dateEndDate
-     *            The EndDate
+     * @param dateAvailabilityEndDate
+     *            The AvailabilityEndDate
      */
-    public void setEndDate( Date dateEndDate )
+    public void setAvailabilityEndDate( Date dateAvailabilityEndDate )
     {
-        _dateEndDate = dateEndDate;
+        _dateAvailabilityEndDate = dateAvailabilityEndDate;
     }
 }

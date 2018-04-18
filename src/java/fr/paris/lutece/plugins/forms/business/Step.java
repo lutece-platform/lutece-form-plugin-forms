@@ -55,6 +55,8 @@ public class Step implements Serializable
     private String _strDescription;
 
     private int _nIdForm;
+    
+    private boolean _bIsFinal;
 
     /**
      * Returns the Id
@@ -138,5 +140,24 @@ public class Step implements Serializable
     public void setIdForm( int nIdForm )
     {
         _nIdForm = nIdForm;
+    }
+
+    /**
+     * Returns true if this is a final step
+     * 
+     * @return The _bIsFinal flag
+     */
+    public boolean isFinal() {
+        return _bIsFinal;
+    }
+
+    /**
+     * Sets the IsFinal flag
+     * 
+     * @param _bIsFinal
+     *            true if this is a final step
+     */
+    public void setFinal(boolean _bIsFinal) {
+        this._bIsFinal = _bIsFinal;
     }
 }
