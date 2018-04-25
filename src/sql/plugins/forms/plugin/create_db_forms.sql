@@ -8,9 +8,11 @@ CREATE TABLE forms_form (
 id_form int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
 description varchar(255) default '',
-creation_date timestamp NOT NULL,
-availability_start_date date,
-availability_end_date date,
+creation_date timestamp default CURRENT_TIMESTAMP NOT NULL,
+update_date timestamp default CURRENT_TIMESTAMP NOT NULL,
+availability_start_date date default NULL,
+availability_end_date date default NULL,
+workgroup varchar(255),
 PRIMARY KEY (id_form)
 );
 
@@ -68,4 +70,21 @@ id_step int default '0',
 collapsible SMALLINT,
 iteration_number int default '0',
 PRIMARY KEY (id_group)
+);
+
+
+
+--
+-- Table structure for table form_action
+--
+DROP TABLE IF EXISTS forms_action;
+CREATE TABLE forms_action (
+    id_action int default 0 NOT NULL,
+    name_key varchar(100) default NULL,
+    description_key varchar(100) default NULL,
+    action_url varchar(255) default NULL,
+    icon_url varchar(255) default NULL,
+    action_permission varchar(255) default NULL,
+    form_state smallint default NULL,
+    PRIMARY KEY (id_action)
 );

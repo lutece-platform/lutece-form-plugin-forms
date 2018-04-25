@@ -112,7 +112,7 @@ public final class FormHome
      * 
      * @return the list which contains the data of all the form objects
      */
-    public static List<Form> getFormsList( )
+    public static List<Form> getFormList( )
     {
         return _dao.selectFormsList( _plugin );
     }
@@ -136,4 +136,5 @@ public final class FormHome
     {
         return _dao.selectFormsReferenceList( _plugin );
     }
+
 }

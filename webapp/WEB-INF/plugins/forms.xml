@@ -23,8 +23,8 @@
     <admin-features>
         <admin-feature>
             <feature-id>FORMS_MANAGEMENT</feature-id>
-            <feature-title>forms.adminFeature.ManageForms.name</feature-title>
-            <feature-description>forms.adminFeature.ManageForms.description</feature-description>
+            <feature-title>forms.adminFeature.manageForms.name</feature-title>
+            <feature-description>forms.adminFeature.manageForms.description</feature-description>
             <feature-level>0</feature-level>
             <feature-url>jsp/admin/plugins/forms/ManageForms.jsp</feature-url>
             <feature-icon-url></feature-icon-url>

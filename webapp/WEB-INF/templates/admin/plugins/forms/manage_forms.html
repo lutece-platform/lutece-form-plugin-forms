@@ -1,56 +1,67 @@
-<#include "manageforms_tabs.html" />
-<@tabs2 tab="form" />
-
-<@box>
-	<@boxHeader title='#i18n{forms.manage_form.title}' boxTools=true>
-		<@tform class='form-inline pull-right' name='manage_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
-			<@button type='submit' name='view_createForm' buttonIcon='plus' title='#i18n{forms.manage_forms.buttonAdd}' />
-		</@tform>
-	</@boxHeader>
-	<@boxBody>    
-    <@messages infos=infos />
-    <@paginationAdmin paginator=paginator combo=1 />
-    <div class="clearfix"></div>
-    <@table>
-        <tr>
-            <input type="hidden" id="id" name="id"/>
-            <th>#i18n{forms.manage_forms.columnTitle}</th>
-            <th>#i18n{forms.manage_forms.columnDescription}</th>
-            <th>#i18n{forms.manage_forms.columnCreationDate}</th>
-            <th>#i18n{forms.manage_forms.columnStartDate}</th>
-            <th>#i18n{forms.manage_forms.columnEndDate}</th>
-            <th>#i18n{portal.util.labelActions}</th>
-        </tr>
-        <@tableHeadBodySeparator />
-            <#list form_list as form >
-        <tr>
-            <input type="hidden" id="id" name="id"/>
-            <td>
-                ${form.title}
-            </td>
-            <td>
-                ${form.description}
-            </td>
-            <td>
-                ${form.creationDate}
-            </td>
-            <td>
-                ${form.startDate}
-            </td>
-            <td>
-                ${form.endDate}
-            </td>
-        <td>
-			<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id=${form.id}' title='#i18n{portal.util.labelModify}' buttonIcon='pencil' showTitle=false />
-						
-			<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?action=confirmRemoveForm&id=${form.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='btn-danger' showTitle=false />
-
-        </td>
-        </tr>
-        </#list>
-    </@table>
-
-    <@paginationAdmin paginator=paginator />
-
-  </@boxBody>
-</@box>
+<@row>
+    <@columns>
+        <@box color='primary' collapsed=true>
+            <@boxHeader title='#i18n{forms.manageForm.title}' boxTools=true>
+                <#if permission_create_forms>
+                    <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' showTitleXs=false size='' />
+                </#if>
+            </@boxHeader>
+        </@box>
+        <@box color='solid'>
+            <@boxBody>
+                <@messages errors=errors />
+                <@messages infos=infos />
+                <@paginationAdmin paginator=paginator combo=1 />
+                <div class="clearfix"></div>
+                <@table>
+                    <tr>
+                        <th class="col-xs-6 col-sm-5 col-md-7">#i18n{forms.manageForm.title}
+                            <@sort jsp_url="jsp/admin/plugins/forms/ManageForm.jsp" attribute="title" />
+                        </th>
+                        <th class="col-xs-1 col-sm-1">#i18n{forms.manageForm.rowPeriodDisponibility}</th>
+                        <th class="col-xs-5 col-sm-6 col-md-4">#i18n{forms.manageForm.rowActions}</th>
+                    </tr>
+                    <#list form_list as form>
+                        <tr>
+                            <td class="col-sm-6">
+                                <#if form.active>
+                                     <@tag color='success'><@icon style='check' /></@tag>
+                                 <#else>
+                                     <@tag color='danger'><@icon style='close' /></@tag>
+                                 </#if>
+                                &nbsp;${form.title}&nbsp;<a href="jsp/site/Portal.jsp?page=form&id_form=${form.id}" title="Voir ${form.title}" target="_blank"><i class="fa fa-globe"></i></a>
+                            </td>
+                            <td class="col-sm-2">
+                                <#setting locale=locale.language>
+                                <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
+                                    #i18n{forms.manageForm.rowPeriodDisponibilityThe} ${forms.availabilityStartDate}
+                                <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
+                                    #i18n{forms.manageForm.rowPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.rowPeriodDisponibilityTo} ${form.availabilityEndDate}
+                                <#elseif form.availabilityStartDate??>
+                                    #i18n{forms.manageForm.rowPeriodDisponibilityFrom} ${form.availabilityStartDate}
+                                <#elseif form.availabilityEndDate??>
+                                    #i18n{forms.manageForm.rowPeriodDisponibilityUntil} ${form.availabilityEndDate}
+                                <#else>
+                                    &nbsp;
+                                </#if>
+                            </td>
+                            <td class="col-sm-4">
+                                <#if form.actions?exists>
+                                    <#list form.actions as action>
+                                            <#if action.permission=='DELETE'>
+                                                <#assign color='btn-danger' />
+                                            <#else>
+                                                <#assign color='btn-primary' />
+                                            </#if>
+                                            <@aButton href='${action.url}&id=${form.id}' title='${action.description}' showTitle=false buttonIcon=action.iconUrl color=color size='sm' />
+                                    </#list>
+                                </#if>
+                            </td>
+                        </tr>
+                    </#list>
+                </@table>
+                <@paginationAdmin paginator=paginator />
+            </@boxBody>
+        </@box>
+    </@columns>
+</@row>

@@ -34,25 +34,50 @@
 
 package fr.paris.lutece.plugins.forms.web;
 
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
+import fr.paris.lutece.plugins.forms.business.FormAction;
+import fr.paris.lutece.plugins.forms.business.FormActionHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.portal.business.rbac.RBAC;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
+import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.web.util.LocalizedPaginator;
+import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.http.HttpRequest;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
 @Controller( controllerJsp = "ManageForms.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
-public class FormJspBean extends AbstractManageFormsJspBean
+public class FormJspBean extends MVCAdminJspBean
 {
+
+    private static final long serialVersionUID = 7515975782241863390L;
+
+    private static final String EMPTY_STRING = "";
+
     // Templates
     private static final String TEMPLATE_MANAGE_FORMS = "/admin/plugins/forms/manage_forms.html";
     private static final String TEMPLATE_CREATE_FORM = "/admin/plugins/forms/create_form.html";
@@ -60,20 +85,29 @@ public class FormJspBean extends AbstractManageFormsJspBean
 
     // Parameters
     private static final String PARAMETER_ID_FORM = "id";
+    protected static final String PARAMETER_PAGE_INDEX = "page_index";
 
     // Properties for page titles
-    private static final String PROPERTY_PAGE_TITLE_MANAGE_FORMS = "forms.manage_forms.pageTitle";
     private static final String PROPERTY_PAGE_TITLE_MODIFY_FORM = "forms.modify_form.pageTitle";
     private static final String PROPERTY_PAGE_TITLE_CREATE_FORM = "forms.create_form.pageTitle";
 
     // Markers
     private static final String MARK_FORM_LIST = "form_list";
+    private static final String MARK_PAGINATOR = "paginator";
+    private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+    private static final String MARK_LOCALE = "locale";
     private static final String MARK_FORM = "form";
+    private static final String MARK_PERMISSION_CREATE_FORMS = "permission_create_forms";
 
     private static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
 
     // Properties
+    private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
+    private static final String PROPERTY_COPY_FORM_TITLE = "forms.copyForm.title";
+
+    // Messages
     private static final String MESSAGE_CONFIRM_REMOVE_FORM = "forms.message.confirmRemoveForm";
+    private static final String MESSAGE_CONFIRM_REMOVE_ACTIVE_FORM = "forms.message.confirmRemoveActiveForm";
 
     // Validations
     private static final String VALIDATION_ATTRIBUTES_PREFIX = "forms.model.entity.form.attribute.";
@@ -82,20 +116,30 @@ public class FormJspBean extends AbstractManageFormsJspBean
     private static final String VIEW_MANAGE_FORMS = "manageForms";
     private static final String VIEW_CREATE_FORM = "createForm";
     private static final String VIEW_MODIFY_FORM = "modifyForm";
+    private static final String VIEW_CONFIRM_REMOVE_FORM = "confirmRemoveForm";
 
     // Actions
     private static final String ACTION_CREATE_FORM = "createForm";
     private static final String ACTION_MODIFY_FORM = "modifyForm";
     private static final String ACTION_REMOVE_FORM = "removeForm";
-    private static final String ACTION_CONFIRM_REMOVE_FORM = "confirmRemoveForm";
+    private static final String ACTION_DUPLICATE_FORM = "duplicateForm";
 
     // Infos
     private static final String INFO_FORM_CREATED = "forms.info.form.created";
     private static final String INFO_FORM_UPDATED = "forms.info.form.updated";
     private static final String INFO_FORM_REMOVED = "forms.info.form.removed";
+    private static final String INFO_FORM_COPIED = "forms.info.form.copied";
+
+    // Errors
+    private static final String ERROR_FORM_NOT_UPDATED = "forms.error.form.notUpdated";
+    private static final String ERROR_FORM_DATE_START_AFTER_END = "forms.error.form.date.startAfterEnd";
 
     // Session variable to store working values
     private Form _form;
+
+    private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
+    private String _strCurrentPageIndex;
+    private int _nItemsPerPage;
 
     /**
      * Build the Manage View
@@ -107,11 +151,52 @@ public class FormJspBean extends AbstractManageFormsJspBean
     @View( value = VIEW_MANAGE_FORMS, defaultView = true )
     public String getManageForms( HttpServletRequest request )
     {
+        AdminUser adminUser = getUser( );
+        Plugin plugin = getPlugin( );
+        Locale locale = getLocale( );
+        List<FormAction> listFormActions;
+        List<FormAction> listAuthorizedFormActions;
         _form = null;
-        List<Form> listForms = FormHome.getFormsList( );
-        Map<String, Object> model = getPaginatedListModel( request, MARK_FORM_LIST, listForms, JSP_MANAGE_FORMS );
 
-        return getPage( PROPERTY_PAGE_TITLE_MANAGE_FORMS, TEMPLATE_MANAGE_FORMS, model );
+        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
+
+        List<Form> listForms = FormHome.getFormList( );
+        listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, adminUser );
+
+        Map<String, Object> model = getModel( );
+        LocalizedPaginator<Form> paginator = new LocalizedPaginator<Form>( listForms, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
+                _strCurrentPageIndex, getLocale( ) );
+
+        listFormActions = FormActionHome.selectAllFormActions( plugin, locale );
+
+        for ( Form form : paginator.getPageItems( ) )
+        {
+            listAuthorizedFormActions = (List<FormAction>) RBACService.getAuthorizedActionsCollection( listFormActions, form, getUser( ) );
+            form.setActions( listAuthorizedFormActions );
+
+        }
+
+        model.put( MARK_PAGINATOR, paginator );
+        model.put( MARK_NB_ITEMS_PER_PAGE, EMPTY_STRING + _nItemsPerPage );
+
+        model.put( MARK_FORM_LIST, paginator.getPageItems( ) );
+        model.put( MARK_LOCALE, request.getLocale( ) );
+
+        if ( RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, adminUser ) )
+        {
+            model.put( MARK_PERMISSION_CREATE_FORMS, true );
+        }
+        else
+        {
+            model.put( MARK_PERMISSION_CREATE_FORMS, false );
+        }
+
+        setPageTitleProperty( EMPTY_STRING );
+
+        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_FORMS, locale, model );
+
+        return getAdminPage( templateList.getHtml( ) );
     }
 
     /**
@@ -128,6 +213,7 @@ public class FormJspBean extends AbstractManageFormsJspBean
 
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, _form );
+        model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
 
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_CREATE_FORM, model );
     }
@@ -144,8 +230,7 @@ public class FormJspBean extends AbstractManageFormsJspBean
     {
         populate( _form, request, request.getLocale( ) );
 
-        // Check constraints
-        if ( !validateBean( _form, VALIDATION_ATTRIBUTES_PREFIX ) )
+        if ( !validateForm( _form ) )
         {
             return redirectView( request, VIEW_CREATE_FORM );
         }
@@ -156,6 +241,7 @@ public class FormJspBean extends AbstractManageFormsJspBean
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
 
+
     /**
      * Manages the removal form of a form whose identifier is in the http request
      *
@@ -163,16 +249,85 @@ public class FormJspBean extends AbstractManageFormsJspBean
      *            The Http request
      * @return the html code to confirm
      */
-    @Action( ACTION_CONFIRM_REMOVE_FORM )
+    @View( VIEW_CONFIRM_REMOVE_FORM )
     public String getConfirmRemoveForm( HttpServletRequest request )
     {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
+        int nId = -1;
+        Form formToBeDeleted;
+        String strConfirmRemoveMessage;
+
+        try
+        {
+            nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
+        }
+        catch( NumberFormatException ne )
+        {
+            AppLogService.error( ne );
+
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+
+        formToBeDeleted = FormHome.findByPrimaryKey( nId );
+        strConfirmRemoveMessage = formToBeDeleted.isActive( ) ? MESSAGE_CONFIRM_REMOVE_ACTIVE_FORM : MESSAGE_CONFIRM_REMOVE_FORM;
+
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_FORM ) );
         url.addParameter( PARAMETER_ID_FORM, nId );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_FORM, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
+
+    }
+
+    /**
+     * Manages the copy of a form whose identifier is in the http request
+     *
+     * @param request
+     *            The Http request
+     * @return the html code to confirm
+     */
+    @Action( ACTION_DUPLICATE_FORM )
+    public String doDuplicateForm( HttpServletRequest request )
+    {
+        int nId = -1;
+        String strIdForm;
+        Form formToBeCopied;
+
+        try
+        {
+            strIdForm = request.getParameter( PARAMETER_ID_FORM );
+            nId = Integer.parseInt( strIdForm );
+        }
+        catch( NumberFormatException ne )
+        {
+            AppLogService.error( ne );
+
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+
+        if ( ( nId != -1 ) && RBACService.isAuthorized( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, getUser( ) ) )
+        {
+            formToBeCopied = FormHome.findByPrimaryKey( nId );
+
+            if ( formToBeCopied != null )
+            {
+
+                Object [ ] tabFormTitleCopy = {
+                    formToBeCopied.getTitle( )
+                };
+                String strTitleCopyForm = I18nService.getLocalizedString( PROPERTY_COPY_FORM_TITLE, tabFormTitleCopy, getLocale( ) );
+
+                if ( strTitleCopyForm != null )
+                {
+                    formToBeCopied.setTitle( strTitleCopyForm );
+                }
+
+                FormHome.create( formToBeCopied );
+                addInfo( INFO_FORM_COPIED, getLocale( ) );
+            }
+        }
+
+        return redirectView( request, VIEW_MANAGE_FORMS );
     }
 
     /**
@@ -185,7 +340,18 @@ public class FormJspBean extends AbstractManageFormsJspBean
     @Action( ACTION_REMOVE_FORM )
     public String doRemoveForm( HttpServletRequest request )
     {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
+        int nId = -1;
+        try
+        {
+            nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
+        }
+        catch( NumberFormatException ne )
+        {
+            AppLogService.error( ne );
+
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+
         FormHome.remove( nId );
         addInfo( INFO_FORM_REMOVED, getLocale( ) );
 
@@ -202,17 +368,31 @@ public class FormJspBean extends AbstractManageFormsJspBean
     @View( VIEW_MODIFY_FORM )
     public String getModifyForm( HttpServletRequest request )
     {
-        int nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
-
-        if ( _form == null || ( _form.getId( ) != nId ) )
+        int nId = -1;
+        try
         {
-            _form = FormHome.findByPrimaryKey( nId );
+            nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
+        }
+        catch( NumberFormatException ne )
+        {
+            AppLogService.error( ne );
+
+            return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        Map<String, Object> model = getModel( );
-        model.put( MARK_FORM, _form );
+        Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
-        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );
+        if ( formToBeModified != null )
+        {
+            Map<String, Object> model = getModel( );
+            model.put( MARK_FORM, formToBeModified );
+            model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
+
+            return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );
+        }
+
+        return redirectView( request, VIEW_MANAGE_FORMS );
+
     }
 
     /**
@@ -225,10 +405,28 @@ public class FormJspBean extends AbstractManageFormsJspBean
     @Action( ACTION_MODIFY_FORM )
     public String doModifyForm( HttpServletRequest request )
     {
+        int nId = -1;
+        try
+        {
+            nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
+        }
+        catch( NumberFormatException ne )
+        {
+            AppLogService.error( ne );
+            addError( ERROR_FORM_NOT_UPDATED, getLocale( ) );
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+
+        _form = FormHome.findByPrimaryKey( nId );
+
+        if ( _form == null )
+        {
+            addError( ERROR_FORM_NOT_UPDATED, getLocale( ) );
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
         populate( _form, request, request.getLocale( ) );
 
-        // Check constraints
-        if ( !validateBean( _form, VALIDATION_ATTRIBUTES_PREFIX ) )
+        if ( !validateForm( _form ) )
         {
             return redirect( request, VIEW_MODIFY_FORM, PARAMETER_ID_FORM, _form.getId( ) );
         }
@@ -238,4 +436,41 @@ public class FormJspBean extends AbstractManageFormsJspBean
 
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
+
+    /**
+     * Return the URL of the JSP manage form
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL of the JSP manage form
+     */
+    protected String getJspManageForm( HttpServletRequest request )
+    {
+        return AppPathService.getBaseUrl( request ) + JSP_MANAGE_FORMS;
+    }
+
+    /**
+     * Validate the form field values
+     * 
+     * @param form
+     *            the Form to validate
+     * 
+     * @return True if the form is valid
+     */
+    private boolean validateForm( Form form )
+    {
+
+        boolean bIsFormValid = validateBean( form, VALIDATION_ATTRIBUTES_PREFIX );
+
+        if ( form.getAvailabilityStartDate( ) != null && form.getAvailabilityEndDate( ) != null
+                && form.getAvailabilityStartDate( ).after( form.getAvailabilityEndDate( ) ) )
+        {
+            addError( ERROR_FORM_DATE_START_AFTER_END, getLocale( ));
+            bIsFormValid = false;
+
+        }
+        return bIsFormValid;
+
+    }
+
 }

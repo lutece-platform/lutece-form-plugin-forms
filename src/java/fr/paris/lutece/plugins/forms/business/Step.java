@@ -55,7 +55,7 @@ public class Step implements Serializable
     private String _strDescription;
 
     private int _nIdForm;
-    
+
     private boolean _bIsFinal;
 
     /**
@@ -147,7 +147,8 @@ public class Step implements Serializable
      * 
      * @return The _bIsFinal flag
      */
-    public boolean isFinal() {
+    public boolean isFinal( )
+    {
         return _bIsFinal;
     }
 
@@ -157,7 +158,8 @@ public class Step implements Serializable
      * @param _bIsFinal
      *            true if this is a final step
      */
-    public void setFinal(boolean _bIsFinal) {
+    public void setFinal( boolean _bIsFinal )
+    {
         this._bIsFinal = _bIsFinal;
     }
 }

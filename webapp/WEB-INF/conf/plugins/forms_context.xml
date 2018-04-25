@@ -9,6 +9,5 @@
     <bean id="forms.transitionDAO" class="fr.paris.lutece.plugins.forms.business.TransitionDAO" />
     <bean id="forms.questionDAO" class="fr.paris.lutece.plugins.forms.business.QuestionDAO" />
     <bean id="forms.groupDAO" class="fr.paris.lutece.plugins.forms.business.GroupDAO" />
-
-
+    <bean id="forms.formActionDAO"  class="fr.paris.lutece.plugins.forms.business.FormActionDAO" />
 </beans>

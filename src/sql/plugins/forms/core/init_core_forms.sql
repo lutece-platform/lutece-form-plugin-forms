@@ -4,7 +4,7 @@
 --
 DELETE FROM core_admin_right WHERE id_right = 'FORMS_MANAGEMENT';
 INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is_updatable,plugin_name,id_feature_group,icon_url,documentation_url, id_order ) VALUES 
-('FORMS_MANAGEMENT','forms.adminFeature.ManageForms.name',1,'jsp/admin/plugins/forms/ManageForms.jsp','forms.adminFeature.ManageForms.description',0,'forms',NULL,NULL,NULL,4);
+('FORMS_MANAGEMENT','forms.adminFeature.manageForms.name',1,'jsp/admin/plugins/forms/ManageForms.jsp','forms.adminFeature.manageForms.description',0,'forms',NULL,NULL,NULL,4);
 
 
 --
@@ -12,4 +12,23 @@ INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is
 --
 DELETE FROM core_user_right WHERE id_right = 'FORMS_MANAGEMENT';
 INSERT INTO core_user_right (id_right,id_user) VALUES ('FORMS_MANAGEMENT',1);
+INSERT INTO core_user_right (id_right,id_user) VALUES ('FORMS_MANAGEMENT',2);
 
+--
+-- Dumping data for table core_admin_role
+--
+DELETE FROM core_admin_role WHERE role_key = 'forms_manager';
+INSERT INTO core_admin_role (role_key,role_description) VALUES ('forms_manager','Gestion des formulaires');
+
+--
+-- Dumping data for table core_user_role
+--
+INSERT INTO core_user_role (role_key,id_user) VALUES ('forms_manager',1);
+INSERT INTO core_user_role (role_key,id_user) VALUES ('forms_manager',2);
+
+--
+-- Dumping data for table core_admin_role_resource
+--
+DELETE FROM core_admin_role_resource WHERE role_key = 'forms_manager';
+ INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES 
+ (1907,'forms_manager','FORMS_FORM','*','*');

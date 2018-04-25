@@ -34,17 +34,38 @@
 package fr.paris.lutece.plugins.forms.business;
 
 import javax.validation.constraints.Size;
+
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
-import java.io.Serializable;
+
+import fr.paris.lutece.plugins.forms.business.FormAction;
+import fr.paris.lutece.portal.service.rbac.RBACResource;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
+
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * This is the business class for the object Form
  */
-public class Form implements Serializable
+public class Form implements AdminWorkgroupResource, RBACResource
 {
-    private static final long serialVersionUID = 1L;
+
+    /**
+     * Form resource type
+     */
+    public static final String RESOURCE_TYPE = "FORMS_FORM";
+
+    /**
+     * State of forms that are enabled
+     */
+    public static final int STATE_ENABLE = 1;
+
+    /**
+     * State of forms that are disabled
+     */
+    public static final int STATE_DISABLE = 0;
 
     // Variables declarations
     private int _nId;
@@ -56,11 +77,18 @@ public class Form implements Serializable
     @Size( max = 255, message = "#i18n{forms.validation.form.Description.size}" )
     private String _strDescription;
 
-    private Timestamp _tCreationDate;
+    private Timestamp _dateCreation;
 
     private Date _dateAvailabilityStartDate;
 
     private Date _dateAvailabilityEndDate;
+
+    private Timestamp _dateUpdate;
+
+    private String _strWorkgroup;
+
+    private List<FormAction> _listActions;
+
 
     /**
      * Returns the Id
@@ -132,18 +160,40 @@ public class Form implements Serializable
      */
     public Timestamp getCreationDate( )
     {
-        return _tCreationDate;
+        return _dateCreation;
     }
 
     /**
      * Sets the CreationDate
      * 
-     * @param dateCreationDate
+     * @param creationDate
      *            The CreationDate
      */
     public void setCreationDate( Timestamp creationDate )
     {
-        _tCreationDate = creationDate;
+        _dateCreation = creationDate;
+    }
+
+    /**
+     * Returns the UpdateDate
+     * 
+     * @return The UpdateDate
+     */
+    public Timestamp getUpdateDate( )
+    {
+        return _dateUpdate;
+    }
+
+    /**
+     * Sets the UpdateDate
+     * 
+     * @param updateDate
+     *            The UpdateDate
+     */
+    public void setUpdateDate( Timestamp dateUpdate )
+    {
+
+        _dateUpdate = dateUpdate;
     }
 
     /**
@@ -187,4 +237,98 @@ public class Form implements Serializable
     {
         _dateAvailabilityEndDate = dateAvailabilityEndDate;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getResourceTypeCode( )
+    {
+        return RESOURCE_TYPE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getResourceId( )
+    {
+        return StringUtils.EMPTY + _nId;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getWorkgroup( )
+    {
+        return _strWorkgroup;
+    }
+
+    /**
+     * set the work group associate to the form
+     * 
+     * @param workGroup
+     *            the work group associate to the form
+     */
+    public void setWorkgroup( String workGroup )
+    {
+        _strWorkgroup = workGroup;
+    }
+
+    /**
+     *
+     * @return a list of action can be use for the form
+     */
+    public List<FormAction> getActions( )
+    {
+        return _listActions;
+    }
+
+    /**
+     * set a list of action can be use for the form
+     * 
+     * @param formActions
+     *            a list of action must be use for the form
+     */
+    public void setActions( List<FormAction> formActions )
+    {
+        _listActions = formActions;
+    }
+
+    /**
+     * Check if the form is active or not
+     * 
+     * @return true if the form is active
+     */
+    public boolean isActive( )
+    {
+        return getActiveStatusFromAvailabilityPeriod( );
+    }
+
+
+    /**
+     * Returns the active status of a form by checking if we are currently within its availability period
+     * 
+     * @return true if the Form is active
+     */
+    private boolean getActiveStatusFromAvailabilityPeriod( )
+    {
+        boolean bActive = false;
+        Date dToday = new java.sql.Date( System.currentTimeMillis( ) );
+
+        if ( _dateAvailabilityStartDate != null && _dateAvailabilityStartDate.before( dToday )
+                && ( _dateAvailabilityEndDate == null || _dateAvailabilityEndDate.after( dToday ) ) )
+        {
+            bActive = true;
+        }
+        if ( _dateAvailabilityStartDate == null  && 
+                ( _dateAvailabilityEndDate != null && _dateAvailabilityEndDate.after( dToday ) ) )
+        {
+            bActive = true;
+        }
+        
+        return bActive;
+    }
+
 }
