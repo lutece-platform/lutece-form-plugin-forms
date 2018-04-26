@@ -155,11 +155,11 @@ public class Step implements Serializable
     /**
      * Sets the IsFinal flag
      * 
-     * @param _bIsFinal
+     * @param bIsFinal
      *            true if this is a final step
      */
-    public void setFinal( boolean _bIsFinal )
+    public void setFinal( boolean bIsFinal )
     {
-        this._bIsFinal = _bIsFinal;
+        this._bIsFinal = bIsFinal;
     }
 }

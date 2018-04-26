@@ -90,6 +90,7 @@ public class FormsResourceIdService extends ResourceIdService
     /** Creates a new instance of DocumentTypeResourceIdService */
     public FormsResourceIdService( )
     {
+        super( );
         setPluginName( FormsPlugin.PLUGIN_NAME );
     }
 
@@ -99,53 +100,53 @@ public class FormsResourceIdService extends ResourceIdService
     @Override
     public void register( )
     {
-        ResourceType rt = new ResourceType( );
-        rt.setResourceIdServiceClass( FormsResourceIdService.class.getName( ) );
-        rt.setPluginName( FormsPlugin.PLUGIN_NAME );
-        rt.setResourceTypeKey( Form.RESOURCE_TYPE );
-        rt.setResourceTypeLabelKey( PROPERTY_LABEL_RESOURCE_TYPE );
+        ResourceType resourceType = new ResourceType( );
+        resourceType.setResourceIdServiceClass( FormsResourceIdService.class.getName( ) );
+        resourceType.setPluginName( FormsPlugin.PLUGIN_NAME );
+        resourceType.setResourceTypeKey( Form.RESOURCE_TYPE );
+        resourceType.setResourceTypeLabelKey( PROPERTY_LABEL_RESOURCE_TYPE );
 
-        Permission p = new Permission( );
-        p.setPermissionKey( PERMISSION_CREATE );
-        p.setPermissionTitleKey( PROPERTY_LABEL_CREATE );
-        rt.registerPermission( p );
+        Permission permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_CREATE );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_CREATE );
+        resourceType.registerPermission( permission );
 
-        p = new Permission( );
-        p.setPermissionKey( PERMISSION_MODIFY );
-        p.setPermissionTitleKey( PROPERTY_LABEL_MODIFY );
-        rt.registerPermission( p );
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_MODIFY );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_MODIFY );
+        resourceType.registerPermission( permission );
 
-        p = new Permission( );
-        p.setPermissionKey( PERMISSION_COPY );
-        p.setPermissionTitleKey( PROPERTY_LABEL_COPY );
-        rt.registerPermission( p );
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_COPY );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_COPY );
+        resourceType.registerPermission( permission );
 
-        p = new Permission( );
-        p.setPermissionKey( PERMISSION_TEST );
-        p.setPermissionTitleKey( PROPERTY_LABEL_TEST );
-        rt.registerPermission( p );
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_TEST );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_TEST );
+        resourceType.registerPermission( permission );
 
-        p = new Permission( );
-        p.setPermissionKey( PERMISSION_CHANGE_STATE );
-        p.setPermissionTitleKey( PROPERTY_LABEL_CHANGE_STATE );
-        rt.registerPermission( p );
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_CHANGE_STATE );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_CHANGE_STATE );
+        resourceType.registerPermission( permission );
 
-        p = new Permission( );
-        p.setPermissionKey( PERMISSION_MANAGE_VALIDATOR );
-        p.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_VALIDATOR );
-        rt.registerPermission( p );
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_MANAGE_VALIDATOR );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_VALIDATOR );
+        resourceType.registerPermission( permission );
 
-        p = new Permission( );
-        p.setPermissionKey( PERMISSION_VIEW_RESULT );
-        p.setPermissionTitleKey( PROPERTY_LABEL_VIEW_RESULT );
-        rt.registerPermission( p );
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_VIEW_RESULT );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_VIEW_RESULT );
+        resourceType.registerPermission( permission );
 
-        p = new Permission( );
-        p.setPermissionKey( PERMISSION_DELETE );
-        p.setPermissionTitleKey( PROPERTY_LABEL_DELETE );
-        rt.registerPermission( p );
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_DELETE );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_DELETE );
+        resourceType.registerPermission( permission );
 
-        ResourceTypeManager.registerResourceType( rt );
+        ResourceTypeManager.registerResourceType( resourceType );
     }
 
     /**

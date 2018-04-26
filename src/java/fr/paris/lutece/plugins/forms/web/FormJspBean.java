@@ -65,7 +65,6 @@ import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.http.HttpRequest;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
@@ -85,7 +84,7 @@ public class FormJspBean extends MVCAdminJspBean
 
     // Parameters
     private static final String PARAMETER_ID_FORM = "id";
-    protected static final String PARAMETER_PAGE_INDEX = "page_index";
+    private static final String PARAMETER_PAGE_INDEX = "page_index";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_FORM = "forms.modify_form.pageTitle";
@@ -156,7 +155,7 @@ public class FormJspBean extends MVCAdminJspBean
         Locale locale = getLocale( );
         List<FormAction> listFormActions;
         List<FormAction> listAuthorizedFormActions;
-        _form = null;
+        _form = new Form( );
 
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
@@ -253,9 +252,6 @@ public class FormJspBean extends MVCAdminJspBean
     public String getConfirmRemoveForm( HttpServletRequest request )
     {
         int nId = -1;
-        Form formToBeDeleted;
-        String strConfirmRemoveMessage;
-
         try
         {
             nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
@@ -267,8 +263,8 @@ public class FormJspBean extends MVCAdminJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        formToBeDeleted = FormHome.findByPrimaryKey( nId );
-        strConfirmRemoveMessage = formToBeDeleted.isActive( ) ? MESSAGE_CONFIRM_REMOVE_ACTIVE_FORM : MESSAGE_CONFIRM_REMOVE_FORM;
+        Form formToBeDeleted = FormHome.findByPrimaryKey( nId );
+        String strConfirmRemoveMessage = formToBeDeleted.isActive( ) ? MESSAGE_CONFIRM_REMOVE_ACTIVE_FORM : MESSAGE_CONFIRM_REMOVE_FORM;
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_FORM ) );
         url.addParameter( PARAMETER_ID_FORM, nId );
@@ -291,7 +287,6 @@ public class FormJspBean extends MVCAdminJspBean
     {
         int nId = -1;
         String strIdForm;
-        Form formToBeCopied;
 
         try
         {
@@ -307,13 +302,13 @@ public class FormJspBean extends MVCAdminJspBean
 
         if ( ( nId != -1 ) && RBACService.isAuthorized( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, getUser( ) ) )
         {
-            formToBeCopied = FormHome.findByPrimaryKey( nId );
+            Form formToBeCopied = FormHome.findByPrimaryKey( nId );
 
             if ( formToBeCopied != null )
             {
 
                 Object [ ] tabFormTitleCopy = {
-                    formToBeCopied.getTitle( )
+                    formToBeCopied.getTitle( ),
                 };
                 String strTitleCopyForm = I18nService.getLocalizedString( PROPERTY_COPY_FORM_TITLE, tabFormTitleCopy, getLocale( ) );
 
@@ -465,7 +460,7 @@ public class FormJspBean extends MVCAdminJspBean
         if ( form.getAvailabilityStartDate( ) != null && form.getAvailabilityEndDate( ) != null
                 && form.getAvailabilityStartDate( ).after( form.getAvailabilityEndDate( ) ) )
         {
-            addError( ERROR_FORM_DATE_START_AFTER_END, getLocale( ));
+            addError( ERROR_FORM_DATE_START_AFTER_END, getLocale( ) );
             bIsFormValid = false;
 
         }

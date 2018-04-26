@@ -43,9 +43,10 @@ import java.io.Serializable;
 public class FormsPlugin extends PluginDefaultImplementation implements Serializable
 {
 
-    private static final long serialVersionUID = 363631628732516426L;
-
     /** The Constant PLUGIN_NAME. */
     public static final String PLUGIN_NAME = "forms";
+
+    private static final long serialVersionUID = 363631628732516426L;
+
 
 }

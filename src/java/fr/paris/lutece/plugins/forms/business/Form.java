@@ -38,7 +38,6 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
 
@@ -187,7 +186,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
     /**
      * Sets the UpdateDate
      * 
-     * @param updateDate
+     * @param dateUpdate
      *            The UpdateDate
      */
     public void setUpdateDate( Timestamp dateUpdate )
@@ -297,25 +296,14 @@ public class Form implements AdminWorkgroupResource, RBACResource
     }
 
     /**
-     * Check if the form is active or not
+     * Returns the active status of a form by checking if we are currently within its availability period
      * 
      * @return true if the form is active
      */
     public boolean isActive( )
     {
-        return getActiveStatusFromAvailabilityPeriod( );
-    }
-
-
-    /**
-     * Returns the active status of a form by checking if we are currently within its availability period
-     * 
-     * @return true if the Form is active
-     */
-    private boolean getActiveStatusFromAvailabilityPeriod( )
-    {
         boolean bActive = false;
-        Date dToday = new java.sql.Date( System.currentTimeMillis( ) );
+        Date dToday = new Date( System.currentTimeMillis( ) );
 
         if ( _dateAvailabilityStartDate != null && _dateAvailabilityStartDate.before( dToday )
                 && ( _dateAvailabilityEndDate == null || _dateAvailabilityEndDate.after( dToday ) ) )
