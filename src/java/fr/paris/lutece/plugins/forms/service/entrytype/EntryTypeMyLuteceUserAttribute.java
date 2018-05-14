@@ -65,18 +65,18 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
      * Name of the bean of this service
      */
     public static final String BEAN_NAME = "forms.entryTypeMyLuteceUser";
-    
+
     public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "";
     public static final String CONSTANT_MYLUTECE_ATTRIBUTE_I18N_PREFIX = "";
     public static final String CONSTANT_COMMA = ",";
-    
+
     private static final String TEMPLATE_HTML_CODE = "skin/plugins/forms/entries/html_code_entry_type_mylutece_user_attribute.html";
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_mylutece_user_attribute.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_mylutece_user_attribute.html";
     private static final String PROPERTY_ENTRY_TITLE = "form.entryTypeMyLuteceUserAttribute.title";
     private static final String PARAMETER_DISPLAY_IN_FRONT_OFFICE = "display_front_office";
     private static final String PARAMETER_MYLUTECE_ATTRIBUTE_NAME = "mylutece_attribute_name";
-    
+
     private ReferenceList _refListUserAttributes;
 
     /**

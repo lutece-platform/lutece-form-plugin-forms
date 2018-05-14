@@ -7,14 +7,14 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 /**
  * Interface for the entry display services
  */
-public interface IEntryDisplayService 
-{	
-	/**
+public interface IEntryDisplayService
+{
+    /**
      * @return the display service name
      */
-	String getDisplayServiceName( );
-	
-	/**
+    String getDisplayServiceName( );
+
+    /**
      * Get the Html of the given step
      * 
      * @param entry
@@ -23,5 +23,5 @@ public interface IEntryDisplayService
      *            The given locale
      * @return the template Html of the given entry
      */
-	String getEntryTemplateDisplay ( Entry entry, Locale locale );
+    String getEntryTemplateDisplay( Entry entry, Locale locale );
 }

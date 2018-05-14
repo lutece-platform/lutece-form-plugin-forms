@@ -175,7 +175,7 @@ public final class QuestionDAO implements IQuestionDAO
         daoUtil.close( );
         return questionList;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -244,24 +244,24 @@ public final class QuestionDAO implements IQuestionDAO
         daoUtil.close( );
         return questionList;
     }
-    
+
     /**
-     * @param nIdEntry 
-     * 			the entry primary key
+     * @param nIdEntry
+     *            the entry primary key
      * @return the Entry
      */
     private Entry getQuestionEntry( int nIdEntry )
     {
-    	return EntryHome.findByPrimaryKey( nIdEntry );
+        return EntryHome.findByPrimaryKey( nIdEntry );
     }
-    
+
     /**
-     * @param nIdStep 
-     * 			the step primary key
+     * @param nIdStep
+     *            the step primary key
      * @return the Step
      */
     private Step getQuestionStep( int nIdStep )
     {
-    	return StepHome.findByPrimaryKey( nIdStep );
+        return StepHome.findByPrimaryKey( nIdStep );
     }
 }

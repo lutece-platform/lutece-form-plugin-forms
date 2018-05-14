@@ -50,8 +50,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class EntryTypeText extends AbstractEntryTypeText
 {
-	public static final String BEAN_FORM_RESPONSE_SERVICE = "forms.responseService";
-	
+    public static final String BEAN_FORM_RESPONSE_SERVICE = "forms.responseService";
+
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_text.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_text.html";
     private static final String TEMPLATE_HTML_CODE = "skin/plugins/forms/entries/html_code_entry_type_text.html";

@@ -17,22 +17,22 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
  */
 public class EntryTypeFileDisplayService implements IEntryDisplayService
 {
-	private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
-	
-	private String _strEntryServiceName = StringUtils.EMPTY;
-	
-	/**
+    private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
+
+    private String _strEntryServiceName = StringUtils.EMPTY;
+
+    /**
      * Constructor of the EntryTypeFileDisplayService
      * 
      * @param strEntryServiceName
      *            The entry service name
      */
-	public EntryTypeFileDisplayService( String strEntryServiceName )
-	{
-		_strEntryServiceName = strEntryServiceName;
-	}
-	
-	/**
+    public EntryTypeFileDisplayService( String strEntryServiceName )
+    {
+        _strEntryServiceName = strEntryServiceName;
+    }
+
+    /**
      * Return the completed model
      * 
      * @param entry
@@ -41,29 +41,29 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
      *            The upload service
      * @return the completed model
      */
-	private Map<String, Object> getModel( Entry entry, IEntryTypeService service ) 
-	{
-		Map<String, Object> model = new HashMap<String, Object>( );
-		model.put( FormsConstants.QUESTION_ENTRY_MARKER , entry );
-		model.put( MARK_UPLOAD_HANDLER, ( ( AbstractEntryTypeUpload ) service ).getAsynchronousUploadHandler( ) );
-		
-		return model;
-	}
-	
-	@Override
-	public String getDisplayServiceName( ) 
-	{
-		return _strEntryServiceName;
-	}
+    private Map<String, Object> getModel( Entry entry, IEntryTypeService service )
+    {
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
+        model.put( MARK_UPLOAD_HANDLER, ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ) );
 
-	@Override
-	public String getEntryTemplateDisplay( Entry entry, Locale locale ) 
-	{
-		IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
-		
-		String strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, true ), locale, getModel( entry, service ) ).getHtml( );
-		
-		return strEntryHtml;
-	}
+        return model;
+    }
+
+    @Override
+    public String getDisplayServiceName( )
+    {
+        return _strEntryServiceName;
+    }
+
+    @Override
+    public String getEntryTemplateDisplay( Entry entry, Locale locale )
+    {
+        IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
+
+        String strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, true ), locale, getModel( entry, service ) ).getHtml( );
+
+        return strEntryHtml;
+    }
 
 }
