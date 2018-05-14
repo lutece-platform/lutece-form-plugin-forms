@@ -54,6 +54,7 @@ id_question int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
 description varchar(255) default '',
 id_entry int default '0',
+id_step int default '0',
 PRIMARY KEY (id_question)
 );
 
@@ -87,4 +88,20 @@ CREATE TABLE forms_action (
     action_permission varchar(255) default NULL,
     form_state smallint default NULL,
     PRIMARY KEY (id_action)
+);
+
+--
+-- Structure for table forms_display
+--
+
+DROP TABLE IF EXISTS forms_display;
+CREATE TABLE forms_display (
+id_display int AUTO_INCREMENT,
+id_form int default '0',
+id_step int default '0',
+id_composite int default '0',
+id_parent int default '0',
+display_order int default '0',
+composite_type varchar(255) default '',
+PRIMARY KEY (id_display)
 );

@@ -95,6 +95,17 @@ public interface IQuestionDAO
      * @return The list which contains the data of all the question objects
      */
     List<Question> selectQuestionsList( Plugin plugin );
+    
+    /**
+     * Load the data of all the question objects by step and returns them as a list
+     * 
+     * @param plugin
+     *            the Plugin
+     * @param nIdStep
+     *            the step id
+     * @return The list which contains the data of all the question objects
+     */
+    List<Question> selectQuestionsListByStep( int nIdStep, Plugin plugin );
 
     /**
      * Load the id of all the question objects and returns them as a list

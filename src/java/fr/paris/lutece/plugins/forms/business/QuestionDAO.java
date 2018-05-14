@@ -34,6 +34,8 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
@@ -48,12 +50,13 @@ import java.util.List;
 public final class QuestionDAO implements IQuestionDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_question, title, description, id_entry FROM forms_question WHERE id_question = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question ( title, description, id_entry ) VALUES ( ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = "SELECT id_question, title, description, id_entry, id_step FROM forms_question WHERE id_question = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question ( title, description, id_entry, id_step ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question WHERE id_question = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_question SET id_question = ?, title = ?, description = ?, id_entry = ? WHERE id_question = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_question, title, description, id_entry FROM forms_question";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_question SET id_question = ?, title = ?, description = ?, id_entry = ?, id_step = ? WHERE id_question = ?";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_question, title, description, id_entry, id_step FROM forms_question";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_question FROM forms_question";
+    private static final String SQL_QUERY_SELECT_BY_STEP = "SELECT id_question, title, description, id_entry, id_step FROM forms_question WHERE id_step = ?";
 
     /**
      * {@inheritDoc }
@@ -68,6 +71,7 @@ public final class QuestionDAO implements IQuestionDAO
             daoUtil.setString( nIndex++, question.getTitle( ) );
             daoUtil.setString( nIndex++, question.getDescription( ) );
             daoUtil.setInt( nIndex++, question.getIdEntry( ) );
+            daoUtil.setInt( nIndex++, question.getIdStep( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -77,7 +81,7 @@ public final class QuestionDAO implements IQuestionDAO
         }
         finally
         {
-            daoUtil.free( );
+            daoUtil.close( );
         }
     }
 
@@ -101,9 +105,12 @@ public final class QuestionDAO implements IQuestionDAO
             question.setTitle( daoUtil.getString( nIndex++ ) );
             question.setDescription( daoUtil.getString( nIndex++ ) );
             question.setIdEntry( daoUtil.getInt( nIndex++ ) );
+            question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+            question.setIdStep( daoUtil.getInt( nIndex++ ) );
+            question.setStep( getQuestionStep( question.getIdStep( ) ) );
         }
 
-        daoUtil.free( );
+        daoUtil.close( );
         return question;
     }
 
@@ -116,7 +123,7 @@ public final class QuestionDAO implements IQuestionDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
         daoUtil.setInt( 1, nKey );
         daoUtil.executeUpdate( );
-        daoUtil.free( );
+        daoUtil.close( );
     }
 
     /**
@@ -132,10 +139,11 @@ public final class QuestionDAO implements IQuestionDAO
         daoUtil.setString( nIndex++, question.getTitle( ) );
         daoUtil.setString( nIndex++, question.getDescription( ) );
         daoUtil.setInt( nIndex++, question.getIdEntry( ) );
+        daoUtil.setInt( nIndex++, question.getIdStep( ) );
         daoUtil.setInt( nIndex, question.getId( ) );
 
         daoUtil.executeUpdate( );
-        daoUtil.free( );
+        daoUtil.close( );
     }
 
     /**
@@ -157,11 +165,45 @@ public final class QuestionDAO implements IQuestionDAO
             question.setTitle( daoUtil.getString( nIndex++ ) );
             question.setDescription( daoUtil.getString( nIndex++ ) );
             question.setIdEntry( daoUtil.getInt( nIndex++ ) );
+            question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+            question.setIdStep( daoUtil.getInt( nIndex++ ) );
+            question.setStep( getQuestionStep( question.getIdStep( ) ) );
 
             questionList.add( question );
         }
 
-        daoUtil.free( );
+        daoUtil.close( );
+        return questionList;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<Question> selectQuestionsListByStep( int nIdStep, Plugin plugin )
+    {
+        List<Question> questionList = new ArrayList<Question>( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_STEP, plugin );
+        daoUtil.setInt( 1, nIdStep );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            Question question = new Question( );
+            int nIndex = 1;
+
+            question.setId( daoUtil.getInt( nIndex++ ) );
+            question.setTitle( daoUtil.getString( nIndex++ ) );
+            question.setDescription( daoUtil.getString( nIndex++ ) );
+            question.setIdEntry( daoUtil.getInt( nIndex++ ) );
+            question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+            question.setIdStep( daoUtil.getInt( nIndex++ ) );
+            question.setStep( getQuestionStep( question.getIdStep( ) ) );
+
+            questionList.add( question );
+        }
+
+        daoUtil.close( );
         return questionList;
     }
 
@@ -180,7 +222,7 @@ public final class QuestionDAO implements IQuestionDAO
             questionList.add( daoUtil.getInt( 1 ) );
         }
 
-        daoUtil.free( );
+        daoUtil.close( );
         return questionList;
     }
 
@@ -199,7 +241,27 @@ public final class QuestionDAO implements IQuestionDAO
             questionList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
         }
 
-        daoUtil.free( );
+        daoUtil.close( );
         return questionList;
+    }
+    
+    /**
+     * @param nIdEntry 
+     * 			the entry primary key
+     * @return the Entry
+     */
+    private Entry getQuestionEntry( int nIdEntry )
+    {
+    	return EntryHome.findByPrimaryKey( nIdEntry );
+    }
+    
+    /**
+     * @param nIdStep 
+     * 			the step primary key
+     * @return the Step
+     */
+    private Step getQuestionStep( int nIdStep )
+    {
+    	return StepHome.findByPrimaryKey( nIdStep );
     }
 }

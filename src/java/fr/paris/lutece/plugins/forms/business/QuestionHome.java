@@ -116,6 +116,18 @@ public final class QuestionHome
     {
         return _dao.selectQuestionsList( _plugin );
     }
+    
+    /**
+     * Load the data of all the question objects and returns them as a list
+     * 
+     * @param nIdStep
+     *            The step primary key
+     * @return the list which contains the data of all the question objects
+     */
+    public static List<Question> getQuestionsListByStep( int nIdStep )
+    {
+        return _dao.selectQuestionsListByStep( nIdStep, _plugin );
+    }
 
     /**
      * Load the id of all the question objects and returns them as a list
