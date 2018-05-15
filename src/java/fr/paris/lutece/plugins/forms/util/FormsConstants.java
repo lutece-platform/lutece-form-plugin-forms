@@ -51,7 +51,6 @@ public final class FormsConstants
     public static final String PARAMETER_ID_FORM = "id_form";
     public static final String PARAMETER_ID_STEP = "id_step";
 
-
     public static final String COMPOSITE_STEP_LABEL = "step";
     public static final String COMPOSITE_GROUP_LABEL = "group";
     public static final String COMPOSITE_QUESTION_LABEL = "question";
@@ -63,7 +62,7 @@ public final class FormsConstants
     private FormsConstants( )
     {
 
-        throw new AssertionError();
+        throw new AssertionError( );
 
     }
 }

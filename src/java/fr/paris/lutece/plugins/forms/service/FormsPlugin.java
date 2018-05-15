@@ -48,5 +48,4 @@ public class FormsPlugin extends PluginDefaultImplementation implements Serializ
 
     private static final long serialVersionUID = 363631628732516426L;
 
-
 }

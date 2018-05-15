@@ -136,7 +136,7 @@ public final class StepDAO implements IStepDAO
         daoUtil.setString( nIndex++, step.getDescription( ) );
         daoUtil.setInt( nIndex++, step.getIdForm( ) );
         daoUtil.setBoolean( nIndex++, step.isFinal( ) );
-        
+
         daoUtil.setInt( nIndex, step.getId( ) );
 
         daoUtil.executeUpdate( );

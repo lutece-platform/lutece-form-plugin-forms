@@ -88,7 +88,6 @@ public class Form implements AdminWorkgroupResource, RBACResource
 
     private List<FormAction> _listActions;
 
-
     /**
      * Returns the Id
      * 
@@ -310,12 +309,11 @@ public class Form implements AdminWorkgroupResource, RBACResource
         {
             bActive = true;
         }
-        if ( _dateAvailabilityStartDate == null  && 
-                ( _dateAvailabilityEndDate != null && _dateAvailabilityEndDate.after( dToday ) ) )
+        if ( _dateAvailabilityStartDate == null && ( _dateAvailabilityEndDate != null && _dateAvailabilityEndDate.after( dToday ) ) )
         {
             bActive = true;
         }
-        
+
         return bActive;
     }
 

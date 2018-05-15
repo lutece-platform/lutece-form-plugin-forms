@@ -60,7 +60,6 @@ import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
@@ -125,7 +124,6 @@ public class FormStepJspBean extends MVCAdminJspBean
     // Errors
     private static final String ERROR_STEP_NOT_UPDATED = "forms.error.form.notUpdated";
 
-
     // Session variable to store working values
     private Form _form;
     private Step _step;
@@ -170,7 +168,6 @@ public class FormStepJspBean extends MVCAdminJspBean
         LocalizedPaginator<Step> paginator = new LocalizedPaginator<Step>( listSteps, _nItemsPerPage, getJspManageSteps( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
 
-
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, EMPTY_STRING + _nItemsPerPage );
         model.put( FormsConstants.MARK_FORM, formParent );
@@ -208,7 +205,7 @@ public class FormStepJspBean extends MVCAdminJspBean
 
         _step = ( _step != null ) ? _step : new Step( );
         _step.setIdForm( nIdForm );
-        
+
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
@@ -239,7 +236,6 @@ public class FormStepJspBean extends MVCAdminJspBean
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.MARK_ID_FORM, _step.getIdForm( ) );
     }
 
-
     /**
      * Manages the removal form of a step whose identifier is in the http request
      *
@@ -264,9 +260,9 @@ public class FormStepJspBean extends MVCAdminJspBean
         }
 
         _step = StepHome.findByPrimaryKey( nId );
-        
+
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
-        
+
         if ( _form != null && _form.isActive( ) )
         {
             strConfirmRemoveMessage = MESSAGE_CONFIRM_REMOVE_STEP_ACTIVE_FORM;
@@ -311,10 +307,10 @@ public class FormStepJspBean extends MVCAdminJspBean
 
             if ( _step != null )
             {
-                
+
                 nIdForm = _step.getIdForm( );
                 Object [ ] tabSTepTitleCopy = {
-                        _step.getTitle( ),
+                    _step.getTitle( ),
                 };
                 String strTitleCopyStep = I18nService.getLocalizedString( PROPERTY_COPY_FORM_TITLE, tabSTepTitleCopy, getLocale( ) );
 
@@ -355,7 +351,7 @@ public class FormStepJspBean extends MVCAdminJspBean
         }
 
         _step = StepHome.findByPrimaryKey( nIdStep );
-        
+
         if ( _step != null )
         {
             nIdForm = _step.getIdForm( );
@@ -459,7 +455,7 @@ public class FormStepJspBean extends MVCAdminJspBean
     {
         return AppPathService.getBaseUrl( request ) + JSP_MANAGE_STEPS;
     }
-    
+
     /**
      * Return the URL of the JSP manage form
      * 

@@ -66,7 +66,6 @@ import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
@@ -238,7 +237,6 @@ public class FormJspBean extends MVCAdminJspBean
 
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
-
 
     /**
      * Manages the removal form of a form whose identifier is in the http request
