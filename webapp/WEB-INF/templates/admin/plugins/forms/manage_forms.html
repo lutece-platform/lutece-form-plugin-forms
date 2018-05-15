@@ -15,11 +15,9 @@
                 <div class="clearfix"></div>
                 <@table>
                     <tr>
-                        <th class="col-xs-6 col-sm-5 col-md-7">#i18n{forms.manageForm.title}
-                            <@sort jsp_url="jsp/admin/plugins/forms/ManageForm.jsp" attribute="title" />
-                        </th>
-                        <th class="col-xs-1 col-sm-1">#i18n{forms.manageForm.rowPeriodDisponibility}</th>
-                        <th class="col-xs-5 col-sm-6 col-md-4">#i18n{forms.manageForm.rowActions}</th>
+                        <th class="col-xs-6 col-sm-5 col-md-7">#i18n{forms.manageForm.columnTitle}</th>
+                        <th class="col-xs-1 col-sm-1">#i18n{forms.manageForm.columnPeriodDisponibility}</th>
+                        <th class="col-xs-5 col-sm-6 col-md-4">#i18n{forms.manageForm.columnActions}</th>
                     </tr>
                     <#list form_list as form>
                         <tr>
@@ -34,13 +32,13 @@
                             <td class="col-sm-2">
                                 <#setting locale=locale.language>
                                 <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
-                                    #i18n{forms.manageForm.rowPeriodDisponibilityThe} ${forms.availabilityStartDate}
+                                    #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${forms.availabilityStartDate}
                                 <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
-                                    #i18n{forms.manageForm.rowPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.rowPeriodDisponibilityTo} ${form.availabilityEndDate}
+                                    #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
                                 <#elseif form.availabilityStartDate??>
-                                    #i18n{forms.manageForm.rowPeriodDisponibilityFrom} ${form.availabilityStartDate}
+                                    #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}
                                 <#elseif form.availabilityEndDate??>
-                                    #i18n{forms.manageForm.rowPeriodDisponibilityUntil} ${form.availabilityEndDate}
+                                    #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate}
                                 <#else>
                                     &nbsp;
                                 </#if>
@@ -49,11 +47,11 @@
                                 <#if form.actions?exists>
                                     <#list form.actions as action>
                                             <#if action.permission=='DELETE'>
-                                                <#assign color='btn-danger' />
-                                            <#else>
-                                                <#assign color='btn-primary' />
-                                            </#if>
-                                            <@aButton href='${action.url}&id=${form.id}' title='${action.description}' showTitle=false buttonIcon=action.iconUrl color=color size='sm' />
+	                                              <#assign color='btn-danger' />
+	                                          <#else>
+	                                              <#assign color='btn-primary' />
+	                                          </#if>
+	                                          <@aButton href='${action.url}&id_form=${form.id}' title='${action.description}' showTitle=false buttonIcon=action.iconUrl color=color size='sm' />
                                     </#list>
                                 </#if>
                             </td>

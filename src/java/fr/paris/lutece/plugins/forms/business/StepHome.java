@@ -118,6 +118,18 @@ public final class StepHome
     }
 
     /**
+     * Load the data of all the steps linked to a given form and returns them as a list
+     * 
+     * @param nFormId the form identifier
+     * 
+     * @return the list which contains the data of all the step objects
+     */
+    public static List<Step> getStepsListByForm( int nFormId )
+    {
+        return _dao.selectStepsListbyForm( nFormId,  _plugin );
+    }
+    
+    /**
      * Load the id of all the step objects and returns them as a list
      * 
      * @return the list which contains the id of all the step objects
