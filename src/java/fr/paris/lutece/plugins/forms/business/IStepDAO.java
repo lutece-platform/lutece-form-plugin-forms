@@ -113,4 +113,15 @@ public interface IStepDAO
      * @return The referenceList which contains the data of all the step objects
      */
     ReferenceList selectStepsReferenceList( Plugin plugin );
+
+    /**
+     * Load the id of all the step linked a given parent form and returns them as a list
+     * 
+     * @param nFormId
+     *            the parent form identifier
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the id of all the step objects
+     */
+    List<Step> selectStepsListbyForm( int nFormId, Plugin plugin );
 }

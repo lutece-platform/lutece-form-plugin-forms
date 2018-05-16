@@ -3,7 +3,7 @@
     <@boxBody>
     <@tform class="form-horizontal" method="post" name="create_form" action="jsp/admin/plugins/forms/ManageForms.jsp">
          <@messages errors=errors />
-         <input type="hidden" id="id" name="id" value="${form.id}"/>
+         <input type="hidden" id="id_form" name="id_form" value="${form.id}"/>
          
              <@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true>
                  <@input type='text' name='title' value='${form.title!}' />

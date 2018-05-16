@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUpload;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,21 +31,38 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service;
 
-import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
-
-import java.io.Serializable;
+package fr.paris.lutece.plugins.forms.util;
 
 /**
- * class FormPlugin
+ * 
+ * Constants class for the plugin-form
+ *
  */
-public class FormsPlugin extends PluginDefaultImplementation implements Serializable
+public final class FormsConstants
 {
+    // Marks
+    public static final String MARK_FORM = "form";
+    public static final String MARK_ID_FORM = "id_form";
+    public static final String MARK_STEP = "step";
+    public static final String MARK_ID_STEP = "id_step";
 
-    /** The Constant PLUGIN_NAME. */
-    public static final String PLUGIN_NAME = "forms";
+    // Parameters
+    public static final String PARAMETER_ID_FORM = "id_form";
+    public static final String PARAMETER_ID_STEP = "id_step";
 
-    private static final long serialVersionUID = 363631628732516426L;
+    public static final String COMPOSITE_STEP_LABEL = "step";
+    public static final String COMPOSITE_GROUP_LABEL = "group";
+    public static final String COMPOSITE_QUESTION_LABEL = "question";
+    public static final String QUESTION_ENTRY_MARKER = "entry";
 
+    /**
+     * Default private constructor. Do not call
+     */
+    private FormsConstants( )
+    {
+
+        throw new AssertionError( );
+
+    }
 }

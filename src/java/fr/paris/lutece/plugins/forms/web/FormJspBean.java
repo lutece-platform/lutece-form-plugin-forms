@@ -35,6 +35,7 @@
 package fr.paris.lutece.plugins.forms.web;
 
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.plugins.forms.business.FormActionHome;
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -65,7 +66,6 @@ import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
-
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
@@ -82,8 +82,6 @@ public class FormJspBean extends MVCAdminJspBean
     private static final String TEMPLATE_CREATE_FORM = "/admin/plugins/forms/create_form.html";
     private static final String TEMPLATE_MODIFY_FORM = "/admin/plugins/forms/modify_form.html";
 
-    // Parameters
-    private static final String PARAMETER_ID_FORM = "id";
     private static final String PARAMETER_PAGE_INDEX = "page_index";
 
     // Properties for page titles
@@ -240,7 +238,6 @@ public class FormJspBean extends MVCAdminJspBean
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
 
-
     /**
      * Manages the removal form of a form whose identifier is in the http request
      *
@@ -254,7 +251,7 @@ public class FormJspBean extends MVCAdminJspBean
         int nId = -1;
         try
         {
-            nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
+            nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
         }
         catch( NumberFormatException ne )
         {
@@ -267,7 +264,7 @@ public class FormJspBean extends MVCAdminJspBean
         String strConfirmRemoveMessage = formToBeDeleted.isActive( ) ? MESSAGE_CONFIRM_REMOVE_ACTIVE_FORM : MESSAGE_CONFIRM_REMOVE_FORM;
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_FORM ) );
-        url.addParameter( PARAMETER_ID_FORM, nId );
+        url.addParameter( FormsConstants.PARAMETER_ID_FORM, nId );
 
         String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
@@ -290,7 +287,7 @@ public class FormJspBean extends MVCAdminJspBean
 
         try
         {
-            strIdForm = request.getParameter( PARAMETER_ID_FORM );
+            strIdForm = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
             nId = Integer.parseInt( strIdForm );
         }
         catch( NumberFormatException ne )
@@ -338,7 +335,7 @@ public class FormJspBean extends MVCAdminJspBean
         int nId = -1;
         try
         {
-            nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
+            nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
         }
         catch( NumberFormatException ne )
         {
@@ -366,7 +363,7 @@ public class FormJspBean extends MVCAdminJspBean
         int nId = -1;
         try
         {
-            nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
+            nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
         }
         catch( NumberFormatException ne )
         {
@@ -403,7 +400,7 @@ public class FormJspBean extends MVCAdminJspBean
         int nId = -1;
         try
         {
-            nId = Integer.parseInt( request.getParameter( PARAMETER_ID_FORM ) );
+            nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
         }
         catch( NumberFormatException ne )
         {
@@ -423,7 +420,7 @@ public class FormJspBean extends MVCAdminJspBean
 
         if ( !validateForm( _form ) )
         {
-            return redirect( request, VIEW_MODIFY_FORM, PARAMETER_ID_FORM, _form.getId( ) );
+            return redirect( request, VIEW_MODIFY_FORM, FormsConstants.PARAMETER_ID_FORM, _form.getId( ) );
         }
 
         FormHome.update( _form );
