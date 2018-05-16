@@ -10,6 +10,7 @@
     <bean id="forms.questionDAO" class="fr.paris.lutece.plugins.forms.business.QuestionDAO" />
     <bean id="forms.groupDAO" class="fr.paris.lutece.plugins.forms.business.GroupDAO" />
     <bean id="forms.formActionDAO"  class="fr.paris.lutece.plugins.forms.business.FormActionDAO" />
+    <bean id="forms.formDisplayDAO" class="fr.paris.lutece.plugins.forms.business.FormDisplayDAO" />
     
     <bean id="forms.entryTypeCheckBox" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox" />
 	 <bean id="forms.entryTypeComment" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment" />
