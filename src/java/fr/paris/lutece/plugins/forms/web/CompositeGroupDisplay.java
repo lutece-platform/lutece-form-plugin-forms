@@ -38,8 +38,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
             _group = GroupHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
         }
 
-        List<FormDisplay> formDisplayList = FormDisplayHome
-                .getFormDisplayListByParent( formDisplay.getStepId( ), formDisplay.getId( ) );
+        List<FormDisplay> formDisplayList = FormDisplayHome.getFormDisplayListByParent( formDisplay.getStepId( ), formDisplay.getId( ) );
 
         for ( FormDisplay formDisplayChild : formDisplayList )
         {
@@ -48,7 +47,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
             composite.initComposite( formDisplayChild );
         }
     }
-    
+
     @Override
     public String getCompositeHtml( Locale locale )
     {

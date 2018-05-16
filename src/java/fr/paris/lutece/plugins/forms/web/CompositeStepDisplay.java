@@ -41,8 +41,7 @@ public class CompositeStepDisplay implements ICompositeDisplay
         if ( _step != null )
         {
             FormDisplay stepFormDisplay = FormDisplayHome.getFormDisplayListByParent( _step.getId( ), 0 ).get( 0 );
-            List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParent( stepFormDisplay.getStepId( ),
-                    stepFormDisplay.getId( ) );
+            List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParent( stepFormDisplay.getStepId( ), stepFormDisplay.getId( ) );
 
             for ( FormDisplay formDisplayChild : listStepFormDisplay )
             {
@@ -78,6 +77,5 @@ public class CompositeStepDisplay implements ICompositeDisplay
 
         return t.getHtml( );
     }
-    
-    
+
 }
