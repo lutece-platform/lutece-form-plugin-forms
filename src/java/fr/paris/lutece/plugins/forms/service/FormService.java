@@ -5,10 +5,10 @@ import java.util.Locale;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
 import fr.paris.lutece.plugins.forms.web.CompositeQuestionDisplay;
 import fr.paris.lutece.plugins.forms.web.CompositeStepDisplay;
-import fr.paris.lutece.plugins.forms.web.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
 
 /**
@@ -17,14 +17,14 @@ import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
 public final class FormService
 {
 
-	/**
+    /**
      * Constructor
      */
     private FormService( )
     {
-        throw new AssertionError();
+        throw new AssertionError( );
     }
-    
+
     /**
      * Get the Html of the given step
      * 
@@ -62,15 +62,16 @@ public final class FormService
 
             return composite;
         }
-        else if ( FormsConstants.COMPOSITE_QUESTION_TYPE.equals( formDisplay.getCompositeType( ) ) )
-	    {
-	        CompositeQuestionDisplay composite = new CompositeQuestionDisplay( );
-	
-	        return composite;
-	    }
-	    else
-	    {
-	        return null;
-	    }
+        else
+            if ( FormsConstants.COMPOSITE_QUESTION_TYPE.equals( formDisplay.getCompositeType( ) ) )
+            {
+                CompositeQuestionDisplay composite = new CompositeQuestionDisplay( );
+
+                return composite;
+            }
+            else
+            {
+                return null;
+            }
     }
 }

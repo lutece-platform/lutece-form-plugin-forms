@@ -51,9 +51,9 @@ public final class FormsConstants
     public static final String PARAMETER_ID_FORM = "id_form";
     public static final String PARAMETER_ID_STEP = "id_step";
 
-    public static final String COMPOSITE_STEP_LABEL = "step";
-    public static final String COMPOSITE_GROUP_LABEL = "group";
-    public static final String COMPOSITE_QUESTION_LABEL = "question";
+    public static final String COMPOSITE_STEP_TYPE = "step";
+    public static final String COMPOSITE_GROUP_TYPE = "group";
+    public static final String COMPOSITE_QUESTION_TYPE = "question";
     public static final String QUESTION_ENTRY_MARKER = "entry";
 
     /**
