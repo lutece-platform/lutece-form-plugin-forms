@@ -62,11 +62,11 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
         return strQuestionTemplate;
     }
-    
+
     @Override
-    public List<ICompositeDisplay> getCompositeList(  )
+    public List<ICompositeDisplay> getCompositeList( )
     {
-        List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>(  );
+        List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
         listICompositeDisplay.add( this );
         return listICompositeDisplay;
     }
@@ -75,17 +75,17 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     public String getTitle( )
     {
         String strTitle = "";
-        if( _question != null && StringUtils.isNotEmpty( _question.getTitle( ) ) )
-                {
+        if ( _question != null && StringUtils.isNotEmpty( _question.getTitle( ) ) )
+        {
             strTitle = _question.getTitle( );
-                }
+        }
         return strTitle;
     }
 
     @Override
     public String getType( )
     {
-        return  _question != null ? CompositeDisplayType.QUESTION.getLabel( ) : StringUtils.EMPTY;
+        return _question != null ? CompositeDisplayType.QUESTION.getLabel( ) : StringUtils.EMPTY;
     }
 
     @Override
@@ -104,7 +104,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     public void setParentId( int parentId )
     {
         _nParentId = parentId;
-        
+
     }
 
     @Override
@@ -112,16 +112,18 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
         return _nParentId;
     }
+
     /**
      * @return the IdDisplay
      */
-    public int getIdDisplay()
+    public int getIdDisplay( )
     {
         return _nIdDisplay;
     }
 
     /**
-     * @param nIdDisplay the IdDisplay to set
+     * @param nIdDisplay
+     *            the IdDisplay to set
      */
     public void setIdDisplay( int nIdDisplay )
     {

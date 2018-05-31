@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
-
 /**
  * Enum of the different ICompositeDisplay types
  *
@@ -41,12 +40,14 @@ package fr.paris.lutece.plugins.forms.business;
 public enum CompositeDisplayType
 {
     GROUP( "group" ), QUESTION( "question" );
-    
+
     private final String _strLabel;
 
-    
-    /**Private constructor
-     * @param strLabel the Enum element label
+    /**
+     * Private constructor
+     * 
+     * @param strLabel
+     *            the Enum element label
      */
     CompositeDisplayType( String strLabel )
     {

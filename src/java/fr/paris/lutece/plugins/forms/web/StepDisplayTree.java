@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -30,16 +29,16 @@ public class StepDisplayTree
     private List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
     private Step _step;
 
-
-    /** Constructor
+    /**
+     * Constructor
      * 
-     * @param nIdStep the step identifier
+     * @param nIdStep
+     *            the step identifier
      */
-    public StepDisplayTree ( int nIdStep )
+    public StepDisplayTree( int nIdStep )
     {
         initStepTree( nIdStep );
     }
-
 
     /**
      * Initialize the composite tree
@@ -64,11 +63,11 @@ public class StepDisplayTree
         }
     }
 
-
-
     /**
      * Build and return the html template of the tree for Front-Office display
-     * @param locale the locale
+     * 
+     * @param locale
+     *            the locale
      * @return the html template of the tree as a String
      */
     public String getCompositeHtml( Locale locale )
@@ -92,16 +91,16 @@ public class StepDisplayTree
 
     /**
      * Build and return all the composite display of the tree as a flat List
+     * 
      * @return the list of composite display
      */
     public List<ICompositeDisplay> getCompositeList( )
-    {        
+    {
         for ( ICompositeDisplay child : _listChildren )
         {
             _listICompositeDisplay.addAll( child.getCompositeList( ) );
         }
         return _listICompositeDisplay;
     }
-
 
 }

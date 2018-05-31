@@ -84,10 +84,9 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     // Templates
     private static final String TEMPLATE_MANAGE_QUESTIONS = "/admin/plugins/forms/manage_questions.html";
 
-    //Properties
+    // Properties
     private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.createEntry.titleComment";
     private static final String PROPERTY_CREATE_QUESTION_TITLE = "form.createEntry.titleQuestion";
-
 
     // Views
     private static final String VIEW_MANAGE_QUESTIONS = "manageQuestions";
@@ -104,10 +103,10 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private static final String MARK_LIST_PARAM_DEFAULT_VALUES = "list_param_default_values";
     private static final String MARK_IS_AUTHENTIFICATION_ENABLED = "is_authentification_enabled";
 
-    //Error messages
+    // Error messages
     private static final String ERROR_QUESTION_NOT_CREATED = "forms.error.question.notCreated";
 
-    //Others
+    // Others
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
 
     private Step _step;
@@ -129,19 +128,18 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
 
-
         _step = StepHome.findByPrimaryKey( nIdStep );
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_STEP, _step );
-        
+
         listICompositeDisplay = FormService.getStepCompositeList( nIdStep );
         model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
-        
+
         ReferenceList refEntryType;
         refEntryType = FormsEntryUtils.initRefListEntryType( );
-        
+
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, refEntryType );
 
         setPageTitleProperty( EMPTY_STRING );
@@ -150,7 +148,6 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
         return getAdminPage( templateList.getHtml( ) );
     }
-
 
     /**
      * Gets the entry creation page
@@ -166,18 +163,16 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         int nIdStep = -1;
         int nIdTypeEntry = -1;
         int nParentGroup;
-        
+
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         nIdTypeEntry = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ) );
         nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
 
-        
         _step = StepHome.findByPrimaryKey( nIdStep );
         if ( ( _step == null ) )
         {
             return getJspManageForm( request );
         }
-        
 
         _entry = FormsEntryUtils.createEntryByType( nIdTypeEntry );
 
@@ -186,15 +181,14 @@ public class FormQuestionJspBean extends MVCAdminJspBean
             return getJspManageForm( request );
         }
 
-
         _entry.setIdResource( _step.getIdForm( ) );
         _entry.setResourceType( Form.RESOURCE_TYPE );
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
         // Default Values
-        //TODO: implement EntryParameterService to handle default values
-        //ReferenceList listParamDefaultValues = EntryParameterService.getService( ).findAll( );
+        // TODO: implement EntryParameterService to handle default values
+        // ReferenceList listParamDefaultValues = EntryParameterService.getService( ).findAll( );
         ReferenceList listParamDefaultValues = new ReferenceList( );
 
         Map<String, Object> model = new HashMap<String, Object>( );
@@ -251,11 +245,11 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     {
         String strReturnUrl = processQuestionCreation( request );
 
-        //TODO : redirect to modifyQuestion view
+        // TODO : redirect to modifyQuestion view
         return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
 
     }
-    
+
     /**
      * Perform the Question creation with its Entry
      * 
@@ -269,7 +263,6 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         int nIdStep = -1;
         int nParentGroup = -1;
         int nIdType = -1;
-        
 
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
@@ -279,7 +272,6 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
-        
 
         _entry = FormsEntryUtils.createEntryByType( nIdType );
 
@@ -309,15 +301,14 @@ public class FormQuestionJspBean extends MVCAdminJspBean
             }
         }
 
-
         Question formQuestion = new Question( );
-        String strTitle = _entry.getEntryType( ).getComment( )? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
+        String strTitle = _entry.getEntryType( ).getComment( ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
         formQuestion.setTitle( strTitle );
         formQuestion.setDescription( _entry.getComment( ) );
         formQuestion.setIdEntry( _entry.getIdEntry( ) );
         formQuestion.setIdStep( nIdStep );
-        QuestionHome.create( formQuestion ) ;
-        
+        QuestionHome.create( formQuestion );
+
         int nDisplayDepth = 0;
         if ( nParentGroup > 0 )
         {
@@ -327,8 +318,8 @@ public class FormQuestionJspBean extends MVCAdminJspBean
                 nDisplayDepth = formDisplayParent.getDepth( ) + 1;
             }
         }
-        
-        if ( formQuestion.getId( )!= -1 )
+
+        if ( formQuestion.getId( ) != -1 )
         {
             FormDisplay formDisplay = new FormDisplay( );
             formDisplay.setFormId( _step.getIdForm( ) );
@@ -342,6 +333,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         return null;
 
     }
+
     /**
      * Gets the confirmation page of delete entry
      * 
@@ -351,7 +343,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
      */
     public String getConfirmRemoveQuestion( HttpServletRequest request )
     {
-        //TODO
+        // TODO
         return null;
     }
 
@@ -364,12 +356,10 @@ public class FormQuestionJspBean extends MVCAdminJspBean
      */
     public String doRemoveEntry( HttpServletRequest request )
     {
-        //TODO
+        // TODO
         return null;
     }
 
-
-    
     /**
      * Return the URL of the JSP manage step
      * 
@@ -393,8 +383,6 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     {
         return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_FORMS;
     }
-
-
 
     /**
      * Return the id of the current form

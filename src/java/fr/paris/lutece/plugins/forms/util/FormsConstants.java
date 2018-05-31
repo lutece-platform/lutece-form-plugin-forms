@@ -67,14 +67,15 @@ public final class FormsConstants
     public static final String PARAMETER_ID_DISPLAY_PARENT = "id_parent";
     public static final String PARAMETER_ID_ENTRY_TYPE = "id_type";
 
-    //Jsp
+    // Jsp
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
     public static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
     public static final String JSP_MANAGE_QUESTIONS = "jsp/admin/plugins/forms/ManageQuestions.jsp";
 
-    //Properties
+    // Properties
     public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "entrytype.myluteceuserattribute.attributes.list";
     public static final String CONSTANT_MYLUTECE_ATTRIBUTE_I18N_PREFIX = "forms.entrytype.myluteceuserattribute.attribute.";
+
     /**
      * Default private constructor. Do not call
      */

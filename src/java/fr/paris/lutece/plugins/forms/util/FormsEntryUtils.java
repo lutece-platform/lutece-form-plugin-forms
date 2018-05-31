@@ -58,7 +58,6 @@ public final class FormsEntryUtils
         throw new AssertionError( );
     }
 
-
     /**
      * Return an instance of IEntry function of type entry
      * 
@@ -110,9 +109,6 @@ public final class FormsEntryUtils
         return nIndex;
     }
 
-
-
-
     /**
      * Return true if the field which key is specified in parameter is in the response list
      * 
@@ -134,7 +130,6 @@ public final class FormsEntryUtils
 
         return false;
     }
-
 
     /**
      * Build a reference list whith the different entry types excluding Group and MyLuteceUser

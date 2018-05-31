@@ -5,7 +5,6 @@ import java.util.Locale;
 
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 
-
 /**
  * 
  * Interface composite to display step components
@@ -27,14 +26,13 @@ public interface ICompositeDisplay
      *            The parent formDisplay
      */
     void initComposite( FormDisplay formDisplay );
-    
+
     /**
      * Return the full list of children ICompositeDisplay of an initialized CompositeDisplay
      * 
      * @return the children composite list
      */
-    List< ICompositeDisplay> getCompositeList(  );
-
+    List<ICompositeDisplay> getCompositeList( );
 
     /**
      * 
@@ -59,7 +57,8 @@ public interface ICompositeDisplay
      * Set the display depth indent of the compositeDisplay
      */
     /**
-     * @param nDepth the display depth
+     * @param nDepth
+     *            the display depth
      */
     void setDepthIndent( int nDepth );
 
@@ -67,7 +66,8 @@ public interface ICompositeDisplay
      * 
      * Set the parent identifier the compositeDisplay
      * 
-     * @param nParentId the parent id
+     * @param nParentId
+     *            the parent id
      */
     void setParentId( int nParentId );
 
@@ -77,13 +77,15 @@ public interface ICompositeDisplay
      * @return the parent identifier
      */
     int getParentId( );
+
     /**
      * @return the IdDisplay
      */
     int getIdDisplay( );
 
     /**
-     * @param nIdDisplay the IdDisplay to set
+     * @param nIdDisplay
+     *            the IdDisplay to set
      */
     void setIdDisplay( int nIdDisplay );
 

@@ -189,10 +189,11 @@ public class FormDisplay implements Serializable
     /**
      * set the form display depth
      * 
-     * @param nDepth the depth to set
+     * @param nDepth
+     *            the depth to set
      */
     public void setDepth( int nDepth )
     {
-         _nDepth = nDepth;
+        _nDepth = nDepth;
     }
 }

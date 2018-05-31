@@ -132,7 +132,6 @@ public class FormJspBean extends MVCAdminJspBean
     private static final String ERROR_FORM_NOT_UPDATED = "forms.error.form.notUpdated";
     private static final String ERROR_FORM_DATE_START_AFTER_END = "forms.error.form.date.startAfterEnd";
 
-
     // Session variable to store working values
     private Form _form;
     private Step _step;
@@ -443,8 +442,6 @@ public class FormJspBean extends MVCAdminJspBean
     {
         return AppPathService.getBaseUrl( request ) + JSP_MANAGE_FORMS;
     }
-
-
 
     /**
      * Validate the form field values

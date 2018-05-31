@@ -77,7 +77,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     {
         List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
         listICompositeDisplay.add( this );
-        
+
         for ( ICompositeDisplay child : _listChildren )
         {
             listICompositeDisplay.addAll( child.getCompositeList( ) );
@@ -89,17 +89,17 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     public String getTitle( )
     {
         String strTitle = "";
-        if( _group != null && StringUtils.isNotEmpty( _group.getTitle( ) ) )
-                {
+        if ( _group != null && StringUtils.isNotEmpty( _group.getTitle( ) ) )
+        {
             strTitle = _group.getTitle( );
-                }
+        }
         return strTitle;
     }
 
     @Override
     public String getType( )
     {
-        return  _group != null ? CompositeDisplayType.GROUP.getLabel( ) : StringUtils.EMPTY;
+        return _group != null ? CompositeDisplayType.GROUP.getLabel( ) : StringUtils.EMPTY;
     }
 
     @Override
@@ -118,7 +118,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     public void setParentId( int parentId )
     {
         _nParentId = parentId;
-        
+
     }
 
     @Override
@@ -130,13 +130,14 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     /**
      * @return the IdDisplay
      */
-    public int getIdDisplay()
+    public int getIdDisplay( )
     {
         return _nIdDisplay;
     }
 
     /**
-     * @param nIdDisplay the IdDisplay to set
+     * @param nIdDisplay
+     *            the IdDisplay to set
      */
     public void setIdDisplay( int nIdDisplay )
     {

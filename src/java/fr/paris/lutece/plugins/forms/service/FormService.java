@@ -78,18 +78,19 @@ public final class FormService
 
             return composite;
         }
-        else if ( FormsConstants.COMPOSITE_QUESTION_TYPE.equals( formDisplay.getCompositeType( ) ) )
-        {
-            CompositeQuestionDisplay composite = new CompositeQuestionDisplay( );
-            composite.setDepthIndent( formDisplay.getDepth( ) );
-            composite.setParentId( formDisplay.getParentId( ) );
-            composite.setIdDisplay( formDisplay.getId( ) );
-
-            return composite;
-        }
         else
-        {
-            return null;
-        }
+            if ( FormsConstants.COMPOSITE_QUESTION_TYPE.equals( formDisplay.getCompositeType( ) ) )
+            {
+                CompositeQuestionDisplay composite = new CompositeQuestionDisplay( );
+                composite.setDepthIndent( formDisplay.getDepth( ) );
+                composite.setParentId( formDisplay.getParentId( ) );
+                composite.setIdDisplay( formDisplay.getId( ) );
+
+                return composite;
+            }
+            else
+            {
+                return null;
+            }
     }
 }

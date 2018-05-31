@@ -59,7 +59,7 @@ public class FormTransitionJspBean extends MVCAdminJspBean
     private static final long serialVersionUID = -9023450166890042022L;
 
     private static final String EMPTY_STRING = "";
-    
+
     private static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
 
     // Templates
@@ -107,7 +107,6 @@ public class FormTransitionJspBean extends MVCAdminJspBean
     private static final String INFO_TRANSITION_UPDATED = "forms.info.transition.updated";
     private static final String INFO_TRANSITION_REMOVED = "forms.info.transition.removed";
 
-
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
@@ -124,7 +123,7 @@ public class FormTransitionJspBean extends MVCAdminJspBean
     {
         // TO DO : implement feature
         Locale locale = getLocale( );
-        
+
         int nIdStep = -1;
         try
         {
@@ -136,12 +135,12 @@ public class FormTransitionJspBean extends MVCAdminJspBean
             return redirect( request, getJspManageForm( request ) );
 
         }
-        
+
         Step step = StepHome.findByPrimaryKey( nIdStep );
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_STEP, step );
- 
+
         setPageTitleProperty( EMPTY_STRING );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_TRANSITIONS, locale, model );
