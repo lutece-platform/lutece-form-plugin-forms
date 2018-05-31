@@ -103,5 +103,6 @@ id_composite int default '0',
 id_parent int default '0',
 display_order int default '0',
 composite_type varchar(255) default '',
+display_depth int default '0',
 PRIMARY KEY (id_display)
 );

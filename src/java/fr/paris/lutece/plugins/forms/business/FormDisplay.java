@@ -57,6 +57,8 @@ public class FormDisplay implements Serializable
 
     private String _strCompositeType;
 
+    private int _nDepth;
+
     /**
      * @return the _nId
      */
@@ -174,5 +176,23 @@ public class FormDisplay implements Serializable
     public void setCompositeType( String strCompositeType )
     {
         this._strCompositeType = strCompositeType;
+    }
+
+    /**
+     * @return the form display depth
+     */
+    public int getDepth( )
+    {
+        return _nDepth;
+    }
+
+    /**
+     * set the form display depth
+     * 
+     * @param nDepth the depth to set
+     */
+    public void setDepth( int nDepth )
+    {
+         _nDepth = nDepth;
     }
 }

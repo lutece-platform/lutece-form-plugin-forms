@@ -1,11 +1,14 @@
 package fr.paris.lutece.plugins.forms.web;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
@@ -24,6 +27,9 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private static final String QUESTION_CONTENT_MARKER = "questionContent";
 
     private Question _question;
+    private int _nDepthIndent;
+    private int _nParentId;
+    private int _nIdDisplay;
 
     @Override
     public void initComposite( FormDisplay formDisplay )
@@ -55,5 +61,70 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
 
         return strQuestionTemplate;
+    }
+    
+    @Override
+    public List<ICompositeDisplay> getCompositeList(  )
+    {
+        List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>(  );
+        listICompositeDisplay.add( this );
+        return listICompositeDisplay;
+    }
+
+    @Override
+    public String getTitle( )
+    {
+        String strTitle = "";
+        if( _question != null && StringUtils.isNotEmpty( _question.getTitle( ) ) )
+                {
+            strTitle = _question.getTitle( );
+                }
+        return strTitle;
+    }
+
+    @Override
+    public String getType( )
+    {
+        return  _question != null ? CompositeDisplayType.QUESTION.getLabel( ) : StringUtils.EMPTY;
+    }
+
+    @Override
+    public int getDepthIndent( )
+    {
+        return _nDepthIndent;
+    }
+
+    @Override
+    public void setDepthIndent( int nDepthIndent )
+    {
+        _nDepthIndent = nDepthIndent;
+    }
+
+    @Override
+    public void setParentId( int parentId )
+    {
+        _nParentId = parentId;
+        
+    }
+
+    @Override
+    public int getParentId( )
+    {
+        return _nParentId;
+    }
+    /**
+     * @return the IdDisplay
+     */
+    public int getIdDisplay()
+    {
+        return _nIdDisplay;
+    }
+
+    /**
+     * @param nIdDisplay the IdDisplay to set
+     */
+    public void setIdDisplay( int nIdDisplay )
+    {
+        this._nIdDisplay = nIdDisplay;
     }
 }

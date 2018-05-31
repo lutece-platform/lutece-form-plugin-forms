@@ -1,0 +1,94 @@
+<#include "/admin/plugins/forms/edit_step_tabs.html" />
+<#assign entryIconList = ['dot-circle-o','check-square-o','comment-o','calendar','list-alt','file-text-o','file-text','file','map-o','image','user','phone','user','table','indent'] />
+
+<@row>
+    <@columns>
+        <@box color='primary' collapsed=true>
+            <@boxHeader title='#i18n{forms.modify_step.title} ${step.title}' boxTools=true></@boxHeader>
+        </@box>
+        <@box color='solid'>
+            <@boxBody>
+                <@tabs>
+                <@formStepTabs tab="questions" />
+                </@tabs>
+                <@tabContent>
+                 <@tform class="form-horizontal" method="post" name="manage_questions" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
+                     <input type="hidden" id="id_step" name="id_step" value="${step.id}"/>
+                     <@row>
+                        <@columns md=9>
+                            <div class="tab-pane active">
+                                <@messages errors=errors />
+                                <@messages infos=infos />
+                                <div class="clearfix"></div>
+                                <@table>
+                                    <tr>
+                                        <th class="col-sm-1"><@fieldInputRadioBox 'forms.manage_questions.selectRootLevel' 'id_parent' '0' false true /></th>
+                                        <th class="col-sm-7">#i18n{forms.manage_questions.columnTitle}</th>
+                                        <th class="col-sm-1">#i18n{forms.manage_questions.columnType}</th>
+                                        <th class="col-sm-3">#i18n{forms.manage_questions.columnAction}</th>
+                                    </tr>
+                                    <#list composite_list as composite>
+                                        <tr>
+                                            <#if composite.type == 'group'>
+                                                <td><@fieldInputRadioBox "" 'id_parent' '${composite.idDisplay}'/></td>
+                                            <#else>
+                                                <td></td>
+                                            </#if>
+                                            <td class="col-sm-8">
+                                                <#if composite.type == 'group'><h4></#if>                                           
+                                                <#list 0..composite.depthIndent as indent>
+                                                    <#if indent_index gte 0>
+                                                        <#if indent_has_next>
+                                                            <@icon style='' class='fa-padded'/>
+                                                        <#else>
+                                                            <#if composite.type == 'group'>
+                                                                <@icon style='indent' class='fa-padded'/>
+                                                            <#else>
+                                                                <@icon style='arrow-circle-right' class='fa-padded'/>
+                                                            </#if>  
+                                                            
+                                                        </#if>
+                                                    </#if>
+                                                </#list>    
+                                                ${composite.title}
+                                                <#if composite.type == 'group'></h4></#if>
+                                            </td>                                           
+                                            <td class="col-sm-1">
+                                                <#if composite.type == 'group'>#i18n{forms.manage_questions.type.group}                                             
+                                                <#elseif composite.type == 'question'>#i18n{forms.manage_questions.type.question}   
+                                                </#if>
+                                            </td>
+                                            <td class="col-sm-3">
+                                                <@aButton href='' title='#i18n{forms.manage_questions.action.modifyQuestion}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
+                                                <@aButton href='' title='#i18n{forms.manage_questions.action.removeQuestion}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' /> 
+                                            </td>
+                                        </tr>
+                                    </#list>
+                                </@table>
+                                
+                            </div>
+                        </@columns>
+                        <@columns md=3>
+                            <@listGroup>
+                            <a class="${listElementClass} active lead">#i18n{forms.manage_questions.buttonAdd}</a>
+                                <#list entry_type_list as item>
+                                    <div>
+                                        <button  class="btn btn-entry" name="view_createQuestion" value="${item.code!}" type="submit">
+                                        <#list entryIconList as entryIcon>                                      
+                                            <#if item.code?number-100 == entryIcon?index+1>
+                                                <@icon style='${entryIcon}' />
+                                            </#if>
+                                        </#list>
+                                           &#160;${item.name}
+                                        </button>
+                                    </div>
+                                </#list>
+                            </@listGroup>
+                        </@columns>
+                    </@row>
+                    </@tform>
+                </@tabContent>
+            </@boxBody>
+        </@box>
+    </@columns>
+</@row>

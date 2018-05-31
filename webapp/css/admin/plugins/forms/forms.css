@@ -1,0 +1,11 @@
+
+.btn-entry {
+    width: 100%;
+    text-align: left;
+    background-color: white;
+    border-color: whitesmoke;
+}
+
+.fa-padded {
+    padding-left: 25px;
+}

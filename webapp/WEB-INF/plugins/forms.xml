@@ -19,6 +19,10 @@
         <max-core-version/>	
     </core-version-dependency>
 
+    <admin-css-stylesheets>
+        <admin-css-stylesheet>css/admin/plugins/forms/forms.css</admin-css-stylesheet>
+    </admin-css-stylesheets>
+    
     <!-- Admin features parameters -->
     <admin-features>
         <admin-feature>

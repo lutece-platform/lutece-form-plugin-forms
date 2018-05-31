@@ -1,0 +1,25 @@
+<#include "/admin/plugins/forms/edit_step_tabs.html" />
+<@row>
+    <@columns>
+        <@box color='primary' collapsed=true>
+            <@boxHeader title='#i18n{forms.modify_step.title} ${step.title}' boxTools=true>
+             </@boxHeader>
+        </@box>
+        <@box color='solid'>
+            <@boxBody>
+                <@tabs>
+                <@formStepTabs tab="transitions" />
+                </@tabs>
+                <@tabContent>
+                    <div class="tab-pane active">
+                        <@messages errors=errors />
+                        <@messages infos=infos />
+                        <div class="clearfix"></div>
+                        <@table>
+                        </@table>
+                    </div>
+                </@tabContent>
+            </@boxBody>
+        </@box>
+    </@columns>
+</@row>

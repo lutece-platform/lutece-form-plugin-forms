@@ -46,16 +46,35 @@ public final class FormsConstants
     public static final String MARK_ID_FORM = "id_form";
     public static final String MARK_STEP = "step";
     public static final String MARK_ID_STEP = "id_step";
+    public static final String MARK_COMPOSITE_LIST = "composite_list";
+    public static final String MARK_ENTRY_TYPE_REF_LIST = "entry_type_list";
+    public static final String MARK_ENTRY = "entry";
+    public static final String MARK_ID_PARENT = "id_parent";
 
     // Parameters
     public static final String PARAMETER_ID_FORM = "id_form";
     public static final String PARAMETER_ID_STEP = "id_step";
+    public static final String PARAMETER_ID_ENTRY = "id_entry";
+    public static final String PARAMETER_ID_FIELD = "id_field";
 
     public static final String COMPOSITE_STEP_TYPE = "step";
     public static final String COMPOSITE_GROUP_TYPE = "group";
     public static final String COMPOSITE_QUESTION_TYPE = "question";
     public static final String QUESTION_ENTRY_MARKER = "entry";
+    public static final String INDENT_COMPOSITE_DISPLAY = "&nbsp;&nbsp;&nbsp;";
+    public static final String PARAMETER_ID_COMPOSITE_PARENT = "id_parent";
+    public static final String PARAMETER_BUTTON_TYPE_ENTRY = "view_createQuestion";
+    public static final String PARAMETER_ID_DISPLAY_PARENT = "id_parent";
+    public static final String PARAMETER_ID_ENTRY_TYPE = "id_type";
 
+    //Jsp
+    public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
+    public static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
+    public static final String JSP_MANAGE_QUESTIONS = "jsp/admin/plugins/forms/ManageQuestions.jsp";
+
+    //Properties
+    public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "entrytype.myluteceuserattribute.attributes.list";
+    public static final String CONSTANT_MYLUTECE_ATTRIBUTE_I18N_PREFIX = "forms.entrytype.myluteceuserattribute.attribute.";
     /**
      * Default private constructor. Do not call
      */

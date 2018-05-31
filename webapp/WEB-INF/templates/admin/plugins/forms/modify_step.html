@@ -1,30 +1,36 @@
+<#include "/admin/plugins/forms/edit_step_tabs.html" />
 <@box>
-    <@boxHeader title='#i18n{forms.modify_step.title}' />
+   <@boxHeader title='#i18n{forms.modify_step.title} ${step.title}' boxTools=true></@boxHeader>
     <@boxBody>
-    <@tform class="form-horizontal" method="post" name="modify_step" action="jsp/admin/plugins/forms/ManageSteps.jsp">
-         <@messages errors=errors />
-         <input type="hidden" id="id_form" name="id_form" value="${step.idForm}"/>
-         <input type="hidden" id="id_step" name="id_step" value="${step.id}"/>
-         
-             <@formGroup labelKey='#i18n{forms.modify_step.labelTitle}' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true>
-                 <@input type='text' name='title' value='${step.title!}' />
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}' >
-                 <@input type='textarea' name='description'>${step.description!}</@input>
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.modify_step.labelFinal}' helpKey='#i18n{forms.modify_step.labelFinal.help}' >
-                <@checkBox labelFor='final' name='final' id='final' value='1' checked=(step?exists && step.final??) />
-             </@formGroup>
-            <div class="form-group">
-                <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
-                    <button  class="btn btn-primary" name="action_modifyStep" type="submit">
-                        <i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
-                    </button>
-                    <button class="btn btn-default" name="view_manageSteps" type="submit" formnovalidate >
-                        <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
-                    </button>
-                </div>
-            </div>
-    </@tform>
+        <@tabs>
+            <@formStepTabs tab="general" />
+        </@tabs>
+        <@tabContent>
+            <@tform class="form-horizontal" method="post" name="modify_step" action="jsp/admin/plugins/forms/ManageSteps.jsp">
+                 <@messages errors=errors />
+                 <input type="hidden" id="id_form" name="id_form" value="${step.idForm}"/>
+                 <input type="hidden" id="id_step" name="id_step" value="${step.id}"/>
+                 
+                     <@formGroup labelKey='#i18n{forms.modify_step.labelTitle}' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true>
+                         <@input type='text' name='title' value='${step.title!}' />
+                     </@formGroup>
+                     <@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}' >
+                         <@input type='textarea' name='description'>${step.description!}</@input>
+                     </@formGroup>
+                     <@formGroup labelKey='#i18n{forms.modify_step.labelFinal}' helpKey='#i18n{forms.modify_step.labelFinal.help}' >
+                        <@checkBox labelFor='final' name='final' id='final' value='1' checked=(step?exists && step.final??) />
+                     </@formGroup>
+                    <div class="form-group">
+                        <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
+                            <button  class="btn btn-primary" name="action_modifyStep" type="submit">
+                                <i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
+                            </button>
+                            <button class="btn btn-default" name="view_manageSteps" type="submit" formnovalidate >
+                                <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
+                            </button>
+                        </div>
+                    </div>
+            </@tform>
+        </@tabContent>
     </@boxBody>
 </@box>

@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.plugins.forms.business.FormActionHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -131,8 +132,10 @@ public class FormJspBean extends MVCAdminJspBean
     private static final String ERROR_FORM_NOT_UPDATED = "forms.error.form.notUpdated";
     private static final String ERROR_FORM_DATE_START_AFTER_END = "forms.error.form.date.startAfterEnd";
 
+
     // Session variable to store working values
     private Form _form;
+    private Step _step;
 
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
@@ -440,6 +443,8 @@ public class FormJspBean extends MVCAdminJspBean
     {
         return AppPathService.getBaseUrl( request ) + JSP_MANAGE_FORMS;
     }
+
+
 
     /**
      * Validate the form field values

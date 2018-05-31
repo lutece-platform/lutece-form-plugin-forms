@@ -1,5 +1,6 @@
 package fr.paris.lutece.plugins.forms.web;
 
+import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.Group;
@@ -29,6 +30,9 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private Group _group;
+    private int _nIdDisplay;
+    private int _nDepthIndent;
+    private int _nParentId;
 
     @Override
     public void initComposite( FormDisplay formDisplay )
@@ -66,6 +70,77 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         HtmlTemplate t = AppTemplateService.getTemplate( GROUP_TEMPLATE, locale, model );
 
         return t.getHtml( );
+    }
+
+    @Override
+    public List<ICompositeDisplay> getCompositeList( )
+    {
+        List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
+        listICompositeDisplay.add( this );
+        
+        for ( ICompositeDisplay child : _listChildren )
+        {
+            listICompositeDisplay.addAll( child.getCompositeList( ) );
+        }
+        return listICompositeDisplay;
+    }
+
+    @Override
+    public String getTitle( )
+    {
+        String strTitle = "";
+        if( _group != null && StringUtils.isNotEmpty( _group.getTitle( ) ) )
+                {
+            strTitle = _group.getTitle( );
+                }
+        return strTitle;
+    }
+
+    @Override
+    public String getType( )
+    {
+        return  _group != null ? CompositeDisplayType.GROUP.getLabel( ) : StringUtils.EMPTY;
+    }
+
+    @Override
+    public int getDepthIndent( )
+    {
+        return _nDepthIndent;
+    }
+
+    @Override
+    public void setDepthIndent( int nDepthIndent )
+    {
+        _nDepthIndent = nDepthIndent;
+    }
+
+    @Override
+    public void setParentId( int parentId )
+    {
+        _nParentId = parentId;
+        
+    }
+
+    @Override
+    public int getParentId( )
+    {
+        return _nParentId;
+    }
+
+    /**
+     * @return the IdDisplay
+     */
+    public int getIdDisplay()
+    {
+        return _nIdDisplay;
+    }
+
+    /**
+     * @param nIdDisplay the IdDisplay to set
+     */
+    public void setIdDisplay( int nIdDisplay )
+    {
+        this._nIdDisplay = nIdDisplay;
     }
 
 }

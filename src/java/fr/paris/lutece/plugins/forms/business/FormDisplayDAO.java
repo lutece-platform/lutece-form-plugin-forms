@@ -47,12 +47,12 @@ import java.util.List;
 public final class FormDisplayDAO implements IFormDisplayDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type FROM forms_display WHERE id_display = ?";
-    private static final String SQL_QUERY_SELECT_BY_PARENT = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type FROM forms_display WHERE id_step = ? AND id_parent = ? ORDER BY display_order ASC";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_display ( id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display WHERE id_display = ?";
+    private static final String SQL_QUERY_SELECT_BY_PARENT = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display WHERE id_step = ? AND id_parent = ? ORDER BY display_order ASC";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_display ( id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_display WHERE id_display = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_display SET id_display = ?, id_form = ?, id_step = ?, id_composite = ?, id_parent = ?, display_order = ?, composite_type = ? WHERE id_display = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type FROM forms_display";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_display SET id_display = ?, id_form = ?, id_step = ?, id_composite = ?, id_parent = ?, display_order = ?, composite_type = ?, display_depth = ? WHERE id_display = ?";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display";
 
     /**
      * {@inheritDoc }
@@ -70,6 +70,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
             daoUtil.setInt( nIndex++, formDisplay.getParentId( ) );
             daoUtil.setInt( nIndex++, formDisplay.getDisplayOrder( ) );
             daoUtil.setString( nIndex++, formDisplay.getCompositeType( ) );
+            daoUtil.setInt( nIndex++, formDisplay.getDepth( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -107,6 +108,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
             formDisplay.setParentId( daoUtil.getInt( nIndex++ ) );
             formDisplay.setDisplayOrder( daoUtil.getInt( nIndex++ ) );
             formDisplay.setCompositeType( daoUtil.getString( nIndex++ ) );
+            formDisplay.setDepth( daoUtil.getInt( nIndex++ ) );
         }
 
         daoUtil.close( );
@@ -143,6 +145,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
         daoUtil.setInt( nIndex++, formDisplay.getParentId( ) );
         daoUtil.setInt( nIndex++, formDisplay.getDisplayOrder( ) );
         daoUtil.setString( nIndex++, formDisplay.getCompositeType( ) );
+        daoUtil.setInt( nIndex++, formDisplay.getDepth( ) );
         daoUtil.setInt( nIndex++, formDisplay.getId( ) );
 
         daoUtil.executeUpdate( );
@@ -171,6 +174,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
             formDisplay.setParentId( daoUtil.getInt( nIndex++ ) );
             formDisplay.setDisplayOrder( daoUtil.getInt( nIndex++ ) );
             formDisplay.setCompositeType( daoUtil.getString( nIndex++ ) );
+            formDisplay.setDepth( daoUtil.getInt( nIndex++ ) );
 
             formDisplayList.add( formDisplay );
         }
@@ -204,6 +208,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
             formDisplay.setParentId( daoUtil.getInt( nIndex++ ) );
             formDisplay.setDisplayOrder( daoUtil.getInt( nIndex++ ) );
             formDisplay.setCompositeType( daoUtil.getString( nIndex++ ) );
+            formDisplay.setDepth( daoUtil.getInt( nIndex++ ) );
 
             formDisplayList.add( formDisplay );
         }
