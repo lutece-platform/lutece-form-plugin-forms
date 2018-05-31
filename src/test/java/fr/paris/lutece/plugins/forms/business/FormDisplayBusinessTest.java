@@ -44,15 +44,6 @@ public class FormDisplayBusinessTest extends LuteceTestCase
 
     private static final int INT_0 = 0;
     private static final int INT_1 = 1;
-    private static final int INT_2 = 2;
-    private static final int INT_3 = 3;
-    private static final int INT_4 = 4;
-    private static final int INT_5 = 5;
-    private static final int INT_6 = 6;
-    private static final int INT_7 = 7;
-    private static final int INT_8 = 8;
-    private static final int INT_9 = 9;
-    private static final int INT_10 = 10;
     private static final String TYPE_GROUP = "group";
     private static final String TYPE_QUESTION = "question";
 
@@ -69,6 +60,7 @@ public class FormDisplayBusinessTest extends LuteceTestCase
         formDisplay.setParentId( INT_0 );
         formDisplay.setDisplayOrder( INT_0 );
         formDisplay.setCompositeType( TYPE_GROUP );
+        formDisplay.setDepth( INT_0 );
 
         // Create test
         FormDisplayHome.create( formDisplay );
@@ -79,6 +71,7 @@ public class FormDisplayBusinessTest extends LuteceTestCase
         assertEquals( formDisplayStored.getParentId( ), formDisplay.getParentId( ) );
         assertEquals( formDisplayStored.getDisplayOrder( ), formDisplay.getDisplayOrder( ) );
         assertEquals( formDisplayStored.getCompositeType( ), formDisplay.getCompositeType( ) );
+        assertEquals( formDisplayStored.getDepth( ), formDisplay.getDepth( ) );
 
         // Update test
         formDisplay.setFormId( INT_1 );
@@ -87,6 +80,7 @@ public class FormDisplayBusinessTest extends LuteceTestCase
         formDisplay.setParentId( INT_1 );
         formDisplay.setDisplayOrder( INT_1 );
         formDisplay.setCompositeType( TYPE_QUESTION );
+        formDisplay.setDepth( INT_1 );
         FormDisplayHome.update( formDisplay );
         formDisplayStored = FormDisplayHome.findByPrimaryKey( formDisplay.getId( ) );
         assertEquals( formDisplayStored.getFormId( ), formDisplay.getFormId( ) );
@@ -95,12 +89,13 @@ public class FormDisplayBusinessTest extends LuteceTestCase
         assertEquals( formDisplayStored.getParentId( ), formDisplay.getParentId( ) );
         assertEquals( formDisplayStored.getDisplayOrder( ), formDisplay.getDisplayOrder( ) );
         assertEquals( formDisplayStored.getCompositeType( ), formDisplay.getCompositeType( ) );
+        assertEquals( formDisplayStored.getDepth( ), formDisplay.getDepth( ) );
 
         // List test
         FormDisplayHome.getFormDisplayList( );
 
         // Delete test
-        FormHome.remove( formDisplay.getId( ) );
+        FormDisplayHome.remove( formDisplay.getId( ) );
         formDisplayStored = FormDisplayHome.findByPrimaryKey( formDisplay.getId( ) );
         assertNull( formDisplayStored );
 
