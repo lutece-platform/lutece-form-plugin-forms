@@ -1,6 +1,4 @@
 <#include "/admin/plugins/forms/edit_step_tabs.html" />
-<#assign entryIconList = ['dot-circle-o','check-square-o','comment-o','calendar','list-alt','file-text-o','file-text','file','map-o','image','user','phone','user','table','indent'] />
-
 <@row>
     <@columns>
         <@box color='primary' collapsed=true>
@@ -82,13 +80,8 @@
                                 </div>
                                 <#list entry_type_list as item>
                                     <div>
-                                        <button  class="btn btn-entry" name="view_createQuestion" value="${item.code!}" type="submit">
-                                        <#list entryIconList as entryIcon>                                      
-                                            <#if item.code?number-100 == entryIcon?index+1>
-                                                <@icon style='${entryIcon}' />
-                                            </#if>
-                                        </#list>
-                                           &#160;${item.name}
+                                        <button  class="btn btn-entry" name="view_createQuestion" value="${item.idType}" type="submit">
+                                           <@icon style='${item.iconName}' />&#160;${item.title}
                                         </button>
                                     </div>
                                 </#list>

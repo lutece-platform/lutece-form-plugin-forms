@@ -157,10 +157,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         listICompositeDisplay = FormService.getStepCompositeList( nIdStep );
         model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
 
-        ReferenceList refEntryType;
-        refEntryType = FormsEntryUtils.initRefListEntryType( );
-
-        model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, refEntryType );
+        model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
 
         setPageTitleProperty( EMPTY_STRING );
 
