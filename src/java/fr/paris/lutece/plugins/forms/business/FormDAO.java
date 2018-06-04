@@ -34,15 +34,15 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.sql.DAOUtil;
-
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
  * This class provides Data Access methods for Form objects
@@ -51,7 +51,7 @@ public final class FormDAO implements IFormDAO
 {
     // Constants
     private static final String SQL_QUERY_SELECT = "SELECT id_form, title, description, creation_date, update_date, availability_start_date, availability_end_date, workgroup FROM forms_form WHERE id_form = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, availability_start_date, availability_end_date, workgroup ) VALUES ( ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ? WHERE id_form = ?";
     private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup FROM forms_form";
@@ -69,6 +69,8 @@ public final class FormDAO implements IFormDAO
             int nIndex = 1;
             daoUtil.setString( nIndex++, form.getTitle( ) );
             daoUtil.setString( nIndex++, form.getDescription( ) );
+            Timestamp tsUpdateDate = new Timestamp( GregorianCalendar.getInstance( ).getTimeInMillis( ) );
+            daoUtil.setTimestamp( nIndex++, tsUpdateDate );
             daoUtil.setDate( nIndex++, form.getAvailabilityStartDate( ) );
             daoUtil.setDate( nIndex++, form.getAvailabilityEndDate( ) );
             daoUtil.setString( nIndex++, form.getWorkgroup( ) );
@@ -80,7 +82,6 @@ public final class FormDAO implements IFormDAO
         }
         finally
         {
-            daoUtil.free( );
             daoUtil.close( );
 
         }
@@ -113,7 +114,6 @@ public final class FormDAO implements IFormDAO
 
         }
 
-        daoUtil.free( );
         daoUtil.close( );
 
         return form;
