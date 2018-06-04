@@ -29,7 +29,6 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private Question _question;
     private FormDisplay _formDisplay;
 
-
     @Override
     public void initComposite( FormDisplay formDisplay )
     {
@@ -103,6 +102,5 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
         _formDisplay = formDisplay;
     }
-
 
 }

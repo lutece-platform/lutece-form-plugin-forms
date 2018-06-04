@@ -117,16 +117,13 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private static final String ERROR_GROUP_NOT_CREATED = "forms.error.group.notCreated";
     private static final String ERROR_GROUP_NOT_UPDATED = "forms.error.group.notUpdated";
 
-    //Infos messages
+    // Infos messages
     private static final String INFO_QUESTION_CREATED = "forms.info.question.created";
     private static final String INFO_GROUP_UPDATED = "forms.info.group.updated";
     private static final String INFO_GROUP_CREATED = "forms.info.group.created";
 
     // Others
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
-
-
-
 
     private Step _step;
     private Form _form;
@@ -266,9 +263,8 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
-        
         _group = new Group( );
-        
+
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
@@ -305,7 +301,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
         _group = ( _group != null ) ? _group : new Group( );
         populate( _group, request );
-        
+
         GroupHome.create( _group );
 
         int nDisplayDepth = getDisplayDepthFromParent( nParentGroup );
@@ -320,7 +316,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
             formDisplay.setCompositeType( CompositeDisplayType.GROUP.getLabel( ) );
             formDisplay.setDepth( nDisplayDepth );
             FormDisplayHome.create( formDisplay );
-            
+
             if ( formDisplay.getId( ) == -1 )
             {
                 addError( ERROR_GROUP_NOT_CREATED, getLocale( ) );
@@ -332,7 +328,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         }
 
         addInfo( INFO_GROUP_CREATED, getLocale( ) );
-        return  redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
 
     }
 
@@ -365,12 +361,11 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
-        
-        if ( _group == null || _group.getId( ) != nIdGroup ) 
+        if ( _group == null || _group.getId( ) != nIdGroup )
         {
             _group = GroupHome.findByPrimaryKey( nIdGroup );
         }
-        
+
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
@@ -404,7 +399,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
         _group = ( _group != null ) ? _group : new Group( );
         populate( _group, request );
-        
+
         GroupHome.update( _group );
 
         if ( _group.getId( ) == -1 )
@@ -413,14 +408,12 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         }
         else
         {
-            addInfo( INFO_GROUP_UPDATED, getLocale( ) ); 
+            addInfo( INFO_GROUP_UPDATED, getLocale( ) );
         }
 
-        return  redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
 
     }
-
-
 
     /**
      * Perform the Question creation with its Entry
@@ -565,9 +558,11 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         return null;
     }
 
-    /**Returns the display depth of a child display element
+    /**
+     * Returns the display depth of a child display element
      * 
-     * @param nParentGroup the Identifier of the parent display element (zero if we are at the step root)
+     * @param nParentGroup
+     *            the Identifier of the parent display element (zero if we are at the step root)
      * 
      * @return the display depth
      */

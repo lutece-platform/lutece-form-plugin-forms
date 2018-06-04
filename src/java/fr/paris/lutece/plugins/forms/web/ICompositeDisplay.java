@@ -46,10 +46,11 @@ public interface ICompositeDisplay
      */
     String getType( );
 
-    
-    /** Set the formDisplay
+    /**
+     * Set the formDisplay
+     * 
      * @param formDisplay
-     *          the FormDisplay to set
+     *            the FormDisplay to set
      */
     void setFormDisplay( FormDisplay formDisplay );
 

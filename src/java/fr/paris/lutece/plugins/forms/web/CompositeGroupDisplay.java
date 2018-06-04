@@ -100,12 +100,11 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         return _group != null ? CompositeDisplayType.GROUP.getLabel( ) : StringUtils.EMPTY;
     }
 
-
     @Override
     public void setFormDisplay( FormDisplay formDisplay )
     {
         _formDisplay = formDisplay;
-        
+
     }
 
     @Override
