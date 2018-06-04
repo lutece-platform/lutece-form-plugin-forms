@@ -27,9 +27,8 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private static final String QUESTION_CONTENT_MARKER = "questionContent";
 
     private Question _question;
-    private int _nDepthIndent;
-    private int _nParentId;
-    private int _nIdDisplay;
+    private FormDisplay _formDisplay;
+
 
     @Override
     public void initComposite( FormDisplay formDisplay )
@@ -88,45 +87,22 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         return _question != null ? CompositeDisplayType.QUESTION.getLabel( ) : StringUtils.EMPTY;
     }
 
-    @Override
-    public int getDepthIndent( )
+    /**
+     * @return the formDisplay
+     */
+    public FormDisplay getFormDisplay( )
     {
-        return _nDepthIndent;
-    }
-
-    @Override
-    public void setDepthIndent( int nDepthIndent )
-    {
-        _nDepthIndent = nDepthIndent;
-    }
-
-    @Override
-    public void setParentId( int parentId )
-    {
-        _nParentId = parentId;
-
-    }
-
-    @Override
-    public int getParentId( )
-    {
-        return _nParentId;
+        return _formDisplay;
     }
 
     /**
-     * @return the IdDisplay
+     * @param formDisplay
+     *            the formDisplay to set
      */
-    public int getIdDisplay( )
+    public void setFormDisplay( FormDisplay formDisplay )
     {
-        return _nIdDisplay;
+        _formDisplay = formDisplay;
     }
 
-    /**
-     * @param nIdDisplay
-     *            the IdDisplay to set
-     */
-    public void setIdDisplay( int nIdDisplay )
-    {
-        this._nIdDisplay = nIdDisplay;
-    }
+
 }

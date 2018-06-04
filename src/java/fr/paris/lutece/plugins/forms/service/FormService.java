@@ -69,28 +69,20 @@ public final class FormService
      */
     public static ICompositeDisplay formDisplayToComposite( FormDisplay formDisplay )
     {
+        ICompositeDisplay composite = null;
         if ( FormsConstants.COMPOSITE_GROUP_TYPE.equals( formDisplay.getCompositeType( ) ) )
         {
-            CompositeGroupDisplay composite = new CompositeGroupDisplay( );
-            composite.setDepthIndent( formDisplay.getDepth( ) );
-            composite.setParentId( formDisplay.getParentId( ) );
-            composite.setIdDisplay( formDisplay.getId( ) );
+            composite = new CompositeGroupDisplay( );
+            composite.setFormDisplay( formDisplay );
 
-            return composite;
         }
         else
             if ( FormsConstants.COMPOSITE_QUESTION_TYPE.equals( formDisplay.getCompositeType( ) ) )
             {
-                CompositeQuestionDisplay composite = new CompositeQuestionDisplay( );
-                composite.setDepthIndent( formDisplay.getDepth( ) );
-                composite.setParentId( formDisplay.getParentId( ) );
-                composite.setIdDisplay( formDisplay.getId( ) );
+                composite = new CompositeQuestionDisplay( );
+                composite.setFormDisplay( formDisplay );
+            }
 
-                return composite;
-            }
-            else
-            {
-                return null;
-            }
+        return composite;
     }
 }

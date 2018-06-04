@@ -30,9 +30,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private Group _group;
-    private int _nIdDisplay;
-    private int _nDepthIndent;
-    private int _nParentId;
+    private FormDisplay _formDisplay;
 
     @Override
     public void initComposite( FormDisplay formDisplay )
@@ -102,46 +100,17 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         return _group != null ? CompositeDisplayType.GROUP.getLabel( ) : StringUtils.EMPTY;
     }
 
-    @Override
-    public int getDepthIndent( )
-    {
-        return _nDepthIndent;
-    }
 
     @Override
-    public void setDepthIndent( int nDepthIndent )
+    public void setFormDisplay( FormDisplay formDisplay )
     {
-        _nDepthIndent = nDepthIndent;
+        _formDisplay = formDisplay;
+        
     }
 
     @Override
-    public void setParentId( int parentId )
+    public FormDisplay getFormDisplay( )
     {
-        _nParentId = parentId;
-
+        return _formDisplay;
     }
-
-    @Override
-    public int getParentId( )
-    {
-        return _nParentId;
-    }
-
-    /**
-     * @return the IdDisplay
-     */
-    public int getIdDisplay( )
-    {
-        return _nIdDisplay;
-    }
-
-    /**
-     * @param nIdDisplay
-     *            the IdDisplay to set
-     */
-    public void setIdDisplay( int nIdDisplay )
-    {
-        this._nIdDisplay = nIdDisplay;
-    }
-
 }

@@ -30,13 +30,13 @@
                                     <#list composite_list as composite>
                                         <tr>
                                             <#if composite.type == 'group'>
-                                                <td><@fieldInputRadioBox "" 'id_parent' '${composite.idDisplay}'/></td>
+                                                <td><@fieldInputRadioBox "" 'id_parent' '${composite.formDisplay.id}'/></td>
                                             <#else>
                                                 <td></td>
                                             </#if>
                                             <td class="col-sm-8">
                                                 <#if composite.type == 'group'><h4></#if>                                           
-                                                <#list 0..composite.depthIndent as indent>
+                                                <#list 0..composite.formDisplay.depth as indent>
                                                     <#if indent_index gte 0>
                                                         <#if indent_has_next>
                                                             <@icon style='' class='fa-padded'/>
@@ -59,8 +59,12 @@
                                                 </#if>
                                             </td>
                                             <td class="col-sm-3">
-                                                <@aButton href='' title='#i18n{forms.manage_questions.action.modifyQuestion}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
-                                                <@aButton href='' title='#i18n{forms.manage_questions.action.removeQuestion}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' /> 
+                                                <#if composite.type == 'group'>
+                                                    <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyGroup}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
+                                                <#else>
+                                                    <@aButton href='' title='#i18n{forms.manage_questions.action.modifyQuestion}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
+                                                </#if>
+                                                    <@aButton href='' title='#i18n{forms.manage_questions.action.removeQuestion}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' /> 
                                             </td>
                                         </tr>
                                     </#list>
@@ -71,6 +75,11 @@
                         <@columns md=3>
                             <@listGroup>
                             <a class="${listElementClass} active lead">#i18n{forms.manage_questions.buttonAdd}</a>
+                                <div>
+                                    <button  class="btn btn-entry" name="view_createGroup" value="" type="submit">
+                                        <@icon style='indent' />&#160;#i18n{forms.manage_questions.action.creategroup.label}
+                                    </button>
+                                </div>
                                 <#list entry_type_list as item>
                                     <div>
                                         <button  class="btn btn-entry" name="view_createQuestion" value="${item.code!}" type="submit">

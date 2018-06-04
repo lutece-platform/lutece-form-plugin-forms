@@ -50,6 +50,7 @@ public final class FormsConstants
     public static final String MARK_ENTRY_TYPE_REF_LIST = "entry_type_list";
     public static final String MARK_ENTRY = "entry";
     public static final String MARK_ID_PARENT = "id_parent";
+    public static final String MARK_GROUP = "group";
 
     // Parameters
     public static final String PARAMETER_ID_FORM = "id_form";
@@ -66,6 +67,7 @@ public final class FormsConstants
     public static final String PARAMETER_BUTTON_TYPE_ENTRY = "view_createQuestion";
     public static final String PARAMETER_ID_DISPLAY_PARENT = "id_parent";
     public static final String PARAMETER_ID_ENTRY_TYPE = "id_type";
+    public static final String PARAMETER_ID_GROUP = "id_group";
 
     // Jsp
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";

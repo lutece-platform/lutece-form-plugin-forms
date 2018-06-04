@@ -46,6 +46,8 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.Group;
+import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -83,18 +85,25 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
     // Templates
     private static final String TEMPLATE_MANAGE_QUESTIONS = "/admin/plugins/forms/manage_questions.html";
+    private static final String TEMPLATE_CREATE_GROUP = "/admin/plugins/forms/create_group.html";
+    private static final String TEMPLATE_MODIFY_GROUP = "/admin/plugins/forms/modify_group.html";
 
     // Properties
-    private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.createEntry.titleComment";
-    private static final String PROPERTY_CREATE_QUESTION_TITLE = "form.createEntry.titleQuestion";
+    private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.create_Question.titleComment";
+    private static final String PROPERTY_CREATE_QUESTION_TITLE = "forms.create_Question.titleQuestion";
+    private static final String PROPERTY_CREATE_GROUP_TITLE = "forms.create_group.title";
 
     // Views
     private static final String VIEW_MANAGE_QUESTIONS = "manageQuestions";
     private static final String VIEW_CREATE_QUESTION = "createQuestion";
+    private static final String VIEW_CREATE_GROUP = "createGroup";
+    private static final String VIEW_MODIFY_GROUP = "modifyGroup";
 
     // Actions
     private static final String ACTION_CREATE_QUESTION = "createQuestion";
     private static final String ACTION_CREATE_QUESTION_AND_MANAGE_ENTRIES = "createQuestionAndManageEntries";
+    private static final String ACTION_CREATE_GROUP = "createGroup";
+    private static final String ACTION_MODIFY_GROUP = "modifyGroup";
 
     // Markers
     private static final String MARK_WEBAPP_URL = "webapp_url";
@@ -105,13 +114,24 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
     // Error messages
     private static final String ERROR_QUESTION_NOT_CREATED = "forms.error.question.notCreated";
+    private static final String ERROR_GROUP_NOT_CREATED = "forms.error.group.notCreated";
+    private static final String ERROR_GROUP_NOT_UPDATED = "forms.error.group.notUpdated";
+
+    //Infos messages
+    private static final String INFO_QUESTION_CREATED = "forms.info.question.created";
+    private static final String INFO_GROUP_UPDATED = "forms.info.group.updated";
+    private static final String INFO_GROUP_CREATED = "forms.info.group.created";
 
     // Others
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
 
+
+
+
     private Step _step;
     private Form _form;
     private Entry _entry;
+    private Group _group;
 
     /**
      * Build the Manage View
@@ -156,7 +176,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
      *            The HTTP request
      * @return The entry creation page
      */
-    @View( value = VIEW_CREATE_QUESTION, defaultView = true )
+    @View( value = VIEW_CREATE_QUESTION )
     public String getCreateQuestion( HttpServletRequest request )
     {
 
@@ -218,6 +238,191 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     }
 
     /**
+     * Gets the entry creation page
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The entry creation page
+     */
+    @View( value = VIEW_CREATE_GROUP )
+    public String getCreateGroup( HttpServletRequest request )
+    {
+
+        int nIdStep = -1;
+        int nParentGroup;
+
+        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
+
+        if ( ( _step == null ) || nIdStep != _step.getId( ) )
+        {
+            _step = StepHome.findByPrimaryKey( nIdStep );
+        }
+
+        if ( ( _step == null ) )
+        {
+            return getJspManageForm( request );
+        }
+
+        _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+
+        
+        _group = new Group( );
+        
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( FormsConstants.MARK_FORM, _form );
+        model.put( FormsConstants.MARK_STEP, _step );
+        model.put( FormsConstants.MARK_GROUP, _group );
+        model.put( FormsConstants.MARK_ID_PARENT, nParentGroup );
+
+        setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_GROUP, getLocale( ), model );
+
+        return getAdminPage( template.getHtml( ) );
+    }
+
+    /**
+     * Perform the Group creation
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL to go after performing the action
+     */
+    @Action( ACTION_CREATE_GROUP )
+    public String doCreateGroup( HttpServletRequest request )
+    {
+        int nIdStep = -1;
+        int nParentGroup = -1;
+
+        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
+
+        if ( ( _step == null ) || nIdStep != _step.getId( ) )
+        {
+            _step = StepHome.findByPrimaryKey( nIdStep );
+        }
+
+        _group = ( _group != null ) ? _group : new Group( );
+        populate( _group, request );
+        
+        GroupHome.create( _group );
+
+        int nDisplayDepth = getDisplayDepthFromParent( nParentGroup );
+
+        if ( _group.getId( ) != -1 )
+        {
+            FormDisplay formDisplay = new FormDisplay( );
+            formDisplay.setFormId( _step.getIdForm( ) );
+            formDisplay.setStepId( nIdStep );
+            formDisplay.setParentId( nParentGroup );
+            formDisplay.setCompositeId( _group.getId( ) );
+            formDisplay.setCompositeType( CompositeDisplayType.GROUP.getLabel( ) );
+            formDisplay.setDepth( nDisplayDepth );
+            FormDisplayHome.create( formDisplay );
+            
+            if ( formDisplay.getId( ) == -1 )
+            {
+                addError( ERROR_GROUP_NOT_CREATED, getLocale( ) );
+            }
+        }
+        else
+        {
+            addError( ERROR_GROUP_NOT_CREATED, getLocale( ) );
+        }
+
+        addInfo( INFO_GROUP_CREATED, getLocale( ) );
+        return  redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+
+    }
+
+    /**
+     * Gets the entry creation page
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The entry creation page
+     */
+    @View( value = VIEW_MODIFY_GROUP )
+    public String getModifyGroup( HttpServletRequest request )
+    {
+
+        int nIdStep = -1;
+        int nIdGroup = -1;
+
+        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        nIdGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ) );
+
+        if ( ( _step == null ) || nIdStep != _step.getId( ) )
+        {
+            _step = StepHome.findByPrimaryKey( nIdStep );
+        }
+
+        if ( ( _step == null ) )
+        {
+            return getJspManageForm( request );
+        }
+
+        _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+
+        
+        if ( _group == null || _group.getId( ) != nIdGroup ) 
+        {
+            _group = GroupHome.findByPrimaryKey( nIdGroup );
+        }
+        
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( FormsConstants.MARK_FORM, _form );
+        model.put( FormsConstants.MARK_STEP, _step );
+        model.put( FormsConstants.MARK_GROUP, _group );
+
+        setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_GROUP, getLocale( ), model );
+
+        return getAdminPage( template.getHtml( ) );
+    }
+
+    /**
+     * Perform the Group creation
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL to go after performing the action
+     */
+    @Action( ACTION_MODIFY_GROUP )
+    public String doModifyGroup( HttpServletRequest request )
+    {
+        int nIdStep = -1;
+
+        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+
+        if ( ( _step == null ) || nIdStep != _step.getId( ) )
+        {
+            _step = StepHome.findByPrimaryKey( nIdStep );
+        }
+
+        _group = ( _group != null ) ? _group : new Group( );
+        populate( _group, request );
+        
+        GroupHome.update( _group );
+
+        if ( _group.getId( ) == -1 )
+        {
+            addError( ERROR_GROUP_NOT_UPDATED, getLocale( ) );
+        }
+        else
+        {
+            addInfo( INFO_GROUP_UPDATED, getLocale( ) ); 
+        }
+
+        return  redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+
+    }
+
+
+
+    /**
      * Perform the Question creation with its Entry
      * 
      * @param request
@@ -229,7 +434,15 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     {
         String strReturnUrl = processQuestionCreation( request );
 
-        return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+        if ( strReturnUrl != null )
+        {
+            return strReturnUrl;
+        }
+        else
+        {
+            addInfo( INFO_QUESTION_CREATED, getLocale( ) );
+        }
+        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
 
     }
 
@@ -309,15 +522,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         formQuestion.setIdStep( nIdStep );
         QuestionHome.create( formQuestion );
 
-        int nDisplayDepth = 0;
-        if ( nParentGroup > 0 )
-        {
-            FormDisplay formDisplayParent = FormDisplayHome.findByPrimaryKey( nParentGroup );
-            if ( formDisplayParent != null )
-            {
-                nDisplayDepth = formDisplayParent.getDepth( ) + 1;
-            }
-        }
+        int nDisplayDepth = getDisplayDepthFromParent( nParentGroup );
 
         if ( formQuestion.getId( ) != -1 )
         {
@@ -358,6 +563,26 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     {
         // TODO
         return null;
+    }
+
+    /**Returns the display depth of a child display element
+     * 
+     * @param nParentGroup the Identifier of the parent display element (zero if we are at the step root)
+     * 
+     * @return the display depth
+     */
+    private int getDisplayDepthFromParent( int nParentGroup )
+    {
+        int nDisplayDepth = 0;
+        if ( nParentGroup > 0 )
+        {
+            FormDisplay formDisplayParent = FormDisplayHome.findByPrimaryKey( nParentGroup );
+            if ( formDisplayParent != null )
+            {
+                nDisplayDepth = formDisplayParent.getDepth( ) + 1;
+            }
+        }
+        return nDisplayDepth;
     }
 
     /**

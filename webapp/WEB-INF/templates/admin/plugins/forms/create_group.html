@@ -1,0 +1,31 @@
+<@box>
+    <@boxHeader title='#i18n{forms.create_group.title}' />
+    <@boxBody>
+    <@tform class="form-horizontal" method="post" name="create_group" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
+         <@messages errors=errors />
+         <input type="hidden" id="id_form" name="id_form" value="${step.idForm}"/>
+         <input type="hidden" id="id_step" name="id_step" value="${step.id}"/>
+         <input type="hidden" id="id_parent" name="id_parent" value="${id_parent}"/>
+         
+             <@formGroup labelKey='#i18n{forms.create_group.labelTitle}' helpKey='#i18n{forms.create_group.labelTitle.help}' mandatory=true>
+                 <@input type='text' name='title' value='${group.title!}' />
+             </@formGroup>
+             <@formGroup labelKey='#i18n{forms.create_group.labelDescription}' helpKey='#i18n{forms.create_group.labelDescription.help}' >
+                 <@input type='textarea' name='description'>${group.description!}</@input>
+             </@formGroup>
+             <@formGroup labelKey='#i18n{forms.create_group.labelCollapsible}' helpKey='#i18n{forms.create_group.labelCollapsible.help}' >
+                <@checkBox labelFor='collapsible' name='collapsible' id='collapsible' value='1' checked=(group?exists && group.collapsible??) />
+             </@formGroup>
+            <div class="form-group">
+                <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
+                    <button  class="btn btn-primary" name="action_createGroup" type="submit">
+                        <i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
+                    </button>
+                    <button class="btn btn-default" name="view_manageQuestions" type="submit" formnovalidate >
+                        <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
+                    </button>
+                </div>
+            </div>
+    </@tform>
+    </@boxBody>
+</@box>

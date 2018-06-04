@@ -46,47 +46,18 @@ public interface ICompositeDisplay
      */
     String getType( );
 
-    /**
-     * 
-     * @return the display depth indent of the compositeDisplay
+    
+    /** Set the formDisplay
+     * @param formDisplay
+     *          the FormDisplay to set
      */
-    int getDepthIndent( );
+    void setFormDisplay( FormDisplay formDisplay );
 
     /**
+     * return the FormDisplay
      * 
-     * Set the display depth indent of the compositeDisplay
+     * @return the FormDisplay
      */
-    /**
-     * @param nDepth
-     *            the display depth
-     */
-    void setDepthIndent( int nDepth );
-
-    /**
-     * 
-     * Set the parent identifier the compositeDisplay
-     * 
-     * @param nParentId
-     *            the parent id
-     */
-    void setParentId( int nParentId );
-
-    /**
-     * return the parent identifier the compositeDisplay
-     * 
-     * @return the parent identifier
-     */
-    int getParentId( );
-
-    /**
-     * @return the IdDisplay
-     */
-    int getIdDisplay( );
-
-    /**
-     * @param nIdDisplay
-     *            the IdDisplay to set
-     */
-    void setIdDisplay( int nIdDisplay );
+    FormDisplay getFormDisplay( );
 
 }
