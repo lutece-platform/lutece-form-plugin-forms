@@ -110,10 +110,10 @@ public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
 
         String strJoinInnerJoinEntryResponseQueryPart = String.format( ENTRY_JOIN_ENTRY_RESPONSE_QUERY_PART, nFormColumnPosition );
         stringBuilderJoinQuery.append( strJoinInnerJoinEntryResponseQueryPart );
-        
+
         String strJoinInnerJoinEntryQueryPart = String.format( ENTRY_JOIN_ENTRY_QUERY_PART, nFormColumnPosition );
         stringBuilderJoinQuery.append( strJoinInnerJoinEntryQueryPart );
-        
+
         StringBuilder stringBuilderListEntryTitle = new StringBuilder( );
         IFormColumn formColumn = getFormColumn( );
         if ( formColumn instanceof FormColumnEntry )

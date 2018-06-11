@@ -158,8 +158,8 @@ public class FormFilterQueryBuilderTest extends LuteceTestCase
     }
 
     /**
-     * Test of the method {@link FormFilterQueryBuilder#buildFormFilterQuery(String, FormParameters)} with a query pattern with multiple values to replace
-     * and a null value
+     * Test of the method {@link FormFilterQueryBuilder#buildFormFilterQuery(String, FormParameters)} with a query pattern with multiple values to replace and a
+     * null value
      */
     public void testBuildFormFilterQueryWithMultipleNameWithWrongValue( )
     {
@@ -179,8 +179,8 @@ public class FormFilterQueryBuilderTest extends LuteceTestCase
     }
 
     /**
-     * Test of the method {@link FormFilterQueryBuilder#buildFormFilterQuery(String, FormParameters)} with a query pattern with nothing to replace but
-     * with element which has the same name that those in the map parameter
+     * Test of the method {@link FormFilterQueryBuilder#buildFormFilterQuery(String, FormParameters)} with a query pattern with nothing to replace but with
+     * element which has the same name that those in the map parameter
      */
     public void testBuildFormFilterQueryWithoutElementToReplace( )
     {

@@ -145,8 +145,7 @@ public class ReferenceListFactoryTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link fr.paris.lutece.plugins.forms.util.ReferenceListFactory#createReferenceList()} with a changed default
-     * name
+     * Test for the method {@link fr.paris.lutece.plugins.forms.util.ReferenceListFactory#createReferenceList()} with a changed default name
      */
     public void testCreateReferenceListWithChangedDefaultName( )
     {
@@ -192,8 +191,7 @@ public class ReferenceListFactoryTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link fr.paris.lutece.plugins.forms.util.ReferenceListFactory#createReferenceList()} and verify that the
-     * missing name are replaced
+     * Test for the method {@link fr.paris.lutece.plugins.forms.util.ReferenceListFactory#createReferenceList()} and verify that the missing name are replaced
      */
     public void testCreateReferenceLisCheckedNameReplacement( )
     {

@@ -43,8 +43,8 @@ import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 public interface IFormPanelInitializerQueryPart
 {
     /**
-     * Build the query of the FormPanelInitializer from the given FormParameters. This method will use all the information of the FormParameters to build
-     * the query associated to the current PanelInitializer.
+     * Build the query of the FormPanelInitializer from the given FormParameters. This method will use all the information of the FormParameters to build the
+     * query associated to the current PanelInitializer.
      * 
      * @param formParameters
      *            The FormParameters to use for building the query

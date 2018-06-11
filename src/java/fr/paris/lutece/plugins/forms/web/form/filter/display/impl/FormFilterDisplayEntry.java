@@ -133,7 +133,8 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
         // Build the list of FormFilter to use for the filter from the list of entry to search on
         List<Response> listResponse = getEntryResponseList( listIEntryToRetrieveValueFrom );
         cleanListResponse( listResponse );
-        ReferenceListFactory referenceListFactory = new ReferenceListFactory( listResponse, ENTRY_RESPONSE_VALUE_ATTRIBUTE, ENTRY_RESPONSE_VALUE_ATTRIBUTE, Boolean.FALSE );
+        ReferenceListFactory referenceListFactory = new ReferenceListFactory( listResponse, ENTRY_RESPONSE_VALUE_ATTRIBUTE, ENTRY_RESPONSE_VALUE_ATTRIBUTE,
+                Boolean.FALSE );
 
         String strDefaultReferenceListName = getFormFilterDisplayLabel( );
         referenceListFactory.setDefaultName( strDefaultReferenceListName );
@@ -222,7 +223,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
             {
                 ResponseFilter responseFilter = new ResponseFilter( );
                 responseFilter.setIdEntry( entry.getIdEntry( ) );
-                
+
                 listResponseFieldResult.addAll( ResponseHome.getResponseList( responseFilter ) );
             }
         }

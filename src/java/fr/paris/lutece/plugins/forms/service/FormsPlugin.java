@@ -57,7 +57,7 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
     {
         super( );
     }
-    
+
     /**
      * Return the plugin
      *

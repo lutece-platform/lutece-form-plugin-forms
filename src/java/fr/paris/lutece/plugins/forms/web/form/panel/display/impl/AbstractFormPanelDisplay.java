@@ -72,7 +72,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay, IFo
     private boolean _bActive;
     private String _strTemplate;
     private IFormPanel _formPanel;
-    
+
     /**
      * {@inheritDoc}
      */

@@ -89,7 +89,8 @@ public class FormColumnFormResponseDateCreationQueryPart extends AbstractFormCol
     protected Map<String, Object> getMapFormColumnValues( DAOUtil daoUtil )
     {
         Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
-        Timestamp timestampFormResponseDateCreation = daoUtil.getTimestamp( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
+        Timestamp timestampFormResponseDateCreation = daoUtil
+                .getTimestamp( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
         Date dateFormResponseDateCreation = new Date( timestampFormResponseDateCreation.getTime( ) );
         mapFormColumnValues.put( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION, dateFormResponseDateCreation );
 

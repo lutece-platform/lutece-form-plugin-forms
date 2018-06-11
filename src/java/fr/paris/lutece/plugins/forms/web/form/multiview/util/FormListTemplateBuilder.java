@@ -67,7 +67,7 @@ public final class FormListTemplateBuilder
     {
 
     }
-    
+
     /**
      * Build the template of the table of all form response
      * 
@@ -81,8 +81,8 @@ public final class FormListTemplateBuilder
      *            The url to use for sort a column
      * @return the global template of all FormColumnDisplay objects
      */
-    public static String buildTableTemplate( List<IFormColumnDisplay> listFormColumnDisplay, List<FormResponseItem> listFormResponseItem,
-            Locale locale, String strSortUrl )
+    public static String buildTableTemplate( List<IFormColumnDisplay> listFormColumnDisplay, List<FormResponseItem> listFormResponseItem, Locale locale,
+            String strSortUrl )
     {
         String strTableTemplate = StringUtils.EMPTY;
 
@@ -92,8 +92,7 @@ public final class FormListTemplateBuilder
             List<String> listFormColumnHeaderTemplate = buildFormColumnHeaderTemplateList( listFormColumnDisplay, locale, strSortUrl );
 
             // Build the list of all FormColumnLineTemplate
-            List<FormColumnLineTemplate> listFormColumnLineTemplate = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItem,
-                    locale );
+            List<FormColumnLineTemplate> listFormColumnLineTemplate = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItem, locale );
 
             // Build the model
             Map<String, Object> model = new LinkedHashMap<>( );

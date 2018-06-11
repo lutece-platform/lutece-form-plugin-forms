@@ -118,10 +118,10 @@ public class FormColumnEntryQueryPartMock extends FormColumnEntryQueryPart
 
         String strJoinInnerJoinEntryResponseQueryPart = String.format( ENTRY_JOIN_ENTRY_RESPONSE_QUERY_PART, _nPosition );
         stringBuilderJoinQuery.append( strJoinInnerJoinEntryResponseQueryPart );
-        
+
         String strJoinInnerJoinEntryQueryPart = String.format( ENTRY_JOIN_ENTRY_QUERY_PART, _nPosition );
         stringBuilderJoinQuery.append( strJoinInnerJoinEntryQueryPart );
-        
+
         StringBuilder stringBuilderListEntryTitle = new StringBuilder( );
         IFormColumn formColumn = getFormColumn( );
         if ( formColumn instanceof FormColumnEntry )

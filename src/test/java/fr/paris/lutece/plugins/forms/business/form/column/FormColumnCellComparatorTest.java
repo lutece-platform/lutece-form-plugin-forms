@@ -87,8 +87,8 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link FormColumnCellComparator#compare(FormColumnCell, FormColumnCell)} with the second FormColumnCell which have a greater
-     * value than the first
+     * Test for the method {@link FormColumnCellComparator#compare(FormColumnCell, FormColumnCell)} with the second FormColumnCell which have a greater value
+     * than the first
      */
     public void testCompareWithSecondCellValueGreater( )
     {
@@ -109,8 +109,8 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link FormColumnCellComparator#compare(FormColumnCell, FormColumnCell)} with the first FormColumnCell which have a greater
-     * value than the second
+     * Test for the method {@link FormColumnCellComparator#compare(FormColumnCell, FormColumnCell)} with the first FormColumnCell which have a greater value
+     * than the second
      */
     public void testCompareWithFirstCellValueGreater( )
     {
@@ -152,8 +152,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the first FormColumnCell which have a
-     * null value
+     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the first FormColumnCell which have a null value
      */
     public void testCompareWithFirstCellNullValue( )
     {
@@ -174,8 +173,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the second FormColumnCell which have a
-     * null value
+     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the second FormColumnCell which have a null value
      */
     public void testCompareWithSecondCellNullValue( )
     {
@@ -196,8 +194,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with one FormColumnCell which haven't the
-     * good key
+     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with one FormColumnCell which haven't the good key
      */
     public void testCompareWithOneMissingKey( )
     {
@@ -218,8 +215,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the two FormColumnCell which haven't
-     * the good key
+     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the two FormColumnCell which haven't the good key
      */
     public void testCompareWithoutSortKey( )
     {

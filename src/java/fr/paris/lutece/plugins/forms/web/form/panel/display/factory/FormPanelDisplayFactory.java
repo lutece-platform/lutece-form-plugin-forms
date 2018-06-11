@@ -105,8 +105,7 @@ public class FormPanelDisplayFactory
     }
 
     /**
-     * Configure the FormPanelDisplay by defining if its active or not and build all the FormPanelInitializer with their FormParameters from its
-     * FormPanel
+     * Configure the FormPanelDisplay by defining if its active or not and build all the FormPanelInitializer with their FormParameters from its FormPanel
      * 
      * @param request
      *            The request to retrieve the information from
@@ -183,8 +182,8 @@ public class FormPanelDisplayFactory
     }
 
     /**
-     * Build the FormPanelDisplayInitializer associated to the given IFormPanelDisplayInitializerFactory from the specified list of IFormPanelInitializer
-     * and build its FormParameters with the request
+     * Build the FormPanelDisplayInitializer associated to the given IFormPanelDisplayInitializerFactory from the specified list of IFormPanelInitializer and
+     * build its FormParameters with the request
      * 
      * @param request
      *            The request used to build the FormParameters of the FormPanelInitializer
@@ -200,8 +199,7 @@ public class FormPanelDisplayFactory
         {
             for ( IFormPanelInitializer formPanelInitializer : listFormPanelInitializer )
             {
-                IFormPanelDisplayInitializer formPanelDisplayInitializer = formPanelDisplayInitializerFactory
-                        .buildFormPanelDisplay( formPanelInitializer );
+                IFormPanelDisplayInitializer formPanelDisplayInitializer = formPanelDisplayInitializerFactory.buildFormPanelDisplay( formPanelInitializer );
                 if ( formPanelDisplayInitializer != null )
                 {
                     formPanelDisplayInitializer.setFormPanelInitializer( formPanelInitializer );
@@ -212,8 +210,8 @@ public class FormPanelDisplayFactory
     }
 
     /**
-     * Check if there is an active FormDisplay Panel in the given list and if there is no one set the first element in the list (which is in first position)
-     * as active
+     * Check if there is an active FormDisplay Panel in the given list and if there is no one set the first element in the list (which is in first position) as
+     * active
      * 
      * @param listFormPanelDisplay
      *            The list of FormDisplayPanel to analyze

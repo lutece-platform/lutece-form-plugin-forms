@@ -78,8 +78,7 @@ public class FormResponseItemComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with two FormResponseItem which have no
-     * values
+     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with two FormResponseItem which have no values
      */
     public void testCompareWithEmptyFormResponseItems( )
     {
@@ -93,8 +92,8 @@ public class FormResponseItemComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the first FormResponseItem which have
-     * no values with the ascendant sort
+     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the first FormResponseItem which have no values
+     * with the ascendant sort
      */
     public void testCompareAscendantSortWithFirstFormResponseItemEmpty( )
     {
@@ -112,8 +111,8 @@ public class FormResponseItemComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the first FormResponseItem which have
-     * no values with the descendant sort
+     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the first FormResponseItem which have no values
+     * with the descendant sort
      */
     public void testCompareDescendantSortWithFirstFormResponseItemEmpty( )
     {
@@ -126,16 +125,15 @@ public class FormResponseItemComparatorTest extends LuteceTestCase
 
         FormResponseItemComparatorConfig formResponseItemComparatorConfig = new FormResponseItemComparatorConfig( DEFAULT_COLUMN_POSITION_TO_SORT,
                 DEFAULT_SORT_ATTRIBUTE_NAME, DESCENDANT_SORT );
-        FormResponseItemComparator comparator = new FormResponseItemComparator( formResponseItemComparatorConfig,
-                _defaultFormResponseItemComparatorConfig );
+        FormResponseItemComparator comparator = new FormResponseItemComparator( formResponseItemComparatorConfig, _defaultFormResponseItemComparatorConfig );
 
         int nComparisonResult = comparator.compare( formResponseItemOne, formResponseItemTwo );
         assertThat( nComparisonResult, is( SUPERIOR_COMPARISON_RESULT ) );
     }
 
     /**
-     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the second FormResponseItem which
-     * have no values with the ascendant sort
+     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the second FormResponseItem which have no values
+     * with the ascendant sort
      */
     public void testCompareAscendantSortWithSecondFormResponseItemEmpty( )
     {
@@ -153,8 +151,8 @@ public class FormResponseItemComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the second FormResponseItem which
-     * have no values with the descendant sort
+     * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the second FormResponseItem which have no values
+     * with the descendant sort
      */
     public void testCompareDescendantSortWithSecondFormResponseItemEmpty( )
     {
@@ -167,8 +165,7 @@ public class FormResponseItemComparatorTest extends LuteceTestCase
 
         FormResponseItemComparatorConfig formResponseItemComparatorConfig = new FormResponseItemComparatorConfig( DEFAULT_COLUMN_POSITION_TO_SORT,
                 DEFAULT_SORT_ATTRIBUTE_NAME, DESCENDANT_SORT );
-        FormResponseItemComparator comparator = new FormResponseItemComparator( formResponseItemComparatorConfig,
-                _defaultFormResponseItemComparatorConfig );
+        FormResponseItemComparator comparator = new FormResponseItemComparator( formResponseItemComparatorConfig, _defaultFormResponseItemComparatorConfig );
 
         int nComparisonResult = comparator.compare( formResponseItemOne, formResponseItemTwo );
         assertThat( nComparisonResult, is( INFERIOR_COMPARISON_RESULT ) );

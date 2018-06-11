@@ -107,8 +107,8 @@ public final class QueryBuilder
      * @param listFormColumnQueryPart
      *            The list of FormColumnQueryPart to retrieve the select query parts from
      */
-    private static void buildSelectQueryPart( StringBuilder stringBuilderGlobalQuery,
-            List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart )
+    private static void buildSelectQueryPart( StringBuilder stringBuilderGlobalQuery, List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart,
+            List<IFormColumnQueryPart> listFormColumnQueryPart )
     {
         List<String> listSelectQueryParts = new ArrayList<>( );
 

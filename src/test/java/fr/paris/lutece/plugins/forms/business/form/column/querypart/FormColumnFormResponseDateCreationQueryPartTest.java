@@ -96,7 +96,8 @@ public class FormColumnFormResponseDateCreationQueryPartTest extends LuteceTestC
         assertThat( mapFormColumnCellValues, is( not( nullValue( ) ) ) );
         assertThat( mapFormColumnCellValues.size( ), is( 1 ) );
 
-        Object objFormResponseDateCreationResult = formColumnCell.getFormColumnCellValueByName( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
+        Object objFormResponseDateCreationResult = formColumnCell
+                .getFormColumnCellValueByName( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
         assertThat( objFormResponseDateCreationResult, is( not( nullValue( ) ) ) );
         assertThat( (Date) objFormResponseDateCreationResult, is( dateFormResponseDateCreationValueToRetrieve ) );
     }

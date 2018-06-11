@@ -52,7 +52,7 @@ public class FormResponseItemComparator implements Comparator<FormResponseItem>,
      * Generated serial UID
      */
     private static final long serialVersionUID = -1894179865016507190L;
-    
+
     // Constants
     private static final int SORT_ASCENDANT_DIRECTION = NumberUtils.INTEGER_ONE;
     private static final int SORT_DESCENDANT_DIRECTION = NumberUtils.INTEGER_MINUS_ONE;

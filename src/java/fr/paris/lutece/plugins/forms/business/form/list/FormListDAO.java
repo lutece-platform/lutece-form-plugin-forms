@@ -80,8 +80,7 @@ public class FormListDAO implements IFormListDAO
         List<String> listQueryParametersValues = new ArrayList<>( );
 
         // Build the list of query part from the formPanel, the list of columns and the list of filters
-        List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart = buildFormPanelInitializerQueryPartList( formPanel,
-                listQueryParametersValues );
+        List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart = buildFormPanelInitializerQueryPartList( formPanel, listQueryParametersValues );
         List<IFormColumnQueryPart> listFormColumnQueryPart = buildformColumnQueryPartList( listFormColumn );
         List<IFormFilterQueryPart> listFormFilterQueryPart = buildFormFilterQueryPartList( listFormFilter, listQueryParametersValues );
 
@@ -167,8 +166,7 @@ public class FormListDAO implements IFormListDAO
      *            The list of all parameter values to used to fill the DAOUtil statement
      * @return the list of all FormPanelInitializerQueryPart associate to all the FormPanelInitializer to retrieve from the given FormPanel
      */
-    private static List<IFormPanelInitializerQueryPart> buildFormPanelInitializerQueryPartList( IFormPanel formPanel,
-            List<String> listQueryParametersValue )
+    private static List<IFormPanelInitializerQueryPart> buildFormPanelInitializerQueryPartList( IFormPanel formPanel, List<String> listQueryParametersValue )
     {
         List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart = new ArrayList<>( );
 
@@ -278,8 +276,7 @@ public class FormListDAO implements IFormListDAO
      *            The list of all parameter values to used to fill the DAOUtil statement
      * @return the list of form filter query part from the given list of form filter
      */
-    private static List<IFormFilterQueryPart> buildFormFilterQueryPartList( List<IFormFilter> listFormFilter,
-            List<String> listQueryParametersPositionValue )
+    private static List<IFormFilterQueryPart> buildFormFilterQueryPartList( List<IFormFilter> listFormFilter, List<String> listQueryParametersPositionValue )
     {
         List<IFormFilterQueryPart> listFormFilterQueryPart = new ArrayList<>( );
 

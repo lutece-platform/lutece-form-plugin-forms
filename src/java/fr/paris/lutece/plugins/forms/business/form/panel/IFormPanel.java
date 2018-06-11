@@ -58,8 +58,8 @@ public interface IFormPanel
     String getTitle( );
 
     /**
-     * Return the technical code of the panel from the configuration. This code is used as unique identifier for a FormPanel to manage the case of the
-     * selected FormPanel.
+     * Return the technical code of the panel from the configuration. This code is used as unique identifier for a FormPanel to manage the case of the selected
+     * FormPanel.
      * 
      * @return the technical code of the panel from the configuration
      */

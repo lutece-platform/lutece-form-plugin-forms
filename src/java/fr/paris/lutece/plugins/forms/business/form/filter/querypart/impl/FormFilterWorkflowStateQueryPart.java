@@ -43,8 +43,8 @@ import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstant
 public class FormFilterWorkflowStateQueryPart extends AbstractFormFilterQueryPart
 {
     // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $" + FormMultiviewWorkflowStateNameConstants.FILTER_ID_WORKFLOW_STATE
-            + "$";
+    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $"
+            + FormMultiviewWorkflowStateNameConstants.FILTER_ID_WORKFLOW_STATE + "$";
 
     /**
      * {@inheritDoc}

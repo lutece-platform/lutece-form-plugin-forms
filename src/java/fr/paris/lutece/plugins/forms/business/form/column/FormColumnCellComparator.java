@@ -48,7 +48,7 @@ public class FormColumnCellComparator implements Comparator<FormColumnCell>, Ser
      * Generated serial UID
      */
     private static final long serialVersionUID = 3458483480534971093L;
-    
+
     // Variables
     private final String _strSortKey;
 
@@ -132,8 +132,8 @@ public class FormColumnCellComparator implements Comparator<FormColumnCell>, Ser
     }
 
     /**
-     * Make the comparison between the two given object. If there are both Date a comparison will be make on the two Dates otherwise it will be 
-     * their comparison as String which will be made
+     * Make the comparison between the two given object. If there are both Date a comparison will be make on the two Dates otherwise it will be their comparison
+     * as String which will be made
      * 
      * @param objectOne
      *            The first object to compare

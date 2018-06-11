@@ -135,17 +135,14 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
     private List<State> getFormWorkflowStateList( HttpServletRequest request, int nIdForm )
     {
         List<State> listWorkflowState = new ArrayList<>( );
-        
-        /** [FIXME]
-        Form form = FormHome.findByPrimaryKey( nIdForm );
 
-        if ( form != null && form.getIdWorkflow( ) > ID_WORKFLOW_UNSET )
-        {
-            listWorkflowState.addAll( WorkflowService.getInstance( )
-                    .getAllStateByWorkflow( form.getIdWorkflow( ), AdminUserService.getAdminUser( request ) ) );
-        }
+        /**
+         * [FIXME] Form form = FormHome.findByPrimaryKey( nIdForm );
+         * 
+         * if ( form != null && form.getIdWorkflow( ) > ID_WORKFLOW_UNSET ) { listWorkflowState.addAll( WorkflowService.getInstance( ) .getAllStateByWorkflow(
+         * form.getIdWorkflow( ), AdminUserService.getAdminUser( request ) ) ); }
          **/
-        
+
         return listWorkflowState;
     }
 }

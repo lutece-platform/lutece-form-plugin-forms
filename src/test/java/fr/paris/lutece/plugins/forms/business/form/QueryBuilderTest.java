@@ -174,8 +174,7 @@ public class QueryBuilderTest extends LuteceTestCase
     }
 
     /**
-     * Test the for {@link QueryBuilder#buildQuery(List, List)} method with the FormPanel and the ColumnForm and its filter with the good name for the
-     * item
+     * Test the for {@link QueryBuilder#buildQuery(List, List)} method with the FormPanel and the ColumnForm and its filter with the good name for the item
      */
     public void testBuildQueryWithFormColumnWithFilter( )
     {
@@ -248,8 +247,8 @@ public class QueryBuilderTest extends LuteceTestCase
     }
 
     /**
-     * Test the for {@link QueryBuilder#buildQuery(List, List)} method with the FormPanel and the ColumnForms and its filter with the item has no value.
-     * In this case the condition is not added to the global query
+     * Test the for {@link QueryBuilder#buildQuery(List, List)} method with the FormPanel and the ColumnForms and its filter with the item has no value. In this
+     * case the condition is not added to the global query
      */
     public void testBuildQueryWithFormsColumnWithFilterWithoutName( )
     {
@@ -390,8 +389,8 @@ public class QueryBuilderTest extends LuteceTestCase
     }
 
     /**
-     * Build the query from the list of FormColumnQueryPart and the list of FormFilterQueryPart and make the test with the built query and the given
-     * expected query
+     * Build the query from the list of FormColumnQueryPart and the list of FormFilterQueryPart and make the test with the built query and the given expected
+     * query
      * 
      * @param strQueryToFind
      *            The query to find

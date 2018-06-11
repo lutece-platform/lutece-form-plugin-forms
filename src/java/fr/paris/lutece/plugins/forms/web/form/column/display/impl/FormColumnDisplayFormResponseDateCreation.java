@@ -83,7 +83,8 @@ public class FormColumnDisplayFormResponseDateCreation extends AbstractFormColum
         Date dateFormResponseDateCreation = null;
         if ( formColumnCell != null )
         {
-            Object objFormResponseDateCreation = formColumnCell.getFormColumnCellValueByName( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
+            Object objFormResponseDateCreation = formColumnCell
+                    .getFormColumnCellValueByName( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
             if ( objFormResponseDateCreation != null )
             {
                 dateFormResponseDateCreation = (Date) objFormResponseDateCreation;

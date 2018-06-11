@@ -54,9 +54,9 @@ public final class MultiviewFormService
      */
     private MultiviewFormService( )
     {
-        
+
     }
-    
+
     /**
      * Return the singleton of the MultiviewFormService
      * 
@@ -66,7 +66,7 @@ public final class MultiviewFormService
     {
         return MultiviewFormServiceHolder._singleton;
     }
-    
+
     /**
      * Populate the given FormPanel with the information from the given list of FormColumns and FormFilters
      * 
@@ -108,7 +108,7 @@ public final class MultiviewFormService
 
         return formPanelDisplayActive;
     }
-    
+
     /**
      * Holder class which manage the singleton of the MultiviewFormService
      */

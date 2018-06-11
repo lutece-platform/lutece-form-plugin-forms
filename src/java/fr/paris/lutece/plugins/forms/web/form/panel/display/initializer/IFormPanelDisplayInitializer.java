@@ -58,8 +58,8 @@ public interface IFormPanelDisplayInitializer
     void setFormPanelInitializer( IFormPanelInitializer formPanelInitializer );
 
     /**
-     * Build the FormParameters associated to the FormPanelDisplayInitializer. This method will retrieve from the request all the necessary information for
-     * the current IFormPanelDisplayInitializer and create a FormParameters object.
+     * Build the FormParameters associated to the FormPanelDisplayInitializer. This method will retrieve from the request all the necessary information for the
+     * current IFormPanelDisplayInitializer and create a FormParameters object.
      * 
      * @param request
      *            The request use to build the FormParameters for the FormPanelDisplayInitializer

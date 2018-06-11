@@ -79,28 +79,28 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 {
     // Generated serial UID
     private static final long serialVersionUID = 2122079505317782087L;
-    
+
     // Templates
     private static final String TEMPLATE_FORMS_MULTIVIEW = "admin/plugins/forms/multiview/forms_multiview.html";
 
     // Properties
     private static final String PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE = "forms.multiviewForms.pageTitle";
-    
+
     // JSP URL
     private static final String JSP_FORMS_MULTIVIEW = "jsp/admin/plugins/forms/MultiviewForms.jsp";
-    
+
     // Constants
     private static final String BASE_SORT_URL_PATTERN = JSP_FORMS_MULTIVIEW + "?current_selected_panel=%s";
-    
+
     // Views
     private static final String VIEW_MULTIVIEW_FORMS = "view_multiview_forms";
-    
+
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_SORT_COLUMN_POSITION = "column_position";
     private static final String PARAMETER_SORT_ATTRIBUTE_NAME = "sorted_attribute_name";
     private static final String PARAMETER_SORT_ASC_VALUE = "asc_sort";
-    
+
     // Marks
     private static final String MARK_LOCALE = "locale";
     private static final String MARK_PAGINATOR = "paginator";
@@ -117,12 +117,12 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private transient List<IFormPanelDisplay> _listFormPanelDisplay;
     private transient IFormPanelDisplay _formPanelDisplayActive;
     private transient FormResponseItemComparatorConfig _formResponseItemComparatorConfig;
-    
+
     /**
      * Return the view with the responses of all the forms
      * 
      * @param request
-     *          The request on which to retrieve informations
+     *            The request on which to retrieve informations
      * @return the view associated to the responses value of all forms
      */
     @View( value = VIEW_MULTIVIEW_FORMS, defaultView = true )
@@ -161,8 +161,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Add the template of column to the model
         String strSortUrl = String.format( BASE_SORT_URL_PATTERN, _strSelectedPanelTechnicalCode );
         List<FormResponseItem> listFormResponseItemToDisplay = buildFormResponseItemListToDisplay( );
-        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, listFormResponseItemToDisplay, getLocale( ),
-                strSortUrl );
+        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, listFormResponseItemToDisplay, getLocale( ), strSortUrl );
         model.put( MARK_TABLE_TEMPLATE, strTableTemplate );
 
         // Add the list of all form panel
@@ -171,7 +170,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW, model );
     }
-    
+
     /**
      * Return the boolean which tell if the session is lost
      * 
@@ -182,7 +181,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         return _listFormColumn == null || _listFormFilterDisplay == null || _listFormColumnDisplay == null || _listFormPanelDisplay == null
                 || _formPanelDisplayActive == null;
     }
-    
+
     /**
      * Return the boolean which tell if the pagination and the sort are not used
      * 
@@ -194,7 +193,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     {
         return request.getParameter( PARAMETER_PAGE_INDEX ) == null && request.getParameter( PARAMETER_SORT_COLUMN_POSITION ) == null;
     }
-    
+
     /**
      * Build the list of all columns, filters and forms panels and all of their display equivalents
      * 
@@ -213,7 +212,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
         _listFormPanelDisplay = new FormPanelDisplayFactory( ).createFormPanelDisplayList( request, listFormPanel );
     }
-    
+
     /**
      * Retrieve the technical code of the selected panel and change the value of the previous selected one if it wasn't the same and reset the pagination in
      * this case
@@ -231,10 +230,9 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             }
         }
     }
-    
+
     /**
-     * Build all the form panels by building their template and retrieve the data of their columns for the given list of filter and the specified text to
-     * search
+     * Build all the form panels by building their template and retrieve the data of their columns for the given list of filter and the specified text to search
      */
     private void buildFormPanelDisplayWithData( )
     {
@@ -259,7 +257,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             formPanelDisplay.buildTemplate( getLocale( ) );
         }
     }
-    
+
     /**
      * Sort the given list of FormResponseItem from the values contains in the request
      * 
@@ -281,7 +279,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             Collections.sort( listFormResponseItem, formResponseItemComparator );
         }
     }
-    
+
     /**
      * Build the configuration to use for sort the FormResponseItem with the information from the request
      * 
@@ -300,7 +298,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         _formResponseItemComparatorConfig = new FormResponseItemComparatorConfig( nColumnToSortPosition, strSortKey, bAscSort );
     }
-    
+
     /**
      * Build the url to use for the pagination
      * 
@@ -310,10 +308,10 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     {
         UrlItem url = new UrlItem( JSP_FORMS_MULTIVIEW );
         url.addParameter( FormsConstants.PARAMETER_CURRENT_SELECTED_PANEL, _strSelectedPanelTechnicalCode );
-        
+
         return url.getUrl( );
     }
-    
+
     /**
      * Build the list of FormResponseItem to display for the active FormPanelDisplay based on the number of items of the current paginator
      * 

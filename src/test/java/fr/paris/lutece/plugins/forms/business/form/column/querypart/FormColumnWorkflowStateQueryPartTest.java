@@ -81,7 +81,8 @@ public class FormColumnWorkflowStateQueryPartTest extends LuteceTestCase
     public void testgetFormColumnCellWorkflowState( )
     {
         String strWorkflowStateValueToRetrieve = "workflow state";
-        DAOUtil daoUtil = new DAOUtilMock( StringUtils.EMPTY, FormMultiviewWorkflowStateNameConstants.COLUMN_WORKFLOW_STATE_NAME, strWorkflowStateValueToRetrieve );
+        DAOUtil daoUtil = new DAOUtilMock( StringUtils.EMPTY, FormMultiviewWorkflowStateNameConstants.COLUMN_WORKFLOW_STATE_NAME,
+                strWorkflowStateValueToRetrieve );
 
         IFormColumn formColumn = new FormColumnWorkflowState( 1, "Workflow State" );
         FormColumnWorkflowStateQueryPart formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateQueryPart( );
