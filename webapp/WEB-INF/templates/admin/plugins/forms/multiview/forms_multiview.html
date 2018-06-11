@@ -1,0 +1,39 @@
+<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' class2='form-inline'>
+<#include "includes/include_manage_multiview_forms_header.html">
+<div class="tab-content">
+    <@columns>
+        <div class="box box-forms-tab-content">
+            <div class="box-header">
+                <h3 class="box-title"></h3>
+            </div>
+            <#if table_template?has_content>
+                <div id="multi-form-list" class="box-body table-responsive forms">
+				    ${table_template}
+                    <div class="col-xs-12">
+                        <@paginationAdmin paginator=paginator combo=1 showcount=1 form=0 />
+                    </div>
+                </div>
+            <#else>
+                <div id="multiview-no-forms">
+                    <h2 class="text-muted">#i18n{forms.multiviewForms.noFormResponses}</h2>
+                    <img class="img-responsive" src="images/admin/skin/plugins/forms/multiview/no_form_responses.jpg" alt="#i18n{forms.multiviewForms.noFormResponses}" title="">
+                </div>
+            </#if>
+        </div>
+        <script src="js/plugins/forms/multiview/forms-multiview.js"></script>
+    </@columns>
+</div>
+</@tform>
+
+<script>
+$( document ).ready(function() {
+    $( "#forms_id_form" ).change( function( ) 
+    {
+        // reinit workflow states 
+        $( "#forms_id_state_workflow" ).find( "option" ).remove( );
+
+        // submit to get new states
+        $( "#searchForm" ).submit( ) ;
+    });
+});
+</script>
