@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
@@ -132,7 +133,7 @@ public final class FormsEntryUtils
     }
 
     /**
-     * Build a reference list whith the different entry types excluding Group and MyLuteceUser
+     * Build a reference list with the different entry types excluding Group and MyLuteceUser
      * 
      * @return reference list of entry type
      */
@@ -150,5 +151,26 @@ public final class FormsEntryUtils
         }
 
         return refListEntryType;
+    }
+
+    /**
+     * Build a list with the different entry types excluding Group and MyLuteceUser
+     * 
+     * @return list of entry type
+     */
+    public static List<EntryType> initListEntryType( )
+    {
+        List<EntryType> listEntryType = new ArrayList<EntryType>( );
+        List<EntryType> listRefEntryType = EntryTypeHome.getList( FormsPlugin.PLUGIN_NAME );
+
+        for ( EntryType entryType : listRefEntryType )
+        {
+            if ( !entryType.getGroup( ) && !entryType.getMyLuteceUser( ) )
+            {
+                listEntryType.add( entryType );
+            }
+        }
+
+        return listEntryType;
     }
 }
