@@ -20,10 +20,17 @@
                                 <div class="clearfix"></div>
                                 <@table>
                                     <tr>
-                                        <th class="col-sm-1"><@fieldInputRadioBox 'forms.manage_questions.selectRootLevel' 'id_parent' '0' false true /></th>
+                                        <th class="col-sm-1"></th>
                                         <th class="col-sm-7">#i18n{forms.manage_questions.columnTitle}</th>
                                         <th class="col-sm-1">#i18n{forms.manage_questions.columnType}</th>
                                         <th class="col-sm-3">#i18n{forms.manage_questions.columnAction}</th>
+                                    </tr>
+                                    <tr>
+                                        <td><@fieldInputRadioBox 'forms.manage_questions.selectRootLevel' 'id_parent' '0' false true /></td>
+                                        <td class="col-sm-8"><h4>#i18n{forms.manage_questions.rootlevel.label}</h4></td>
+                                        <td class="col-sm-1">
+                                            #i18n{forms.manage_questions.type.step.label}                                             
+                                        </td>
                                     </tr>
                                     <#list composite_list as composite>
                                         <tr>
@@ -39,12 +46,7 @@
                                                         <#if indent_has_next>
                                                             <@icon style='' class='fa-padded'/>
                                                         <#else>
-                                                            <#if composite.type == 'group'>
-                                                                <@icon style='indent' class='fa-padded'/>
-                                                            <#else>
-                                                                <@icon style='arrow-circle-right' class='fa-padded'/>
-                                                            </#if>  
-                                                            
+                                                                <@icon style='${composite.icon!}' class='fa-padded'/>                                                            
                                                         </#if>
                                                     </#if>
                                                 </#list>    
@@ -60,7 +62,7 @@
                                                 <#if composite.type == 'group'>
                                                     <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyGroup}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
                                                 <#else>
-                                                    <@aButton href='' title='#i18n{forms.manage_questions.action.modifyQuestion}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
+                                                    <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyQuestion}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
                                                 </#if>
                                                     <@aButton href='' title='#i18n{forms.manage_questions.action.removeQuestion}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' /> 
                                             </td>

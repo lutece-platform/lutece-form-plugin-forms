@@ -7,6 +7,7 @@ import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.util.ArrayList;
@@ -27,10 +28,13 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     private static final String GROUP_TEMPLATE = "/skin/plugins/forms/composite_template/view_group.html";
     private static final String GROUP_TITLE_MARKER = "groupTitle";
     private static final String GROUP_CONTENT_MARKER = "groupContent";
+    private static final String PROPERTY_COMPOSITE_GROUP_ICON = "forms.composite.group.icon";
+    private static final String DEFAULT_GROUP_ICON  = "indent";
 
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private Group _group;
     private FormDisplay _formDisplay;
+    private String _strIconName;
 
     @Override
     public void initComposite( FormDisplay formDisplay )
@@ -38,6 +42,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         if ( !StringUtils.isEmpty( formDisplay.getCompositeType( ) ) )
         {
             _group = GroupHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
+            _strIconName = AppPropertiesService.getProperty( PROPERTY_COMPOSITE_GROUP_ICON, DEFAULT_GROUP_ICON );
         }
 
         List<FormDisplay> formDisplayList = FormDisplayHome.getFormDisplayListByParent( formDisplay.getStepId( ), formDisplay.getId( ) );
@@ -111,5 +116,17 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     public FormDisplay getFormDisplay( )
     {
         return _formDisplay;
+    }
+
+    @Override
+    public String getIcon( )
+    {
+        return _strIconName;
+    }
+
+    @Override
+    public void setIcon( String strIconName )
+    {
+        _strIconName = strIconName;
     }
 }

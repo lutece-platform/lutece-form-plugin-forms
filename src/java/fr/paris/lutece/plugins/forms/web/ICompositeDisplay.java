@@ -61,4 +61,17 @@ public interface ICompositeDisplay
      */
     FormDisplay getFormDisplay( );
 
+    /**
+     * @return the icon name
+     */
+    String getIcon( );
+
+
+    /**
+     * @param strIconName
+     *            the icon name to set
+     */
+    void setIcon( String strIconName );
+
+
 }

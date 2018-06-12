@@ -28,11 +28,17 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     private Question _question;
     private FormDisplay _formDisplay;
+    private String _strIconName;
 
     @Override
     public void initComposite( FormDisplay formDisplay )
     {
         _question = QuestionHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
+        if ( _question.getEntry( ) != null && _question.getEntry( ).getEntryType( ) != null )
+        {
+            _strIconName = _question.getEntry( ).getEntryType( ).getIconName( );
+        }
+
     }
 
     @Override
@@ -86,21 +92,28 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         return _question != null ? CompositeDisplayType.QUESTION.getLabel( ) : StringUtils.EMPTY;
     }
 
-    /**
-     * @return the formDisplay
-     */
+    @Override
     public FormDisplay getFormDisplay( )
     {
         return _formDisplay;
     }
 
-    /**
-     * @param formDisplay
-     *            the formDisplay to set
-     */
+    @Override
     public void setFormDisplay( FormDisplay formDisplay )
     {
         _formDisplay = formDisplay;
+    }
+
+    @Override
+    public String getIcon( )
+    {
+        return _strIconName;
+    }
+
+    @Override
+    public void setIcon( String strIconName )
+    {
+        _strIconName = strIconName;
     }
 
 }

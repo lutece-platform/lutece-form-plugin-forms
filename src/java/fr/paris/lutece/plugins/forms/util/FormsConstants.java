@@ -49,8 +49,11 @@ public final class FormsConstants
     public static final String MARK_COMPOSITE_LIST = "composite_list";
     public static final String MARK_ENTRY_TYPE_REF_LIST = "entry_type_list";
     public static final String MARK_ENTRY = "entry";
+    public static final String MARK_ID_ENTRY = "id_entry";
     public static final String MARK_ID_PARENT = "id_parent";
     public static final String MARK_GROUP = "group";
+    public static final String MARK_QUESTION = "question";
+    public static final String MARK_ID_QUESTION = "id_question";
 
     // Parameters
     public static final String PARAMETER_ID_FORM = "id_form";
@@ -68,6 +71,7 @@ public final class FormsConstants
     public static final String PARAMETER_ID_DISPLAY_PARENT = "id_parent";
     public static final String PARAMETER_ID_ENTRY_TYPE = "id_type";
     public static final String PARAMETER_ID_GROUP = "id_group";
+    public static final String PARAMETER_ID_QUESTION = "id_question";
 
     // Jsp
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
@@ -77,6 +81,8 @@ public final class FormsConstants
     // Properties
     public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "entrytype.myluteceuserattribute.attributes.list";
     public static final String CONSTANT_MYLUTECE_ATTRIBUTE_I18N_PREFIX = "forms.entrytype.myluteceuserattribute.attribute.";
+    // Markers
+    public static final String MARK_FIELD = "field";
 
     /**
      * Default private constructor. Do not call
