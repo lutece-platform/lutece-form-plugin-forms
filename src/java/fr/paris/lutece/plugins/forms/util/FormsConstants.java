@@ -34,6 +34,8 @@
 
 package fr.paris.lutece.plugins.forms.util;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 /**
  * 
  * Constants class for the plugin-form
@@ -73,6 +75,9 @@ public final class FormsConstants
     public static final String PARAMETER_ID_GROUP = "id_group";
     public static final String PARAMETER_ID_QUESTION = "id_question";
 
+    public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
+    public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
+
     // Jsp
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
     public static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
@@ -83,6 +88,11 @@ public final class FormsConstants
     public static final String CONSTANT_MYLUTECE_ATTRIBUTE_I18N_PREFIX = "forms.entrytype.myluteceuserattribute.attribute.";
     // Markers
     public static final String MARK_FIELD = "field";
+
+    // Constants
+    public static final int DEFAULT_FILTER_VALUE = NumberUtils.INTEGER_MINUS_ONE;
+    public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
+    public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
 
     /**
      * Default private constructor. Do not call

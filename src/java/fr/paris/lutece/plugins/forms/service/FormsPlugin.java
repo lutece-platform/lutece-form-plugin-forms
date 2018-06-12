@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2018, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,14 +33,16 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 
 import java.io.Serializable;
 
 /**
  * class FormPlugin
  */
-public class FormsPlugin extends PluginDefaultImplementation implements Serializable
+public final class FormsPlugin extends PluginDefaultImplementation implements Serializable
 {
 
     /** The Constant PLUGIN_NAME. */
@@ -48,4 +50,21 @@ public class FormsPlugin extends PluginDefaultImplementation implements Serializ
 
     private static final long serialVersionUID = 363631628732516426L;
 
+    /**
+     * Constructor
+     */
+    private FormsPlugin( )
+    {
+        super( );
+    }
+
+    /**
+     * Return the plugin
+     *
+     * @return the plugin
+     */
+    public static Plugin getPlugin( )
+    {
+        return PluginService.getPlugin( PLUGIN_NAME );
+    }
 }
