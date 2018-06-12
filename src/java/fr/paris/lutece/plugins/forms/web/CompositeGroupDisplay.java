@@ -29,7 +29,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     private static final String GROUP_TITLE_MARKER = "groupTitle";
     private static final String GROUP_CONTENT_MARKER = "groupContent";
     private static final String PROPERTY_COMPOSITE_GROUP_ICON = "forms.composite.group.icon";
-    private static final String DEFAULT_GROUP_ICON  = "indent";
+    private static final String DEFAULT_GROUP_ICON = "indent";
 
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private Group _group;

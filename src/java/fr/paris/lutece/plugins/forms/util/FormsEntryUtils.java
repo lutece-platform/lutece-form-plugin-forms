@@ -109,7 +109,6 @@ public final class FormsEntryUtils
         return nIndex;
     }
 
-
     /**
      * Build a reference list with the different entry types excluding Group and MyLuteceUser
      * 

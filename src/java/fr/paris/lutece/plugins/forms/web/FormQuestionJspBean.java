@@ -119,8 +119,6 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private static final String MARK_IS_AUTHENTIFICATION_ENABLED = "is_authentification_enabled";
     private static final String MARK_LIST = "list";
 
-
-
     // Error messages
     private static final String ERROR_QUESTION_NOT_CREATED = "forms.error.question.notCreated";
     private static final String ERROR_GROUP_NOT_CREATED = "forms.error.group.notCreated";
@@ -132,7 +130,6 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private static final String INFO_QUESTION_UPDATED = "forms.info.question.updated";
     private static final String INFO_GROUP_UPDATED = "forms.info.group.updated";
     private static final String INFO_GROUP_CREATED = "forms.info.group.created";
-
 
     // Others
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
@@ -542,7 +539,6 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
     }
 
-
     /**
      * Gets the Question entry modification page
      * 
@@ -577,7 +573,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         }
 
         _question = QuestionHome.findByPrimaryKey( nIdQuestion );
-        
+
         _entry = EntryHome.findByPrimaryKey( _question.getIdEntry( ) );
 
         List<Field> listField = new ArrayList<Field>( _entry.getFields( ).size( ) );
@@ -624,7 +620,6 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         return getAdminPage( template.getHtml( ) );
     }
 
-
     /**
      * Perform the entry modification
      * 
@@ -634,7 +629,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
      */
     public String processQuestionUpdate( HttpServletRequest request )
     {
-        
+
         int nIdEntry = -1;
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
         int nIdStep = -1;
@@ -660,7 +655,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         {
             _question = QuestionHome.findByPrimaryKey( nIdQuestion );
         }
-        
+
         nIdEntry = _question.getIdEntry( );
         _entry = EntryHome.findByPrimaryKey( nIdEntry );
 
@@ -743,9 +738,11 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         {
             return strReturnUrl;
         }
-        return redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
+        return redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
+                _question.getId( ) );
 
     }
+
     /**
      * Gets the confirmation page of delete entry
      * 

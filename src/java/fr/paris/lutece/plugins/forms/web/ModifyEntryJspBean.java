@@ -83,13 +83,12 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
      * Right to manage forms
      */
     public static final String RIGHT_MANAGE_FORMS = "FORMS_MANAGEMENT";
-    
+
     /**
      * Serial version UID
      */
     private static final long serialVersionUID = 2261595222578282162L;
 
-    
     // templates
     private static final String TEMPLATE_CREATE_FIELD = "admin/plugins/forms/create_field.html";
     private static final String TEMPLATE_MODIFY_FIELD = "admin/plugins/forms/modify_field.html";
@@ -138,13 +137,10 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
     private static final String EMPTY_STRING = "";
     private static final String ANCHOR_LIST = "list";
 
-    
     private int _nIdEntry = -1;
     private Step _step;
     private Question _question;
     private Field _field;
-
-
 
     /* -------- Fields management ---------- */
 
@@ -159,15 +155,14 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
     public String getCreateField( HttpServletRequest request )
     {
 
-        
-        if ( !updateStepAndQuestion( request ) ) 
+        if ( !updateStepAndQuestion( request ) )
         {
             return getHomeUrl( request );
         }
 
         _nIdEntry = _question.getIdEntry( );
         Entry entry = EntryHome.findByPrimaryKey( _nIdEntry );
-        
+
         if ( ( ( _nIdEntry == -1 ) || ( entry == null ) )
                 || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, getUser( ) ) )
         {
@@ -216,14 +211,14 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
         Field field = null;
         Entry entry = null;
         String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
-        
-        if ( !updateStepAndQuestion( request ) ) 
+
+        if ( !updateStepAndQuestion( request ) )
         {
             return getHomeUrl( request );
         }
-        
+
         _nIdEntry = _question.getIdEntry( );
-        
+
         int nIdField = -1;
 
         if ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null )
@@ -282,18 +277,18 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
      *            The HTTP request
      * @return The URL to go after performing the action
      */
-    @Action( ACTION_CREATE_FIELD ) 
+    @Action( ACTION_CREATE_FIELD )
     public String doCreateField( HttpServletRequest request )
     {
 
         String strIdEntry = request.getParameter( FormsConstants.PARAMETER_ID_ENTRY );
         _nIdEntry = Integer.parseInt( strIdEntry );
-        
-        if ( !updateStepAndQuestion( request ) ) 
+
+        if ( !updateStepAndQuestion( request ) )
         {
             return getHomeUrl( request );
         }
-        
+
         Entry entry = new Entry( );
         entry.setIdEntry( _nIdEntry );
 
@@ -319,19 +314,19 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
      *            The HTTP request
      * @return The URL to go after performing the action
      */
-    @Action ( ACTION_MODIFY_FIELD )
+    @Action( ACTION_MODIFY_FIELD )
     public String doModifyField( HttpServletRequest request )
     {
         Field field = null;
-        
+
         String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
         int nIdField = -1;
 
-        if ( !updateStepAndQuestion( request ) ) 
+        if ( !updateStepAndQuestion( request ) )
         {
             return getHomeUrl( request );
         }
-        
+
         if ( strIdField != null )
         {
             try
@@ -349,15 +344,14 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
         {
             field = FieldHome.findByPrimaryKey( nIdField );
 
+            String strError = getFieldData( request, field, false );
 
-                String strError = getFieldData( request, field, false );
+            if ( strError != null )
+            {
+                return redirect( request, strError );
+            }
 
-                if ( strError != null )
-                {
-                    return redirect( request, strError );
-                }
-
-                FieldHome.update( field );
+            FieldHome.update( field );
 
         }
         else
@@ -375,14 +369,14 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
      *            The HTTP request
      * @return the html code to confirm
      */
-    @View ( value = VIEW_CONFIRM_REMOVE_FIELD )
+    @View( value = VIEW_CONFIRM_REMOVE_FIELD )
     public String getConfirmRemoveField( HttpServletRequest request )
     {
-        if ( !updateStepAndQuestion( request ) ) 
+        if ( !updateStepAndQuestion( request ) )
         {
             return getHomeUrl( request );
         }
-        
+
         if ( ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null )
                 || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, getUser( ) ) )
         {
@@ -390,7 +384,7 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
         }
 
         String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
-        
+
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_FIELD ) );
         url.addParameter( FormsConstants.PARAMETER_ID_FIELD, strIdField );
         url.addParameter( FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
@@ -407,17 +401,17 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
      *            The HTTP request
      * @return The URL to go after performing the action
      */
-    @Action ( ACTION_REMOVE_FIELD )
+    @Action( ACTION_REMOVE_FIELD )
     public String doRemoveField( HttpServletRequest request )
     {
         String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
         int nIdField = -1;
-        
-        if ( !updateStepAndQuestion( request ) ) 
+
+        if ( !updateStepAndQuestion( request ) )
         {
             return getHomeUrl( request );
         }
-        
+
         if ( ( strIdField == null )
                 || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, getUser( ) ) )
         {
@@ -452,25 +446,25 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
      *            The request
      * @return The next URL to redirect to
      */
-    @Action ( ACTION_MOVE_FIELD_UP )
+    @Action( ACTION_MOVE_FIELD_UP )
     public String doMoveFieldUp( HttpServletRequest request )
     {
         return doMoveField( request, true );
     }
-    
+
     /**
-     * Move a field  down
+     * Move a field down
      * 
      * @param request
      *            The request
      * @return The next URL to redirect to
      */
-    @Action ( ACTION_MOVE_FIELD_DOWN )
+    @Action( ACTION_MOVE_FIELD_DOWN )
     public String doMoveFieldDown( HttpServletRequest request )
     {
         return doMoveField( request, false );
     }
-    
+
     /**
      * Move a field up or down
      * 
@@ -492,11 +486,11 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
             return getHomeUrl( request );
         }
 
-        if ( !updateStepAndQuestion( request ) ) 
+        if ( !updateStepAndQuestion( request ) )
         {
             return getHomeUrl( request );
         }
-        
+
         try
         {
             nIdField = Integer.parseInt( strIdField );
@@ -610,7 +604,6 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
 
     }
 
-
     /**
      * Return the URL of the JSP manage questions
      * 
@@ -627,29 +620,30 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
 
         url.addParameter( FormsConstants.PARAMETER_ID_STEP, nIdStep );
         return redirect( request, url.getUrl( ) );
-        }
+    }
 
-
-    /** Update Step and Question session variables using request parameter question id
+    /**
+     * Update Step and Question session variables using request parameter question id
      * 
-     * @param request the request
+     * @param request
+     *            the request
      * 
      * @return false if any error occured
      */
-    private boolean updateStepAndQuestion ( HttpServletRequest request )
+    private boolean updateStepAndQuestion( HttpServletRequest request )
     {
         boolean bSuccess = true;
         int nIdStep = -1;
         int nIdQuestion = -1;
-        
+
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
         nIdQuestion = Integer.parseInt( strIdQuestion );
-        
-        if (  StringUtils.isBlank( strIdQuestion ) || ( nIdQuestion == -1 ) )
+
+        if ( StringUtils.isBlank( strIdQuestion ) || ( nIdQuestion == -1 ) )
         {
-            bSuccess = false; 
+            bSuccess = false;
         }
-        
+
         if ( ( _question == null ) || ( _question.getId( ) != nIdQuestion ) )
         {
             _question = QuestionHome.findByPrimaryKey( nIdQuestion );
@@ -658,14 +652,14 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
         nIdStep = _question.getIdStep( );
         if ( nIdStep == -1 )
         {
-            bSuccess = false; 
+            bSuccess = false;
         }
-        
+
         if ( ( _step == null ) || ( _step.getId( ) != nIdStep ) )
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
-        
+
         return bSuccess;
     }
 }

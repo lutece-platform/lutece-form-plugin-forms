@@ -66,12 +66,10 @@ public interface ICompositeDisplay
      */
     String getIcon( );
 
-
     /**
      * @param strIconName
      *            the icon name to set
      */
     void setIcon( String strIconName );
-
 
 }
