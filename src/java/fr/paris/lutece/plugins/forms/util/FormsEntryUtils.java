@@ -41,7 +41,6 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.plugins.genericattributes.business.EntryTypeHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.util.ReferenceList;
 
 /**
@@ -110,27 +109,6 @@ public final class FormsEntryUtils
         return nIndex;
     }
 
-    /**
-     * Return true if the field which key is specified in parameter is in the response list
-     * 
-     * @param nIdField
-     *            the id of the field who is search
-     * @param listResponse
-     *            the list of object Response
-     * @return true if the field which key is specified in parameter is in the response list
-     */
-    public static Boolean isFieldInTheResponseList( int nIdField, List<Response> listResponse )
-    {
-        for ( Response response : listResponse )
-        {
-            if ( ( response.getField( ) != null ) && ( response.getField( ).getIdField( ) == nIdField ) )
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
 
     /**
      * Build a reference list with the different entry types excluding Group and MyLuteceUser

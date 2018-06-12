@@ -2,59 +2,59 @@
 <@row>
     <@columns>
         <@box color='primary'>
-            <@boxHeader title='#i18n{form.createEntry.titleQuestion} : "${form.title}"' />
+            <@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
             <@boxBody>
                 <@tform method="post" name="manage_entries" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
                     <fieldset>
-                        <legend class="sr-only">#i18n{form.createEntry.titleQuestion} : '${form.title}'</legend>
+                        <legend class="sr-only">#i18n{forms.createEntry.titleQuestion} : '${form.title}'</legend>
                         <input name="id_type" value="${entry.entryType.idType}" type="hidden">
                         <#if entry.fieldDepend?exists>
                                 <input name="id_field" value="${entry.fieldDepend.idField}" type="hidden">
                         </#if>
                         <input name="id_parent" value="${id_parent!'0'}" type="hidden">
                         <input name="id_step" value="${step.id!'0'}" type="hidden">
-                        <@formGroup labelFor='type' labelKey='#i18n{form.createEntry.labelType}'>
+                        <@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
                             <@input type='text' name='type' id='type' readonly=true disabled=true value='${entry.entryType.title}' />
                         </@formGroup>
-                        <@formGroup labelFor='title' labelKey='#i18n{form.createEntry.labelTitle}' helpKey='#i18n{form.createEntry.labelTitleComment}' mandatory=true>
+                        <@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
                             <@input type='text' name='title' id='title' value='' maxlength=255 />
                         </@formGroup>
-                        <@formGroup labelFor='help_message' labelKey='#i18n{form.createEntry.labelHelpMessage}' helpKey='#i18n{form.createEntry.labelHelpMessageComment}'>
+                        <@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
                             <@input type='textarea' name='help_message' id='help_message' rows=2></@input>
                         </@formGroup>
-                        <@formGroup labelFor='comment' labelKey='#i18n{form.createEntry.labelComment}'>
+                        <@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
                             <@input type='textarea' name='comment' id='comment' rows=2></@input>
                         </@formGroup>
-                        <@formGroup labelFor='value' labelKey='#i18n{form.createEntry.labelValueDefault}'>
+                        <@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
                             <@input type='text' name='value' id='value' />
                         </@formGroup>
-                        <@formGroup labelFor='mandatory' labelKey='#i18n{form.createEntry.labelMandatory}'>
+                        <@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
                             <@checkBox name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
                         </@formGroup>
-                        <@formGroup labelFor='errorMessage' labelKey='#i18n{form.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{form.createEntry.labelMandatoryErrorMessageHelp}'>
+                        <@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}'>
                             <@input type='textarea' name='errorMessage' id='errorMessage' rows=2></@input>
                         </@formGroup>
-                        <@formGroup labelFor='width' labelKey='#i18n{form.createEntry.labelWidth}' mandatory=true>
+                        <@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
                             <@input type='text' name='width' id='width' value=getName('width_text',list_param_default_values) />
                         </@formGroup>
-                        <@formGroup labelFor='max_size_enter' labelKey='#i18n{form.createEntry.labelMaxSizeEnter}'>
+                        <@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
                             <@input type='text' name='max_size_enter' id='max_size_enter' value=getName('max_size_enter',list_param_default_values) />
                         </@formGroup>
                         <@formGroup>
-                            <@checkBox labelFor='confirm_field' labelKey='#i18n{form.createEntry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' params='onchange="javascript:changeVisilityConfirmFieldTitle();"' />
+                            <@checkBox labelFor='confirm_field' labelKey='#i18n{forms.createEntry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' params='onchange="javascript:changeVisilityConfirmFieldTitle();"' />
                         </@formGroup>
-                        <@formGroup labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{form.createEntry.labelConfirmFieldTitle}' >
+                        <@formGroup labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.createEntry.labelConfirmFieldTitle}' >
                             <@input type='text' name='confirm_field_title' id='confirm_field_title' maxlength=255 />
                         </@formGroup>
                         <@formGroup>
-                            <@checkBox labelFor='unique_field' labelKey='#i18n{form.createEntry.labelUniqueField}' name='unique_field' id='unique_field' value='1' />
+                            <@checkBox labelFor='unique_field' labelKey='#i18n{forms.createEntry.labelUniqueField}' name='unique_field' id='unique_field' value='1' />
                         </@formGroup>
-                        <@formGroup labelFor='css_class' labelKey='#i18n{form.createEntry.labelCSSClass}' helpKey='#i18n{form.createEntry.labelCSSClassComment}'>
+                        <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
                             <@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
                         </@formGroup>
                         <@formGroup>
-                            <@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{form.modifyEntry.buttonSave}' showTitleXs=false size='' />
-                            <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{form.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />
+                            <@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
+                            <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />
                         </@formGroup>
                     </fieldset>
                 </@tform>

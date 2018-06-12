@@ -1,0 +1,44 @@
+<@row>
+	<@columns>
+		<@box color='primary'>
+			<@boxHeader title='#i18n{forms.createField.title} : "${field.parentEntry.title}"' />
+			<@boxBody>
+        <fieldset>
+					<legend class="sr-only">#i18n{forms.createField.title} : "${field.parentEntry.title}"</legend>
+					<@tform action='jsp/admin/plugins/forms/ModifyEntry.jsp'>
+					<input name="id_step" value="${question.idStep}" type="hidden" />
+                    <input name="id_question" value="${question.id}" type="hidden" />
+                    <input name="id_entry" value="${id_entry}" type="hidden" />
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
+							<@input type='text' name='title' id='title' value='' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='value' labelKey='#i18n{forms.createField.labelValue}' mandatory=true>
+							<@input type='text' name='value' id='value' value='' />
+						</@formGroup>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.createField.labelComment}'>
+							<@input type='textarea' name='comment' id='comment'></@input>
+						</@formGroup>
+						<@formGroup>
+							<@checkBox name='default_value' value='1' labelKey='#i18n{forms.createField.labelDefaultValue}' />
+						</@formGroup>
+						<#if option_no_display_title>
+							<@formGroup>
+								<#if field.noDisplayTitle><#assign checked = true /></#if>
+								<@checkBox name='no_display_title' value='1' checked=checked labelKey='#i18n{forms.createField.labelNoDisplayTitle}' />
+							</@formGroup>
+						</#if>
+						<#if field.parentEntry.roleAssociated && role_list?exists >
+							<@formGroup labelFor='role' labelKey='#i18n{forms.createField.labelRole}' helpKey='#i18n{forms.createFiled.labelRoleComment}'>
+								<@select name='role_key' default_value='none' items=role_list />
+							</@formGroup>
+						</#if>
+						<@formGroup>
+							<@button type='submit' name='action_createField' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false />
+							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' showTitle=false color='btn-secondary' />
+						</@formGroup>
+					</@tform>
+        </fieldset>
+			</@boxBody>
+		</@box>
+	</@columns>
+ </@row>

@@ -1,0 +1,37 @@
+<@row>
+	<@columns>
+		<@box color='primary'>
+			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}' />
+			<@boxBody>
+				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+					<fieldset>
+						<legend class="sr-only">#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}</legend>
+                    <input name="id_entry" value="${entry.idEntry}" type="hidden" />
+                    <input name="id_step" value="${step.id}" type="hidden" />
+                    <input name="id_question" value="${question.id}" type="hidden" />
+						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+							<@input type='text' name='type' id='type' readonly=true disabled=true value='${entry.entryType.title}' />
+						</@formGroup>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+							<@input type='text' name='title' id='title' value=entry.title maxlength=255 />
+						</@formGroup>
+						<#if entry.fields?? && entry.fields?has_content>
+							<#assign prefix = "">
+							<#if entry.fields[0].title??>
+									<#assign prefix = entry.fields[0].title>
+							</#if>
+							<@formGroup labelFor='prefix' labelKey='#i18n{forms.createEntry.labelPrefix}' helpKey='#i18n{forms.createEntry.labelPrefixComment}'>
+								<@input type='text' name='prefix' value=prefix maxlength=255 />
+							</@formGroup>
+						</#if>
+						<@formGroup>
+							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
+							<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' showTitleXs=false size='' />
+							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />
+						</@formGroup>
+					</fieldset>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
