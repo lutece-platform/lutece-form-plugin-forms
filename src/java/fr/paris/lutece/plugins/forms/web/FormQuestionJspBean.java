@@ -458,8 +458,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     {
         String strReturnUrl = processQuestionCreation( request );
 
-        // TODO : redirect to modifyQuestion view
-        return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+        return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
 
     }
 
@@ -514,23 +513,23 @@ public class FormQuestionJspBean extends MVCAdminJspBean
             }
         }
 
-        Question formQuestion = new Question( );
+        _question = new Question( );
         String strTitle = _entry.getEntryType( ).getComment( ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
-        formQuestion.setTitle( strTitle );
-        formQuestion.setDescription( _entry.getComment( ) );
-        formQuestion.setIdEntry( _entry.getIdEntry( ) );
-        formQuestion.setIdStep( nIdStep );
-        QuestionHome.create( formQuestion );
+        _question.setTitle( strTitle );
+        _question.setDescription( _entry.getComment( ) );
+        _question.setIdEntry( _entry.getIdEntry( ) );
+        _question.setIdStep( nIdStep );
+        QuestionHome.create( _question );
 
         int nDisplayDepth = getDisplayDepthFromParent( nParentGroup );
 
-        if ( formQuestion.getId( ) != -1 )
+        if ( _question.getId( ) != -1 )
         {
             FormDisplay formDisplay = new FormDisplay( );
             formDisplay.setFormId( _step.getIdForm( ) );
             formDisplay.setStepId( nIdStep );
             formDisplay.setParentId( nParentGroup );
-            formDisplay.setCompositeId( formQuestion.getId( ) );
+            formDisplay.setCompositeId( _question.getId( ) );
             formDisplay.setCompositeType( CompositeDisplayType.QUESTION.getLabel( ) );
             formDisplay.setDepth( nDisplayDepth );
             FormDisplayHome.create( formDisplay );
