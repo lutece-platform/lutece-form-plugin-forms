@@ -69,9 +69,10 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
     public Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request )
     {
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
-        
+
         int nIdForm = NumberUtils.toInt( request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ), DEFAULT_FORM_VALUE );
-        int nIdPreviousForm = NumberUtils.toInt( request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM ), DEFAULT_PREVIOUS_FORM_VALUE );
+        int nIdPreviousForm = NumberUtils.toInt( request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM ),
+                DEFAULT_PREVIOUS_FORM_VALUE );
         String strIdWorkflowState = request.getParameter( PARAMETER_ID_WORKFLOW_STATE );
 
         if ( nIdForm != nIdPreviousForm )
@@ -83,9 +84,9 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
         {
             mapFilterNameValues.put( FormMultiviewWorkflowStateNameConstants.FILTER_ID_WORKFLOW_STATE, strIdWorkflowState );
         }
-        
+
         setValue( strIdWorkflowState );
-        
+
         return mapFilterNameValues;
     }
 
