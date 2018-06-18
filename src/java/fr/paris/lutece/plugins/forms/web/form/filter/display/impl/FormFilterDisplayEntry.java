@@ -71,7 +71,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
     private static final String DEFAULT_ENTRY_VALUE = StringUtils.EMPTY;
     private static final String PARAMETER_ENTRY_VALUE_PATTERN = "multiview_entry_value_%s";
     private static final String ENTRY_RESPONSE_VALUE_ATTRIBUTE = "responseValue";
-    private static final String FORM_RESOURCE_TYPE = "FORMS_FORM";
+    private static final String FORM_RESOURCE_TYPE = Form.RESOURCE_TYPE;
 
     /**
      * {@inheritDoc}

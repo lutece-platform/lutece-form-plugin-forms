@@ -24,16 +24,3 @@
     </@columns>
 </div>
 </@tform>
-
-<script>
-$( document ).ready(function() {
-    $( "#forms_id_form" ).change( function( ) 
-    {
-        // reinit workflow states 
-        $( "#forms_id_state_workflow" ).find( "option" ).remove( );
-
-        // submit to get new states
-        $( "#searchForm" ).submit( ) ;
-    });
-});
-</script>
