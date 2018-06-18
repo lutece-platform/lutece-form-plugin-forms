@@ -458,7 +458,8 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     {
         String strReturnUrl = processQuestionCreation( request );
 
-        return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
+        return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ),
+                FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
 
     }
 
