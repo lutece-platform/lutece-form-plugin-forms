@@ -69,7 +69,6 @@ public class FormDisplayBusinessTest extends LuteceTestCase
         assertEquals( formDisplayStored.getStepId( ), formDisplay.getStepId( ) );
         assertEquals( formDisplayStored.getCompositeId( ), formDisplay.getCompositeId( ) );
         assertEquals( formDisplayStored.getParentId( ), formDisplay.getParentId( ) );
-        assertEquals( formDisplayStored.getDisplayOrder( ), formDisplay.getDisplayOrder( ) );
         assertEquals( formDisplayStored.getCompositeType( ), formDisplay.getCompositeType( ) );
         assertEquals( formDisplayStored.getDepth( ), formDisplay.getDepth( ) );
 
