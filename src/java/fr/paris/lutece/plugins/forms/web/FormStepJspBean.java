@@ -389,7 +389,7 @@ public class FormStepJspBean extends MVCAdminJspBean
         if ( _step != null )
         {
             int nIdForm = _step.getIdForm( );
-            
+
             if ( ( _form == null ) || ( _form.getId( ) != nIdForm ) )
             {
                 _form = FormHome.findByPrimaryKey( nIdForm );

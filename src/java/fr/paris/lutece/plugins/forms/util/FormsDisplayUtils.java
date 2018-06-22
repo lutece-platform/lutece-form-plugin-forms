@@ -68,10 +68,12 @@ public final class FormsDisplayUtils
         throw new AssertionError( );
     }
 
-    /** Utility method to rebuild the position sequence of a given FormDisplay list and update the objects in database
-     * The displayOrder field of the objects will be the corresponding list indexes.
+    /**
+     * Utility method to rebuild the position sequence of a given FormDisplay list and update the objects in database The displayOrder field of the objects will
+     * be the corresponding list indexes.
      * 
-     * @param listDisplay The List of FormDisplay to update
+     * @param listDisplay
+     *            The List of FormDisplay to update
      */
     public static void rebuildDisplayPositionSequence( List<FormDisplay> listDisplay )
     {
@@ -83,17 +85,20 @@ public final class FormsDisplayUtils
             FormDisplayHome.update( displayToUpdate );
         }
     }
-    
-    /** Utility Method to retrieve referenceList containing all the Displays of a given Step
-     * that could be a potential destination parent for the given FormDisplay.
-     * The ReferenceList begins with a first root level item, followed by all the relevant children displays of type "Group".
-     * If the Display to be moved is a group, this Display and its child groups will be excluded from the list
+
+    /**
+     * Utility Method to retrieve referenceList containing all the Displays of a given Step that could be a potential destination parent for the given
+     * FormDisplay. The ReferenceList begins with a first root level item, followed by all the relevant children displays of type "Group". If the Display to be
+     * moved is a group, this Display and its child groups will be excluded from the list
      * 
-     * @param nIdStep The Step identifier
+     * @param nIdStep
+     *            The Step identifier
      * 
-     * @param formDisplayToMove The Display to move.
+     * @param formDisplayToMove
+     *            The Display to move.
      * 
-     * @param locale The Locale
+     * @param locale
+     *            The Locale
      * 
      * @return a ReferenceList containing the Groups of the step
      */
@@ -102,7 +107,7 @@ public final class FormsDisplayUtils
         ReferenceList listGroupDisplay = new ReferenceList( );
 
         boolean bIsGroup = CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( formDisplayToMove.getCompositeType( ) );
-        
+
         listGroupDisplay.addItem( 0, I18nService.getLocalizedString( PROPERTY_ROOT_LEVEL_POSITION_LABEL, locale ) );
 
         if ( bIsGroup )
@@ -110,7 +115,7 @@ public final class FormsDisplayUtils
             for ( ReferenceItem display : FormDisplayHome.getGroupDisplayReferenceListByStep( nIdStep ) )
             {
                 int nDisplayId = NumberUtils.toInt( display.getCode( ) );
-                if( !isDescendantDisplay( nDisplayId, formDisplayToMove ) )
+                if ( !isDescendantDisplay( nDisplayId, formDisplayToMove ) )
                 {
                     listGroupDisplay.addItem( display.getCode( ), display.getName( ) );
                 }
@@ -120,30 +125,32 @@ public final class FormsDisplayUtils
         {
             listGroupDisplay.addAll( FormDisplayHome.getGroupDisplayReferenceListByStep( nIdStep ) );
         }
-        
+
         return listGroupDisplay;
     }
 
-    /** Return true if the provided FormDisplay identifier A is a descendant (a child, grandchild, great-grandchild, etc.) 
-     * of the second FormDisplay parameter
+    /**
+     * Return true if the provided FormDisplay identifier A is a descendant (a child, grandchild, great-grandchild, etc.) of the second FormDisplay parameter
      * 
-     * @param nDisplayId the FormDisplay identifier A
+     * @param nDisplayId
+     *            the FormDisplay identifier A
      * 
-     * @param formDisplay the FormDisplay B
+     * @param formDisplay
+     *            the FormDisplay B
      * 
      * @return true if A is a descendant of B
      */
     public static boolean isDescendantDisplay( int nDisplayId, FormDisplay formDisplay )
     {
         boolean bIsChild = false;
-        
-        if( nDisplayId == formDisplay.getId( ) )
+
+        if ( nDisplayId == formDisplay.getId( ) )
         {
             return true;
         }
-        
+
         List<FormDisplay> listFormDisplay = FormDisplayHome.getFormDisplayListByParent( formDisplay.getStepId( ), formDisplay.getId( ) );
-        
+
         for ( FormDisplay displayChild : listFormDisplay )
         {
             bIsChild = isDescendantDisplay( nDisplayId, displayChild );
@@ -155,16 +162,18 @@ public final class FormsDisplayUtils
         return bIsChild;
     }
 
-    /** Utility Method to retrieve the Move composite page title from a given FormDisplay
+    /**
+     * Utility Method to retrieve the Move composite page title from a given FormDisplay
      * 
-     * @param formDisplayToMove the FormDisplay
+     * @param formDisplayToMove
+     *            the FormDisplay
      * 
-     * @return the admin page title 
+     * @return the admin page title
      */
     public static String getDisplayTitle( FormDisplay formDisplayToMove )
     {
         String strDisplayTitle = StringUtils.EMPTY;
-        
+
         if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( formDisplayToMove.getCompositeType( ) ) )
         {
             Group groupToMove = GroupHome.findByPrimaryKey( formDisplayToMove.getCompositeId( ) );
@@ -186,8 +195,8 @@ public final class FormsDisplayUtils
     }
 
     /**
-     * Return a ReferenceList containing all the available positions within a given parent FormDisplay, in a given Step.
-     * Includes the position after the last element of the group.
+     * Return a ReferenceList containing all the available positions within a given parent FormDisplay, in a given Step. Includes the position after the last
+     * element of the group.
      * 
      * @param nIdStep
      *            the identifier of the Step
@@ -195,9 +204,11 @@ public final class FormsDisplayUtils
      * @param nIdDisplayGroup
      *            the identifier of the group DIsplay parent. Zero for the step root level
      *
-     * @param bAddPosition if true a position is added at the end of the list
+     * @param bAddPosition
+     *            if true a position is added at the end of the list
      * 
-     * @param locale The locale
+     * @param locale
+     *            The locale
      * 
      * @return the available positions sorted in a ReferenceList
      */
@@ -208,18 +219,16 @@ public final class FormsDisplayUtils
 
         listDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, nIdDisplayGroup );
 
-            for ( int i = 1 ; i <= listDisplay.size( ) ; i++ )
-            {
-                listAvailablePositions.addItem( i,
-                        I18nService.getLocalizedString( PROPERTY_POSITION_LABEL, locale ) + i );
-            }
-            if( bAddPosition )
-            {
-                int nPosition = listDisplay.size( ) + 1;
-                listAvailablePositions.addItem( nPosition,
-                        I18nService.getLocalizedString( PROPERTY_POSITION_LABEL, locale ) + nPosition );
-            }
-            
+        for ( int i = 1; i <= listDisplay.size( ); i++ )
+        {
+            listAvailablePositions.addItem( i, I18nService.getLocalizedString( PROPERTY_POSITION_LABEL, locale ) + i );
+        }
+        if ( bAddPosition )
+        {
+            int nPosition = listDisplay.size( ) + 1;
+            listAvailablePositions.addItem( nPosition, I18nService.getLocalizedString( PROPERTY_POSITION_LABEL, locale ) + nPosition );
+        }
+
         return listAvailablePositions;
     }
 
@@ -244,15 +253,19 @@ public final class FormsDisplayUtils
         }
         return nDisplayDepth;
     }
-    /** Update a given FormDisplay, and all its descendants by setting the provided depth and idStep values.
-     * Value of a children Depth is parent depth plus one.
+
+    /**
+     * Update a given FormDisplay, and all its descendants by setting the provided depth and idStep values. Value of a children Depth is parent depth plus one.
      * Value of a children idStep is same as parent idStep.
      * 
-     * @param formDisplayParent the parent Display
+     * @param formDisplayParent
+     *            the parent Display
      * 
-     * @param nDepth the parent depth value to set
+     * @param nDepth
+     *            the parent depth value to set
      * 
-     * @param nIdStep the parent idStep value to set
+     * @param nIdStep
+     *            the parent idStep value to set
      * 
      */
     public static void setChildrenDisplayDepthAndStep( FormDisplay formDisplayParent, int nDepth, int nIdStep )
@@ -262,10 +275,10 @@ public final class FormsDisplayUtils
         formDisplayParent.setStepId( nIdStep );
         formDisplayParent.setDepth( nDepth );
         FormDisplayHome.update( formDisplayParent );
-        
+
         List<FormDisplay> listChildDisplay = FormDisplayHome.getFormDisplayListByParent( nOldIdStep, formDisplayParent.getId( ) );
 
-        for( FormDisplay childDisplay : listChildDisplay )
+        for ( FormDisplay childDisplay : listChildDisplay )
         {
             setChildrenDisplayDepthAndStep( childDisplay, formDisplayParent.getDepth( ) + 1, nIdStep );
         }

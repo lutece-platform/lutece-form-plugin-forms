@@ -131,7 +131,6 @@ public final class FormDisplayHome
         return _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
     }
 
-
     /**
      * Load the data of all the FormDisplay objects of type "Group" linked to a given FormStep and returns them as a referenceList
      * 

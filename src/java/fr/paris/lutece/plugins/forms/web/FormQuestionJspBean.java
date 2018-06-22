@@ -131,8 +131,8 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private static final String MARK_LIST = "list";
     private static final String MARK_GROUP_VALIDATED = "groupValidated";
     private static final String MARK_STEP_VALIDATED = "stepValidated";
-    
-    //Parameters
+
+    // Parameters
     private static final String PARAMETER_VALUE_VALIDATE_STEP = "validateStep";
     private static final String PARAMETER_VALUE_VALIDATE_GROUP = "validateGroup";
 
@@ -154,8 +154,6 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     // Others
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
     private static final int INTEGER_MINUS_ONE = -1;
-
-
 
     private Step _step;
     private Form _form;
@@ -817,18 +815,18 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         boolean bGroupValidated = false;
 
         nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
-        
+
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
             getJspManageForm( request );
         }
-        
+
         if ( _formDisplayToMove == null || _formDisplayToMove.getId( ) != nIdDisplay )
         {
             _formDisplayToMove = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
         nTargetPosition = _formDisplayToMove.getDisplayOrder( );
-        
+
         String strIsStepValidated = request.getParameter( FormsConstants.PARAMETER_STEP_VALIDATED );
         if ( StringUtils.isNotBlank( strIsStepValidated ) )
         {
@@ -846,16 +844,17 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         if ( StringUtils.isNotBlank( strValidateButtonValue ) )
         {
             nTargetPosition = 1;
-            
+
             if ( PARAMETER_VALUE_VALIDATE_STEP.equals( strValidateButtonValue ) )
             {
                 bStepValidated = true;
                 bGroupValidated = false;
             }
-            else if ( PARAMETER_VALUE_VALIDATE_GROUP.equals( strValidateButtonValue ) && bStepValidated )
-            {
-                bGroupValidated = true;
-            }
+            else
+                if ( PARAMETER_VALUE_VALIDATE_GROUP.equals( strValidateButtonValue ) && bStepValidated )
+                {
+                    bGroupValidated = true;
+                }
         }
         else
         {
@@ -864,9 +863,9 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         }
 
         nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), -1 );
-        if( bStepValidated )
+        if ( bStepValidated )
         {
-            if( nIdStepTarget == INTEGER_MINUS_ONE )
+            if ( nIdStepTarget == INTEGER_MINUS_ONE )
             {
                 nIdStepTarget = _formDisplayToMove.getStepId( );
             }
@@ -883,9 +882,9 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         }
 
         nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), -1 );
-        if( bGroupValidated )
+        if ( bGroupValidated )
         {
-            if( nIdParentTarget == INTEGER_MINUS_ONE )
+            if ( nIdParentTarget == INTEGER_MINUS_ONE )
             {
                 nIdParentTarget = _formDisplayToMove.getParentId( );
             }
@@ -897,8 +896,9 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         ReferenceList listStepGroups = FormsDisplayUtils.getTargetGroupDisplayListByStep( nIdStepTarget, _formDisplayToMove, getLocale( ) );
 
         boolean bMoveToDifferentGroup = ( ( _formDisplayToMove.getParentId( ) != nIdParentTarget ) || ( _formDisplayToMove.getStepId( ) != nIdStepTarget ) );
-        ReferenceList listAvailablePositionsInParentGroup = FormsDisplayUtils.getlistAvailablePositionsInGroup( nIdStepTarget, nIdParentTarget, bMoveToDifferentGroup, getLocale( ) );
-        
+        ReferenceList listAvailablePositionsInParentGroup = FormsDisplayUtils.getlistAvailablePositionsInGroup( nIdStepTarget, nIdParentTarget,
+                bMoveToDifferentGroup, getLocale( ) );
+
         Map<String, Object> model = getModel( );
 
         model.put( FormsConstants.MARK_STEP, _step );
@@ -946,17 +946,17 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         boolean bGroupValidated = false;
 
         nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), -1 );
-        
+
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
             getJspManageForm( request );
         }
-        
+
         if ( _formDisplayToMove == null || _formDisplayToMove.getId( ) != nIdDisplay )
         {
             _formDisplayToMove = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
-        
+
         String strIsStepValidated = request.getParameter( FormsConstants.PARAMETER_STEP_VALIDATED );
         if ( StringUtils.isNotBlank( strIsStepValidated ) )
         {
@@ -968,28 +968,27 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         {
             bGroupValidated = BooleanUtils.toBoolean( strIsGroupValidated );
         }
-            
-        
+
         nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
         nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), INTEGER_MINUS_ONE );
         nDisplayOrderTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_DISPLAY_ORDER ), INTEGER_MINUS_ONE );
-        
+
         if ( ( nIdStepTarget == INTEGER_MINUS_ONE ) || ( nIdParentTarget == INTEGER_MINUS_ONE ) )
         {
             addError( ERROR_OCCURED_MOVING_COMPOSITE, getLocale( ) );
             return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _formDisplayToMove.getStepId( ) );
         }
 
-        if( nIdStepTarget != _nIdStepTarget )
+        if ( nIdStepTarget != _nIdStepTarget )
         {
             bStepValidated = false;
         }
-        
-        if( nIdParentTarget != _nIdParentTarget )
+
+        if ( nIdParentTarget != _nIdParentTarget )
         {
             bGroupValidated = false;
         }
-        
+
         if ( !( bStepValidated && bGroupValidated ) )
         {
             addError( ERROR_STEP_OR_GROUP_NOT_VALIDATED, getLocale( ) );
@@ -999,41 +998,41 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         moveDisplay( _formDisplayToMove, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget );
 
         addInfo( INFO_MOVE_COMPOSITE_SUCCESSFUL, getLocale( ) );
-        
+
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, nIdStepTarget );
     }
 
-    
-
-    /** Process the FormDisplay move:
-     * Update the idParent, idStep and depth of the display and all its descendants
-     * Rebuild the Position values of the Display and all its sibling inside Parent
-     * If move to a different group, rebuild the positions sequence within the origin group
+    /**
+     * Process the FormDisplay move: Update the idParent, idStep and depth of the display and all its descendants Rebuild the Position values of the Display and
+     * all its sibling inside Parent If move to a different group, rebuild the positions sequence within the origin group
      * 
-     * @param formDisplayToMove the FormDisplay to be moved
+     * @param formDisplayToMove
+     *            the FormDisplay to be moved
      * 
-     * @param nIdStepTarget the target Step identifier
+     * @param nIdStepTarget
+     *            the target Step identifier
      * 
-     * @param nIdParentTarget the target Parent Display identifier (0 if root level of the step ) 
+     * @param nIdParentTarget
+     *            the target Parent Display identifier (0 if root level of the step )
      * 
-     * @param nDisplayOrderTarget the target position within parent 
+     * @param nDisplayOrderTarget
+     *            the target position within parent
      */
-    private void moveDisplay( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget,
-            int nDisplayOrderTarget )
+    private void moveDisplay( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget, int nDisplayOrderTarget )
     {
         int nIdOriginStep = _formDisplayToMove.getStepId( );
         int nIdOriginParent = _formDisplayToMove.getParentId( );
         int nOriginDisplayOrder = _formDisplayToMove.getDisplayOrder( );
-        
+
         List<FormDisplay> listDisplayInTargetGroup = FormDisplayHome.getFormDisplayListByParent( nIdStepTarget, nIdParentTarget );
-        
+
         formDisplayToMove.setParentId( nIdParentTarget );
-        
+
         int nTargetDepth = FormsDisplayUtils.getDisplayDepthFromParent( nIdParentTarget );
-        //update the idStep and depth of the display and all its descendants
+        // update the idStep and depth of the display and all its descendants
         FormsDisplayUtils.setChildrenDisplayDepthAndStep( formDisplayToMove, nTargetDepth, nIdStepTarget );
 
-        //Rebuild the Position values of the Display and all its sibling inside Parent
+        // Rebuild the Position values of the Display and all its sibling inside Parent
         if ( !listDisplayInTargetGroup.isEmpty( ) )
         {
             // If move inside same group, first remove the Display from the list before adding it at the right index
@@ -1041,18 +1040,18 @@ public class FormQuestionJspBean extends MVCAdminJspBean
             {
                 listDisplayInTargetGroup.remove( nOriginDisplayOrder - 1 );
             }
-            listDisplayInTargetGroup.add( nDisplayOrderTarget - 1 , formDisplayToMove );
+            listDisplayInTargetGroup.add( nDisplayOrderTarget - 1, formDisplayToMove );
 
             FormsDisplayUtils.rebuildDisplayPositionSequence( listDisplayInTargetGroup );
         }
-        
+
         // If move to a different group, rebuild the positions sequence within the origin group
         if ( ( nIdOriginParent != nIdParentTarget ) || ( nIdOriginStep != nIdStepTarget ) )
         {
             List<FormDisplay> listDisplayInOriginGroup = FormDisplayHome.getFormDisplayListByParent( nIdOriginStep, nIdOriginParent );
             FormsDisplayUtils.rebuildDisplayPositionSequence( listDisplayInOriginGroup );
         }
-        
+
     }
 
     /**
