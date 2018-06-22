@@ -35,6 +35,8 @@
 package fr.paris.lutece.plugins.forms.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.util.ReferenceList;
+
 import java.util.List;
 
 /**
@@ -107,4 +109,16 @@ public interface IFormDisplayDAO
      * @return The list which contains the data of all the FormDisplay objects
      */
     List<FormDisplay> selectFormDisplayListByParent( int nIdStep, int nIdParent, Plugin plugin );
+
+    /**
+     * Load the data of all the FormDisplay objects of type "Group" linked to a given FormStep and returns them as a referenceList
+     * 
+     * @param nIdStep
+     *            the step identifier
+     * @param plugin
+     *            the plugin to use
+     * @return the referenceList which contains the data of all the Display objects of group type
+     */
+    ReferenceList selectGroupDisplayReferenceListByStep( int nIdStep, Plugin plugin );
+
 }

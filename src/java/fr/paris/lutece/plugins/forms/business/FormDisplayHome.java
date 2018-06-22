@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.util.ReferenceList;
 
 import java.util.List;
 
@@ -117,7 +118,7 @@ public final class FormDisplayHome
     }
 
     /**
-     * Load the data of all the formDisplay objects by parent and returns them as a list
+     * Load the data of all the formDisplay that are direct children of a given parent and returns them as a list
      * 
      * @param nIdStep
      *            The step primary key
@@ -128,6 +129,19 @@ public final class FormDisplayHome
     public static List<FormDisplay> getFormDisplayListByParent( int nIdStep, int nIdParent )
     {
         return _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
+    }
+
+
+    /**
+     * Load the data of all the FormDisplay objects of type "Group" linked to a given FormStep and returns them as a referenceList
+     * 
+     * @param nIdStep
+     *            the step identifier
+     * @return the referenceList which contains the data of all the Display objects of group type
+     */
+    public static ReferenceList getGroupDisplayReferenceListByStep( int nIdStep )
+    {
+        return _dao.selectGroupDisplayReferenceListByStep( nIdStep, _plugin );
     }
 
 }

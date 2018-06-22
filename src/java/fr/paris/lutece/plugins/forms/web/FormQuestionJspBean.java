@@ -35,6 +35,7 @@
 package fr.paris.lutece.plugins.forms.web;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsDisplayUtils;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
@@ -71,7 +72,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
@@ -88,6 +94,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private static final String TEMPLATE_MANAGE_QUESTIONS = "/admin/plugins/forms/manage_questions.html";
     private static final String TEMPLATE_CREATE_GROUP = "/admin/plugins/forms/create_group.html";
     private static final String TEMPLATE_MODIFY_GROUP = "/admin/plugins/forms/modify_group.html";
+    private static final String TEMPLATE_MOVE_COMPOSITE = "/admin/plugins/forms/move_composite.html";
 
     // Properties
     private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.create_Question.titleComment";
@@ -95,6 +102,8 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private static final String PROPERTY_CREATE_GROUP_TITLE = "forms.create_group.title";
     private static final String PROPERTY_MODIFY_COMMENT_TITLE = "forms.modifyEntry.titleComment";
     private static final String PROPERTY_MODIFY_QUESTION_TITLE = "forms.modifyEntry.titleQuestion";
+    private static final String PROPERTY_MOVE_GROUP_TITLE = "forms.moveComposite.group.title";
+    private static final String PROPERTY_MOVE_QUESTION_TITLE = "forms.moveComposite.question.title";
 
     // Views
     private static final String VIEW_MANAGE_QUESTIONS = "manageQuestions";
@@ -102,6 +111,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private static final String VIEW_MODIFY_QUESTION = "modifyQuestion";
     private static final String VIEW_CREATE_GROUP = "createGroup";
     private static final String VIEW_MODIFY_GROUP = "modifyGroup";
+    private static final String VIEW_MOVE_COMPOSITE = "moveComposite";
 
     // Actions
     private static final String ACTION_CREATE_QUESTION = "createQuestion";
@@ -110,6 +120,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private static final String ACTION_SAVE_QUESTION = "saveQuestion";
     private static final String ACTION_CREATE_GROUP = "createGroup";
     private static final String ACTION_MODIFY_GROUP = "modifyGroup";
+    private static final String ACTION_MOVE_COMPOSITE = "moveComposite";
 
     // Markers
     private static final String MARK_WEBAPP_URL = "webapp_url";
@@ -118,27 +129,44 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private static final String MARK_LIST_PARAM_DEFAULT_VALUES = "list_param_default_values";
     private static final String MARK_IS_AUTHENTIFICATION_ENABLED = "is_authentification_enabled";
     private static final String MARK_LIST = "list";
+    private static final String MARK_GROUP_VALIDATED = "groupValidated";
+    private static final String MARK_STEP_VALIDATED = "stepValidated";
+    
+    //Parameters
+    private static final String PARAMETER_VALUE_VALIDATE_STEP = "validateStep";
+    private static final String PARAMETER_VALUE_VALIDATE_GROUP = "validateGroup";
 
     // Error messages
     private static final String ERROR_QUESTION_NOT_CREATED = "forms.error.question.notCreated";
     private static final String ERROR_GROUP_NOT_CREATED = "forms.error.group.notCreated";
     private static final String ERROR_GROUP_NOT_UPDATED = "forms.error.group.notUpdated";
     private static final String ERROR_QUESTION_NOT_UPDATED = "forms.error.question.notUpdated";
+    private static final String ERROR_STEP_OR_GROUP_NOT_VALIDATED = "forms.error.moveComposite.stepOrGroup.notvalidated";
+    private static final String ERROR_OCCURED_MOVING_COMPOSITE = "forms.error.moveComposite.notCompleted";
 
     // Infos messages
     private static final String INFO_QUESTION_CREATED = "forms.info.question.created";
     private static final String INFO_QUESTION_UPDATED = "forms.info.question.updated";
     private static final String INFO_GROUP_UPDATED = "forms.info.group.updated";
     private static final String INFO_GROUP_CREATED = "forms.info.group.created";
+    private static final String INFO_MOVE_COMPOSITE_SUCCESSFUL = "forms.info.moveComposite.successful";
 
     // Others
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
+    private static final int INTEGER_MINUS_ONE = -1;
+
+
 
     private Step _step;
     private Form _form;
     private Entry _entry;
     private Question _question;
     private Group _group;
+    private FormDisplay _formDisplayToMove;
+
+    private int _nIdStepTarget;
+
+    private int _nIdParentTarget;
 
     /**
      * Build the Manage View
@@ -151,7 +179,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     public String getManageQuestions( HttpServletRequest request )
     {
         Locale locale = getLocale( );
-        int nIdStep = -1;
+        int nIdStep = INTEGER_MINUS_ONE;
         List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
 
@@ -160,6 +188,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_STEP, _step );
+        model.put( FormsConstants.MARK_FORM, _form );
 
         listICompositeDisplay = FormService.getStepCompositeList( nIdStep );
         model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
@@ -184,8 +213,8 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     public String getCreateQuestion( HttpServletRequest request )
     {
 
-        int nIdStep = -1;
-        int nIdTypeEntry = -1;
+        int nIdStep = INTEGER_MINUS_ONE;
+        int nIdTypeEntry = INTEGER_MINUS_ONE;
         int nParentGroup;
 
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
@@ -252,7 +281,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     public String getCreateGroup( HttpServletRequest request )
     {
 
-        int nIdStep = -1;
+        int nIdStep = INTEGER_MINUS_ONE;
         int nParentGroup;
 
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
@@ -295,8 +324,8 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     @Action( ACTION_CREATE_GROUP )
     public String doCreateGroup( HttpServletRequest request )
     {
-        int nIdStep = -1;
-        int nParentGroup = -1;
+        int nIdStep = INTEGER_MINUS_ONE;
+        int nParentGroup = INTEGER_MINUS_ONE;
 
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
@@ -311,7 +340,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
         GroupHome.create( _group );
 
-        int nDisplayDepth = getDisplayDepthFromParent( nParentGroup );
+        int nDisplayDepth = FormsDisplayUtils.getDisplayDepthFromParent( nParentGroup );
 
         if ( _group.getId( ) != -1 )
         {
@@ -350,8 +379,8 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     public String getModifyGroup( HttpServletRequest request )
     {
 
-        int nIdStep = -1;
-        int nIdGroup = -1;
+        int nIdStep = INTEGER_MINUS_ONE;
+        int nIdGroup = INTEGER_MINUS_ONE;
 
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         nIdGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ) );
@@ -395,7 +424,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     @Action( ACTION_MODIFY_GROUP )
     public String doModifyGroup( HttpServletRequest request )
     {
-        int nIdStep = -1;
+        int nIdStep = INTEGER_MINUS_ONE;
 
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
 
@@ -409,7 +438,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
         GroupHome.update( _group );
 
-        if ( _group.getId( ) == -1 )
+        if ( _group.getId( ) == INTEGER_MINUS_ONE )
         {
             addError( ERROR_GROUP_NOT_UPDATED, getLocale( ) );
         }
@@ -458,7 +487,8 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     {
         String strReturnUrl = processQuestionCreation( request );
 
-        return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
+        return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ),
+                FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
 
     }
 
@@ -472,9 +502,9 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     private String processQuestionCreation( HttpServletRequest request )
     {
 
-        int nIdStep = -1;
-        int nParentGroup = -1;
-        int nIdType = -1;
+        int nIdStep = INTEGER_MINUS_ONE;
+        int nParentGroup = INTEGER_MINUS_ONE;
+        int nIdType = INTEGER_MINUS_ONE;
 
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
@@ -521,9 +551,9 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         _question.setIdStep( nIdStep );
         QuestionHome.create( _question );
 
-        int nDisplayDepth = getDisplayDepthFromParent( nParentGroup );
+        int nDisplayDepth = FormsDisplayUtils.getDisplayDepthFromParent( nParentGroup );
 
-        if ( _question.getId( ) != -1 )
+        if ( _question.getId( ) != INTEGER_MINUS_ONE )
         {
             FormDisplay formDisplay = new FormDisplay( );
             formDisplay.setFormId( _step.getIdForm( ) );
@@ -549,7 +579,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     public String getModifyQuestion( HttpServletRequest request )
     {
 
-        int nIdStep = -1;
+        int nIdStep = INTEGER_MINUS_ONE;
 
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
 
@@ -564,7 +594,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         }
 
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
-        int nIdQuestion = -1;
+        int nIdQuestion = INTEGER_MINUS_ONE;
 
         if ( ( strIdQuestion != null ) && !strIdQuestion.equals( EMPTY_STRING ) )
         {
@@ -629,9 +659,9 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     public String processQuestionUpdate( HttpServletRequest request )
     {
 
-        int nIdEntry = -1;
+        int nIdEntry = INTEGER_MINUS_ONE;
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
-        int nIdStep = -1;
+        int nIdStep = -INTEGER_MINUS_ONE;
 
         if ( ( strIdStep != null ) && !strIdStep.equals( EMPTY_STRING ) )
         {
@@ -643,7 +673,7 @@ public class FormQuestionJspBean extends MVCAdminJspBean
         }
 
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
-        int nIdQuestion = -1;
+        int nIdQuestion = INTEGER_MINUS_ONE;
 
         if ( ( strIdQuestion != null ) && !strIdQuestion.equals( EMPTY_STRING ) )
         {
@@ -769,25 +799,260 @@ public class FormQuestionJspBean extends MVCAdminJspBean
     }
 
     /**
-     * Returns the display depth of a child display element
+     * Gets the Move component page
      * 
-     * @param nParentGroup
-     *            the Identifier of the parent display element (zero if we are at the step root)
-     * 
-     * @return the display depth
+     * @param request
+     *            The HTTP request
+     * @return The move component page
      */
-    private int getDisplayDepthFromParent( int nParentGroup )
+    @View( value = VIEW_MOVE_COMPOSITE )
+    public String getMoveComposite( HttpServletRequest request )
     {
-        int nDisplayDepth = 0;
-        if ( nParentGroup > 0 )
+        int nIdStepTarget = INTEGER_MINUS_ONE;
+        Step stepTarget = new Step( );
+        int nIdParentTarget = INTEGER_MINUS_ONE;
+        int nIdDisplay = INTEGER_MINUS_ONE;
+        int nTargetPosition = INTEGER_MINUS_ONE;
+        boolean bStepValidated = false;
+        boolean bGroupValidated = false;
+
+        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
+        
+        if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
-            FormDisplay formDisplayParent = FormDisplayHome.findByPrimaryKey( nParentGroup );
-            if ( formDisplayParent != null )
+            getJspManageForm( request );
+        }
+        
+        if ( _formDisplayToMove == null || _formDisplayToMove.getId( ) != nIdDisplay )
+        {
+            _formDisplayToMove = FormDisplayHome.findByPrimaryKey( nIdDisplay );
+        }
+        nTargetPosition = _formDisplayToMove.getDisplayOrder( );
+        
+        String strIsStepValidated = request.getParameter( FormsConstants.PARAMETER_STEP_VALIDATED );
+        if ( StringUtils.isNotBlank( strIsStepValidated ) )
+        {
+            bStepValidated = BooleanUtils.toBoolean( strIsStepValidated );
+        }
+
+        String strIsGroupValidated = request.getParameter( FormsConstants.PARAMETER_GROUP_VALIDATED );
+        if ( StringUtils.isNotBlank( strIsGroupValidated ) )
+        {
+            bGroupValidated = BooleanUtils.toBoolean( strIsGroupValidated );
+        }
+
+        String strValidateButtonValue = request.getParameter( "view_moveComposite" );
+
+        if ( StringUtils.isNotBlank( strValidateButtonValue ) )
+        {
+            nTargetPosition = 1;
+            
+            if ( PARAMETER_VALUE_VALIDATE_STEP.equals( strValidateButtonValue ) )
             {
-                nDisplayDepth = formDisplayParent.getDepth( ) + 1;
+                bStepValidated = true;
+                bGroupValidated = false;
+            }
+            else if ( PARAMETER_VALUE_VALIDATE_GROUP.equals( strValidateButtonValue ) && bStepValidated )
+            {
+                bGroupValidated = true;
             }
         }
-        return nDisplayDepth;
+        else
+        {
+            bStepValidated = true;
+            bGroupValidated = true;
+        }
+
+        nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), -1 );
+        if( bStepValidated )
+        {
+            if( nIdStepTarget == INTEGER_MINUS_ONE )
+            {
+                nIdStepTarget = _formDisplayToMove.getStepId( );
+            }
+            _nIdStepTarget = nIdStepTarget;
+        }
+
+        if ( nIdStepTarget != INTEGER_MINUS_ONE )
+        {
+            stepTarget = StepHome.findByPrimaryKey( nIdStepTarget );
+        }
+        else
+        {
+            getJspManageForm( request );
+        }
+
+        nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), -1 );
+        if( bGroupValidated )
+        {
+            if( nIdParentTarget == INTEGER_MINUS_ONE )
+            {
+                nIdParentTarget = _formDisplayToMove.getParentId( );
+            }
+            _nIdParentTarget = nIdParentTarget;
+        }
+
+        ReferenceList listFormSteps = StepHome.getStepReferenceListByForm( stepTarget.getIdForm( ) );
+
+        ReferenceList listStepGroups = FormsDisplayUtils.getTargetGroupDisplayListByStep( nIdStepTarget, _formDisplayToMove, getLocale( ) );
+
+        boolean bMoveToDifferentGroup = ( ( _formDisplayToMove.getParentId( ) != nIdParentTarget ) || ( _formDisplayToMove.getStepId( ) != nIdStepTarget ) );
+        ReferenceList listAvailablePositionsInParentGroup = FormsDisplayUtils.getlistAvailablePositionsInGroup( nIdStepTarget, nIdParentTarget, bMoveToDifferentGroup, getLocale( ) );
+        
+        Map<String, Object> model = getModel( );
+
+        model.put( FormsConstants.MARK_STEP, _step );
+        model.put( FormsConstants.MARK_DISPLAY, _formDisplayToMove );
+        model.put( FormsConstants.MARK_DISPLAY_TITLE, FormsDisplayUtils.getDisplayTitle( _formDisplayToMove ) );
+        model.put( FormsConstants.MARK_LIST_STEPS, listFormSteps );
+        model.put( FormsConstants.MARK_LIST_GROUPS, listStepGroups );
+        model.put( FormsConstants.MARK_LIST_AVAILABLE_POSITIONS, listAvailablePositionsInParentGroup );
+        model.put( FormsConstants.MARK_ID_STEP, bStepValidated ? nIdStepTarget : _formDisplayToMove.getStepId( ) );
+        model.put( FormsConstants.MARK_ID_PARENT, bGroupValidated ? nIdParentTarget : 0 );
+        model.put( FormsConstants.MARK_DISPLAY_ORDER, nTargetPosition );
+        model.put( MARK_STEP_VALIDATED, bStepValidated );
+        model.put( MARK_GROUP_VALIDATED, bGroupValidated );
+
+        if ( _formDisplayToMove.getCompositeType( ).equalsIgnoreCase( CompositeDisplayType.GROUP.getLabel( ) ) )
+        {
+            setPageTitleProperty( PROPERTY_MOVE_GROUP_TITLE );
+        }
+        else
+            if ( _formDisplayToMove.getCompositeType( ).equalsIgnoreCase( CompositeDisplayType.QUESTION.getLabel( ) ) )
+            {
+                setPageTitleProperty( PROPERTY_MOVE_QUESTION_TITLE );
+            }
+
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MOVE_COMPOSITE, getLocale( ), model );
+
+        return getAdminPage( template.getHtml( ) );
+    }
+
+    /**
+     * Process the FormDisplay moving action
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The move component page
+     */
+    @Action( ACTION_MOVE_COMPOSITE )
+    public String doMoveComposite( HttpServletRequest request )
+    {
+        int nIdStepTarget = INTEGER_MINUS_ONE;
+        int nIdParentTarget = INTEGER_MINUS_ONE;
+        int nIdDisplay = INTEGER_MINUS_ONE;
+        int nDisplayOrderTarget = INTEGER_MINUS_ONE;
+        boolean bStepValidated = false;
+        boolean bGroupValidated = false;
+
+        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), -1 );
+        
+        if ( nIdDisplay == INTEGER_MINUS_ONE )
+        {
+            getJspManageForm( request );
+        }
+        
+        if ( _formDisplayToMove == null || _formDisplayToMove.getId( ) != nIdDisplay )
+        {
+            _formDisplayToMove = FormDisplayHome.findByPrimaryKey( nIdDisplay );
+        }
+        
+        String strIsStepValidated = request.getParameter( FormsConstants.PARAMETER_STEP_VALIDATED );
+        if ( StringUtils.isNotBlank( strIsStepValidated ) )
+        {
+            bStepValidated = BooleanUtils.toBoolean( strIsStepValidated );
+        }
+
+        String strIsGroupValidated = request.getParameter( FormsConstants.PARAMETER_GROUP_VALIDATED );
+        if ( StringUtils.isNotBlank( strIsGroupValidated ) )
+        {
+            bGroupValidated = BooleanUtils.toBoolean( strIsGroupValidated );
+        }
+            
+        
+        nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
+        nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), INTEGER_MINUS_ONE );
+        nDisplayOrderTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_DISPLAY_ORDER ), INTEGER_MINUS_ONE );
+        
+        if ( ( nIdStepTarget == INTEGER_MINUS_ONE ) || ( nIdParentTarget == INTEGER_MINUS_ONE ) )
+        {
+            addError( ERROR_OCCURED_MOVING_COMPOSITE, getLocale( ) );
+            return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _formDisplayToMove.getStepId( ) );
+        }
+
+        if( nIdStepTarget != _nIdStepTarget )
+        {
+            bStepValidated = false;
+        }
+        
+        if( nIdParentTarget != _nIdParentTarget )
+        {
+            bGroupValidated = false;
+        }
+        
+        if ( !( bStepValidated && bGroupValidated ) )
+        {
+            addError( ERROR_STEP_OR_GROUP_NOT_VALIDATED, getLocale( ) );
+            return redirect( request, VIEW_MOVE_COMPOSITE, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
+        }
+
+        moveDisplay( _formDisplayToMove, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget );
+
+        addInfo( INFO_MOVE_COMPOSITE_SUCCESSFUL, getLocale( ) );
+        
+        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, nIdStepTarget );
+    }
+
+    
+
+    /** Process the FormDisplay move:
+     * Update the idParent, idStep and depth of the display and all its descendants
+     * Rebuild the Position values of the Display and all its sibling inside Parent
+     * If move to a different group, rebuild the positions sequence within the origin group
+     * 
+     * @param formDisplayToMove the FormDisplay to be moved
+     * 
+     * @param nIdStepTarget the target Step identifier
+     * 
+     * @param nIdParentTarget the target Parent Display identifier (0 if root level of the step ) 
+     * 
+     * @param nDisplayOrderTarget the target position within parent 
+     */
+    private void moveDisplay( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget,
+            int nDisplayOrderTarget )
+    {
+        int nIdOriginStep = _formDisplayToMove.getStepId( );
+        int nIdOriginParent = _formDisplayToMove.getParentId( );
+        int nOriginDisplayOrder = _formDisplayToMove.getDisplayOrder( );
+        
+        List<FormDisplay> listDisplayInTargetGroup = FormDisplayHome.getFormDisplayListByParent( nIdStepTarget, nIdParentTarget );
+        
+        formDisplayToMove.setParentId( nIdParentTarget );
+        
+        int nTargetDepth = FormsDisplayUtils.getDisplayDepthFromParent( nIdParentTarget );
+        //update the idStep and depth of the display and all its descendants
+        FormsDisplayUtils.setChildrenDisplayDepthAndStep( formDisplayToMove, nTargetDepth, nIdStepTarget );
+
+        //Rebuild the Position values of the Display and all its sibling inside Parent
+        if ( !listDisplayInTargetGroup.isEmpty( ) )
+        {
+            // If move inside same group, first remove the Display from the list before adding it at the right index
+            if ( ( nIdOriginStep == nIdStepTarget && nIdOriginParent == nIdParentTarget ) )
+            {
+                listDisplayInTargetGroup.remove( nOriginDisplayOrder - 1 );
+            }
+            listDisplayInTargetGroup.add( nDisplayOrderTarget - 1 , formDisplayToMove );
+
+            FormsDisplayUtils.rebuildDisplayPositionSequence( listDisplayInTargetGroup );
+        }
+        
+        // If move to a different group, rebuild the positions sequence within the origin group
+        if ( ( nIdOriginParent != nIdParentTarget ) || ( nIdOriginStep != nIdStepTarget ) )
+        {
+            List<FormDisplay> listDisplayInOriginGroup = FormDisplayHome.getFormDisplayListByParent( nIdOriginStep, nIdOriginParent );
+            FormsDisplayUtils.rebuildDisplayPositionSequence( listDisplayInOriginGroup );
+        }
+        
     }
 
     /**

@@ -237,4 +237,21 @@ public final class StepDAO implements IStepDAO
         daoUtil.close( );
         return stepList;
     }
+
+    @Override
+    public ReferenceList selectStepReferenceListbyForm( int nFormId, Plugin plugin )
+    {
+        ReferenceList stepReferenceList = new ReferenceList( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin );
+        daoUtil.setInt( 1, nFormId );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            stepReferenceList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+        }
+
+        daoUtil.close( );
+        return stepReferenceList;
+    }
 }

@@ -35,6 +35,7 @@
 package fr.paris.lutece.plugins.forms.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
 import java.sql.Statement;
 
@@ -53,6 +54,10 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_display WHERE id_display = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_display SET id_display = ?, id_form = ?, id_step = ?, id_composite = ?, id_parent = ?, display_order = ?, composite_type = ?, display_depth = ? WHERE id_display = ?";
     private static final String SQL_QUERY_SELECTALL = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display";
+    private static final String SQL_QUERY_NEXT_POSITION_BY_PARENT = "SELECT MAX(display_order) from forms_display WHERE id_step = ? AND id_parent = ?";
+    private static final String SQL_QUERY_SELECTALL_GROUP_DISPLAY_BY_STEP = "SELECT d.id_display, g.title, d.id_form, d.id_step, d.id_composite, d.id_parent, d.display_order, d.composite_type, d.display_depth "
+            + "FROM forms_display d INNER JOIN forms_group g ON d.id_composite = g.id_group "
+            + "WHERE d.id_step = ? AND d.composite_type = ? order by d.id_parent, d.display_order";
 
     /**
      * {@inheritDoc }
@@ -68,7 +73,8 @@ public final class FormDisplayDAO implements IFormDisplayDAO
             daoUtil.setInt( nIndex++, formDisplay.getStepId( ) );
             daoUtil.setInt( nIndex++, formDisplay.getCompositeId( ) );
             daoUtil.setInt( nIndex++, formDisplay.getParentId( ) );
-            daoUtil.setInt( nIndex++, formDisplay.getDisplayOrder( ) );
+            int nDisplayOrder = getNextPositionInGroup( formDisplay.getStepId( ), formDisplay.getParentId( ), plugin );
+            daoUtil.setInt( nIndex++, nDisplayOrder );
             daoUtil.setString( nIndex++, formDisplay.getCompositeType( ) );
             daoUtil.setInt( nIndex++, formDisplay.getDepth( ) );
 
@@ -217,4 +223,53 @@ public final class FormDisplayDAO implements IFormDisplayDAO
 
         return formDisplayList;
     }
+
+    /**
+     * Return the next available position with a given parent group
+     * 
+     * @param nIdStep
+     *            the Step id
+     * @param nIdParent
+     *            the parent display identifier
+     * @param plugin
+     *            the Plugin to use
+     * @return the next available position value in the group
+     */
+    private int getNextPositionInGroup( int nIdStep, int nIdParent, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEXT_POSITION_BY_PARENT, plugin );
+        daoUtil.setInt( 1, nIdStep );
+        daoUtil.setInt( 2, nIdParent );
+        daoUtil.executeQuery( );
+
+        int nNextPosition = 0;
+
+        if ( daoUtil.next( ) )
+        {
+            nNextPosition = daoUtil.getInt( 1 ) + 1;
+        }
+
+        daoUtil.close( );
+
+        return nNextPosition;
+    }
+
+    @Override
+    public ReferenceList selectGroupDisplayReferenceListByStep( int nIdStep, Plugin plugin )
+    {
+        ReferenceList groupList = new ReferenceList( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_GROUP_DISPLAY_BY_STEP, plugin );
+        daoUtil.setInt( 1, nIdStep );
+        daoUtil.setString( 2, CompositeDisplayType.GROUP.getLabel( ) );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            groupList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+        }
+
+        daoUtil.close( );
+        return groupList;
+    }
+
 }

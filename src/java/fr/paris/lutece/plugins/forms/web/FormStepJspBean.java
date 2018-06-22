@@ -388,8 +388,15 @@ public class FormStepJspBean extends MVCAdminJspBean
 
         if ( _step != null )
         {
+            int nIdForm = _step.getIdForm( );
+            
+            if ( ( _form == null ) || ( _form.getId( ) != nIdForm ) )
+            {
+                _form = FormHome.findByPrimaryKey( nIdForm );
+            }
             Map<String, Object> model = getModel( );
             model.put( FormsConstants.MARK_STEP, _step );
+            model.put( FormsConstants.MARK_FORM, _form );
             model.put( MARK_LOCALE, request.getLocale( ) );
 
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_STEP, TEMPLATE_MODIFY_STEP, model );

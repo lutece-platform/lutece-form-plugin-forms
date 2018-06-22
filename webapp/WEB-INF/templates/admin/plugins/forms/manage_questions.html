@@ -2,7 +2,7 @@
 <@row>
     <@columns>
         <@box color='primary' collapsed=true>
-            <@boxHeader title='#i18n{forms.modify_step.title} ${step.title}' boxTools=true></@boxHeader>
+            <@boxHeader title='#i18n{forms.manageForm.pageTitle} : ${form.title} - #i18n{forms.modify_step.title} : ${step.title}' boxTools=true></@boxHeader>
         </@box>
         <@box color='solid'>
             <@boxBody>
@@ -64,6 +64,7 @@
                                                 <#else>
                                                     <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyQuestion}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
                                                 </#if>
+                                                    <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.move}' showTitle=false buttonIcon='arrows-alt' color='btn-primary' size='sm' />
                                                     <@aButton href='' title='#i18n{forms.manage_questions.action.removeQuestion}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' /> 
                                             </td>
                                         </tr>

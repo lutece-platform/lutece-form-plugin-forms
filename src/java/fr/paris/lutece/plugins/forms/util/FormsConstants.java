@@ -56,6 +56,13 @@ public final class FormsConstants
     public static final String MARK_GROUP = "group";
     public static final String MARK_QUESTION = "question";
     public static final String MARK_ID_QUESTION = "id_question";
+    public static final String MARK_FIELD = "field";
+    public static final String MARK_LIST_STEPS = "list_steps";
+    public static final String MARK_LIST_GROUPS = "list_groups";
+    public static final String MARK_LIST_AVAILABLE_POSITIONS = "list_positions";
+    public static final String MARK_DISPLAY = "display";
+    public static final String MARK_DISPLAY_TITLE = "display_title";
+    public static final String MARK_DISPLAY_ORDER = "displayOrder";
 
     // Parameters
     public static final String PARAMETER_ID_FORM = "id_form";
@@ -74,6 +81,11 @@ public final class FormsConstants
     public static final String PARAMETER_ID_ENTRY_TYPE = "id_type";
     public static final String PARAMETER_ID_GROUP = "id_group";
     public static final String PARAMETER_ID_QUESTION = "id_question";
+    public static final String PARAMETER_ID_DISPLAY = "id_display";
+    public static final String PARAMETER_ID_PARENT = "id_parent";
+    public static final String PARAMETER_STEP_VALIDATED = "stepValidated";
+    public static final String PARAMETER_GROUP_VALIDATED = "groupValidated";
+    public static final String PARAMETER_DISPLAY_ORDER = "displayOrder";
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
@@ -86,8 +98,6 @@ public final class FormsConstants
     // Properties
     public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "entrytype.myluteceuserattribute.attributes.list";
     public static final String CONSTANT_MYLUTECE_ATTRIBUTE_I18N_PREFIX = "forms.entrytype.myluteceuserattribute.attribute.";
-    // Markers
-    public static final String MARK_FIELD = "field";
 
     // Constants
     public static final int DEFAULT_FILTER_VALUE = NumberUtils.INTEGER_MINUS_ONE;
