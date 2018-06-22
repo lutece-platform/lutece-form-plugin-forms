@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
 import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
@@ -55,10 +56,10 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
 {
     // Constants
     private static final String PARAMETER_ID_WORKFLOW_STATE = "multiview_id_state_workflow";
-    private static final String PARAMETER_ID_FORM = "multiview_id_form";
     private static final String WORKFLOW_STATE_CODE_ATTRIBUTE = "id";
     private static final String WORKFLOW_STATE_NAME_ATTRIBUTE = "name";
     private static final int DEFAULT_FORM_VALUE = NumberUtils.INTEGER_MINUS_ONE;
+    private static final int DEFAULT_PREVIOUS_FORM_VALUE = NumberUtils.INTEGER_MINUS_ONE;
     private static final int ID_WORKFLOW_UNSET = NumberUtils.INTEGER_ZERO;
 
     /**
@@ -69,13 +70,22 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
     {
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
 
+        int nIdForm = NumberUtils.toInt( request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ), DEFAULT_FORM_VALUE );
+        int nIdPreviousForm = NumberUtils.toInt( request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM ),
+                DEFAULT_PREVIOUS_FORM_VALUE );
         String strIdWorkflowState = request.getParameter( PARAMETER_ID_WORKFLOW_STATE );
-        setValue( strIdWorkflowState );
+
+        if ( nIdForm != nIdPreviousForm )
+        {
+            strIdWorkflowState = StringUtils.EMPTY;
+        }
 
         if ( StringUtils.isNotBlank( strIdWorkflowState ) )
         {
             mapFilterNameValues.put( FormMultiviewWorkflowStateNameConstants.FILTER_ID_WORKFLOW_STATE, strIdWorkflowState );
         }
+
+        setValue( strIdWorkflowState );
 
         return mapFilterNameValues;
     }
@@ -89,7 +99,7 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
         // If no form has been selected we will return an empty list
         ReferenceList referenceList = new ReferenceList( );
 
-        int nIdForm = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM ), DEFAULT_FORM_VALUE );
+        int nIdForm = NumberUtils.toInt( request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ), DEFAULT_FORM_VALUE );
         if ( nIdForm != DEFAULT_FORM_VALUE )
         {
             referenceList = createReferenceList( request, nIdForm );

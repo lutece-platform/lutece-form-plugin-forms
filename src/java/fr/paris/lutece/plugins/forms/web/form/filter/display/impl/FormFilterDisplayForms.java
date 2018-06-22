@@ -47,15 +47,19 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  * Implementation of the IFormFilterDisplay interface for the filter on form
  */
 public class FormFilterDisplayForms extends AbstractFormFilterDisplay
 {
+    // Templates
+    private static final String FORM_FILTER_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/record_form_filter.html";
+
     // Constants
-    private static final String PARAMETER_ID_FORM = "forms_id_form";
     private static final String FORM_CODE_ATTRIBUTE = "id";
     private static final String FORM_NAME_ATTRIBUTE = "title";
     private static final String DEFAULT_ID_FORM = "-1";
@@ -69,7 +73,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
         String strIdFormValue = DEFAULT_ID_FORM;
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
 
-        String strIdForm = request.getParameter( PARAMETER_ID_FORM );
+        String strIdForm = request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
         if ( StringUtils.isNotBlank( strIdForm ) )
         {
             mapFilterNameValues.put( FormMultiviewFormsNameConstants.FILTER_ID_FORM, strIdForm );
@@ -87,7 +91,21 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     @Override
     public void buildTemplate( HttpServletRequest request )
     {
-        manageFilterTemplate( request, createReferenceList( ), PARAMETER_ID_FORM );
+        String strTemplateResult = StringUtils.EMPTY;
+
+        Map<String, Object> model = new LinkedHashMap<>( );
+        model.put( MARK_FILTER_LIST, createReferenceList( ) );
+        model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
+        model.put( MARK_FILTER_NAME, FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
+        model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM, request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ) );
+
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( FORM_FILTER_TEMPLATE_NAME, request.getLocale( ), model );
+        if ( htmlTemplate != null )
+        {
+            strTemplateResult = htmlTemplate.getHtml( );
+        }
+
+        setTemplate( strTemplateResult );
     }
 
     /**
