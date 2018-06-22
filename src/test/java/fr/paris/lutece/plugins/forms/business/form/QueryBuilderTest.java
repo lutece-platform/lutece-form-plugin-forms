@@ -73,9 +73,9 @@ import fr.paris.lutece.test.LuteceTestCase;
 public class QueryBuilderTest extends LuteceTestCase
 {
     // Variables
-    List<IFormPanelInitializerQueryPart> _listFormPanelInitializerQueryPart;
-    List<IFormColumnQueryPart> _listFormColumnQueryPart;
-    List<IFormFilterQueryPart> _listFormFilterQueryPart;
+    private List<IFormPanelInitializerQueryPart> _listFormPanelInitializerQueryPart;
+    private List<IFormColumnQueryPart> _listFormColumnQueryPart;
+    private List<IFormFilterQueryPart> _listFormFilterQueryPart;
 
     /**
      * {@inheritDoc}
