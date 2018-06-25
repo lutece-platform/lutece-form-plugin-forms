@@ -32,11 +32,12 @@
  * License 1.0
  */
 
-package fr.paris.lutece.plugins.forms.web;
+package fr.paris.lutece.plugins.forms.web.admin;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsDisplayUtils;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
+import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
@@ -60,7 +61,6 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
-import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -83,7 +83,7 @@ import org.apache.commons.lang3.StringUtils;
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
 @Controller( controllerJsp = "ManageQuestions.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
-public class FormQuestionJspBean extends MVCAdminJspBean
+public class FormQuestionJspBean extends AbstractJspBean
 {
 
     private static final long serialVersionUID = 7515975782241863390L;
@@ -1054,38 +1054,4 @@ public class FormQuestionJspBean extends MVCAdminJspBean
 
     }
 
-    /**
-     * Return the URL of the JSP manage step
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL of the JSP manage step
-     */
-    protected String getJspManageSteps( HttpServletRequest request )
-    {
-        return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_STEPS;
-    }
-
-    /**
-     * Return the URL of the JSP manage form
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL of the JSP manage form
-     */
-    protected String getJspManageForm( HttpServletRequest request )
-    {
-        return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_FORMS;
-    }
-
-    /**
-     * Return the id of the current form
-     * 
-     * @return The id of the current form
-     */
-    protected int getFormId( )
-    {
-
-        return _form.getId( );
-    }
 }

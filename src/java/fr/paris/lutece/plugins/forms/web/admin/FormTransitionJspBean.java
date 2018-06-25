@@ -32,16 +32,14 @@
  * License 1.0
  */
 
-package fr.paris.lutece.plugins.forms.web;
+package fr.paris.lutece.plugins.forms.web.admin;
 
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -53,14 +51,12 @@ import javax.servlet.http.HttpServletRequest;
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
 @Controller( controllerJsp = "ManageTransitions.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
-public class FormTransitionJspBean extends MVCAdminJspBean
+public class FormTransitionJspBean extends AbstractJspBean
 {
 
     private static final long serialVersionUID = -9023450166890042022L;
 
     private static final String EMPTY_STRING = "";
-
-    private static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
 
     // Templates
     private static final String TEMPLATE_MANAGE_TRANSITIONS = "/admin/plugins/forms/manage_transitions.html";
@@ -146,18 +142,6 @@ public class FormTransitionJspBean extends MVCAdminJspBean
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_TRANSITIONS, locale, model );
 
         return getAdminPage( templateList.getHtml( ) );
-    }
-
-    /**
-     * Return the URL of the JSP manage form
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL of the JSP manage form
-     */
-    protected String getJspManageForm( HttpServletRequest request )
-    {
-        return AppPathService.getBaseUrl( request ) + JSP_MANAGE_FORMS;
     }
 
 }

@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web;
+package fr.paris.lutece.plugins.forms.web.admin;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -54,7 +54,6 @@ import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
-import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -76,7 +75,7 @@ import javax.servlet.http.HttpServletRequest;
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
 @Controller( controllerJsp = "ModifyEntry.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
-public class ModifyEntryJspBean extends MVCAdminJspBean
+public class ModifyEntryJspBean extends AbstractJspBean
 {
 
     /**
@@ -157,7 +156,7 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         _nIdEntry = _question.getIdEntry( );
@@ -214,7 +213,7 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         _nIdEntry = _question.getIdEntry( );
@@ -223,7 +222,7 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
 
         if ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         try
@@ -286,7 +285,7 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         Entry entry = new Entry( );
@@ -324,7 +323,7 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         if ( strIdField != null )
@@ -374,13 +373,13 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
     {
         if ( !updateStepAndQuestion( request ) )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         if ( ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null )
                 || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, getUser( ) ) )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
@@ -409,13 +408,13 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         if ( ( strIdField == null )
                 || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, getUser( ) ) )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         try
@@ -426,7 +425,7 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
         {
             AppLogService.error( ne );
 
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         if ( nIdField != -1 )
@@ -483,12 +482,12 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
 
         if ( ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null ) )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         try
@@ -499,7 +498,7 @@ public class ModifyEntryJspBean extends MVCAdminJspBean
         {
             AppLogService.error( ne );
 
-            return getHomeUrl( request );
+            return getJspManageForm( request );
         }
 
         field = FieldHome.findByPrimaryKey( nIdField );

@@ -32,7 +32,7 @@
  * License 1.0
  */
 
-package fr.paris.lutece.plugins.forms.web;
+package fr.paris.lutece.plugins.forms.web.admin;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -44,9 +44,7 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -64,7 +62,7 @@ import javax.servlet.http.HttpServletRequest;
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
 @Controller( controllerJsp = "ManageSteps.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
-public class FormStepJspBean extends MVCAdminJspBean
+public class FormStepJspBean extends AbstractJspBean
 {
 
     private static final long serialVersionUID = 7515975782241863390L;
@@ -88,9 +86,6 @@ public class FormStepJspBean extends MVCAdminJspBean
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     private static final String MARK_LOCALE = "locale";
-
-    private static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
-    private static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -449,30 +444,6 @@ public class FormStepJspBean extends MVCAdminJspBean
         addInfo( INFO_STEP_UPDATED, getLocale( ) );
 
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
-    }
-
-    /**
-     * Return the URL of the JSP manage step
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL of the JSP manage step
-     */
-    protected String getJspManageSteps( HttpServletRequest request )
-    {
-        return AppPathService.getBaseUrl( request ) + JSP_MANAGE_STEPS;
-    }
-
-    /**
-     * Return the URL of the JSP manage form
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL of the JSP manage form
-     */
-    protected String getJspManageForm( HttpServletRequest request )
-    {
-        return AppPathService.getBaseUrl( request ) + JSP_MANAGE_FORMS;
     }
 
     /**

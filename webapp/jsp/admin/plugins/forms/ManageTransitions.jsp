@@ -1,4 +1,4 @@
-<jsp:useBean id="manageformsTransition" scope="session" class="fr.paris.lutece.plugins.forms.web.FormTransitionJspBean" />
+<jsp:useBean id="manageformsTransition" scope="session" class="fr.paris.lutece.plugins.forms.web.admin.FormTransitionJspBean" />
 <% String strContent = manageformsTransition.processController ( request , response ); %>
 
 <%@ page errorPage="../../ErrorPage.jsp" %>

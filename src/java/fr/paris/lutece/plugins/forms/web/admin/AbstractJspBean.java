@@ -31,13 +31,15 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web;
+package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
@@ -114,5 +116,29 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected LocalizedPaginator<Integer> getPaginator( )
     {
         return _paginator;
+    }
+
+    /**
+     * Return the URL of the JSP manage step
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL of the JSP manage step
+     */
+    protected String getJspManageSteps( HttpServletRequest request )
+    {
+        return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_STEPS;
+    }
+
+    /**
+     * Return the URL of the JSP manage form
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL of the JSP manage form
+     */
+    protected String getJspManageForm( HttpServletRequest request )
+    {
+        return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_FORMS;
     }
 }

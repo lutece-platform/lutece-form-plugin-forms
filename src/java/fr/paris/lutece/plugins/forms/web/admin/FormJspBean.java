@@ -32,7 +32,7 @@
  * License 1.0
  */
 
-package fr.paris.lutece.plugins.forms.web;
+package fr.paris.lutece.plugins.forms.web.admin;
 
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -53,7 +53,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
-import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -71,7 +70,7 @@ import javax.servlet.http.HttpServletRequest;
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
 @Controller( controllerJsp = "ManageForms.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
-public class FormJspBean extends MVCAdminJspBean
+public class FormJspBean extends AbstractJspBean
 {
 
     private static final long serialVersionUID = 7515975782241863390L;
