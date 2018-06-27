@@ -106,3 +106,30 @@ composite_type varchar(255) default '',
 display_depth int default '0',
 PRIMARY KEY (id_display)
 );
+
+DROP TABLE IF EXISTS forms_question_entry_response;
+CREATE TABLE forms_question_entry_response (
+  id_question_entry_response int AUTO_INCREMENT,
+  id_question_response int default '0' NOT NULL,
+  id_entry_response int default '0' NOT NULL,
+  PRIMARY KEY (id_question_entry_response)
+);
+
+DROP TABLE IF EXISTS forms_question_response;
+CREATE TABLE IF NOT EXISTS forms_question_response (
+  id_question_response int AUTO_INCREMENT,
+  id_form_response int default '0' NOT NULL,
+  id_question int default '0' NOT NULL,
+  iteration_number int default '0',
+  PRIMARY KEY (id_question_response)
+);
+
+DROP TABLE IF EXISTS forms_response;
+CREATE TABLE IF NOT EXISTS forms_response (
+  id_response int AUTO_INCREMENT,
+  id_form int default '0' NOT NULL,
+  guid varchar(255),
+  creation_date timestamp default CURRENT_TIMESTAMP NOT NULL,
+  update_date timestamp,
+  PRIMARY KEY (id_response)
+);
