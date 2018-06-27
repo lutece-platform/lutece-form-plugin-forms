@@ -69,7 +69,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formQuestionResponse.getIdFormResponse( ) );
-            daoUtil.setInt( nIndex++, formQuestionResponse.getQuestion( ).getId( ) );
+            daoUtil.setInt( nIndex++, formQuestionResponse.getIdQuestion( ) );
             daoUtil.setInt( nIndex++, formQuestionResponse.getIterationNumber( ) );
             
             daoUtil.executeUpdate( );

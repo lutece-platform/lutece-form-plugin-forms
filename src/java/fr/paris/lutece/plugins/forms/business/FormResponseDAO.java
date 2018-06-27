@@ -34,8 +34,6 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
-import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 import java.sql.Statement;
