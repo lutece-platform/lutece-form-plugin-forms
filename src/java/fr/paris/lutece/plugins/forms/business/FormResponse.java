@@ -53,7 +53,7 @@ public class FormResponse
 
     private Timestamp _dateUpdate;
 
-    private List<FormQuestionResponse> _listResponses = new ArrayList<FormQuestionResponse>();
+    private List<FormQuestionResponse> _listResponses = new ArrayList<FormQuestionResponse>( );
 
     /**
      * @return the _nId

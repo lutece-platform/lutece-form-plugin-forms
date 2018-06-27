@@ -44,9 +44,9 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 public class FormQuestionResponse
 {
     private int _nId;
-    
+
     private int _nIdFormResponse;
-    
+
     private int _nIdQuestion;
 
     private Question _question;
@@ -71,7 +71,7 @@ public class FormQuestionResponse
     {
         this._nId = nId;
     }
-    
+
     /**
      * @return the _nIdFormResponse
      */
@@ -88,7 +88,7 @@ public class FormQuestionResponse
     {
         this._nIdFormResponse = nIdFormResponse;
     }
-    
+
     /**
      * @return the nIdQuestion
      */
