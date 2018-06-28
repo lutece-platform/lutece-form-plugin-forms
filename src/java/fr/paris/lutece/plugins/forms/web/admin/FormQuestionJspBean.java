@@ -55,10 +55,14 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.AdminMessage;
+import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
@@ -66,6 +70,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.util.url.UrlItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -82,6 +87,9 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
+
+// TODO : Move get MoveComposite() and doMoveComposite( ) to a another dedicated controller
+
 @Controller( controllerJsp = "ManageQuestions.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormQuestionJspBean extends AbstractJspBean
 {
@@ -112,6 +120,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String VIEW_CREATE_GROUP = "createGroup";
     private static final String VIEW_MODIFY_GROUP = "modifyGroup";
     private static final String VIEW_MOVE_COMPOSITE = "moveComposite";
+    private static final String VIEW_CONFIRM_REMOVE_COMPOSITE = "getConfirmRemoveComposite";
 
     // Actions
     private static final String ACTION_CREATE_QUESTION = "createQuestion";
@@ -121,6 +130,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String ACTION_CREATE_GROUP = "createGroup";
     private static final String ACTION_MODIFY_GROUP = "modifyGroup";
     private static final String ACTION_MOVE_COMPOSITE = "moveComposite";
+    private static final String ACTION_REMOVE_COMPOSITE = "removeComposite";
 
     // Markers
     private static final String MARK_WEBAPP_URL = "webapp_url";
@@ -150,17 +160,31 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String INFO_GROUP_UPDATED = "forms.info.group.updated";
     private static final String INFO_GROUP_CREATED = "forms.info.group.created";
     private static final String INFO_MOVE_COMPOSITE_SUCCESSFUL = "forms.info.moveComposite.successful";
+    private static final String INFO_DELETE_COMPOSITE_SUCCESSFUL = "forms.info.deleteComposite.successful";
+    private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
+    
+    //Warning messages
+    private static final String WARNING_CONFIRM_REMOVE_QUESTION = "forms.warning.deleteComposite.confirmRemoveQuestion";
+    private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS = "forms.warning.deleteComposite.confirmRemoveGroup";
+    private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
+    private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveGroup.formActive";
 
     // Others
-    private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
     private static final int INTEGER_MINUS_ONE = -1;
+    private static final String FORM_DISPLAY_SERVICE_BEAN = "forms.formDisplayService";
+    private static final FormDisplayService _formDisplayService = SpringContextService.getBean( FORM_DISPLAY_SERVICE_BEAN );
+
+
+
+
+
 
     private Step _step;
     private Form _form;
     private Entry _entry;
     private Question _question;
     private Group _group;
-    private FormDisplay _formDisplayToMove;
+    private FormDisplay _formDisplay;
 
     private int _nIdStepTarget;
 
@@ -222,14 +246,14 @@ public class FormQuestionJspBean extends AbstractJspBean
         _step = StepHome.findByPrimaryKey( nIdStep );
         if ( ( _step == null ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         _entry = FormsEntryUtils.createEntryByType( nIdTypeEntry );
 
         if ( ( _entry == null ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         _entry.setIdResource( _step.getIdForm( ) );
@@ -292,7 +316,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         if ( ( _step == null ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
@@ -390,7 +414,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         if ( ( _step == null ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
@@ -771,29 +795,120 @@ public class FormQuestionJspBean extends AbstractJspBean
     }
 
     /**
-     * Gets the confirmation page of delete entry
+     * Gets the confirmation page of question/group deletion
      * 
      * @param request
      *            The HTTP request
      * @return the confirmation page of delete entry
      */
-    public String getConfirmRemoveQuestion( HttpServletRequest request )
+    @View( value = VIEW_CONFIRM_REMOVE_COMPOSITE )
+    public String getConfirmRemoveComposite( HttpServletRequest request )
     {
-        // TODO
-        return null;
+
+        int nIdStep = INTEGER_MINUS_ONE;
+        int nIdDisplay = INTEGER_MINUS_ONE;
+        String strMessage = StringUtils.EMPTY;
+
+        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
+
+        if ( nIdStep == INTEGER_MINUS_ONE )
+        {
+            redirectToViewManageForm( request );
+        }
+        
+        if ( ( _step == null ) || ( _step.getId( ) != nIdStep ) )
+        {
+            _step = StepHome.findByPrimaryKey( nIdStep );
+        }
+
+        int nIdForm = _step.getIdForm( );
+        
+        if ( nIdForm == INTEGER_MINUS_ONE )
+        {
+            redirectToViewManageForm( request );
+        }
+        
+        if( ( _form == null ) || _form.getId( ) != _step.getIdForm( ) )
+        {
+            _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+        }
+
+        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
+
+        if ( nIdDisplay == INTEGER_MINUS_ONE )
+        {
+            redirectToViewManageForm( request );
+        }
+
+        if ( _formDisplay == null || _formDisplay.getId( ) != nIdDisplay )
+        {
+            _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
+        }
+        
+        if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) ) )
+        {
+            if( _form.isActive( ) )
+            {
+                strMessage = WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE;
+            }
+            else
+            {
+                strMessage = WARNING_CONFIRM_REMOVE_QUESTION;
+            }
+        }
+
+        if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) ) )
+        {
+            if( _form.isActive( ) )
+            {
+                strMessage = WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE;
+            }
+            else
+            {
+                strMessage = WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS;
+            }
+            
+        }
+        
+        UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_COMPOSITE ) );
+        url.addParameter( FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
+
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, strMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+
+        return redirect( request, strMessageUrl );
     }
 
     /**
-     * Perform the entry suppression
+     * Perform the question suppression
      * 
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
      */
-    public String doRemoveEntry( HttpServletRequest request )
+    @Action( ACTION_REMOVE_COMPOSITE )
+    public String doRemoveComposite( HttpServletRequest request )
     {
-        // TODO
-        return null;
+        int nIdDisplay = INTEGER_MINUS_ONE;
+        
+        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
+
+        if ( nIdDisplay == INTEGER_MINUS_ONE )
+        {
+            redirectToViewManageForm( request );
+        }
+
+        if ( _formDisplay == null || _formDisplay.getId( ) != nIdDisplay )
+        {
+            _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
+        }
+        
+        _formDisplayService.deleteDisplayAndDescendants( nIdDisplay );
+        
+        List<FormDisplay> listFormDisplaySibling = FormDisplayHome.getFormDisplayListByParent( _formDisplay.getStepId( ), _formDisplay.getParentId( ) );
+        _formDisplayService.rebuildDisplayPositionSequence( listFormDisplaySibling );
+        
+        addInfo( INFO_DELETE_COMPOSITE_SUCCESSFUL, getLocale( ) );
+        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _formDisplay.getStepId( ) );
     }
 
     /**
@@ -818,14 +933,14 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
-            getJspManageForm( request );
+            redirectToViewManageForm( request );
         }
 
-        if ( _formDisplayToMove == null || _formDisplayToMove.getId( ) != nIdDisplay )
+        if ( _formDisplay == null || _formDisplay.getId( ) != nIdDisplay )
         {
-            _formDisplayToMove = FormDisplayHome.findByPrimaryKey( nIdDisplay );
+            _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
-        nTargetPosition = _formDisplayToMove.getDisplayOrder( );
+        nTargetPosition = _formDisplay.getDisplayOrder( );
 
         String strIsStepValidated = request.getParameter( FormsConstants.PARAMETER_STEP_VALIDATED );
         if ( StringUtils.isNotBlank( strIsStepValidated ) )
@@ -867,7 +982,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             if ( nIdStepTarget == INTEGER_MINUS_ONE )
             {
-                nIdStepTarget = _formDisplayToMove.getStepId( );
+                nIdStepTarget = _formDisplay.getStepId( );
             }
             _nIdStepTarget = nIdStepTarget;
         }
@@ -878,7 +993,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
         else
         {
-            getJspManageForm( request );
+            redirectToViewManageForm( request );
         }
 
         nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), -1 );
@@ -886,39 +1001,39 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             if ( nIdParentTarget == INTEGER_MINUS_ONE )
             {
-                nIdParentTarget = _formDisplayToMove.getParentId( );
+                nIdParentTarget = _formDisplay.getParentId( );
             }
             _nIdParentTarget = nIdParentTarget;
         }
 
         ReferenceList listFormSteps = StepHome.getStepReferenceListByForm( stepTarget.getIdForm( ) );
 
-        ReferenceList listStepGroups = FormsDisplayUtils.getTargetGroupDisplayListByStep( nIdStepTarget, _formDisplayToMove, getLocale( ) );
+        ReferenceList listStepGroups = FormsDisplayUtils.getTargetGroupDisplayListByStep( nIdStepTarget, _formDisplay, getLocale( ) );
 
-        boolean bMoveToDifferentGroup = ( ( _formDisplayToMove.getParentId( ) != nIdParentTarget ) || ( _formDisplayToMove.getStepId( ) != nIdStepTarget ) );
+        boolean bMoveToDifferentGroup = ( ( _formDisplay.getParentId( ) != nIdParentTarget ) || ( _formDisplay.getStepId( ) != nIdStepTarget ) );
         ReferenceList listAvailablePositionsInParentGroup = FormsDisplayUtils.getlistAvailablePositionsInGroup( nIdStepTarget, nIdParentTarget,
                 bMoveToDifferentGroup, getLocale( ) );
 
         Map<String, Object> model = getModel( );
 
         model.put( FormsConstants.MARK_STEP, _step );
-        model.put( FormsConstants.MARK_DISPLAY, _formDisplayToMove );
-        model.put( FormsConstants.MARK_DISPLAY_TITLE, FormsDisplayUtils.getDisplayTitle( _formDisplayToMove ) );
+        model.put( FormsConstants.MARK_DISPLAY, _formDisplay );
+        model.put( FormsConstants.MARK_DISPLAY_TITLE, FormsDisplayUtils.getDisplayTitle( _formDisplay ) );
         model.put( FormsConstants.MARK_LIST_STEPS, listFormSteps );
         model.put( FormsConstants.MARK_LIST_GROUPS, listStepGroups );
         model.put( FormsConstants.MARK_LIST_AVAILABLE_POSITIONS, listAvailablePositionsInParentGroup );
-        model.put( FormsConstants.MARK_ID_STEP, bStepValidated ? nIdStepTarget : _formDisplayToMove.getStepId( ) );
+        model.put( FormsConstants.MARK_ID_STEP, bStepValidated ? nIdStepTarget : _formDisplay.getStepId( ) );
         model.put( FormsConstants.MARK_ID_PARENT, bGroupValidated ? nIdParentTarget : 0 );
         model.put( FormsConstants.MARK_DISPLAY_ORDER, nTargetPosition );
         model.put( MARK_STEP_VALIDATED, bStepValidated );
         model.put( MARK_GROUP_VALIDATED, bGroupValidated );
 
-        if ( _formDisplayToMove.getCompositeType( ).equalsIgnoreCase( CompositeDisplayType.GROUP.getLabel( ) ) )
+        if ( _formDisplay.getCompositeType( ).equalsIgnoreCase( CompositeDisplayType.GROUP.getLabel( ) ) )
         {
             setPageTitleProperty( PROPERTY_MOVE_GROUP_TITLE );
         }
         else
-            if ( _formDisplayToMove.getCompositeType( ).equalsIgnoreCase( CompositeDisplayType.QUESTION.getLabel( ) ) )
+            if ( _formDisplay.getCompositeType( ).equalsIgnoreCase( CompositeDisplayType.QUESTION.getLabel( ) ) )
             {
                 setPageTitleProperty( PROPERTY_MOVE_QUESTION_TITLE );
             }
@@ -949,12 +1064,12 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
-            getJspManageForm( request );
+            redirectToViewManageForm( request );
         }
 
-        if ( _formDisplayToMove == null || _formDisplayToMove.getId( ) != nIdDisplay )
+        if ( _formDisplay == null || _formDisplay.getId( ) != nIdDisplay )
         {
-            _formDisplayToMove = FormDisplayHome.findByPrimaryKey( nIdDisplay );
+            _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
 
         String strIsStepValidated = request.getParameter( FormsConstants.PARAMETER_STEP_VALIDATED );
@@ -976,7 +1091,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         if ( ( nIdStepTarget == INTEGER_MINUS_ONE ) || ( nIdParentTarget == INTEGER_MINUS_ONE ) )
         {
             addError( ERROR_OCCURED_MOVING_COMPOSITE, getLocale( ) );
-            return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _formDisplayToMove.getStepId( ) );
+            return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _formDisplay.getStepId( ) );
         }
 
         if ( nIdStepTarget != _nIdStepTarget )
@@ -995,7 +1110,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             return redirect( request, VIEW_MOVE_COMPOSITE, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
         }
 
-        moveDisplay( _formDisplayToMove, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget );
+        moveDisplay( _formDisplay, nIdStepTarget, nIdParentTarget, nDisplayOrderTarget );
 
         addInfo( INFO_MOVE_COMPOSITE_SUCCESSFUL, getLocale( ) );
 
@@ -1020,9 +1135,9 @@ public class FormQuestionJspBean extends AbstractJspBean
      */
     private void moveDisplay( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget, int nDisplayOrderTarget )
     {
-        int nIdOriginStep = _formDisplayToMove.getStepId( );
-        int nIdOriginParent = _formDisplayToMove.getParentId( );
-        int nOriginDisplayOrder = _formDisplayToMove.getDisplayOrder( );
+        int nIdOriginStep = _formDisplay.getStepId( );
+        int nIdOriginParent = _formDisplay.getParentId( );
+        int nOriginDisplayOrder = _formDisplay.getDisplayOrder( );
 
         List<FormDisplay> listDisplayInTargetGroup = FormDisplayHome.getFormDisplayListByParent( nIdStepTarget, nIdParentTarget );
 
@@ -1030,7 +1145,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         int nTargetDepth = FormsDisplayUtils.getDisplayDepthFromParent( nIdParentTarget );
         // update the idStep and depth of the display and all its descendants
-        FormsDisplayUtils.setChildrenDisplayDepthAndStep( formDisplayToMove, nTargetDepth, nIdStepTarget );
+        _formDisplayService.setChildrenDisplayDepthAndStep( formDisplayToMove, nTargetDepth, nIdStepTarget );
 
         // Rebuild the Position values of the Display and all its sibling inside Parent
         if ( !listDisplayInTargetGroup.isEmpty( ) )
@@ -1042,14 +1157,14 @@ public class FormQuestionJspBean extends AbstractJspBean
             }
             listDisplayInTargetGroup.add( nDisplayOrderTarget - 1, formDisplayToMove );
 
-            FormsDisplayUtils.rebuildDisplayPositionSequence( listDisplayInTargetGroup );
+            _formDisplayService.rebuildDisplayPositionSequence( listDisplayInTargetGroup );
         }
 
         // If move to a different group, rebuild the positions sequence within the origin group
         if ( ( nIdOriginParent != nIdParentTarget ) || ( nIdOriginStep != nIdStepTarget ) )
         {
             List<FormDisplay> listDisplayInOriginGroup = FormDisplayHome.getFormDisplayListByParent( nIdOriginStep, nIdOriginParent );
-            FormsDisplayUtils.rebuildDisplayPositionSequence( listDisplayInOriginGroup );
+            _formDisplayService.rebuildDisplayPositionSequence( listDisplayInOriginGroup );
         }
 
     }

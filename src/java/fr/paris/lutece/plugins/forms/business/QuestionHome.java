@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -86,12 +87,18 @@ public final class QuestionHome
 
     /**
      * Remove the question whose identifier is specified in parameter
+     * The associated Entry and EntryResponses will be also deleted
      * 
      * @param nKey
      *            The question Id
      */
     public static void remove( int nKey )
     {
+        Question questionToDelete = findByPrimaryKey( nKey );
+        if ( questionToDelete != null )
+        {
+            EntryHome.remove( questionToDelete.getIdEntry( ) );
+        }
         _dao.delete( nKey, _plugin );
     }
 

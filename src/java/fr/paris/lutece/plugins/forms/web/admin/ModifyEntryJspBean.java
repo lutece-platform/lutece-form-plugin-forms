@@ -156,7 +156,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         _nIdEntry = _question.getIdEntry( );
@@ -213,7 +213,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         _nIdEntry = _question.getIdEntry( );
@@ -222,7 +222,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         if ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         try
@@ -285,7 +285,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         Entry entry = new Entry( );
@@ -303,7 +303,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         FieldHome.create( field );
 
-        return getJspModifyQuestion( request, _step.getId( ), _question.getId( ) );
+        return redirectToViewModifyQuestion( request, _step.getId( ), _question.getId( ) );
     }
 
     /**
@@ -323,7 +323,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         if ( strIdField != null )
@@ -358,7 +358,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
             return getJspManageQuestions( request, _step.getId( ) );
         }
 
-        return getJspModifyQuestion( request, _step.getId( ), _question.getId( ) );
+        return redirectToViewModifyQuestion( request, _step.getId( ), _question.getId( ) );
     }
 
     /**
@@ -373,13 +373,13 @@ public class ModifyEntryJspBean extends AbstractJspBean
     {
         if ( !updateStepAndQuestion( request ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         if ( ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null )
                 || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, getUser( ) ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
@@ -408,13 +408,13 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         if ( ( strIdField == null )
                 || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, getUser( ) ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         try
@@ -425,14 +425,14 @@ public class ModifyEntryJspBean extends AbstractJspBean
         {
             AppLogService.error( ne );
 
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         if ( nIdField != -1 )
         {
             FieldHome.remove( nIdField );
 
-            return getJspModifyQuestion( request, _step.getId( ), _question.getId( ) );
+            return redirectToViewModifyQuestion( request, _step.getId( ), _question.getId( ) );
         }
 
         return getJspManageQuestions( request, _step.getId( ) );
@@ -482,12 +482,12 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         if ( ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         if ( !updateStepAndQuestion( request ) )
         {
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         try
@@ -498,7 +498,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         {
             AppLogService.error( ne );
 
-            return getJspManageForm( request );
+            return redirectToViewManageForm( request );
         }
 
         field = FieldHome.findByPrimaryKey( nIdField );
@@ -519,7 +519,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
             FieldHome.update( fieldToInversePosition );
         }
 
-        return getJspModifyQuestion( request, _step.getId( ), _question.getId( ) );
+        return redirectToViewModifyQuestion( request, _step.getId( ), _question.getId( ) );
     }
 
     /**
@@ -590,7 +590,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
      *            the parent question identifier
      * @return return URL of the JSP modify entry
      */
-    private String getJspModifyQuestion( HttpServletRequest request, int nIdStep, int nIdQuestion )
+    private String redirectToViewModifyQuestion( HttpServletRequest request, int nIdStep, int nIdQuestion )
     {
         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + JSP_MODIFY_QUESTION );
         url.addParameter( MVCUtils.PARAMETER_VIEW, VIEW_MODIFY_QUESTION );

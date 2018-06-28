@@ -146,7 +146,7 @@ public class FormStepJspBean extends AbstractJspBean
         catch( NumberFormatException ne )
         {
             AppLogService.error( ne );
-            return redirect( request, getJspManageForm( request ) );
+            return redirectToViewManageForm( request );
 
         }
 
@@ -195,7 +195,7 @@ public class FormStepJspBean extends AbstractJspBean
         {
             AppLogService.error( ne );
 
-            return redirect( request, getJspManageForm( request ) );
+            return redirectToViewManageForm( request );
         }
 
         _step = ( _step != null ) ? _step : new Step( );
@@ -251,7 +251,7 @@ public class FormStepJspBean extends AbstractJspBean
         {
             AppLogService.error( ne );
 
-            return redirect( request, getJspManageSteps( request ) );
+            return redirectToViewManageForm( request );
         }
 
         _step = StepHome.findByPrimaryKey( nId );
@@ -293,7 +293,7 @@ public class FormStepJspBean extends AbstractJspBean
         {
             AppLogService.error( ne );
 
-            return redirect( request, getJspManageSteps( request ) );
+            return redirectToViewManageForm( request );
         }
 
         if ( ( nIdStep != -1 ) )

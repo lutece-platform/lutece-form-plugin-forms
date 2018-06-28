@@ -115,7 +115,7 @@ public class FormTransitionJspBean extends AbstractJspBean
      * @return The page
      */
     @View( value = VIEW_MANAGE_TRANSITIONS, defaultView = true )
-    public String getManageSteps( HttpServletRequest request )
+    public String getManageTransition( HttpServletRequest request )
     {
         // TO DO : implement feature
         Locale locale = getLocale( );
@@ -128,7 +128,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         catch( NumberFormatException ne )
         {
             AppLogService.error( ne );
-            return redirect( request, getJspManageForm( request ) );
+            return redirectToViewManageForm( request );
 
         }
 

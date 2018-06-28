@@ -95,6 +95,17 @@ public final class FormQuestionResponseHome
     }
 
     /**
+     * Remove the formQuestionResponse related to a Question whose identifier is specified in parameter
+     * 
+     * @param nIdQuestion
+     *            The form Question Id
+     */
+    public static void removeByQuestion( int nIdQuestion )
+    {
+        _dao.deleteByQuestion( nIdQuestion, _plugin );
+    }
+
+    /**
      * Returns an instance of a formQuestionResponse whose identifier is specified in parameter
      * 
      * @param nKey

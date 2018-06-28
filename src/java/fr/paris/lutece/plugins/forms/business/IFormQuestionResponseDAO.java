@@ -95,4 +95,14 @@ public interface IFormQuestionResponseDAO
      */
     List<FormQuestionResponse> selectFormQuestionResponseList( Plugin plugin );
 
+    /**
+     * Delete all the FormQuestionResponse records related to a given Question
+     * 
+     * @param nIdQuestion
+     *            The identifier of the Question
+     * @param plugin
+     *            the Plugin
+     */
+    void deleteByQuestion( int nIdQuestion, Plugin plugin );
+
 }

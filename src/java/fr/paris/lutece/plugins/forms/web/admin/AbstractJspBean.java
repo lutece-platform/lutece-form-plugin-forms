@@ -44,6 +44,7 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.html.Paginator;
+import fr.paris.lutece.util.url.UrlItem;
 
 /**
  * Abstract Jsp Bean for plugin-forms
@@ -129,6 +130,23 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     {
         return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_STEPS;
     }
+    
+    /**
+     * Redirect to the URL of View manage step for the given
+     * 
+     * @param request
+     *            The HTTP request
+     * @param nIdForm
+     *            The Form identifier
+     * @return The URL of the JSP manage step
+     */
+    protected String redirectToViewManageSteps( HttpServletRequest request, int nIdForm )
+    {
+        UrlItem url = new UrlItem( getJspManageSteps( request ) );
+
+        url.addParameter( FormsConstants.PARAMETER_ID_FORM, nIdForm );
+        return redirect( request, url.getUrl( ) );
+    }
 
     /**
      * Return the URL of the JSP manage form
@@ -140,5 +158,17 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected String getJspManageForm( HttpServletRequest request )
     {
         return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_FORMS;
+    }
+    
+    /**
+     * Redirect to the URL of view manage form
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL of the JSP manage form
+     */
+    protected String redirectToViewManageForm( HttpServletRequest request )
+    {
+        return redirect( request, getJspManageForm( request ) );
     }
 }

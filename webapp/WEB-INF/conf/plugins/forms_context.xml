@@ -12,6 +12,7 @@
     <bean id="forms.formActionDAO"  class="fr.paris.lutece.plugins.forms.business.FormActionDAO" />
     <bean id="forms.formDisplayDAO" class="fr.paris.lutece.plugins.forms.business.FormDisplayDAO" />
     <bean id="forms.formListDAO" class="fr.paris.lutece.plugins.forms.business.form.list.FormListDAO" />
+    <bean id="forms.formQuestionResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormQuestionResponseDAO" />
     
     <bean id="forms.entryTypeCheckBox" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox" />
 	<bean id="forms.entryTypeComment" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment" />
@@ -76,6 +77,8 @@
 	</bean>
 		
 	<bean id="forms.asynchronousUploadHandler" class="fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler" />
+	
+	<bean id="forms.formDisplayService" class="fr.paris.lutece.plugins.forms.service.FormDisplayService" />
 	
 	<!-- FormList Facade -->
     <bean id="forms.formList.facade" class="fr.paris.lutece.plugins.forms.business.form.list.FormListFacade">

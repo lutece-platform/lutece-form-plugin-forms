@@ -40,7 +40,6 @@ import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.plugins.forms.business.FormActionHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
-import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -50,7 +49,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
@@ -96,8 +94,6 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_FORM = "form";
     private static final String MARK_PERMISSION_CREATE_FORMS = "permission_create_forms";
 
-    private static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
-
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
     private static final String PROPERTY_COPY_FORM_TITLE = "forms.copyForm.title";
@@ -133,7 +129,6 @@ public class FormJspBean extends AbstractJspBean
 
     // Session variable to store working values
     private Form _form;
-    private Step _step;
 
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
@@ -428,18 +423,6 @@ public class FormJspBean extends AbstractJspBean
         addInfo( INFO_FORM_UPDATED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_FORMS );
-    }
-
-    /**
-     * Return the URL of the JSP manage form
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL of the JSP manage form
-     */
-    protected String getJspManageForm( HttpServletRequest request )
-    {
-        return AppPathService.getBaseUrl( request ) + JSP_MANAGE_FORMS;
     }
 
     /**

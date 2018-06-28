@@ -54,6 +54,7 @@ import fr.paris.lutece.util.ReferenceList;
 /**
  * Utility class for plugin Forms
  */
+//TODO : Move the methods calling "Home" classes to a another class
 public final class FormsDisplayUtils
 {
     private static final String PROPERTY_POSITION_LABEL = "forms.moveComposite.position.label";
@@ -66,24 +67,6 @@ public final class FormsDisplayUtils
     private FormsDisplayUtils( )
     {
         throw new AssertionError( );
-    }
-
-    /**
-     * Utility method to rebuild the position sequence of a given FormDisplay list and update the objects in database The displayOrder field of the objects will
-     * be the corresponding list indexes.
-     * 
-     * @param listDisplay
-     *            The List of FormDisplay to update
-     */
-    public static void rebuildDisplayPositionSequence( List<FormDisplay> listDisplay )
-    {
-        int nUpdatedPosition = 0;
-        for ( FormDisplay displayToUpdate : listDisplay )
-        {
-            nUpdatedPosition++;
-            displayToUpdate.setDisplayOrder( nUpdatedPosition );
-            FormDisplayHome.update( displayToUpdate );
-        }
     }
 
     /**
@@ -252,35 +235,5 @@ public final class FormsDisplayUtils
             }
         }
         return nDisplayDepth;
-    }
-
-    /**
-     * Update a given FormDisplay, and all its descendants by setting the provided depth and idStep values. Value of a children Depth is parent depth plus one.
-     * Value of a children idStep is same as parent idStep.
-     * 
-     * @param formDisplayParent
-     *            the parent Display
-     * 
-     * @param nDepth
-     *            the parent depth value to set
-     * 
-     * @param nIdStep
-     *            the parent idStep value to set
-     * 
-     */
-    public static void setChildrenDisplayDepthAndStep( FormDisplay formDisplayParent, int nDepth, int nIdStep )
-    {
-        int nOldIdStep = formDisplayParent.getStepId( );
-
-        formDisplayParent.setStepId( nIdStep );
-        formDisplayParent.setDepth( nDepth );
-        FormDisplayHome.update( formDisplayParent );
-
-        List<FormDisplay> listChildDisplay = FormDisplayHome.getFormDisplayListByParent( nOldIdStep, formDisplayParent.getId( ) );
-
-        for ( FormDisplay childDisplay : listChildDisplay )
-        {
-            setChildrenDisplayDepthAndStep( childDisplay, formDisplayParent.getDepth( ) + 1, nIdStep );
-        }
     }
 }
