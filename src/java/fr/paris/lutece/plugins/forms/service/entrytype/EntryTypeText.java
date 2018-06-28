@@ -34,14 +34,7 @@
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeText;
-
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -83,12 +76,4 @@ public class EntryTypeText extends AbstractEntryTypeText
         return TEMPLATE_MODIFY;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public GenericAttributeError getResponseData( Entry entry, HttpServletRequest request, List<Response> listResponse, Locale locale )
-    {
-        return null;
-    }
 }

@@ -34,16 +34,19 @@
 package fr.paris.lutece.plugins.forms.service;
 
 import java.util.List;
-import java.util.Locale;
-
-import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
 import fr.paris.lutece.plugins.forms.web.CompositeQuestionDisplay;
 import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
+import fr.paris.lutece.plugins.forms.web.IEntryDataService;
 
 /**
  * This is the service class related to the form
@@ -60,23 +63,23 @@ public final class FormService
     }
 
     /**
-     * Get the Html of the given step
+     * Save the FormResponse instance
      * 
-     * @param nIdStep
-     *            The step primary key
-     * @param locale
-     *            The locale
-     * @return the Html of the given step
+     * @param formResponse
+     *            The formResponse to save
      */
-    public static String getStepHtml( int nIdStep, Locale locale )
+    public static void saveForm( FormResponse formResponse )
     {
-        String strStepHtml = StringUtils.EMPTY;
+        FormResponseHome.create( formResponse );
 
-        StepDisplayTree displayTree = new StepDisplayTree( nIdStep );
+        for ( FormQuestionResponse formQuestionResponse : formResponse.getListResponses( ) )
+        {
+            Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
+            IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+            formQuestionResponse.setIdFormResponse( formResponse.getId( ) );
+            dataService.saveFormQuestionResponse( formQuestionResponse );
+        }
 
-        strStepHtml = displayTree.getCompositeHtml( locale );
-
-        return strStepHtml;
     }
 
     /**

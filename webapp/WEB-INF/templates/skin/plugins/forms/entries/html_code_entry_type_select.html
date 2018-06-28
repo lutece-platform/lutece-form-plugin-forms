@@ -1,0 +1,58 @@
+	<div class="form-group">
+		<#assign idName = 'attribute' + entry.idEntry>
+		<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+			<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
+		</#if>
+		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"  for="${idName}">${entry.title} <#if entry.mandatory>*</#if></label>
+		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">	 
+			<select class="form-control input-sm" name="${idName}" id="${idName}"
+				<#if list_responses??>
+					<#list list_responses as response>
+						<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
+							class="error"
+							<#break>
+						</#if>
+					</#list>
+					class="${entry.CSSClass!}"
+				</#if>	>
+				<option value="">#i18n{form.xpage.form.noValue}</option>
+				<#list entry.fields as field>
+					<option  value="${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if>
+						<#if list_responses??>
+							<#list list_responses as response>
+								<#if response.entry.idEntry == entry.idEntry && response.field??>
+									<#if response.field.idField == field.idField>
+										selected ="selected"
+										<#break>
+									</#if>
+								</#if>
+							</#list>
+						<#else>
+							<#if field.defaultValue>
+								selected ="selected"
+							</#if>
+						</#if>
+						>
+							${field.title}
+					</option>	
+				</#list>
+			</select>
+			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+				<span class="help-block">${entry.helpMessage}</span>
+			</#if>
+			<#if list_responses??>
+				<#list list_responses as response>
+					<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+						<div class="alert alert-danger">
+							<#assign error = response.entry.error>
+							<#if error.mandatoryError>
+								#i18n{forms.message.mandatory.entry}
+							<#else>
+								${error.errorMessage}
+							</#if>
+						</div>	
+					</#if>
+				</#list>
+			</#if>
+		</div>
+	</div>

@@ -44,6 +44,7 @@ import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -135,5 +136,17 @@ public class StepDisplayTree
         }
         return _listICompositeDisplay;
     }
-
+    
+    /**
+     * 
+     * @param mapStepResponses
+     *            The map containing question responses and potential errors
+     */
+    public void setResponses( Map<Integer, List<Response>> mapStepResponses )
+    {
+    	for ( ICompositeDisplay composite : _listChildren )
+        {
+            composite.setResponses( mapStepResponses );
+        }
+    }
 }

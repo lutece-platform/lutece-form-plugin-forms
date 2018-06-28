@@ -4,6 +4,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" >
 
+	<!-- DAO -->
     <bean id="forms.formDAO" class="fr.paris.lutece.plugins.forms.business.FormDAO" />
     <bean id="forms.stepDAO" class="fr.paris.lutece.plugins.forms.business.StepDAO" />
     <bean id="forms.transitionDAO" class="fr.paris.lutece.plugins.forms.business.TransitionDAO" />
@@ -12,14 +13,16 @@
     <bean id="forms.formActionDAO"  class="fr.paris.lutece.plugins.forms.business.FormActionDAO" />
     <bean id="forms.formDisplayDAO" class="fr.paris.lutece.plugins.forms.business.FormDisplayDAO" />
     <bean id="forms.formListDAO" class="fr.paris.lutece.plugins.forms.business.form.list.FormListDAO" />
+    <bean id="forms.formQuestionResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormQuestionResponseDAO" />
+    <bean id="forms.formResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseDAO" />
     
+    <!-- EntryType -->
     <bean id="forms.entryTypeCheckBox" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox" />
 	<bean id="forms.entryTypeComment" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment" />
 	<bean id="forms.entryTypeDate" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate" />
 	<bean id="forms.entryTypeFile" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeFile" />
 	<bean id="forms.entryTypeGeolocation" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeGeolocation" />
 	<bean id="forms.entryTypeImage" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage" />
-	<bean id="forms.entryTypeMandatoryCheckBox" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMandatoryCheckBox" />
 	<bean id="forms.entryTypeMyLuteceUser" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUser" />
 	<bean id="forms.entryTypeNumbering" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering" />
 	<bean id="forms.entryTypeRadioButton" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton" />
@@ -29,6 +32,7 @@
 	<bean id="forms.entryTypeMyLuteceUserattribute" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUserAttribute" />
 	<bean id="forms.entryTypeArray" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeArray" />
 
+	<!-- DisplayService -->
 	<bean id="forms.entryTypeCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeCheckBox" />
 	</bean>
@@ -46,9 +50,6 @@
 	</bean>
 	<bean id="forms.entryTypeImageDisplayService" class="fr.paris.lutece.plugins.forms.web.EntryTypeFileDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeImage" />
-	</bean>
-	<bean id="forms.entryTypeMandatoryCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDisplayService">
-		<constructor-arg  type="java.lang.String" value="forms.entryTypeMandatoryCheckBox" />
 	</bean>
 	<bean id="forms.entryTypeMyLuteceUserDisplayService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeMyLuteceUser" />
@@ -72,6 +73,53 @@
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeMyLuteceUserattribute" />
 	</bean>
 	<bean id="forms.entryTypeArrayDisplayService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDisplayService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeArray" />
+	</bean>
+	
+	<!-- DataService -->
+	<bean id="forms.entryTypeCheckBoxDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeCheckBox" />
+	</bean>
+	<bean id="forms.entryTypeCommentDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeComment" />
+	</bean>
+	<bean id="forms.entryTypeDateDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeDate" />
+	</bean>
+	<bean id="forms.entryTypeFileDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeFile" />
+	</bean>
+	<bean id="forms.entryTypeGeolocationDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeGeolocation" />
+	</bean>
+	<bean id="forms.entryTypeGroupDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeGroup" />
+	</bean>
+	<bean id="forms.entryTypeImageDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeImage" />
+	</bean>
+	<bean id="forms.entryTypeMyLuteceUserDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeMyLuteceUser" />
+	</bean>
+	<bean id="forms.entryTypeNumberingDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeNumbering" />
+	</bean>
+	<bean id="forms.entryTypeRadioButtonDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeRadioButton" />
+	</bean>
+	<bean id="forms.entryTypeSelectDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeSelect" />
+	</bean>
+	<bean id="forms.entryTypeTextDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeText" />
+	</bean>
+	<bean id="forms.entryTypeTextAreaDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeTextArea" />
+	</bean>
+	<bean id="forms.entryTypeMyLuteceUserattributeDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeMyLuteceUserattribute" />
+	</bean>
+	<bean id="forms.entryTypeArrayDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeArray" />
 	</bean>
 		

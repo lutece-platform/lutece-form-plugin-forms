@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.service;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.web.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.IEntryDisplayService;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -46,12 +47,15 @@ public final class EntryServiceManager
 {
     private List<IEntryDisplayService> _listEntryDisplayService;
 
+    private List<IEntryDataService> _listEntryDataService;
+
     /**
      * Constructor for EntryServiceManager class
      */
     private EntryServiceManager( )
     {
         _listEntryDisplayService = SpringContextService.getBeansOfType( IEntryDisplayService.class );
+        _listEntryDataService = SpringContextService.getBeansOfType( IEntryDataService.class );
     }
 
     /**
@@ -73,17 +77,35 @@ public final class EntryServiceManager
      */
     public IEntryDisplayService getEntryDisplayService( EntryType entryType )
     {
-        IEntryDisplayService entryDisplayService = null;
-
         for ( IEntryDisplayService entryDisplayServiceTemp : _listEntryDisplayService )
         {
             if ( entryType.getBeanName( ).equals( entryDisplayServiceTemp.getDisplayServiceName( ) ) )
             {
-                entryDisplayService = entryDisplayServiceTemp;
+                return entryDisplayServiceTemp;
             }
         }
 
-        return entryDisplayService;
+        return null;
+    }
+
+    /**
+     * Get the right IEntryDataService
+     * 
+     * @param entryType
+     *            The entrytype
+     * @return the IEntryDataService
+     */
+    public IEntryDataService getEntryDataService( EntryType entryType )
+    {
+        for ( IEntryDataService entryDataServiceTemp : _listEntryDataService )
+        {
+            if ( entryType.getBeanName( ).equals( entryDataServiceTemp.getDataServiceName( ) ) )
+            {
+                return entryDataServiceTemp;
+            }
+        }
+
+        return null;
     }
 
     /**

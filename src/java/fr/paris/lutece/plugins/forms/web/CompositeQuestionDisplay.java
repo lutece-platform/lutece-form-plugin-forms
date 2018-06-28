@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -58,10 +59,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 {
     private static final String QUESTION_TEMPLATE = "/skin/plugins/forms/composite_template/view_question.html";
     private static final String QUESTION_CONTENT_MARKER = "questionContent";
+    private static final String QUESTION_ERRORS = "list_responses";
+    private static final String QUESTION_ENTRY = "questionEntry";
 
     private Question _question;
     private FormDisplay _formDisplay;
     private String _strIconName;
+    private List<Response> _listResponses = new ArrayList<Response>( );
 
     @Override
     public void initComposite( FormDisplay formDisplay )
@@ -75,6 +79,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     }
 
     @Override
+    public void initIterationComposite( FormDisplay formDisplay, int nIterationNumber )
+    {
+        _question = QuestionHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
+        _formDisplay = formDisplay;
+    }
+
+    @Override
     public String getCompositeHtml( Locale locale )
     {
         String strQuestionTemplate = StringUtils.EMPTY;
@@ -85,9 +96,11 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
             if ( displayService != null )
             {
-                strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale );
-
                 Map<String, Object> model = new HashMap<String, Object>( );
+                model.put( QUESTION_ERRORS, _listResponses );
+                model.put( QUESTION_ENTRY, _question.getEntry( ) );
+
+                strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale, model );
 
                 model.put( QUESTION_CONTENT_MARKER, strQuestionTemplate );
 
@@ -98,6 +111,20 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
 
         return strQuestionTemplate;
+    }
+    
+    @Override
+    public void setResponses( Map<Integer, List<Response>> mapStepResponses )
+    {
+    	List<Response> listResponse = mapStepResponses.get( _question.getId( ) );
+    	if( listResponse != null )
+    	{
+    		_listResponses = listResponse;
+    	}
+    	else
+    	{
+    		_listResponses = new ArrayList<Response>( );
+    	}
     }
 
     @Override

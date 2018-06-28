@@ -45,6 +45,10 @@
 
     <!-- XPages parameters -->
     <applications>
+    	<application>
+            <application-id>forms</application-id>
+            <application-class>fr.paris.lutece.plugins.forms.web.FormXPage</application-class>
+        </application>
     </applications>
 
     <!-- Portlet parameters -->

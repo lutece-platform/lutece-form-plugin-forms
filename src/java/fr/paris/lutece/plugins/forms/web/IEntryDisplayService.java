@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web;
 
 import java.util.Locale;
+import java.util.Map;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 
@@ -54,7 +55,10 @@ public interface IEntryDisplayService
      *            The given entry
      * @param locale
      *            The given locale
+     * @param model
+     *            The given model
      * @return the template Html of the given entry
      */
-    String getEntryTemplateDisplay( Entry entry, Locale locale );
+    String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model );
+
 }
