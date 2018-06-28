@@ -31,67 +31,78 @@
  *
  * License 1.0
  */
+
 package fr.paris.lutece.plugins.forms.web;
 
-import java.util.Locale;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
 
 /**
- * The default display service
+ * 
+ * Default entry data service
+ *
  */
-public class EntryTypeDefaultDisplayService implements IEntryDisplayService
+public class EntryTypeDefaultDataService implements IEntryDataService
 {
     private String _strEntryServiceName = StringUtils.EMPTY;
 
     /**
-     * Constructor of the EntryTypeDefaultDisplayService
+     * Constructor
      * 
      * @param strEntryServiceName
-     *            The entry service name
+     *            the service name
      */
-    public EntryTypeDefaultDisplayService( String strEntryServiceName )
+    public EntryTypeDefaultDataService( String strEntryServiceName )
     {
         _strEntryServiceName = strEntryServiceName;
     }
 
-    /**
-     * Return the completed model
-     * 
-     * @param entry
-     *            The given entry
-     * @param model
-     *            The given model
-     * @return the completed model
-     */
-    private Map<String, Object> setModel( Entry entry, Map<String, Object> model )
-    {
-        model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
-
-        return model;
-    }
-
     @Override
-    public String getDisplayServiceName( )
+    public String getDataServiceName( )
     {
         return _strEntryServiceName;
     }
 
     @Override
-    public String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
+    public void saveFormQuestionResponse( FormQuestionResponse questionResponse )
     {
-        IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
+        FormQuestionResponseHome.create( questionResponse );
+    }
 
-        String strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, true ), locale, setModel( entry, model ) ).getHtml( );
+    @Override
+    public boolean getResponseFromRequest( Question question, HttpServletRequest request, FormQuestionResponse responseInstance )
+    {
 
-        return strEntryHtml;
+        boolean bHasError = false;
+
+        List<Response> listResponses = new ArrayList<Response>( );
+        GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
+                listResponses, request.getLocale( ) );
+
+        if ( error != null )
+        {
+            bHasError = true;
+            if ( listResponses.size( ) > 0 && listResponses.get( 0 ).getEntry( ) != null )
+            {
+                listResponses.get( 0 ).getEntry( ).setError( error );
+            }
+        }
+
+        responseInstance.setEntryResponse( listResponses );
+        responseInstance.setIdQuestion( question.getId( ) );
+
+        return bHasError;
     }
 
 }

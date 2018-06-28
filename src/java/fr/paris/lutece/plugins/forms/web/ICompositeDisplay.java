@@ -35,8 +35,10 @@ package fr.paris.lutece.plugins.forms.web;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 
 /**
  * 
@@ -59,6 +61,13 @@ public interface ICompositeDisplay
      *            The parent formDisplay
      */
     void initComposite( FormDisplay formDisplay );
+
+    /**
+     * 
+     * @param mapStepResponses
+     *            The map containing question responses and potential errors
+     */
+    void setResponses( Map<Integer, List<Response>> mapStepResponses );
 
     /**
      * Return the full list of children ICompositeDisplay of an initialized CompositeDisplay

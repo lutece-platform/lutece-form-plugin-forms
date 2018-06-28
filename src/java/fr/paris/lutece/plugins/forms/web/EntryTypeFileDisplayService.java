@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -73,11 +72,12 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
      *            The given entry
      * @param service
      *            The upload service
+     * @param model
+     *            The upload model
      * @return the completed model
      */
-    private Map<String, Object> getModel( Entry entry, IEntryTypeService service )
+    private Map<String, Object> setModel( Entry entry, IEntryTypeService service, Map<String, Object> model )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
         model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
         model.put( MARK_UPLOAD_HANDLER, ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ) );
 
@@ -91,11 +91,11 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     }
 
     @Override
-    public String getEntryTemplateDisplay( Entry entry, Locale locale )
+    public String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
     {
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
 
-        String strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, true ), locale, getModel( entry, service ) ).getHtml( );
+        String strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, true ), locale, setModel( entry, service, model ) ).getHtml( );
 
         return strEntryHtml;
     }

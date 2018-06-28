@@ -39,6 +39,7 @@ import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -59,7 +60,7 @@ import org.apache.commons.lang.StringUtils;
 public class CompositeGroupDisplay implements ICompositeDisplay
 {
     private static final String GROUP_TEMPLATE = "/skin/plugins/forms/composite_template/view_group.html";
-    private static final String GROUP_TITLE_MARKER = "groupTitle";
+    private static final String GROUP_MARKER = "group";
     private static final String GROUP_CONTENT_MARKER = "groupContent";
     private static final String PROPERTY_COMPOSITE_GROUP_ICON = "forms.composite.group.icon";
     private static final String DEFAULT_GROUP_ICON = "indent";
@@ -100,12 +101,21 @@ public class CompositeGroupDisplay implements ICompositeDisplay
             strBuilder.append( child.getCompositeHtml( locale ) );
         }
 
-        model.put( GROUP_TITLE_MARKER, _group.getTitle( ) );
+        model.put( GROUP_MARKER, _group );
         model.put( GROUP_CONTENT_MARKER, strBuilder.toString( ) );
 
         HtmlTemplate t = AppTemplateService.getTemplate( GROUP_TEMPLATE, locale, model );
 
         return t.getHtml( );
+    }
+
+    @Override
+    public void setResponses( Map<Integer, List<Response>> mapStepResponses )
+    {
+        for ( ICompositeDisplay composite : _listChildren )
+        {
+            composite.setResponses( mapStepResponses );
+        }
     }
 
     @Override

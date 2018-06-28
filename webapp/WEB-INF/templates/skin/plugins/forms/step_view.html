@@ -1,10 +1,16 @@
+<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <@addRequiredJsFiles />
 <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
 
-<form class="form-horizontal" id="form-validate" action="jsp/site/Portal.jsp?page=form" method="post" enctype="multipart/form-data">
-	${stepHtml}
+<form class="form-horizontal" id="form-validate" action="jsp/site/Portal.jsp?page=forms" method="post" enctype="multipart/form-data">
+	${stepContent}
 	<div class="form-group">
-		<input name="page" value="form" type="hidden">
-		<button class="btn btn-primary btn-sm" name="action_saveResponse"  type="submit">Valider</button>
+		<input name="page" value="forms" type="hidden">
+		<input name="formId" value="${step.idForm}" type="hidden">
+		<input name="stepId" value="${step.id}" type="hidden">
+		<button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit">#i18n{forms.step.valid}</button>
+		<#if step.final >
+			<button class="btn btn-primary btn-sm" name="action_doSaveResponse"  type="submit">#i18n{forms.step.save}</button>
+		</#if>
 	</div>
 </form>
