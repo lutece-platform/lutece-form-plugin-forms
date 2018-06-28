@@ -1,6 +1,5 @@
 package fr.paris.lutece.plugins.forms.web;
 
-
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;

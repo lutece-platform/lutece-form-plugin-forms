@@ -99,12 +99,12 @@ public class FormXPage extends MVCApplication
             if ( form.isActive( ) )
             {
                 model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ) ) );
-                model.put( FormsConstants.MARK_STEP, _currentStep ); 
+                model.put( FormsConstants.MARK_STEP, _currentStep );
             }
             // TODO
-            /*else
-            {
-            }*/
+            /*
+             * else { }
+             */
         }
 
         return getXPage( TEMPLATE_VIEW_STEP, request.getLocale( ), model );
@@ -138,30 +138,30 @@ public class FormXPage extends MVCApplication
             for ( Question question : stepQuestions )
             {
                 IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-                if( entryDataService != null )
+                if ( entryDataService != null )
                 {
-	                FormQuestionResponse questionResponseInstance = new FormQuestionResponse( );
-	                boolean bHasError = entryDataService.getResponseFromRequest( question, request, questionResponseInstance );
-	                
-	                if ( bHasError )
-	                {
-	                	bValidStep = false;
-	                }
-	                else
-	                {
-	                	listResponsesTemp.add( questionResponseInstance );
-	                }
-	                
-	                mapStepResponses.put( question.getId( ), questionResponseInstance.getEntryResponse( ) );
+                    FormQuestionResponse questionResponseInstance = new FormQuestionResponse( );
+                    boolean bHasError = entryDataService.getResponseFromRequest( question, request, questionResponseInstance );
+
+                    if ( bHasError )
+                    {
+                        bValidStep = false;
+                    }
+                    else
+                    {
+                        listResponsesTemp.add( questionResponseInstance );
+                    }
+
+                    mapStepResponses.put( question.getId( ), questionResponseInstance.getEntryResponse( ) );
                 }
             }
-            
-            if( !bValidStep )
+
+            if ( !bValidStep )
             {
-            	_stepDisplayTree.setResponses( mapStepResponses );
-            	return getStepView( request );
+                _stepDisplayTree.setResponses( mapStepResponses );
+                return getStepView( request );
             }
-            
+
             _formResponse.getListResponses( ).addAll( listResponsesTemp );
 
         }
@@ -183,11 +183,11 @@ public class FormXPage extends MVCApplication
 
         if ( nIdForm >= 0 && nIdStep >= 0 )
         {
-        	Form form = FormHome.findByPrimaryKey( nIdForm );
+            Form form = FormHome.findByPrimaryKey( nIdForm );
 
             if ( form.isActive( ) )
             {
-            	FormService.saveForm( _formResponse );
+                FormService.saveForm( _formResponse );
             }
         }
 

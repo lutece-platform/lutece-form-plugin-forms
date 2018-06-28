@@ -84,22 +84,22 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     public boolean getResponseFromRequest( Question question, HttpServletRequest request, FormQuestionResponse responseInstance )
     {
 
-    	boolean bHasError = false;
-    	
-    	List<Response> listResponses = new ArrayList<Response>( );
+        boolean bHasError = false;
+
+        List<Response> listResponses = new ArrayList<Response>( );
         GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
                 listResponses, request.getLocale( ) );
-        
-        if( error != null )
+
+        if ( error != null )
         {
-        	bHasError = true;
-        	if( listResponses.size( ) > 0 && listResponses.get( 0 ).getEntry() != null )
-        	{
-        		listResponses.get( 0 ).getEntry().setError( error );
-        	}
+            bHasError = true;
+            if ( listResponses.size( ) > 0 && listResponses.get( 0 ).getEntry( ) != null )
+            {
+                listResponses.get( 0 ).getEntry( ).setError( error );
+            }
         }
 
-    	responseInstance.setEntryResponse( listResponses );
+        responseInstance.setEntryResponse( listResponses );
         responseInstance.setIdQuestion( question.getId( ) );
 
         return bHasError;

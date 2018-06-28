@@ -90,24 +90,6 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     }
 
     @Override
-    public void initIterationComposite( FormDisplay formDisplay, int nIterationNumber )
-    {
-        if ( !StringUtils.isEmpty( formDisplay.getCompositeType( ) ) )
-        {
-            _group = GroupHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
-        }
-
-        List<FormDisplay> formDisplayList = FormDisplayHome.getFormDisplayListByParent( formDisplay.getStepId( ), formDisplay.getId( ) );
-
-        for ( FormDisplay formDisplayChild : formDisplayList )
-        {
-            ICompositeDisplay composite = FormService.formDisplayToComposite( formDisplayChild );
-            _listChildren.add( composite );
-            composite.initIterationComposite( formDisplayChild, nIterationNumber );
-        }
-    }
-
-    @Override
     public String getCompositeHtml( Locale locale )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
@@ -126,11 +108,11 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         return t.getHtml( );
     }
-    
+
     @Override
     public void setResponses( Map<Integer, List<Response>> mapStepResponses )
     {
-    	for ( ICompositeDisplay composite : _listChildren )
+        for ( ICompositeDisplay composite : _listChildren )
         {
             composite.setResponses( mapStepResponses );
         }

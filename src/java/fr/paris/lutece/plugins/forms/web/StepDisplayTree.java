@@ -136,7 +136,7 @@ public class StepDisplayTree
         }
         return _listICompositeDisplay;
     }
-    
+
     /**
      * 
      * @param mapStepResponses
@@ -144,7 +144,7 @@ public class StepDisplayTree
      */
     public void setResponses( Map<Integer, List<Response>> mapStepResponses )
     {
-    	for ( ICompositeDisplay composite : _listChildren )
+        for ( ICompositeDisplay composite : _listChildren )
         {
             composite.setResponses( mapStepResponses );
         }

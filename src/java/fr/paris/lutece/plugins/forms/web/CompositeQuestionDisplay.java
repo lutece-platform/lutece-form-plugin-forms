@@ -79,13 +79,6 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     }
 
     @Override
-    public void initIterationComposite( FormDisplay formDisplay, int nIterationNumber )
-    {
-        _question = QuestionHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
-        _formDisplay = formDisplay;
-    }
-
-    @Override
     public String getCompositeHtml( Locale locale )
     {
         String strQuestionTemplate = StringUtils.EMPTY;
@@ -112,19 +105,19 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
         return strQuestionTemplate;
     }
-    
+
     @Override
     public void setResponses( Map<Integer, List<Response>> mapStepResponses )
     {
-    	List<Response> listResponse = mapStepResponses.get( _question.getId( ) );
-    	if( listResponse != null )
-    	{
-    		_listResponses = listResponse;
-    	}
-    	else
-    	{
-    		_listResponses = new ArrayList<Response>( );
-    	}
+        List<Response> listResponse = mapStepResponses.get( _question.getId( ) );
+        if ( listResponse != null )
+        {
+            _listResponses = listResponse;
+        }
+        else
+        {
+            _listResponses = new ArrayList<Response>( );
+        }
     }
 
     @Override

@@ -62,7 +62,6 @@ public interface ICompositeDisplay
      */
     void initComposite( FormDisplay formDisplay );
 
-    
     /**
      * 
      * @param mapStepResponses
