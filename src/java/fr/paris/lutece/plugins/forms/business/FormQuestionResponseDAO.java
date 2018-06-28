@@ -58,7 +58,8 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     private static final String SQL_QUERY_INSERT_ENTRY_RESPONSE = "INSERT INTO forms_question_entry_response ( id_question_response, id_entry_response ) VALUES ( ?, ? ) ";
     private static final String SQL_QUERY_DELETE_BY_QUESTION = "DELETE FROM forms_question_response WHERE id_question = ? ";
     private static final String SQL_QUERY_DELETE_QUESTION_ENTRY_RESPONSE_BY_QUESTION = "DELETE FROM forms_question_entry_response "
-            +"WHERE id_question_response IN ( SELECT id_question_response FROM forms_question_response WHERE id_question = ? )";
+            + "WHERE id_question_response IN ( SELECT id_question_response FROM forms_question_response WHERE id_question = ? )";
+
     /**
      * {@inheritDoc }
      */
@@ -171,7 +172,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         {
             daoUtil.close( );
         }
-        
+
         daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_QUESTION, plugin );
         try
         {

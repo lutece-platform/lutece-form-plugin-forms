@@ -86,8 +86,7 @@ public final class QuestionHome
     }
 
     /**
-     * Remove the question whose identifier is specified in parameter
-     * The associated Entry and EntryResponses will be also deleted
+     * Remove the question whose identifier is specified in parameter. The associated Entry and EntryResponses will be also deleted
      * 
      * @param nKey
      *            The question Id

@@ -54,7 +54,7 @@ import fr.paris.lutece.util.ReferenceList;
 /**
  * Utility class for plugin Forms
  */
-//TODO : Move the methods calling "Home" classes to a another class
+// TODO : Move the methods calling "Home" classes to a another class
 public final class FormsDisplayUtils
 {
     private static final String PROPERTY_POSITION_LABEL = "forms.moveComposite.position.label";

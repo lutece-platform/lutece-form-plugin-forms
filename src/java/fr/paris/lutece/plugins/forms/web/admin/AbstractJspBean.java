@@ -130,7 +130,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     {
         return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_STEPS;
     }
-    
+
     /**
      * Redirect to the URL of View manage step for the given
      * 
@@ -159,7 +159,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     {
         return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_FORMS;
     }
-    
+
     /**
      * Redirect to the URL of view manage form
      * 

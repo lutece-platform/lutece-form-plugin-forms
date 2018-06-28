@@ -58,9 +58,8 @@ public final class FormDisplayService
     }
 
     /**
-     * Remove the formDisplay whose identifier is specified in parameter.
-     * The responses, group/question associated to this display will be deleted.
-     * All the descendants of the display will also be removed
+     * Remove the formDisplay whose identifier is specified in parameter. The responses, group/question associated to this display will be deleted. All the
+     * descendants of the display will also be removed
      * 
      * @param nIdDIsplay
      *            The formDisplay Id
@@ -69,20 +68,20 @@ public final class FormDisplayService
     {
         FormDisplay formDisplayToDelete = FormDisplayHome.findByPrimaryKey( nIdDIsplay );
         List<FormDisplay> listChildrenDisplay = new ArrayList<FormDisplay>( );
-        
+
         if ( formDisplayToDelete != null )
         {
             int formDisplayCompositeId = formDisplayToDelete.getCompositeId( );
-            
+
             listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( formDisplayToDelete.getStepId( ), formDisplayToDelete.getId( ) );
-            
+
             if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplayToDelete.getCompositeType( ) ) )
             {
-                //Delete all QuestionResponses associated to the Question, including the responses of different parent iterations
+                // Delete all QuestionResponses associated to the Question, including the responses of different parent iterations
                 FormQuestionResponseHome.removeByQuestion( formDisplayCompositeId );
-                //Delete the Question and its Entry
+                // Delete the Question and its Entry
                 QuestionHome.remove( formDisplayCompositeId );
-                //TO DO: delete all Controls associated to the composite
+                // TO DO: delete all Controls associated to the composite
             }
 
             if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( formDisplayToDelete.getCompositeType( ) ) )
@@ -91,7 +90,7 @@ public final class FormDisplayService
             }
 
             FormDisplayHome.remove( nIdDIsplay );
-            
+
             for ( FormDisplay childDisplay : listChildrenDisplay )
             {
                 deleteDisplayAndDescendants( childDisplay.getId( ) );
@@ -101,8 +100,8 @@ public final class FormDisplayService
     }
 
     /**
-     * Rebuild the position sequence of a given FormDisplay list and update the objects in database.
-     * The list indexes will be used to set the displayOrder values.
+     * Rebuild the position sequence of a given FormDisplay list and update the objects in database. The list indexes will be used to set the displayOrder
+     * values.
      * 
      * @param listDisplay
      *            The List of FormDisplay to update
@@ -140,7 +139,7 @@ public final class FormDisplayService
         formDisplayParent.setStepId( nIdStep );
         formDisplayParent.setDepth( nDepth );
         FormDisplayHome.update( formDisplayParent );
-        
+
         if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( strCompositeType ) )
         {
             Question question = QuestionHome.findByPrimaryKey( formDisplayParent.getCompositeId( ) );

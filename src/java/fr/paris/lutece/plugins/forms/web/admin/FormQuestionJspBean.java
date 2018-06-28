@@ -162,8 +162,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String INFO_MOVE_COMPOSITE_SUCCESSFUL = "forms.info.moveComposite.successful";
     private static final String INFO_DELETE_COMPOSITE_SUCCESSFUL = "forms.info.deleteComposite.successful";
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
-    
-    //Warning messages
+
+    // Warning messages
     private static final String WARNING_CONFIRM_REMOVE_QUESTION = "forms.warning.deleteComposite.confirmRemoveQuestion";
     private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS = "forms.warning.deleteComposite.confirmRemoveGroup";
     private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
@@ -173,11 +173,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final int INTEGER_MINUS_ONE = -1;
     private static final String FORM_DISPLAY_SERVICE_BEAN = "forms.formDisplayService";
     private static final FormDisplayService _formDisplayService = SpringContextService.getBean( FORM_DISPLAY_SERVICE_BEAN );
-
-
-
-
-
 
     private Step _step;
     private Form _form;
@@ -815,20 +810,20 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             redirectToViewManageForm( request );
         }
-        
+
         if ( ( _step == null ) || ( _step.getId( ) != nIdStep ) )
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
 
         int nIdForm = _step.getIdForm( );
-        
+
         if ( nIdForm == INTEGER_MINUS_ONE )
         {
             redirectToViewManageForm( request );
         }
-        
-        if( ( _form == null ) || _form.getId( ) != _step.getIdForm( ) )
+
+        if ( ( _form == null ) || _form.getId( ) != _step.getIdForm( ) )
         {
             _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
         }
@@ -844,10 +839,10 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
-        
+
         if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) ) )
         {
-            if( _form.isActive( ) )
+            if ( _form.isActive( ) )
             {
                 strMessage = WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE;
             }
@@ -859,7 +854,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) ) )
         {
-            if( _form.isActive( ) )
+            if ( _form.isActive( ) )
             {
                 strMessage = WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE;
             }
@@ -867,9 +862,9 @@ public class FormQuestionJspBean extends AbstractJspBean
             {
                 strMessage = WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS;
             }
-            
+
         }
-        
+
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_COMPOSITE ) );
         url.addParameter( FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
 
@@ -889,7 +884,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String doRemoveComposite( HttpServletRequest request )
     {
         int nIdDisplay = INTEGER_MINUS_ONE;
-        
+
         nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
@@ -901,12 +896,12 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
-        
+
         _formDisplayService.deleteDisplayAndDescendants( nIdDisplay );
-        
+
         List<FormDisplay> listFormDisplaySibling = FormDisplayHome.getFormDisplayListByParent( _formDisplay.getStepId( ), _formDisplay.getParentId( ) );
         _formDisplayService.rebuildDisplayPositionSequence( listFormDisplaySibling );
-        
+
         addInfo( INFO_DELETE_COMPOSITE_SUCCESSFUL, getLocale( ) );
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _formDisplay.getStepId( ) );
     }
