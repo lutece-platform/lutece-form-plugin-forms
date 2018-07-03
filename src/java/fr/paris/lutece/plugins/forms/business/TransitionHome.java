@@ -65,6 +65,11 @@ public final class TransitionHome
      */
     public static Transition create( Transition transition )
     {
+        int nPriority = getCurrentPriorityByStep( transition.getFromStep( ) );
+        if( nPriority != -1 )
+        {
+            transition.setPriority( nPriority + 1 );
+        }
         _dao.insert( transition, _plugin );
 
         return transition;
@@ -84,6 +89,7 @@ public final class TransitionHome
         return transition;
     }
 
+    
     /**
      * Remove the transition whose identifier is specified in parameter
      * 
@@ -136,4 +142,62 @@ public final class TransitionHome
     {
         return _dao.selectTransitionsReferenceList( _plugin );
     }
+
+    /**
+     * Load the data of all the transition objects from the given step and returns them as a list
+     * 
+     * @param nIdStep
+     *            The identifier of the starting step
+     * @return the list which contains the data of all the transition objects
+     */
+    public static List<Transition> getTransitionsListFromStep( int nIdStep )
+    {
+        return _dao.selectTransitionsListFromStep( nIdStep, _plugin );
+    }
+
+
+    /**
+     * Load the data of a transition object from the given step and the given priority
+     * 
+     * @param nIdStep
+     *            The identifier of the step
+     * @param nPriority
+     *            The priority value        
+     * @return the transition object if existing
+     */
+    public static Transition getTransitionByPriority( int nIdStep, int nPriority )
+    {
+        
+        return _dao.getTransitionByPriority( nIdStep, nPriority, _plugin );
+    }
+
+    
+    /**Rebuild the priority sequence of the transitions sharing the same starting Step
+     * 
+     * @param fromStep The starting step
+     */
+    public static void rebuildPrioritySequence( int fromStep )
+    {
+        List<Transition> listTransitions = getTransitionsListFromStep( fromStep );
+        int nPriority = 1;
+        
+        for ( Transition transition : listTransitions )
+        {
+            transition.setPriority( nPriority++ );
+            TransitionHome.update( transition );
+        }
+    }
+
+    /**Select the lowest priority of the transitions sharing the same starting Step
+     * Priority increase when value decrease.
+     * 
+     * @param fromStep The starting step
+     * 
+     * @return the Minimum priority ( maximum value )
+     */
+    public static int getCurrentPriorityByStep( int fromStep )
+    {
+        return _dao.selectMaxPriorityByStep( fromStep, _plugin );
+    }
+
 }

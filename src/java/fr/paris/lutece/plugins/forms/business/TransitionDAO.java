@@ -48,13 +48,19 @@ import java.util.List;
 public final class TransitionDAO implements ITransitionDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_transition, from_step, next_step, id_control, priority FROM forms_transition WHERE id_transition = ?";
+    private static final String SQL_QUERY_SELECT = "SELECT t.id_transition, t.from_step, fromStep.title, t.next_step, nextStep.title, t.id_control, t.priority FROM forms_transition t "
+            +"INNER JOIN forms_step fromStep ON fromStep.id_step = t.from_step "
+            +"INNER JOIN forms_step nextStep ON nextStep.id_step = t.next_step ";
+    private static final String SQL_FILTER_BY_ID = " WHERE t.id_transition = ? ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_transition ( from_step, next_step, id_control, priority ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_transition WHERE id_transition = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_transition SET id_transition = ?, from_step = ?, next_step = ?, id_control = ?, priority = ? WHERE id_transition = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_transition, from_step, next_step, id_control, priority FROM forms_transition";
+    private static final String SQL_ORDER_BY_PRIORITY = " ORDER BY priority ASC";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_transition FROM forms_transition";
-
+    private static final String SQL_FILTER_BY_STEP = " WHERE t.from_step = ? " + SQL_ORDER_BY_PRIORITY;
+    private static final String SQL_FILTER_BY_STEP_AND_PRIORITY = " WHERE t.from_step = ? AND t.priority = ?";
+    private static final String SQL_QUERY_SELECT_MAX_PRIORITY_BY_STEP = " SELECT MAX( t.priority ) FROM forms_transition t WHERE t.from_step = ?";
+    
     /**
      * {@inheritDoc }
      */
@@ -78,7 +84,7 @@ public final class TransitionDAO implements ITransitionDAO
         }
         finally
         {
-            daoUtil.free( );
+            daoUtil.close( );
         }
     }
 
@@ -88,7 +94,8 @@ public final class TransitionDAO implements ITransitionDAO
     @Override
     public Transition load( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
+        String strSQLQuery = SQL_QUERY_SELECT + SQL_FILTER_BY_ID;
+        DAOUtil daoUtil = new DAOUtil( strSQLQuery, plugin );
         daoUtil.setInt( 1, nKey );
         daoUtil.executeQuery( );
         Transition transition = null;
@@ -100,13 +107,36 @@ public final class TransitionDAO implements ITransitionDAO
 
             transition.setId( daoUtil.getInt( nIndex++ ) );
             transition.setFromStep( daoUtil.getInt( nIndex++ ) );
+            transition.setFromStepTitle( daoUtil.getString( nIndex++ ) );
             transition.setNextStep( daoUtil.getInt( nIndex++ ) );
+            transition.setNextStepTitle( daoUtil.getString( nIndex++ ) );
             transition.setIdControl( daoUtil.getInt( nIndex++ ) );
             transition.setPriority( daoUtil.getInt( nIndex++ ) );
         }
 
-        daoUtil.free( );
+        daoUtil.close( );
         return transition;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int selectMaxPriorityByStep( int nIdStep, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_MAX_PRIORITY_BY_STEP, plugin );
+        daoUtil.setInt( 1, nIdStep );
+        daoUtil.executeQuery( );
+        int nMaxPriority = -1;
+
+        if ( daoUtil.next( ) )
+        {
+            nMaxPriority = daoUtil.getInt( 1 );
+        }
+
+        daoUtil.close( );
+        
+        return nMaxPriority;
     }
 
     /**
@@ -118,7 +148,7 @@ public final class TransitionDAO implements ITransitionDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
         daoUtil.setInt( 1, nKey );
         daoUtil.executeUpdate( );
-        daoUtil.free( );
+        daoUtil.close( );
     }
 
     /**
@@ -138,7 +168,7 @@ public final class TransitionDAO implements ITransitionDAO
         daoUtil.setInt( nIndex, transition.getId( ) );
 
         daoUtil.executeUpdate( );
-        daoUtil.free( );
+        daoUtil.close( );
     }
 
     /**
@@ -148,7 +178,8 @@ public final class TransitionDAO implements ITransitionDAO
     public List<Transition> selectTransitionsList( Plugin plugin )
     {
         List<Transition> transitionList = new ArrayList<Transition>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
+        String strSQLQuery = SQL_QUERY_SELECT + SQL_ORDER_BY_PRIORITY;
+        DAOUtil daoUtil = new DAOUtil( strSQLQuery, plugin );
         daoUtil.executeQuery( );
 
         while ( daoUtil.next( ) )
@@ -158,14 +189,16 @@ public final class TransitionDAO implements ITransitionDAO
 
             transition.setId( daoUtil.getInt( nIndex++ ) );
             transition.setFromStep( daoUtil.getInt( nIndex++ ) );
+            transition.setFromStepTitle( daoUtil.getString( nIndex++ ) );
             transition.setNextStep( daoUtil.getInt( nIndex++ ) );
+            transition.setNextStepTitle( daoUtil.getString( nIndex++ ) );
             transition.setIdControl( daoUtil.getInt( nIndex++ ) );
             transition.setPriority( daoUtil.getInt( nIndex++ ) );
 
             transitionList.add( transition );
         }
 
-        daoUtil.free( );
+        daoUtil.close( );
         return transitionList;
     }
 
@@ -184,7 +217,7 @@ public final class TransitionDAO implements ITransitionDAO
             transitionList.add( daoUtil.getInt( 1 ) );
         }
 
-        daoUtil.free( );
+        daoUtil.close( );
         return transitionList;
     }
 
@@ -195,7 +228,8 @@ public final class TransitionDAO implements ITransitionDAO
     public ReferenceList selectTransitionsReferenceList( Plugin plugin )
     {
         ReferenceList transitionList = new ReferenceList( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
+        String strSQLQuery = SQL_QUERY_SELECT + SQL_ORDER_BY_PRIORITY;
+        DAOUtil daoUtil = new DAOUtil( strSQLQuery, plugin );
         daoUtil.executeQuery( );
 
         while ( daoUtil.next( ) )
@@ -203,7 +237,75 @@ public final class TransitionDAO implements ITransitionDAO
             transitionList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
         }
 
-        daoUtil.free( );
+        daoUtil.close( );
         return transitionList;
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<Transition> selectTransitionsListFromStep( int nIdStep, Plugin plugin )
+    {
+        List<Transition> transitionList = new ArrayList<Transition>( );
+        String strSQLQuery = SQL_QUERY_SELECT + SQL_FILTER_BY_STEP;
+        DAOUtil daoUtil = new DAOUtil( strSQLQuery, plugin );
+        daoUtil.setInt( 1, nIdStep );
+
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            Transition transition = new Transition( );
+            int nIndex = 1;
+
+            transition.setId( daoUtil.getInt( nIndex++ ) );
+            transition.setFromStep( daoUtil.getInt( nIndex++ ) );
+            transition.setFromStepTitle( daoUtil.getString( nIndex++ ) );
+            transition.setNextStep( daoUtil.getInt( nIndex++ ) );
+            transition.setNextStepTitle( daoUtil.getString( nIndex++ ) );
+            transition.setIdControl( daoUtil.getInt( nIndex++ ) );
+            transition.setPriority( daoUtil.getInt( nIndex++ ) );
+
+            transitionList.add( transition );
+        }
+
+        daoUtil.close( );
+        return transitionList;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Transition getTransitionByPriority( int nIdStep, int nPriority, Plugin plugin )
+        {
+            String strSQLQuery = SQL_QUERY_SELECT + SQL_FILTER_BY_STEP_AND_PRIORITY;
+            DAOUtil daoUtil = new DAOUtil( strSQLQuery, plugin );
+            daoUtil.setInt( 1, nIdStep );
+            daoUtil.setInt( 2, nPriority );
+            daoUtil.executeQuery( );
+            
+            Transition transition = null;
+
+            if ( daoUtil.next( ) )
+            {
+                transition = new Transition( );
+                int nIndex = 1;
+
+                transition.setId( daoUtil.getInt( nIndex++ ) );
+                transition.setFromStep( daoUtil.getInt( nIndex++ ) );
+                transition.setFromStepTitle( daoUtil.getString( nIndex++ ) );
+                transition.setNextStep( daoUtil.getInt( nIndex++ ) );
+                transition.setNextStepTitle( daoUtil.getString( nIndex++ ) );
+                transition.setIdControl( daoUtil.getInt( nIndex++ ) );
+                transition.setPriority( daoUtil.getInt( nIndex++ ) );
+            }
+
+            daoUtil.close( );
+
+            return transition;
+        
+    }
+
 }

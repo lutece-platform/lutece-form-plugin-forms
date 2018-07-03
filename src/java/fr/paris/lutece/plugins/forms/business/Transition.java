@@ -46,10 +46,16 @@ public class Transition implements Serializable
     private int _nId;
 
     private int _nFromStep;
+    
+    private String _strFromStepTitle;
 
     private int _nNextStep;
+    
+    private String _strNextStepTitle;
 
     private int _nIdControl;
+
+    private String _strControlTitle;
 
     private int _nPriority;
 
@@ -157,4 +163,53 @@ public class Transition implements Serializable
     {
         _nPriority = nPriority;
     }
+
+    /**
+     * @return the _strFromStepTitle
+     */
+    public String getFromStepTitle( )
+    {
+        return _strFromStepTitle;
+    }
+
+    /**
+     * @param strFromStepTitle the _strFromStepTitle to set
+     */
+    public void setFromStepTitle( String strFromStepTitle )
+    {
+        _strFromStepTitle = strFromStepTitle;
+    }
+
+    /**
+     * @return the _strNextStepTitle
+     */
+    public String getNextStepTitle( )
+    {
+        return _strNextStepTitle;
+    }
+
+    /**
+     * @param strNextStepTitle the _strNextStepTitle to set
+     */
+    public void setNextStepTitle( String strNextStepTitle )
+    {
+        _strNextStepTitle = strNextStepTitle;
+    }
+
+    /**
+     * @return the _strControlTitle
+     */
+    public String getControlTitle( )
+    {
+        return _strControlTitle;
+    }
+
+    /**
+     * @param strControlTitle the _strControlTitle to set
+     */
+    public void setControlTitle( String strControlTitle )
+    {
+        _strControlTitle = strControlTitle;
+    }
+
 }

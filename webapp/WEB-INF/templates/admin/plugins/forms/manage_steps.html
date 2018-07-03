@@ -20,14 +20,16 @@
                         <@table>
                             <tr>
                                 <th class="col-sm-6">#i18n{forms.manage_steps.columnTitle}</th>
+                                <th class="col-sm-1">#i18n{forms.manage_steps.columnInitial}</th>
                                 <th class="col-sm-1">#i18n{forms.manage_steps.columnFinal}</th>
-                                <th class="col-sm-5">#i18n{forms.manageForm.columnActions}</th>
+                                <th class="col-sm-4">#i18n{forms.manageForm.columnActions}</th>
                             </tr>
                             <#list step_list as step>
                                 <tr>
                                     <td class="col-sm-6">${step.title}</td>
-                                    <td class="col-sm-1"><#if step.final>#i18n{forms.manage_steps.labelFinal}</#if>                                   </td>
-                                    <td class="col-sm-5">
+                                    <td class="col-sm-1"><#if step.initial>#i18n{forms.manage_steps.labelInitial}</#if></td>
+                                    <td class="col-sm-1"><#if step.final>#i18n{forms.manage_steps.labelFinal}</#if></td>
+                                    <td class="col-sm-4">
                                         <@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=modifyStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.modifyStep}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
                                         <@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?action=duplicateStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.copyStep}' showTitle=false buttonIcon='copy' color='btn-primary' size='sm' />
                                         <@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.removeStep}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' /> 

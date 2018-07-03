@@ -113,4 +113,40 @@ public interface ITransitionDAO
      * @return The referenceList which contains the data of all the transition objects
      */
     ReferenceList selectTransitionsReferenceList( Plugin plugin );
+
+    /**
+     * Load the data of all the transition objects from given step and returns them as a list
+     * 
+     * @param nIdStep
+     *            The identifier of the starting step
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the transition objects
+     */
+    List<Transition> selectTransitionsListFromStep( int nIdStep, Plugin plugin );
+
+    /**
+     * Load the data of a transition object from the given step and the given priority
+     * 
+     * @param nIdStep
+     *            The identifier of the step
+     * @param nPriority
+     *            The priority value
+     * @param plugin The Plugin
+     * 
+     * @return the Transition object if existing
+     */
+    Transition getTransitionByPriority( int nIdStep, int nPriority, Plugin plugin );
+
+    /**
+     *Return the maximum priority value of the transitions from the given starting step
+     * 
+     * @param nIdStep
+     *            The identifier of the step
+     * @param plugin The Plugin
+     * 
+     * @return the Transition object if existing
+     */
+    int selectMaxPriorityByStep( int nIdStep, Plugin plugin );
+
 }

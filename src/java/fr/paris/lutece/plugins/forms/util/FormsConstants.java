@@ -63,6 +63,7 @@ public final class FormsConstants
     public static final String MARK_DISPLAY = "display";
     public static final String MARK_DISPLAY_TITLE = "display_title";
     public static final String MARK_DISPLAY_ORDER = "displayOrder";
+    public static final String MARK_TRANSITION = "transition";
 
     // Parameters
     public static final String PARAMETER_ID_FORM = "id_form";
@@ -86,6 +87,7 @@ public final class FormsConstants
     public static final String PARAMETER_STEP_VALIDATED = "stepValidated";
     public static final String PARAMETER_GROUP_VALIDATED = "groupValidated";
     public static final String PARAMETER_DISPLAY_ORDER = "displayOrder";
+    public static final String PARAMETER_ID_TRANSITION = "id_transition";
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
@@ -103,6 +105,10 @@ public final class FormsConstants
     public static final int DEFAULT_FILTER_VALUE = NumberUtils.INTEGER_MINUS_ONE;
     public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
     public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
+    public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
+    // Markers
+    public static final String MARK_AVAILABLE_STEPS = "availableSteps";
+    public static final String MARK_TRANSITION_CONTROL_LIST = "listControls";
 
     /**
      * Default private constructor. Do not call
