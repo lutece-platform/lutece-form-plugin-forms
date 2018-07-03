@@ -114,16 +114,15 @@ public class FormTransitionJspBean extends AbstractJspBean
     private static final String INFO_TRANSITION_REMOVED = "forms.info.transition.removed";
     private static final String MESSAGE_CONFIRM_REMOVE_TRANSITION = "forms.message.confirmRemoveTransition";
 
-  //Warning
+    // Warning
     private static final String WARNING_NO_TRANSITION_STEP_FINAL = "forms.warning.transition.cannotAdd.finalStep";
-    //Errors
+    // Errors
     private static final String ERROR_TRANSITION_REMOVED = "forms.error.deleteTransition";
 
     private static final String ACTION_DO_MOVE_PRIORITY_UP = "moveUpPriority";
 
     private static final String ACTION_DO_MOVE_PRIORITY_DOWN = "moveDownPriority";
 
-    
     // Session variable to store working values
     private Transition _transition;
     private Step _step;
@@ -132,8 +131,6 @@ public class FormTransitionJspBean extends AbstractJspBean
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
-
-
 
     /**
      * Build the Manage View
@@ -147,14 +144,13 @@ public class FormTransitionJspBean extends AbstractJspBean
     {
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
 
-        if( nIdStep == FormsConstants.DEFAULT_ID_VALUE )
+        if ( nIdStep == FormsConstants.DEFAULT_ID_VALUE )
         {
             return redirectToViewManageForm( request );
         }
-        
+
         _step = StepHome.findByPrimaryKey( nIdStep );
 
-        
         if ( _step != null )
         {
             int nIdForm = _step.getIdForm( );
@@ -166,16 +162,16 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
 
         Locale locale = getLocale( );
-        
-        if( _step.isFinal( ) )
+
+        if ( _step.isFinal( ) )
         {
             addWarning( WARNING_NO_TRANSITION_STEP_FINAL, locale );
         }
-        
+
         Map<String, Object> model = getModel( );
-        
+
         List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( nIdStep );
-        
+
         model.put( MARK_TRANSITION_LIST, listTransition );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_FORM, _form );
@@ -186,7 +182,7 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         return getAdminPage( templateList.getHtml( ) );
     }
-    
+
     /**
      * Returns the form to create a transition
      *
@@ -196,17 +192,17 @@ public class FormTransitionJspBean extends AbstractJspBean
      */
     @View( VIEW_CREATE_TRANSITION )
     public String getCreateTransition( HttpServletRequest request )
-    {        
-        if( !retrieveStepFromRequest( request ) )
+    {
+        if ( !retrieveStepFromRequest( request ) )
         {
             return redirectToViewManageForm( request );
         }
-        
+
         _transition = ( _transition != null ) ? _transition : new Transition( );
-        
+
         Map<String, Object> model = getModel( );
-        
-        if( _step != null )
+
+        if ( _step != null )
         {
             buildTransitionModel( _step, _transition, model );
         }
@@ -216,7 +212,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
 
         return getPage( PROPERTY_PAGE_TITLE_CREATE_TRANSITION, TEMPLATE_CREATE_TRANSITION, model );
-    }    
+    }
 
     /**
      * Returns the form to modify a transition
@@ -228,8 +224,8 @@ public class FormTransitionJspBean extends AbstractJspBean
     @View( VIEW_MODIFY_TRANSITION )
     public String getModifyTransition( HttpServletRequest request )
     {
-        
-        if( !retrieveStepFromRequest( request ) )
+
+        if ( !retrieveStepFromRequest( request ) )
         {
             return redirectToViewManageForm( request );
         }
@@ -238,10 +234,10 @@ public class FormTransitionJspBean extends AbstractJspBean
         {
             return redirectToViewManageForm( request );
         }
-        
+
         Map<String, Object> model = getModel( );
-        
-        if( _transition != null && _step != null )
+
+        if ( _transition != null && _step != null )
         {
             buildTransitionModel( _step, _transition, model );
         }
@@ -253,10 +249,15 @@ public class FormTransitionJspBean extends AbstractJspBean
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_TRANSITION, TEMPLATE_MODIFY_TRANSITION, model );
     }
 
-    /** Build the model for Create and Modify Transition views
-     * @param step the Step object
-     * @param transition the Transition object
-     * @param model the Model
+    /**
+     * Build the model for Create and Modify Transition views
+     * 
+     * @param step
+     *            the Step object
+     * @param transition
+     *            the Transition object
+     * @param model
+     *            the Model
      */
     private void buildTransitionModel( Step step, Transition transition, Map<String, Object> model )
     {
@@ -264,16 +265,16 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         ReferenceList listTransitionControls = new ReferenceList( );
         listTransitionControls.addItem( 0, I18nService.getLocalizedString( DEFAULT_TRANSITION_NO_CONTROL, getLocale( ) ) );
-        //TODO: Retrieve a Control object list
+        // TODO: Retrieve a Control object list
         /*
-        listTransitionControls.addAll( ...);
-        */
+         * listTransitionControls.addAll( ...);
+         */
         model.put( FormsConstants.MARK_TRANSITION, _transition );
         model.put( FormsConstants.MARK_AVAILABLE_STEPS, listTransitionTargetSteps );
         model.put( FormsConstants.MARK_TRANSITION_CONTROL_LIST, listTransitionControls );
 
         model.put( FormsConstants.MARK_STEP, _step );
-        
+
     }
 
     /**
@@ -298,7 +299,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
 
         TransitionHome.create( _transition );
-        
+
         addInfo( INFO_TRANSITION_CREATED, getLocale( ) );
 
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
@@ -313,21 +314,22 @@ public class FormTransitionJspBean extends AbstractJspBean
      */
     @Action( ACTION_MODIFY_TRANSITION )
     public String doModifyTransition( HttpServletRequest request )
-    {        
+    {
         if ( !retrieveTransitionFromRequest( request ) )
         {
             return redirectToViewManageForm( request );
         }
-        
+
         populate( _transition, request, getLocale( ) );
 
         if ( !validateTransition( _transition ) )
         {
-            return redirect( request, VIEW_MODIFY_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ), FormsConstants.PARAMETER_ID_TRANSITION, _transition.getId( ) );
+            return redirect( request, VIEW_MODIFY_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ),
+                    FormsConstants.PARAMETER_ID_TRANSITION, _transition.getId( ) );
         }
 
         TransitionHome.update( _transition );
-        
+
         addInfo( INFO_TRANSITION_UPDATED, getLocale( ) );
 
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
@@ -373,13 +375,13 @@ public class FormTransitionJspBean extends AbstractJspBean
         {
             return redirectToViewManageForm( request );
         }
-        
-        if( _transition != null )
+
+        if ( _transition != null )
         {
             TransitionHome.remove( _transition.getId( ) );
-            
+
             TransitionHome.rebuildPrioritySequence( _transition.getFromStep( ) );
-            
+
             addInfo( INFO_TRANSITION_REMOVED, getLocale( ) );
         }
         else
@@ -387,12 +389,12 @@ public class FormTransitionJspBean extends AbstractJspBean
             addError( ERROR_TRANSITION_REMOVED, getLocale( ) );
             return redirectToViewManageForm( request );
         }
-        
+
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
     }
 
     /**
-     *  Move transition priority up
+     * Move transition priority up
      * 
      * @param request
      *            The request
@@ -405,7 +407,7 @@ public class FormTransitionJspBean extends AbstractJspBean
     }
 
     /**
-     *  Move transition priority down
+     * Move transition priority down
      * 
      * @param request
      *            The request
@@ -432,18 +434,18 @@ public class FormTransitionJspBean extends AbstractJspBean
         {
             return redirectToViewManageForm( request );
         }
-        
+
         if ( !retrieveTransitionFromRequest( request ) )
         {
             return redirectToViewManageForm( request );
         }
-        
+
         int nOldPriority = _transition.getPriority( );
         int nNewPriority = bMoveUp ? ( nOldPriority - 1 ) : ( nOldPriority + 1 );
 
         Transition transitionToInversePriority = TransitionHome.getTransitionByPriority( _step.getId( ), nNewPriority );
 
-        if( transitionToInversePriority != null )
+        if ( transitionToInversePriority != null )
         {
             transitionToInversePriority.setPriority( nOldPriority );
             TransitionHome.update( transitionToInversePriority );
@@ -454,19 +456,21 @@ public class FormTransitionJspBean extends AbstractJspBean
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
     }
 
-    /** Retrieve the step object from request parameter
+    /**
+     * Retrieve the step object from request parameter
      * 
-     * @param request The request
+     * @param request
+     *            The request
      * 
      * @return false if an error occurred, true otherwise
      */
     private boolean retrieveStepFromRequest( HttpServletRequest request )
     {
         boolean bSuccess = true;
-        
+
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
 
-        if( nIdStep == FormsConstants.DEFAULT_ID_VALUE )
+        if ( nIdStep == FormsConstants.DEFAULT_ID_VALUE )
         {
             bSuccess = false;
         }
@@ -478,9 +482,11 @@ public class FormTransitionJspBean extends AbstractJspBean
         return bSuccess;
     }
 
-    /** Retrieve the transition object from request parameter
+    /**
+     * Retrieve the transition object from request parameter
      * 
-     * @param request The request
+     * @param request
+     *            The request
      * 
      * @return false if an error occurred, true otherwise
      */
@@ -489,7 +495,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         boolean bSuccess = true;
         int nIdTransition = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_TRANSITION ), FormsConstants.DEFAULT_ID_VALUE );
 
-        if( nIdTransition == FormsConstants.DEFAULT_ID_VALUE )
+        if ( nIdTransition == FormsConstants.DEFAULT_ID_VALUE )
         {
             bSuccess = false;
         }
@@ -515,27 +521,29 @@ public class FormTransitionJspBean extends AbstractJspBean
 
     }
 
-    /** Build a referenceList containing all the target Steps of a transition, for a given Form.
+    /**
+     * Build a referenceList containing all the target Steps of a transition, for a given Form.
      * 
-     * @param nIdForm the Form identifier
+     * @param nIdForm
+     *            the Form identifier
      * 
-     * @param nIdStep the identifier of the transition origin step
+     * @param nIdStep
+     *            the identifier of the transition origin step
      * 
      * @return a referenceList with all the target Steps
      */
     private ReferenceList getTransitionTargetStepReferenceList( int nIdForm, int nIdStep )
     {
         ReferenceList listTransitionTargetSteps = new ReferenceList( );
-        
+
         for ( ReferenceItem step : StepHome.getStepReferenceListByForm( nIdForm ) )
         {
             if ( NumberUtils.toInt( step.getCode( ) ) != nIdStep )
             {
                 listTransitionTargetSteps.add( step );
             }
-        }        
+        }
         return listTransitionTargetSteps;
     }
 
-    
 }

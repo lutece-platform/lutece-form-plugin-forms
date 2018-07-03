@@ -57,7 +57,7 @@ public class Step implements Serializable
     private int _nIdForm;
 
     private boolean _bIsInitial;
-    
+
     private boolean _bIsFinal;
 
     /**
@@ -153,7 +153,8 @@ public class Step implements Serializable
     }
 
     /**
-     * @param bIsInitial the _bIsInitial to set
+     * @param bIsInitial
+     *            the _bIsInitial to set
      */
     public void setInitial( boolean bIsInitial )
     {

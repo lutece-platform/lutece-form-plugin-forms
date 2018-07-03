@@ -46,11 +46,11 @@ public class Transition implements Serializable
     private int _nId;
 
     private int _nFromStep;
-    
+
     private String _strFromStepTitle;
 
     private int _nNextStep;
-    
+
     private String _strNextStepTitle;
 
     private int _nIdControl;
@@ -173,7 +173,8 @@ public class Transition implements Serializable
     }
 
     /**
-     * @param strFromStepTitle the _strFromStepTitle to set
+     * @param strFromStepTitle
+     *            the _strFromStepTitle to set
      */
     public void setFromStepTitle( String strFromStepTitle )
     {
@@ -189,7 +190,8 @@ public class Transition implements Serializable
     }
 
     /**
-     * @param strNextStepTitle the _strNextStepTitle to set
+     * @param strNextStepTitle
+     *            the _strNextStepTitle to set
      */
     public void setNextStepTitle( String strNextStepTitle )
     {
@@ -205,7 +207,8 @@ public class Transition implements Serializable
     }
 
     /**
-     * @param strControlTitle the _strControlTitle to set
+     * @param strControlTitle
+     *            the _strControlTitle to set
      */
     public void setControlTitle( String strControlTitle )
     {

@@ -132,18 +132,20 @@ public interface ITransitionDAO
      *            The identifier of the step
      * @param nPriority
      *            The priority value
-     * @param plugin The Plugin
+     * @param plugin
+     *            The Plugin
      * 
      * @return the Transition object if existing
      */
     Transition getTransitionByPriority( int nIdStep, int nPriority, Plugin plugin );
 
     /**
-     *Return the maximum priority value of the transitions from the given starting step
+     * Return the maximum priority value of the transitions from the given starting step
      * 
      * @param nIdStep
      *            The identifier of the step
-     * @param plugin The Plugin
+     * @param plugin
+     *            The Plugin
      * 
      * @return the Transition object if existing
      */
