@@ -31,46 +31,26 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web.form.filter.display;
+package fr.paris.lutece.plugins.forms.service;
 
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.forms.web.form.filter.IFilterable;
-import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
-
 /**
- * Interface for the Filter associated to a FormColumnDisplay
+ * Forms service for managing the authorization on access form response from the multiview page
  */
-public interface IFormFilterDisplay extends IFilterable, IFormListPosition
+public interface IFormsMultiviewAuthorizationService
 {
-    /**
-     * Return the value of the the template of the FormFilterDisplay
-     * 
-     * @return the value of the FormFilterDisplay
-     */
-    String getValue( );
+    // Bean name
+    String BEAN_NAME = "forms.formsMultiviewAuthorizationService";
 
     /**
-     * Return the name of the parameter associated to the FormFilterDisplay. This name correspond to the name on which the filter used to retrieve the value
-     * which has been selected on the screen by the user. If the name returned by this method doesn't match the name used to retrieve the value selected by the
-     * user this value will be lost during the redirection between the page of the details of the form response and the page which list all the form responses.
-     * 
-     * @return the name of the parameter associated to the FormFilterDisplay
-     */
-    String getParameterName( );
-
-    /**
-     * Return the template of the FormFilterDisplay
-     * 
-     * @return the template of the FormFilterDisplay
-     */
-    String getTemplate( );
-
-    /**
-     * Build the Template of the FormFilterDisplay
+     * Return the boolean which tell if the connected user is authorized to access the form response details or not
      * 
      * @param request
-     *            The HttpServletRequest to use to build the template of the filter
+     *            The request to use to determine if the user can access the details of the given form response
+     * @param nIdFormResponse
+     *            The identifier of the form response to access
+     * @return the boolean which tell if the connected user is authorized to access the form response or not
      */
-    void buildTemplate( HttpServletRequest request );
+    boolean isUserAuthorizedOnFormResponse( HttpServletRequest request, int nIdFormResponse );
 }

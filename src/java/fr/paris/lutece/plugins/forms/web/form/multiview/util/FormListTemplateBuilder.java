@@ -56,9 +56,10 @@ public final class FormListTemplateBuilder
     private static final String TEMPLATE_MULTIVIEW_FORM_TABLE = "admin/plugins/forms/multiview/includes/include_manage_multiview_forms_table.html";
 
     // Marks
-    private static final String FROM_RESPONSE_ITEM_LIST = "from_response_item_list";
-    private static final String FORM_RESPONSE_COLUMN_HEADER_TEMPLATE_LIST = "form_response_column_header_template_list";
-    private static final String FORM_RESPONSE_LINE_TEMPLATE_LIST = "form_response_line_template_list";
+    private static final String MARK_FROM_RESPONSE_ITEM_LIST = "from_response_item_list";
+    private static final String MARK_FORM_RESPONSE_COLUMN_HEADER_TEMPLATE_LIST = "form_response_column_header_template_list";
+    private static final String MARK_FORM_RESPONSE_LINE_TEMPLATE_LIST = "form_response_line_template_list";
+    private static final String MARK_FORM_RESPONSE_DETAILS_REDIRECT_BASE_URL = "redirect_details_base_url";
 
     /**
      * Constructor
@@ -77,12 +78,14 @@ public final class FormListTemplateBuilder
      *            The list of all FormResponseItem used to build the tab with all form responses
      * @param locale
      *            The locale to used for build template
+     * @param strRedirectionDetailsBaseUrl
+     *            The base url to use for the redirection on the details page
      * @param strSortUrl
      *            The url to use for sort a column
      * @return the global template of all FormColumnDisplay objects
      */
     public static String buildTableTemplate( List<IFormColumnDisplay> listFormColumnDisplay, List<FormResponseItem> listFormResponseItem, Locale locale,
-            String strSortUrl )
+            String strRedirectionDetailsBaseUrl, String strSortUrl )
     {
         String strTableTemplate = StringUtils.EMPTY;
 
@@ -96,9 +99,10 @@ public final class FormListTemplateBuilder
 
             // Build the model
             Map<String, Object> model = new LinkedHashMap<>( );
-            model.put( FORM_RESPONSE_COLUMN_HEADER_TEMPLATE_LIST, listFormColumnHeaderTemplate );
-            model.put( FROM_RESPONSE_ITEM_LIST, listFormResponseItem );
-            model.put( FORM_RESPONSE_LINE_TEMPLATE_LIST, listFormColumnLineTemplate );
+            model.put( MARK_FORM_RESPONSE_COLUMN_HEADER_TEMPLATE_LIST, listFormColumnHeaderTemplate );
+            model.put( MARK_FROM_RESPONSE_ITEM_LIST, listFormResponseItem );
+            model.put( MARK_FORM_RESPONSE_LINE_TEMPLATE_LIST, listFormColumnLineTemplate );
+            model.put( MARK_FORM_RESPONSE_DETAILS_REDIRECT_BASE_URL, strRedirectionDetailsBaseUrl );
 
             strTableTemplate = AppTemplateService.getTemplate( TEMPLATE_MULTIVIEW_FORM_TABLE, locale, model ).getHtml( );
         }

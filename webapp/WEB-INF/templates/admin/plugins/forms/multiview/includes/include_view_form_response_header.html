@@ -1,0 +1,27 @@
+<style type="text/css">
+#admin-wrapper .content { padding: 15px; }
+</style>
+
+<div class="row">
+	<div class="row box-forms bg-form-multiview-light header-form-response">
+		<form class="form-horizontal" action="jsp/admin/plugins/forms/MultiviewForms.jsp" method="get">
+			<input name="page" value="form" type="hidden" >
+			<input type="hidden" name="session" value="session">
+				
+			<#assign editModeValue = "ReadOnly">
+			<#assign viewNumberAttValue = "1">
+			
+			<#if list_filter_values?has_content>
+				<#list list_filter_values as filter_values>
+					<input type="hidden" name="${filter_values.code}" value="${filter_values.name}">		
+				</#list>
+			</#if>
+				
+			<div class="col-xs-12 btn-forms">
+				<button class="btn btn-default" type="submit" >
+					<i class="fa fa-arrow-left"></i>&nbsp;#i18n{forms.multiviewForms.formResponseDetails.header.buttonBack}
+				</button>
+			</div>
+		</form>
+	</div>
+</div>

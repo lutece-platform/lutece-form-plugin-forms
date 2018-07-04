@@ -91,6 +91,10 @@ public final class FormsConstants
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
+    public static final String PARAMETER_URL_FILTER_PREFIX = "filter_";
+    public static final String PARAMETER_SORT_COLUMN_POSITION = "column_position";
+    public static final String PARAMETER_SORT_ATTRIBUTE_NAME = "sorted_attribute_name";
+    public static final String PARAMETER_SORT_ASC_VALUE = "asc_sort";
 
     // Jsp
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";

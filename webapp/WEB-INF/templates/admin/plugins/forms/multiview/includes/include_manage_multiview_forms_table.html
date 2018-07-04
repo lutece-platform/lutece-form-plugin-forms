@@ -12,7 +12,7 @@
         <tbody>
             <#if form_response_line_template_list?has_content>
                 <#list form_response_line_template_list as form_response_line_template>
-                    <tr>
+                    <tr data-url="${redirect_details_base_url}&id_form_response=${form_response_line_template.idFormResponse}">
                         <#if form_response_line_template.formColumnCellTemplateList?has_content>
                             <#list form_response_line_template.formColumnCellTemplateList as form_column_cell_template>
                                 ${form_column_cell_template}

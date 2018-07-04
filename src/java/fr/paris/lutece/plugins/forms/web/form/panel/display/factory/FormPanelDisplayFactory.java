@@ -160,7 +160,7 @@ public class FormPanelDisplayFactory
      * @param formPanel
      *            The IFormPanel to the FormPanelInitializer from
      */
-    private void buildFormPanelDisplayInitializer( HttpServletRequest request, IFormPanel formPanel )
+    public void buildFormPanelDisplayInitializer( HttpServletRequest request, IFormPanel formPanel )
     {
         List<IFormPanelDisplayInitializerFactory> listFormPanelDisplayInitializerFactory = new FormDisplayInitializerFactoryFacade( )
                 .buildFormPanelDisplayInitializerList( );

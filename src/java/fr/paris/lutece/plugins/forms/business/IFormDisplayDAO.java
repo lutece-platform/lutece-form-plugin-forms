@@ -120,4 +120,18 @@ public interface IFormDisplayDAO
      */
     ReferenceList selectGroupDisplayReferenceListByStep( int nIdStep, Plugin plugin );
 
+    /**
+     * Select the FormDisplay associated to the given parameter
+     * 
+     * @param nIdForm
+     *            The identifier of the Form to match
+     * @param nIdStep
+     *            The identifier of the Step to match
+     * @param nIdComposite
+     *            The identifier of the Composite to match
+     * @param plugin
+     *            The plugin to use to execute the query
+     * @return the FormDisplay associated to the given parameter
+     */
+    FormDisplay selectFormdisplayByFormStepAndComposite( int nIdForm, int nIdStep, int nIdComposite, Plugin plugin );
 }

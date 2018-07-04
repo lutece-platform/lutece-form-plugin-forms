@@ -34,12 +34,15 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.util.sql.DAOUtil;
 import java.sql.Statement;
-
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
  * This class provides Data Access methods for Form objects
@@ -48,7 +51,7 @@ public final class FormResponseDAO implements IFormResponseDAO
 {
     // Constants
     private static final String SQL_QUERY_SELECT = "SELECT id_response, id_form, guid, creation_date, update_date FROM forms_response WHERE id_response = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid ) VALUES ( ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_question = ?, iteration_number = ? WHERE id = ?";
     private static final String SQL_QUERY_SELECTALL = "SELECT id, id_question, iteration_number FROM forms_response";
@@ -66,6 +69,10 @@ public final class FormResponseDAO implements IFormResponseDAO
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponse.getFormId( ) );
             daoUtil.setString( nIndex++, formResponse.getGuid( ) );
+
+            Timestamp timestampCurrentTime = new Timestamp( System.currentTimeMillis( ) );
+            daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
+            daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
 
             daoUtil.executeUpdate( );
 
@@ -87,8 +94,31 @@ public final class FormResponseDAO implements IFormResponseDAO
     public FormResponse load( int nKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
+        daoUtil.setInt( 1, nKey );
+        daoUtil.executeQuery( );
 
-        FormResponse formResponse = new FormResponse( );
+        FormResponse formResponse = null;
+
+        if ( daoUtil.next( ) )
+        {
+            formResponse = new FormResponse( );
+            formResponse.setId( daoUtil.getInt( "id_response" ) );
+            formResponse.setFormId( daoUtil.getInt( "id_form" ) );
+            formResponse.setGuid( daoUtil.getString( "guid" ) );
+
+            Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
+            formResponse.setDateCreation( timestampCreationDate );
+            try
+            {
+                formResponse.setUpdate( daoUtil.getTimestamp( "update_date" ) );
+            }
+            catch( AppException exception )
+            {
+                AppLogService.error( "The update date of the FormResponse si not valid !" );
+
+                formResponse.setUpdate( timestampCreationDate );
+            }
+        }
 
         daoUtil.close( );
 

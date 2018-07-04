@@ -58,6 +58,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     private static final String SQL_QUERY_SELECTALL_GROUP_DISPLAY_BY_STEP = "SELECT d.id_display, g.title, d.id_form, d.id_step, d.id_composite, d.id_parent, d.display_order, d.composite_type, d.display_depth "
             + "FROM forms_display d INNER JOIN forms_group g ON d.id_composite = g.id_group "
             + "WHERE d.id_step = ? AND d.composite_type = ? order by d.id_parent, d.display_order";
+    private static final String SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display WHERE id_form = ? AND id_step = ? AND id_composite = ?";
 
     /**
      * {@inheritDoc }
@@ -272,4 +273,35 @@ public final class FormDisplayDAO implements IFormDisplayDAO
         return groupList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FormDisplay selectFormdisplayByFormStepAndComposite( int nIdForm, int nIdStep, int nIdComposite, Plugin plugin )
+    {
+        FormDisplay formDisplay = null;
+
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE, plugin );
+        daoUtil.setInt( 1, nIdForm );
+        daoUtil.setInt( 2, nIdStep );
+        daoUtil.setInt( 3, nIdComposite );
+        daoUtil.executeQuery( );
+
+        if ( daoUtil.next( ) )
+        {
+            formDisplay = new FormDisplay( );
+            formDisplay.setId( daoUtil.getInt( "id_display" ) );
+            formDisplay.setFormId( daoUtil.getInt( "id_form" ) );
+            formDisplay.setStepId( daoUtil.getInt( "id_step" ) );
+            formDisplay.setCompositeId( daoUtil.getInt( "id_composite" ) );
+            formDisplay.setParentId( daoUtil.getInt( "id_parent" ) );
+            formDisplay.setDisplayOrder( daoUtil.getInt( "display_order" ) );
+            formDisplay.setCompositeType( daoUtil.getString( "composite_type" ) );
+            formDisplay.setDepth( daoUtil.getInt( "display_depth" ) );
+        }
+
+        daoUtil.close( );
+
+        return formDisplay;
+    }
 }

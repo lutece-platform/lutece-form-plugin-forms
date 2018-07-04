@@ -34,14 +34,16 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections.CollectionUtils;
+
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
-import java.sql.Statement;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class provides Data Access methods for Form objects
@@ -54,6 +56,9 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question_response WHERE id = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_question_response SET id_question = ?, iteration_number = ? WHERE id = ?";
     private static final String SQL_QUERY_SELECTALL = "SELECT id_question_response, id_question, iteration_number FROM forms_question_response";
+    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION = "SELECT id_question_response, id_form_response, id_question, iteration_number FROM forms_question_response"
+            + " WHERE id_form_response = ? AND id_question = ?";
+    private static final String SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_QUESTION = "SELECT id_entry_response FROM forms_question_entry_response WHERE id_question_response = ?";
 
     private static final String SQL_QUERY_INSERT_ENTRY_RESPONSE = "INSERT INTO forms_question_entry_response ( id_question_response, id_entry_response ) VALUES ( ?, ? ) ";
     private static final String SQL_QUERY_DELETE_BY_QUESTION = "DELETE FROM forms_question_response WHERE id_question = ? ";
@@ -157,6 +162,74 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         daoUtil.close( );
 
         return formQuestionResponseList;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FormQuestionResponse> selectFormQuestionResponseListByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin )
+    {
+        List<FormQuestionResponse> formQuestionResponseList = new ArrayList<FormQuestionResponse>( );
+
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION, plugin );
+        daoUtil.setInt( 1, nIdFormResponse );
+        daoUtil.setInt( 2, nIdQuestion );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
+            formQuestionResponse.setId( daoUtil.getInt( "id_question_response" ) );
+            formQuestionResponse.setIdFormResponse( daoUtil.getInt( "id_form_response" ) );
+            formQuestionResponse.setIdQuestion( daoUtil.getInt( "id_question" ) );
+            formQuestionResponse.setIterationNumber( daoUtil.getInt( "iteration_number" ) );
+
+            formQuestionResponseList.add( formQuestionResponse );
+        }
+
+        daoUtil.close( );
+
+        completeQuestionResponseWithEntryResponse( formQuestionResponseList, plugin );
+
+        return formQuestionResponseList;
+    }
+
+    /**
+     * Add all informations associated to the EntryResponse for the elements in the given list
+     * 
+     * @param formQuestionResponseList
+     *            The list to complete with informations of the EntryResponse
+     * @param plugin
+     *            The plugin to use to execute the query
+     */
+    private void completeQuestionResponseWithEntryResponse( List<FormQuestionResponse> formQuestionResponseList, Plugin plugin )
+    {
+        if ( !CollectionUtils.isEmpty( formQuestionResponseList ) )
+        {
+            for ( FormQuestionResponse formQuestionResponse : formQuestionResponseList )
+            {
+                DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_QUESTION, plugin );
+                daoUtil.setInt( 1, formQuestionResponse.getId( ) );
+                daoUtil.executeQuery( );
+
+                List<Integer> listIdResponse = new ArrayList<>( );
+                while ( daoUtil.next( ) )
+                {
+                    listIdResponse.add( daoUtil.getInt( "id_entry_response" ) );
+                }
+
+                daoUtil.close( );
+
+                List<Response> listEntryResponse = new ArrayList<>( );
+                for ( Integer nIdEntryResponse : listIdResponse )
+                {
+                    listEntryResponse.add( ResponseHome.findByPrimaryKey( nIdEntryResponse ) );
+                }
+
+                formQuestionResponse.setEntryResponse( listEntryResponse );
+            }
+        }
     }
 
     @Override

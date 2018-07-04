@@ -31,46 +31,28 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web.form.filter.display;
+package fr.paris.lutece.plugins.forms.web.form.response.view;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
-import fr.paris.lutece.plugins.forms.web.form.filter.IFilterable;
-import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 /**
- * Interface for the Filter associated to a FormColumnDisplay
+ * Factory used to retrieve all the implementation of the IFormResponseViewModelProcessor
  */
-public interface IFormFilterDisplay extends IFilterable, IFormListPosition
+public class FormResponseViewModelProcessorFactory
 {
-    /**
-     * Return the value of the the template of the FormFilterDisplay
-     * 
-     * @return the value of the FormFilterDisplay
-     */
-    String getValue( );
+    // Variables
+    private final List<IFormResponseViewModelProcessor> _listFormResponseViewModelProcessor = SpringContextService
+            .getBeansOfType( IFormResponseViewModelProcessor.class );
 
     /**
-     * Return the name of the parameter associated to the FormFilterDisplay. This name correspond to the name on which the filter used to retrieve the value
-     * which has been selected on the screen by the user. If the name returned by this method doesn't match the name used to retrieve the value selected by the
-     * user this value will be lost during the redirection between the page of the details of the form response and the page which list all the form responses.
+     * Return the list of all FormResponseViewModelProcessor
      * 
-     * @return the name of the parameter associated to the FormFilterDisplay
+     * @return the list of all FormResponseViewModelProcessor
      */
-    String getParameterName( );
-
-    /**
-     * Return the template of the FormFilterDisplay
-     * 
-     * @return the template of the FormFilterDisplay
-     */
-    String getTemplate( );
-
-    /**
-     * Build the Template of the FormFilterDisplay
-     * 
-     * @param request
-     *            The HttpServletRequest to use to build the template of the filter
-     */
-    void buildTemplate( HttpServletRequest request );
+    public List<IFormResponseViewModelProcessor> buildFormResponseViewModelProcessorList( )
+    {
+        return _listFormResponseViewModelProcessor;
+    }
 }

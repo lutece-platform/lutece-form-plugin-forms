@@ -31,46 +31,50 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web.form.filter.display;
+package fr.paris.lutece.plugins.forms.web.form.multiview.display;
 
-import javax.servlet.http.HttpServletRequest;
-
-import fr.paris.lutece.plugins.forms.web.form.filter.IFilterable;
-import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
- * Interface for the Filter associated to a FormColumnDisplay
+ * This class represent the high level object to use for the display of the details of a FormResponse
  */
-public interface IFormFilterDisplay extends IFilterable, IFormListPosition
+public class MultiviewStepDisplay
 {
-    /**
-     * Return the value of the the template of the FormFilterDisplay
-     * 
-     * @return the value of the FormFilterDisplay
-     */
-    String getValue( );
+    private String _strTitle;
+    private List<MultiviewQuestionDisplay> _listQuestionDisplay = new ArrayList<>( );
 
     /**
-     * Return the name of the parameter associated to the FormFilterDisplay. This name correspond to the name on which the filter used to retrieve the value
-     * which has been selected on the screen by the user. If the name returned by this method doesn't match the name used to retrieve the value selected by the
-     * user this value will be lost during the redirection between the page of the details of the form response and the page which list all the form responses.
+     * Constructor
      * 
-     * @return the name of the parameter associated to the FormFilterDisplay
+     * @param strTitle
+     *            The title of the Step
+     * @param listQuestionDisplay
+     *            The list of Question display associated to the Step
      */
-    String getParameterName( );
+    public MultiviewStepDisplay( String strTitle, List<MultiviewQuestionDisplay> listQuestionDisplay )
+    {
+        _strTitle = strTitle;
+        _listQuestionDisplay = listQuestionDisplay;
+    }
 
     /**
-     * Return the template of the FormFilterDisplay
+     * Return the title of the MultiviewStepDisplay
      * 
-     * @return the template of the FormFilterDisplay
+     * @return the title of the MultiviewStepDisplay
      */
-    String getTemplate( );
+    public String getTitle( )
+    {
+        return _strTitle;
+    }
 
     /**
-     * Build the Template of the FormFilterDisplay
+     * Return the list of MultiviewQuestionDisplay of the MultiviewStepDisplay
      * 
-     * @param request
-     *            The HttpServletRequest to use to build the template of the filter
+     * @return the list of MultiviewQuestionDisplay of the MultiviewStepDisplay
      */
-    void buildTemplate( HttpServletRequest request );
+    public List<MultiviewQuestionDisplay> getMultiviewQuestionDisplays( )
+    {
+        return _listQuestionDisplay;
+    }
 }
