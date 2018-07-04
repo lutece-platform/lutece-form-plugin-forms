@@ -55,14 +55,14 @@ public class TransitionBusinessTest extends LuteceTestCase
     public void testBusiness( )
     {
         // Initialize an object
-        
+
         Step step1 = new Step( );
         step1.setTitle( STEP_TITLE1 );
         StepHome.create( step1 );
 
         Transition transition = new Transition( );
         transition.setFromStep( step1.getId( ) );
-        transition.setNextStep( step1.getId( )  );
+        transition.setNextStep( step1.getId( ) );
         transition.setIdControl( IDCONTROL1 );
         transition.setPriority( PRIORITY1 );
 
@@ -77,7 +77,7 @@ public class TransitionBusinessTest extends LuteceTestCase
         Step step2 = new Step( );
         step2.setTitle( STEP_TITLE2 );
         StepHome.create( step2 );
-        
+
         // Update test
         transition.setFromStep( step2.getId( ) );
         transition.setNextStep( step2.getId( ) );
@@ -97,7 +97,7 @@ public class TransitionBusinessTest extends LuteceTestCase
         TransitionHome.remove( transition.getId( ) );
         transitionStored = TransitionHome.findByPrimaryKey( transition.getId( ) );
         assertNull( transitionStored );
-        
+
         StepHome.remove( step1.getId( ) );
         StepHome.remove( step2.getId( ) );
 
