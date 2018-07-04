@@ -56,6 +56,8 @@ public class Step implements Serializable
 
     private int _nIdForm;
 
+    private boolean _bIsInitial;
+
     private boolean _bIsFinal;
 
     /**
@@ -143,6 +145,23 @@ public class Step implements Serializable
     }
 
     /**
+     * @return the _bIsInitial
+     */
+    public boolean isInitial( )
+    {
+        return _bIsInitial;
+    }
+
+    /**
+     * @param bIsInitial
+     *            the _bIsInitial to set
+     */
+    public void setInitial( boolean bIsInitial )
+    {
+        _bIsInitial = bIsInitial;
+    }
+
+    /**
      * Returns true if this is a final step
      * 
      * @return The _bIsFinal flag
@@ -160,6 +179,6 @@ public class Step implements Serializable
      */
     public void setFinal( boolean bIsFinal )
     {
-        this._bIsFinal = bIsFinal;
+        _bIsFinal = bIsFinal;
     }
 }

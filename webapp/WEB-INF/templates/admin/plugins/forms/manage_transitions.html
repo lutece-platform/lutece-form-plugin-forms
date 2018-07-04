@@ -2,7 +2,10 @@
 <@row>
     <@columns>
         <@box color='primary' collapsed=true>
-            <@boxHeader title='#i18n{forms.modify_step.title} ${step.title}' boxTools=true>
+            <@boxHeader title='#i18n{forms.manageForm.pageTitle} : ${form.title} - #i18n{forms.modify_step.title} : ${step.title}' boxTools=true>
+                <#if !step.final>               
+                    <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}' buttonIcon='plus' title='#i18n{forms.manage_transitions.buttonAdd}' showTitleXs=false size='' />
+                </#if>
              </@boxHeader>
         </@box>
         <@box color='solid'>
@@ -14,8 +17,32 @@
                     <div class="tab-pane active">
                         <@messages errors=errors />
                         <@messages infos=infos />
+                        <@messages warnings=warnings />
                         <div class="clearfix"></div>
                         <@table>
+                            <tr>
+                                <th class="col-sm-6">#i18n{forms.manage_transitions.columnNextStep}</th>
+                                <th class="col-sm-1">#i18n{forms.manage_transitions.columnIdControl}</th>
+                                <th class="col-sm-1">#i18n{forms.manage_transitions.columnPriority}</th>
+                                <th class="col-sm-4">#i18n{forms.manageForm.columnActions}</th>
+                            </tr>
+                            <#list transition_list as transition>
+                                <tr>
+                                    <td class="col-sm-6">${transition.nextStepTitle!''}</td>
+                                    <td class="col-sm-1">${transition.idControl}</td>
+                                    <td class="col-sm-1">${transition.priority}</td>
+                                    <td class="col-sm-4">
+                                        <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.modifyTransition}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
+                                        <#if transition_index gt 0>
+                                            <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveUpPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveUpPriorityTransition}' showTitle=false buttonIcon='chevron-up' color='btn-primary' size='sm' />
+                                        </#if>
+                                        <#if transition_has_next>
+                                            <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveDownPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveDownPriorityTransition}' showTitle=false buttonIcon='chevron-down' color='btn-primary' size='sm' />
+                                        </#if>
+                                        <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveTransition&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.removeTransition}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' /> 
+                                    </td>
+                                </tr>
+                            </#list>
                         </@table>
                     </div>
                 </@tabContent>

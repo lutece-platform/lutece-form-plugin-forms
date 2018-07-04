@@ -26,7 +26,8 @@ id_step int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
 description varchar(255) default '',
 id_form int default '0' NOT NULL,
-is_final SMALLINT,
+is_initial SMALLINT default 0 NOT NULL,
+is_final SMALLINT default 0 NOT NULL,
 PRIMARY KEY (id_step)
 );
 

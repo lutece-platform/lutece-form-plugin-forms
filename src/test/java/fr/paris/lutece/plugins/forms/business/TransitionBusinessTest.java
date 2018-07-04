@@ -41,14 +41,13 @@ import fr.paris.lutece.test.LuteceTestCase;
  */
 public class TransitionBusinessTest extends LuteceTestCase
 {
-    private static final int FROMSTEP1 = 1;
-    private static final int FROMSTEP2 = 2;
-    private static final int NEXTSTEP1 = 1;
-    private static final int NEXTSTEP2 = 2;
+
     private static final int IDCONTROL1 = 1;
     private static final int IDCONTROL2 = 2;
     private static final int PRIORITY1 = 1;
     private static final int PRIORITY2 = 2;
+    private static final String STEP_TITLE1 = "titre1";
+    private static final String STEP_TITLE2 = "titre2";
 
     /**
      * test Transition
@@ -56,9 +55,14 @@ public class TransitionBusinessTest extends LuteceTestCase
     public void testBusiness( )
     {
         // Initialize an object
+        
+        Step step1 = new Step( );
+        step1.setTitle( STEP_TITLE1 );
+        StepHome.create( step1 );
+
         Transition transition = new Transition( );
-        transition.setFromStep( FROMSTEP1 );
-        transition.setNextStep( NEXTSTEP1 );
+        transition.setFromStep( step1.getId( ) );
+        transition.setNextStep( step1.getId( )  );
         transition.setIdControl( IDCONTROL1 );
         transition.setPriority( PRIORITY1 );
 
@@ -70,9 +74,13 @@ public class TransitionBusinessTest extends LuteceTestCase
         assertEquals( transitionStored.getIdControl( ), transition.getIdControl( ) );
         assertEquals( transitionStored.getPriority( ), transition.getPriority( ) );
 
+        Step step2 = new Step( );
+        step2.setTitle( STEP_TITLE2 );
+        StepHome.create( step2 );
+        
         // Update test
-        transition.setFromStep( FROMSTEP2 );
-        transition.setNextStep( NEXTSTEP2 );
+        transition.setFromStep( step2.getId( ) );
+        transition.setNextStep( step2.getId( ) );
         transition.setIdControl( IDCONTROL2 );
         transition.setPriority( PRIORITY2 );
         TransitionHome.update( transition );
@@ -89,6 +97,9 @@ public class TransitionBusinessTest extends LuteceTestCase
         TransitionHome.remove( transition.getId( ) );
         transitionStored = TransitionHome.findByPrimaryKey( transition.getId( ) );
         assertNull( transitionStored );
+        
+        StepHome.remove( step1.getId( ) );
+        StepHome.remove( step2.getId( ) );
 
     }
 

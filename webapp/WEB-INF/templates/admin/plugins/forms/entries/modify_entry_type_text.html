@@ -81,7 +81,7 @@
 			<@boxBody>
 				<fieldset> 
 				<legend class="sr-only">#i18n{forms.createEntry.manageRegularExpression.title}</legend>
-				<@tform action='jsp/admin/plugins/form/DoInsertVerification.jsp#list'>
+				<@tform action='jsp/admin/plugins/forms/DoInsertVerification.jsp#list'>
 					<input name="id_field" value="${id_field}" type="hidden" />
 					<@formGroup labelFor='id_expression' labelKey='#i18n{forms.createEntry.manageRegularExpression.labelInsert}' helpKey='#i18n{forms.createEntry.manageRegularExpression.labelInsertComment}'>
 						<@inputGroup>
@@ -108,7 +108,7 @@
 								<td>${expression.informationMessage}</td>
 								<td>${expression.validExemple}</td>
 								<td>
-									<@aButton href='jsp/admin/plugins/form/DoRemoveVerification.jsp?id_expression=${expression.idExpression}&id_field=${id_field}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' showTitle=false buttonIcon='trash' color='btn-danger' />
+									<@aButton href='jsp/admin/plugins/forms/DoRemoveVerification.jsp?id_expression=${expression.idExpression}&id_field=${id_field}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' showTitle=false buttonIcon='trash' color='btn-danger' />
 								</td>
 							</tr>
 						</#list>
