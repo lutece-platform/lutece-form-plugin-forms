@@ -69,7 +69,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponse.getFormId( ) );
             daoUtil.setString( nIndex++, formResponse.getGuid( ) );
-            
+
             Timestamp timestampCurrentTime = new Timestamp( System.currentTimeMillis( ) );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
@@ -105,8 +105,8 @@ public final class FormResponseDAO implements IFormResponseDAO
             formResponse.setId( daoUtil.getInt( "id_response" ) );
             formResponse.setFormId( daoUtil.getInt( "id_form" ) );
             formResponse.setGuid( daoUtil.getString( "guid" ) );
-            
-            Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" ); 
+
+            Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
             formResponse.setDateCreation( timestampCreationDate );
             try
             {
@@ -115,7 +115,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             catch( AppException exception )
             {
                 AppLogService.error( "The update date of the FormResponse si not valid !" );
-                
+
                 formResponse.setUpdate( timestampCreationDate );
             }
         }
