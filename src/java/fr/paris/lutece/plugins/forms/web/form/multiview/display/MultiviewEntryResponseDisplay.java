@@ -31,46 +31,38 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web.form.filter.display;
+package fr.paris.lutece.plugins.forms.web.form.multiview.display;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 
-import fr.paris.lutece.plugins.forms.web.form.filter.IFilterable;
-import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 
 /**
- * Interface for the Filter associated to a FormColumnDisplay
+ * This class is a representation of an Response of an Entry for a Question object for the page of the details of a FormResponse
  */
-public interface IFormFilterDisplay extends IFilterable, IFormListPosition
+public class MultiviewEntryResponseDisplay
 {
-    /**
-     * Return the value of the the template of the FormFilterDisplay
-     * 
-     * @return the value of the FormFilterDisplay
-     */
-    String getValue( );
-
-    /**
-     * Return the name of the parameter associated to the FormFilterDisplay. This name correspond to the name on which the filter used to retrieve the value
-     * which has been selected on the screen by the user. If the name returned by this method doesn't match the name used to retrieve the value selected by the
-     * user this value will be lost during the redirection between the page of the details of the form response and the page which list all the form responses.
-     * 
-     * @return the name of the parameter associated to the FormFilterDisplay
-     */
-    String getParameterName( );
+    private List<Response> _listResponses = new ArrayList<>( );
     
     /**
-     * Return the template of the FormFilterDisplay
+     * Constructor
      * 
-     * @return the template of the FormFilterDisplay
+     * @param listResponse
+     *          The list of Responses on which the MultiviewEntryResponseDisplay is linked
      */
-    String getTemplate( );
-
+    public MultiviewEntryResponseDisplay( List<Response> listResponse )
+    {
+        _listResponses = listResponse;
+    }
+    
     /**
-     * Build the Template of the FormFilterDisplay
+     * Return the list of Response of the MultiviewEntryResponseDisplay
      * 
-     * @param request
-     *            The HttpServletRequest to use to build the template of the filter
+     * @return the list of Response of the MultiviewEntryResponseDisplay
      */
-    void buildTemplate( HttpServletRequest request );
+    public List<Response> getListResponse( )
+    {
+        return _listResponses;
+    }
 }

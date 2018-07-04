@@ -77,6 +77,15 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
+    public String getParameterName( )
+    {
+        return buildElementName( PARAMETER_ENTRY_VALUE_PATTERN );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request )
     {
         String strEntryValue = DEFAULT_ENTRY_VALUE;

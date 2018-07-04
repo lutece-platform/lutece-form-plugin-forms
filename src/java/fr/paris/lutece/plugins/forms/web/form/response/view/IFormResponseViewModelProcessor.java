@@ -31,46 +31,29 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web.form.filter.display;
+package fr.paris.lutece.plugins.forms.web.form.response.view;
+
+import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.forms.web.form.filter.IFilterable;
-import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
-
 /**
- * Interface for the Filter associated to a FormColumnDisplay
+ * Processor used to build the model for accessing the page of details of a Form Response
  */
-public interface IFormFilterDisplay extends IFilterable, IFormListPosition
+public interface IFormResponseViewModelProcessor
 {
     /**
-     * Return the value of the the template of the FormFilterDisplay
-     * 
-     * @return the value of the FormFilterDisplay
-     */
-    String getValue( );
-
-    /**
-     * Return the name of the parameter associated to the FormFilterDisplay. This name correspond to the name on which the filter used to retrieve the value
-     * which has been selected on the screen by the user. If the name returned by this method doesn't match the name used to retrieve the value selected by the
-     * user this value will be lost during the redirection between the page of the details of the form response and the page which list all the form responses.
-     * 
-     * @return the name of the parameter associated to the FormFilterDisplay
-     */
-    String getParameterName( );
-    
-    /**
-     * Return the template of the FormFilterDisplay
-     * 
-     * @return the template of the FormFilterDisplay
-     */
-    String getTemplate( );
-
-    /**
-     * Build the Template of the FormFilterDisplay
+     * Populate the given model for the processor for the form response associated to the given identifier
      * 
      * @param request
-     *            The HttpServletRequest to use to build the template of the filter
+     *            The request to use to retrieve the parameters from the request
+     * @param mapModel
+     *            The model to populate with the data of the current processor
+     * @param nIdFormResponse
+     *            The identifier of the form response on which the model must be build
+     * @param locale
+     *            The locale to used for build the model
      */
-    void buildTemplate( HttpServletRequest request );
+    void populateModel( HttpServletRequest request, Map<String, Object> mapModel, int nIdFormResponse, Locale locale );
 }

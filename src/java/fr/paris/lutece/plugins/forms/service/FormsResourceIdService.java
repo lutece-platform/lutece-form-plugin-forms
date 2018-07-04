@@ -77,6 +77,9 @@ public class FormsResourceIdService extends ResourceIdService
     /** Permission for managing Validator */
     public static final String PERMISSION_MANAGE_VALIDATOR = "MANAGE_VALIDATOR";
 
+    /** Permission for access the details of a form response **/
+    public static final String PERMISSION_ACCESS_FORM_RESPONSE_DETAILS = "ACCESS_FORM_RESPONSE_DETAILS";
+
     private static final String PROPERTY_LABEL_RESOURCE_TYPE = "form.permission.label.resourceType";
     private static final String PROPERTY_LABEL_CREATE = "form.permission.label.create";
     private static final String PROPERTY_LABEL_TEST = "form.permission.label.test";
@@ -86,6 +89,7 @@ public class FormsResourceIdService extends ResourceIdService
     private static final String PROPERTY_LABEL_VIEW_RESULT = "form.permission.label.viewResult";
     private static final String PROPERTY_LABEL_CHANGE_STATE = "form.permission.label.changeState";
     private static final String PROPERTY_LABEL_MANAGE_VALIDATOR = "form.permission.label.manageValidator";
+    private static final String PROPERTY_LABEL_ACCESS_FORM_RESPONSE_DETAILS = "form.permission.label.accessFormResponseDetails";
 
     /** Creates a new instance of DocumentTypeResourceIdService */
     public FormsResourceIdService( )
@@ -144,6 +148,11 @@ public class FormsResourceIdService extends ResourceIdService
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_DELETE );
         permission.setPermissionTitleKey( PROPERTY_LABEL_DELETE );
+        resourceType.registerPermission( permission );
+        
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_ACCESS_FORM_RESPONSE_DETAILS );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_ACCESS_FORM_RESPONSE_DETAILS );
         resourceType.registerPermission( permission );
 
         ResourceTypeManager.registerResourceType( resourceType );

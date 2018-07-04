@@ -66,6 +66,15 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
+    public String getParameterName( )
+    {
+        return PARAMETER_ID_WORKFLOW_STATE ;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request )
     {
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );

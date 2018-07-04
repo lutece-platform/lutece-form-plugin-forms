@@ -68,6 +68,15 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
+    public String getParameterName( )
+    {
+        return FormMultiviewFormsNameConstants.PARAMETER_ID_FORM;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request )
     {
         String strIdFormValue = DEFAULT_ID_FORM;

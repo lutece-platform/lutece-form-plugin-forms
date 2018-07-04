@@ -31,46 +31,47 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web.form.filter.display;
-
-import javax.servlet.http.HttpServletRequest;
-
-import fr.paris.lutece.plugins.forms.web.form.filter.IFilterable;
-import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
+package fr.paris.lutece.plugins.forms.web.form.multiview.display;
 
 /**
- * Interface for the Filter associated to a FormColumnDisplay
+ * This class represent the parent element of a Question
  */
-public interface IFormFilterDisplay extends IFilterable, IFormListPosition
+public class MultiviewParentQuestionDisplay
 {
-    /**
-     * Return the value of the the template of the FormFilterDisplay
-     * 
-     * @return the value of the FormFilterDisplay
-     */
-    String getValue( );
-
-    /**
-     * Return the name of the parameter associated to the FormFilterDisplay. This name correspond to the name on which the filter used to retrieve the value
-     * which has been selected on the screen by the user. If the name returned by this method doesn't match the name used to retrieve the value selected by the
-     * user this value will be lost during the redirection between the page of the details of the form response and the page which list all the form responses.
-     * 
-     * @return the name of the parameter associated to the FormFilterDisplay
-     */
-    String getParameterName( );
+    private int _nIdParent;
+    private String _strTitle;
     
     /**
-     * Return the template of the FormFilterDisplay
+     * Constructor
      * 
-     * @return the template of the FormFilterDisplay
+     * @param nIdParent
+     *          The identifier of the Parent Question
+     * @param strTitle
+     *          The title of the Parent Question
      */
-    String getTemplate( );
-
+    public MultiviewParentQuestionDisplay( int nIdParent, String strTitle )
+    {
+        _nIdParent = nIdParent;
+        _strTitle = strTitle;
+    }
+    
     /**
-     * Build the Template of the FormFilterDisplay
+     * Return the identifier of the Parent Question
      * 
-     * @param request
-     *            The HttpServletRequest to use to build the template of the filter
+     * @return the identifier of the Parent Question
      */
-    void buildTemplate( HttpServletRequest request );
+    public int getIdParent( )
+    {
+        return _nIdParent;
+    }
+    
+    /**
+     * Return the title of the MultiviewParentQuestionDisplay
+     * 
+     * @return the title of the MultiviewParentQuestionDisplay
+     */
+    public String getTitle( )
+    {
+        return _strTitle;
+    }
 }

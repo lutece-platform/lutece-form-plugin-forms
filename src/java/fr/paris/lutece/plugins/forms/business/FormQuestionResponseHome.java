@@ -126,4 +126,19 @@ public final class FormQuestionResponseHome
     {
         return _dao.selectFormQuestionResponseList( _plugin );
     }
+    
+    /**
+     * Retrieve all the FormQuestionResponse associated to the given FormResponse for the specified Question.
+     * Return an empty list if there is no FormQuestionResponse associated to the given parameters.
+     * 
+     * @param nIdFormResponse
+     *          The identifier of the FormResponse
+     * @param nIdQuestion
+     *          The identifier of the Question
+     * @return the list of all FormQuestionResponse associated to the given formResponse and Question, return an empty list if there is no result.
+     */
+    public static List<FormQuestionResponse> getFormQuestionResponseListByResponseQuestion( int nIdFormResponse, int nIdQuestion )
+    {
+        return _dao.selectFormQuestionResponseListByResponseForQuestion( nIdFormResponse, nIdQuestion, _plugin );
+    }
 }

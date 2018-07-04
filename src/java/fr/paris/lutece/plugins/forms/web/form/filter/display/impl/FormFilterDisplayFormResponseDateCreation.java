@@ -64,6 +64,15 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
      * {@inheritDoc}
      */
     @Override
+    public String getParameterName( )
+    {
+        return PARAMETER_SEARCH_OPEN_SINCE;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request )
     {
         String strPeriodCreationDate = request.getParameter( PARAMETER_SEARCH_OPEN_SINCE );

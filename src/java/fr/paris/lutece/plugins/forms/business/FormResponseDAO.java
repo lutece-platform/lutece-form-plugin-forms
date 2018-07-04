@@ -34,12 +34,12 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.util.sql.DAOUtil;
 import java.sql.Statement;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
  * This class provides Data Access methods for Form objects
@@ -87,9 +87,21 @@ public final class FormResponseDAO implements IFormResponseDAO
     public FormResponse load( int nKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
+        daoUtil.setInt( 1, nKey );
+        daoUtil.executeQuery( );
 
-        FormResponse formResponse = new FormResponse( );
-
+        FormResponse formResponse = null;
+        
+        if ( daoUtil.next( ) )
+        {
+            formResponse = new FormResponse( );
+            formResponse.setId( daoUtil.getInt( "id_response" ) );
+            formResponse.setFormId( daoUtil.getInt( "id_form" ) );
+            formResponse.setGuid( daoUtil.getString( "guid" ) );
+            formResponse.setDateCreation( daoUtil.getTimestamp( "creation_date" ) );
+            formResponse.setUpdate( daoUtil.getTimestamp( "update_date" ) );
+        }
+        
         daoUtil.close( );
 
         return formResponse;

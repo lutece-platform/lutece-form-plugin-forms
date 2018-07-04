@@ -97,9 +97,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";
-    private static final String PARAMETER_SORT_COLUMN_POSITION = "column_position";
-    private static final String PARAMETER_SORT_ATTRIBUTE_NAME = "sorted_attribute_name";
-    private static final String PARAMETER_SORT_ASC_VALUE = "asc_sort";
 
     // Marks
     private static final String MARK_LOCALE = "locale";
@@ -160,8 +157,9 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Add the template of column to the model
         String strSortUrl = String.format( BASE_SORT_URL_PATTERN, _strSelectedPanelTechnicalCode );
+        String strRedirectionDetailsBaseUrl = buildRedirectionDetailsBaseUrl( );
         List<FormResponseItem> listFormResponseItemToDisplay = buildFormResponseItemListToDisplay( );
-        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, listFormResponseItemToDisplay, getLocale( ), strSortUrl );
+        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, listFormResponseItemToDisplay, getLocale( ), strRedirectionDetailsBaseUrl, strSortUrl );
         model.put( MARK_TABLE_TEMPLATE, strTableTemplate );
 
         // Add the list of all form panel
@@ -191,7 +189,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     private boolean isPaginationAndSortNotUsed( HttpServletRequest request )
     {
-        return request.getParameter( PARAMETER_PAGE_INDEX ) == null && request.getParameter( PARAMETER_SORT_COLUMN_POSITION ) == null;
+        return request.getParameter( PARAMETER_PAGE_INDEX ) == null && request.getParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION ) == null;
     }
 
     /**
@@ -268,7 +266,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     private void sortFormResponseItemList( HttpServletRequest request, List<FormResponseItem> listFormResponseItem )
     {
-        if ( request.getParameter( PARAMETER_SORT_COLUMN_POSITION ) != null )
+        if ( request.getParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION ) != null )
         {
             buildFormResponseItemComparatorConfiguration( request );
         }
@@ -288,15 +286,67 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     private void buildFormResponseItemComparatorConfiguration( HttpServletRequest request )
     {
-        String strColumnToSortPosition = request.getParameter( PARAMETER_SORT_COLUMN_POSITION );
+        String strColumnToSortPosition = request.getParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION );
         int nColumnToSortPosition = NumberUtils.toInt( strColumnToSortPosition, NumberUtils.INTEGER_MINUS_ONE );
 
-        String strSortKey = request.getParameter( PARAMETER_SORT_ATTRIBUTE_NAME );
+        String strSortKey = request.getParameter( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME );
 
-        String strAscSort = request.getParameter( PARAMETER_SORT_ASC_VALUE );
+        String strAscSort = request.getParameter( FormsConstants.PARAMETER_SORT_ASC_VALUE );
         boolean bAscSort = Boolean.parseBoolean( strAscSort );
 
         _formResponseItemComparatorConfig = new FormResponseItemComparatorConfig( nColumnToSortPosition, strSortKey, bAscSort );
+    }
+    
+    /**
+     * Build the base url to use for redirect to the page of the details of a form response
+     * 
+     * @return the base url to use for redirect to the details page of a form response
+     */
+    private String buildRedirectionDetailsBaseUrl( )
+    {
+        UrlItem urlRedirectionDetails = new UrlItem( MultiviewFormResponseDetailsJspBean.getMultiviewRecordDetailsBaseUrl( ) );
+
+        if ( !CollectionUtils.isEmpty( _listFormFilterDisplay ) )
+        {
+            for ( IFormFilterDisplay formFilterDisplay : _listFormFilterDisplay )
+            {
+                // Add all the filters values
+                String strFilterValue = formFilterDisplay.getValue( );
+                if ( !StringUtils.isEmpty( strFilterValue ) )
+                {
+                    String strFilterFullName = FormsConstants.PARAMETER_URL_FILTER_PREFIX + formFilterDisplay.getParameterName( );
+                    urlRedirectionDetails.addParameter( strFilterFullName, strFilterValue );
+                }
+            }
+        }
+
+        // Add the selected panel technical code
+        urlRedirectionDetails.addParameter( FormsConstants.PARAMETER_SELECTED_PANEL, _strSelectedPanelTechnicalCode );
+
+        // Add sort filter data to the url
+        addFilterSortConfigToUrl( urlRedirectionDetails );
+
+        return urlRedirectionDetails.getUrl( );
+    }
+
+    /**
+     * Add the information for rebuild the used sort
+     * 
+     * @param urlRedirectionDetails
+     *            The UrlItem which represent the url to use for redirect to the form response details page
+     */
+    private void addFilterSortConfigToUrl( UrlItem urlRedirectionDetails )
+    {
+        if ( _formResponseItemComparatorConfig != null )
+        {
+            String strSortPosition = Integer.toString( _formResponseItemComparatorConfig.getColumnToSortPosition( ) );
+            String strAttributeName = _formResponseItemComparatorConfig.getSortAttributeName( );
+            String strAscSort = String.valueOf( _formResponseItemComparatorConfig.isAscSort( ) );
+
+            urlRedirectionDetails.addParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION, strSortPosition );
+            urlRedirectionDetails.addParameter( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME, strAttributeName );
+            urlRedirectionDetails.addParameter( FormsConstants.PARAMETER_SORT_ASC_VALUE, strAscSort );
+        }
     }
 
     /**

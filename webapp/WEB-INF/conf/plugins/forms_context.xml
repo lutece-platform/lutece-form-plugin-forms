@@ -127,6 +127,11 @@
 	
 	<bean id="forms.formDisplayService" class="fr.paris.lutece.plugins.forms.service.FormDisplayService" />
 	
+    <!-- Forms Multiview Authorization Service -->
+    <bean id="forms.formsMultiviewAuthorizationService" class="fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService">
+        <constructor-arg name="formPanel" type="fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel" ref="forms.panelForms"/>
+    </bean>
+    
 	<!-- FormList Facade -->
     <bean id="forms.formList.facade" class="fr.paris.lutece.plugins.forms.business.form.list.FormListFacade">
     	<constructor-arg name="formListDAO" type="fr.paris.lutece.plugins.forms.business.form.list.IFormListDAO" ref="forms.formListDAO" />
