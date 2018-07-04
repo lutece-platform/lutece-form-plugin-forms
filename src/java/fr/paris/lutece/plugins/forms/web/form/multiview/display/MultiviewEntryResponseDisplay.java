@@ -44,18 +44,18 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 public class MultiviewEntryResponseDisplay
 {
     private List<Response> _listResponses = new ArrayList<>( );
-    
+
     /**
      * Constructor
      * 
      * @param listResponse
-     *          The list of Responses on which the MultiviewEntryResponseDisplay is linked
+     *            The list of Responses on which the MultiviewEntryResponseDisplay is linked
      */
     public MultiviewEntryResponseDisplay( List<Response> listResponse )
     {
         _listResponses = listResponse;
     }
-    
+
     /**
      * Return the list of Response of the MultiviewEntryResponseDisplay
      * 

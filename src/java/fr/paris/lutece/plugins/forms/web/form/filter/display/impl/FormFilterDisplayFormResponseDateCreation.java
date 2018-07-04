@@ -68,7 +68,7 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
     {
         return PARAMETER_SEARCH_OPEN_SINCE;
     }
-    
+
     /**
      * {@inheritDoc}
      */

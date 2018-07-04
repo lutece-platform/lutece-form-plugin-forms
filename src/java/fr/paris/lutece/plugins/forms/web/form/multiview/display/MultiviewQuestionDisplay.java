@@ -42,27 +42,28 @@ public class MultiviewQuestionDisplay
     private int _depth;
     private MultiviewParentQuestionDisplay _multiviewParentQuestionDisplay;
     private MultiviewEntryResponseDisplay _multiviewEntryResponseDisplay;
-    
+
     /**
      * Constructor
      * 
      * @param strTitle
-     *          The of the Question associated to the MultiviewQuestionDisplay
+     *            The of the Question associated to the MultiviewQuestionDisplay
      * @param depth
-     *          The depth of the question in the Form
+     *            The depth of the question in the Form
      * @param multiviewParentQuestionDisplay
-     *          The MultiviewEntryResponseDisplay associated to the MultiviewQuestionDisplay
+     *            The MultiviewEntryResponseDisplay associated to the MultiviewQuestionDisplay
      * @param multiviewEntryResponseDisplay
-     *          The MultiviewEntryResponseDisplay associated to the MultiviewQuestionDisplay
+     *            The MultiviewEntryResponseDisplay associated to the MultiviewQuestionDisplay
      */
-    public MultiviewQuestionDisplay( String strTitle, int depth, MultiviewParentQuestionDisplay multiviewParentQuestionDisplay, MultiviewEntryResponseDisplay multiviewEntryResponseDisplay )
+    public MultiviewQuestionDisplay( String strTitle, int depth, MultiviewParentQuestionDisplay multiviewParentQuestionDisplay,
+            MultiviewEntryResponseDisplay multiviewEntryResponseDisplay )
     {
         _strTitle = strTitle;
         _depth = depth;
         _multiviewParentQuestionDisplay = multiviewParentQuestionDisplay;
         _multiviewEntryResponseDisplay = multiviewEntryResponseDisplay;
     }
-    
+
     /**
      * Return the title of the MultiviewQuestionDisplay
      * 
@@ -72,7 +73,7 @@ public class MultiviewQuestionDisplay
     {
         return _strTitle;
     }
-    
+
     /**
      * Return the depth of the Question in the Form
      * 
@@ -82,7 +83,7 @@ public class MultiviewQuestionDisplay
     {
         return _depth;
     }
-    
+
     /**
      * Return the MultiviewParentQuestionDisplay associated to the MultiviewQuestionDisplay
      * 
@@ -92,7 +93,7 @@ public class MultiviewQuestionDisplay
     {
         return _multiviewParentQuestionDisplay;
     }
-    
+
     /**
      * Return the MultiviewEntryResponseDisplay of the MultiviewQuestionDisplay
      * 

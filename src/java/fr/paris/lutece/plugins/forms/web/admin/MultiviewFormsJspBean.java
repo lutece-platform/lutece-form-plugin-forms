@@ -159,7 +159,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         String strSortUrl = String.format( BASE_SORT_URL_PATTERN, _strSelectedPanelTechnicalCode );
         String strRedirectionDetailsBaseUrl = buildRedirectionDetailsBaseUrl( );
         List<FormResponseItem> listFormResponseItemToDisplay = buildFormResponseItemListToDisplay( );
-        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, listFormResponseItemToDisplay, getLocale( ), strRedirectionDetailsBaseUrl, strSortUrl );
+        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, listFormResponseItemToDisplay, getLocale( ),
+                strRedirectionDetailsBaseUrl, strSortUrl );
         model.put( MARK_TABLE_TEMPLATE, strTableTemplate );
 
         // Add the list of all form panel
@@ -296,7 +297,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         _formResponseItemComparatorConfig = new FormResponseItemComparatorConfig( nColumnToSortPosition, strSortKey, bAscSort );
     }
-    
+
     /**
      * Build the base url to use for redirect to the page of the details of a form response
      * 

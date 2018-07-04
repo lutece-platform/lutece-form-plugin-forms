@@ -43,21 +43,21 @@ public class MultiviewStepDisplay
 {
     private String _strTitle;
     private List<MultiviewQuestionDisplay> _listQuestionDisplay = new ArrayList<>( );
-    
+
     /**
      * Constructor
      * 
      * @param strTitle
-     *          The title of the Step
+     *            The title of the Step
      * @param listQuestionDisplay
-     *          The list of Question display associated to the Step
+     *            The list of Question display associated to the Step
      */
     public MultiviewStepDisplay( String strTitle, List<MultiviewQuestionDisplay> listQuestionDisplay )
     {
         _strTitle = strTitle;
         _listQuestionDisplay = listQuestionDisplay;
     }
-    
+
     /**
      * Return the title of the MultiviewStepDisplay
      * 
@@ -67,7 +67,7 @@ public class MultiviewStepDisplay
     {
         return _strTitle;
     }
-    
+
     /**
      * Return the list of MultiviewQuestionDisplay of the MultiviewStepDisplay
      * 

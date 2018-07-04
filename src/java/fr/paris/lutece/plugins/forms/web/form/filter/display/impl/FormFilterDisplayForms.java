@@ -72,7 +72,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     {
         return FormMultiviewFormsNameConstants.PARAMETER_ID_FORM;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -43,7 +43,8 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 public class FormResponseViewModelProcessorFactory
 {
     // Variables
-    private final List<IFormResponseViewModelProcessor> _listFormResponseViewModelProcessor = SpringContextService.getBeansOfType( IFormResponseViewModelProcessor.class );
+    private final List<IFormResponseViewModelProcessor> _listFormResponseViewModelProcessor = SpringContextService
+            .getBeansOfType( IFormResponseViewModelProcessor.class );
 
     /**
      * Return the list of all FormResponseViewModelProcessor

@@ -40,21 +40,21 @@ public class MultiviewParentQuestionDisplay
 {
     private int _nIdParent;
     private String _strTitle;
-    
+
     /**
      * Constructor
      * 
      * @param nIdParent
-     *          The identifier of the Parent Question
+     *            The identifier of the Parent Question
      * @param strTitle
-     *          The title of the Parent Question
+     *            The title of the Parent Question
      */
     public MultiviewParentQuestionDisplay( int nIdParent, String strTitle )
     {
         _nIdParent = nIdParent;
         _strTitle = strTitle;
     }
-    
+
     /**
      * Return the identifier of the Parent Question
      * 
@@ -64,7 +64,7 @@ public class MultiviewParentQuestionDisplay
     {
         return _nIdParent;
     }
-    
+
     /**
      * Return the title of the MultiviewParentQuestionDisplay
      * 

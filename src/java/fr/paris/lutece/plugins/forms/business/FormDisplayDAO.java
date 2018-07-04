@@ -280,13 +280,13 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     public FormDisplay selectFormdisplayByFormStepAndComposite( int nIdForm, int nIdStep, int nIdComposite, Plugin plugin )
     {
         FormDisplay formDisplay = null;
-        
+
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE, plugin );
         daoUtil.setInt( 1, nIdForm );
         daoUtil.setInt( 2, nIdStep );
         daoUtil.setInt( 3, nIdComposite );
         daoUtil.executeQuery( );
-        
+
         if ( daoUtil.next( ) )
         {
             formDisplay = new FormDisplay( );
@@ -299,9 +299,9 @@ public final class FormDisplayDAO implements IFormDisplayDAO
             formDisplay.setCompositeType( daoUtil.getString( "composite_type" ) );
             formDisplay.setDepth( daoUtil.getInt( "display_depth" ) );
         }
-        
+
         daoUtil.close( );
-        
+
         return formDisplay;
     }
 }

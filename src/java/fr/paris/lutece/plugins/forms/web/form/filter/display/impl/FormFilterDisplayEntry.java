@@ -81,7 +81,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
     {
         return buildElementName( PARAMETER_ENTRY_VALUE_PATTERN );
     }
-    
+
     /**
      * {@inheritDoc}
      */

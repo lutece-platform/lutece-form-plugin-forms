@@ -149,7 +149,7 @@ public class FormsResourceIdService extends ResourceIdService
         permission.setPermissionKey( PERMISSION_DELETE );
         permission.setPermissionTitleKey( PROPERTY_LABEL_DELETE );
         resourceType.registerPermission( permission );
-        
+
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_ACCESS_FORM_RESPONSE_DETAILS );
         permission.setPermissionTitleKey( PROPERTY_LABEL_ACCESS_FORM_RESPONSE_DETAILS );

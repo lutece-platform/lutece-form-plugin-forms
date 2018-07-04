@@ -163,7 +163,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
         return formQuestionResponseList;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -171,37 +171,37 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     public List<FormQuestionResponse> selectFormQuestionResponseListByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin )
     {
         List<FormQuestionResponse> formQuestionResponseList = new ArrayList<FormQuestionResponse>( );
-        
+
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION, plugin );
         daoUtil.setInt( 1, nIdFormResponse );
         daoUtil.setInt( 2, nIdQuestion );
         daoUtil.executeQuery( );
-        
-        while( daoUtil.next( ) )
+
+        while ( daoUtil.next( ) )
         {
             FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
             formQuestionResponse.setId( daoUtil.getInt( "id_question_response" ) );
             formQuestionResponse.setIdFormResponse( daoUtil.getInt( "id_form_response" ) );
             formQuestionResponse.setIdQuestion( daoUtil.getInt( "id_question" ) );
             formQuestionResponse.setIterationNumber( daoUtil.getInt( "iteration_number" ) );
-            
+
             formQuestionResponseList.add( formQuestionResponse );
         }
 
         daoUtil.close( );
-        
+
         completeQuestionResponseWithEntryResponse( formQuestionResponseList, plugin );
 
         return formQuestionResponseList;
     }
-    
+
     /**
      * Add all informations associated to the EntryResponse for the elements in the given list
      * 
      * @param formQuestionResponseList
-     *          The list to complete with informations of the EntryResponse
+     *            The list to complete with informations of the EntryResponse
      * @param plugin
-     *          The plugin to use to execute the query
+     *            The plugin to use to execute the query
      */
     private void completeQuestionResponseWithEntryResponse( List<FormQuestionResponse> formQuestionResponseList, Plugin plugin )
     {
@@ -212,21 +212,21 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
                 DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_QUESTION, plugin );
                 daoUtil.setInt( 1, formQuestionResponse.getId( ) );
                 daoUtil.executeQuery( );
-                
+
                 List<Integer> listIdResponse = new ArrayList<>( );
                 while ( daoUtil.next( ) )
                 {
                     listIdResponse.add( daoUtil.getInt( "id_entry_response" ) );
                 }
-                
+
                 daoUtil.close( );
-                
+
                 List<Response> listEntryResponse = new ArrayList<>( );
                 for ( Integer nIdEntryResponse : listIdResponse )
                 {
                     listEntryResponse.add( ResponseHome.findByPrimaryKey( nIdEntryResponse ) );
                 }
-                
+
                 formQuestionResponse.setEntryResponse( listEntryResponse );
             }
         }

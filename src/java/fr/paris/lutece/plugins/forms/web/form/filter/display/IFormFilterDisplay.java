@@ -58,7 +58,7 @@ public interface IFormFilterDisplay extends IFilterable, IFormListPosition
      * @return the name of the parameter associated to the FormFilterDisplay
      */
     String getParameterName( );
-    
+
     /**
      * Return the template of the FormFilterDisplay
      * 

@@ -142,20 +142,20 @@ public final class FormDisplayHome
     {
         return _dao.selectGroupDisplayReferenceListByStep( nIdStep, _plugin );
     }
-    
+
     /**
      * Return the FormDisplay associated to the given parameters
      * 
      * @param nIdForm
-     *          The identifier of the Form to match
+     *            The identifier of the Form to match
      * @param nIdStep
-     *          The identifier of the Step to match
+     *            The identifier of the Step to match
      * @param nIdComposite
-     *          The identifier of the Composite to match
+     *            The identifier of the Composite to match
      * @return the formDisplay associated to the given parameters
      */
     public static FormDisplay getFormDisplayByFormStepAndComposite( int nIdForm, int nIdStep, int nIdComposite )
     {
-        return  _dao.selectFormdisplayByFormStepAndComposite( nIdForm, nIdStep, nIdComposite, _plugin );
+        return _dao.selectFormdisplayByFormStepAndComposite( nIdForm, nIdStep, nIdComposite, _plugin );
     }
 }

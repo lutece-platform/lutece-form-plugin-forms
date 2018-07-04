@@ -98,23 +98,23 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
     // JSP path
     private static final String CONTROLLER_JSP_NAME_WITH_PATH = "jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp";
-    
+
     // Templates
     private static final String TEMPLATE_VIEW_FORM_RESPONSE = "admin/plugins/forms/multiview/view_form_response.html";
-    
+
     // Views
     private static final String VIEW_FORM_RESPONSE_DETAILS = "view_form_response_details";
-    
+
     // Parameters
     private static final String PARAMETER_ID_FORM_RESPONSE = "id_form_response";
     private static final String PARAMETER_BACK_FROM_ACTION = "back_form_action";
-    
+
     // Marks
     private static final String MARK_LIST_FILTER_VALUES = "list_filter_values";
     private static final String MARK_FORM = "form";
     private static final String MARK_FORM_RESPONSE = "form_response";
     private static final String MARK_LIST_MULTIVIEW_STEP_DISPLAY = "list_multiview_step_display";
-    
+
     // Messages
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
     private static final String MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE = "forms.multiviewForms.pageTitle";
@@ -123,7 +123,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
     private final transient IFormsMultiviewAuthorizationService _formsMultiviewAuthorizationService = SpringContextService
             .getBean( IFormsMultiviewAuthorizationService.BEAN_NAME );
-    
+
     /**
      * Return the page with the details of a form response
      * 
@@ -138,11 +138,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     {
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
-        
+
         boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( nIdFormResponse ),
                 FormsResourceIdService.PERMISSION_ACCESS_FORM_RESPONSE_DETAILS, getUser( ) );
         boolean bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( request, nIdFormResponse );
-        
+
         if ( formResponse == null || !bRBACAuthorization || !bAuthorizedRecord )
         {
             throw new AccessDeniedException( MESSAGE_ACCESS_DENIED );
@@ -153,7 +153,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
         // Build the model of all ModelProcessors
         FormResponseViewModelProcessorFactory formResponseViewModelProcessorFactory = new FormResponseViewModelProcessorFactory( );
-        List<IFormResponseViewModelProcessor> listFormResponseViewModelProcesor = formResponseViewModelProcessorFactory.buildFormResponseViewModelProcessorList( );
+        List<IFormResponseViewModelProcessor> listFormResponseViewModelProcesor = formResponseViewModelProcessorFactory
+                .buildFormResponseViewModelProcessorList( );
         if ( !CollectionUtils.isEmpty( listFormResponseViewModelProcesor ) )
         {
             Locale locale = getLocale( );
@@ -172,7 +173,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
         return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_VIEW_FORM_RESPONSE, model );
     }
-    
+
     /**
      * Build the model of the page which display the details of a FormResponse
      * 
@@ -191,20 +192,20 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
         return mapFormResponseDetailsModel;
     }
-    
+
     /**
      * Build the list of all MultiviewStepDisplay for the given Form and the given FormResponse
      * 
      * @param form
-     *          The Form to use to build the list of MultiviewStepDisplay
+     *            The Form to use to build the list of MultiviewStepDisplay
      * @param formResponse
-     *          The FormResponse to use to build the list of MultiviewStepDisplay
+     *            The FormResponse to use to build the list of MultiviewStepDisplay
      * @return the list of all MultiviewStepDisplay built for the given parameters
      */
     private List<MultiviewStepDisplay> buildListMultiviewStepDisplay( Form form, FormResponse formResponse )
     {
         List<MultiviewStepDisplay> listMultiviewStepDisplay = new ArrayList<>( );
-        
+
         if ( form != null && formResponse != null )
         {
             List<Step> listFormStep = StepHome.getStepsListByForm( form.getId( ) );
@@ -213,29 +214,29 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 for ( Step step : listFormStep )
                 {
                     List<MultiviewQuestionDisplay> listMultiviewQuestionDisplay = buildListMultiviewQuestionDisplay( step, formResponse );
-                    
+
                     MultiviewStepDisplay multiviewStepDisplay = new MultiviewStepDisplay( step.getTitle( ), listMultiviewQuestionDisplay );
                     listMultiviewStepDisplay.add( multiviewStepDisplay );
                 }
             }
         }
-        
+
         return listMultiviewStepDisplay;
     }
-    
+
     /**
      * Build the list of all MultiviewQuestionDisplay for the given step and the given FormResponse
      * 
      * @param step
-     *          The Step to use to build the list of MultiviewQuestionDisplay
+     *            The Step to use to build the list of MultiviewQuestionDisplay
      * @param formResponse
-     *          The FormResponse to use to build the list of MultiviewQuestionDisplay
+     *            The FormResponse to use to build the list of MultiviewQuestionDisplay
      * @return the list of all MultiviewQuestionDisplay built with the given parameters
      */
     private List<MultiviewQuestionDisplay> buildListMultiviewQuestionDisplay( Step step, FormResponse formResponse )
     {
         List<MultiviewQuestionDisplay> listMultiviewQuestionDisplay = new ArrayList<>( );
-        
+
         if ( step != null && formResponse != null )
         {
             int nIdStep = step.getId( );
@@ -248,34 +249,36 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
                     FormDisplay formDisplay = FormDisplayHome.getFormDisplayByFormStepAndComposite( formResponse.getFormId( ), nIdStep, question.getId( ) );
                     MultiviewParentQuestionDisplay multiviewParentQuestionDisplay = buildParentQuestionDisplay( formDisplay );
-                    
-                    MultiviewQuestionDisplay multiviewQuestionDisplay = new MultiviewQuestionDisplay( question.getTitle( ), formDisplay.getDepth( ), multiviewParentQuestionDisplay, multiviewEntryResponseDetails );
+
+                    MultiviewQuestionDisplay multiviewQuestionDisplay = new MultiviewQuestionDisplay( question.getTitle( ), formDisplay.getDepth( ),
+                            multiviewParentQuestionDisplay, multiviewEntryResponseDetails );
                     listMultiviewQuestionDisplay.add( multiviewQuestionDisplay );
                 }
             }
         }
-        
+
         return listMultiviewQuestionDisplay;
     }
-    
+
     /**
      * Build the MultiviewEntryResponseDisplay for the given question for the given FormResponse
      * 
      * @param question
-     *          The question to use to build the MultiviewEntryResponseDisplay
+     *            The question to use to build the MultiviewEntryResponseDisplay
      * @param formResponse
-     *          The formResponse to use to build the MultiviewEntryResponseDisplay
+     *            The formResponse to use to build the MultiviewEntryResponseDisplay
      * @return the MultiviewEntryResponseDisplay built with the given parameters
      */
     private MultiviewEntryResponseDisplay buildEntryResponseDetails( Question question, FormResponse formResponse )
     {
         MultiviewEntryResponseDisplay multiviewEntryResponseDisplay = null;
-        
+
         if ( question != null && formResponse != null )
         {
             List<Response> listResponses = new ArrayList<>( );
-            List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByResponseQuestion( formResponse.getId( ), question.getId( ) );
-            
+            List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByResponseQuestion(
+                    formResponse.getId( ), question.getId( ) );
+
             if ( !CollectionUtils.isEmpty( listFormQuestionResponse ) )
             {
                 for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
@@ -283,24 +286,24 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                     listResponses.addAll( formQuestionResponse.getEntryResponse( ) );
                 }
             }
-            
+
             multiviewEntryResponseDisplay = new MultiviewEntryResponseDisplay( listResponses );
         }
-        
+
         return multiviewEntryResponseDisplay;
     }
-    
+
     /**
      * Build the MultiviewParentQuestionDisplay for the given Form, the given Step and the given Question
      * 
      * @param formDisplay
-     *          The FormDisplay to use to retrieve the associated MultiviewParentQuestionDisplay
+     *            The FormDisplay to use to retrieve the associated MultiviewParentQuestionDisplay
      * @return the MultiviewParentQuestionDisplay built with the given parameters
      */
     private MultiviewParentQuestionDisplay buildParentQuestionDisplay( FormDisplay formDisplay )
     {
         MultiviewParentQuestionDisplay multiviewParentQuestionDisplay = null;
-        
+
         if ( formDisplay != null )
         {
             FormDisplay formDisplayParent = FormDisplayHome.findByPrimaryKey( formDisplay.getParentId( ) );
@@ -313,10 +316,10 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 }
             }
         }
-        
+
         return multiviewParentQuestionDisplay;
     }
-    
+
     /**
      * Fill the map which contains the values of all filters with the data of the request
      * 
@@ -335,8 +338,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         {
             List<String> listFilterParameterName = Collections.list( enumerationParameterName );
             setFilterParameterName = listFilterParameterName.stream( )
-                    .filter( strParameterName -> strParameterName.startsWith( FormsConstants.PARAMETER_URL_FILTER_PREFIX ) )
-                    .collect( Collectors.toSet( ) );
+                    .filter( strParameterName -> strParameterName.startsWith( FormsConstants.PARAMETER_URL_FILTER_PREFIX ) ).collect( Collectors.toSet( ) );
         }
 
         if ( !CollectionUtils.isEmpty( setFilterParameterName ) )
@@ -378,7 +380,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         _mapFilterValues.put( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME, strAttributeName );
         _mapFilterValues.put( FormsConstants.PARAMETER_SORT_ASC_VALUE, strAscSort );
     }
-    
+
     /**
      * Populate the given model with the data associated to the filters from the request
      * 
@@ -405,7 +407,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             model.put( MARK_LIST_FILTER_VALUES, referenceListFilterValues );
         }
     }
-    
+
     /**
      * Return the default view base url for the MultiviewFormResponseDetailsJspBean
      * 

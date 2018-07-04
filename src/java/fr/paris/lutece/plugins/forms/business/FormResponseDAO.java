@@ -91,7 +91,7 @@ public final class FormResponseDAO implements IFormResponseDAO
         daoUtil.executeQuery( );
 
         FormResponse formResponse = null;
-        
+
         if ( daoUtil.next( ) )
         {
             formResponse = new FormResponse( );
@@ -101,7 +101,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             formResponse.setDateCreation( daoUtil.getTimestamp( "creation_date" ) );
             formResponse.setUpdate( daoUtil.getTimestamp( "update_date" ) );
         }
-        
+
         daoUtil.close( );
 
         return formResponse;
