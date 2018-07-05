@@ -53,6 +53,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     private static final String SQL_QUERY_SELECT = "SELECT id_response, id_form, guid, creation_date, update_date FROM forms_response WHERE id_response = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id = ? ";
+    private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_question = ?, iteration_number = ? WHERE id = ?";
     private static final String SQL_QUERY_SELECTALL = "SELECT id, id_question, iteration_number FROM forms_response";
 
@@ -159,6 +160,19 @@ public final class FormResponseDAO implements IFormResponseDAO
         daoUtil.close( );
 
         return formResponseList;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteByForm( int nIdForm, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORM, plugin );
+        daoUtil.setInt( 1, nIdForm );
+        daoUtil.executeUpdate( );
+        daoUtil.close( );
+        
     }
 
 }

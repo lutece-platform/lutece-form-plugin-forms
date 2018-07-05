@@ -54,6 +54,7 @@ import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
@@ -99,6 +100,8 @@ public class FormXPage extends MVCApplication
     // Markers
     private static final String STEP_HTML_MARKER = "stepContent";
 
+    //Other
+    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     // Attributes
     private FormResponse _formResponse;
     private Step _currentStep;
@@ -199,6 +202,7 @@ public class FormXPage extends MVCApplication
 
         }
 
+        // TODO: process transitions and get the next Step to redirect to
         return getStepView( request );
     }
 
@@ -220,7 +224,7 @@ public class FormXPage extends MVCApplication
 
             if ( form.isActive( ) )
             {
-                FormService.saveForm( _formResponse );
+                _formService.saveForm( _formResponse );
             }
         }
 

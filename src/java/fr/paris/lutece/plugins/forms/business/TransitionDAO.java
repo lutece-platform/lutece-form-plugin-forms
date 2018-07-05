@@ -53,6 +53,7 @@ public final class TransitionDAO implements ITransitionDAO
     private static final String SQL_FILTER_BY_ID = " WHERE t.id_transition = ? ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_transition ( from_step, next_step, id_control, priority ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_transition WHERE id_transition = ? ";
+    private static final String SQL_QUERY_DELETE_BY_STEP = "DELETE FROM forms_transition WHERE from_step = ? OR next_step = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_transition SET id_transition = ?, from_step = ?, next_step = ?, id_control = ?, priority = ? WHERE id_transition = ?";
     private static final String SQL_ORDER_BY_PRIORITY = " ORDER BY priority ASC";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_transition FROM forms_transition";
@@ -305,6 +306,20 @@ public final class TransitionDAO implements ITransitionDAO
 
         return transition;
 
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteByStep( int nIdStep, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_STEP, plugin );
+        daoUtil.setInt( 1, nIdStep );
+        daoUtil.setInt( 2, nIdStep );
+        daoUtil.executeUpdate( );
+        
+        daoUtil.close( );
     }
 
 }

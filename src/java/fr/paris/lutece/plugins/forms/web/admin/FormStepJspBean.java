@@ -39,9 +39,11 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -57,6 +59,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
@@ -119,6 +123,9 @@ public class FormStepJspBean extends AbstractJspBean
     // Errors
     private static final String ERROR_STEP_NOT_UPDATED = "forms.error.form.notUpdated";
 
+    //Others
+    private static final StepService _stepService = SpringContextService.getBean( StepService.BEAN_NAME );
+
     // Session variable to store working values
     private Form _form;
     private Step _step;
@@ -126,6 +133,7 @@ public class FormStepJspBean extends AbstractJspBean
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
+
 
     /**
      * Build the Manage View
@@ -332,26 +340,28 @@ public class FormStepJspBean extends AbstractJspBean
     @Action( ACTION_REMOVE_STEP )
     public String doRemoveStep( HttpServletRequest request )
     {
-        int nIdStep = -1;
+
         int nIdForm = -1;
-        try
-        {
-            nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        }
-        catch( NumberFormatException ne )
-        {
-            AppLogService.error( ne );
 
-            return redirectView( request, VIEW_MANAGE_STEPS );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if( nIdStep == -1 )
+        {
+            return redirectToViewManageForm( request );
         }
 
-        _step = StepHome.findByPrimaryKey( nIdStep );
+        if ( _step == null || _step.getId( ) != nIdStep )
+        {
+            _step = StepHome.findByPrimaryKey( nIdStep );
+        }
 
         if ( _step != null )
         {
             nIdForm = _step.getIdForm( );
         }
-        StepHome.remove( nIdStep );
+        _stepService.removeStep( nIdStep );
+
+        
         addInfo( INFO_STEP_REMOVED, getLocale( ) );
 
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );

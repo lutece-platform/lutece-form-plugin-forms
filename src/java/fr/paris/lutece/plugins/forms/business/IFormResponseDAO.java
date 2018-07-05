@@ -94,4 +94,14 @@ public interface IFormResponseDAO
      */
     List<FormResponse> selectFormResponseList( Plugin plugin );
 
+    /**
+     * Remove all the formResponse linked to a given Form
+     * 
+     * @param nIdForm
+     *            The form Identifier
+     * @param plugin
+     *            the Plugin
+     */
+    void deleteByForm( int nIdForm, Plugin plugin );
+
 }

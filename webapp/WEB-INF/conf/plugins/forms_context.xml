@@ -125,8 +125,10 @@
 		
 	<bean id="forms.asynchronousUploadHandler" class="fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler" />
 	
-	<bean id="forms.formDisplayService" class="fr.paris.lutece.plugins.forms.service.FormDisplayService" />
-	
+    <bean id="forms.formDisplayService" class="fr.paris.lutece.plugins.forms.service.FormDisplayService" />
+    <bean id="forms.stepService" class="fr.paris.lutece.plugins.forms.service.StepService" />
+    <bean id="forms.formService" class="fr.paris.lutece.plugins.forms.service.FormService" />
+    	
     <!-- Forms Multiview Authorization Service -->
     <bean id="forms.formsMultiviewAuthorizationService" class="fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService">
         <constructor-arg name="formPanel" type="fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel" ref="forms.panelForms"/>
