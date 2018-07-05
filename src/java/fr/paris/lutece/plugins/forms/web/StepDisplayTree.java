@@ -62,6 +62,7 @@ public class StepDisplayTree
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
     private Step _step;
+    private Map<Integer, List<Response>> _mapStepResponses = new HashMap<Integer, List<Response>>( );
 
     /**
      * Constructor
@@ -138,12 +139,40 @@ public class StepDisplayTree
     }
 
     /**
+	 * @return the _step
+	 */
+	public Step getStep ( ) 
+	{
+		return _step;
+	}
+
+	/**
+	 * @param step the step to set
+	 */
+	public void setStep( Step step ) 
+	{
+		this._step = step;
+	}
+
+	/**
+     * 
+     * @return mapStepResponses
+     *            The map containing question responses and potential errors
+     */
+    public Map<Integer, List<Response>> getResponses(  )
+    {
+    	return _mapStepResponses;
+    }
+    
+    /**
      * 
      * @param mapStepResponses
      *            The map containing question responses and potential errors
      */
     public void setResponses( Map<Integer, List<Response>> mapStepResponses )
     {
+    	_mapStepResponses = mapStepResponses;
+    	
         for ( ICompositeDisplay composite : _listChildren )
         {
             composite.setResponses( mapStepResponses );

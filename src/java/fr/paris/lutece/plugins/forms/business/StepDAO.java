@@ -49,12 +49,14 @@ public final class StepDAO implements IStepDAO
 {
     // Constants
     private static final String SQL_QUERY_SELECT = "SELECT id_step, title, description, id_form, is_initial, is_final FROM forms_step WHERE id_step = ?";
+    private static final String SQL_QUERY_SELECT_INITIAL_STEP = "SELECT id_step, title, description, id_form, is_initial, is_final FROM forms_step WHERE id_form = ? AND is_initial = 1";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_step ( title, description, id_form, is_initial, is_final ) VALUES ( ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_step WHERE id_step = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_step SET id_step = ?, title = ?, description = ?, id_form = ? ,is_initial = ?, is_final = ? WHERE id_step = ?";
     private static final String SQL_QUERY_SELECTALL = "SELECT id_step, title, description, id_form, is_initial, is_final FROM forms_step";
     private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT id_step, title, description, id_form, is_initial, is_final FROM forms_step where id_form = ?";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_step FROM forms_step";
+    
 
     /**
      * {@inheritDoc }
@@ -92,6 +94,34 @@ public final class StepDAO implements IStepDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
         daoUtil.setInt( 1, nKey );
+        daoUtil.executeQuery( );
+        Step step = null;
+
+        if ( daoUtil.next( ) )
+        {
+            step = new Step( );
+            int nIndex = 1;
+
+            step.setId( daoUtil.getInt( nIndex++ ) );
+            step.setTitle( daoUtil.getString( nIndex++ ) );
+            step.setDescription( daoUtil.getString( nIndex++ ) );
+            step.setIdForm( daoUtil.getInt( nIndex++ ) );
+            step.setInitial( daoUtil.getBoolean( nIndex++ ) );
+            step.setFinal( daoUtil.getBoolean( nIndex++ ) );
+        }
+
+        daoUtil.close( );
+        return step;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Step selectInitialStep( int nIdForm, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_INITIAL_STEP, plugin );
+        daoUtil.setInt( 1, nIdForm );
         daoUtil.executeQuery( );
         Step step = null;
 
