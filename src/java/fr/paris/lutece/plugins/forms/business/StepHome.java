@@ -108,6 +108,18 @@ public final class StepHome
     }
 
     /**
+     * Returns the initial step of the given form id
+     * 
+     * @param nIdForm
+     *            The step form primary key
+     * @return the initial step of the given form id
+     */
+    public static Step getInitialStep( int nIdForm )
+    {
+        return _dao.selectInitialStep( nIdForm, _plugin );
+    }
+
+    /**
      * Load the data of all the step objects and returns them as a list
      * 
      * @return the list which contains the data of all the step objects

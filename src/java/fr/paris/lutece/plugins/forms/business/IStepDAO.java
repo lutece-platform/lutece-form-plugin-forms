@@ -88,6 +88,17 @@ public interface IStepDAO
     Step load( int nKey, Plugin plugin );
 
     /**
+     * Load the initial step of the given form
+     * 
+     * @param nIdForm
+     *            The identifier of the step form
+     * @param plugin
+     *            the Plugin
+     * @return The initial step of the given form
+     */
+    Step selectInitialStep( int nIdForm, Plugin plugin );
+
+    /**
      * Load the data of all the step objects and returns them as a list
      * 
      * @param plugin

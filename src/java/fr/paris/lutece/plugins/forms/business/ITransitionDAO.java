@@ -151,4 +151,15 @@ public interface ITransitionDAO
      */
     int selectMaxPriorityByStep( int nIdStep, Plugin plugin );
 
+    /**
+     * Remove all the transitions starting from or leading to a given step
+     * 
+     * @param nIdStep
+     *            The Step Id
+     * 
+     * @param plugin
+     *            The Plugin
+     */
+    void deleteByStep( int nIdStep, Plugin plugin );
+
 }

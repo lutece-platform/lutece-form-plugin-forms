@@ -50,10 +50,16 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.business.Transition;
+import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.service.message.SiteMessage;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
+import fr.paris.lutece.portal.service.message.SiteMessageService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
@@ -73,6 +79,8 @@ public class FormXPage extends MVCApplication
     // Messages
     protected static final String MESSAGE_PAGE_TITLE = "forms.xpage.form.view.pageTitle";
     protected static final String MESSAGE_PATH = "forms.xpage.form.view.pagePathLabel";
+    protected static final String MESSAGE_ERROR_NO_STEP = "forms.xpage.form.error.noStep";
+    protected static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.xpage.form.error.inactive";
 
     /**
      * Generated serial id
@@ -99,6 +107,8 @@ public class FormXPage extends MVCApplication
     // Markers
     private static final String STEP_HTML_MARKER = "stepContent";
 
+    // Other
+    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     // Attributes
     private FormResponse _formResponse;
     private Step _currentStep;
@@ -109,36 +119,45 @@ public class FormXPage extends MVCApplication
      * @param request
      *            The Http request
      * @return the XPage
+     * @throws SiteMessageException
      */
     @View( value = VIEW_STEP, defaultView = true )
-    public XPage getStepView( HttpServletRequest request )
+    public XPage getStepView( HttpServletRequest request ) throws SiteMessageException
     {
-
         Map<String, Object> model = getModel( );
 
-        int nIdForm = NumberUtils.toInt( request.getParameter( ID_FORM ), INCORRECT_ID );
-        int nIdStep = NumberUtils.toInt( request.getParameter( ID_STEP ), INCORRECT_ID );
+        int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), INCORRECT_ID );
 
-        if ( _currentStep == null || _currentStep.getId( ) != nIdStep )
+        if ( _currentStep == null || nIdForm != _currentStep.getIdForm( ) )
         {
-            _currentStep = StepHome.findByPrimaryKey( nIdStep );
-            _stepDisplayTree = new StepDisplayTree( nIdStep );
+            _currentStep = StepHome.getInitialStep( nIdForm );
         }
 
-        if ( _currentStep != null )
+        if ( _currentStep == null )
         {
-            Form form = FormHome.findByPrimaryKey( nIdForm );
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+        }
+
+        else
+        {
+            Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
 
             if ( form.isActive( ) )
             {
+                if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
+                {
+                    _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
+                }
+
                 boolean bIsForEdition = Boolean.TRUE;
                 model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), bIsForEdition ) );
+
                 model.put( FormsConstants.MARK_STEP, _currentStep );
             }
-            // TODO
-            /*
-             * else { }
-             */
+            else
+            {
+                SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+            }
         }
 
         return getXPage( TEMPLATE_VIEW_STEP, request.getLocale( ), model );
@@ -149,82 +168,90 @@ public class FormXPage extends MVCApplication
      * @param request
      *            The Http request
      * @return the XPage
+     * @throws SiteMessageException
      */
     @Action( value = ACTION_SAVE_STEP )
-    public XPage doSaveStep( HttpServletRequest request )
+    public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException
     {
-        int nIdForm = NumberUtils.toInt( request.getParameter( ID_FORM ), INCORRECT_ID );
-        int nIdStep = NumberUtils.toInt( request.getParameter( ID_STEP ), INCORRECT_ID );
+        Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
 
-        if ( nIdForm >= 0 && nIdStep >= 0 )
+        if ( !form.isActive( ) )
         {
-            if ( _formResponse == null )
-            {
-                _formResponse = new FormResponse( );
-                _formResponse.setFormId( nIdForm );
-            }
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+        }
 
-            List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( nIdStep );
-            boolean bValidStep = true;
-            Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
-            List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
+        if ( _formResponse == null )
+        {
+            _formResponse = new FormResponse( );
+            _formResponse.setFormId( _currentStep.getIdForm( ) );
+        }
 
-            for ( Question question : stepQuestions )
+        List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
+        boolean bValidStep = true;
+        Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
+        List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
+
+        for ( Question question : stepQuestions )
+        {
+            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+            if ( entryDataService != null )
             {
-                IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-                if ( entryDataService != null )
+                FormQuestionResponse questionResponseInstance = new FormQuestionResponse( );
+                boolean bHasError = entryDataService.getResponseFromRequest( question, request, questionResponseInstance );
+
+                if ( bHasError )
                 {
-                    FormQuestionResponse questionResponseInstance = new FormQuestionResponse( );
-                    boolean bHasError = entryDataService.getResponseFromRequest( question, request, questionResponseInstance );
-
-                    if ( bHasError )
-                    {
-                        bValidStep = false;
-                    }
-                    else
-                    {
-                        listResponsesTemp.add( questionResponseInstance );
-                    }
-
-                    mapStepResponses.put( question.getId( ), questionResponseInstance.getEntryResponse( ) );
+                    bValidStep = false;
                 }
+                else
+                {
+                    listResponsesTemp.add( questionResponseInstance );
+                }
+
+                mapStepResponses.put( question.getId( ), questionResponseInstance.getEntryResponse( ) );
             }
-
-            if ( !bValidStep )
-            {
-                _stepDisplayTree.setResponses( mapStepResponses );
-                return getStepView( request );
-            }
-
-            _formResponse.getListResponses( ).addAll( listResponsesTemp );
-
         }
 
-        return getStepView( request );
-    }
-
-    /**
-     * 
-     * @param request
-     *            The Http request
-     * @return the XPage
-     */
-    @Action( value = ACTION_SAVE_FORM_RESPONSE )
-    public XPage doSaveFormResponse( HttpServletRequest request )
-    {
-        int nIdForm = NumberUtils.toInt( request.getParameter( ID_FORM ), INCORRECT_ID );
-        int nIdStep = NumberUtils.toInt( request.getParameter( ID_STEP ), INCORRECT_ID );
-
-        if ( nIdForm >= 0 && nIdStep >= 0 )
+        if ( !bValidStep )
         {
-            Form form = FormHome.findByPrimaryKey( nIdForm );
-
-            if ( form.isActive( ) )
-            {
-                FormService.saveForm( _formResponse );
-            }
+            _stepDisplayTree.setResponses( mapStepResponses );
+            return getStepView( request );
         }
 
-        return getStepView( request );
+        _formResponse.getListResponses( ).addAll( listResponsesTemp );
+
+        if ( _currentStep.isFinal( ) )
+        {
+            _formService.saveForm( _formResponse );
+
+            Map<String, String> model = new HashMap<String, String>( );
+
+            model.put( ID_FORM, Integer.toString( _currentStep.getIdForm( ) ) );
+
+            _formResponse = null;
+            _currentStep = null;
+            _stepDisplayTree = null;
+
+            return redirect( request, VIEW_STEP, model );
+        }
+        else
+        {
+            List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( _currentStep.getId( ) );
+
+            for ( Transition transition : listTransition )
+            {
+                if ( transition.getIdControl( ) == 0 )
+                {
+                    _currentStep = StepHome.findByPrimaryKey( transition.getNextStep( ) );
+                    break;
+                }
+                /*
+                 * else { TODO }
+                 */
+
+            }
+            return getStepView( request );
+        }
     }
+
 }

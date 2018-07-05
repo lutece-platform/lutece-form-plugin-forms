@@ -48,6 +48,7 @@ import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
@@ -64,6 +65,8 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     private static final String GROUP_CONTENT_MARKER = "groupContent";
     private static final String PROPERTY_COMPOSITE_GROUP_ICON = "forms.composite.group.icon";
     private static final String DEFAULT_GROUP_ICON = "indent";
+
+    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private Group _group;
@@ -83,7 +86,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         for ( FormDisplay formDisplayChild : formDisplayList )
         {
-            ICompositeDisplay composite = FormService.formDisplayToComposite( formDisplayChild );
+            ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild );
             _listChildren.add( composite );
             composite.initComposite( formDisplayChild );
         }

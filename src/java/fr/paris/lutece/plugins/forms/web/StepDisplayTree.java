@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
 /**
@@ -59,9 +60,12 @@ public class StepDisplayTree
     private static final String STEP_TITLE_MARKER = "stepTitle";
     private static final String STEP_CONTENT_MARKER = "stepContent";
 
+    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
     private Step _step;
+    private Map<Integer, List<Response>> _mapStepResponses = new HashMap<Integer, List<Response>>( );
 
     /**
      * Constructor
@@ -90,7 +94,7 @@ public class StepDisplayTree
 
             for ( FormDisplay formDisplayChild : listStepFormDisplay )
             {
-                ICompositeDisplay composite = FormService.formDisplayToComposite( formDisplayChild );
+                ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild );
                 _listChildren.add( composite );
                 composite.initComposite( formDisplayChild );
             }
@@ -140,12 +144,40 @@ public class StepDisplayTree
     }
 
     /**
+     * @return the _step
+     */
+    public Step getStep( )
+    {
+        return _step;
+    }
+
+    /**
+     * @param step
+     *            the step to set
+     */
+    public void setStep( Step step )
+    {
+        this._step = step;
+    }
+
+    /**
+     * 
+     * @return mapStepResponses The map containing question responses and potential errors
+     */
+    public Map<Integer, List<Response>> getResponses( )
+    {
+        return _mapStepResponses;
+    }
+
+    /**
      * 
      * @param mapStepResponses
      *            The map containing question responses and potential errors
      */
     public void setResponses( Map<Integer, List<Response>> mapStepResponses )
     {
+        _mapStepResponses = mapStepResponses;
+
         for ( ICompositeDisplay composite : _listChildren )
         {
             composite.setResponses( mapStepResponses );

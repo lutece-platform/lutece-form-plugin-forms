@@ -25,7 +25,7 @@
 							<@checkBox name='default_value' value='1' checked=checked />
 						</@formGroup>
             <#if field.parentEntry.roleAssociated && role_list?exists >
-						<@formGroup labelFor='role_key' labelKey='#i18n{forms.createField.labelRole}' helpKey='#i18n{forms.createFiled.labelRoleComment}'>
+						<@formGroup labelFor='role_key' labelKey='#i18n{forms.createField.labelRole}' helpKey='#i18n{forms.createField.labelRoleComment}'>
 							<#if field.roleKey?exists>
 								<#assign default_value = field.roleKey />
 							<#else>

@@ -7,10 +7,8 @@
 	<div class="form-group">
 		<input name="page" value="forms" type="hidden">
 		<input name="formId" value="${step.idForm}" type="hidden">
-		<input name="stepId" value="${step.id}" type="hidden">
-		<button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit">#i18n{forms.step.valid}</button>
-		<#if step.final >
-			<button class="btn btn-primary btn-sm" name="action_doSaveResponse"  type="submit">#i18n{forms.step.save}</button>
-		</#if>
+		
+		<button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit"><#if step.final >#i18n{forms.step.save}<#else>#i18n{forms.step.valid}</#if></button>
+		
 	</div>
 </form>

@@ -115,4 +115,16 @@ public final class FormResponseHome
     {
         return _dao.selectFormResponseList( _plugin );
     }
+
+    /**
+     * Remove all the formResponse linked to a given Form
+     * 
+     * @param nIdForm
+     *            The form Identifier
+     */
+    public static void removeByForm( int nIdForm )
+    {
+        _dao.deleteByForm( nIdForm, _plugin );
+
+    }
 }
