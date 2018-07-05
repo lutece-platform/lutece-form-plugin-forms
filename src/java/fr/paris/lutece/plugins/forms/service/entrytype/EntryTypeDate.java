@@ -74,7 +74,7 @@ public class EntryTypeDate extends AbstractEntryTypeDate
     {
         return TEMPLATE_MODIFY;
     }
-    
+
     /**
      * {@inheritDoc}
      */

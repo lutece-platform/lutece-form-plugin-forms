@@ -65,11 +65,11 @@ public interface IEntryDisplayService
      * Return the template of an Entry with its Response
      * 
      * @param entry
-     *          The Entry to display
+     *            The Entry to display
      * @param locale
-     *          The Locale to use to build the model
+     *            The Locale to use to build the model
      * @param model
-     *          The model to populate
+     *            The model to populate
      * @return the template of the given Entry with its Response value
      */
     String getEntryResponseValueTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model );

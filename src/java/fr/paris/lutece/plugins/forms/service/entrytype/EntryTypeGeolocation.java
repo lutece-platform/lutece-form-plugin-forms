@@ -73,7 +73,7 @@ public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation
     {
         return TEMPLATE_HTML_CODE;
     }
-    
+
     /**
      * {@inheritDoc}
      */

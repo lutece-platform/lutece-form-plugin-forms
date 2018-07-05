@@ -235,7 +235,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     {
         return response.getResponseValue( );
     }
-    
+
     /**
      * {@inheritDoc}
      */

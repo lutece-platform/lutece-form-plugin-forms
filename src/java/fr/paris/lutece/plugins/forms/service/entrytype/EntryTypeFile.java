@@ -108,7 +108,7 @@ public class EntryTypeFile extends AbstractEntryTypeFile
     {
         return false;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -51,7 +51,7 @@ public interface ICompositeDisplay
      * @param locale
      *            The locale
      * @param bIsForEdition
-     *          The boolean which tell if the built Html is for edition or only for display value
+     *            The boolean which tell if the built Html is for edition or only for display value
      * @return the composite html to display
      */
     String getCompositeHtml( Locale locale, boolean bIsForEdition );

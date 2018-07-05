@@ -74,7 +74,7 @@ public class EntryTypeComment extends AbstractEntryTypeComment
     {
         return TEMPLATE_MODIFY;
     }
-    
+
     /**
      * {@inheritDoc}
      */

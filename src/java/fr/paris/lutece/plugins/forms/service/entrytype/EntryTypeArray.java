@@ -74,7 +74,7 @@ public class EntryTypeArray extends AbstractEntryTypeArray
     {
         return TEMPLATE_MODIFY;
     }
-    
+
     /**
      * {@inheritDoc}
      */

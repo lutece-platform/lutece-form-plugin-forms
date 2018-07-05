@@ -74,7 +74,7 @@ public class EntryTypeSelect extends AbstractEntryTypeSelect
     {
         return TEMPLATE_MODIFY;
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -158,7 +158,7 @@ public class EntryTypeMandatoryCheckBox extends EntryTypeCheckBox
 
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */

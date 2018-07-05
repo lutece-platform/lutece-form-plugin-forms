@@ -78,7 +78,7 @@ public class EntryTypeNumbering extends AbstractEntryTypeNumbering
     {
         return TEMPLATE_MODIFY;
     }
-    
+
     /**
      * {@inheritDoc}
      */

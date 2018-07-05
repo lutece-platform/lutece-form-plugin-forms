@@ -50,7 +50,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 public class EntryTypeDateDisplayService implements IEntryDisplayService
 {
     private static final String LOCALE_MARKER = "locale";
-    
+
     private String _strEntryServiceName = StringUtils.EMPTY;
 
     /**
@@ -106,7 +106,7 @@ public class EntryTypeDateDisplayService implements IEntryDisplayService
     public String getEntryResponseValueTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
     {
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
-        
+
         return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( ), locale, setModel( entry, locale, model ) ).getHtml( );
     }
 }

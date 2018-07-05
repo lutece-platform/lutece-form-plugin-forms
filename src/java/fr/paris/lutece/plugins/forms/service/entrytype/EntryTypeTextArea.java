@@ -74,7 +74,7 @@ public class EntryTypeTextArea extends AbstractEntryTypeTextArea
     {
         return TEMPLATE_MODIFY;
     }
-    
+
     /**
      * {@inheritDoc}
      */

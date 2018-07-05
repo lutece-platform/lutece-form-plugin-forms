@@ -103,7 +103,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         model.put( GROUP_MARKER, _group );
         model.put( GROUP_CONTENT_MARKER, strBuilder.toString( ) );
-        
+
         String strTemplate = bIsForEdition ? GROUP_TEMPLATE : GROUP_TEMPLATE_READ_ONLY;
 
         return AppTemplateService.getTemplate( strTemplate, locale, model ).getHtml( );

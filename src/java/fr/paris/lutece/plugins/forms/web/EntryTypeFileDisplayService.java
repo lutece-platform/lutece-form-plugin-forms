@@ -56,7 +56,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 public class EntryTypeFileDisplayService implements IEntryDisplayService
 {
     private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
-    
+
     private static final String LIST_RESPONSES = "list_responses";
 
     private String _strEntryServiceName = StringUtils.EMPTY;
@@ -114,7 +114,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     public String getEntryResponseValueTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
     {
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
-        
+
         List<Response> listResponse = (List<Response>) model.get( LIST_RESPONSES );
         if ( !CollectionUtils.isEmpty( listResponse ) )
         {
@@ -127,7 +127,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
                 }
             }
         }
-        
+
         return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( ), locale, setModel( entry, service, model ) ).getHtml( );
     }
 }

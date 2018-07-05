@@ -103,7 +103,7 @@ public class StepDisplayTree
      * @param locale
      *            the locale
      * @param bIsForEdition
-     *          The boolean which tell if the built Template is for edition or only for display value
+     *            The boolean which tell if the built Template is for edition or only for display value
      * @return the html template of the tree as a String
      */
     public String getCompositeHtml( Locale locale, boolean bIsForEdition )

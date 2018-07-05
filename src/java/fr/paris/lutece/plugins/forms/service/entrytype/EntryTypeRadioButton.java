@@ -74,7 +74,7 @@ public class EntryTypeRadioButton extends AbstractEntryTypeRadioButton
     {
         return TEMPLATE_MODIFY;
     }
-    
+
     /**
      * {@inheritDoc}
      */

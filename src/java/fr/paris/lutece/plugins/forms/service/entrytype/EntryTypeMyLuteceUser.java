@@ -56,7 +56,7 @@ public class EntryTypeMyLuteceUser extends AbstractEntryTypeMyLuteceUser
     {
         return TEMPLATE_HTML_CODE;
     }
-    
+
     /**
      * {@inheritDoc}
      */

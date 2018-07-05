@@ -74,7 +74,7 @@ public class EntryTypeCheckBox extends AbstractEntryTypeCheckBox
     {
         return TEMPLATE_MODIFY;
     }
-    
+
     /**
      * {@inheritDoc}
      */
