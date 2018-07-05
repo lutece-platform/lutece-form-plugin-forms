@@ -86,7 +86,7 @@ public interface IStepDAO
      * @return The instance of the step
      */
     Step load( int nKey, Plugin plugin );
-    
+
     /**
      * Load the initial step of the given form
      * 

@@ -56,7 +56,6 @@ public final class StepDAO implements IStepDAO
     private static final String SQL_QUERY_SELECTALL = "SELECT id_step, title, description, id_form, is_initial, is_final FROM forms_step";
     private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT id_step, title, description, id_form, is_initial, is_final FROM forms_step where id_form = ?";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_step FROM forms_step";
-    
 
     /**
      * {@inheritDoc }
@@ -113,7 +112,7 @@ public final class StepDAO implements IStepDAO
         daoUtil.close( );
         return step;
     }
-    
+
     /**
      * {@inheritDoc }
      */

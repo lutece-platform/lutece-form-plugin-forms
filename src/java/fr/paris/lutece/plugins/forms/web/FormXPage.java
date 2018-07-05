@@ -119,7 +119,7 @@ public class FormXPage extends MVCApplication
      * @param request
      *            The Http request
      * @return the XPage
-     * @throws SiteMessageException 
+     * @throws SiteMessageException
      */
     @View( value = VIEW_STEP, defaultView = true )
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException
@@ -132,12 +132,11 @@ public class FormXPage extends MVCApplication
         {
             _currentStep = StepHome.getInitialStep( nIdForm );
         }
-        
+
         if ( _currentStep == null )
         {
-        	SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
         }
-        
 
         else
         {
@@ -145,17 +144,17 @@ public class FormXPage extends MVCApplication
 
             if ( form.isActive( ) )
             {
-            	if(  _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
+                if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
                 {
-                	_stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
+                    _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
                 }
-            	
+
                 model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ) ) );
                 model.put( FormsConstants.MARK_STEP, _currentStep );
             }
             else
             {
-            	SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+                SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
             }
         }
 
@@ -167,18 +166,18 @@ public class FormXPage extends MVCApplication
      * @param request
      *            The Http request
      * @return the XPage
-     * @throws SiteMessageException 
+     * @throws SiteMessageException
      */
     @Action( value = ACTION_SAVE_STEP )
     public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException
     {
-    	Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
+        Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
 
         if ( !form.isActive( ) )
         {
-        	SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
         }
-        
+
         if ( _formResponse == null )
         {
             _formResponse = new FormResponse( );
@@ -218,25 +217,25 @@ public class FormXPage extends MVCApplication
         }
 
         _formResponse.getListResponses( ).addAll( listResponsesTemp );
-        
-        if( _currentStep.isFinal( ) )
+
+        if ( _currentStep.isFinal( ) )
         {
             _formService.saveForm( _formResponse );
-            
+
             Map<String, String> model = new HashMap<String, String>( );
-            
+
             model.put( ID_FORM, Integer.toString( _currentStep.getIdForm( ) ) );
-            
+
             _formResponse = null;
             _currentStep = null;
             _stepDisplayTree = null;
-            
+
             return redirect( request, VIEW_STEP, model );
         }
-        else 
+        else
         {
             List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( _currentStep.getId( ) );
-            
+
             for ( Transition transition : listTransition )
             {
                 if ( transition.getIdControl( ) == 0 )
@@ -244,11 +243,10 @@ public class FormXPage extends MVCApplication
                     _currentStep = StepHome.findByPrimaryKey( transition.getNextStep( ) );
                     break;
                 }
-                /*else
-                {
-                    TODO
-                }*/
-                
+                /*
+                 * else { TODO }
+                 */
+
             }
             return getStepView( request );
         }

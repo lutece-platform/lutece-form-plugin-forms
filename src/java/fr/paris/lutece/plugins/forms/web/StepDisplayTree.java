@@ -142,31 +142,31 @@ public class StepDisplayTree
     }
 
     /**
-	 * @return the _step
-	 */
-	public Step getStep ( ) 
-	{
-		return _step;
-	}
-
-	/**
-	 * @param step the step to set
-	 */
-	public void setStep( Step step ) 
-	{
-		this._step = step;
-	}
-
-	/**
-     * 
-     * @return mapStepResponses
-     *            The map containing question responses and potential errors
+     * @return the _step
      */
-    public Map<Integer, List<Response>> getResponses(  )
+    public Step getStep( )
     {
-    	return _mapStepResponses;
+        return _step;
     }
-    
+
+    /**
+     * @param step
+     *            the step to set
+     */
+    public void setStep( Step step )
+    {
+        this._step = step;
+    }
+
+    /**
+     * 
+     * @return mapStepResponses The map containing question responses and potential errors
+     */
+    public Map<Integer, List<Response>> getResponses( )
+    {
+        return _mapStepResponses;
+    }
+
     /**
      * 
      * @param mapStepResponses
@@ -174,8 +174,8 @@ public class StepDisplayTree
      */
     public void setResponses( Map<Integer, List<Response>> mapStepResponses )
     {
-    	_mapStepResponses = mapStepResponses;
-    	
+        _mapStepResponses = mapStepResponses;
+
         for ( ICompositeDisplay composite : _listChildren )
         {
             composite.setResponses( mapStepResponses );
