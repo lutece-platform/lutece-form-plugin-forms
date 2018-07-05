@@ -59,6 +59,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
@@ -106,6 +107,8 @@ public class FormXPage extends MVCApplication
     // Markers
     private static final String STEP_HTML_MARKER = "stepContent";
 
+    // Other
+    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     // Attributes
     private FormResponse _formResponse;
     private Step _currentStep;
@@ -169,7 +172,6 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_SAVE_STEP )
     public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException
     {
-
     	Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
 
         if ( !form.isActive( ) )
@@ -219,7 +221,7 @@ public class FormXPage extends MVCApplication
         
         if( _currentStep.isFinal( ) )
         {
-            FormService.saveForm( _formResponse );
+            _formService.saveForm( _formResponse );
             
             Map<String, String> model = new HashMap<String, String>( );
             
@@ -250,7 +252,6 @@ public class FormXPage extends MVCApplication
             }
             return getStepView( request );
         }
-        
     }
 
 }

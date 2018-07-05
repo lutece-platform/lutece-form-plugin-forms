@@ -171,8 +171,9 @@ public class FormQuestionJspBean extends AbstractJspBean
 
     // Others
     private static final int INTEGER_MINUS_ONE = -1;
-    private static final String FORM_DISPLAY_SERVICE_BEAN = "forms.formDisplayService";
-    private static final FormDisplayService _formDisplayService = SpringContextService.getBean( FORM_DISPLAY_SERVICE_BEAN );
+
+    private static final FormDisplayService _formDisplayService = SpringContextService.getBean( FormDisplayService.BEAN_NAME );
+    private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
     private Step _step;
     private Form _form;
@@ -207,7 +208,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_FORM, _form );
 
-        listICompositeDisplay = FormService.getStepCompositeList( nIdStep );
+        listICompositeDisplay = _formService.getStepCompositeList( nIdStep );
         model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
 
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );

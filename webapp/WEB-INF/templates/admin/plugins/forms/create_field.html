@@ -28,7 +28,7 @@
 							</@formGroup>
 						</#if>
 						<#if field.parentEntry.roleAssociated && role_list?exists >
-							<@formGroup labelFor='role' labelKey='#i18n{forms.createField.labelRole}' helpKey='#i18n{forms.createFiled.labelRoleComment}'>
+							<@formGroup labelFor='role' labelKey='#i18n{forms.createField.labelRole}' helpKey='#i18n{forms.createField.labelRoleComment}'>
 								<@select name='role_key' default_value='none' items=role_list />
 							</@formGroup>
 						</#if>

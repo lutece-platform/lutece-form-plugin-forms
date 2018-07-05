@@ -200,4 +200,16 @@ public final class TransitionHome
         return _dao.selectMaxPriorityByStep( fromStep, _plugin );
     }
 
+    /**
+     * Remove all the transitions starting from or leading to a given step
+     * 
+     * @param nIdStep
+     *            The Step Id
+     */
+    public static void removeTransitionByStep( int nIdStep )
+    {
+        _dao.deleteByStep( nIdStep, _plugin );
+
+    }
+
 }

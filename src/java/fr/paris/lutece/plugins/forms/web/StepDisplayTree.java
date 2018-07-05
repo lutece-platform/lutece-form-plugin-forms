@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -58,6 +59,8 @@ public class StepDisplayTree
     private static final String STEP_TEMPLATE = "/skin/plugins/forms/composite_template/view_step.html";
     private static final String STEP_TITLE_MARKER = "stepTitle";
     private static final String STEP_CONTENT_MARKER = "stepContent";
+
+    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
@@ -91,7 +94,7 @@ public class StepDisplayTree
 
             for ( FormDisplay formDisplayChild : listStepFormDisplay )
             {
-                ICompositeDisplay composite = FormService.formDisplayToComposite( formDisplayChild );
+                ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild );
                 _listChildren.add( composite );
                 composite.initComposite( formDisplayChild );
             }

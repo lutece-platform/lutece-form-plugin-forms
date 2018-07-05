@@ -50,6 +50,9 @@ import fr.paris.lutece.plugins.forms.business.QuestionHome;
  */
 public final class FormDisplayService
 {
+
+    public static final String BEAN_NAME = "forms.formDisplayService";
+
     /**
      * Constructor
      */
@@ -81,7 +84,8 @@ public final class FormDisplayService
                 FormQuestionResponseHome.removeByQuestion( formDisplayCompositeId );
                 // Delete the Question and its Entry
                 QuestionHome.remove( formDisplayCompositeId );
-                // TO DO: delete all Controls associated to the composite
+
+                // TODO: delete all Controls associated to the composite
             }
 
             if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( formDisplayToDelete.getCompositeType( ) ) )

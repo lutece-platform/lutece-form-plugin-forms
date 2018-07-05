@@ -31,7 +31,6 @@
                                     <td class="col-sm-1"><#if step.final>#i18n{forms.manage_steps.labelFinal}</#if></td>
                                     <td class="col-sm-4">
                                         <@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=modifyStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.modifyStep}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
-                                        <@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?action=duplicateStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.copyStep}' showTitle=false buttonIcon='copy' color='btn-primary' size='sm' />
                                         <@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.removeStep}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' /> 
                                     </td>
                                 </tr>

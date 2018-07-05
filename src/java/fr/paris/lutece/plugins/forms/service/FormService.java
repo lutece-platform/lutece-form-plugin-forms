@@ -36,15 +36,19 @@ package fr.paris.lutece.plugins.forms.service;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
 import fr.paris.lutece.plugins.forms.web.CompositeQuestionDisplay;
 import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
 import fr.paris.lutece.plugins.forms.web.IEntryDataService;
 
@@ -54,12 +58,13 @@ import fr.paris.lutece.plugins.forms.web.IEntryDataService;
 public final class FormService
 {
 
+    public static final String BEAN_NAME = "forms.formService";
+
     /**
      * Constructor
      */
     private FormService( )
     {
-        throw new AssertionError( );
     }
 
     /**
@@ -68,7 +73,7 @@ public final class FormService
      * @param formResponse
      *            The formResponse to save
      */
-    public static void saveForm( FormResponse formResponse )
+    public void saveForm( FormResponse formResponse )
     {
         FormResponseHome.create( formResponse );
 
@@ -89,7 +94,7 @@ public final class FormService
      *            The step primary key
      * @return the Html of the given step
      */
-    public static List<ICompositeDisplay> getStepCompositeList( int nIdStep )
+    public List<ICompositeDisplay> getStepCompositeList( int nIdStep )
     {
         StepDisplayTree displayTree = new StepDisplayTree( nIdStep );
 
@@ -103,7 +108,7 @@ public final class FormService
      *            The formDisplay
      * @return the right composite
      */
-    public static ICompositeDisplay formDisplayToComposite( FormDisplay formDisplay )
+    public ICompositeDisplay formDisplayToComposite( FormDisplay formDisplay )
     {
         ICompositeDisplay composite = null;
         if ( FormsConstants.COMPOSITE_GROUP_TYPE.equals( formDisplay.getCompositeType( ) ) )
@@ -120,5 +125,30 @@ public final class FormService
             }
 
         return composite;
+    }
+
+    /**
+     * Remove a given Form, all its steps and composites, workflow resources. Also remove all the related formResponses, QuestionsResposes, EntryResponses and
+     * entries.
+     * 
+     * @param nIdForm
+     *            The identifier of the form to be deleted
+     */
+    public void removeForm( int nIdForm )
+    {
+        StepService stepService = SpringContextService.getBean( StepService.BEAN_NAME );
+
+        List<Step> listStep = StepHome.getStepsListByForm( nIdForm );
+
+        for ( Step step : listStep )
+        {
+            stepService.removeStep( step.getId( ) );
+        }
+
+        FormResponseHome.removeByForm( nIdForm );
+        FormHome.remove( nIdForm );
+
+        // TODO: remove workflow resources linked to this form
+
     }
 }
