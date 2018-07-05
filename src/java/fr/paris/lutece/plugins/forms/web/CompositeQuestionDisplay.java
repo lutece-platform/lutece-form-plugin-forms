@@ -58,8 +58,9 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class CompositeQuestionDisplay implements ICompositeDisplay
 {
     private static final String QUESTION_TEMPLATE = "/skin/plugins/forms/composite_template/view_question.html";
+    private static final String QUESTION_TEMPLATE_READ_ONLY = "/admin/plugins/forms/composite/view_question.html";
     private static final String QUESTION_CONTENT_MARKER = "questionContent";
-    private static final String QUESTION_ERRORS = "list_responses";
+    private static final String QUESTION_LIST_RESPONSES = "list_responses";
     private static final String QUESTION_ENTRY = "questionEntry";
 
     private Question _question;
@@ -79,7 +80,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     }
 
     @Override
-    public String getCompositeHtml( Locale locale )
+    public String getCompositeHtml( Locale locale, boolean bIsForEdition )
     {
         String strQuestionTemplate = StringUtils.EMPTY;
 
@@ -90,16 +91,26 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             if ( displayService != null )
             {
                 Map<String, Object> model = new HashMap<String, Object>( );
-                model.put( QUESTION_ERRORS, _listResponses );
+                model.put( QUESTION_LIST_RESPONSES, _listResponses );
                 model.put( QUESTION_ENTRY, _question.getEntry( ) );
 
-                strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale, model );
+                String strTemplate = StringUtils.EMPTY;
+                if ( bIsForEdition )
+                {
+                    strTemplate = QUESTION_TEMPLATE;
+                    strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale, model );
+                }
+                else
+                {
+                    strTemplate = QUESTION_TEMPLATE_READ_ONLY;
+                    strQuestionTemplate = displayService.getEntryResponseValueTemplateDisplay( _question.getEntry( ), locale, model );
+                }
 
                 model.put( QUESTION_CONTENT_MARKER, strQuestionTemplate );
 
-                HtmlTemplate t = AppTemplateService.getTemplate( QUESTION_TEMPLATE, locale, model );
+                HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( strTemplate, locale, model );
 
-                strQuestionTemplate = t != null ? t.getHtml( ) : StringUtils.EMPTY;
+                strQuestionTemplate = htmlTemplateQuestion != null ? htmlTemplateQuestion.getHtml( ) : StringUtils.EMPTY;
             }
         }
 

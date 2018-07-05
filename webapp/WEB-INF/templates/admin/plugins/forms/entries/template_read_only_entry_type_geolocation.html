@@ -1,0 +1,37 @@
+<div class="form-group">
+    <label class="col-xs-12 col-sm-3 control-label">
+        ${entry.title!''}
+    </label>
+    <#if list_responses?has_content>
+        <#assign first = true>
+        <#list list_responses as response>
+            <#if first>
+                <#assign first = false>
+                <div class="col-xs-12 col-sm-9">
+            <#else>
+                <div class="col-xs-12 col-sm-9 col-sm-offset-3">
+            </#if>
+            <#if response.field?exists>
+                <#if response.field.title == 'address'>
+                    <#if response.value?has_content>
+                        ${response.value}
+                    <#else>
+                        -
+                    </#if>
+                <#elseif response.field.title == 'X'>
+                    <#if !(response.value?has_content) || (response.value == '0')>
+                        #i18n{forms.entryType.geolocalisation.message.noGeolocation}
+                    <#else>
+                        <input type="hidden" name="geolocation" value="${response.entry.idEntry}" />
+                        <input type="hidden" id="${response.entry.idEntry}_x" name="x" value="${response.value}"/>
+                    </#if>
+                <#elseif response.field.title == 'Y'>
+                    <#if response.value?has_content && response.value != '0'>
+                        <input type="hidden" id="${response.entry.idEntry}_y" name="y" value="${response.value}"/>
+                    </#if>
+                </#if>
+            </#if>
+            </div>
+        </#list>
+    </#if>
+</div>

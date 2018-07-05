@@ -58,6 +58,7 @@ public class EntryTypeMandatoryCheckBox extends EntryTypeCheckBox
 {
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_mandatory_check_box.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_mandatory_check_box.html";
+    private static final String TEMPLATE_ENTRY_READ_ONLY = "admin/plugins/forms/entries/template_read_only_entry_type_check_box.html";
 
     /**
      * {@inheritDoc}
@@ -156,5 +157,14 @@ public class EntryTypeMandatoryCheckBox extends EntryTypeCheckBox
         }
 
         return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTemplateEntryReadOnly( )
+    {
+        return TEMPLATE_ENTRY_READ_ONLY;
     }
 }

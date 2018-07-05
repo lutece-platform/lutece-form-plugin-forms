@@ -33,6 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
@@ -42,15 +50,6 @@ import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.util.html.HtmlTemplate;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
 
 /**
  * 
@@ -60,6 +59,7 @@ import org.apache.commons.lang.StringUtils;
 public class CompositeGroupDisplay implements ICompositeDisplay
 {
     private static final String GROUP_TEMPLATE = "/skin/plugins/forms/composite_template/view_group.html";
+    private static final String GROUP_TEMPLATE_READ_ONLY = "/admin/plugins/forms/composite/view_group.html";
     private static final String GROUP_MARKER = "group";
     private static final String GROUP_CONTENT_MARKER = "groupContent";
     private static final String PROPERTY_COMPOSITE_GROUP_ICON = "forms.composite.group.icon";
@@ -90,7 +90,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     }
 
     @Override
-    public String getCompositeHtml( Locale locale )
+    public String getCompositeHtml( Locale locale, boolean bIsForEdition )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
 
@@ -98,15 +98,15 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         for ( ICompositeDisplay child : _listChildren )
         {
-            strBuilder.append( child.getCompositeHtml( locale ) );
+            strBuilder.append( child.getCompositeHtml( locale, bIsForEdition ) );
         }
 
         model.put( GROUP_MARKER, _group );
         model.put( GROUP_CONTENT_MARKER, strBuilder.toString( ) );
+        
+        String strTemplate = bIsForEdition ? GROUP_TEMPLATE : GROUP_TEMPLATE_READ_ONLY;
 
-        HtmlTemplate t = AppTemplateService.getTemplate( GROUP_TEMPLATE, locale, model );
-
-        return t.getHtml( );
+        return AppTemplateService.getTemplate( strTemplate, locale, model ).getHtml( );
     }
 
     @Override

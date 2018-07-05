@@ -46,6 +46,7 @@ public class EntryTypeMyLuteceUser extends AbstractEntryTypeMyLuteceUser
      */
     public static final String BEAN_NAME = "forms.entryTypeMyLuteceUser";
     private static final String TEMPLATE_HTML_CODE = "skin/plugins/forms/entries/html_code_entry_type_mylutece_user.html";
+    private static final String TEMPLATE_ENTRY_READ_ONLY = "admin/plugins/forms/entries/template_read_only_entry_type_mylutece_user.html";
 
     /**
      * {@inheritDoc}
@@ -54,5 +55,14 @@ public class EntryTypeMyLuteceUser extends AbstractEntryTypeMyLuteceUser
     public String getTemplateHtmlForm( Entry entry, boolean bDisplayFront )
     {
         return TEMPLATE_HTML_CODE;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTemplateEntryReadOnly( )
+    {
+        return TEMPLATE_ENTRY_READ_ONLY;
     }
 }

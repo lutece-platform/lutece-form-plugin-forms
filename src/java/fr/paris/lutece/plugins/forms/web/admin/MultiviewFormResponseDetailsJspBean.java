@@ -52,17 +52,12 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.business.FormDisplay;
-import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.Group;
-import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -70,10 +65,7 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.IFormsMultiviewAuthorizationService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.web.form.multiview.display.MultiviewEntryResponseDisplay;
-import fr.paris.lutece.plugins.forms.web.form.multiview.display.MultiviewParentQuestionDisplay;
-import fr.paris.lutece.plugins.forms.web.form.multiview.display.MultiviewQuestionDisplay;
-import fr.paris.lutece.plugins.forms.web.form.multiview.display.MultiviewStepDisplay;
+import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.form.response.view.FormResponseViewModelProcessorFactory;
 import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewModelProcessor;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -188,136 +180,97 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         Map<String, Object> mapFormResponseDetailsModel = new HashMap<>( );
         mapFormResponseDetailsModel.put( MARK_FORM_RESPONSE, formResponse );
         mapFormResponseDetailsModel.put( MARK_FORM, form );
-        mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, buildListMultiviewStepDisplay( form, formResponse ) );
+        
+        // [TODO] - Retrieve the list of Step which correspond to the selected path
+        // of the user who is associated to the given FormResponse rather than retrieve 
+        // the list of all Step associated to the Form of the given FormResponse when
+        // it will be ready
+        List<Step> listStep = StepHome.getStepsListByForm( form.getId( ) );
+        
+        List<String> listStepDisplayTree = buildFormStepDisplayTreeList( listStep, formResponse.getId( ) );
+        mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, listStepDisplayTree );
 
         return mapFormResponseDetailsModel;
     }
-
+    
     /**
-     * Build the list of all MultiviewStepDisplay for the given Form and the given FormResponse
+     * Return the list of all DisplayTree for the given list of Step
      * 
-     * @param form
-     *            The Form to use to build the list of MultiviewStepDisplay
-     * @param formResponse
-     *            The FormResponse to use to build the list of MultiviewStepDisplay
-     * @return the list of all MultiviewStepDisplay built for the given parameters
+     * @param listStep
+     *          The list of all Step on which the DisplayTree must be build
+     * @param nIdFormResponse
+     *          The identifier of FormResponse on which to retrieve the Response objects
+     * @return the list of all DisplayTree for the given list of Step
      */
-    private List<MultiviewStepDisplay> buildListMultiviewStepDisplay( Form form, FormResponse formResponse )
+    private List<String> buildFormStepDisplayTreeList( List<Step> listStep, int nIdFormResponse )
     {
-        List<MultiviewStepDisplay> listMultiviewStepDisplay = new ArrayList<>( );
-
-        if ( form != null && formResponse != null )
+        List<String> listFormDisplayTrees = new ArrayList<>( );
+        
+        if ( !CollectionUtils.isEmpty( listStep ) )
         {
-            List<Step> listFormStep = StepHome.getStepsListByForm( form.getId( ) );
-            if ( !CollectionUtils.isEmpty( listFormStep ) )
+            for ( Step step : listStep )
             {
-                for ( Step step : listFormStep )
-                {
-                    List<MultiviewQuestionDisplay> listMultiviewQuestionDisplay = buildListMultiviewQuestionDisplay( step, formResponse );
-
-                    MultiviewStepDisplay multiviewStepDisplay = new MultiviewStepDisplay( step.getTitle( ), listMultiviewQuestionDisplay );
-                    listMultiviewStepDisplay.add( multiviewStepDisplay );
-                }
+                int nIdStep = step.getId( );
+                boolean bIsForEdition = Boolean.FALSE;
+                
+                StepDisplayTree stepDisplayTree = new StepDisplayTree( nIdStep );
+                stepDisplayTree.setResponses( buildStepMapResponse( nIdStep, nIdFormResponse ) );
+                listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( getLocale( ), bIsForEdition ) );
             }
         }
-
-        return listMultiviewStepDisplay;
+        
+        return listFormDisplayTrees;
     }
-
+    
     /**
-     * Build the list of all MultiviewQuestionDisplay for the given step and the given FormResponse
+     * Return the map which associate for each Question of a Step its List of Response for the given FormResponse
      * 
-     * @param step
-     *            The Step to use to build the list of MultiviewQuestionDisplay
-     * @param formResponse
-     *            The FormResponse to use to build the list of MultiviewQuestionDisplay
-     * @return the list of all MultiviewQuestionDisplay built with the given parameters
+     * @param nIdStep
+     *          The identifier of the Step to retrieve the Question from
+     * @param nIdFormResponse
+     *          The identifier of the FormResponse on which to retrieve the Response from
+     * @return the map which associate for each Question of a Step its List of Response for the given FormResponse
      */
-    private List<MultiviewQuestionDisplay> buildListMultiviewQuestionDisplay( Step step, FormResponse formResponse )
+    private Map<Integer,List<Response>> buildStepMapResponse( int nIdStep, int nIdFormResponse )
     {
-        List<MultiviewQuestionDisplay> listMultiviewQuestionDisplay = new ArrayList<>( );
-
-        if ( step != null && formResponse != null )
+        Map<Integer, List<Response>> mapStepResponses = new LinkedHashMap<>( );
+        
+        List<Question> listQuestions = QuestionHome.getQuestionsListByStep( nIdStep );
+        if( !CollectionUtils.isEmpty( listQuestions ) )
         {
-            int nIdStep = step.getId( );
-            List<Question> listQuestion = QuestionHome.getQuestionsListByStep( nIdStep );
-            if ( !CollectionUtils.isEmpty( listQuestion ) )
+            for ( Question question : listQuestions )
             {
-                for ( Question question : listQuestion )
-                {
-                    MultiviewEntryResponseDisplay multiviewEntryResponseDetails = buildEntryResponseDetails( question, formResponse );
-
-                    FormDisplay formDisplay = FormDisplayHome.getFormDisplayByFormStepAndComposite( formResponse.getFormId( ), nIdStep, question.getId( ) );
-                    MultiviewParentQuestionDisplay multiviewParentQuestionDisplay = buildParentQuestionDisplay( formDisplay );
-
-                    MultiviewQuestionDisplay multiviewQuestionDisplay = new MultiviewQuestionDisplay( question.getTitle( ), formDisplay.getDepth( ),
-                            multiviewParentQuestionDisplay, multiviewEntryResponseDetails );
-                    listMultiviewQuestionDisplay.add( multiviewQuestionDisplay );
-                }
+                int nIdQuestion = question.getId( );
+                mapStepResponses.put( nIdQuestion, buildQuestionResponseList( nIdFormResponse, nIdQuestion ) );
             }
         }
-
-        return listMultiviewQuestionDisplay;
+        
+        return mapStepResponses;
     }
-
+    
     /**
-     * Build the MultiviewEntryResponseDisplay for the given question for the given FormResponse
+     * Return the list of all Response for the given iFormResponse for the given Question
      * 
-     * @param question
-     *            The question to use to build the MultiviewEntryResponseDisplay
-     * @param formResponse
-     *            The formResponse to use to build the MultiviewEntryResponseDisplay
-     * @return the MultiviewEntryResponseDisplay built with the given parameters
+     * @param nIdFormResponse
+     *             The identifier of the FormResponse on which to retrieve the list of Response
+     * @param nIdQuestion
+     *          The identifier of the Question on which to retrieve the list of Response from
+     * @return the list of all Response for the given iFormResponse for the given Question
      */
-    private MultiviewEntryResponseDisplay buildEntryResponseDetails( Question question, FormResponse formResponse )
+    private List<Response> buildQuestionResponseList( int nIdFormResponse, int nIdQuestion )
     {
-        MultiviewEntryResponseDisplay multiviewEntryResponseDisplay = null;
-
-        if ( question != null && formResponse != null )
+        List<Response> listResponseQuestions = new ArrayList<>( );
+        
+        List<FormQuestionResponse> formQuestionResponses = FormQuestionResponseHome.getFormQuestionResponseListByResponseQuestion( nIdFormResponse, nIdQuestion );
+        if ( !CollectionUtils.isEmpty( formQuestionResponses ) )
         {
-            List<Response> listResponses = new ArrayList<>( );
-            List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByResponseQuestion(
-                    formResponse.getId( ), question.getId( ) );
-
-            if ( !CollectionUtils.isEmpty( listFormQuestionResponse ) )
+            for ( FormQuestionResponse formQuestionResponse : formQuestionResponses )
             {
-                for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
-                {
-                    listResponses.addAll( formQuestionResponse.getEntryResponse( ) );
-                }
-            }
-
-            multiviewEntryResponseDisplay = new MultiviewEntryResponseDisplay( listResponses );
-        }
-
-        return multiviewEntryResponseDisplay;
-    }
-
-    /**
-     * Build the MultiviewParentQuestionDisplay for the given Form, the given Step and the given Question
-     * 
-     * @param formDisplay
-     *            The FormDisplay to use to retrieve the associated MultiviewParentQuestionDisplay
-     * @return the MultiviewParentQuestionDisplay built with the given parameters
-     */
-    private MultiviewParentQuestionDisplay buildParentQuestionDisplay( FormDisplay formDisplay )
-    {
-        MultiviewParentQuestionDisplay multiviewParentQuestionDisplay = null;
-
-        if ( formDisplay != null )
-        {
-            FormDisplay formDisplayParent = FormDisplayHome.findByPrimaryKey( formDisplay.getParentId( ) );
-            if ( formDisplayParent != null && CompositeDisplayType.GROUP.getLabel( ).equals( formDisplayParent.getCompositeType( ) ) )
-            {
-                Group group = GroupHome.findByPrimaryKey( formDisplayParent.getCompositeId( ) );
-                if ( group != null )
-                {
-                    multiviewParentQuestionDisplay = new MultiviewParentQuestionDisplay( group.getId( ), group.getTitle( ) );
-                }
+                listResponseQuestions.addAll( formQuestionResponse.getEntryResponse( ) );
             }
         }
-
-        return multiviewParentQuestionDisplay;
+        
+        return listResponseQuestions;
     }
 
     /**

@@ -319,9 +319,17 @@ table.table-hover tbody tr:hover {
 
 #form-response-details legend {
     font-weight:400; 
-    font-size:180%; 
+    font-size:130%; 
     border-bottom:1px solid #1d98f6; 
     color:#1d98f6;
+}
+
+#form-response-details .form-group-value-content {
+    margin-left: 20px;
+}
+
+#form-response-details .form-response-details-label {
+    margin-bottom: 0;	
 }
 
 #info-right {

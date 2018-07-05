@@ -33,16 +33,21 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUpload;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.business.file.File;
+import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
 /**
@@ -51,6 +56,8 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 public class EntryTypeFileDisplayService implements IEntryDisplayService
 {
     private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
+    
+    private static final String LIST_RESPONSES = "list_responses";
 
     private String _strEntryServiceName = StringUtils.EMPTY;
 
@@ -100,4 +107,27 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
         return strEntryHtml;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getEntryResponseValueTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
+    {
+        IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
+        
+        List<Response> listResponse = (List<Response>) model.get( LIST_RESPONSES );
+        if ( !CollectionUtils.isEmpty( listResponse ) )
+        {
+            for ( Response response : listResponse )
+            {
+                File file = response.getFile( );
+                if ( response.getFile( ) != null )
+                {
+                    response.setFile( FileHome.findByPrimaryKey( file.getIdFile( ) ) );
+                }
+            }
+        }
+        
+        return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( ), locale, setModel( entry, service, model ) ).getHtml( );
+    }
 }

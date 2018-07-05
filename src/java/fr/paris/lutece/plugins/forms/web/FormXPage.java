@@ -131,7 +131,8 @@ public class FormXPage extends MVCApplication
 
             if ( form.isActive( ) )
             {
-                model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ) ) );
+                boolean bIsForEdition = Boolean.TRUE;
+                model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), bIsForEdition ) );
                 model.put( FormsConstants.MARK_STEP, _currentStep );
             }
             // TODO

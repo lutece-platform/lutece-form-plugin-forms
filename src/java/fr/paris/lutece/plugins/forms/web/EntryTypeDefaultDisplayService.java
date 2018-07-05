@@ -48,7 +48,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
  * The default display service
  */
 public class EntryTypeDefaultDisplayService implements IEntryDisplayService
-{
+{    
     private String _strEntryServiceName = StringUtils.EMPTY;
 
     /**
@@ -93,5 +93,15 @@ public class EntryTypeDefaultDisplayService implements IEntryDisplayService
 
         return strEntryHtml;
     }
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getEntryResponseValueTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
+    {
+        IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
+        
+        return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( ), locale, setModel( entry, model ) ).getHtml( );
+    }
 }

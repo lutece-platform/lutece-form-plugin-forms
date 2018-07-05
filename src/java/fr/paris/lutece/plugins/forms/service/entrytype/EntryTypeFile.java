@@ -49,6 +49,7 @@ public class EntryTypeFile extends AbstractEntryTypeFile
     private static final String JSP_DOWNLOAD_FILE = "jsp/admin/plugins/forms/DoDownloadFile.jsp";
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_file.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_file.html";
+    private static final String TEMPLATE_ENTRY_READ_ONLY = "admin/plugins/forms/entries/template_read_only_entry_type_file.html";
     private static final String TEMPLATE_HTML_CODE = "skin/plugins/forms/entries/html_code_entry_type_file.html";
 
     /**
@@ -106,5 +107,14 @@ public class EntryTypeFile extends AbstractEntryTypeFile
     protected boolean checkForImages( )
     {
         return false;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTemplateEntryReadOnly( )
+    {
+        return TEMPLATE_ENTRY_READ_ONLY;
     }
 }

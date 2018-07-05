@@ -72,6 +72,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     private static final String TEMPLATE_HTML_CODE = "skin/plugins/forms/entries/html_code_entry_type_mylutece_user_attribute.html";
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_mylutece_user_attribute.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_mylutece_user_attribute.html";
+    private static final String TEMPLATE_ENTRY_READ_ONLY = "admin/plugins/forms/entries/template_read_only_entry_type_mylutece_user_attribute.html";
     private static final String PROPERTY_ENTRY_TITLE = "forms.entryTypeMyLuteceUserAttribute.title";
     private static final String PARAMETER_DISPLAY_IN_FRONT_OFFICE = "display_front_office";
     private static final String PARAMETER_MYLUTECE_ATTRIBUTE_NAME = "mylutece_attribute_name";
@@ -233,5 +234,14 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     public String getResponseValueForRecap( Entry entry, HttpServletRequest request, Response response, Locale locale )
     {
         return response.getResponseValue( );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTemplateEntryReadOnly( )
+    {
+        return TEMPLATE_ENTRY_READ_ONLY;
     }
 }

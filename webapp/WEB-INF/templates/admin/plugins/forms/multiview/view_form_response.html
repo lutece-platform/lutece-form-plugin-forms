@@ -4,58 +4,10 @@
 	<div class="col-xs-12 col-sm-8">
 		<div class="box box-primary box-forms-borderless">
 			<div id="form-response-details" class="box-body">
-			    <#if list_multiview_step_display?has_content>		
-				    <#list list_multiview_step_display as multiview_step_display>
-				        <fieldset>
-				            <div class="form-group">
-				                <#if multiview_step_display.title?has_content>
-				                    <legend>${multiview_step_display.title}</legend>
-				                </#if>
-				                <#if multiview_step_display.multiviewQuestionDisplays?has_content>
-				                	<#assign list_id_group = []>
-				                	<#assign id_previous_group = 0>
-				                	<#assign is_open = false>
-				                    <#list multiview_step_display.multiviewQuestionDisplays as multiview_question_display>
-				                    	<#if multiview_question_display.multiviewParentQuestionDisplay?has_content && multiview_question_display.multiviewParentQuestionDisplay.idParent != id_previous_group>
-				                    		<#assign id_parent = multiview_question_display.multiviewParentQuestionDisplay.idParent>
-				                    	    <#assign id_previous_group = id_parent>
-				                    	    <#if is_open>
-				                    	    	</div>
-				                    	    	<div class="form-response-group">
-				                    	    <#else>
-				                    	    	<div class="form-response-group">
-				                    	    	<#assign is_open = true>
-				                    	    </#if>
-				                    	    <#if !(list_id_group?seq_contains(id_parent))>
-				                    			<#assign list_id_group = list_id_group + [id_parent]>
-				                    	    	<div class="col-xs-12 col-sm-12">
-				                                	<label class="col-xs-12 col-sm-4 label-form-response-history">${multiview_question_display.multiviewParentQuestionDisplay.title}</label>
-				                            	</div>
-				                            </#if>
-				                    	</#if>
-				                    	<#if !(multiview_question_display.multiviewParentQuestionDisplay?has_content)>
-				                    	    <#if is_open>
-				                    	    	</div>
-				                    	    	<#assign is_open = false>
-				                    	    </#if>
-				                    	</#if>
-				                    	<div class="form-group col-xs-12">
-				                            	<#if multiview_question_display.title?has_content>
-				                                	<label class="col-xs-12 col-sm-4 control-label">${multiview_question_display.title}</label>
-				                            	</#if>
-				                            	<#if multiview_question_display.multiviewEntryResponseDisplay?has_content>
-				                                	<#list multiview_question_display.multiviewEntryResponseDisplay.listResponse as response>
-				                                    	<div class="col-xs-12 col-sm-8">
-				                                        	<p>${response.toStringValueResponse!''}</p>
-				                                    	</div>
-				                                	</#list>
-				                            	</#if>
-				                        </div>
-				                    </#list>
-				                </#if>
-				            </div>
-				        </fieldset>
-				    </#list>
+			    <#if list_multiview_step_display?has_content>
+			        <#list list_multiview_step_display as multiview_step_display>
+			            ${multiview_step_display}
+			        </#list>
 				</#if>
 		    </div>
 	    </div>

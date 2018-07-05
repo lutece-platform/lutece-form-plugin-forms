@@ -45,6 +45,7 @@ public class EntryTypeCheckBox extends AbstractEntryTypeCheckBox
 {
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_check_box.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_check_box.html";
+    private static final String TEMPLATE_ENTRY_READ_ONLY = "admin/plugins/forms/entries/template_read_only_entry_type_check_box.html";
     private static final String TEMPLATE_HTML_CODE = "skin/plugins/forms/entries/html_code_entry_type_check_box.html";
 
     /**
@@ -72,5 +73,14 @@ public class EntryTypeCheckBox extends AbstractEntryTypeCheckBox
     public String getTemplateModify( Entry entry, boolean bDisplayFront )
     {
         return TEMPLATE_MODIFY;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getTemplateEntryReadOnly( )
+    {
+        return TEMPLATE_ENTRY_READ_ONLY;
     }
 }
