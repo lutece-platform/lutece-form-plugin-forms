@@ -84,7 +84,7 @@ public final class FormDisplayService
                 FormQuestionResponseHome.removeByQuestion( formDisplayCompositeId );
                 // Delete the Question and its Entry
                 QuestionHome.remove( formDisplayCompositeId );
-                
+
                 // TODO: delete all Controls associated to the composite
             }
 

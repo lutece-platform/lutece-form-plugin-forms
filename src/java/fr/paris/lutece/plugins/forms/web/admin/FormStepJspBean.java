@@ -123,7 +123,7 @@ public class FormStepJspBean extends AbstractJspBean
     // Errors
     private static final String ERROR_STEP_NOT_UPDATED = "forms.error.form.notUpdated";
 
-    //Others
+    // Others
     private static final StepService _stepService = SpringContextService.getBean( StepService.BEAN_NAME );
 
     // Session variable to store working values
@@ -133,7 +133,6 @@ public class FormStepJspBean extends AbstractJspBean
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
-
 
     /**
      * Build the Manage View
@@ -345,7 +344,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
 
-        if( nIdStep == -1 )
+        if ( nIdStep == -1 )
         {
             return redirectToViewManageForm( request );
         }
@@ -361,7 +360,6 @@ public class FormStepJspBean extends AbstractJspBean
         }
         _stepService.removeStep( nIdStep );
 
-        
         addInfo( INFO_STEP_REMOVED, getLocale( ) );
 
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );

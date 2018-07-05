@@ -65,7 +65,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     private static final String GROUP_CONTENT_MARKER = "groupContent";
     private static final String PROPERTY_COMPOSITE_GROUP_ICON = "forms.composite.group.icon";
     private static final String DEFAULT_GROUP_ICON = "indent";
-    
+
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );

@@ -66,6 +66,7 @@ public final class FormService
     private FormService( )
     {
     }
+
     /**
      * Save the FormResponse instance
      * 
@@ -127,8 +128,8 @@ public final class FormService
     }
 
     /**
-     * Remove a given Form, all its steps and composites, workflow resources.
-     * Also remove all the related formResponses, QuestionsResposes, EntryResponses and entries.
+     * Remove a given Form, all its steps and composites, workflow resources. Also remove all the related formResponses, QuestionsResposes, EntryResponses and
+     * entries.
      * 
      * @param nIdForm
      *            The identifier of the form to be deleted
@@ -136,18 +137,18 @@ public final class FormService
     public void removeForm( int nIdForm )
     {
         StepService stepService = SpringContextService.getBean( StepService.BEAN_NAME );
-        
+
         List<Step> listStep = StepHome.getStepsListByForm( nIdForm );
-        
+
         for ( Step step : listStep )
         {
             stepService.removeStep( step.getId( ) );
         }
-        
+
         FormResponseHome.removeByForm( nIdForm );
         FormHome.remove( nIdForm );
-        
-        //TODO: remove workflow resources linked to this form
+
+        // TODO: remove workflow resources linked to this form
 
     }
 }

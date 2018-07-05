@@ -100,7 +100,7 @@ public class FormXPage extends MVCApplication
     // Markers
     private static final String STEP_HTML_MARKER = "stepContent";
 
-    //Other
+    // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     // Attributes
     private FormResponse _formResponse;

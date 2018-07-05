@@ -209,7 +209,7 @@ public final class TransitionHome
     public static void removeTransitionByStep( int nIdStep )
     {
         _dao.deleteByStep( nIdStep, _plugin );
-        
+
     }
 
 }

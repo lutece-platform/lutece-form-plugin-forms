@@ -59,7 +59,7 @@ public class StepDisplayTree
     private static final String STEP_TEMPLATE = "/skin/plugins/forms/composite_template/view_step.html";
     private static final String STEP_TITLE_MARKER = "stepTitle";
     private static final String STEP_CONTENT_MARKER = "stepContent";
-    
+
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );

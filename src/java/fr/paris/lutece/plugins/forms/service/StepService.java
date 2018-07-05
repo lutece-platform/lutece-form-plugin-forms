@@ -58,9 +58,8 @@ public final class StepService
     }
 
     /**
-     * Remove a given Step and the all its formDisplays.
-     * The responses, group/question associated to the displays will be deleted. All the
-     * descendants of the displays will also be removed
+     * Remove a given Step and the all its formDisplays. The responses, group/question associated to the displays will be deleted. All the descendants of the
+     * displays will also be removed
      * 
      * @param nIdStep
      *            The Step Id
@@ -68,17 +67,17 @@ public final class StepService
     public void removeStep( int nIdStep )
     {
         FormDisplayService displayService = SpringContextService.getBean( FormDisplayService.BEAN_NAME );
-        
+
         List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, DISPLAY_ROOT_PARENT_ID );
 
-        for( FormDisplay childDisplay : listChildrenDisplay )
+        for ( FormDisplay childDisplay : listChildrenDisplay )
         {
             displayService.deleteDisplayAndDescendants( childDisplay.getId( ) );
         }
-        
+
         TransitionHome.removeTransitionByStep( nIdStep );
-        
+
         StepHome.remove( nIdStep );
-        
+
     }
 }

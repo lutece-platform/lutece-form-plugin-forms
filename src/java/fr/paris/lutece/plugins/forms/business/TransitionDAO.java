@@ -318,7 +318,7 @@ public final class TransitionDAO implements ITransitionDAO
         daoUtil.setInt( 1, nIdStep );
         daoUtil.setInt( 2, nIdStep );
         daoUtil.executeUpdate( );
-        
+
         daoUtil.close( );
     }
 
