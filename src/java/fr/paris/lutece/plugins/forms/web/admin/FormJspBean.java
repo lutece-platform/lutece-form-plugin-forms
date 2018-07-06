@@ -34,6 +34,7 @@
 
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.business.FormAction;
@@ -47,6 +48,7 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -340,7 +342,9 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        FormHome.remove( nId );
+        FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
+        formService.removeForm( nId );
+        
         addInfo( INFO_FORM_REMOVED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_FORMS );
