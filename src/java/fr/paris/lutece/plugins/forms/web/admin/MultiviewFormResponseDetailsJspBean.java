@@ -85,6 +85,9 @@ import fr.paris.lutece.util.url.UrlItem;
 @Controller( controllerJsp = "ManageDirectoryFormResponseDetails.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MULTIVIEW" )
 public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 {
+    // Rights
+    public static final String RIGHT_FORMS_MULTIVIEW = "FORMS_MULTIVIEW";
+    
     // Generated serial UID
     private static final long serialVersionUID = 3673744119212180461L;
 
@@ -132,7 +135,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
 
         boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( nIdFormResponse ),
-                FormsResourceIdService.PERMISSION_ACCESS_FORM_RESPONSE_DETAILS, getUser( ) );
+                FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, getUser( ) );
         boolean bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( request, nIdFormResponse );
 
         if ( formResponse == null || !bRBACAuthorization || !bAuthorizedRecord )

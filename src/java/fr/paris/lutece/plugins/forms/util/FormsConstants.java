@@ -70,6 +70,7 @@ public final class FormsConstants
     public static final String PARAMETER_ID_STEP = "id_step";
     public static final String PARAMETER_ID_ENTRY = "id_entry";
     public static final String PARAMETER_ID_FIELD = "id_field";
+    public static final String PARAMETER_ID_RESPONSE = "id_response";
 
     public static final String COMPOSITE_STEP_TYPE = "step";
     public static final String COMPOSITE_GROUP_TYPE = "group";

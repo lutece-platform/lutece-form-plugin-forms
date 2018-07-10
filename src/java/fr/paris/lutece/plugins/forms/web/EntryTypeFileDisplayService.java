@@ -33,11 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -49,6 +51,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * The display service for entry type file
@@ -115,7 +118,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     {
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
 
-        List<Response> listResponse = (List<Response>) model.get( LIST_RESPONSES );
+        List<Response> listResponse = retrieveResponseListFromModel( model );
         if ( !CollectionUtils.isEmpty( listResponse ) )
         {
             for ( Response response : listResponse )
@@ -129,5 +132,35 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
         }
 
         return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( ), locale, setModel( entry, service, model ) ).getHtml( );
+    }
+
+    /**
+     * Return from the given map the list of Response of the model
+     * 
+     * @param model
+     *          The model on which to retrieve the list of all Response
+     * @return the list of Response form the given model or an empty collection if its missing or if an error occurred
+     */
+    @SuppressWarnings( "unchecked" )
+    private List<Response> retrieveResponseListFromModel( Map<String, Object> model )
+    {
+        List<Response> listResponse = new ArrayList<Response>( );
+        
+        if ( !MapUtils.isEmpty( model ) && model.containsKey( LIST_RESPONSES ) )
+        {
+            try
+            {
+                listResponse = (List<Response>) model.get( LIST_RESPONSES );
+            }
+            catch ( ClassCastException exception )
+            {
+                AppLogService.error( "The object associated to the list of Responses doesn't have the good format !" );
+                
+                // Erase the value to avoid future errors
+                model.put( LIST_RESPONSES, new ArrayList<>( ) );
+            }
+        }
+        
+        return listResponse;
     }
 }
