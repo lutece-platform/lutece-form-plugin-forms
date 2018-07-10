@@ -166,50 +166,50 @@ public final class FormService
         // TODO: remove workflow resources linked to this form
 
     }
-    
+
     /**
      * Check if a user is authorized to access a File from its given identifier
      * 
      * @param request
-     *          The request to use to retrieve information of the current user
+     *            The request to use to retrieve information of the current user
      * @param nIdResponse
-     *          The identifier of the Response which have the file
+     *            The identifier of the Response which have the file
      * @param nIdFile
-     *          The identifier of the file to access
+     *            The identifier of the file to access
      * @return the boolean which tell if the user is authorize to access the given File or not
      */
     public boolean isFileAccessAuthorized( HttpServletRequest request, int nIdResponse, int nIdFile )
     {
         boolean bFileAccessAuthorized = Boolean.FALSE;
-        
+
         Response response = ResponseHome.findByPrimaryKey( nIdResponse );
         if ( response != null && response.getEntry( ) != null && response.getFile( ) != null && response.getFile( ).getIdFile( ) == nIdFile )
         {
             Entry entryResponse = EntryHome.findByPrimaryKey( response.getEntry( ).getIdEntry( ) );
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entryResponse );
-            
+
             if ( entryTypeService instanceof AbstractEntryTypeFile && Form.RESOURCE_TYPE.equals( entryResponse.getResourceType( ) ) )
             {
                 bFileAccessAuthorized = canUserAccessFile( request, entryResponse.getIdResource( ) );
             }
         }
-        
+
         return bFileAccessAuthorized;
     }
-    
+
     /**
-     * Check if a user have all necessaries permissions to access to file in the formResponse details view 
+     * Check if a user have all necessaries permissions to access to file in the formResponse details view
      * 
      * @param request
-     *          The request to use to retrieve the user
+     *            The request to use to retrieve the user
      * @param nIdForm
-     *          The identifier of the Form to use to check the permissions
+     *            The identifier of the Form to use to check the permissions
      * @return true if the user can access File false if the user doesn't have necessary permissions
      */
     private boolean canUserAccessFile( HttpServletRequest request, int nIdForm )
     {
         boolean bUserAccessFile = Boolean.FALSE;
-        
+
         AdminUser adminUser = AdminUserService.getAdminUser( request );
         if ( adminUser != null && adminUser.checkRight( MultiviewFormResponseDetailsJspBean.RIGHT_FORMS_MULTIVIEW ) )
         {
@@ -218,17 +218,17 @@ public final class FormService
             {
                 boolean bRbacModify = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( form.getId( ) ),
                         FormsResourceIdService.PERMISSION_MODIFY_FORM_RESPONSE, adminUser );
-                
+
                 boolean bRbacManage = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( form.getId( ) ),
                         FormsResourceIdService.PERMISSION_MANAGE_FORM_RESPONSE, adminUser );
-                
+
                 boolean bRbacView = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( form.getId( ) ),
                         FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, adminUser );
-                
+
                 bUserAccessFile = bRbacModify || bRbacManage || bRbacView;
             }
         }
-        
+
         return bUserAccessFile;
     }
 }

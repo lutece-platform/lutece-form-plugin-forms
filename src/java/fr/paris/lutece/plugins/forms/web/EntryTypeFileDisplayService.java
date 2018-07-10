@@ -138,29 +138,29 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
      * Return from the given map the list of Response of the model
      * 
      * @param model
-     *          The model on which to retrieve the list of all Response
+     *            The model on which to retrieve the list of all Response
      * @return the list of Response form the given model or an empty collection if its missing or if an error occurred
      */
     @SuppressWarnings( "unchecked" )
     private List<Response> retrieveResponseListFromModel( Map<String, Object> model )
     {
         List<Response> listResponse = new ArrayList<Response>( );
-        
+
         if ( !MapUtils.isEmpty( model ) && model.containsKey( LIST_RESPONSES ) )
         {
             try
             {
                 listResponse = (List<Response>) model.get( LIST_RESPONSES );
             }
-            catch ( ClassCastException exception )
+            catch( ClassCastException exception )
             {
                 AppLogService.error( "The object associated to the list of Responses doesn't have the good format !" );
-                
+
                 // Erase the value to avoid future errors
                 model.put( LIST_RESPONSES, new ArrayList<>( ) );
             }
         }
-        
+
         return listResponse;
     }
 }

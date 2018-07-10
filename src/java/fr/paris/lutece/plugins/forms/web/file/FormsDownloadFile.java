@@ -61,10 +61,10 @@ public final class FormsDownloadFile
 {
     // Parameters
     private static final String PARAMETER_ID_FILE = "id_file";
-    
+
     // Messages
     private static final String MESSAGE_ERROR_DURING_DOWNLOAD_FILE = "forms.error.downloadFile";
-    
+
     // Constants
     private static final int ID_FILE_INCORRECT = NumberUtils.INTEGER_MINUS_ONE;
     private static final int ID_RESPONSE_INCORRECT = NumberUtils.INTEGER_MINUS_ONE;
@@ -74,7 +74,7 @@ public final class FormsDownloadFile
      */
     private FormsDownloadFile( )
     {
-        
+
     }
 
     /**
@@ -96,10 +96,10 @@ public final class FormsDownloadFile
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
-        
+
         PhysicalFile physicalFile = null;
         File file = FileHome.findByPrimaryKey( nIdFile );
-        if ( file != null ) 
+        if ( file != null )
         {
             physicalFile = PhysicalFileHome.findByPrimaryKey( file.getPhysicalFile( ).getIdPhysicalFile( ) );
         }
@@ -111,16 +111,16 @@ public final class FormsDownloadFile
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_DURING_DOWNLOAD_FILE, AdminMessage.TYPE_STOP );
     }
-    
+
     /**
      * Add the information of the given File with the content of its PhysicalFile to the HttpServletResponse
      * 
      * @param response
-     *          The httpServletResponse on which to add the content of the PhysicalFile
+     *            The httpServletResponse on which to add the content of the PhysicalFile
      * @param file
-     *          The File with the information to set in the HttpServletResponse
+     *            The File with the information to set in the HttpServletResponse
      * @param physicalFile
-     *          The content of the given File to set in the HttpServletResponse
+     *            The content of the given File to set in the HttpServletResponse
      */
     private static void addFileContentToResponse( HttpServletResponse response, File file, PhysicalFile physicalFile )
     {
@@ -147,7 +147,7 @@ public final class FormsDownloadFile
             AppLogService.error( e );
         }
     }
-    
+
     /**
      * Write the Http header in the response
      *

@@ -79,10 +79,10 @@ public class FormsResourceIdService extends ResourceIdService
 
     /** Permission for manage form response **/
     public static final String PERMISSION_MANAGE_FORM_RESPONSE = "MANAGE_FORM_RESPONSE";
-    
+
     /** Permission for modify a form response **/
     public static final String PERMISSION_MODIFY_FORM_RESPONSE = "MODIFY_FORM_RESPONSE";
-    
+
     /** Permission for view a form response **/
     public static final String PERMISSION_VIEW_FORM_RESPONSE = "VIEW_FORM_RESPONSE";
 
@@ -162,12 +162,12 @@ public class FormsResourceIdService extends ResourceIdService
         permission.setPermissionKey( PERMISSION_MANAGE_FORM_RESPONSE );
         permission.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_FORM_RESPONSE );
         resourceType.registerPermission( permission );
-        
+
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_MODIFY_FORM_RESPONSE );
         permission.setPermissionTitleKey( PROPERTY_LABEL_MODIFY_FORM_RESPONSE );
         resourceType.registerPermission( permission );
-        
+
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_VIEW_FORM_RESPONSE );
         permission.setPermissionTitleKey( PROPERTY_LABEL_VIEW_FORM_RESPONSE );

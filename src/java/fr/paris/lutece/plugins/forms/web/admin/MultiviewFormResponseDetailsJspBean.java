@@ -87,7 +87,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 {
     // Rights
     public static final String RIGHT_FORMS_MULTIVIEW = "FORMS_MULTIVIEW";
-    
+
     // Generated serial UID
     private static final long serialVersionUID = 3673744119212180461L;
 

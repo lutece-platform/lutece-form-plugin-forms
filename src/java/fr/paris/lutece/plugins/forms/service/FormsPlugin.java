@@ -50,7 +50,7 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
 
     // Generated serial UID
     private static final long serialVersionUID = 363631628732516426L;
-    
+
     /**
      * {@inheritDoc}
      */

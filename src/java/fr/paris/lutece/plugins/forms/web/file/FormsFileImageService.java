@@ -109,13 +109,13 @@ public final class FormsFileImageService implements ImageResourceProvider
         HttpServletRequest request = LocalVariables.getRequest( );
 
         ImageResource imageResource = null;
-        
+
         File file = FileHome.findByPrimaryKey( nIdResource );
         if ( file != null && file.getPhysicalFile( ) != null && FileUtil.hasImageExtension( file.getTitle( ) ) && request != null )
         {
             FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
             int nIdResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), ID_RESPONSE_NOT_FOUND );
-            
+
             if ( formService.isFileAccessAuthorized( request, nIdResponse, nIdResource ) )
             {
                 imageResource = createImageResource( file );
@@ -129,7 +129,7 @@ public final class FormsFileImageService implements ImageResourceProvider
      * Create an ImageResource associated to the given File
      * 
      * @param file
-     *          The File on which to based to create the create the ImageResource
+     *            The File on which to based to create the create the ImageResource
      * @return the ImageResource associated to the given File or null if an error occurred
      */
     private ImageResource createImageResource( File file )

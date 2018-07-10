@@ -72,7 +72,7 @@ public class FormJspBean extends AbstractJspBean
 {
     // Rights
     public static final String RIGHT_FORMS_MANAGEMENT = "FORMS_MANAGEMENT";
-    
+
     private static final long serialVersionUID = 7515975782241863390L;
 
     private static final String EMPTY_STRING = "";
