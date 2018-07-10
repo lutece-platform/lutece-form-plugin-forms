@@ -119,7 +119,8 @@ public class FormXPage extends MVCApplication
      * @param request
      *            The Http request
      * @return the XPage
-     * @throws SiteMessageException
+     * 
+     * @throws SiteMessageException Exception
      */
     @View( value = VIEW_STEP, defaultView = true )
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException
@@ -168,7 +169,8 @@ public class FormXPage extends MVCApplication
      * @param request
      *            The Http request
      * @return the XPage
-     * @throws SiteMessageException
+     * 
+     * @throws SiteMessageException Exception
      */
     @Action( value = ACTION_SAVE_STEP )
     public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException
@@ -187,6 +189,8 @@ public class FormXPage extends MVCApplication
         }
 
         List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
+        int nIdForm = _currentStep.getIdForm( );
+        
         boolean bValidStep = true;
         Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
         List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
@@ -224,15 +228,12 @@ public class FormXPage extends MVCApplication
         {
             _formService.saveForm( _formResponse );
 
-            Map<String, String> model = new HashMap<String, String>( );
-
-            model.put( ID_FORM, Integer.toString( _currentStep.getIdForm( ) ) );
-
             _formResponse = null;
             _currentStep = null;
             _stepDisplayTree = null;
+            
+            //TODO: redirect to recap or configured url
 
-            return redirect( request, VIEW_STEP, model );
         }
         else
         {
@@ -245,13 +246,14 @@ public class FormXPage extends MVCApplication
                     _currentStep = StepHome.findByPrimaryKey( transition.getNextStep( ) );
                     break;
                 }
+                
+                SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
                 /*
                  * else { TODO }
                  */
-
             }
-            return getStepView( request );
         }
+        return redirect( request, VIEW_STEP, FormsConstants.PARAMETER_ID_FORM, nIdForm );
     }
 
 }
