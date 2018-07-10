@@ -105,7 +105,8 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
     }
 
     /**
-     * Test of the method {@link FormsMultiviewAuthorizationService#isUserAuthorizedOnFormResponse(request,int)} on a form response on which the user is authorized
+     * Test of the method {@link FormsMultiviewAuthorizationService#isUserAuthorizedOnFormResponse(request,int)} on a form response on which the user is
+     * authorized
      */
     public void testIsUserAthorizedOnFormResponseOnAuthorizedFormResponse( )
     {
@@ -114,15 +115,16 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 
         FormListDAOMock formListDAOMock = new FormListDAOMock( listAuthorizedId );
         FormListFacade formListFacade = new FormListFacade( formListDAOMock );
-        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( _formPanel,
-                formListFacade, _formColumnFactory );
+        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( _formPanel, formListFacade,
+                _formColumnFactory );
 
         boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.TRUE ) );
     }
 
     /**
-     * Test of the method {@link FormsMultiviewAuthorizationService#isUserAuthorizedOnFormResponse(request,int)} on a form response on which the user is not authorized
+     * Test of the method {@link FormsMultiviewAuthorizationService#isUserAuthorizedOnFormResponse(request,int)} on a form response on which the user is not
+     * authorized
      */
     public void testIsUserAthorizedOnFormResponseOnUnauthorizedFormResponse( )
     {
@@ -131,8 +133,8 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 
         FormListDAOMock formListDAOMock = new FormListDAOMock( listAuthorizedId );
         FormListFacade formListFacade = new FormListFacade( formListDAOMock );
-        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( _formPanel,
-                formListFacade, _formColumnFactory );
+        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( _formPanel, formListFacade,
+                _formColumnFactory );
 
         boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );
@@ -148,8 +150,8 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 
         FormListDAOMock formListDAOMock = new FormListDAOMock( listAuthorizedId );
         FormListFacade formListFacade = new FormListFacade( formListDAOMock );
-        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( _formPanel,
-                formListFacade, _formColumnFactory );
+        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( _formPanel, formListFacade,
+                _formColumnFactory );
 
         boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );
