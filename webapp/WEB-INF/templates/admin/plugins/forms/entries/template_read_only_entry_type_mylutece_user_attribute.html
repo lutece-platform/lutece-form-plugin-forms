@@ -6,13 +6,28 @@
         </#list>
     </fieldset>
 <#else>
-    <#if form_response?? && response?? && response.entry??>
-        <a href="jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}">
-            ${response.toStringValueResponse!''}
-        </a>
-    <#else>
-        <#if response??>
-            ${response.toStringValueResponse!''}
+    <div class="form-group">
+        <label class="col-xs-12 col-sm-3 control-label">
+            ${entry.title!''}
+        </label>
+        <#if list_responses?has_content>
+            <#assign first = true>
+            <#list list_responses as response>
+                <#if first>
+                    <#assign first = false>
+                    <div class="col-xs-12 col-sm-9">
+                <#else>
+                    <div class="col-xs-12 col-sm-9 col-sm-offset-3">
+                </#if>
+                <#if form_response?? && response.entry??>
+                    <a href="jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}">
+                        ${response.toStringValueResponse!''}
+                    </a>
+                <#else>
+                    ${response.toStringValueResponse!''}
+                </#if>
+                </div>
+            </#list>
         </#if>
-    </#if>
+    </div>
 </#if>

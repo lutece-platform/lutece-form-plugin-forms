@@ -77,8 +77,14 @@ public class FormsResourceIdService extends ResourceIdService
     /** Permission for managing Validator */
     public static final String PERMISSION_MANAGE_VALIDATOR = "MANAGE_VALIDATOR";
 
-    /** Permission for access the details of a form response **/
-    public static final String PERMISSION_ACCESS_FORM_RESPONSE_DETAILS = "ACCESS_FORM_RESPONSE_DETAILS";
+    /** Permission for manage form response **/
+    public static final String PERMISSION_MANAGE_FORM_RESPONSE = "MANAGE_FORM_RESPONSE";
+
+    /** Permission for modify a form response **/
+    public static final String PERMISSION_MODIFY_FORM_RESPONSE = "MODIFY_FORM_RESPONSE";
+
+    /** Permission for view a form response **/
+    public static final String PERMISSION_VIEW_FORM_RESPONSE = "VIEW_FORM_RESPONSE";
 
     private static final String PROPERTY_LABEL_RESOURCE_TYPE = "form.permission.label.resourceType";
     private static final String PROPERTY_LABEL_CREATE = "form.permission.label.create";
@@ -89,7 +95,9 @@ public class FormsResourceIdService extends ResourceIdService
     private static final String PROPERTY_LABEL_VIEW_RESULT = "form.permission.label.viewResult";
     private static final String PROPERTY_LABEL_CHANGE_STATE = "form.permission.label.changeState";
     private static final String PROPERTY_LABEL_MANAGE_VALIDATOR = "form.permission.label.manageValidator";
-    private static final String PROPERTY_LABEL_ACCESS_FORM_RESPONSE_DETAILS = "form.permission.label.accessFormResponseDetails";
+    private static final String PROPERTY_LABEL_MANAGE_FORM_RESPONSE = "form.permission.label.manageFormResponse";
+    private static final String PROPERTY_LABEL_MODIFY_FORM_RESPONSE = "form.permission.label.modifyFormResponse";
+    private static final String PROPERTY_LABEL_VIEW_FORM_RESPONSE = "form.permission.label.viewFormResponse";
 
     /** Creates a new instance of DocumentTypeResourceIdService */
     public FormsResourceIdService( )
@@ -151,8 +159,18 @@ public class FormsResourceIdService extends ResourceIdService
         resourceType.registerPermission( permission );
 
         permission = new Permission( );
-        permission.setPermissionKey( PERMISSION_ACCESS_FORM_RESPONSE_DETAILS );
-        permission.setPermissionTitleKey( PROPERTY_LABEL_ACCESS_FORM_RESPONSE_DETAILS );
+        permission.setPermissionKey( PERMISSION_MANAGE_FORM_RESPONSE );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_FORM_RESPONSE );
+        resourceType.registerPermission( permission );
+
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_MODIFY_FORM_RESPONSE );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_MODIFY_FORM_RESPONSE );
+        resourceType.registerPermission( permission );
+
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_VIEW_FORM_RESPONSE );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_VIEW_FORM_RESPONSE );
         resourceType.registerPermission( permission );
 
         ResourceTypeManager.registerResourceType( resourceType );

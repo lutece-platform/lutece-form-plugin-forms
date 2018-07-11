@@ -33,29 +33,32 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.io.Serializable;
+
+import fr.paris.lutece.plugins.forms.web.file.FormsFileImageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-
-import java.io.Serializable;
 
 /**
  * class FormPlugin
  */
 public final class FormsPlugin extends PluginDefaultImplementation implements Serializable
 {
-
     /** The Constant PLUGIN_NAME. */
     public static final String PLUGIN_NAME = "forms";
 
+    // Generated serial UID
     private static final long serialVersionUID = 363631628732516426L;
 
     /**
-     * Constructor
+     * {@inheritDoc}
      */
-    private FormsPlugin( )
+    @Override
+    public void init( )
     {
-        super( );
+        // ImageResourceManager
+        FormsFileImageService.getInstance( ).register( );
     }
 
     /**

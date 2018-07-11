@@ -72,6 +72,8 @@ import javax.servlet.http.HttpServletRequest;
 @Controller( controllerJsp = "ManageForms.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormJspBean extends AbstractJspBean
 {
+    // Rights
+    public static final String RIGHT_FORMS_MANAGEMENT = "FORMS_MANAGEMENT";
 
     private static final long serialVersionUID = 7515975782241863390L;
 
@@ -344,7 +346,7 @@ public class FormJspBean extends AbstractJspBean
 
         FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
         formService.removeForm( nId );
-        
+
         addInfo( INFO_FORM_REMOVED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_FORMS );

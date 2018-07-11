@@ -120,7 +120,8 @@ public class FormXPage extends MVCApplication
      *            The Http request
      * @return the XPage
      * 
-     * @throws SiteMessageException Exception
+     * @throws SiteMessageException
+     *             Exception
      */
     @View( value = VIEW_STEP, defaultView = true )
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException
@@ -170,7 +171,8 @@ public class FormXPage extends MVCApplication
      *            The Http request
      * @return the XPage
      * 
-     * @throws SiteMessageException Exception
+     * @throws SiteMessageException
+     *             Exception
      */
     @Action( value = ACTION_SAVE_STEP )
     public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException
@@ -190,7 +192,7 @@ public class FormXPage extends MVCApplication
 
         List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
         int nIdForm = _currentStep.getIdForm( );
-        
+
         boolean bValidStep = true;
         Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
         List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
@@ -231,8 +233,8 @@ public class FormXPage extends MVCApplication
             _formResponse = null;
             _currentStep = null;
             _stepDisplayTree = null;
-            
-            //TODO: redirect to recap or configured url
+
+            // TODO: redirect to recap or configured url
 
         }
         else
@@ -246,7 +248,7 @@ public class FormXPage extends MVCApplication
                     _currentStep = StepHome.findByPrimaryKey( transition.getNextStep( ) );
                     break;
                 }
-                
+
                 SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
                 /*
                  * else { TODO }

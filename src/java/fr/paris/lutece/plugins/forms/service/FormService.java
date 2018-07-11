@@ -35,6 +35,9 @@ package fr.paris.lutece.plugins.forms.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -47,10 +50,22 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
 import fr.paris.lutece.plugins.forms.web.CompositeQuestionDisplay;
-import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
 import fr.paris.lutece.plugins.forms.web.IEntryDataService;
+import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
+import fr.paris.lutece.plugins.forms.web.admin.MultiviewFormResponseDetailsJspBean;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 
 /**
  * This is the service class related to the form
@@ -150,5 +165,70 @@ public final class FormService
 
         // TODO: remove workflow resources linked to this form
 
+    }
+
+    /**
+     * Check if a user is authorized to access a File from its given identifier
+     * 
+     * @param request
+     *            The request to use to retrieve information of the current user
+     * @param nIdResponse
+     *            The identifier of the Response which have the file
+     * @param nIdFile
+     *            The identifier of the file to access
+     * @return the boolean which tell if the user is authorize to access the given File or not
+     */
+    public boolean isFileAccessAuthorized( HttpServletRequest request, int nIdResponse, int nIdFile )
+    {
+        boolean bFileAccessAuthorized = Boolean.FALSE;
+
+        Response response = ResponseHome.findByPrimaryKey( nIdResponse );
+        if ( response != null && response.getEntry( ) != null && response.getFile( ) != null && response.getFile( ).getIdFile( ) == nIdFile )
+        {
+            Entry entryResponse = EntryHome.findByPrimaryKey( response.getEntry( ).getIdEntry( ) );
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entryResponse );
+
+            if ( entryTypeService instanceof AbstractEntryTypeFile && Form.RESOURCE_TYPE.equals( entryResponse.getResourceType( ) ) )
+            {
+                bFileAccessAuthorized = canUserAccessFile( request, entryResponse.getIdResource( ) );
+            }
+        }
+
+        return bFileAccessAuthorized;
+    }
+
+    /**
+     * Check if a user have all necessaries permissions to access to file in the formResponse details view
+     * 
+     * @param request
+     *            The request to use to retrieve the user
+     * @param nIdForm
+     *            The identifier of the Form to use to check the permissions
+     * @return true if the user can access File false if the user doesn't have necessary permissions
+     */
+    private boolean canUserAccessFile( HttpServletRequest request, int nIdForm )
+    {
+        boolean bUserAccessFile = Boolean.FALSE;
+
+        AdminUser adminUser = AdminUserService.getAdminUser( request );
+        if ( adminUser != null && adminUser.checkRight( MultiviewFormResponseDetailsJspBean.RIGHT_FORMS_MULTIVIEW ) )
+        {
+            Form form = FormHome.findByPrimaryKey( nIdForm );
+            if ( form != null && AdminWorkgroupService.isAuthorized( form, adminUser ) )
+            {
+                boolean bRbacModify = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( form.getId( ) ),
+                        FormsResourceIdService.PERMISSION_MODIFY_FORM_RESPONSE, adminUser );
+
+                boolean bRbacManage = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( form.getId( ) ),
+                        FormsResourceIdService.PERMISSION_MANAGE_FORM_RESPONSE, adminUser );
+
+                boolean bRbacView = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( form.getId( ) ),
+                        FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, adminUser );
+
+                bUserAccessFile = bRbacModify || bRbacManage || bRbacView;
+            }
+        }
+
+        return bUserAccessFile;
     }
 }
