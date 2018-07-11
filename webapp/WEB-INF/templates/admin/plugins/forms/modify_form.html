@@ -34,6 +34,13 @@
                                     </@inputGroupItem>
                                 </@inputGroup>
                             </@formGroup>
+                            <#if workflow_list?has_content>
+                               <@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' helpKey='#i18n{forms.modify_form.workflow.label.help}'>
+                                   <@inputGroup>
+                                       <@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
+                                   </@inputGroup>
+                              </@formGroup>
+                              </#if>
                             <div class="form-group">
                                 <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
                                     <button  class="btn btn-primary" name="action_modifyForm" type="submit">

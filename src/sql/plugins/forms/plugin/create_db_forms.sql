@@ -13,6 +13,7 @@ update_date timestamp,
 availability_start_date date default NULL,
 availability_end_date date default NULL,
 workgroup varchar(255),
+id_workflow INT DEFAULT NULL,
 PRIMARY KEY (id_form)
 );
 

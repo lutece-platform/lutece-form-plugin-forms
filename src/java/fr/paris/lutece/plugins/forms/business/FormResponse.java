@@ -43,6 +43,11 @@ import java.util.List;
  */
 public class FormResponse
 {
+    /**
+     * Form response resource type
+     */
+    public static final String RESOURCE_TYPE = "FORMS_FORM_RESPONSE";
+    
     private int _nId;
 
     private int _nFormId;
