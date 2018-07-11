@@ -136,7 +136,6 @@ public class FormJspBean extends AbstractJspBean
     private static final String ERROR_FORM_NOT_UPDATED = "forms.error.form.notUpdated";
     private static final String ERROR_FORM_DATE_START_AFTER_END = "forms.error.form.date.startAfterEnd";
 
-
     // Session variable to store working values
     private Form _form;
 
@@ -215,14 +214,14 @@ public class FormJspBean extends AbstractJspBean
         _form = ( _form != null ) ? _form : new Form( );
 
         Map<String, Object> model = getModel( );
-        
+
         if ( WorkflowService.getInstance( ).isAvailable( ) )
         {
             AdminUser adminUser = getUser( );
             ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( adminUser, getLocale( ) );
             model.put( MARK_WORKFLOW_REF_LIST, referenceList );
         }
-        
+
         model.put( MARK_FORM, _form );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
 
@@ -378,7 +377,7 @@ public class FormJspBean extends AbstractJspBean
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
-        if( nId == FormsConstants.DEFAULT_ID_VALUE )
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
@@ -388,11 +387,11 @@ public class FormJspBean extends AbstractJspBean
         if ( formToBeModified != null )
         {
             AdminUser adminUser = getUser( );
-        
+
             Map<String, Object> model = getModel( );
             model.put( MARK_FORM, formToBeModified );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
-            
+
             if ( WorkflowService.getInstance( ).isAvailable( ) )
             {
                 ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( adminUser, getLocale( ) );

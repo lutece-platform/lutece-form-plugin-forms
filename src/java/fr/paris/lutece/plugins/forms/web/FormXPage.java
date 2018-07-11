@@ -230,7 +230,7 @@ public class FormXPage extends MVCApplication
         if ( _currentStep.isFinal( ) )
         {
             _formService.saveForm( _formResponse );
-            
+
             if ( WorkflowService.getInstance( ).isAvailable( ) && ( form.getIdWorkflow( ) != FormsConstants.DEFAULT_ID_VALUE ) )
             {
                 WorkflowService.getInstance( ).getState( _formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), form.getId( ) );
