@@ -1,0 +1,33 @@
+<@box>
+	<@boxHeader title='#i18n{forms.manage_condition.title} ${display_title!}' />
+	<@boxBody>
+		<div class="tab-pane active">
+			<@tform method="post" name="condition_form" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
+				<@messages errors=errors />
+				<input type="hidden" id="id_display" name="id_display" value="1"/>
+				<input type="hidden" id="id_step" name="id_step" value="${step.id}"/>
+
+				<@formGroup labelKey='#i18n{forms.manageCondition.question.label}' helpKey='#i18n{forms.manageCondition.question.label.help}'>
+					<@select name='id_question' items=list_questions default_value='${id_question_parent!}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.manageCondition.condition.label}' helpKey='#i18n{forms.manageCondition.condition.label.help}'>
+					<@select name='id_condition' items=list_validators default_value='${id_condition!}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.manageCondition.value.label}' helpKey='#i18n{forms.manageCondition.value.label.help}'>
+					<@input type='text' name='condition_value' value='${condition_value!}' />
+				</@formGroup>
+                     
+				<div class="form-group">
+					<div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
+						<button  class="btn btn-primary" name="action_modifyCondition" type="submit">
+							<i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
+						</button>
+						<button class="btn btn-default" name="view_manageQuestions" type="submit" formnovalidate >
+							<i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
+						</button>
+					</div>
+				</div>  
+			</@tform>
+		</div>
+	</@boxBody>
+</@box>
