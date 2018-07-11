@@ -46,34 +46,30 @@ import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
  */
 public interface IValidator
 {
-	/**
-	 * 
-	 * @return
-	 * 		the validator bean name
-	 */
+    /**
+     * 
+     * @return the validator bean name
+     */
     String getValidatorBeanName( );
-    
+
     /**
-	 * 
-	 * @return
-	 * 		the validator display name
-	 */
+     * 
+     * @return the validator display name
+     */
     String getValidatorDisplayName( );
-    
+
     /**
-	 * 
-	 * @return
-	 * 		the list of available entrytype for this validator
-	 */
+     * 
+     * @return the list of available entrytype for this validator
+     */
     List<String> getListAvailableEntryType( );
-    
+
     /**
      * @param questionResponse
      *            The response to control
      * @param control
      *            The control to verify
-	 * @return
-	 * 		boolean that indicate the validation result
-	 */
+     * @return boolean that indicate the validation result
+     */
     boolean validate( FormQuestionResponse questionResponse, Control control );
 }

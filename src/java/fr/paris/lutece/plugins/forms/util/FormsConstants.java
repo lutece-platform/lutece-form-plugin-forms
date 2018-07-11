@@ -43,90 +43,90 @@ import org.apache.commons.lang3.math.NumberUtils;
  */
 public final class FormsConstants
 {
-	// Marks
-	public static final String MARK_FORM = "form";
-	public static final String MARK_ID_FORM = "id_form";
-	public static final String MARK_STEP = "step";
-	public static final String MARK_ID_STEP = "id_step";
-	public static final String MARK_COMPOSITE_LIST = "composite_list";
-	public static final String MARK_ENTRY_TYPE_REF_LIST = "entry_type_list";
-	public static final String MARK_ENTRY = "entry";
-	public static final String MARK_ID_ENTRY = "id_entry";
-	public static final String MARK_ID_PARENT = "id_parent";
-	public static final String MARK_GROUP = "group";
-	public static final String MARK_QUESTION = "question";
-	public static final String MARK_ID_QUESTION = "id_question";
-	public static final String MARK_FIELD = "field";
-	public static final String MARK_LIST_STEPS = "list_steps";
-	public static final String MARK_LIST_GROUPS = "list_groups";
-	public static final String MARK_LIST_QUESTIONS = "list_questions";
-	public static final String MARK_LIST_VALIDATORS = "list_validators";
-	public static final String MARK_LIST_AVAILABLE_POSITIONS = "list_positions";
-	public static final String MARK_DISPLAY = "display";
-	public static final String MARK_DISPLAY_TITLE = "display_title";
-	public static final String MARK_DISPLAY_ORDER = "displayOrder";
-	public static final String MARK_TRANSITION = "transition";
-	public static final String MARK_CONTROL = "control";
+    // Marks
+    public static final String MARK_FORM = "form";
+    public static final String MARK_ID_FORM = "id_form";
+    public static final String MARK_STEP = "step";
+    public static final String MARK_ID_STEP = "id_step";
+    public static final String MARK_COMPOSITE_LIST = "composite_list";
+    public static final String MARK_ENTRY_TYPE_REF_LIST = "entry_type_list";
+    public static final String MARK_ENTRY = "entry";
+    public static final String MARK_ID_ENTRY = "id_entry";
+    public static final String MARK_ID_PARENT = "id_parent";
+    public static final String MARK_GROUP = "group";
+    public static final String MARK_QUESTION = "question";
+    public static final String MARK_ID_QUESTION = "id_question";
+    public static final String MARK_FIELD = "field";
+    public static final String MARK_LIST_STEPS = "list_steps";
+    public static final String MARK_LIST_GROUPS = "list_groups";
+    public static final String MARK_LIST_QUESTIONS = "list_questions";
+    public static final String MARK_LIST_VALIDATORS = "list_validators";
+    public static final String MARK_LIST_AVAILABLE_POSITIONS = "list_positions";
+    public static final String MARK_DISPLAY = "display";
+    public static final String MARK_DISPLAY_TITLE = "display_title";
+    public static final String MARK_DISPLAY_ORDER = "displayOrder";
+    public static final String MARK_TRANSITION = "transition";
+    public static final String MARK_CONTROL = "control";
 
-	// Parameters
-	public static final String PARAMETER_ID_FORM = "id_form";
-	public static final String PARAMETER_ID_STEP = "id_step";
-	public static final String PARAMETER_ID_ENTRY = "id_entry";
-	public static final String PARAMETER_ID_FIELD = "id_field";
-	public static final String PARAMETER_ID_RESPONSE = "id_response";
+    // Parameters
+    public static final String PARAMETER_ID_FORM = "id_form";
+    public static final String PARAMETER_ID_STEP = "id_step";
+    public static final String PARAMETER_ID_ENTRY = "id_entry";
+    public static final String PARAMETER_ID_FIELD = "id_field";
+    public static final String PARAMETER_ID_RESPONSE = "id_response";
 
-	public static final String COMPOSITE_STEP_TYPE = "step";
-	public static final String COMPOSITE_GROUP_TYPE = "group";
-	public static final String COMPOSITE_QUESTION_TYPE = "question";
-	public static final String QUESTION_ENTRY_MARKER = "entry";
-	public static final String INDENT_COMPOSITE_DISPLAY = "&nbsp;&nbsp;&nbsp;";
-	public static final String PARAMETER_ID_COMPOSITE_PARENT = "id_parent";
-	public static final String PARAMETER_BUTTON_TYPE_ENTRY = "view_createQuestion";
-	public static final String PARAMETER_ID_DISPLAY_PARENT = "id_parent";
-	public static final String PARAMETER_ID_ENTRY_TYPE = "id_type";
-	public static final String PARAMETER_ID_GROUP = "id_group";
-	public static final String PARAMETER_ID_QUESTION = "id_question";
-	public static final String PARAMETER_ID_DISPLAY = "id_display";
-	public static final String PARAMETER_ID_PARENT = "id_parent";
-	public static final String PARAMETER_STEP_VALIDATED = "stepValidated";
-	public static final String PARAMETER_GROUP_VALIDATED = "groupValidated";
-	public static final String PARAMETER_DISPLAY_ORDER = "displayOrder";
-	public static final String PARAMETER_ID_TRANSITION = "id_transition";
+    public static final String COMPOSITE_STEP_TYPE = "step";
+    public static final String COMPOSITE_GROUP_TYPE = "group";
+    public static final String COMPOSITE_QUESTION_TYPE = "question";
+    public static final String QUESTION_ENTRY_MARKER = "entry";
+    public static final String INDENT_COMPOSITE_DISPLAY = "&nbsp;&nbsp;&nbsp;";
+    public static final String PARAMETER_ID_COMPOSITE_PARENT = "id_parent";
+    public static final String PARAMETER_BUTTON_TYPE_ENTRY = "view_createQuestion";
+    public static final String PARAMETER_ID_DISPLAY_PARENT = "id_parent";
+    public static final String PARAMETER_ID_ENTRY_TYPE = "id_type";
+    public static final String PARAMETER_ID_GROUP = "id_group";
+    public static final String PARAMETER_ID_QUESTION = "id_question";
+    public static final String PARAMETER_ID_DISPLAY = "id_display";
+    public static final String PARAMETER_ID_PARENT = "id_parent";
+    public static final String PARAMETER_STEP_VALIDATED = "stepValidated";
+    public static final String PARAMETER_GROUP_VALIDATED = "groupValidated";
+    public static final String PARAMETER_DISPLAY_ORDER = "displayOrder";
+    public static final String PARAMETER_ID_TRANSITION = "id_transition";
 
-	public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
-	public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
-	public static final String PARAMETER_URL_FILTER_PREFIX = "filter_";
-	public static final String PARAMETER_SORT_COLUMN_POSITION = "column_position";
-	public static final String PARAMETER_SORT_ATTRIBUTE_NAME = "sorted_attribute_name";
-	public static final String PARAMETER_SORT_ASC_VALUE = "asc_sort";
+    public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
+    public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
+    public static final String PARAMETER_URL_FILTER_PREFIX = "filter_";
+    public static final String PARAMETER_SORT_COLUMN_POSITION = "column_position";
+    public static final String PARAMETER_SORT_ATTRIBUTE_NAME = "sorted_attribute_name";
+    public static final String PARAMETER_SORT_ASC_VALUE = "asc_sort";
 
-	// Jsp
-	public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
-	public static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
-	public static final String JSP_MANAGE_QUESTIONS = "jsp/admin/plugins/forms/ManageQuestions.jsp";
+    // Jsp
+    public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
+    public static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
+    public static final String JSP_MANAGE_QUESTIONS = "jsp/admin/plugins/forms/ManageQuestions.jsp";
 
-	// Properties
-	public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "entrytype.myluteceuserattribute.attributes.list";
-	public static final String CONSTANT_MYLUTECE_ATTRIBUTE_I18N_PREFIX = "forms.entrytype.myluteceuserattribute.attribute.";
+    // Properties
+    public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "entrytype.myluteceuserattribute.attributes.list";
+    public static final String CONSTANT_MYLUTECE_ATTRIBUTE_I18N_PREFIX = "forms.entrytype.myluteceuserattribute.attribute.";
 
-	// Constants
-	public static final int DEFAULT_FILTER_VALUE = NumberUtils.INTEGER_MINUS_ONE;
-	public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
-	public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
-	public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
-	// Markers
-	public static final String MARK_AVAILABLE_STEPS = "availableSteps";
-	public static final String MARK_TRANSITION_CONTROL_LIST = "listControls";
-	public static final String MARK_AVAILABLE_VALIDATORS = "availableValidators";
-	public static final String MARK_QUESTION_LIST = "listQuestion";
+    // Constants
+    public static final int DEFAULT_FILTER_VALUE = NumberUtils.INTEGER_MINUS_ONE;
+    public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
+    public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
+    public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
+    // Markers
+    public static final String MARK_AVAILABLE_STEPS = "availableSteps";
+    public static final String MARK_TRANSITION_CONTROL_LIST = "listControls";
+    public static final String MARK_AVAILABLE_VALIDATORS = "availableValidators";
+    public static final String MARK_QUESTION_LIST = "listQuestion";
 
-	/**
-	 * Default private constructor. Do not call
-	 */
-	private FormsConstants()
-	{
+    /**
+     * Default private constructor. Do not call
+     */
+    private FormsConstants( )
+    {
 
-		throw new AssertionError();
+        throw new AssertionError( );
 
-	}
+    }
 }

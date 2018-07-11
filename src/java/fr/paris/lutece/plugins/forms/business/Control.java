@@ -14,9 +14,9 @@ public class Control
     private int _nIdQuestion;
 
     private String _strValidatorName;
-    
+
     private String _strControlType;
-    
+
     /**
      * @return the _nId
      */
@@ -101,7 +101,7 @@ public class Control
     {
         this._strValidatorName = strValidatorName;
     }
-    
+
     /**
      * @return the _strControlType
      */

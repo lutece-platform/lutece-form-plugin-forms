@@ -48,13 +48,13 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
  * 
- * Validator to verify the pattern of a response 
+ * Validator to verify the pattern of a response
  *
  */
 public class PatternValidator implements IValidator
 {
-	private String _strValidatorName = StringUtils.EMPTY;
-	private String _strDisplayName = StringUtils.EMPTY;
+    private String _strValidatorName = StringUtils.EMPTY;
+    private String _strDisplayName = StringUtils.EMPTY;
     private List<String> _listAvailableEntryType = new ArrayList<String>( );
 
     /**
@@ -65,7 +65,7 @@ public class PatternValidator implements IValidator
      * @param strValidatorDisplayName
      *            The validator display name
      * @param listAvailableEntryType
-     *            The  list of available entrytype 
+     *            The list of available entrytype
      */
     public PatternValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
@@ -79,13 +79,13 @@ public class PatternValidator implements IValidator
     {
         return _strValidatorName;
     }
-    
+
     @Override
     public String getValidatorDisplayName( )
     {
         return _strDisplayName;
     }
-    
+
     @Override
     public List<String> getListAvailableEntryType( )
     {

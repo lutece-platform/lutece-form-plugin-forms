@@ -32,7 +32,6 @@
  * License 1.0
  */
 
-
 package fr.paris.lutece.plugins.forms.validation;
 
 import java.util.ArrayList;
@@ -47,7 +46,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
  * 
- * Validator to verify the exact value of a response 
+ * Validator to verify the exact value of a response
  *
  */
 public class ListValueValidator implements IValidator
@@ -64,7 +63,7 @@ public class ListValueValidator implements IValidator
      * @param strValidatorDisplayName
      *            The validator display name
      * @param listAvailableEntryType
-     *            The  list of available entrytype 
+     *            The list of available entrytype
      */
     public ListValueValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
@@ -78,13 +77,13 @@ public class ListValueValidator implements IValidator
     {
         return _strValidatorName;
     }
-    
+
     @Override
     public String getValidatorDisplayName( )
     {
         return _strDisplayName;
     }
-    
+
     @Override
     public List<String> getListAvailableEntryType( )
     {

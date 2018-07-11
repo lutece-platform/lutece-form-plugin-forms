@@ -132,7 +132,7 @@ public final class EntryServiceManager
 
         return null;
     }
-    
+
     /**
      * Get the right IValidator
      * 
@@ -142,13 +142,13 @@ public final class EntryServiceManager
      */
     public ReferenceList getAvailableValidator( EntryType entryType )
     {
-    	ReferenceList availableValidator = new ReferenceList( );
-    	
+        ReferenceList availableValidator = new ReferenceList( );
+
         for ( IValidator validator : _listValidator )
         {
             if ( validator.getListAvailableEntryType( ).contains( entryType.getBeanName( ) ) )
             {
-            	availableValidator.addItem( validator.getValidatorBeanName( ), validator.getValidatorDisplayName( ) );
+                availableValidator.addItem( validator.getValidatorBeanName( ), validator.getValidatorDisplayName( ) );
             }
         }
 
