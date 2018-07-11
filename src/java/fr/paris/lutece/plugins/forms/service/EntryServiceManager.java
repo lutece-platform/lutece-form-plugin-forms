@@ -35,10 +35,12 @@ package fr.paris.lutece.plugins.forms.service;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.IEntryDisplayService;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.util.ReferenceList;
 
 /**
  * This is the manager class for different entry type
@@ -49,6 +51,8 @@ public final class EntryServiceManager
 
     private List<IEntryDataService> _listEntryDataService;
 
+    private List<IValidator> _listValidator;
+
     /**
      * Constructor for EntryServiceManager class
      */
@@ -56,6 +60,7 @@ public final class EntryServiceManager
     {
         _listEntryDisplayService = SpringContextService.getBeansOfType( IEntryDisplayService.class );
         _listEntryDataService = SpringContextService.getBeansOfType( IEntryDataService.class );
+        _listValidator = SpringContextService.getBeansOfType( IValidator.class );
     }
 
     /**
@@ -106,6 +111,48 @@ public final class EntryServiceManager
         }
 
         return null;
+    }
+
+    /**
+     * Get the right IValidator
+     * 
+     * @param strValidatorName
+     *            The validator name
+     * @return the IValidator
+     */
+    public IValidator getValidator( String strValidatorName )
+    {
+        for ( IValidator validator : _listValidator )
+        {
+            if ( strValidatorName.equals( validator.getValidatorBeanName( ) ) )
+            {
+                return validator;
+            }
+        }
+
+        return null;
+    }
+    
+    /**
+     * Get the right IValidator
+     * 
+     * @param entryType
+     *            The entrytype
+     * @return the IValidator
+     */
+    public ReferenceList getAvailableValidator( EntryType entryType )
+    {
+    	ReferenceList availableValidator = new ReferenceList( );
+    	
+        for ( IValidator validator : _listValidator )
+        {
+            if ( validator.getListAvailableEntryType( ).contains( entryType.getBeanName( ) ) )
+            {
+            	availableValidator.addItem( validator.getValidatorBeanName( ), validator.getValidatorDisplayName( ) );
+            }
+        }
+
+        return availableValidator;
     }
 
     /**
