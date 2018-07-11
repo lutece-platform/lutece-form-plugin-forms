@@ -15,7 +15,31 @@
     <bean id="forms.formListDAO" class="fr.paris.lutece.plugins.forms.business.form.list.FormListDAO" />
     <bean id="forms.formQuestionResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormQuestionResponseDAO" />
     <bean id="forms.formResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseDAO" />
+    <bean id="forms.controlDAO" class="fr.paris.lutece.plugins.forms.business.ControlDAO" />
     
+    <!-- Validator -->
+    <bean id="forms.patternValidator" class="fr.paris.lutece.plugins.forms.validation.PatternValidator">
+    	<constructor-arg type="java.lang.String" index="0" value="forms.patternValidator" />
+    	<constructor-arg type="java.lang.String" index="1" value="forms.validator.pattern.name" />
+		<constructor-arg index="2" >
+			<list>
+				<value type="java.lang.String">forms.entryTypeText</value>
+				<value type="java.lang.String">forms.entryTypeTextArea</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="forms.listValueValidator" class="fr.paris.lutece.plugins.forms.validation.ListValueValidator">
+		<constructor-arg  type="java.lang.String" index="0" value="forms.listValueValidator" />
+		<constructor-arg type="java.lang.String" index="1" value="forms.validator.listValue.name" />
+		<constructor-arg index="2" >
+			<list>
+				<value type="java.lang.String">forms.entryTypeCheckBox</value>
+				<value type="java.lang.String">forms.entryTypeRadioButton</value>
+				<value type="java.lang.String">forms.entryTypeSelect</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	
     <!-- EntryType -->
     <bean id="forms.entryTypeCheckBox" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox" />
 	<bean id="forms.entryTypeComment" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment" />

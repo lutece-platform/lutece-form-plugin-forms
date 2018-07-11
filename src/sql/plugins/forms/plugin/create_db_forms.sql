@@ -109,6 +109,21 @@ display_depth int default '0',
 PRIMARY KEY (id_display)
 );
 
+--
+-- Structure for table forms_control
+--
+
+DROP TABLE IF EXISTS forms_control;
+CREATE TABLE forms_control (
+id_control int AUTO_INCREMENT,
+value varchar(255) NOT NULL,
+error_message varchar(255) default '',
+id_question int NOT NULL,
+validator_name varchar(255) NOT NULL,
+control_type varchar(255) NOT NULL,
+PRIMARY KEY (id_control)
+);
+
 DROP TABLE IF EXISTS forms_question_entry_response;
 CREATE TABLE forms_question_entry_response (
   id_question_entry_response int AUTO_INCREMENT,

@@ -59,11 +59,14 @@ public final class FormsConstants
     public static final String MARK_FIELD = "field";
     public static final String MARK_LIST_STEPS = "list_steps";
     public static final String MARK_LIST_GROUPS = "list_groups";
+    public static final String MARK_LIST_QUESTIONS = "list_questions";
+    public static final String MARK_LIST_VALIDATORS = "list_validators";
     public static final String MARK_LIST_AVAILABLE_POSITIONS = "list_positions";
     public static final String MARK_DISPLAY = "display";
     public static final String MARK_DISPLAY_TITLE = "display_title";
     public static final String MARK_DISPLAY_ORDER = "displayOrder";
     public static final String MARK_TRANSITION = "transition";
+    public static final String MARK_CONTROL = "control";
 
     // Parameters
     public static final String PARAMETER_ID_FORM = "id_form";
@@ -114,6 +117,8 @@ public final class FormsConstants
     // Markers
     public static final String MARK_AVAILABLE_STEPS = "availableSteps";
     public static final String MARK_TRANSITION_CONTROL_LIST = "listControls";
+    public static final String MARK_AVAILABLE_VALIDATORS = "availableValidators";
+    public static final String MARK_QUESTION_LIST = "listQuestion";
 
     /**
      * Default private constructor. Do not call
