@@ -116,8 +116,6 @@ public class FormTransitionJspBean extends AbstractJspBean
     private static final String VIEW_CREATE_TRANSITION = "createTransition";
     private static final String VIEW_MODIFY_TRANSITION = "modifyTransition";
     private static final String VIEW_CONFIRM_REMOVE_TRANSITION = "confirmRemoveTransition";
-    
-    
 
     private static final String VIEW_CREATE_CONTROL = "createControl";
     private static final String VIEW_MODIFY_CONTROL = "modifyControl";
@@ -150,7 +148,7 @@ public class FormTransitionJspBean extends AbstractJspBean
     private static final String ERROR_TRANSITION_REMOVED = "forms.error.deleteTransition";
     private static final String ERROR_TRANSITION_EMPTY = "forms.error.emptyTransition";
     private static final String ERROR_CONTROL_REMOVED = "forms.error.deleteControl";
-    
+
     private static final String ACTION_DO_MOVE_PRIORITY_UP = "moveUpPriority";
 
     private static final String ACTION_DO_MOVE_PRIORITY_DOWN = "moveDownPriority";
@@ -175,9 +173,9 @@ public class FormTransitionJspBean extends AbstractJspBean
     @View( value = VIEW_MANAGE_TRANSITIONS, defaultView = true )
     public String getManageTransition( HttpServletRequest request )
     {
-    	_transition = null;
-    	_control = null;
-    	
+        _transition = null;
+        _control = null;
+
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nIdStep == FormsConstants.DEFAULT_ID_VALUE )
@@ -320,7 +318,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
 
         Map<String, Object> model = getModel( );
-        
+
         if ( _step != null )
         {
             buildTransitionModel( _step, _transition, model );
@@ -332,10 +330,10 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         if ( _transition != null )
         {
-        	int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
-        	_control.setIdQuestion( nIdQuestion );
-        	
-        	buildControlModel( nIdQuestion, model );
+            int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
+            _control.setIdQuestion( nIdQuestion );
+
+            buildControlModel( nIdQuestion, model );
         }
         else
         {
@@ -345,7 +343,7 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         return getPage( PROPERTY_PAGE_TITLE_CREATE_CONTROL, TEMPLATE_CREATE_CONTROL, model );
     }
-    
+
     /**
      * Returns the form to modify a control
      *
@@ -376,22 +374,22 @@ public class FormTransitionJspBean extends AbstractJspBean
         {
             redirectToViewManageForm( request );
         }
-        
+
         if ( _transition != null )
         {
-        	if( _control == null || _control.getId( ) != _transition.getIdControl( ) )
-        	{
-        		_control = ControlHome.findByPrimaryKey( _transition.getIdControl( ) );
-        	}
-        	
-        	int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
-        	
-        	if( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE )
-        	{
-        		_control.setIdQuestion( nIdQuestion );
-        	}
-        	
-        	buildControlModel( _control.getIdQuestion( ), model );
+            if ( _control == null || _control.getId( ) != _transition.getIdControl( ) )
+            {
+                _control = ControlHome.findByPrimaryKey( _transition.getIdControl( ) );
+            }
+
+            int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
+
+            if ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE )
+            {
+                _control.setIdQuestion( nIdQuestion );
+            }
+
+            buildControlModel( _control.getIdQuestion( ), model );
         }
         else
         {
@@ -429,7 +427,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_STEP, _step );
 
     }
-    
+
     /**
      * Build the model for Create and Modify Control views
      * 
@@ -438,7 +436,7 @@ public class FormTransitionJspBean extends AbstractJspBean
      * @param model
      *            the Model
      */
-    private void buildControlModel ( int nIdQuestion, Map<String, Object> model )
+    private void buildControlModel( int nIdQuestion, Map<String, Object> model )
     {
         if ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE )
         {
@@ -452,7 +450,7 @@ public class FormTransitionJspBean extends AbstractJspBean
                 model.put( FormsConstants.MARK_AVAILABLE_VALIDATORS, availableValidator );
             }
         }
-        
+
         model.put( FormsConstants.MARK_CONTROL, _control );
         model.put( FormsConstants.MARK_QUESTION_LIST, QuestionHome.getQuestionsReferenceListByForm( _step.getIdForm( ) ) );
     }
@@ -467,16 +465,16 @@ public class FormTransitionJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_TRANSITION )
     public String doCreateTransition( HttpServletRequest request )
     {
-    	if( !createTransition ( request ) )
+        if ( !createTransition( request ) )
         {
-        	return redirect( request, VIEW_CREATE_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
+            return redirect( request, VIEW_CREATE_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
         }
-    	
-    	addInfo( INFO_TRANSITION_CREATED, getLocale( ) );
+
+        addInfo( INFO_TRANSITION_CREATED, getLocale( ) );
 
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
     }
-    
+
     /**
      * Process the data capture of a new transition and redirect to control creation
      *
@@ -487,16 +485,16 @@ public class FormTransitionJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_TRANSITION_AND_CONTROL )
     public String doCreateTransitionAndControl( HttpServletRequest request )
     {
-        if( !createTransition ( request ) )
+        if ( !createTransition( request ) )
         {
-        	return redirect( request, VIEW_CREATE_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
+            return redirect( request, VIEW_CREATE_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
         }
-        
+
         addInfo( INFO_TRANSITION_CREATED, getLocale( ) );
-        
+
         return redirect( request, VIEW_CREATE_CONTROL, FormsConstants.PARAMETER_ID_TRANSITION, _transition.getId( ) );
     }
-    
+
     /**
      * Process the data capture of a new transition
      *
@@ -506,7 +504,7 @@ public class FormTransitionJspBean extends AbstractJspBean
      */
     private boolean createTransition( HttpServletRequest request )
     {
-    	if ( _transition == null )
+        if ( _transition == null )
         {
             _transition = new Transition( );
         }
@@ -518,7 +516,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
 
         TransitionHome.create( _transition );
-        
+
         return true;
     }
 
@@ -546,7 +544,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
 
         ControlHome.create( _control );
-        
+
         _transition.setIdControl( _control.getId( ) );
         TransitionHome.update( _transition );
 
@@ -584,7 +582,7 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
     }
-    
+
     /**
      * Process the data modification of a control
      *
@@ -655,18 +653,18 @@ public class FormTransitionJspBean extends AbstractJspBean
         {
             return redirectToViewManageForm( request );
         }
-        
+
         int nIdTransitionToRemove = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_TRANSITION ), FormsConstants.DEFAULT_ID_VALUE );
-        
-        if( _transition == null || _transition.getId( ) != nIdTransitionToRemove )
+
+        if ( _transition == null || _transition.getId( ) != nIdTransitionToRemove )
         {
-        	_transition = TransitionHome.findByPrimaryKey( nIdTransitionToRemove );
+            _transition = TransitionHome.findByPrimaryKey( nIdTransitionToRemove );
         }
-        
+
         if ( _transition != null )
         {
             ControlHome.remove( _transition.getIdControl( ) );
-            
+
             _transition.setIdControl( FormsConstants.DEFAULT_ID_VALUE );
             TransitionHome.update( _transition );
 
@@ -680,7 +678,7 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
     }
-    
+
     /**
      * Manages the removal form of a Transition whose identifier is in the http request
      *
