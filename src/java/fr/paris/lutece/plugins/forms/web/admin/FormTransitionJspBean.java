@@ -665,7 +665,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         {
             ControlHome.remove( _transition.getIdControl( ) );
 
-            _transition.setIdControl( FormsConstants.DEFAULT_ID_VALUE );
+            _transition.setIdControl( 0 );
             TransitionHome.update( _transition );
 
             addInfo( INFO_CONTROL_REMOVED, getLocale( ) );
