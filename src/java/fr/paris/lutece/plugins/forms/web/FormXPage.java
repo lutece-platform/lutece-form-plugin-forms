@@ -237,7 +237,7 @@ public class FormXPage extends MVCApplication
             Map<String, String> model = new HashMap<String, String>( );
 
             model.put( ID_FORM, Integer.toString( _currentStep.getIdForm( ) ) );
-            
+
             if ( WorkflowService.getInstance( ).isAvailable( ) && ( form.getIdWorkflow( ) != FormsConstants.DEFAULT_ID_VALUE ) )
             {
                 WorkflowService.getInstance( ).getState( _formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), form.getId( ) );
