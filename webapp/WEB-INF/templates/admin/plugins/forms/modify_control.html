@@ -1,0 +1,44 @@
+<@box>
+    <@boxHeader title='#i18n{forms.modify_control.title} ${transition.nextStepTitle}' />
+    <@boxBody>
+    <@tform class="form-horizontal" method="post" name="modify_control" action="jsp/admin/plugins/forms/ManageTransitions.jsp">
+         <@messages errors=errors />
+         <input type="hidden" id="id_step" name="id_step" value="${step.id}"/>
+         <input type="hidden" id="id_transition" name="id_transition" value="${transition.id}"/>
+         
+         	<@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}' mandatory=true>
+                 <@inputGroup>
+                     <@select name='id_question' items=listQuestion default_value='${control.idQuestion!}' />
+                     <@inputGroupItem>
+	                     <@button type='submit' name="view_modifyControl" value="validateQuestion" showTitle=false buttonIcon='check'/>
+	                 </@inputGroupItem>
+                 </@inputGroup>
+             </@formGroup>
+             
+             <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true>
+                 <@inputGroup>
+                     <@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
+                 </@inputGroup>
+             </@formGroup>
+
+             <@formGroup labelKey='#i18n{forms.modify_control.labelValue}' helpKey='#i18n{forms.modify_control.labelValue.help}' >
+                <@input type='text' name='value' value='${control.value!}' />
+             </@formGroup>
+             
+             <@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' >
+                <@input type='text' name='errorMessage' value='${control.errorMessage!}' />
+             </@formGroup>
+             
+            <div class="form-group">
+                <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
+                    <button  class="btn btn-primary" name="action_modifyControl" type="submit">
+                        <i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
+                    </button>
+                    <button class="btn btn-default" name="view_manageTransition" type="submit" formnovalidate >
+                        <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
+                    </button>
+                </div>
+            </div>
+    </@tform>
+    </@boxBody>
+</@box>

@@ -138,7 +138,6 @@ public final class ControlDAO implements IControlDAO
         daoUtil.setInt( nIndex++, control.getIdQuestion( ) );
         daoUtil.setString( nIndex++, control.getValidatorName( ) );
         daoUtil.setString( nIndex++, control.getControlType( ) );
-        control.setControlType( daoUtil.getString( nIndex++ ) );
 
         daoUtil.setInt( nIndex, control.getId( ) );
 

@@ -124,4 +124,15 @@ public interface IQuestionDAO
      * @return The referenceList which contains the data of all the question objects
      */
     ReferenceList selectQuestionsReferenceList( Plugin plugin );
+
+    /**
+     * Load the data of all the question objects for the given form and returns them as a referenceList
+     * 
+     * @param nIdForm
+     *            the form id
+     * @param plugin
+     *            the Plugin
+     * @return The referenceList which contains the data of all the question objects
+     */
+    ReferenceList selectQuestionsReferenceListByForm( int nIdForm, Plugin plugin );
 }

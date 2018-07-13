@@ -42,6 +42,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -55,6 +57,7 @@ import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -230,12 +233,15 @@ public class FormXPage extends MVCApplication
         {
             _formService.saveForm( _formResponse );
 
+            Map<String, String> model = new HashMap<String, String>( );
+
+            model.put( ID_FORM, Integer.toString( _currentStep.getIdForm( ) ) );
+
             _formResponse = null;
             _currentStep = null;
             _stepDisplayTree = null;
 
-            // TODO: redirect to recap or configured url
-
+            return redirect( request, VIEW_STEP, model );
         }
         else
         {
@@ -243,19 +249,34 @@ public class FormXPage extends MVCApplication
 
             for ( Transition transition : listTransition )
             {
-                if ( transition.getIdControl( ) == 0 )
+                if ( transition.getIdControl( ) == FormsConstants.DEFAULT_ID_VALUE )
                 {
                     _currentStep = StepHome.findByPrimaryKey( transition.getNextStep( ) );
-                    break;
+                    return getStepView( request );
                 }
+                else
+                {
+                    for ( FormQuestionResponse questionResponse : _formResponse.getListResponses( ) )
+                    {
+                        Control transitionControl = ControlHome.findByPrimaryKey( transition.getIdControl( ) );
+                        if ( transitionControl.getIdQuestion( ) == questionResponse.getIdQuestion( ) )
+                        {
+                            IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
 
-                SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
-                /*
-                 * else { TODO }
-                 */
+                            if ( validator != null && validator.validate( questionResponse, transitionControl ) )
+                            {
+                                _currentStep = StepHome.findByPrimaryKey( transition.getNextStep( ) );
+                                return getStepView( request );
+                            }
+                        }
+                    }
+                }
             }
+
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+
+            return getStepView( request );
         }
-        return redirect( request, VIEW_STEP, FormsConstants.PARAMETER_ID_FORM, nIdForm );
     }
 
 }

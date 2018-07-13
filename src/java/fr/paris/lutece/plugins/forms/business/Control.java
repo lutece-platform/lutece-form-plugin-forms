@@ -1,5 +1,9 @@
 package fr.paris.lutece.plugins.forms.business;
 
+import javax.validation.constraints.Min;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 /**
  * This is the business class for the object Control
  */
@@ -11,10 +15,13 @@ public class Control
 
     private String _strErrorMessage;
 
+    @Min( value = 0, message = "#i18n{forms.validation.control.Question.notEmpty}" )
     private int _nIdQuestion;
 
+    @NotEmpty( message = "#i18n{forms.validation.control.ValidatorName.notEmpty}" )
     private String _strValidatorName;
 
+    @NotEmpty( message = "#i18n{forms.validation.control.ControlType.notEmpty}" )
     private String _strControlType;
 
     /**
