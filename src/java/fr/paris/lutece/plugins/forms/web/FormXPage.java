@@ -63,6 +63,7 @@ import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
@@ -236,6 +237,11 @@ public class FormXPage extends MVCApplication
             Map<String, String> model = new HashMap<String, String>( );
 
             model.put( ID_FORM, Integer.toString( _currentStep.getIdForm( ) ) );
+            
+            if ( WorkflowService.getInstance( ).isAvailable( ) && ( form.getIdWorkflow( ) != FormsConstants.DEFAULT_ID_VALUE ) )
+            {
+                WorkflowService.getInstance( ).getState( _formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), form.getId( ) );
+            }
 
             _formResponse = null;
             _currentStep = null;
