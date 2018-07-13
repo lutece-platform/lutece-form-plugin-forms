@@ -50,48 +50,50 @@ import fr.paris.lutece.plugins.forms.business.Step;
 public class FormResponseManager
 {
     private List<Step> _listValidatedStep;
-    
+
     private Map<Integer, List<FormQuestionResponse>> _mapStepFormResponses;
-    
+
     /**
      * Constructor
      */
     public FormResponseManager( )
     {
-    	_listValidatedStep = new ArrayList<Step>( );
-    	_mapStepFormResponses = new HashMap<Integer, List<FormQuestionResponse>>( );
+        _listValidatedStep = new ArrayList<Step>( );
+        _mapStepFormResponses = new HashMap<Integer, List<FormQuestionResponse>>( );
     }
 
     /**
-	 * @return the _listValidatedStep
-	 */
-	public List<Step> getListValidatedStep( ) 
-	{
-		return _listValidatedStep;
-	}
+     * @return the _listValidatedStep
+     */
+    public List<Step> getListValidatedStep( )
+    {
+        return _listValidatedStep;
+    }
 
-	/**
-	 * @param listValidatedStep the listValidatedStep to set
-	 */
-	public void setListValidatedStep( List<Step> listValidatedStep )
-	{
-		this._listValidatedStep = listValidatedStep;
-	}
+    /**
+     * @param listValidatedStep
+     *            the listValidatedStep to set
+     */
+    public void setListValidatedStep( List<Step> listValidatedStep )
+    {
+        this._listValidatedStep = listValidatedStep;
+    }
 
-	/**
-	 * @return the _mapStepFormResponses
-	 */
-	public Map<Integer, List<FormQuestionResponse>> getMapStepFormResponses( )
-	{
-		return _mapStepFormResponses;
-	}
+    /**
+     * @return the _mapStepFormResponses
+     */
+    public Map<Integer, List<FormQuestionResponse>> getMapStepFormResponses( )
+    {
+        return _mapStepFormResponses;
+    }
 
-	/**
-	 * @param mapStepFormResponses the mapStepFormResponses to set
-	 */
-	public void setMapStepFormResponses ( Map<Integer, List<FormQuestionResponse>> mapStepFormResponses ) 
-	{
-		this._mapStepFormResponses = mapStepFormResponses;
-	}
+    /**
+     * @param mapStepFormResponses
+     *            the mapStepFormResponses to set
+     */
+    public void setMapStepFormResponses( Map<Integer, List<FormQuestionResponse>> mapStepFormResponses )
+    {
+        this._mapStepFormResponses = mapStepFormResponses;
+    }
 
 }

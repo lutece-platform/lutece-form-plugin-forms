@@ -151,21 +151,21 @@ public class FormXPage extends MVCApplication
 
             if ( form.isActive( ) )
             {
-            	if ( _formResponseManager == null )
+                if ( _formResponseManager == null )
                 {
-                	_formResponseManager = new FormResponseManager( );
+                    _formResponseManager = new FormResponseManager( );
                 }
-            	
+
                 if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
                 {
                     _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
-                    _formResponseManager.getListValidatedStep().add( _currentStep );
+                    _formResponseManager.getListValidatedStep( ).add( _currentStep );
                 }
-                
+
                 populateStepResponses( );
-                
+
                 boolean bIsForEdition = Boolean.TRUE;
-                
+
                 model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), bIsForEdition ) );
                 model.put( FormsConstants.MARK_FORM_BREADCRUMB, _formResponseManager.getListValidatedStep( ) );
                 model.put( FormsConstants.MARK_STEP, _currentStep );
@@ -178,7 +178,7 @@ public class FormXPage extends MVCApplication
 
         return getXPage( TEMPLATE_VIEW_STEP, request.getLocale( ), model );
     }
-    
+
     /**
      * 
      * @param request
@@ -191,39 +191,38 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_PREVIOUS_STEP )
     public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException
     {
-    	int nIndexLastStep =  _formResponseManager.getListValidatedStep( ).size( ) - 1 ;
-    	
-    	_formResponseManager.getListValidatedStep().remove( nIndexLastStep );
-    	
-    	_currentStep =  _formResponseManager.getListValidatedStep( ).get( nIndexLastStep - 1 );
-    	    	
-    	_stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
-    	
-    	populateStepResponses( );
-    	
+        int nIndexLastStep = _formResponseManager.getListValidatedStep( ).size( ) - 1;
+
+        _formResponseManager.getListValidatedStep( ).remove( nIndexLastStep );
+
+        _currentStep = _formResponseManager.getListValidatedStep( ).get( nIndexLastStep - 1 );
+
+        _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
+
+        populateStepResponses( );
+
         return getStepView( request );
     }
-    
-    
+
     /**
      * Populate the step responses
      */
     private void populateStepResponses( )
     {
-    	Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
-    	
-    	List<FormQuestionResponse> listStepResponses = _formResponseManager.getMapStepFormResponses( ).get( _currentStep.getId( ) );
-    	
-    	if( listStepResponses != null )
-    	{
-    		for( FormQuestionResponse formQuestionResponse : listStepResponses )
-        	{
-        		Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
-        		mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
-        	}
-    	}
-    	
-    	_stepDisplayTree.setResponses( mapStepResponses );
+        Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
+
+        List<FormQuestionResponse> listStepResponses = _formResponseManager.getMapStepFormResponses( ).get( _currentStep.getId( ) );
+
+        if ( listStepResponses != null )
+        {
+            for ( FormQuestionResponse formQuestionResponse : listStepResponses )
+            {
+                Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
+                mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
+            }
+        }
+
+        _stepDisplayTree.setResponses( mapStepResponses );
     }
 
     /**
@@ -246,7 +245,7 @@ public class FormXPage extends MVCApplication
         }
 
         List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
-        
+
         int nIdForm = _currentStep.getIdForm( );
 
         boolean bValidStep = true;
@@ -273,7 +272,7 @@ public class FormXPage extends MVCApplication
                 mapStepResponses.put( question.getId( ), questionResponseInstance.getEntryResponse( ) );
             }
         }
-        
+
         _formResponseManager.getMapStepFormResponses( ).put( _currentStep.getId( ), listResponsesTemp );
 
         if ( !bValidStep )
@@ -282,15 +281,15 @@ public class FormXPage extends MVCApplication
         }
 
         if ( _currentStep.isFinal( ) )
-        {        	
-        	FormResponse formResponse = new FormResponse( );
-        	formResponse.setFormId( _currentStep.getIdForm( ) );
-        	
-        	for( Step step : _formResponseManager.getListValidatedStep( ) )
-        	{
-        		formResponse.getListResponses( ).addAll( _formResponseManager.getMapStepFormResponses().get( step.getId( ) ) );
-        	}
-        	
+        {
+            FormResponse formResponse = new FormResponse( );
+            formResponse.setFormId( _currentStep.getIdForm( ) );
+
+            for ( Step step : _formResponseManager.getListValidatedStep( ) )
+            {
+                formResponse.getListResponses( ).addAll( _formResponseManager.getMapStepFormResponses( ).get( step.getId( ) ) );
+            }
+
             _formService.saveForm( formResponse );
 
             Map<String, String> model = new HashMap<String, String>( );
@@ -321,10 +320,10 @@ public class FormXPage extends MVCApplication
                 }
                 else
                 {
-                	Control transitionControl = ControlHome.findByPrimaryKey( transition.getIdControl( ) );
-                	
-                	Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
-                	
+                    Control transitionControl = ControlHome.findByPrimaryKey( transition.getIdControl( ) );
+
+                    Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
+
                     for ( FormQuestionResponse questionResponse : _formResponseManager.getMapStepFormResponses( ).get( targetQuestion.getIdStep( ) ) )
                     {
                         if ( transitionControl.getIdQuestion( ) == questionResponse.getIdQuestion( ) )
