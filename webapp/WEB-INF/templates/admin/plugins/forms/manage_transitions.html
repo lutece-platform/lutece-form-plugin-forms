@@ -29,7 +29,14 @@
                             <#list transition_list as transition>
                                 <tr>
                                     <td class="col-sm-6">${transition.nextStepTitle!''}</td>
-                                    <td class="col-sm-1">${transition.idControl}</td>
+                                    <td class="col-sm-1">
+                                    	<#if transition.idControl gt 0>
+                                            <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyControl&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_controls.action.modifyControl}' showTitle=false buttonIcon='cog' color='btn-primary' size='sm' />
+                                            <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveControl&id_transition=${transition.id}' title='#i18n{forms.manage_controls.action.removeControl}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' />
+                                        <#else>
+                                            <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createControl&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.create_control.title}' showTitle=false buttonIcon='plus' color='btn-primary' size='sm' />
+                                        </#if>
+                                    </td>
                                     <td class="col-sm-1">${transition.priority}</td>
                                     <td class="col-sm-4">
                                         <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.modifyTransition}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />

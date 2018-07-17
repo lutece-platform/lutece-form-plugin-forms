@@ -154,4 +154,17 @@ public final class QuestionHome
     {
         return _dao.selectQuestionsReferenceList( _plugin );
     }
+
+    /**
+     * Load the data of all the question objects for the given form and returns them as a referenceList
+     * 
+     * @param nIdForm
+     *            The form primary key
+     * @return the referenceList which contains the data of all the question objects
+     */
+    public static ReferenceList getQuestionsReferenceListByForm( int nIdForm )
+    {
+        return _dao.selectQuestionsReferenceListByForm( nIdForm, _plugin );
+    }
+
 }
