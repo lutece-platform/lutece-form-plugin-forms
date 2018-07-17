@@ -141,7 +141,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
     private static final String MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE = "forms.multiviewForms.pageTitle";
 
-
     // Variables
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
     private final transient IFormsMultiviewAuthorizationService _formsMultiviewAuthorizationService = SpringContextService
@@ -200,7 +199,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     /**
      * Build the model of the page which display the details of a FormResponse
      * 
-     * @param request the HttpServletRequest
+     * @param request
+     *            the HttpServletRequest
      * @param formResponse
      *            The FormResponse on which the model must be built
      * @return the model associate for the details of the given FormResponse
@@ -222,32 +222,29 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         List<String> listStepDisplayTree = buildFormStepDisplayTreeList( listStep, formResponse.getId( ) );
         mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, listStepDisplayTree );
 
-
         int nIdWorkflow = form.getIdWorkflow( );
         WorkflowService workflowService = WorkflowService.getInstance( );
         boolean bHistoryEnabled = workflowService.isAvailable( ) && ( nIdWorkflow != FormsConstants.DEFAULT_ID_VALUE );
 
-
         if ( bHistoryEnabled )
         {
             Map<String, Object> resourceActions = new HashMap<String, Object>( );
-            
-            Collection<fr.paris.lutece.plugins.workflowcore.business.action.Action> lListActions = workflowService.getActions( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), getUser( ) );
-            State state = workflowService.getState( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ),
-                    formResponse.getFormId( ) );
+
+            Collection<fr.paris.lutece.plugins.workflowcore.business.action.Action> lListActions = workflowService.getActions( formResponse.getId( ),
+                    FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), getUser( ) );
+            State state = workflowService.getState( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), formResponse.getFormId( ) );
             resourceActions.put( MARK_WORKFLOW_STATE, state );
             resourceActions.put( MARK_WORKFLOW_ACTION_LIST, lListActions );
 
-        mapFormResponseDetailsModel.put( MARK_RESOURCE_ACTIONS, resourceActions );
-        mapFormResponseDetailsModel.put( MARK_HISTORY_WORKFLOW_ENABLED, bHistoryEnabled );
-        mapFormResponseDetailsModel.put( MARK_RESOURCE_HISTORY, workflowService.getDisplayDocumentHistory( formResponse.getId( ), FormResponse.RESOURCE_TYPE,
-                form.getIdWorkflow( ), request, getLocale( ), mapFormResponseDetailsModel, TEMPLATE_FORM_RESPONSE_HISTORY ) );
+            mapFormResponseDetailsModel.put( MARK_RESOURCE_ACTIONS, resourceActions );
+            mapFormResponseDetailsModel.put( MARK_HISTORY_WORKFLOW_ENABLED, bHistoryEnabled );
+            mapFormResponseDetailsModel.put( MARK_RESOURCE_HISTORY, workflowService.getDisplayDocumentHistory( formResponse.getId( ),
+                    FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), request, getLocale( ), mapFormResponseDetailsModel, TEMPLATE_FORM_RESPONSE_HISTORY ) );
         }
-        
+
         return mapFormResponseDetailsModel;
     }
 
-    
     /**
      * Return the list of all DisplayTree for the given list of Step
      * 
@@ -435,8 +432,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             return redirectView( request, VIEW_FORM_RESPONSE_DETAILS );
         }
 
-        String strHtmlTasksForm = WorkflowService.getInstance( )
-                .getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request, getLocale( ) );
+        String strHtmlTasksForm = WorkflowService.getInstance( ).getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request,
+                getLocale( ) );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_ID_FORM_RESPONSE, nIdFormResponse );
@@ -479,7 +476,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             {
                 boolean bIsAutomaticAction = Boolean.FALSE;
 
-                workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale, bIsAutomaticAction );
+                workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale,
+                        bIsAutomaticAction );
 
                 // Update Form response modification date
                 FormResponseHome.update( formResponse );
@@ -497,7 +495,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         // Redirect to the correct view
         return manageRedirection( request );
     }
-
 
     /**
      * Process workflow action

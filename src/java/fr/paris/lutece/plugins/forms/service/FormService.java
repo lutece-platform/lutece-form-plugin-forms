@@ -39,7 +39,6 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -153,7 +152,7 @@ public final class FormService
      * 
      * @param nIdForm
      *            The identifier of the form to be deleted
-     * @param adminUser 
+     * @param adminUser
      */
     public void removeForm( int nIdForm, AdminUser adminUser )
     {
@@ -166,25 +165,27 @@ public final class FormService
             stepService.removeStep( step.getId( ) );
         }
 
-        
         FormResponseHome.removeByForm( nIdForm );
-        
+
         Form form = FormHome.findByPrimaryKey( nIdForm );
         int nIdWorkflow = form.getIdWorkflow( );
-        
+
         FormHome.remove( nIdForm );
-        
+
         removeFormWorkflowResources( nIdWorkflow, nIdForm, adminUser );
     }
 
-    
-    /** Remove the workflow resources linked a given workflow, form and user
+    /**
+     * Remove the workflow resources linked a given workflow, form and user
      * 
-     * @param nIdWorkflow The workflow identifier
+     * @param nIdWorkflow
+     *            The workflow identifier
      * 
-     * @param nIdForm The form identifier
+     * @param nIdForm
+     *            The form identifier
      * 
-     * @param adminUser the user
+     * @param adminUser
+     *            the user
      */
     private void removeFormWorkflowResources( int nIdWorkflow, int nIdForm, AdminUser adminUser )
     {
@@ -192,7 +193,8 @@ public final class FormService
         if ( workflowService.isAvailable( ) )
         {
             List<Integer> listIdWorkflowState = getListIdWorkflowState( nIdWorkflow, adminUser );
-            List<Integer> listIdResources = workflowService.getAuthorizedResourceList( FormResponse.RESOURCE_TYPE, nIdWorkflow, listIdWorkflowState, nIdForm, adminUser );
+            List<Integer> listIdResources = workflowService.getAuthorizedResourceList( FormResponse.RESOURCE_TYPE, nIdWorkflow, listIdWorkflowState, nIdForm,
+                    adminUser );
 
             workflowService.doRemoveWorkFlowResourceByListId( listIdResources, FormResponse.RESOURCE_TYPE, nIdWorkflow );
         }
@@ -202,26 +204,27 @@ public final class FormService
     /**
      * Retrieve the list of state identifiers of a given workflow
      * 
-     * @param nIdWorkflow the workflow identifier
+     * @param nIdWorkflow
+     *            the workflow identifier
      * 
-     * @param adminUser the user
+     * @param adminUser
+     *            the user
      * 
      * @return the list of workflow state identifiers
      */
     private List<Integer> getListIdWorkflowState( int nIdWorkflow, AdminUser adminUser )
     {
         List<Integer> listIdState = new ArrayList<Integer>( );
-            Collection<State> collState = WorkflowService.getInstance( ).getAllStateByWorkflow( nIdWorkflow, adminUser );
+        Collection<State> collState = WorkflowService.getInstance( ).getAllStateByWorkflow( nIdWorkflow, adminUser );
 
-            for ( State state : collState )
-            {
-                listIdState.add( state.getId( ) );
-            }
+        for ( State state : collState )
+        {
+            listIdState.add( state.getId( ) );
+        }
 
         return listIdState;
     }
 
-    
     /**
      * Check if a user is authorized to access a File from its given identifier
      * 
