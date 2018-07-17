@@ -1,18 +1,35 @@
 <#include "includes/include_view_form_response_header.html">
 
+<#--
+-- Build the HTML code to display the actions
+-- @param resource_actions the actions to display
+-- @return the HTML code of the actions
+-->
+<#macro display_actions resource_actions >
+<#if resource_actions.workflow_action_list?exists>
+    <#list resource_actions.workflow_action_list as action>
+        <a class="btn btn-lg btn-primary btn-block bg-gru-dark" href="jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}">
+            ${action.name}
+        </a>
+    </#list>
+</#if>
+
+</#macro>
+
 <div class="row">
-	<div class="col-xs-12 col-sm-8">
-		<div class="box box-primary box-forms-borderless">
-			<div id="form-response-details" class="box-body">
-			    <#if list_multiview_step_display?has_content>
-			        <#list list_multiview_step_display as multiview_step_display>
-			            ${multiview_step_display}
-			        </#list>
-				</#if>
-		    </div>
-	    </div>
-	</div>
-	
+    <div class="col-xs-12 col-sm-8">
+        <div class="box box-primary box-forms-borderless">
+            <div id="form-response-details" class="box-body">
+                <#if list_multiview_step_display?has_content>
+                    <#list list_multiview_step_display as multiview_step_display>
+                        ${multiview_step_display}
+                    </#list>
+                </#if>
+            </div>
+        </div>
+        <div>${resource_history}</div>
+    </div>
+    
     <div class="col-xs-12 col-sm-4">
         <div class="box box-primary box-forms-borderless">
             <div class="box-header with-border">
@@ -25,6 +42,15 @@
                     <p class="data">${form_response.creation}</p>
                     <p class="title">#i18n{forms.multiviewForms.responseDetails.response.dateModification}</p>
                     <p class="data">${form_response.update}</p>
+                    <#if resource_actions.workflow_state?exists>
+                    <p class="title">#i18n{forms.multiviewForms.responseDetails.response.state}</p> 
+                    <p class="data">${resource_actions.workflow_state.name}</p>
+                    </#if>
+                </div>
+            </div>
+            <div class="box-body">
+                <div class="">
+                    <@display_actions resource_actions/>
                 </div>
             </div>
         </div>

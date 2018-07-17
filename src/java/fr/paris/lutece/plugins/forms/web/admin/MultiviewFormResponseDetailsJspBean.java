@@ -33,7 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -43,6 +47,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,10 +74,15 @@ import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.form.response.view.FormResponseViewModelProcessorFactory;
 import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewModelProcessor;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.util.ReferenceItem;
@@ -96,23 +106,41 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
     // Templates
     private static final String TEMPLATE_VIEW_FORM_RESPONSE = "admin/plugins/forms/multiview/view_form_response.html";
+    private static final String TEMPLATE_FORM_RESPONSE_HISTORY = "admin/plugins/forms/multiview/form_response_history.html";
+    private static final String TEMPLATE_TASK_FORM = "admin/plugins/forms/multiview/task_form_workflow.html";
 
     // Views
     private static final String VIEW_FORM_RESPONSE_DETAILS = "view_form_response_details";
+    private static final String VIEW_TASKS_FORM = "view_tasksForm";
+
+    // Actions
+    private static final String ACTION_PROCESS_ACTION = "doProcessAction";
+    private static final String ACTION_SAVE_TASK_FORM = "doSaveTaskForm";
+    private static final String ACTION_CANCEL_TASK_FORM = "doCancelTaskForm";
 
     // Parameters
     private static final String PARAMETER_ID_FORM_RESPONSE = "id_form_response";
     private static final String PARAMETER_BACK_FROM_ACTION = "back_form_action";
+    private static final String PARAMETER_ID_ACTION = "id_action";
 
     // Marks
     private static final String MARK_LIST_FILTER_VALUES = "list_filter_values";
     private static final String MARK_FORM = "form";
     private static final String MARK_FORM_RESPONSE = "form_response";
+    private static final String MARK_ID_FORM_RESPONSE = "id_form_response";
+    private static final String MARK_ID_ACTION = "id_action";
+    private static final String MARK_TASK_FORM = "tasks_form";
     private static final String MARK_LIST_MULTIVIEW_STEP_DISPLAY = "list_multiview_step_display";
+    private static final String MARK_RESOURCE_ACTIONS = "resource_actions";
+    private static final String MARK_RESOURCE_HISTORY = "resource_history";
+    private static final String MARK_HISTORY_WORKFLOW_ENABLED = "history_workflow";
+    private static final String MARK_WORKFLOW_STATE = "workflow_state";
+    private static final String MARK_WORKFLOW_ACTION_LIST = "workflow_action_list";
 
     // Messages
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
     private static final String MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE = "forms.multiviewForms.pageTitle";
+
 
     // Variables
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
@@ -129,7 +157,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      *             if the user is not authorize to access the details of the form response
      */
     @View( value = VIEW_FORM_RESPONSE_DETAILS, defaultView = true )
-    public String getRecordDetails( HttpServletRequest request ) throws AccessDeniedException
+    public String getResponseDetails( HttpServletRequest request ) throws AccessDeniedException
     {
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
@@ -144,7 +172,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         }
 
         // Build the base model for the page of the details of a FormResponse
-        Map<String, Object> model = buildFormResponseDetailsModel( formResponse );
+        Map<String, Object> model = buildFormResponseDetailsModel( request, formResponse );
 
         // Build the model of all ModelProcessors
         FormResponseViewModelProcessorFactory formResponseViewModelProcessorFactory = new FormResponseViewModelProcessorFactory( );
@@ -172,11 +200,12 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     /**
      * Build the model of the page which display the details of a FormResponse
      * 
+     * @param request the HttpServletRequest
      * @param formResponse
      *            The FormResponse on which the model must be built
      * @return the model associate for the details of the given FormResponse
      */
-    private Map<String, Object> buildFormResponseDetailsModel( FormResponse formResponse )
+    private Map<String, Object> buildFormResponseDetailsModel( HttpServletRequest request, FormResponse formResponse )
     {
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
 
@@ -193,9 +222,32 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         List<String> listStepDisplayTree = buildFormStepDisplayTreeList( listStep, formResponse.getId( ) );
         mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, listStepDisplayTree );
 
+
+        int nIdWorkflow = form.getIdWorkflow( );
+        WorkflowService workflowService = WorkflowService.getInstance( );
+        boolean bHistoryEnabled = workflowService.isAvailable( ) && ( nIdWorkflow != FormsConstants.DEFAULT_ID_VALUE );
+
+
+        if ( bHistoryEnabled )
+        {
+            Map<String, Object> resourceActions = new HashMap<String, Object>( );
+            
+            Collection<fr.paris.lutece.plugins.workflowcore.business.action.Action> lListActions = workflowService.getActions( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), getUser( ) );
+            State state = workflowService.getState( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ),
+                    formResponse.getFormId( ) );
+            resourceActions.put( MARK_WORKFLOW_STATE, state );
+            resourceActions.put( MARK_WORKFLOW_ACTION_LIST, lListActions );
+
+        mapFormResponseDetailsModel.put( MARK_RESOURCE_ACTIONS, resourceActions );
+        mapFormResponseDetailsModel.put( MARK_HISTORY_WORKFLOW_ENABLED, bHistoryEnabled );
+        mapFormResponseDetailsModel.put( MARK_RESOURCE_HISTORY, workflowService.getDisplayDocumentHistory( formResponse.getId( ), FormResponse.RESOURCE_TYPE,
+                form.getIdWorkflow( ), request, getLocale( ), mapFormResponseDetailsModel, TEMPLATE_FORM_RESPONSE_HISTORY ) );
+        }
+        
         return mapFormResponseDetailsModel;
     }
 
+    
     /**
      * Return the list of all DisplayTree for the given list of Step
      * 
@@ -366,6 +418,146 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     }
 
     /**
+     * Returns the task form associate to the workflow action
+     *
+     * @param request
+     *            The Http request
+     * @return The HTML form the task form associate to the workflow action
+     */
+    @View( value = VIEW_TASKS_FORM )
+    public String getTaskForm( HttpServletRequest request )
+    {
+        int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
+        int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
+
+        if ( nIdAction == NumberUtils.INTEGER_MINUS_ONE || nIdFormResponse == NumberUtils.INTEGER_MINUS_ONE )
+        {
+            return redirectView( request, VIEW_FORM_RESPONSE_DETAILS );
+        }
+
+        String strHtmlTasksForm = WorkflowService.getInstance( )
+                .getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request, getLocale( ) );
+
+        Map<String, Object> model = getModel( );
+        model.put( MARK_ID_FORM_RESPONSE, nIdFormResponse );
+        model.put( MARK_ID_ACTION, nIdAction );
+        model.put( MARK_TASK_FORM, strHtmlTasksForm );
+
+        return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_TASK_FORM, model );
+    }
+
+    /**
+     * Process workflow action on a form Response
+     * 
+     * @param request
+     *            the HttpServletRequest
+     * @return the task form if exists, or the FormResponse detail view otherwise.
+     */
+    @Action( value = ACTION_PROCESS_ACTION )
+    public String doProcessWorkflowAction( HttpServletRequest request )
+    {
+        // Get parameters from request
+        int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
+        int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
+
+        Locale locale = getLocale( );
+        WorkflowService workflowService = WorkflowService.getInstance( );
+        if ( workflowService.isDisplayTasksForm( nIdAction, locale ) )
+        {
+            Map<String, String> model = new LinkedHashMap<>( );
+            model.put( PARAMETER_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
+            model.put( PARAMETER_ID_ACTION, String.valueOf( nIdAction ) );
+
+            return redirect( request, VIEW_TASKS_FORM, model );
+        }
+
+        FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
+
+        try
+        {
+            if ( formResponse != null )
+            {
+                boolean bIsAutomaticAction = Boolean.FALSE;
+
+                workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale, bIsAutomaticAction );
+
+                // Update Form response modification date
+                FormResponseHome.update( formResponse );
+            }
+            else
+            {
+                AppLogService.error( "Error processing action for form response '" + nIdFormResponse + "' - cause : the response doesn't exist " );
+            }
+        }
+        catch( AppException e )
+        {
+            AppLogService.error( "Error processing action for id response '" + nIdFormResponse + "' - cause : " + e.getMessage( ), e );
+        }
+
+        // Redirect to the correct view
+        return manageRedirection( request );
+    }
+
+
+    /**
+     * Process workflow action
+     *
+     * @param request
+     *            The Http request
+     * @return The Jsp URL of the process result
+     */
+    @Action( value = ACTION_SAVE_TASK_FORM )
+    public String doSaveTaskForm( HttpServletRequest request )
+    {
+        int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
+        int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
+
+        FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
+        int nIdForm = ( formResponse != null ) ? formResponse.getFormId( ) : NumberUtils.INTEGER_MINUS_ONE;
+
+        WorkflowService workflowService = WorkflowService.getInstance( );
+        if ( workflowService.canProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, false ) )
+        {
+            try
+            {
+                String strError = workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, getLocale( ) );
+                if ( strError != null )
+                {
+                    addError( strError );
+                    return redirect( request, VIEW_TASKS_FORM, PARAMETER_ID_FORM_RESPONSE, nIdFormResponse, PARAMETER_ID_ACTION, nIdAction );
+                }
+            }
+            catch( AppException e )
+            {
+                AppLogService.error( "Error processing action for record " + nIdFormResponse, e );
+            }
+        }
+        else
+        {
+            return redirectView( request, VIEW_TASKS_FORM );
+        }
+
+        return manageRedirection( request );
+    }
+
+    /**
+     * Cancel an action of the workflow
+     * 
+     * @param request
+     *            The HttpServletRequest
+     * @return the Jsp URL to return
+     */
+    @Action( value = ACTION_CANCEL_TASK_FORM )
+    public String doCancelTaskForm( HttpServletRequest request )
+    {
+        Map<String, String> mapParameters = new LinkedHashMap<>( );
+        mapParameters.put( PARAMETER_ID_FORM_RESPONSE, request.getParameter( PARAMETER_ID_FORM_RESPONSE ) );
+        mapParameters.put( PARAMETER_BACK_FROM_ACTION, Boolean.TRUE.toString( ) );
+
+        return redirect( request, VIEW_FORM_RESPONSE_DETAILS, mapParameters );
+    }
+
+    /**
      * Return the default view base url for the MultiviewFormResponseDetailsJspBean
      * 
      * @return the default view base url for the MultiviewFormResponseDetailsJspBean
@@ -377,4 +569,119 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
         return urlRecordDetailsBase.getUrl( );
     }
+
+    /**
+     * Redirect to the appropriate view
+     * 
+     * @param request
+     *            The HttpServletRequest to retrieve data from
+     * @return redirect to the appropriate view
+     */
+    private String manageRedirection( HttpServletRequest request )
+    {
+        String strWorkflowActionRedirection = request.getParameter( FormsConstants.PARAMETER_WORKFLOW_ACTION_REDIRECTION );
+        if ( StringUtils.isNotBlank( strWorkflowActionRedirection ) )
+        {
+            MultiviewFormWorkflowRedirectionEnum workflowActionRedirectionEnum = MultiviewFormWorkflowRedirectionEnum
+                    .getEnumNameByValue( strWorkflowActionRedirection );
+            switch( workflowActionRedirectionEnum )
+            {
+                case LIST:
+                    return redirectToResponseList( request );
+                case DETAILS:
+                    return redirectToResponseDetailView( request );
+                default:
+                    return defaultRedirection( request );
+            }
+        }
+        else
+        {
+            return defaultRedirection( request );
+        }
+    }
+
+    /**
+     * Redirect to the page of the list of all responses
+     * 
+     * @param request
+     *            The HttpServletRequest to retrieve data from
+     * @return redirect to the page with the list of all records
+     */
+    private String redirectToResponseList( HttpServletRequest request )
+    {
+        return redirect( request, buildRedirecUrlWithFilterValues( ) );
+    }
+
+    /**
+     * Redirect to the page of a record
+     * 
+     * @param request
+     *            The HttpServletRequest to retrieve data from
+     * @return redirect to the page of the record
+     */
+    private String redirectToResponseDetailView( HttpServletRequest request )
+    {
+        return defaultRedirection( request );
+    }
+
+    /**
+     * Return to the default view which is the response detail page
+     * 
+     * @param request
+     *            The HttpServletRequest to retrieve data from
+     * @return redirect to the default view which is the page of the record
+     */
+    private String defaultRedirection( HttpServletRequest request )
+    {
+
+        int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
+
+        if ( nIdFormResponse != NumberUtils.INTEGER_MINUS_ONE )
+        {
+
+            Map<String, String> mapParameters = new LinkedHashMap<>( );
+            mapParameters.put( PARAMETER_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
+            mapParameters.put( PARAMETER_BACK_FROM_ACTION, Boolean.TRUE.toString( ) );
+
+            return redirect( request, VIEW_FORM_RESPONSE_DETAILS, mapParameters );
+        }
+        else
+        {
+            AppLogService.error( "The given id form response is not valid !" );
+
+            return redirect( request, buildRedirecUrlWithFilterValues( ) );
+        }
+    }
+
+    /**
+     * Build the url with the values of the filter selected on the list view
+     * 
+     * @return the url with the values of the filter selected on the list view
+     */
+    private String buildRedirecUrlWithFilterValues( )
+    {
+        UrlItem urlRedirectWithFilterValues = new UrlItem( MultiviewFormsJspBean.getMultiviewBaseViewUrl( ) );
+
+        if ( !MapUtils.isEmpty( _mapFilterValues ) )
+        {
+            for ( Entry<String, String> entryFilterNameValue : _mapFilterValues.entrySet( ) )
+            {
+                String strFilterName = entryFilterNameValue.getKey( );
+                String strFilterValue = entryFilterNameValue.getValue( );
+                try
+                {
+                    strFilterValue = URLEncoder.encode( strFilterValue, StandardCharsets.UTF_8.name( ) );
+                }
+                catch( UnsupportedEncodingException exception )
+                {
+                    AppLogService.debug( "Failed to encode url parameter value !" );
+                }
+
+                urlRedirectWithFilterValues.addParameter( strFilterName, strFilterValue );
+            }
+        }
+
+        return urlRedirectWithFilterValues.getUrl( );
+    }
+
 }

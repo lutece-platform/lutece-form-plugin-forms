@@ -1,0 +1,43 @@
+<#if resource_actions?has_content && history_information_list?has_content>
+  <div id="multi-directory-history-panel">
+    <div class="panel">
+      <#assign defaultUserFrontId=5>
+      <#list history_information_list as history_information>
+        <p>
+          <strong class="text-gra">${history_information.resource_history.creationDate!'Date missing'}</strong> &nbsp;
+          <strong>${history_information.resource_history.action.description}</strong>
+        </p>
+        <ul class="timeline">
+          <li>
+            <#if history_information.admin_user_history?exists>
+              <#if adminAvatar>
+                  <img class="fa direct-chat-img" src="servlet/plugins/adminavatar/avatar?id_user=${history_information.admin_user_history.userId}" alt="Avatar" title="Avatar">
+              <#else>
+                <i class="fa fa-user bg-gru-cat2"></i>
+              </#if>
+            <#else>
+              <i class="fa fa-user-times bg-gru-cat2"></i>
+            </#if>
+            <div class="timeline-item">
+              <h4 class="timeline-header">
+                <#if history_information.admin_user_history?exists>
+                      <em>&nbsp; ${history_information.admin_user_history.firstName} ${history_information.admin_user_history.lastName}</em>
+                <#else>
+                  &nbsp;#i18n{forms.multiviewForms.view_record_history.admin_user_undefined}
+                </#if>
+              </h4>
+              <div class="timeline-body">
+                <#list history_information.task_information_list as task_information>
+                  ${task_information}<br />
+                </#list>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </#list>
+    </div>
+  </div>
+
+<#else>
+  <div class="alert alert-error">#i18n{forms.multiviewForms.view_record_history.history_empty}</div>
+</#if>

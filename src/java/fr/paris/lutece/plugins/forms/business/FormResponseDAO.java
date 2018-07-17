@@ -54,7 +54,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_question = ?, iteration_number = ? WHERE id = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ? WHERE id_response = ?";
     private static final String SQL_QUERY_SELECTALL = "SELECT id, id_question, iteration_number FROM forms_response";
 
     /**
@@ -145,7 +145,24 @@ public final class FormResponseDAO implements IFormResponseDAO
     @Override
     public void store( FormResponse formResponse, Plugin plugin )
     {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
 
+        try
+        {
+            int nIndex = 1;
+            daoUtil.setInt( nIndex++, formResponse.getFormId( ) );
+            daoUtil.setString( nIndex++, formResponse.getGuid( ) );
+
+            Timestamp timestampCurrentTime = new Timestamp( System.currentTimeMillis( ) );
+            daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
+            daoUtil.setInt( nIndex++, formResponse.getId( ) );
+
+            daoUtil.executeUpdate( );
+        }
+        finally
+        {
+            daoUtil.close( );
+        }
     }
 
     /**

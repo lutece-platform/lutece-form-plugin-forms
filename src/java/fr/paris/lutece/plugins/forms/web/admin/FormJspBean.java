@@ -358,7 +358,7 @@ public class FormJspBean extends AbstractJspBean
         }
 
         FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
-        formService.removeForm( nId );
+        formService.removeForm( nId, getUser( ) );
 
         addInfo( INFO_FORM_REMOVED, getLocale( ) );
 
