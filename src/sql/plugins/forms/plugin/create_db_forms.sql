@@ -13,6 +13,7 @@ update_date timestamp,
 availability_start_date date default NULL,
 availability_end_date date default NULL,
 workgroup varchar(255),
+id_workflow INT DEFAULT NULL,
 PRIMARY KEY (id_form)
 );
 
@@ -38,9 +39,9 @@ PRIMARY KEY (id_step)
 DROP TABLE IF EXISTS forms_transition;
 CREATE TABLE forms_transition (
 id_transition int AUTO_INCREMENT,
-from_step int default '0' NOT NULL,
-next_step int default '0' NOT NULL,
-id_control int default '0',
+from_step int NOT NULL,
+next_step int NOT NULL,
+id_control int default NULL,
 priority int default '0',
 PRIMARY KEY (id_transition)
 );
@@ -115,7 +116,7 @@ PRIMARY KEY (id_display)
 DROP TABLE IF EXISTS forms_control;
 CREATE TABLE forms_control (
 id_control int AUTO_INCREMENT,
-value varchar(255) NOT NULL,
+value varchar(255),
 error_message varchar(255) default '',
 id_question int NOT NULL,
 id_display int default '0' NOT NULL,

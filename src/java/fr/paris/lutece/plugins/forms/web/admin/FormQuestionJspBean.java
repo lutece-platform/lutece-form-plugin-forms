@@ -90,8 +90,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
 /**
- * This class provides the user interface to manage Form features ( manage,
- * create, modify, remove )
+ * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
 
 // TODO : Move get MoveComposite() and doMoveComposite( ) to a another dedicated

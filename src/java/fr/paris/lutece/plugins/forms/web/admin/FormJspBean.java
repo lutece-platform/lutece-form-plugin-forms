@@ -52,11 +52,13 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
+import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
@@ -65,6 +67,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
@@ -97,6 +101,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_LOCALE = "locale";
     private static final String MARK_FORM = "form";
     private static final String MARK_PERMISSION_CREATE_FORMS = "permission_create_forms";
+    private static final String MARK_WORKFLOW_REF_LIST = "workflow_list";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -209,6 +214,14 @@ public class FormJspBean extends AbstractJspBean
         _form = ( _form != null ) ? _form : new Form( );
 
         Map<String, Object> model = getModel( );
+
+        if ( WorkflowService.getInstance( ).isAvailable( ) )
+        {
+            AdminUser adminUser = getUser( );
+            ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( adminUser, getLocale( ) );
+            model.put( MARK_WORKFLOW_REF_LIST, referenceList );
+        }
+
         model.put( MARK_FORM, _form );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
 
@@ -345,7 +358,7 @@ public class FormJspBean extends AbstractJspBean
         }
 
         FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
-        formService.removeForm( nId );
+        formService.removeForm( nId, getUser( ) );
 
         addInfo( INFO_FORM_REMOVED, getLocale( ) );
 
@@ -362,15 +375,10 @@ public class FormJspBean extends AbstractJspBean
     @View( VIEW_MODIFY_FORM )
     public String getModifyForm( HttpServletRequest request )
     {
-        int nId = -1;
-        try
-        {
-            nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
-        }
-        catch( NumberFormatException ne )
-        {
-            AppLogService.error( ne );
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
@@ -378,9 +386,17 @@ public class FormJspBean extends AbstractJspBean
 
         if ( formToBeModified != null )
         {
+            AdminUser adminUser = getUser( );
+
             Map<String, Object> model = getModel( );
             model.put( MARK_FORM, formToBeModified );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
+
+            if ( WorkflowService.getInstance( ).isAvailable( ) )
+            {
+                ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( adminUser, getLocale( ) );
+                model.put( MARK_WORKFLOW_REF_LIST, referenceList );
+            }
 
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );
         }

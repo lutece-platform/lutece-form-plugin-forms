@@ -88,6 +88,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
 
     private List<FormAction> _listActions;
 
+    private int _nIdWorkflow;
+
     /**
      * Returns the Id
      * 
@@ -315,6 +317,27 @@ public class Form implements AdminWorkgroupResource, RBACResource
         }
 
         return bActive;
+    }
+
+    /**
+     * Getter for id_workflow
+     * 
+     * @return the _nIdWorkflow
+     */
+    public int getIdWorkflow( )
+    {
+        return _nIdWorkflow;
+    }
+
+    /**
+     * setter for id_workflow
+     * 
+     * @param nIdWorkflow
+     *            the Id Workflow to set
+     */
+    public void setIdWorkflow( int nIdWorkflow )
+    {
+        _nIdWorkflow = nIdWorkflow;
     }
 
 }

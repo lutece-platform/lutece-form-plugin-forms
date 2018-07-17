@@ -388,4 +388,14 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         return listFormResponseItemToDisplay;
     }
+
+    /**
+     * Return the base url of the controller for the view which display the list of reponses
+     * 
+     * @return the base url of the controller for the view which display the list of reponses
+     */
+    protected static String getMultiviewBaseViewUrl( )
+    {
+        return JSP_FORMS_MULTIVIEW + "?view=" + VIEW_MULTIVIEW_FORMS;
+    }
 }

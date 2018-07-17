@@ -69,6 +69,7 @@ public final class FormsConstants
     public static final String MARK_DISPLAY_ORDER = "displayOrder";
     public static final String MARK_TRANSITION = "transition";
     public static final String MARK_CONTROL = "control";
+    public static final String MARK_FORM_BREADCRUMB = "formBreadcrumb";
 
     // Parameters
     public static final String PARAMETER_ID_FORM = "id_form";
@@ -99,6 +100,7 @@ public final class FormsConstants
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
+    public static final String PARAMETER_WORKFLOW_ACTION_REDIRECTION = "workflow_action_redirection";
     public static final String PARAMETER_URL_FILTER_PREFIX = "filter_";
     public static final String PARAMETER_SORT_COLUMN_POSITION = "column_position";
     public static final String PARAMETER_SORT_ATTRIBUTE_NAME = "sorted_attribute_name";

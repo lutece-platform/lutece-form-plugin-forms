@@ -31,55 +31,69 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service.entrytype;
 
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeGeolocation;
+package fr.paris.lutece.plugins.forms.web;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.Step;
 
 /**
- * The Class EntryTypeGeolocation.
+ * 
+ * Class for breadcrumb management and responses history
+ *
  */
-public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation
+public class FormResponseManager
 {
-    /** The Constant CONSTANT_ID_ADDRESS. */
-    private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_geolocation.html";
-    private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_geolocation.html";
-    private static final String TEMPLATE_ENTRY_READ_ONLY = "admin/plugins/forms/entries/template_read_only_entry_type_geolocation.html";
-    private static final String TEMPLATE_HTML_CODE = "skin/plugins/forms/entries/html_code_entry_type_geolocation.html";
+    private List<Step> _listValidatedStep;
+
+    private Map<Integer, List<FormQuestionResponse>> _mapStepFormResponses;
 
     /**
-     * {@inheritDoc}
+     * Constructor
      */
-    @Override
-    public String getTemplateCreate( Entry entry, boolean bDisplayFront )
+    public FormResponseManager( )
     {
-        return TEMPLATE_CREATE;
+        _listValidatedStep = new ArrayList<Step>( );
+        _mapStepFormResponses = new HashMap<Integer, List<FormQuestionResponse>>( );
     }
 
     /**
-     * {@inheritDoc}
+     * @return the _listValidatedStep
      */
-    @Override
-    public String getTemplateModify( Entry entry, boolean bDisplayFront )
+    public List<Step> getListValidatedStep( )
     {
-        return TEMPLATE_MODIFY;
+        return _listValidatedStep;
     }
 
     /**
-     * {@inheritDoc}
+     * @param listValidatedStep
+     *            the listValidatedStep to set
      */
-    @Override
-    public String getTemplateHtmlForm( Entry entry, boolean bDisplayFront )
+    public void setListValidatedStep( List<Step> listValidatedStep )
     {
-        return TEMPLATE_HTML_CODE;
+        this._listValidatedStep = listValidatedStep;
     }
 
     /**
-     * {@inheritDoc}
+     * @return the _mapStepFormResponses
      */
-    @Override
-    public String getTemplateEntryReadOnly( )
+    public Map<Integer, List<FormQuestionResponse>> getMapStepFormResponses( )
     {
-        return TEMPLATE_ENTRY_READ_ONLY;
+        return _mapStepFormResponses;
     }
+
+    /**
+     * @param mapStepFormResponses
+     *            the mapStepFormResponses to set
+     */
+    public void setMapStepFormResponses( Map<Integer, List<FormQuestionResponse>> mapStepFormResponses )
+    {
+        this._mapStepFormResponses = mapStepFormResponses;
+    }
+
 }

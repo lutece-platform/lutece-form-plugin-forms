@@ -1,0 +1,26 @@
+<div class="row">
+  <div class="col-sm-12">
+    <div class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">#i18n{forms.tasks_form_workflow.title}</h3>
+        </div>
+        <div class="box-body">
+                        <form class="form-horizontal" action="jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp" method="post" enctype="multipart/form-data" >
+                            <input name="id_action" value="${id_action}" type="hidden">
+                            <input name="id_form_response" value="${id_form_response}" type="hidden">
+                            ${tasks_form}
+                        <div class="form-group">
+                            <div class="col-xs-12 col-sm-offset-3 col-sm-9">
+                                        <button class="btn btn-primary" type="submit" name="action_doSaveTaskForm">
+                                                <i class="fa fa-check"></i> #i18n{workflow.tasks_form_test_workflow.button_save}
+                                        </button>
+                                        <button class="btn btn-default" type="submit" name="action_doCancelTaskForm" formnovalidate >
+                                                <i class="fa fa-remove"></i>&nbsp;#i18n{workflow.tasks_form_test_workflow.button_cancel}
+                                        </button>
+                                    </div>
+                            </div>
+                    </form>
+                </div>
+        </div>
+    </div>
+ </div>
