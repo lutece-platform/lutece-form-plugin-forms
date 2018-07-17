@@ -48,6 +48,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
+import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
@@ -58,6 +61,7 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -106,7 +110,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 	private static final String TEMPLATE_CREATE_GROUP = "/admin/plugins/forms/create_group.html";
 	private static final String TEMPLATE_MODIFY_GROUP = "/admin/plugins/forms/modify_group.html";
 	private static final String TEMPLATE_MOVE_COMPOSITE = "/admin/plugins/forms/move_composite.html";
-	private static final String TEMPLATE_MANAGE_CONDITION = "/admin/plugins/forms/manage_condition.html";
+	private static final String TEMPLATE_MANAGE_CONDITION = "/admin/plugins/forms/modify_condition.html";
 
 	// Properties
 	private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.create_Question.titleComment";
@@ -136,6 +140,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 	private static final String ACTION_MODIFY_GROUP = "modifyGroup";
 	private static final String ACTION_MOVE_COMPOSITE = "moveComposite";
 	private static final String ACTION_REMOVE_COMPOSITE = "removeComposite";
+	private static final String ACTION_MODIFY_CONDITION = "modifyCondition";
 
 	// Markers
 	private static final String MARK_WEBAPP_URL = "webapp_url";
@@ -150,6 +155,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 	// Parameters
 	private static final String PARAMETER_VALUE_VALIDATE_STEP = "validateStep";
 	private static final String PARAMETER_VALUE_VALIDATE_GROUP = "validateGroup";
+	private static final String PARAMETER_VALUE_OLD_QUESTION = "old_question";
 
 	// Error messages
 	private static final String ERROR_QUESTION_NOT_CREATED = "forms.error.question.notCreated";
@@ -158,6 +164,8 @@ public class FormQuestionJspBean extends AbstractJspBean
 	private static final String ERROR_QUESTION_NOT_UPDATED = "forms.error.question.notUpdated";
 	private static final String ERROR_STEP_OR_GROUP_NOT_VALIDATED = "forms.error.moveComposite.stepOrGroup.notvalidated";
 	private static final String ERROR_OCCURED_MOVING_COMPOSITE = "forms.error.moveComposite.notCompleted";
+	private static final String ERROR_MODIFY_CONDITION_QUESTION = "forms.error.modifyCondition.question";
+	private static final String ERROR_MODIFY_CONDITION_VALIDATOR = "forms.error.modifyCondition.validator";
 
 	// Infos messages
 	private static final String INFO_QUESTION_CREATED = "forms.info.question.created";
@@ -1211,35 +1219,53 @@ public class FormQuestionJspBean extends AbstractJspBean
 	@View( value = VIEW_MODIFY_CONDITION )
 	public String getModifyCondition( HttpServletRequest request )
 	{
-		int nIdStep = INTEGER_MINUS_ONE;
 
-		String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
+		// Get the display we are working on
+		int nIdDisplay = INTEGER_MINUS_ONE;
 
-		if ( ( strIdStep != null ) && !strIdStep.equals( EMPTY_STRING ) )
+		nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ),
+				INTEGER_MINUS_ONE );
+
+		if ( nIdDisplay == INTEGER_MINUS_ONE )
 		{
-			nIdStep = Integer.parseInt( strIdStep );
-
-			if ( ( _step == null ) || ( _step.getId() != nIdStep ) )
-			{
-				_step = StepHome.findByPrimaryKey( nIdStep );
-			}
+			return redirectView( request, VIEW_MANAGE_QUESTIONS );
 		}
 
-		String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
-		int nIdQuestion = INTEGER_MINUS_ONE;
+		FormDisplay display = FormDisplayHome.findByPrimaryKey( nIdDisplay );
 
-		if ( ( strIdQuestion != null ) && !strIdQuestion.equals( EMPTY_STRING ) )
+		// Retrieve the attached control
+		Control control = ControlHome.getConditionalDisplayControlByDisplay( nIdDisplay );
+		if ( control == null )
 		{
-			nIdQuestion = Integer.parseInt( strIdQuestion );
+			control = new Control();
 		}
 
-		_question = QuestionHome.findByPrimaryKey( nIdQuestion );
+		// The selected question should be the input parameter
+		int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ),
+				INTEGER_MINUS_ONE );
 
-		_entry = EntryHome.findByPrimaryKey( _question.getIdEntry() );
+		// If not specified, it should be the question stored in the Control
+		if ( nIdQuestion == INTEGER_MINUS_ONE )
+		{
+			nIdQuestion = control.getIdQuestion();
+		}
+
+		ReferenceList validatorList = new ReferenceList();
+
+		// If still nothing, no question is loaded, therefore no validators
+
+		Question selectedQuestion = QuestionHome.findByPrimaryKey( nIdQuestion );
+
+		// Get all available validators
+		if ( selectedQuestion != null )
+		{
+			validatorList = EntryServiceManager.getInstance()
+					.getAvailableValidator( selectedQuestion.getEntry().getEntryType() );
+		}
 
 		// Get all questions from current step
 		// TODO Only get relevant question (not child questions)
-		List<Question> availableQuestions = QuestionHome.getQuestionsListByStep( _step.getId() );
+		List<Question> availableQuestions = QuestionHome.getQuestionsListByStep( display.getStepId() );
 
 		// Sort questions in alphabetical order
 		availableQuestions.sort( new Comparator<Question>()
@@ -1253,30 +1279,96 @@ public class FormQuestionJspBean extends AbstractJspBean
 		// Put all the questions in a ReferenceList containing with their id and
 		// label
 		ReferenceList questionsRefList = new ReferenceList();
-		questionsRefList.addItem( EMPTY_STRING,
+		questionsRefList.addItem( NumberUtils.INTEGER_ZERO,
 				I18nService.getLocalizedString( CONDITIONAL_DISPLAY_NONE, getLocale() ) );
 		for ( Question question : availableQuestions )
 		{
 			questionsRefList.addItem( question.getId(), question.getTitle() );
 		}
 
-		// Get all available validators TODO
-		// Put them in a Reference List
-		// Current values
-		ReferenceList validatorList = new ReferenceList();
-		// validatorList.addItem( 1, "Égalité" );
-		// validatorList.addItem( 2, "Difference" );
-		// validatorList.addItem( 3, "Expression réguliere" );
-
+		// Fill the model
 		Map<String, Object> model = getModel();
-		model.put( FormsConstants.MARK_STEP, _step );
-		model.put( FormsConstants.MARK_FORM, _question );
+		model.put( FormsConstants.MARK_ID_STEP, display.getStepId() );
+		model.put( FormsConstants.MARK_ID_QUESTION, nIdQuestion );
+		model.put( FormsConstants.MARK_ID_DISPLAY, nIdDisplay );
 		model.put( FormsConstants.MARK_LIST_QUESTIONS, questionsRefList );
 		model.put( FormsConstants.MARK_LIST_VALIDATORS, validatorList );
-
+		model.put( FormsConstants.MARK_CONTROL, control );
 		HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONDITION, getLocale(), model );
 
 		return getAdminPage( template.getHtml() );
+	}
+
+	@Action( value = ACTION_MODIFY_CONDITION )
+	public String doModifyCondition( HttpServletRequest request )
+	{
+		int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ),
+				INTEGER_MINUS_ONE );
+
+		int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
+
+		// Possibly Existing condition
+		Control oldControl = ControlHome.getConditionalDisplayControlByDisplay( nIdDisplay );
+
+		int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ),
+				INTEGER_MINUS_ONE );
+
+		int nIdOldQuestion = NumberUtils.toInt( request.getParameter( PARAMETER_VALUE_OLD_QUESTION ),
+				INTEGER_MINUS_ONE );
+
+		String strValidatorName = request.getParameter( FormsConstants.PARAMETER_VALIDATOR_NAME );
+
+		if ( nIdQuestion <= NumberUtils.INTEGER_ZERO )
+		{
+			// No condition were selected, delete existing condition
+			if ( oldControl != null )
+			{
+				ControlHome.remove( oldControl.getId() );
+			}
+		}
+		else
+		{
+
+			if ( nIdOldQuestion > NumberUtils.INTEGER_ZERO && nIdOldQuestion != nIdQuestion )
+			{
+				// a different question was selected, and not validated
+				addError( ERROR_MODIFY_CONDITION_QUESTION, request.getLocale() );
+				return redirect( request, VIEW_MODIFY_CONDITION, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
+			}
+
+			if ( strValidatorName == null || EMPTY_STRING.equals( strValidatorName ) )
+			{
+				// No validator selected
+				addError( ERROR_MODIFY_CONDITION_VALIDATOR, request.getLocale() );
+				return redirect( request, VIEW_MODIFY_CONDITION, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
+			}
+
+			Control control = new Control();
+
+			if ( oldControl != null )
+			{
+				control.setId( oldControl.getId() );
+			}
+
+			// Assign values
+			control.setValidatorName( strValidatorName );
+			control.setIdQuestion( nIdQuestion );
+			control.setIdTargetFormDisplay( nIdDisplay );
+			control.setValue( request.getParameter( FormsConstants.PARAMETER_CONTROL_VALUE ) );
+			control.setControlType( ControlType.CONDITIONAL.getLabel() );
+
+			// Save or update Control
+			if ( control.getId() > NumberUtils.INTEGER_ZERO )
+			{
+				ControlHome.update( control );
+			}
+			else
+			{
+				ControlHome.create( control );
+			}
+
+		}
+		return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, nIdStep );
 	}
 
 }

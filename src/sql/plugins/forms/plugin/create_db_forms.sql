@@ -118,6 +118,7 @@ id_control int AUTO_INCREMENT,
 value varchar(255) NOT NULL,
 error_message varchar(255) default '',
 id_question int NOT NULL,
+id_display int default '0' NOT NULL,
 validator_name varchar(255) NOT NULL,
 control_type varchar(255) NOT NULL,
 PRIMARY KEY (id_control)

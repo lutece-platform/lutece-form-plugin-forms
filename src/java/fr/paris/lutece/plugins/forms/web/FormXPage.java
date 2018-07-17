@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -55,6 +56,7 @@ import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -154,6 +156,25 @@ public class FormXPage extends MVCApplication
                 boolean bIsForEdition = Boolean.TRUE;
                 model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), bIsForEdition ) );
 
+				// Add all the display controls for visualisation
+				List<Control> listDisplayControls = _stepDisplayTree.getListDisplayControls();
+				model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
+
+				// Add all the validators to generate their Javascript
+				List<IValidator> listDisplayValidators = new ArrayList<IValidator>();
+				for ( Control control : listDisplayControls )
+				{
+					IValidator validator = EntryServiceManager.getInstance().getValidator( control.getValidatorName() );
+					if ( validator != null )
+					{
+						listDisplayValidators.add( validator );
+					}
+				}
+				model.put( FormsConstants.MARK_LIST_VALIDATORS, listDisplayValidators );
+				model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
+				model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE,
+						FormsConstants.JS_PARAMETER_CONTROL_VALUE );
+				model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
                 model.put( FormsConstants.MARK_STEP, _currentStep );
             }
             else

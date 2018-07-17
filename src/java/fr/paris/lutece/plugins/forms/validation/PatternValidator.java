@@ -35,7 +35,10 @@
 package fr.paris.lutece.plugins.forms.validation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,8 +46,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
 
 /**
  * 
@@ -57,6 +62,7 @@ public class PatternValidator implements IValidator
     private String _strDisplayName = StringUtils.EMPTY;
     private List<String> _listAvailableEntryType = new ArrayList<String>( );
 
+	private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
     /**
      * Constructor of the PatternValidator
      * 
@@ -109,4 +115,14 @@ public class PatternValidator implements IValidator
         return false;
     }
 
+	@Override
+	public String getJavascriptValidation()
+	{
+
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
+		model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
+
+		return AppTemplateService.getTemplate( TEMPLATE_JS_FUNCTION, Locale.getDefault(), model ).getHtml();
+	}
 }

@@ -1,20 +1,28 @@
+<#assign question_selected = (id_question > 0)>
+
 <@box>
 	<@boxHeader title='#i18n{forms.manage_condition.title} ${display_title!}' />
 	<@boxBody>
 		<div class="tab-pane active">
 			<@tform method="post" name="condition_form" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
 				<@messages errors=errors />
-				<input type="hidden" id="id_display" name="id_display" value="1"/>
-				<input type="hidden" id="id_step" name="id_step" value="${step.id}"/>
+				<input type="hidden" id="id_display" name="id_display" value="${id_display}"/>
+				<input type="hidden" id="id_step" name="id_step" value="${id_step}"/>
+				<input type="hidden" id="old_question" name="old_question" value="${id_question}"/>
 
 				<@formGroup labelKey='#i18n{forms.manageCondition.question.label}' helpKey='#i18n{forms.manageCondition.question.label.help}'>
-					<@select name='id_question' items=list_questions default_value='${id_question_parent!}' />
+					<@inputGroup>
+						<@select name='id_question' items=list_questions default_value='${id_question!}' />
+						<@inputGroupItem>
+							<@button type='submit' name="view_modifyCondition" showTitle=false buttonIcon='check'/>
+						</@inputGroupItem>
+					</@inputGroup>
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.manageCondition.condition.label}' helpKey='#i18n{forms.manageCondition.condition.label.help}'>
-					<@select name='id_condition' items=list_validators default_value='${id_condition!}' />
+					<@select name='validator_name' items=list_validators default_value='${control.validatorName!}' params=question_selected?then('','disabled') />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.manageCondition.value.label}' helpKey='#i18n{forms.manageCondition.value.label.help}'>
-					<@input type='text' name='condition_value' value='${condition_value!}' />
+					<@input type='text' name='control_value' value='${control.value!}' params=question_selected?then('','disabled') />
 				</@formGroup>
                      
 				<div class="form-group">

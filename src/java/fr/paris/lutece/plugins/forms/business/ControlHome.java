@@ -33,12 +33,12 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.List;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
-
-import java.util.List;
 
 /**
  * This class provides instances management methods (create, find, ...) for Control objects
@@ -136,4 +136,17 @@ public final class ControlHome
     {
         return _dao.selectControlsReferenceList( _plugin );
     }
+
+	/**
+	 * Loads an existing control based on the display it is linked to (for
+	 * conditional display)
+	 * 
+	 * @param nIdDisplay
+	 * @return the requested Control
+	 */
+	public static Control getConditionalDisplayControlByDisplay( int nIdDisplay )
+	{
+		return _dao.selectControlByDisplay( nIdDisplay, _plugin );
+	}
+
 }

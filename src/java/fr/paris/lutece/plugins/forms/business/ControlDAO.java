@@ -34,13 +34,13 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
-import java.sql.Statement;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class provides Data Access methods for Control objects
@@ -48,11 +48,12 @@ import java.util.List;
 public final class ControlDAO implements IControlDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_control, value, error_message, id_question, validator_name, control_type FROM forms_control WHERE id_control = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, id_question, validator_name, control_type ) VALUES ( ?, ?, ?, ?, ? ) ";
+	private static final String SQL_QUERY_SELECT = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control WHERE id_control = ?";
+	private static final String SQL_QUERY_SELECT_BY_DISPLAY_ID = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control WHERE id_display = ?";
+	private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, id_question, validator_name, control_type, id_display ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_control WHERE id_control = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?, id_question = ?, validator_name = ?, control_type = ? WHERE id_control = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_control, value, error_message, id_question, validator_name, control_type FROM forms_control";
+	private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?, id_question = ?, validator_name = ?, control_type = ?, id_display = ? WHERE id_control = ?";
+	private static final String SQL_QUERY_SELECTALL = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_control FROM forms_control";
 
     /**
@@ -70,6 +71,7 @@ public final class ControlDAO implements IControlDAO
             daoUtil.setInt( nIndex++, control.getIdQuestion( ) );
             daoUtil.setString( nIndex++, control.getValidatorName( ) );
             daoUtil.setString( nIndex++, control.getControlType( ) );
+			daoUtil.setInt( nIndex++, control.getIdTargetFormDisplay() );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -105,6 +107,7 @@ public final class ControlDAO implements IControlDAO
             control.setIdQuestion( daoUtil.getInt( nIndex++ ) );
             control.setValidatorName( daoUtil.getString( nIndex++ ) );
             control.setControlType( daoUtil.getString( nIndex++ ) );
+			control.setIdTargetFormDisplay( daoUtil.getInt( nIndex++ ) );
         }
 
         daoUtil.close( );
@@ -138,7 +141,7 @@ public final class ControlDAO implements IControlDAO
         daoUtil.setInt( nIndex++, control.getIdQuestion( ) );
         daoUtil.setString( nIndex++, control.getValidatorName( ) );
         daoUtil.setString( nIndex++, control.getControlType( ) );
-        control.setControlType( daoUtil.getString( nIndex++ ) );
+		daoUtil.setInt( nIndex++, control.getIdTargetFormDisplay() );
 
         daoUtil.setInt( nIndex, control.getId( ) );
 
@@ -167,6 +170,7 @@ public final class ControlDAO implements IControlDAO
             control.setIdQuestion( daoUtil.getInt( nIndex++ ) );
             control.setValidatorName( daoUtil.getString( nIndex++ ) );
             control.setControlType( daoUtil.getString( nIndex++ ) );
+			control.setIdTargetFormDisplay( daoUtil.getInt( nIndex++ ) );
 
             controlList.add( control );
         }
@@ -212,5 +216,32 @@ public final class ControlDAO implements IControlDAO
         daoUtil.close( );
         return controlList;
     }
+
+	@Override
+	public Control selectControlByDisplay( int nIdDisplay, Plugin plugin )
+	{
+
+		DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_DISPLAY_ID, plugin );
+		daoUtil.setInt( 1, nIdDisplay );
+		daoUtil.executeQuery();
+		Control control = null;
+
+		if ( daoUtil.next() )
+		{
+			control = new Control();
+			int nIndex = 1;
+
+			control.setId( daoUtil.getInt( nIndex++ ) );
+			control.setValue( daoUtil.getString( nIndex++ ) );
+			control.setErrorMessage( daoUtil.getString( nIndex++ ) );
+			control.setIdQuestion( daoUtil.getInt( nIndex++ ) );
+			control.setValidatorName( daoUtil.getString( nIndex++ ) );
+			control.setControlType( daoUtil.getString( nIndex++ ) );
+			control.setIdTargetFormDisplay( daoUtil.getInt( nIndex++ ) );
+		}
+
+		daoUtil.close();
+		return control;
+	}
 
 }

@@ -34,9 +34,10 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.List;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
-import java.util.List;
 
 /**
  * IControlDAO Interface
@@ -113,5 +114,16 @@ public interface IControlDAO
      * @return The referenceList which contains the data of all the control objects
      */
     ReferenceList selectControlsReferenceList( Plugin plugin );
+
+	/**
+	 * Select a control for conditional display based on its attached display id
+	 * 
+	 * @param nIdDisplay
+	 *            the display id
+	 * @param plugin
+	 *            the Plugin
+	 * @return
+	 */
+	Control selectControlByDisplay( int nIdDisplay, Plugin plugin );
 
 }
