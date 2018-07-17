@@ -1,1 +1,1 @@
-<div class="row">${questionContent}</div>
+<div class="row <#if id_display??>display_field_${id_display}</#if>" displayControl="${id_question}" <#if id_display??> hidden </#if>>${questionContent}</div>

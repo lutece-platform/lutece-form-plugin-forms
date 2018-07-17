@@ -42,11 +42,13 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
+import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -106,6 +108,10 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         model.put( GROUP_MARKER, _group );
         model.put( GROUP_CONTENT_MARKER, strBuilder.toString( ) );
+		if ( _formDisplay.getDisplayControl() != null )
+		{
+			model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl().getIdTargetFormDisplay() );
+		}
 
         String strTemplate = bIsForEdition ? GROUP_TEMPLATE : GROUP_TEMPLATE_READ_ONLY;
 
@@ -175,4 +181,22 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     {
         _strIconName = strIconName;
     }
+
+	@Override
+	public List<Control> getAllDisplayControls()
+	{
+		List<Control> listDisplayControls = new ArrayList<Control>();
+
+		if ( _formDisplay.getDisplayControl() != null )
+		{
+			listDisplayControls.add( _formDisplay.getDisplayControl() );
+		}
+
+		for ( ICompositeDisplay child : _listChildren )
+		{
+			listDisplayControls.addAll( child.getAllDisplayControls() );
+		}
+
+		return listDisplayControls;
+	}
 }

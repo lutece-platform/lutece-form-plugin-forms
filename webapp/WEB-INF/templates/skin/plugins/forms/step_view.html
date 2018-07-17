@@ -12,3 +12,65 @@
 		
 	</div>
 </form>
+<script>
+
+	function getInputElement(displayControl)
+	{
+		var types = ['input','select','textarea'];
+		var elm = null;
+		for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++)
+		{
+			elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
+		}
+		
+		if(elm.is('input'))
+		{
+			elm = $('input[name=' + elm.attr('name') + ']');
+		}
+		return elm;
+	}
+
+	function getFieldValue(elm)
+	{
+		var result = '';
+		if(elm.is(':radio'))
+		{
+			var input = $('input[name=' + elm.attr('name') + ']:checked');
+			result = input.val();
+		}
+		//add other specific implementations here
+		else
+		{
+			result = elm.val();
+		}
+		return result;
+	}
+	
+	<#assign validNames = [] />
+	<#list list_validators as validator >
+		<#if !validNames?seq_contains(validator.validatorBeanName)>
+			<#assign validNames = validNames + [validator.validatorBeanName] />
+			function validator_${validator.validatorBeanName?replace('.','_')}(${inputValue},${controlValue})
+			{
+				${validator.getJavascriptValidation()!'return true;'}
+			}
+		</#if>
+	</#list>
+	
+	<#list list_controls as control>
+	var input${control.id} = getInputElement(${control.idQuestion});
+		input${control.id}.change(function(){
+		var inputValue = getFieldValue(input${control.id});
+		if(validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
+		{
+			$('.display_field_${control.idTargetFormDisplay!''}').show();		
+		}
+		else
+		{
+			$('.display_field_${control.idTargetFormDisplay!''}').hide();
+		}
+	});
+	input${control.id}.change();
+	
+	</#list>
+</script>
