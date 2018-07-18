@@ -27,7 +27,7 @@
                 </#if>
             </div>
         </div>
-        <div>${resource_history}</div>
+        <div>${resource_history!}</div>
     </div>
     
     <div class="col-xs-12 col-sm-4">
@@ -42,7 +42,7 @@
                     <p class="data">${form_response.creation}</p>
                     <p class="title">#i18n{forms.multiviewForms.responseDetails.response.dateModification}</p>
                     <p class="data">${form_response.update}</p>
-                    <#if resource_actions.workflow_state?exists>
+                    <#if resource_actions?exists && resource_actions.workflow_state?exists>
                     <p class="title">#i18n{forms.multiviewForms.responseDetails.response.state}</p> 
                     <p class="data">${resource_actions.workflow_state.name}</p>
                     </#if>
@@ -50,7 +50,7 @@
             </div>
             <div class="box-body">
                 <div class="">
-                    <@display_actions resource_actions/>
+                    <@display_actions resource_actions! />
                 </div>
             </div>
         </div>
