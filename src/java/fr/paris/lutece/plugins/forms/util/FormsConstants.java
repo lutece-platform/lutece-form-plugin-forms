@@ -56,10 +56,12 @@ public final class FormsConstants
     public static final String MARK_GROUP = "group";
     public static final String MARK_QUESTION = "question";
     public static final String MARK_ID_QUESTION = "id_question";
+	public static final String MARK_ID_DISPLAY = "id_display";
     public static final String MARK_FIELD = "field";
     public static final String MARK_LIST_STEPS = "list_steps";
     public static final String MARK_LIST_GROUPS = "list_groups";
     public static final String MARK_LIST_QUESTIONS = "list_questions";
+	public static final String MARK_LIST_CONTROLS = "list_controls";
     public static final String MARK_LIST_VALIDATORS = "list_validators";
     public static final String MARK_LIST_AVAILABLE_POSITIONS = "list_positions";
     public static final String MARK_DISPLAY = "display";
@@ -93,6 +95,8 @@ public final class FormsConstants
     public static final String PARAMETER_GROUP_VALIDATED = "groupValidated";
     public static final String PARAMETER_DISPLAY_ORDER = "displayOrder";
     public static final String PARAMETER_ID_TRANSITION = "id_transition";
+	public static final String PARAMETER_VALIDATOR_NAME = "validator_name";
+	public static final String PARAMETER_CONTROL_VALUE = "control_value";
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
@@ -116,11 +120,18 @@ public final class FormsConstants
     public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
     public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
     public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
+
     // Markers
     public static final String MARK_AVAILABLE_STEPS = "availableSteps";
     public static final String MARK_TRANSITION_CONTROL_LIST = "listControls";
     public static final String MARK_AVAILABLE_VALIDATORS = "availableValidators";
     public static final String MARK_QUESTION_LIST = "listQuestion";
+
+	// Javascript variables
+	public static final String JS_PARAMETER_INPUT_VALUE = "inputValue";
+	public static final String JS_PARAMETER_CONTROL_VALUE = "controlValue";
+	public static final String MARKER_JS_PARAMETER_INPUT_VALUE = "inputValue";
+	public static final String MARKER_JS_PARAMETER_CONTROL_VALUE = "controlValue";
 
     /**
      * Default private constructor. Do not call

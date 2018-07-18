@@ -33,12 +33,12 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.List;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
-
-import java.util.List;
 
 /**
  * This class provides instances management methods (create, find, ...) for FormDisplay objects
@@ -104,7 +104,9 @@ public final class FormDisplayHome
      */
     public static FormDisplay findByPrimaryKey( int nKey )
     {
-        return _dao.load( nKey, _plugin );
+		FormDisplay formDisplay = _dao.load( nKey, _plugin );
+		InitConditionalDisplayForFormDisplay( formDisplay );
+		return formDisplay;
     }
 
     /**
@@ -114,7 +116,12 @@ public final class FormDisplayHome
      */
     public static List<FormDisplay> getFormDisplayList( )
     {
-        return _dao.selectFormDisplayList( _plugin );
+		List<FormDisplay> result = _dao.selectFormDisplayList( _plugin );
+		for ( FormDisplay formDisplay : result )
+		{
+			InitConditionalDisplayForFormDisplay( formDisplay );
+		}
+		return result;
     }
 
     /**
@@ -128,7 +135,12 @@ public final class FormDisplayHome
      */
     public static List<FormDisplay> getFormDisplayListByParent( int nIdStep, int nIdParent )
     {
-        return _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
+    	List<FormDisplay> result = _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
+		for ( FormDisplay formDisplay : result )
+		{
+			InitConditionalDisplayForFormDisplay( formDisplay );
+		}
+        return result;
     }
 
     /**
@@ -156,6 +168,22 @@ public final class FormDisplayHome
      */
     public static FormDisplay getFormDisplayByFormStepAndComposite( int nIdForm, int nIdStep, int nIdComposite )
     {
-        return _dao.selectFormdisplayByFormStepAndComposite( nIdForm, nIdStep, nIdComposite, _plugin );
+		FormDisplay formDisplay = _dao.selectFormdisplayByFormStepAndComposite( nIdForm, nIdStep, nIdComposite,
+				_plugin );
+		InitConditionalDisplayForFormDisplay( formDisplay );
+		return formDisplay;
     }
+
+	/**
+	 * Inits the Conditional display for a given form display
+	 * 
+	 * @param formDisplay
+	 *            the form display to init
+	 */
+	public static void InitConditionalDisplayForFormDisplay( FormDisplay formDisplay )
+	{
+		formDisplay.setDisplayControl(
+				ControlHome.getConditionalDisplayControlByDisplay( formDisplay.getId() ) );
+	}
+
 }

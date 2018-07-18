@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 
@@ -114,5 +115,11 @@ public interface ICompositeDisplay
      *            the icon name to set
      */
     void setIcon( String strIconName );
+
+	/**
+	 * 
+	 * @return all the Display Controls in the child
+	 */
+	List<Control> getAllDisplayControls();
 
 }

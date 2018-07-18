@@ -42,10 +42,12 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
+import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -107,6 +109,12 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 }
 
                 model.put( QUESTION_CONTENT_MARKER, strQuestionTemplate );
+				model.put( FormsConstants.MARK_ID_QUESTION, _question.getId() );
+				if ( _formDisplay.getDisplayControl() != null )
+				{
+					model.put( FormsConstants.MARK_ID_DISPLAY,
+							_formDisplay.getDisplayControl().getIdTargetFormDisplay() );
+				}
 
                 HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( strTemplate, locale, model );
 
@@ -179,5 +187,18 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
         _strIconName = strIconName;
     }
+
+	@Override
+	public List<Control> getAllDisplayControls()
+	{
+		List<Control> listDisplayControls = new ArrayList<Control>();
+
+		if ( _formDisplay.getDisplayControl() != null )
+		{
+			listDisplayControls.add( _formDisplay.getDisplayControl() );
+		}
+
+		return listDisplayControls;
+	}
 
 }

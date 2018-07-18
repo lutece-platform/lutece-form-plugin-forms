@@ -57,6 +57,8 @@ public class Control
     @NotEmpty( message = "#i18n{forms.validation.control.ControlType.notEmpty}" )
     private String _strControlType;
 
+	private int _nIdTargetFormDisplay;
+
     /**
      * @return the _nId
      */
@@ -158,4 +160,23 @@ public class Control
     {
         this._strControlType = strControlType;
     }
+
+	/**
+	 * 
+	 * @return the _nIdTargetFormDisplay
+	 */
+	public int getIdTargetFormDisplay()
+	{
+		return _nIdTargetFormDisplay;
+	}
+
+	/**
+	 * 
+	 * @param nIdTargetFormDisplay
+	 *            the nIdTargetFormDisplay to set
+	 */
+	public void setIdTargetFormDisplay( int nIdTargetFormDisplay )
+	{
+		this._nIdTargetFormDisplay = nIdTargetFormDisplay;
+	}
 }

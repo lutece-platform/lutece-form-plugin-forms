@@ -21,25 +21,28 @@
                                 <@table>
                                     <tr>
                                         <th class="col-sm-1"></th>
-                                        <th class="col-sm-7">#i18n{forms.manage_questions.columnTitle}</th>
+                                        <th class="col-sm-6">#i18n{forms.manage_questions.columnTitle}</th>
+                                        <th class="col-sm-1" title="#i18n{forms.manage_questions.columnCondition}"><@icon style='question'/></th>
                                         <th class="col-sm-1">#i18n{forms.manage_questions.columnType}</th>
                                         <th class="col-sm-3">#i18n{forms.manage_questions.columnAction}</th>
                                     </tr>
                                     <tr>
-                                        <td><@fieldInputRadioBox 'forms.manage_questions.selectRootLevel' 'id_parent' '0' false true /></td>
-                                        <td class="col-sm-8"><h4>#i18n{forms.manage_questions.rootlevel.label}</h4></td>
+                                        <td class="col-sm-1"><@fieldInputRadioBox 'forms.manage_questions.selectRootLevel' 'id_parent' '0' false true /></td>
+                                        <td class="col-sm-6"><h4>#i18n{forms.manage_questions.rootlevel.label}</h4></td>
+                                        <td class="col-sm-1"></td>
                                         <td class="col-sm-1">
                                             #i18n{forms.manage_questions.type.step.label}                                             
                                         </td>
+                                        <td class="col-sm-3"></td>
                                     </tr>
                                     <#list composite_list as composite>
                                         <tr>
                                             <#if composite.type == 'group'>
-                                                <td><@fieldInputRadioBox "" 'id_parent' '${composite.formDisplay.id}'/></td>
+                                                <td class="col-sm-1"><@fieldInputRadioBox "" 'id_parent' '${composite.formDisplay.id}'/></td>
                                             <#else>
-                                                <td></td>
+                                                <td class="col-sm-1"></td>
                                             </#if>
-                                            <td class="col-sm-8">
+                                            <td class="col-sm-6">
                                                 <#if composite.type == 'group'><h4></#if>                                           
                                                 <#list 0..composite.formDisplay.depth as indent>
                                                     <#if indent_index gte 0>
@@ -52,7 +55,12 @@
                                                 </#list>    
                                                 ${composite.title}
                                                 <#if composite.type == 'group'></h4></#if>
-                                            </td>                                           
+                                            </td>                               
+                                            <td class="col-sm-1">
+                                            <#if composite.formDisplay.displayControl??>
+                                            	<@icon style='check' />  
+                                            </#if>
+                                            </td>                                    
                                             <td class="col-sm-1">
                                                 <#if composite.type == 'group'>#i18n{forms.manage_questions.type.group}                                             
                                                 <#elseif composite.type == 'question'>#i18n{forms.manage_questions.type.question}   
@@ -65,7 +73,7 @@
                                                     <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyQuestion}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
                                                 </#if>
                                                     <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.move}' showTitle=false buttonIcon='arrows-alt' color='btn-primary' size='sm' />
-                                                    <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyCondition&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.condition}' showTitle=false buttonIcon='question' color='btn-primary' size='sm' />
+                                                    <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyCondition&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.condition}' showTitle=false buttonIcon='question' color='btn-primary' size='sm' />
                                                     <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' /> 
                                             </td>
                                         </tr>
