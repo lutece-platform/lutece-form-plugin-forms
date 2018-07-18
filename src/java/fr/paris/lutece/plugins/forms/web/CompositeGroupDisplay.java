@@ -108,10 +108,10 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         model.put( GROUP_MARKER, _group );
         model.put( GROUP_CONTENT_MARKER, strBuilder.toString( ) );
-		if ( _formDisplay.getDisplayControl() != null )
-		{
-			model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl().getIdTargetFormDisplay() );
-		}
+        if ( _formDisplay.getDisplayControl( ) != null )
+        {
+            model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdTargetFormDisplay( ) );
+        }
 
         String strTemplate = bIsForEdition ? GROUP_TEMPLATE : GROUP_TEMPLATE_READ_ONLY;
 
@@ -182,21 +182,21 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         _strIconName = strIconName;
     }
 
-	@Override
-	public List<Control> getAllDisplayControls()
-	{
-		List<Control> listDisplayControls = new ArrayList<Control>();
+    @Override
+    public List<Control> getAllDisplayControls( )
+    {
+        List<Control> listDisplayControls = new ArrayList<Control>( );
 
-		if ( _formDisplay.getDisplayControl() != null )
-		{
-			listDisplayControls.add( _formDisplay.getDisplayControl() );
-		}
+        if ( _formDisplay.getDisplayControl( ) != null )
+        {
+            listDisplayControls.add( _formDisplay.getDisplayControl( ) );
+        }
 
-		for ( ICompositeDisplay child : _listChildren )
-		{
-			listDisplayControls.addAll( child.getAllDisplayControls() );
-		}
+        for ( ICompositeDisplay child : _listChildren )
+        {
+            listDisplayControls.addAll( child.getAllDisplayControls( ) );
+        }
 
-		return listDisplayControls;
-	}
+        return listDisplayControls;
+    }
 }

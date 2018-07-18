@@ -115,15 +115,15 @@ public interface IControlDAO
      */
     ReferenceList selectControlsReferenceList( Plugin plugin );
 
-	/**
-	 * Select a control for conditional display based on its attached display id
-	 * 
-	 * @param nIdDisplay
-	 *            the display id
-	 * @param plugin
-	 *            the Plugin
-	 * @return
-	 */
-	Control selectControlByDisplay( int nIdDisplay, Plugin plugin );
+    /**
+     * Select a control for conditional display based on its attached display id
+     * 
+     * @param nIdDisplay
+     *            the display id
+     * @param plugin
+     *            the Plugin
+     * @return The control
+     */
+    Control selectControlByDisplay( int nIdDisplay, Plugin plugin );
 
 }

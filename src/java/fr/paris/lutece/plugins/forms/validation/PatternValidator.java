@@ -58,11 +58,11 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
  */
 public class PatternValidator implements IValidator
 {
+    private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
     private String _strValidatorName = StringUtils.EMPTY;
     private String _strDisplayName = StringUtils.EMPTY;
     private List<String> _listAvailableEntryType = new ArrayList<String>( );
 
-	private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
     /**
      * Constructor of the PatternValidator
      * 
@@ -115,14 +115,14 @@ public class PatternValidator implements IValidator
         return false;
     }
 
-	@Override
-	public String getJavascriptValidation()
-	{
+    @Override
+    public String getJavascriptValidation( )
+    {
 
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
-		model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
+        model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
 
-		return AppTemplateService.getTemplate( TEMPLATE_JS_FUNCTION, Locale.getDefault(), model ).getHtml();
-	}
+        return AppTemplateService.getTemplate( TEMPLATE_JS_FUNCTION, Locale.getDefault( ), model ).getHtml( );
+    }
 }

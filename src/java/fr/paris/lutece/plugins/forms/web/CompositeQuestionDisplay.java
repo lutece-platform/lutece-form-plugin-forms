@@ -109,12 +109,11 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 }
 
                 model.put( QUESTION_CONTENT_MARKER, strQuestionTemplate );
-				model.put( FormsConstants.MARK_ID_QUESTION, _question.getId() );
-				if ( _formDisplay.getDisplayControl() != null )
-				{
-					model.put( FormsConstants.MARK_ID_DISPLAY,
-							_formDisplay.getDisplayControl().getIdTargetFormDisplay() );
-				}
+                model.put( FormsConstants.MARK_ID_QUESTION, _question.getId( ) );
+                if ( _formDisplay.getDisplayControl( ) != null )
+                {
+                    model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdTargetFormDisplay( ) );
+                }
 
                 HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( strTemplate, locale, model );
 
@@ -188,17 +187,17 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         _strIconName = strIconName;
     }
 
-	@Override
-	public List<Control> getAllDisplayControls()
-	{
-		List<Control> listDisplayControls = new ArrayList<Control>();
+    @Override
+    public List<Control> getAllDisplayControls( )
+    {
+        List<Control> listDisplayControls = new ArrayList<Control>( );
 
-		if ( _formDisplay.getDisplayControl() != null )
-		{
-			listDisplayControls.add( _formDisplay.getDisplayControl() );
-		}
+        if ( _formDisplay.getDisplayControl( ) != null )
+        {
+            listDisplayControls.add( _formDisplay.getDisplayControl( ) );
+        }
 
-		return listDisplayControls;
-	}
+        return listDisplayControls;
+    }
 
 }

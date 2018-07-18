@@ -67,7 +67,7 @@ public class StepDisplayTree
     private List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
     private Step _step;
     private Map<Integer, List<Response>> _mapStepResponses = new HashMap<Integer, List<Response>>( );
-	private List<Control> _listDisplayControls = new ArrayList<Control>();
+    private List<Control> _listDisplayControls = new ArrayList<Control>( );
 
     /**
      * Constructor
@@ -93,13 +93,13 @@ public class StepDisplayTree
         if ( _step != null )
         {
             List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, 0 );
-			_listDisplayControls = new ArrayList<Control>();
+            _listDisplayControls = new ArrayList<Control>( );
             for ( FormDisplay formDisplayChild : listStepFormDisplay )
             {
                 ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild );
                 _listChildren.add( composite );
                 composite.initComposite( formDisplayChild );
-				_listDisplayControls.addAll( composite.getAllDisplayControls() );
+                _listDisplayControls.addAll( composite.getAllDisplayControls( ) );
             }
         }
     }
@@ -187,12 +187,12 @@ public class StepDisplayTree
         }
     }
 
-	/**
-	 * 
-	 * @return the list of display controls for this display tree
-	 */
-	public List<Control> getListDisplayControls()
-	{
-		return _listDisplayControls;
-	}
+    /**
+     * 
+     * @return the list of display controls for this display tree
+     */
+    public List<Control> getListDisplayControls( )
+    {
+        return _listDisplayControls;
+    }
 }

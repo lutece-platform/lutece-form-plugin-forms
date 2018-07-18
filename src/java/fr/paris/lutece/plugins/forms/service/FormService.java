@@ -152,7 +152,8 @@ public final class FormService
      * 
      * @param nIdForm
      *            The identifier of the form to be deleted
-     * @param adminUser the user
+     * @param adminUser
+     *            the user
      */
     public void removeForm( int nIdForm, AdminUser adminUser )
     {
