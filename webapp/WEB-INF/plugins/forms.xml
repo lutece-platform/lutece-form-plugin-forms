@@ -19,6 +19,11 @@
         <max-core-version/>	
     </core-version-dependency>
 
+    <css-stylesheets>
+        <css-stylesheets-scope>portal</css-stylesheets-scope>
+        <css-stylesheet>forms/forms.css</css-stylesheet>
+    </css-stylesheets>
+    
     <admin-css-stylesheets>
         <admin-css-stylesheet>css/admin/plugins/forms/forms.css</admin-css-stylesheet>
     </admin-css-stylesheets>

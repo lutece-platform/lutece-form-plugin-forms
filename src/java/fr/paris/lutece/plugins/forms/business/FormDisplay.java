@@ -59,7 +59,7 @@ public class FormDisplay implements Serializable
 
     private int _nDepth;
 
-	private Control _displayControl;
+    private Control _displayControl;
 
     /**
      * @return the _nId
@@ -199,23 +199,23 @@ public class FormDisplay implements Serializable
         _nDepth = nDepth;
     }
 
-	/**
-	 * 
-	 * @return the conditional display control
-	 */
-	public Control getDisplayControl()
-	{
-		return _displayControl;
-	}
+    /**
+     * 
+     * @return the conditional display control
+     */
+    public Control getDisplayControl( )
+    {
+        return _displayControl;
+    }
 
-	/**
-	 * 
-	 * @param displayControl
-	 *            the control to set
-	 */
-	public void setDisplayControl( Control displayControl )
-	{
-		this._displayControl = displayControl;
-	}
+    /**
+     * 
+     * @param displayControl
+     *            the control to set
+     */
+    public void setDisplayControl( Control displayControl )
+    {
+        this._displayControl = displayControl;
+    }
 
 }

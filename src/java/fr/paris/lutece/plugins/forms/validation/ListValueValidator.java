@@ -103,10 +103,10 @@ public class ListValueValidator implements IValidator
         return false;
     }
 
-	@Override
-	public String getJavascriptValidation()
-	{
-		return null;
-	}
+    @Override
+    public String getJavascriptValidation( )
+    {
+        return null;
+    }
 
 }

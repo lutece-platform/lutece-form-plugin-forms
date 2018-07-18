@@ -138,6 +138,7 @@ public class FormXPage extends MVCApplication
         if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE && ( _currentStep == null || nIdForm != _currentStep.getIdForm( ) ) )
         {
             _currentStep = StepHome.getInitialStep( nIdForm );
+            _formResponseManager = null;
         }
 
         if ( _currentStep == null )
@@ -166,25 +167,24 @@ public class FormXPage extends MVCApplication
 
                 boolean bIsForEdition = Boolean.TRUE;
 
-				// Add all the display controls for visualisation
-				List<Control> listDisplayControls = _stepDisplayTree.getListDisplayControls();
-				model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
+                // Add all the display controls for visualisation
+                List<Control> listDisplayControls = _stepDisplayTree.getListDisplayControls( );
+                model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
 
-				// Add all the validators to generate their Javascript
-				List<IValidator> listDisplayValidators = new ArrayList<IValidator>();
-				for ( Control control : listDisplayControls )
-				{
-					IValidator validator = EntryServiceManager.getInstance().getValidator( control.getValidatorName() );
-					if ( validator != null )
-					{
-						listDisplayValidators.add( validator );
-					}
-				}
-				model.put( FormsConstants.MARK_LIST_VALIDATORS, listDisplayValidators );
-				model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
-				model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE,
-						FormsConstants.JS_PARAMETER_CONTROL_VALUE );
-				model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
+                // Add all the validators to generate their Javascript
+                List<IValidator> listDisplayValidators = new ArrayList<IValidator>( );
+                for ( Control control : listDisplayControls )
+                {
+                    IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+                    if ( validator != null )
+                    {
+                        listDisplayValidators.add( validator );
+                    }
+                }
+                model.put( FormsConstants.MARK_LIST_VALIDATORS, listDisplayValidators );
+                model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
+                model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
+                model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
                 model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), bIsForEdition ) );
                 model.put( FormsConstants.MARK_FORM_BREADCRUMB, _formResponseManager.getListValidatedStep( ) );
                 model.put( FormsConstants.MARK_STEP, _currentStep );
@@ -220,7 +220,7 @@ public class FormXPage extends MVCApplication
 
         populateStepResponses( );
 
-        return getStepView( request );
+        return redirectView( request, VIEW_STEP );
     }
 
     /**
@@ -296,7 +296,7 @@ public class FormXPage extends MVCApplication
 
         if ( !bValidStep )
         {
-            return getStepView( request );
+            return redirectView( request, VIEW_STEP );
         }
 
         if ( _currentStep.isFinal( ) )
@@ -313,7 +313,7 @@ public class FormXPage extends MVCApplication
 
             Map<String, String> model = new HashMap<String, String>( );
 
-            model.put( ID_FORM, Integer.toString( _currentStep.getIdForm( ) ) );
+            model.put( FormsConstants.PARAMETER_ID_FORM, Integer.toString( _currentStep.getIdForm( ) ) );
 
             if ( WorkflowService.getInstance( ).isAvailable( ) && ( form.getIdWorkflow( ) > 0 ) )
             {
@@ -335,7 +335,7 @@ public class FormXPage extends MVCApplication
                 if ( transition.getIdControl( ) <= 0 )
                 {
                     _currentStep = StepHome.findByPrimaryKey( transition.getNextStep( ) );
-                    return getStepView( request );
+                    return redirectView( request, VIEW_STEP );
                 }
                 else
                 {
@@ -352,7 +352,7 @@ public class FormXPage extends MVCApplication
                             if ( validator != null && validator.validate( questionResponse, transitionControl ) )
                             {
                                 _currentStep = StepHome.findByPrimaryKey( transition.getNextStep( ) );
-                                return getStepView( request );
+                                return redirectView( request, VIEW_STEP );
                             }
                         }
                     }
@@ -361,7 +361,7 @@ public class FormXPage extends MVCApplication
 
             SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
 
-            return getStepView( request );
+            return redirectView( request, VIEW_STEP );
         }
     }
 

@@ -116,10 +116,10 @@ public interface ICompositeDisplay
      */
     void setIcon( String strIconName );
 
-	/**
-	 * 
-	 * @return all the Display Controls in the child
-	 */
-	List<Control> getAllDisplayControls();
+    /**
+     * 
+     * @return all the Display Controls in the child
+     */
+    List<Control> getAllDisplayControls( );
 
 }
