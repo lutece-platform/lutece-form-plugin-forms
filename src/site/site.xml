@@ -6,7 +6,10 @@
         </links>
         
         <menu name="Plugin forms">
-            <item name="Home" href="index.html"/>
+            <item name="Introduction" href="index.html" />
+            <item name="Configuration" href="#configuration"/>
+            <item name="Design" href="#design"/>
+            <item name="Usage" href="#usage"/>
         </menu>
         
         <menu name="Downloads" inherit="bottom">
