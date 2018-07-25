@@ -74,7 +74,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
 
             if ( daoUtil.nextGeneratedKey( ) )
             {
-            	formResponseStep.setId( daoUtil.getGeneratedKeyInt( 1 ) );
+                formResponseStep.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
         finally
@@ -97,10 +97,10 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
 
         if ( daoUtil.next( ) )
         {
-        	formResponseStep = new FormResponseStep( );
-        	formResponseStep.setFormResponseId( daoUtil.getInt( "id_form_response" ) );
-        	formResponseStep.setIdStep( daoUtil.getInt( "id_step" ) );
-        	formResponseStep.setOrder( daoUtil.getInt( "order_response" ) );
+            formResponseStep = new FormResponseStep( );
+            formResponseStep.setFormResponseId( daoUtil.getInt( "id_form_response" ) );
+            formResponseStep.setIdStep( daoUtil.getInt( "id_step" ) );
+            formResponseStep.setOrder( daoUtil.getInt( "order_response" ) );
         }
 
         daoUtil.close( );
@@ -174,23 +174,23 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     /**
      * {@inheritDoc }
      */
-	@Override
-	public List<Integer> selectListIdStepByFormResponse( int nIdFormResponse, Plugin plugin )
-	{
-		List<Integer> listIdStep = new ArrayList<Integer>( );
-		DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_RESPONSE, plugin );
-		
-		daoUtil.setInt( 1, nIdFormResponse );
+    @Override
+    public List<Integer> selectListIdStepByFormResponse( int nIdFormResponse, Plugin plugin )
+    {
+        List<Integer> listIdStep = new ArrayList<Integer>( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_RESPONSE, plugin );
+
+        daoUtil.setInt( 1, nIdFormResponse );
         daoUtil.executeQuery( );
-		
-		while ( daoUtil.next( ) )
-		{
-			listIdStep.add( daoUtil.getInt( 1 ) );
-		}
-		
-		daoUtil.close( );
-		
-		return listIdStep;
-	}
+
+        while ( daoUtil.next( ) )
+        {
+            listIdStep.add( daoUtil.getInt( 1 ) );
+        }
+
+        daoUtil.close( );
+
+        return listIdStep;
+    }
 
 }

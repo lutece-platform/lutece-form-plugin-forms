@@ -77,14 +77,14 @@ public final class StepService
             displayService.deleteDisplayAndDescendants( childDisplay.getId( ) );
         }
 
-        for( Transition transition : TransitionHome.getTransitionsListFromStep( nIdStep ) )
+        for ( Transition transition : TransitionHome.getTransitionsListFromStep( nIdStep ) )
         {
-        	if( transition.getIdControl( ) > 0 )
-        	{
-        		ControlHome.remove( transition.getIdControl( ) );
-        	}
+            if ( transition.getIdControl( ) > 0 )
+            {
+                ControlHome.remove( transition.getIdControl( ) );
+            }
         }
-        
+
         TransitionHome.removeTransitionByStep( nIdStep );
 
         StepHome.remove( nIdStep );

@@ -50,11 +50,11 @@ public class FormQuestionResponse
     private int _nIdQuestion;
 
     private Question _question;
-    
+
     private int _nIdStep;
 
     private int _nIterationNumber;
-    
+
     private boolean _bFromSave;
 
     private List<Response> _entryResponses;
@@ -126,7 +126,7 @@ public class FormQuestionResponse
     {
         this._question = question;
     }
-    
+
     /**
      * @return the _nIdStep
      */
@@ -162,22 +162,23 @@ public class FormQuestionResponse
     }
 
     /**
-	 * @return the _bFromSave
-	 */
-	public boolean getFromSave( ) 
-	{
-		return _bFromSave;
-	}
+     * @return the _bFromSave
+     */
+    public boolean getFromSave( )
+    {
+        return _bFromSave;
+    }
 
-	/**
-	 * @param bFromSave the bFromSave to set
-	 */
-	public void setFromSave( boolean bFromSave ) 
-	{
-		this._bFromSave = bFromSave;
-	}
+    /**
+     * @param bFromSave
+     *            the bFromSave to set
+     */
+    public void setFromSave( boolean bFromSave )
+    {
+        this._bFromSave = bFromSave;
+    }
 
-	/**
+    /**
      * @return the _entryResponse
      */
     public List<Response> getEntryResponse( )

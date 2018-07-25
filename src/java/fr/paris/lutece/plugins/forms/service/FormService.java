@@ -102,27 +102,28 @@ public final class FormService
      */
     public void saveForm( FormResponseManager formResponseManager, boolean isBackUp )
     {
-    	if( formResponseManager.getFormResponse( ).getId( ) > 0 )
-    	{
-    		FormResponseHome.update( formResponseManager.getFormResponse( ) );
-    		
-    		for( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponseForSaving( formResponseManager.getFormResponse( ).getId( ) ) )
-    		{
-    			FormQuestionResponseHome.remove( formQuestionResponse );
-    		}
-    		
-    		FormResponseStepHome.removeByFormResponse( formResponseManager.getFormResponse( ).getId( ) );
-    	}
-    	else
-    	{
-    		FormResponseHome.create( formResponseManager.getFormResponse( ) );
-    	}
-        
+        if ( formResponseManager.getFormResponse( ).getId( ) > 0 )
+        {
+            FormResponseHome.update( formResponseManager.getFormResponse( ) );
+
+            for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponseForSaving( formResponseManager
+                    .getFormResponse( ).getId( ) ) )
+            {
+                FormQuestionResponseHome.remove( formQuestionResponse );
+            }
+
+            FormResponseStepHome.removeByFormResponse( formResponseManager.getFormResponse( ).getId( ) );
+        }
+        else
+        {
+            FormResponseHome.create( formResponseManager.getFormResponse( ) );
+        }
+
         int nIndexOrder = 1;
-        
+
         for ( Step step : formResponseManager.getListValidatedStep( ) )
         {
-        	for ( FormQuestionResponse formQuestionResponse : formResponseManager.getMapStepFormResponses( ).get( step.getId( ) ) )
+            for ( FormQuestionResponse formQuestionResponse : formResponseManager.getMapStepFormResponses( ).get( step.getId( ) ) )
             {
                 Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
                 IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
@@ -131,15 +132,15 @@ public final class FormService
                 formQuestionResponse.setFromSave( isBackUp );
                 dataService.saveFormQuestionResponse( formQuestionResponse );
             }
-        	
-        	FormResponseStep formResponseStep = new FormResponseStep( );
-        	formResponseStep.setFormResponseId( formResponseManager.getFormResponse( ).getId( ) );
-        	formResponseStep.setIdStep( step.getId( ) );
-        	formResponseStep.setOrder( nIndexOrder );
-        	
-        	FormResponseStepHome.create( formResponseStep );
-        	
-        	nIndexOrder++;
+
+            FormResponseStep formResponseStep = new FormResponseStep( );
+            formResponseStep.setFormResponseId( formResponseManager.getFormResponse( ).getId( ) );
+            formResponseStep.setIdStep( step.getId( ) );
+            formResponseStep.setOrder( nIndexOrder );
+
+            FormResponseStepHome.create( formResponseStep );
+
+            nIndexOrder++;
         }
     }
 
@@ -327,7 +328,7 @@ public final class FormService
 
         return bUserAccessFile;
     }
-    
+
     /**
      * check if authentification
      * 

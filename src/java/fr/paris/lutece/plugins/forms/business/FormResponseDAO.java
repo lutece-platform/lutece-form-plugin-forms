@@ -179,14 +179,14 @@ public final class FormResponseDAO implements IFormResponseDAO
 
         return formResponseList;
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public FormResponse selectFormResponseByGuidAndForm( String strGuid, int nIdForm, Plugin plugin )
     {
-    	DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_GUID_AND_FORM, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_GUID_AND_FORM, plugin );
         daoUtil.setString( 1, strGuid );
         daoUtil.setInt( 2, nIdForm );
         daoUtil.executeQuery( );

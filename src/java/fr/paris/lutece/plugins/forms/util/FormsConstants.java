@@ -44,7 +44,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 public final class FormsConstants
 {
     // Marks
-	public static final String MARK_USER = "user";
+    public static final String MARK_USER = "user";
     public static final String MARK_FORM = "form";
     public static final String MARK_ID_FORM = "id_form";
     public static final String MARK_STEP = "step";
