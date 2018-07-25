@@ -5,19 +5,148 @@
     </properties>
     <body>
         <section name="Plugin forms">
-            <!--
-            <p>
-                <img src="images/forms.png" />
-            </p>
-            -->
-            <subsection name="Introduction">
-                <p></p>
+
+            <subsection id="introduction" name="Introduction">
+                <p>
+                    This plugin offers a complete and flexible form management within a Lutece site.
+                    User interface : a forms display engine in front-office pages that manage the filling and saving process of the responses
+                    Agent interface : a back-office "multiview" feature to search and display the form responses, and process workflow actions on it.
+                    Administrator interface : a back-office feature to design and publish the forms, including steps, transitions, controls, questions and groups of questions.
+                </p>
+                <p>
+	                Plugin-forms is based on the features of the former plugin-form, and adds the followings improvement :
+	                <ul>
+	                    <li>forms composed of steps, with powerful transition management between steps,</li>
+	                    <li>draft-mode : the user can partially fill out a form, save it, and complete later the full form submit,</li>
+	                    <li>tree-based design of forms with possibility of groups inside groups,</li>
+	                    <li>multiview feature: a configurable and workflow-capable feature to manage form responses</li>
+	                    <li>improved management of conditional display of groups/questions,</li>
+	                    <li>improved validation control management,</li>
+	                    <li>architecture open to custom entry types</li>
+	                </ul>
+                </p>
             </subsection>
-            <subsection name="Configuration">
-                <p></p>
+            <subsection id="configuration" name="Configuration">
+                 <p>
+                     <b>Workflow</b>
+                 </p>
+                 <p>
+                     To enable workflow-base features ( response state monitoring, processing of workflow actions on respones, display of action history, ...), the plugin-workflow must be added in the Lutece site and enabled.
+                 </p>
+                 <p>
+                     <b>Context configuration</b>
+                 </p>
+                 <p>
+                     To configure the Multi-view features for responses list-mode display ( search filters, tabs, displayed columns, ...), the corresponding java beans must be declared in the forms_context.xml file <code>/plugin-forms/webapp/WEB-INF/conf/plugins/forms_context.xml</code> before starting the Lutece site.
+                     The plugin is available with a default configuration to display an example column. The workflow-related objects are commented. If plugin-workflow is present and enabled, those beans should be uncommented to display the workflow state of the form responses. 
+                     For a complete description of the multi-view implementation and the configuration of the different objects (panels, panel initializers, filters, columns, cells, ...) in context file, please refer to the <a href="http://dev.lutece.paris.fr/plugins/module-directory-multiview/"> module-directory-multiview documentation</a>.
+                  </p>
             </subsection>
-            <subsection name="Usage">
-                <p></p>
+             <subsection id="design" name="Design">
+                 <p>
+                     <b>Form questions/groups display model</b>
+                 </p>
+                  <p>
+                     Implementation of form steps is based on composite pattern. A form is composed of one or several steps. Each step is modeled as a tree, with child groups and/or questions. Questions are the leaves of the tree.
+                     A Form_Display object is used to describe and store the tree elements.
+                    <img src="images/Forms-display-model.png" />
+                  </p>
+                  <p>
+                     A Question object is linked to one Generic-attribute entry, therefore the <a href="http://dev.lutece.paris.fr/plugins/plugin-genericattributes/"> plugin-genericattributes</a> is used to hold the EntryType, the Entry Fields and Responses data.
+                     <br/>When rendering the Step display page, the composite tree structure is built in a recursive way.
+                     <img src="images/Forms-composite-architecture.png" />
+                  </p>
+                  <p>
+                     <b>Display Services</b>
+                  </p>
+                  <p>
+                     The <code>fr.paris.lutece.plugins.forms.service.EntryServiceManager</code> class triggers the corresponding process for Question display on the page or response data saving.
+                     <br/>
+                     The implementation depends on entry Type. Cf. <code>fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDisplayService</code> for display processing.
+                     <img src="images/Forms-dataAndDisplayServices-architecture.png" />
+                  </p>
+                  <p>
+                     Example of a text type Question display:
+                     <img src="images/Forms-textTypeDisplay-architecture.png" />
+                  </p>
+                  <p>
+                    To implement a new custom EntryType, it must be declared in the context with corresponding Display implementation class of the interface <code> fr.paris.lutece.plugins.forms.web.IEntryDisplayService</code>.
+                  </p>
+                  <p>
+                     <code>
+                     &lt;!-- DisplayService --&gt;
+                         &lt;bean id="forms.entryTypeCheckBoxDisplayService" 
+                             class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDisplayService"&gt;
+                                 &lt;constructor-arg name="type="java.lang.String" value="forms.entryTypeCheckBox" /&gt;
+                         &lt;/bean&gt;
+                     </code>
+                  </p>
+                  <p>
+                    <b>Data Services</b>
+                  </p>
+                  <p>
+                     The implementation depends on entry Type. Cf. <code>fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService</code> for data management.
+                     <img src="images/Forms-dataServices-architecture.png" />
+                  </p>
+                  <p>
+                     Example of a text type Question display:
+                     <img src="images/Forms-textTypeData-architecture.png" />
+                  </p>
+                  <p>
+                    To implement a new custom EntryType, it must be declared in the context with corresponding Data implementation class of the interface <code> fr.paris.lutece.plugins.forms.web.IEntryDataService</code>.
+                  </p>
+                  <p>
+                     <code>
+                     &lt;!-- DataService --&gt;
+                         &lt;bean id="forms.entryTypeFileDataService" 
+                             class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService"&gt;
+                                 &lt;constructor-arg name="type="java.lang.String" value="forms.entryTypeFile" /&gt;
+                         &lt;/bean&gt;
+                     </code>
+                  </p>
+                  <p>
+                     <b>Controls</b>
+                  </p>
+                  <p>
+                  The Controls are used as generic objects for Transition validation, Question field response validation , or Conditional display control.
+                  Implementation is depending on Question Type. Custom validator types can be added by implemented the interface <code>fr.paris.lutece.plugins.forms.validation.IValidator</code>.
+                     <img src="images/Forms-controls-model.png" />
+                 </p>
+            </subsection>
+            <subsection id="usage" name="Usage">
+                 <p>
+                 After enabling the plugin-forms in Lutece site, there are 3 ways to use it.
+                 </p>
+                 <p>
+                    <b>Front-office :</b> the published forms can be accessed with the XPage url <em>/jsp/site/Portal.jsp?page=forms&amp;id_form=&lt;form identifier&gt;</em><br/>
+                 </p>
+                 <p>
+                    <img src="images/Forms-step-filling-FO.png" />
+                 </p>
+                 <p>
+                    <b>Agent interface :</b> the back-office "multiview" feature to search and display the form responses is available with menu "Viewing of the responses of the forms".<br/>
+                 </p>
+                 <p>
+                    <img src="images/Forms-response-list-admin.png" />
+                 </p>
+                 <p>
+                    <img src="images/Forms-response-detail-admin.png" />
+                 </p>
+                 <p>
+                    <b>Administrator interface :</b> the back-office feature to design and publish the forms, including steps, transitions, controls, questions and groups of questions is available with menu "Manage forms".<br/>
+                 </p>
+                 <p>
+                    Form modification:<br/>
+                    <img src="images/Forms-form-edition-admin.png" />
+                 </p>
+                 <p>
+                    Step modification:<br/>
+                    <img src="images/Forms-step-edition-admin.png" />
+                 </p>
+                 <p>
+                    Control modification for a step transition:
+                    <img src="images/Forms-transition-edition-admin.png" /><br/>
+                 </p>
             </subsection>
         </section>
     </body>
