@@ -34,30 +34,19 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
-import java.util.List;
-
-import fr.paris.lutece.plugins.genericattributes.business.Response;
-
 /**
- * This is the business class for the object FormQuestionResponse
+ * This is the business class for the object FormResponse
  */
-public class FormQuestionResponse
+public class FormResponseStep
 {
+
     private int _nId;
 
-    private int _nIdFormResponse;
+    private int _nFormResponseId;
 
-    private int _nIdQuestion;
-
-    private Question _question;
-    
     private int _nIdStep;
 
-    private int _nIterationNumber;
-    
-    private boolean _bFromSave;
-
-    private List<Response> _entryResponses;
+    private int _nOrder;
 
     /**
      * @return the _nId
@@ -77,56 +66,22 @@ public class FormQuestionResponse
     }
 
     /**
-     * @return the _nIdFormResponse
+     * @return the _nFormResponseId
      */
-    public int getIdFormResponse( )
+    public int getFormResponseId( )
     {
-        return _nIdFormResponse;
+        return _nFormResponseId;
     }
 
     /**
-     * @param nIdFormResponse
-     *            the nIdFormResponse to set
+     * @param nFormResponseId
+     *            the nFormResponseId to set
      */
-    public void setIdFormResponse( int nIdFormResponse )
+    public void setFormResponseId( int nFormResponseId )
     {
-        this._nIdFormResponse = nIdFormResponse;
+        this._nFormResponseId = nFormResponseId;
     }
 
-    /**
-     * @return the nIdQuestion
-     */
-    public int getIdQuestion( )
-    {
-        return _nIdQuestion;
-    }
-
-    /**
-     * @param nIdQuestion
-     *            the nIdQuestion to set
-     */
-    public void setIdQuestion( int nIdQuestion )
-    {
-        this._nIdQuestion = nIdQuestion;
-    }
-
-    /**
-     * @return the _question
-     */
-    public Question getQuestion( )
-    {
-        return _question;
-    }
-
-    /**
-     * @param question
-     *            the question to set
-     */
-    public void setQuestion( Question question )
-    {
-        this._question = question;
-    }
-    
     /**
      * @return the _nIdStep
      */
@@ -145,53 +100,20 @@ public class FormQuestionResponse
     }
 
     /**
-     * @return the _nIterationNumber
+     * @return the _nOrder
      */
-    public int getIterationNumber( )
+    public int getOrder( )
     {
-        return _nIterationNumber;
+        return _nOrder;
     }
 
     /**
-     * @param nIterationNumber
-     *            the nIterationNumber to set
+     * @param nOrder
+     *            the nOrder to set
      */
-    public void setIterationNumber( int nIterationNumber )
+    public void setOrder( int nOrder )
     {
-        this._nIterationNumber = nIterationNumber;
-    }
-
-    /**
-	 * @return the _bFromSave
-	 */
-	public boolean getFromSave( ) 
-	{
-		return _bFromSave;
-	}
-
-	/**
-	 * @param bFromSave the bFromSave to set
-	 */
-	public void setFromSave( boolean bFromSave ) 
-	{
-		this._bFromSave = bFromSave;
-	}
-
-	/**
-     * @return the _entryResponse
-     */
-    public List<Response> getEntryResponse( )
-    {
-        return _entryResponses;
-    }
-
-    /**
-     * @param entryResponse
-     *            the entryResponse to set
-     */
-    public void setEntryResponse( List<Response> entryResponse )
-    {
-        this._entryResponses = entryResponse;
+        this._nOrder = nOrder;
     }
 
 }

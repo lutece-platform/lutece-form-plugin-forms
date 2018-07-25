@@ -40,54 +40,54 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import java.util.List;
 
 /**
- * This class provides instances management methods (create, find, ...) for FormResponseHome objects
+ * This class provides instances management methods (create, find, ...) for FormResponseStep objects
  */
-public final class FormResponseHome
+public final class FormResponseStepHome
 {
     // Static variable pointed at the DAO instance
-    private static IFormResponseDAO _dao = SpringContextService.getBean( "forms.formResponseDAO" );
+    private static IFormResponseStepDAO _dao = SpringContextService.getBean( "forms.formResponseStepDAO" );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
      * Private constructor - this class need not be instantiated
      */
-    private FormResponseHome( )
+    private FormResponseStepHome( )
     {
     }
 
     /**
-     * Create an instance of the formResponse class
+     * Create an instance of the formResponseStep class
      * 
-     * @param formResponse
-     *            The instance of the FormResponse which contains the informations to store
-     * @return The instance of formResponse which has been created with its primary key.
+     * @param formResponseStep
+     *            The instance of the FormResponseStep which contains the informations to store
+     * @return The instance of formResponseStep which has been created with its primary key.
      */
-    public static FormResponse create( FormResponse formResponse )
+    public static FormResponseStep create( FormResponseStep formResponseStep )
     {
-        _dao.insert( formResponse, _plugin );
+        _dao.insert( formResponseStep, _plugin );
 
-        return formResponse;
+        return formResponseStep;
     }
 
     /**
-     * Update of the formResponse which is specified in parameter
+     * Update of the formResponseStep which is specified in parameter
      * 
-     * @param formResponse
-     *            The instance of the FormResponse which contains the data to store
-     * @return The instance of the formResponse which has been updated
+     * @param formResponseStep
+     *            The instance of the FormResponseStep which contains the data to store
+     * @return The instance of the formResponseStep which has been updated
      */
-    public static FormResponse update( FormResponse formResponse )
+    public static FormResponseStep update( FormResponseStep formResponseStep )
     {
-        _dao.store( formResponse, _plugin );
+        _dao.store( formResponseStep, _plugin );
 
-        return formResponse;
+        return formResponseStep;
     }
 
     /**
-     * Remove the formResponse whose identifier is specified in parameter
+     * Remove the formResponseStep whose identifier is specified in parameter
      * 
      * @param nKey
-     *            The formResponse Id
+     *            The formResponseStep Id
      */
     public static void remove( int nKey )
     {
@@ -95,50 +95,48 @@ public final class FormResponseHome
     }
 
     /**
-     * Returns an instance of a formResponse whose identifier is specified in parameter
+     * Returns an instance of a formResponseStep whose identifier is specified in parameter
      * 
      * @param nKey
-     *            The formResponse primary key
-     * @return an instance of FormResponse
+     *            The formResponseStep primary key
+     * @return an instance of FormResponseStep
      */
-    public static FormResponse findByPrimaryKey( int nKey )
+    public static FormResponseStep findByPrimaryKey( int nKey )
     {
         return _dao.load( nKey, _plugin );
     }
 
     /**
-     * Load the data of all the formResponse objects and returns them as a list
+     * Load the data of all the formResponseStep objects and returns them as a list
      * 
-     * @return the list which contains the data of all the formResponse objects
+     * @return the list which contains the data of all the formResponseStep objects
      */
-    public static List<FormResponse> getFormResponseList( )
+    public static List<FormResponseStep> getFormResponseStepList( )
     {
-        return _dao.selectFormResponseList( _plugin );
-    }
-    
-    /**
-     * Load the data of all the formResponse objects and returns them as a list
-     * 
-     * @param strGuid
-     *            The user Guid
-     * @param nIdForm
-     *            The form primary key
-     * @return the formResponse objects
-     */
-    public static FormResponse getFormResponseByGuidAndForm( String strGuid, int nIdForm )
-    {
-        return _dao.selectFormResponseByGuidAndForm( strGuid, nIdForm, _plugin );
+        return _dao.selectFormResponseStepList( _plugin );
     }
 
     /**
      * Remove all the formResponse linked to a given Form
      * 
-     * @param nIdForm
+     * @param nIdFormResponse
      *            The form Identifier
      */
-    public static void removeByForm( int nIdForm )
+    public static void removeByFormResponse( int nIdFormResponse )
     {
-        _dao.deleteByForm( nIdForm, _plugin );
-
+        _dao.deleteByFormResponse( nIdFormResponse, _plugin );
     }
+    
+    /**
+     * Load the order step id list by FormResponse id
+     * 
+     * @param nIdFormResponse
+     *            The form Identifier
+     * @return the list which contains the data of all the formResponseStep objects
+     */
+    public static List<Integer> getListIdStepByFormResponse( int nIdFormResponse )
+    {
+        return _dao.selectListIdStepByFormResponse( nIdFormResponse, _plugin );
+    }
+    
 }

@@ -89,6 +89,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private List<FormAction> _listActions;
 
     private int _nIdWorkflow;
+    
+    private boolean _bAuthentificationNeeded;
 
     /**
      * Returns the Id
@@ -339,5 +341,21 @@ public class Form implements AdminWorkgroupResource, RBACResource
     {
         _nIdWorkflow = nIdWorkflow;
     }
+
+	/**
+	 * @return the _bAuthentificationNeeded
+	 */
+	public boolean getAuthentificationNeeded( ) 
+	{
+		return _bAuthentificationNeeded;
+	}
+
+	/**
+	 * @param bAuthentificationNeeded the bAuthentificationNeeded to set
+	 */
+	public void setAuthentificationNeeded( boolean bAuthentificationNeeded ) 
+	{
+		this._bAuthentificationNeeded = bAuthentificationNeeded;
+	}
 
 }

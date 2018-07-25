@@ -35,9 +35,11 @@ package fr.paris.lutece.plugins.forms.service;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
@@ -75,6 +77,14 @@ public final class StepService
             displayService.deleteDisplayAndDescendants( childDisplay.getId( ) );
         }
 
+        for( Transition transition : TransitionHome.getTransitionsListFromStep( nIdStep ) )
+        {
+        	if( transition.getIdControl( ) > 0 )
+        	{
+        		ControlHome.remove( transition.getIdControl( ) );
+        	}
+        }
+        
         TransitionHome.removeTransitionByStep( nIdStep );
 
         StepHome.remove( nIdStep );

@@ -34,6 +34,9 @@
                                     </@inputGroupItem>
                                 </@inputGroup>
                             </@formGroup>
+                            <@formGroup labelKey='#i18n{forms.modify_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.modify_form.labelAuthentificationNeeded.help}' >
+				                <@checkBox labelFor='authentificationNeeded' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
+				             </@formGroup>
                             <#if workflow_list?has_content>
                                <@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' helpKey='#i18n{forms.modify_form.workflow.label.help}'>
                                    <@inputGroup>

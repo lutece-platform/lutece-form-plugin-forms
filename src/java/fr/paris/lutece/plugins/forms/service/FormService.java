@@ -43,8 +43,11 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormResponseStep;
+import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -52,6 +55,7 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
 import fr.paris.lutece.plugins.forms.web.CompositeQuestionDisplay;
+import fr.paris.lutece.plugins.forms.web.FormResponseManager;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
 import fr.paris.lutece.plugins.forms.web.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
@@ -67,6 +71,8 @@ import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
@@ -89,21 +95,52 @@ public final class FormService
     /**
      * Save the FormResponse instance
      * 
-     * @param formResponse
-     *            The formResponse to save
+     * @param formResponseManager
+     *            The formResponseManager to save
+     * @param isBackUp
+     *            The boolean which indicate if the saving is a backup
      */
-    public void saveForm( FormResponse formResponse )
+    public void saveForm( FormResponseManager formResponseManager, boolean isBackUp )
     {
-        FormResponseHome.create( formResponse );
-
-        for ( FormQuestionResponse formQuestionResponse : formResponse.getListResponses( ) )
+    	if( formResponseManager.getFormResponse( ).getId( ) > 0 )
+    	{
+    		FormResponseHome.update( formResponseManager.getFormResponse( ) );
+    		
+    		for( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponseForSaving( formResponseManager.getFormResponse( ).getId( ) ) )
+    		{
+    			FormQuestionResponseHome.remove( formQuestionResponse );
+    		}
+    		
+    		FormResponseStepHome.removeByFormResponse( formResponseManager.getFormResponse( ).getId( ) );
+    	}
+    	else
+    	{
+    		FormResponseHome.create( formResponseManager.getFormResponse( ) );
+    	}
+        
+        int nIndexOrder = 1;
+        
+        for ( Step step : formResponseManager.getListValidatedStep( ) )
         {
-            Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
-            IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-            formQuestionResponse.setIdFormResponse( formResponse.getId( ) );
-            dataService.saveFormQuestionResponse( formQuestionResponse );
+        	for ( FormQuestionResponse formQuestionResponse : formResponseManager.getMapStepFormResponses( ).get( step.getId( ) ) )
+            {
+                Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
+                IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+                formQuestionResponse.setIdFormResponse( formResponseManager.getFormResponse( ).getId( ) );
+                formQuestionResponse.setIdStep( step.getId( ) );
+                formQuestionResponse.setFromSave( isBackUp );
+                dataService.saveFormQuestionResponse( formQuestionResponse );
+            }
+        	
+        	FormResponseStep formResponseStep = new FormResponseStep( );
+        	formResponseStep.setFormResponseId( formResponseManager.getFormResponse( ).getId( ) );
+        	formResponseStep.setIdStep( step.getId( ) );
+        	formResponseStep.setOrder( nIndexOrder );
+        	
+        	FormResponseStepHome.create( formResponseStep );
+        	
+        	nIndexOrder++;
         }
-
     }
 
     /**
@@ -289,5 +326,47 @@ public final class FormService
         }
 
         return bUserAccessFile;
+    }
+    
+    /**
+     * check if authentification
+     * 
+     * @param form
+     *            Form
+     * @param request
+     *            HttpServletRequest
+     * @throws UserNotSignedException
+     *             exception if the form requires an authentification and the user is not logged
+     */
+    public void checkMyLuteceAuthentification( Form form, HttpServletRequest request ) throws UserNotSignedException
+    {
+        // Try to register the user in case of external authentication
+        if ( SecurityService.isAuthenticationEnable( ) )
+        {
+            if ( SecurityService.getInstance( ).isExternalAuthentication( ) )
+            {
+                // The authentication is external
+                // Should register the user if it's not already done
+                if ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
+                {
+                    if ( ( SecurityService.getInstance( ).getRemoteUser( request ) == null ) && ( form.getAuthentificationNeeded( ) ) )
+                    {
+                        // Authentication is required to access to the portal
+                        throw new UserNotSignedException( );
+                    }
+                }
+            }
+            else
+            {
+                // If portal authentication is enabled and user is null and the requested URL
+                // is not the login URL, user cannot access to Portal
+                if ( ( form.getAuthentificationNeeded( ) ) && ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
+                        && !SecurityService.getInstance( ).isLoginUrl( request ) )
+                {
+                    // Authentication is required to access to the portal
+                    throw new UserNotSignedException( );
+                }
+            }
+        }
     }
 }

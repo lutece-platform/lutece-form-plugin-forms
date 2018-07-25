@@ -3,6 +3,11 @@
 <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
 
 <form class="form-horizontal" id="form-validate" action="jsp/site/Portal.jsp?page=forms" method="post" enctype="multipart/form-data">
+	<#if messageInfo?? >
+	<div class="alert alert-info" role="alert">
+		${messageInfo}
+	</div>
+	</#if>
 	<nav aria-label="breadcrumb">
 	  <ol class="breadcrumb">
 	  	<#list formBreadcrumb as step>
@@ -21,7 +26,7 @@
 		
 		<#if !step.initial ><button class="btn btn-primary btn-sm" name="action_doReturnStep"  type="submit" >#i18n{forms.step.previous}</button></#if>
 		<button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit"><#if step.final >#i18n{forms.step.save}<#else>#i18n{forms.step.next}</#if></button>
-		
+		<#if user?? ><button class="btn btn-info btn-sm pull-right" name="action_doSaveResponse"  type="submit" >#i18n{forms.step.saveResponse}</button></#if>
 	</div>
 </form>
 <script>

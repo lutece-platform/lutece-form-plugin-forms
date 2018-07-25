@@ -64,12 +64,12 @@ public interface IFormQuestionResponseDAO
     /**
      * Delete a record from the table
      * 
-     * @param nKey
-     *            The identifier of the FormDisplay to delete
+     * @param formQuestionResponse
+     *            The formQuestionResponse to delete
      * @param plugin
      *            the Plugin
      */
-    void delete( int nKey, Plugin plugin );
+    void delete( FormQuestionResponse formQuestionResponse, Plugin plugin );
 
     // /////////////////////////////////////////////////////////////////////////
     // Finders
@@ -93,6 +93,31 @@ public interface IFormQuestionResponseDAO
      * @return The list which contains the data of all the FormQuestionResponse objects
      */
     List<FormQuestionResponse> selectFormQuestionResponseList( Plugin plugin );
+    
+    /**
+     * Load the data of all the FormQuestionResponse objects and returns them as a list
+     * 
+     * @param nIdFormResponse
+     *            The identifier of the FormResponse
+     * @param nIdStep
+     *            The identifier of the Step
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the FormQuestionResponse objects
+     */
+    List<FormQuestionResponse> selectFormQuestionResponseListByStepAndFormResponse( int nIdFormResponse, int nIdStep, Plugin plugin );
+    
+    
+    /**
+     * Load the data of all the FormQuestionResponse objects for saving and returns them as a list
+     * 
+     * @param nIdFormResponse
+     *            The identifier of the FormResponse
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the FormQuestionResponse objects
+     */
+    List<FormQuestionResponse> selectFormQuestionResponseListByFormResponseForSaving( int nIdFormResponse, Plugin plugin );
 
     /**
      * Retrieve all the FormQuestionResponse associated to the given FormResponse for the specified Question. Return an empty list if there is no

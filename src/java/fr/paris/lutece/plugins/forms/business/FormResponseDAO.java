@@ -55,7 +55,8 @@ public final class FormResponseDAO implements IFormResponseDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ? WHERE id_response = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id, id_question, iteration_number FROM forms_response";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date FROM forms_response";
+    private static final String SQL_QUERY_SELECT_BY_GUID_AND_FORM = "SELECT id_response, id_form, guid, creation_date, update_date FROM forms_response WHERE guid = ? AND id_form = ?";
 
     /**
      * {@inheritDoc }
@@ -177,6 +178,45 @@ public final class FormResponseDAO implements IFormResponseDAO
         daoUtil.close( );
 
         return formResponseList;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FormResponse selectFormResponseByGuidAndForm( String strGuid, int nIdForm, Plugin plugin )
+    {
+    	DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_GUID_AND_FORM, plugin );
+        daoUtil.setString( 1, strGuid );
+        daoUtil.setInt( 2, nIdForm );
+        daoUtil.executeQuery( );
+
+        FormResponse formResponse = null;
+
+        if ( daoUtil.next( ) )
+        {
+            formResponse = new FormResponse( );
+            formResponse.setId( daoUtil.getInt( "id_response" ) );
+            formResponse.setFormId( daoUtil.getInt( "id_form" ) );
+            formResponse.setGuid( daoUtil.getString( "guid" ) );
+
+            Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
+            formResponse.setDateCreation( timestampCreationDate );
+            try
+            {
+                formResponse.setUpdate( daoUtil.getTimestamp( "update_date" ) );
+            }
+            catch( AppException exception )
+            {
+                AppLogService.error( "The update date of the FormResponse si not valid !" );
+
+                formResponse.setUpdate( timestampCreationDate );
+            }
+        }
+
+        daoUtil.close( );
+
+        return formResponse;
     }
 
     /**

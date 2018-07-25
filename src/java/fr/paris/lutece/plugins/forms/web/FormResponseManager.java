@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Step;
 
 /**
@@ -52,6 +53,8 @@ public class FormResponseManager
     private List<Step> _listValidatedStep;
 
     private Map<Integer, List<FormQuestionResponse>> _mapStepFormResponses;
+    
+    private FormResponse _formResponse;
 
     /**
      * Constructor
@@ -95,5 +98,21 @@ public class FormResponseManager
     {
         this._mapStepFormResponses = mapStepFormResponses;
     }
+
+	/**
+	 * @return the _formResponse
+	 */
+	public FormResponse getFormResponse( ) 
+	{
+		return _formResponse;
+	}
+
+	/**
+	 * @param formResponse the formResponse to set
+	 */
+	public void setFormResponse( FormResponse formResponse )
+	{
+		this._formResponse = formResponse;
+	}
 
 }

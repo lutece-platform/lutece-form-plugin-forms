@@ -14,6 +14,7 @@ availability_start_date date default NULL,
 availability_end_date date default NULL,
 workgroup varchar(255),
 id_workflow INT DEFAULT NULL,
+authentification_needed SMALLINT,
 PRIMARY KEY (id_form)
 );
 
@@ -138,7 +139,9 @@ CREATE TABLE IF NOT EXISTS forms_question_response (
   id_question_response int AUTO_INCREMENT,
   id_form_response int default '0' NOT NULL,
   id_question int default '0' NOT NULL,
+  id_step int default '0' NOT NULL,
   iteration_number int default '0',
+  from_save SMALLINT default 0,
   PRIMARY KEY (id_question_response)
 );
 
@@ -150,4 +153,13 @@ CREATE TABLE IF NOT EXISTS forms_response (
   creation_date timestamp default CURRENT_TIMESTAMP NOT NULL,
   update_date timestamp,
   PRIMARY KEY (id_response)
+);
+
+DROP TABLE IF EXISTS forms_response_step;
+CREATE TABLE IF NOT EXISTS forms_response_step (
+  id int AUTO_INCREMENT,
+  id_form_response int DEFAULT '0' NOT NULL,
+  id_step int  DEFAULT '0' NOT NULL,
+  order_response int DEFAULT '0' NOT NULL,
+  PRIMARY KEY (id)
 );

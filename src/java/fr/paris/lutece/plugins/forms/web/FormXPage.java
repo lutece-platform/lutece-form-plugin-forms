@@ -47,7 +47,10 @@ import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -59,9 +62,13 @@ import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -85,6 +92,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_PATH = "forms.xpage.form.view.pagePathLabel";
     protected static final String MESSAGE_ERROR_NO_STEP = "forms.xpage.form.error.noStep";
     protected static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.xpage.form.error.inactive";
+    protected static final String MESSAGE_LOAD_BACKUP = "forms.xpage.form.view.loadBackUp";
 
     /**
      * Generated serial id
@@ -93,6 +101,7 @@ public class FormXPage extends MVCApplication
 
     // Views
     private static final String VIEW_STEP = "stepView";
+    private static final String VIEW_RETRIEVE_STEP = "retrieveStepView";
 
     // Actions
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
@@ -127,9 +136,10 @@ public class FormXPage extends MVCApplication
      * 
      * @throws SiteMessageException
      *             Exception
+     * @throws UserNotSignedException 
      */
     @View( value = VIEW_STEP, defaultView = true )
-    public XPage getStepView( HttpServletRequest request ) throws SiteMessageException
+    public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         Map<String, Object> model = getModel( );
 
@@ -145,49 +155,13 @@ public class FormXPage extends MVCApplication
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
         }
-
         else
         {
             Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
 
             if ( form.isActive( ) )
             {
-                if ( _formResponseManager == null )
-                {
-                    _formResponseManager = new FormResponseManager( );
-                }
-
-                if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
-                {
-                    _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
-                    _formResponseManager.getListValidatedStep( ).add( _currentStep );
-                }
-
-                populateStepResponses( );
-
-                boolean bIsForEdition = Boolean.TRUE;
-
-                // Add all the display controls for visualisation
-                List<Control> listDisplayControls = _stepDisplayTree.getListDisplayControls( );
-                model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
-
-                // Add all the validators to generate their Javascript
-                List<IValidator> listDisplayValidators = new ArrayList<IValidator>( );
-                for ( Control control : listDisplayControls )
-                {
-                    IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-                    if ( validator != null )
-                    {
-                        listDisplayValidators.add( validator );
-                    }
-                }
-                model.put( FormsConstants.MARK_LIST_VALIDATORS, listDisplayValidators );
-                model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
-                model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
-                model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
-                model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), bIsForEdition ) );
-                model.put( FormsConstants.MARK_FORM_BREADCRUMB, _formResponseManager.getListValidatedStep( ) );
-                model.put( FormsConstants.MARK_STEP, _currentStep );
+            	getModelForFormAndStep( form, request, model );
             }
             else
             {
@@ -196,6 +170,74 @@ public class FormXPage extends MVCApplication
         }
 
         return getXPage( TEMPLATE_VIEW_STEP, request.getLocale( ), model );
+    }
+    
+    /**
+     * @param form
+     *            The form to display
+     * @param request
+     *            The Http request
+     * @param model
+     *            The model for XPage
+     * @throws UserNotSignedException 
+     */
+    private void getModelForFormAndStep( Form form, HttpServletRequest request, Map<String, Object> model ) throws UserNotSignedException
+    {
+    	_formService.checkMyLuteceAuthentification( form, request );
+    	
+    	LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+    	
+        if ( _formResponseManager == null )
+        {
+        	_formResponseManager = new FormResponseManager( );
+        	
+        	if( user != null )
+        	{
+        		loadFormResponseFromBackUp( form.getId( ), user.getName( ) );
+        		
+        		if( _formResponseManager.getFormResponse( ) != null )
+        		{
+        			Object [ ] args = { _formResponseManager.getFormResponse( ).getUpdate( ) };
+        			
+        			model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, request.getLocale( ) ) );
+        		}
+        	}
+        }
+
+        if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
+        {
+            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
+            _formResponseManager.getListValidatedStep( ).add( _currentStep );
+        }
+
+        populateStepResponses( );
+        
+        boolean bIsForEdition = Boolean.TRUE;
+
+        // Add all the display controls for visualisation
+        List<Control> listDisplayControls = _stepDisplayTree.getListDisplayControls( );
+        model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
+
+        // Add all the validators to generate their Javascript
+        List<IValidator> listDisplayValidators = new ArrayList<IValidator>( );
+        for ( Control control : listDisplayControls )
+        {
+            IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+            
+            if ( validator != null )
+            {
+                listDisplayValidators.add( validator );
+            }
+        }
+        
+        model.put( FormsConstants.MARK_USER, user );
+        model.put( FormsConstants.MARK_LIST_VALIDATORS, listDisplayValidators );
+        model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
+        model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
+        model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
+        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), bIsForEdition ) );
+        model.put( FormsConstants.MARK_FORM_BREADCRUMB, _formResponseManager.getListValidatedStep( ) );
+        model.put( FormsConstants.MARK_STEP, _currentStep );
     }
 
     /**
@@ -252,10 +294,16 @@ public class FormXPage extends MVCApplication
      * 
      * @throws SiteMessageException
      *             Exception
+     * @throws UserNotSignedException 
      */
     @Action( value = ACTION_SAVE_STEP )
-    public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException
+    public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
+    	if( _currentStep == null )
+    	{
+    		SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+    	}
+    	
         Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
 
         if ( !form.isActive( ) )
@@ -264,8 +312,6 @@ public class FormXPage extends MVCApplication
         }
 
         List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
-
-        int nIdForm = _currentStep.getIdForm( );
 
         boolean bValidStep = true;
         Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
@@ -301,15 +347,17 @@ public class FormXPage extends MVCApplication
 
         if ( _currentStep.isFinal( ) )
         {
+        	
             FormResponse formResponse = new FormResponse( );
+            
+            if( _formResponseManager.getFormResponse( ) != null )
+        	{
+            	formResponse.setId( _formResponseManager.getFormResponse( ).getId( ) );
+        	}
+            
             formResponse.setFormId( _currentStep.getIdForm( ) );
-
-            for ( Step step : _formResponseManager.getListValidatedStep( ) )
-            {
-                formResponse.getListResponses( ).addAll( _formResponseManager.getMapStepFormResponses( ).get( step.getId( ) ) );
-            }
-
-            _formService.saveForm( formResponse );
+            
+            _formService.saveForm( _formResponseManager, Boolean.FALSE );
 
             Map<String, String> model = new HashMap<String, String>( );
 
@@ -363,6 +411,107 @@ public class FormXPage extends MVCApplication
 
             return redirectView( request, VIEW_STEP );
         }
+    }
+    
+    
+    /**
+     * 
+     * @param request
+     *            The Http request
+     * @return the XPage
+     * 
+     * @throws SiteMessageException
+     *             Exception
+     * @throws UserNotSignedException 
+     */
+    @Action( value = ACTION_SAVE_FORM_RESPONSE )
+    public XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
+    	if( _currentStep == null )
+    	{
+    		SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+    	}
+    	
+    	Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
+
+        if ( !form.isActive( ) )
+        {
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+        }
+        
+        _formService.checkMyLuteceAuthentification( form, request );
+    	
+    	LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+
+        List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
+
+        Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
+        List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
+
+        for ( Question question : stepQuestions )
+        {
+            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+            if ( entryDataService != null )
+            {
+                FormQuestionResponse questionResponseInstance = new FormQuestionResponse( );
+                boolean bHasError = entryDataService.getResponseFromRequest( question, request, questionResponseInstance );
+
+                if ( !bHasError )
+                {
+                	listResponsesTemp.add( questionResponseInstance );
+                }
+
+                mapStepResponses.put( question.getId( ), questionResponseInstance.getEntryResponse( ) );
+            }
+        }
+
+        _formResponseManager.getMapStepFormResponses( ).put( _currentStep.getId( ), listResponsesTemp );
+        
+        if( _formResponseManager.getFormResponse( ) == null || _formResponseManager.getFormResponse( ).getFormId( ) != _currentStep.getIdForm( ) )
+        {
+        	FormResponse formResponse = new FormResponse( );
+            formResponse.setFormId( _currentStep.getIdForm( ) );
+            formResponse.setGuid( user.getName( ) );
+            
+            _formResponseManager.setFormResponse( formResponse );
+        }
+        
+        _formService.saveForm( _formResponseManager, true );
+        
+        return redirectView( request, VIEW_STEP );
+    }
+    
+    /**
+     * @param nIdForm
+     *            The form id
+     * @param strUserGuid
+     *            The user guid
+     */
+    public void loadFormResponseFromBackUp( int nIdForm, String strUserGuid )
+    {    	    	    	
+    	FormResponse formResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, nIdForm );
+    	
+    	if( formResponse != null )
+    	{
+    		_formResponseManager.setFormResponse( formResponse );
+    		
+    		for( int nIdStep :  FormResponseStepHome.getListIdStepByFormResponse( formResponse.getId( ) ) )
+        	{
+        		Step step = StepHome.findByPrimaryKey( nIdStep );
+        		
+        		_formResponseManager.getListValidatedStep( ).add( step );
+        		
+        		List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByStepAndFormResponse( formResponse.getId( ), step.getId( ) );
+        		
+        		_formResponseManager.getMapStepFormResponses( ).put( step.getId( ), listFormQuestionResponse );
+        	}
+    		
+    		Step lastStep = _formResponseManager.getListValidatedStep( ).get( _formResponseManager.getListValidatedStep( ).size( ) - 1 );
+        	
+        	_currentStep = lastStep;
+        	
+        	_formResponseManager.getListValidatedStep( ).remove( lastStep );
+    	}
     }
 
 }

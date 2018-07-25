@@ -15,6 +15,7 @@
     <bean id="forms.formListDAO" class="fr.paris.lutece.plugins.forms.business.form.list.FormListDAO" />
     <bean id="forms.formQuestionResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormQuestionResponseDAO" />
     <bean id="forms.formResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseDAO" />
+    <bean id="forms.formResponseStepDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseStepDAO" />
     <bean id="forms.controlDAO" class="fr.paris.lutece.plugins.forms.business.ControlDAO" />
     
     <!-- Validator -->

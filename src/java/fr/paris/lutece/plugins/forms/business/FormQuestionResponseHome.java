@@ -86,12 +86,12 @@ public final class FormQuestionResponseHome
     /**
      * Remove the formQuestionResponse whose identifier is specified in parameter
      * 
-     * @param nKey
-     *            The formQuestionResponse Id
+     * @param formQuestionResponse
+     *            The formQuestionResponse to remove
      */
-    public static void remove( int nKey )
+    public static void remove( FormQuestionResponse formQuestionResponse )
     {
-        _dao.delete( nKey, _plugin );
+        _dao.delete( formQuestionResponse, _plugin );
     }
 
     /**
@@ -125,6 +125,32 @@ public final class FormQuestionResponseHome
     public static List<FormQuestionResponse> getFormQuestionResponseList( )
     {
         return _dao.selectFormQuestionResponseList( _plugin );
+    }
+    
+    /**
+     * Load the data of all the formQuestionResponse objects and returns them as a list
+     * 
+     * @param nIdFormResponse
+     *            The identifier of the FormResponse
+     * @param nIdStep
+     *            The identifier of the Step
+     * @return the list which contains the data of all the formQuestionResponse objects
+     */
+    public static List<FormQuestionResponse> getFormQuestionResponseListByStepAndFormResponse( int nIdFormResponse, int nIdStep )
+    {
+        return _dao.selectFormQuestionResponseListByStepAndFormResponse( nIdFormResponse, nIdStep, _plugin );
+    }
+    
+    /**
+     * Load the data of all the formQuestionResponse objects for saving and returns them as a list
+     * 
+     * @param nIdFormResponse
+     *            The identifier of the FormResponse
+     * @return the list which contains the data of all the formQuestionResponse objects
+     */
+    public static List<FormQuestionResponse> getFormQuestionResponseListByFormResponseForSaving( int nIdFormResponse )
+    {
+        return _dao.selectFormQuestionResponseListByFormResponseForSaving( nIdFormResponse, _plugin );
     }
 
     /**

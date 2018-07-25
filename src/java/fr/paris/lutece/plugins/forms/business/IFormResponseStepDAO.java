@@ -39,33 +39,33 @@ import java.util.List;
 /**
  * IFormResponseDAO Interface
  */
-public interface IFormResponseDAO
+public interface IFormResponseStepDAO
 {
     /**
      * Insert a new record in the table.
      * 
-     * @param formResponse
-     *            instance of the formResponse object to insert
+     * @param formResponseStep
+     *            instance of the formResponseStep object to insert
      * @param plugin
      *            the Plugin
      */
-    void insert( FormResponse formResponse, Plugin plugin );
+    void insert( FormResponseStep formResponseStep, Plugin plugin );
 
     /**
      * Update the record in the table
      * 
-     * @param formResponse
-     *            the reference of the FormResponse
+     * @param formResponseStep
+     *            the reference of the FormResponseStep
      * @param plugin
      *            the Plugin
      */
-    void store( FormResponse formResponse, Plugin plugin );
+    void store( FormResponseStep formResponseStep, Plugin plugin );
 
     /**
      * Delete a record from the table
      * 
      * @param nKey
-     *            The identifier of the FormResponse to delete
+     *            The identifier of the FormResponseStep to delete
      * @param plugin
      *            the Plugin
      */
@@ -78,43 +78,40 @@ public interface IFormResponseDAO
      * Load the data from the table
      * 
      * @param nKey
+     *            The identifier of the FormResponseStep
+     * @param plugin
+     *            the Plugin
+     * @return The instance of the FormResponseStep
+     */
+    FormResponseStep load( int nKey, Plugin plugin );
+
+    /**
+     * Load the data of all the FormResponseStep objects and returns them as a list
+     * 
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the FormResponseStep objects
+     */
+    List<FormResponseStep> selectFormResponseStepList( Plugin plugin );
+
+    /**
+     * Load the order step id list by FormResponse id
+     * 
+     * @param nIdFormResponse
      *            The identifier of the FormResponse
      * @param plugin
      *            the Plugin
-     * @return The instance of the FormResponse
+     * @return The list which contains the data of all the FormResponseStep objects
      */
-    FormResponse load( int nKey, Plugin plugin );
-
-    /**
-     * Load the data of all the FormResponse objects and returns them as a list
-     * 
-     * @param plugin
-     *            the Plugin
-     * @return The list which contains the data of all the FormResponse objects
-     */
-    List<FormResponse> selectFormResponseList( Plugin plugin );
+    List<Integer> selectListIdStepByFormResponse( int nIdFormResponse, Plugin plugin );
     
     /**
-     * Load the data of all the FormResponse objects and returns them as a list
+     * Remove all the formResponseStep linked to a given FormResponse
      * 
-     * @param strGuid
-     *            the given guid
-     * @param nIdForm
-     *            the form id key
-     * @param plugin
-     *            the Plugin
-     * @return The list which contains the data of all the FormResponse objects
-     */
-    FormResponse selectFormResponseByGuidAndForm( String strGuid, int nIdForm, Plugin plugin );
-
-    /**
-     * Remove all the formResponse linked to a given Form
-     * 
-     * @param nIdForm
+     * @param nIdFormResponse
      *            The form Identifier
      * @param plugin
      *            the Plugin
      */
-    void deleteByForm( int nIdForm, Plugin plugin );
-
+    void deleteByFormResponse( int nIdFormResponse, Plugin plugin );
 }

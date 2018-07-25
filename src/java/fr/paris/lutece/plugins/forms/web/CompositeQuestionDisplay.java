@@ -61,7 +61,6 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 {
     private static final String QUESTION_TEMPLATE = "/skin/plugins/forms/composite_template/view_question.html";
     private static final String QUESTION_TEMPLATE_READ_ONLY = "/admin/plugins/forms/composite/view_question.html";
-    private static final String QUESTION_CONTENT_MARKER = "questionContent";
     private static final String QUESTION_LIST_RESPONSES = "list_responses";
     private static final String QUESTION_ENTRY = "questionEntry";
 
@@ -108,7 +107,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                     strQuestionTemplate = displayService.getEntryResponseValueTemplateDisplay( _question.getEntry( ), locale, model );
                 }
 
-                model.put( QUESTION_CONTENT_MARKER, strQuestionTemplate );
+                model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
                 model.put( FormsConstants.MARK_ID_QUESTION, _question.getId( ) );
                 if ( _formDisplay.getDisplayControl( ) != null )
                 {
