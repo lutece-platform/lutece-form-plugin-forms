@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<plug-in>
+<?xml version="1.0" encoding="UTF-8"?><plug-in>
     <name>forms</name>
     <class>fr.paris.lutece.plugins.forms.service.FormsPlugin</class>
     <version>1.0.0</version>
-    <documentation></documentation>
-    <installation></installation>
-    <changes></changes>
-    <user-guide></user-guide>
+    <documentation/>
+    <installation/>
+    <changes/>
+    <user-guide/>
     <description>forms.plugin.description</description>
     <provider>forms.plugin.provider</provider>
     <provider-url>http://lutece.paris.fr</provider-url>
@@ -36,7 +35,7 @@
             <feature-description>forms.adminFeature.manageForms.description</feature-description>
             <feature-level>0</feature-level>
             <feature-url>jsp/admin/plugins/forms/ManageForms.jsp</feature-url>
-            <feature-icon-url></feature-icon-url>
+            <feature-icon-url/>
       </admin-feature>
       <admin-feature>
             <feature-id>FORMS_MULTIVIEW</feature-id>
@@ -44,7 +43,7 @@
             <feature-description>forms.adminFeature.multiviewForms.description</feature-description>
             <feature-level>2</feature-level>
             <feature-url>jsp/admin/plugins/forms/MultiviewForms.jsp</feature-url>
-            <feature-icon-url></feature-icon-url>
+            <feature-icon-url/>
       </admin-feature>
     </admin-features>    
 
