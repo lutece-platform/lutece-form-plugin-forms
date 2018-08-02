@@ -101,6 +101,7 @@ public final class FormsConstants
     public static final String PARAMETER_ID_CONTROL = "id_control";
     public static final String PARAMETER_VALIDATOR_NAME = "validator_name";
     public static final String PARAMETER_CONTROL_VALUE = "control_value";
+    public static final String PARAMETER_INDEX_STEP = "index_step";
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";

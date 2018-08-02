@@ -102,6 +102,7 @@ public class FormXPage extends MVCApplication
     // Views
     private static final String VIEW_STEP = "stepView";
     private static final String VIEW_RETRIEVE_STEP = "retrieveStepView";
+    private static final String VIEW_GET_STEP = "getStep";
 
     // Actions
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
@@ -265,6 +266,38 @@ public class FormXPage extends MVCApplication
         _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
 
         populateStepResponses( );
+
+        return redirectView( request, VIEW_STEP );
+    }
+    
+    /**
+     * 
+     * @param request
+     *            The Http request
+     * @return the XPage
+     * 
+     * @throws SiteMessageException
+     *             Exception
+     */
+    @View( value = VIEW_GET_STEP )
+    public XPage getPreviousStep( HttpServletRequest request ) throws SiteMessageException
+    {
+    	int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_INDEX_STEP ), INCORRECT_ID );
+    	
+    	if( _formResponseManager.getListValidatedStep( ) != null && _formResponseManager.getListValidatedStep( ).size( ) > nIndexStep )
+    	{
+    		_currentStep = _formResponseManager.getListValidatedStep( ).get( nIndexStep );
+
+    		_formResponseManager.setCurrentStep( nIndexStep );
+    		
+    		_stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
+
+            populateStepResponses( );
+    	}
+    	else
+    	{
+    		SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+    	}        
 
         return redirectView( request, VIEW_STEP );
     }
