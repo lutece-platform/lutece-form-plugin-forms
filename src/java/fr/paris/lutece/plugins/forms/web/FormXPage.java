@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -128,6 +129,31 @@ public class FormXPage extends MVCApplication
     private FormResponseManager _formResponseManager;
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
+    
+    /**
+     * 
+     * @param form
+     * 		the given Form
+     * @param request
+     * 		The Http request
+     * @throws UserNotSignedException
+     * 		Exception
+     */
+    private void checkAuthentication( Form form, HttpServletRequest request ) throws UserNotSignedException
+    {
+	    try
+	    {
+	    	_formService.checkMyLuteceAuthentification( form, request );
+	    }
+	    catch( UserNotSignedException e )
+	    {
+	    	_currentStep = null;
+	    	_formResponseManager = null;
+	    	_stepDisplayTree = null;
+	    	
+	    	throw new UserNotSignedException( );
+	    }
+    }
 
     /**
      * 
@@ -186,7 +212,7 @@ public class FormXPage extends MVCApplication
      */
     private void getModelForFormAndStep( Form form, HttpServletRequest request, Map<String, Object> model ) throws UserNotSignedException
     {
-        _formService.checkMyLuteceAuthentification( form, request );
+        checkAuthentication( form, request );
 
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
@@ -201,7 +227,7 @@ public class FormXPage extends MVCApplication
                 if ( _formResponseManager.getFormResponse( ) != null )
                 {
                     Object [ ] args = {
-                        _formResponseManager.getFormResponse( ).getUpdate( )
+                        _formResponseManager.getFormResponse( ).getUpdate( ),
                     };
 
                     model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, request.getLocale( ) ) );
@@ -490,8 +516,8 @@ public class FormXPage extends MVCApplication
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
         }
-
-        _formService.checkMyLuteceAuthentification( form, request );
+        
+        checkAuthentication( form, request );
 
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
