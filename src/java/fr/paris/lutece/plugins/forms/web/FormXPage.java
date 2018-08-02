@@ -199,7 +199,9 @@ public class FormXPage extends MVCApplication
 
                 if ( _formResponseManager.getFormResponse( ) != null )
                 {
-                    Object [ ] args = { _formResponseManager.getFormResponse( ).getUpdate( ) };
+                    Object [ ] args = {
+                        _formResponseManager.getFormResponse( ).getUpdate( )
+                    };
 
                     model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, request.getLocale( ) ) );
                 }
@@ -242,7 +244,6 @@ public class FormXPage extends MVCApplication
         model.put( FormsConstants.MARK_STEP, _currentStep );
     }
 
-    
     /**
      * 
      * @param request
@@ -332,7 +333,7 @@ public class FormXPage extends MVCApplication
                 {
                     bValidStep = false;
                 }
-                
+
                 listResponsesTemp.add( questionResponseInstance );
             }
         }

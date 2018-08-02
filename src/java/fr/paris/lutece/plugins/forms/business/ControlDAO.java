@@ -244,7 +244,7 @@ public final class ControlDAO implements IControlDAO
         daoUtil.close( );
         return control;
     }
-    
+
     @Override
     public Control selectControlByQuestionAndType( int nIdQuestion, String strControlType, Plugin plugin )
     {
@@ -271,6 +271,6 @@ public final class ControlDAO implements IControlDAO
 
         daoUtil.close( );
         return control;
-    }    
+    }
 
 }

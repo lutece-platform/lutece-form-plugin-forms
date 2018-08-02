@@ -88,55 +88,56 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     public boolean getResponseFromRequest( Question question, HttpServletRequest request, FormQuestionResponse responseInstance )
     {
         boolean bHasError = false;
-        
+
         responseInstance.setEntryResponse( new ArrayList<Response>( ) );
         responseInstance.setIdQuestion( question.getId( ) );
 
         GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
-        		responseInstance.getEntryResponse( ), request.getLocale( ) );
+                responseInstance.getEntryResponse( ), request.getLocale( ) );
 
         if ( error != null )
         {
             bHasError = true;
-            setGenericAttributeError( error, responseInstance ); 
+            setGenericAttributeError( error, responseInstance );
         }
         else
         {
-        	Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
-        	
-        	if( control != null )
-        	{
-        		IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-        		if( !validator.validate( responseInstance, control ) )
-        		{
-        			error = new GenericAttributeError( );
-        			
-        			error.setIsDisplayableError( true );
-        			error.setErrorMessage( control.getErrorMessage( ) );
-        			
-        			setGenericAttributeError( error, responseInstance );
-        			
-        			bHasError = true;
-        		}
-        	}
+            Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
+
+            if ( control != null )
+            {
+                IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+                if ( !validator.validate( responseInstance, control ) )
+                {
+                    error = new GenericAttributeError( );
+
+                    error.setIsDisplayableError( true );
+                    error.setErrorMessage( control.getErrorMessage( ) );
+
+                    setGenericAttributeError( error, responseInstance );
+
+                    bHasError = true;
+                }
+            }
         }
 
         return bHasError;
     }
-    
+
     /**
      * Set the error in the question response instance object
+     * 
      * @param error
-     * 			GenericAttributeError
+     *            GenericAttributeError
      * @param responseInstance
-     * 			Question response instance
+     *            Question response instance
      */
     private void setGenericAttributeError( GenericAttributeError error, FormQuestionResponse responseInstance )
     {
-    	if( responseInstance.getEntryResponse( ).size( ) > 0 && responseInstance.getEntryResponse( ).get( 0 ).getEntry( ) != null )
-    	{
-    		responseInstance.getEntryResponse( ).get( 0 ).getEntry( ).setError( error );
-    	}
+        if ( responseInstance.getEntryResponse( ).size( ) > 0 && responseInstance.getEntryResponse( ).get( 0 ).getEntry( ) != null )
+        {
+            responseInstance.getEntryResponse( ).get( 0 ).getEntry( ).setError( error );
+        }
     }
 
 }

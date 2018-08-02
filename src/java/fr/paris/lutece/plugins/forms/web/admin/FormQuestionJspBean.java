@@ -191,7 +191,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveGroup.formActive";
     private static final String WARNING_CONFIRM_REMOVE_CONTROL = "forms.warning.deleteControl.confirmRemoveControl";
     private static final String WARNING_CONFIRM_REMOVE_CONDITION = "forms.warning.deleteControl.confirmRemoveCondition";
-    
+
     // Validation
     private static final String CONTROL_VALIDATION_ATTRIBUTES_PREFIX = "forms.model.entity.control.attribute.";
 
@@ -1195,7 +1195,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
 
     }
-    
+
     /**
      * Gets the Control component page
      * 
@@ -1207,37 +1207,37 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getModifyControl( HttpServletRequest request )
     {
         int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
-        
+
         _question = QuestionHome.findByPrimaryKey( nIdQuestion );
 
         if ( _question == null )
         {
             return redirectToViewManageForm( request );
-        }        
-        
+        }
+
         Map<String, Object> model = getModel( );
-        
+
         EntryType entryType = _question.getEntry( ).getEntryType( );
         ReferenceList refListAvailableValidator = EntryServiceManager.getInstance( ).getAvailableValidator( entryType );
 
         model.put( FormsConstants.MARK_AVAILABLE_VALIDATORS, refListAvailableValidator );
-        
+
         _control = ControlHome.getControlByQuestionAndType( _question.getId( ), ControlType.VALIDATION.getLabel( ) );
-        
+
         if ( _control == null )
         {
-        	_control = new Control( );
-        	_control.setControlType( ControlType.VALIDATION.getLabel( ) );
+            _control = new Control( );
+            _control.setControlType( ControlType.VALIDATION.getLabel( ) );
         }
-        
+
         model.put( FormsConstants.MARK_CONTROL, _control );
         model.put( FormsConstants.MARK_QUESTION, _question );
-        
+
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONTROL, getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
     }
-    
+
     /**
      * Action to process Condition modification
      * 
@@ -1249,31 +1249,31 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( value = ACTION_MODIFY_CONTROL )
     public String doModifyControl( HttpServletRequest request )
     {
-    	if ( _control == null )
+        if ( _control == null )
         {
             _control = new Control( );
             _control.setControlType( ControlType.VALIDATION.getLabel( ) );
         }
-    	
-	    populate( _control, request, getLocale( ) );
-	
-	    if ( !validateControl( _control ) )
-	    {
-	        return redirect( request, VIEW_MODIFY_CONTROL, FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
-	    }
-	    
-	    if( _control.getId( ) > 0 )
-	    {
-	    	ControlHome.update( _control );
-	    }
-	    else
-	    {
-	    	ControlHome.create( _control );
-	    }
 
-	    return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _question.getIdStep( ) );
+        populate( _control, request, getLocale( ) );
+
+        if ( !validateControl( _control ) )
+        {
+            return redirect( request, VIEW_MODIFY_CONTROL, FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
+        }
+
+        if ( _control.getId( ) > 0 )
+        {
+            ControlHome.update( _control );
+        }
+        else
+        {
+            ControlHome.create( _control );
+        }
+
+        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _question.getIdStep( ) );
     }
-    
+
     /**
      * Validate the Control field values
      * 
@@ -1286,7 +1286,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     {
         return validateBean( control, CONTROL_VALIDATION_ATTRIBUTES_PREFIX );
     }
-    
+
     /**
      * Manages the removal form of a Control whose identifier is in the http request
      *
@@ -1399,7 +1399,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         return getAdminPage( template.getHtml( ) );
     }
-    
+
     /**
      * Action to process Condition modification
      * 
@@ -1476,7 +1476,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, nIdStep );
     }
-    
+
     /**
      * Manages the removal form of a Control whose identifier is in the http request
      *
@@ -1514,7 +1514,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_REMOVE_CONTROL )
     public String doRemoveControl( HttpServletRequest request )
     {
-    	int nIdControlToRemove = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdControlToRemove = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL ), FormsConstants.DEFAULT_ID_VALUE );
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nIdControlToRemove == FormsConstants.DEFAULT_ID_VALUE || nIdStep == FormsConstants.DEFAULT_ID_VALUE )

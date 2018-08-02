@@ -143,19 +143,23 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
         DAOUtil daoUtilRemoveEntryResponses = new DAOUtil( SQL_QUERY_DELETE_QUESTION_ENTRY_RESPONSE, plugin );
 
-        daoUtilSelectEntryResponses.setInt( 1, formQuestionResponse.getId( ) );
-        daoUtilSelectEntryResponses.executeQuery( );
-
-        while ( daoUtilSelectEntryResponses.next( ) )
+        try
         {
+            daoUtilSelectEntryResponses.setInt( 1, formQuestionResponse.getId( ) );
+            daoUtilSelectEntryResponses.executeQuery( );
 
-            ResponseHome.remove( daoUtilSelectEntryResponses.getInt( "id_entry_response" ) );
-            daoUtilRemoveEntryResponses.setInt( 1, daoUtilSelectEntryResponses.getInt( "id_question_entry_response" ) );
-            daoUtilRemoveEntryResponses.executeUpdate( );
+            while ( daoUtilSelectEntryResponses.next( ) )
+            {
+                ResponseHome.remove( daoUtilSelectEntryResponses.getInt( "id_entry_response" ) );
+                daoUtilRemoveEntryResponses.setInt( 1, daoUtilSelectEntryResponses.getInt( "id_question_entry_response" ) );
+                daoUtilRemoveEntryResponses.executeUpdate( );
+            }
         }
-
-        daoUtilSelectEntryResponses.close( );
-        daoUtilRemoveEntryResponses.close( );
+        finally
+        {
+            daoUtilSelectEntryResponses.close( );
+            daoUtilRemoveEntryResponses.close( );
+        }
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
         daoUtil.setInt( 1, formQuestionResponse.getId( ) );
