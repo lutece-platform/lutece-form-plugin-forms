@@ -129,30 +129,30 @@ public class FormXPage extends MVCApplication
     private FormResponseManager _formResponseManager;
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
-    
+
     /**
      * 
      * @param form
-     * 		the given Form
+     *            the given Form
      * @param request
-     * 		The Http request
+     *            The Http request
      * @throws UserNotSignedException
-     * 		Exception
+     *             Exception
      */
     private void checkAuthentication( Form form, HttpServletRequest request ) throws UserNotSignedException
     {
-	    try
-	    {
-	    	_formService.checkMyLuteceAuthentification( form, request );
-	    }
-	    catch( UserNotSignedException e )
-	    {
-	    	_currentStep = null;
-	    	_formResponseManager = null;
-	    	_stepDisplayTree = null;
-	    	
-	    	throw new UserNotSignedException( );
-	    }
+        try
+        {
+            _formService.checkMyLuteceAuthentification( form, request );
+        }
+        catch( UserNotSignedException e )
+        {
+            _currentStep = null;
+            _formResponseManager = null;
+            _stepDisplayTree = null;
+
+            throw new UserNotSignedException( );
+        }
     }
 
     /**
@@ -516,7 +516,7 @@ public class FormXPage extends MVCApplication
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
         }
-        
+
         checkAuthentication( form, request );
 
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
