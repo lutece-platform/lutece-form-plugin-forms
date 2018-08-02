@@ -269,7 +269,7 @@ public class FormXPage extends MVCApplication
 
         return redirectView( request, VIEW_STEP );
     }
-    
+
     /**
      * 
      * @param request
@@ -339,6 +339,16 @@ public class FormXPage extends MVCApplication
     {
         if ( _currentStep == null )
         {
+            int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), INCORRECT_ID );
+
+            if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
+            {
+                _currentStep = StepHome.getInitialStep( nIdForm );
+                _formResponseManager = null;
+
+                return redirectView( request, VIEW_STEP );
+            }
+
             SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
         }
 
@@ -409,41 +419,50 @@ public class FormXPage extends MVCApplication
         }
         else
         {
-            List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( _currentStep.getId( ) );
+            _currentStep = getNextStep( request );
+        }
 
-            for ( Transition transition : listTransition )
+        return redirectView( request, VIEW_STEP );
+    }
+
+    /**
+     * 
+     * @param request
+     *            The Http request
+     * @return The next Step
+     */
+    private Step getNextStep( HttpServletRequest request )
+    {
+        List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( _currentStep.getId( ) );
+
+        for ( Transition transition : listTransition )
+        {
+            if ( transition.getIdControl( ) <= 0 )
             {
-                if ( transition.getIdControl( ) <= 0 )
-                {
-                    _currentStep = StepHome.findByPrimaryKey( transition.getNextStep( ) );
-                    return redirectView( request, VIEW_STEP );
-                }
-                else
-                {
-                    Control transitionControl = ControlHome.findByPrimaryKey( transition.getIdControl( ) );
+                return StepHome.findByPrimaryKey( transition.getNextStep( ) );
+            }
+            else
+            {
+                Control transitionControl = ControlHome.findByPrimaryKey( transition.getIdControl( ) );
 
-                    Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
+                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
 
-                    for ( FormQuestionResponse questionResponse : _formResponseManager.getMapStepFormResponses( ).get( targetQuestion.getIdStep( ) ) )
+                for ( FormQuestionResponse questionResponse : _formResponseManager.getMapStepFormResponses( ).get( targetQuestion.getIdStep( ) ) )
+                {
+                    if ( transitionControl.getIdQuestion( ) == questionResponse.getIdQuestion( ) )
                     {
-                        if ( transitionControl.getIdQuestion( ) == questionResponse.getIdQuestion( ) )
-                        {
-                            IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
+                        IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
 
-                            if ( validator != null && validator.validate( questionResponse, transitionControl ) )
-                            {
-                                _currentStep = StepHome.findByPrimaryKey( transition.getNextStep( ) );
-                                return redirectView( request, VIEW_STEP );
-                            }
+                        if ( validator != null && validator.validate( questionResponse, transitionControl ) )
+                        {
+                            return StepHome.findByPrimaryKey( transition.getNextStep( ) );
                         }
                     }
                 }
             }
-
-            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
-
-            return redirectView( request, VIEW_STEP );
         }
+
+        return null;
     }
 
     /**
