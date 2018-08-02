@@ -64,15 +64,15 @@ public class FormResponseManager
         _listValidatedStep = new ArrayList<Step>( );
         _mapStepFormResponses = new HashMap<Integer, List<FormQuestionResponse>>( );
     }
-    
+
     /**
      * 
      * @param nIndexStep
-     * 		The wanted current step index
+     *            The wanted current step index
      */
     public void setCurrentStep( int nIndexStep )
     {
-    	_listValidatedStep.subList( nIndexStep + 1, _listValidatedStep.size( ) ).clear( );
+        _listValidatedStep.subList( nIndexStep + 1, _listValidatedStep.size( ) ).clear( );
     }
 
     /**

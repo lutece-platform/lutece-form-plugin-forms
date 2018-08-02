@@ -282,22 +282,22 @@ public class FormXPage extends MVCApplication
     @View( value = VIEW_GET_STEP )
     public XPage getPreviousStep( HttpServletRequest request ) throws SiteMessageException
     {
-    	int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_INDEX_STEP ), INCORRECT_ID );
-    	
-    	if( _formResponseManager.getListValidatedStep( ) != null && _formResponseManager.getListValidatedStep( ).size( ) > nIndexStep )
-    	{
-    		_currentStep = _formResponseManager.getListValidatedStep( ).get( nIndexStep );
+        int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_INDEX_STEP ), INCORRECT_ID );
 
-    		_formResponseManager.setCurrentStep( nIndexStep );
-    		
-    		_stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
+        if ( _formResponseManager.getListValidatedStep( ) != null && _formResponseManager.getListValidatedStep( ).size( ) > nIndexStep )
+        {
+            _currentStep = _formResponseManager.getListValidatedStep( ).get( nIndexStep );
+
+            _formResponseManager.setCurrentStep( nIndexStep );
+
+            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ) );
 
             populateStepResponses( );
-    	}
-    	else
-    	{
-    		SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
-    	}        
+        }
+        else
+        {
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+        }
 
         return redirectView( request, VIEW_STEP );
     }
