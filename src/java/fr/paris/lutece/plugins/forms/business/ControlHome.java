@@ -148,5 +148,19 @@ public final class ControlHome
     {
         return _dao.selectControlByDisplay( nIdDisplay, _plugin );
     }
+    
+    /**
+     * Loads an existing control based on the attached question and control type
+     * 
+     * @param nIdQuestion
+     *            the question id
+     * @param strControlType
+     *            the control type
+     * @return the requested Control
+     */
+    public static Control getControlByQuestionAndType( int nIdQuestion, String strControlType )
+    {
+        return _dao.selectControlByQuestionAndType( nIdQuestion, strControlType, _plugin );
+    }
 
 }

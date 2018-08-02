@@ -33,6 +33,9 @@
 						<button class="btn btn-default" name="view_manageQuestions" type="submit" formnovalidate >
 							<i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
 						</button>
+						<#if control.id gt 0>
+	                    	<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveControl&id_step=${id_step}&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeCondition}' class='pull-right' color='btn-danger' />
+	                	</#if>
 					</div>
 				</div>  
 			</@tform>

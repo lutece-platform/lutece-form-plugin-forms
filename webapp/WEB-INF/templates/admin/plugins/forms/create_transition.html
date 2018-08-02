@@ -7,7 +7,6 @@
          <input type="hidden" id="fromStep" name="fromStep" value="${step.id}"/>
          
              <@formGroup labelKey='#i18n{forms.create_transition.labelNextStep}' helpKey='#i18n{forms.create_transition.labelNextStep.help}' mandatory=true>
-             	
                  <@inputGroup>
                      <@select name='nextStep' items=availableSteps default_value='' />
                  </@inputGroup>

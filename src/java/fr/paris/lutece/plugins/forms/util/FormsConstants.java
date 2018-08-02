@@ -98,6 +98,7 @@ public final class FormsConstants
     public static final String PARAMETER_GROUP_VALIDATED = "groupValidated";
     public static final String PARAMETER_DISPLAY_ORDER = "displayOrder";
     public static final String PARAMETER_ID_TRANSITION = "id_transition";
+    public static final String PARAMETER_ID_CONTROL = "id_control";
     public static final String PARAMETER_VALIDATOR_NAME = "validator_name";
     public static final String PARAMETER_CONTROL_VALUE = "control_value";
 

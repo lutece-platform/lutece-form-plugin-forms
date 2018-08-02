@@ -35,15 +35,19 @@
 package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
+import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
@@ -83,26 +87,56 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     @Override
     public boolean getResponseFromRequest( Question question, HttpServletRequest request, FormQuestionResponse responseInstance )
     {
-
         boolean bHasError = false;
+        
+        responseInstance.setEntryResponse( new ArrayList<Response>( ) );
+        responseInstance.setIdQuestion( question.getId( ) );
 
-        List<Response> listResponses = new ArrayList<Response>( );
         GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
-                listResponses, request.getLocale( ) );
+        		responseInstance.getEntryResponse( ), request.getLocale( ) );
 
         if ( error != null )
         {
             bHasError = true;
-            if ( listResponses.size( ) > 0 && listResponses.get( 0 ).getEntry( ) != null )
-            {
-                listResponses.get( 0 ).getEntry( ).setError( error );
-            }
+            setGenericAttributeError( error, responseInstance ); 
+        }
+        else
+        {
+        	Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
+        	
+        	if( control != null )
+        	{
+        		IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+        		if( !validator.validate( responseInstance, control ) )
+        		{
+        			error = new GenericAttributeError( );
+        			
+        			error.setIsDisplayableError( true );
+        			error.setErrorMessage( control.getErrorMessage( ) );
+        			
+        			setGenericAttributeError( error, responseInstance );
+        			
+        			bHasError = true;
+        		}
+        	}
         }
 
-        responseInstance.setEntryResponse( listResponses );
-        responseInstance.setIdQuestion( question.getId( ) );
-
         return bHasError;
+    }
+    
+    /**
+     * Set the error in the question response instance object
+     * @param error
+     * 			GenericAttributeError
+     * @param responseInstance
+     * 			Question response instance
+     */
+    private void setGenericAttributeError( GenericAttributeError error, FormQuestionResponse responseInstance )
+    {
+    	if( responseInstance.getEntryResponse( ).size( ) > 0 && responseInstance.getEntryResponse( ).get( 0 ).getEntry( ) != null )
+    	{
+    		responseInstance.getEntryResponse( ).get( 0 ).getEntry( ).setError( error );
+    	}
     }
 
 }

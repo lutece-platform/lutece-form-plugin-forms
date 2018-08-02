@@ -125,5 +125,18 @@ public interface IControlDAO
      * @return The control
      */
     Control selectControlByDisplay( int nIdDisplay, Plugin plugin );
+    
+    /**
+     * Select a control based on its attached question and control type
+     * 
+     * @param nIdQuestion
+     *            the question id
+     * @param strControlType
+     *            the control type
+     * @param plugin
+     *            the Plugin
+     * @return The control
+     */
+    Control selectControlByQuestionAndType( int nIdQuestion, String strControlType, Plugin plugin );
 
 }

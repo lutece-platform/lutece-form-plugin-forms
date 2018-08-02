@@ -49,6 +49,7 @@ public final class ControlDAO implements IControlDAO
 {
     // Constants
     private static final String SQL_QUERY_SELECT = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control WHERE id_control = ?";
+    private static final String SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control WHERE id_question = ? AND control_type = ?";
     private static final String SQL_QUERY_SELECT_BY_DISPLAY_ID = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control WHERE id_display = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, id_question, validator_name, control_type, id_display ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_control WHERE id_control = ? ";
@@ -243,5 +244,33 @@ public final class ControlDAO implements IControlDAO
         daoUtil.close( );
         return control;
     }
+    
+    @Override
+    public Control selectControlByQuestionAndType( int nIdQuestion, String strControlType, Plugin plugin )
+    {
+
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE, plugin );
+        daoUtil.setInt( 1, nIdQuestion );
+        daoUtil.setString( 2, strControlType );
+        daoUtil.executeQuery( );
+        Control control = null;
+
+        if ( daoUtil.next( ) )
+        {
+            control = new Control( );
+            int nIndex = 1;
+
+            control.setId( daoUtil.getInt( nIndex++ ) );
+            control.setValue( daoUtil.getString( nIndex++ ) );
+            control.setErrorMessage( daoUtil.getString( nIndex++ ) );
+            control.setIdQuestion( daoUtil.getInt( nIndex++ ) );
+            control.setValidatorName( daoUtil.getString( nIndex++ ) );
+            control.setControlType( daoUtil.getString( nIndex++ ) );
+            control.setIdTargetFormDisplay( daoUtil.getInt( nIndex++ ) );
+        }
+
+        daoUtil.close( );
+        return control;
+    }    
 
 }

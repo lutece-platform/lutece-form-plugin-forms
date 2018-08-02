@@ -137,6 +137,7 @@ public class FormXPage extends MVCApplication
      * @throws SiteMessageException
      *             Exception
      * @throws UserNotSignedException
+     *             Exception
      */
     @View( value = VIEW_STEP, defaultView = true )
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
@@ -180,6 +181,7 @@ public class FormXPage extends MVCApplication
      * @param model
      *            The model for XPage
      * @throws UserNotSignedException
+     *             Exception
      */
     private void getModelForFormAndStep( Form form, HttpServletRequest request, Map<String, Object> model ) throws UserNotSignedException
     {
@@ -197,9 +199,7 @@ public class FormXPage extends MVCApplication
 
                 if ( _formResponseManager.getFormResponse( ) != null )
                 {
-                    Object [ ] args = {
-                        _formResponseManager.getFormResponse( ).getUpdate( )
-                    };
+                    Object [ ] args = { _formResponseManager.getFormResponse( ).getUpdate( ) };
 
                     model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, request.getLocale( ) ) );
                 }
@@ -242,6 +242,7 @@ public class FormXPage extends MVCApplication
         model.put( FormsConstants.MARK_STEP, _currentStep );
     }
 
+    
     /**
      * 
      * @param request
@@ -297,6 +298,7 @@ public class FormXPage extends MVCApplication
      * @throws SiteMessageException
      *             Exception
      * @throws UserNotSignedException
+     *             Exception
      */
     @Action( value = ACTION_SAVE_STEP )
     public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
@@ -316,7 +318,6 @@ public class FormXPage extends MVCApplication
         List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
 
         boolean bValidStep = true;
-        Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
         List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
 
         for ( Question question : stepQuestions )
@@ -331,12 +332,8 @@ public class FormXPage extends MVCApplication
                 {
                     bValidStep = false;
                 }
-                else
-                {
-                    listResponsesTemp.add( questionResponseInstance );
-                }
-
-                mapStepResponses.put( question.getId( ), questionResponseInstance.getEntryResponse( ) );
+                
+                listResponsesTemp.add( questionResponseInstance );
             }
         }
 
@@ -424,6 +421,7 @@ public class FormXPage extends MVCApplication
      * @throws SiteMessageException
      *             Exception
      * @throws UserNotSignedException
+     *             Exception
      */
     @Action( value = ACTION_SAVE_FORM_RESPONSE )
     public XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
