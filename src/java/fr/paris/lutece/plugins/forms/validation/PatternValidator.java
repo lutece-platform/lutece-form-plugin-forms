@@ -37,7 +37,6 @@ package fr.paris.lutece.plugins.forms.validation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,6 +49,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  * 
@@ -59,6 +59,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 public class PatternValidator implements IValidator
 {
     private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
+    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/pattern_template.html";
     private String _strValidatorName = StringUtils.EMPTY;
     private String _strDisplayName = StringUtils.EMPTY;
     private List<String> _listAvailableEntryType = new ArrayList<String>( );
@@ -90,6 +91,18 @@ public class PatternValidator implements IValidator
     public String getValidatorDisplayName( )
     {
         return _strDisplayName;
+    }
+    
+    @Override
+    public String getDisplayHtml( Control control )
+    {    	
+    	Map<String, Object> model = new HashMap<String, Object>( );
+    	
+    	model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
+    	
+    	HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
+    	
+    	return htmlTemplateQuestion.getHtml( );
     }
 
     @Override
@@ -123,6 +136,6 @@ public class PatternValidator implements IValidator
         model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
         model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
 
-        return AppTemplateService.getTemplate( TEMPLATE_JS_FUNCTION, Locale.getDefault( ), model ).getHtml( );
+        return AppTemplateService.getTemplate( TEMPLATE_JS_FUNCTION, I18nService.getDefaultLocale( ), model ).getHtml( );
     }
 }

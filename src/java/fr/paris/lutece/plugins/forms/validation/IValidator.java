@@ -57,7 +57,14 @@ public interface IValidator
      * @return the validator display name
      */
     String getValidatorDisplayName( );
-
+    
+    
+    /**
+     * @param control
+     *            The control to build model
+     * @return the HTML to display 
+     */
+    String getDisplayHtml( Control control );
     /**
      * 
      * @return the list of available entrytype for this validator

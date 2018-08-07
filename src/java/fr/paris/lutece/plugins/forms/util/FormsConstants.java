@@ -73,6 +73,8 @@ public final class FormsConstants
     public static final String MARK_FORM_BREADCRUMB = "formBreadcrumb";
     public static final String MARK_QUESTION_CONTENT = "questionContent";
     public static final String MARK_INFO = "messageInfo";
+    public static final String MARK_CONTROL_TEMPLATE = "control_template";
+    public static final String MARK_CONDITION_TITLE = "modify_condition_title";
 
     // Parameters
     public static final String PARAMETER_ID_FORM = "id_form";
@@ -81,6 +83,7 @@ public final class FormsConstants
     public static final String PARAMETER_ID_FIELD = "id_field";
     public static final String PARAMETER_ID_RESPONSE = "id_response";
 
+    public static final String PARAMETER_TARGET_VIEW = "view";
     public static final String COMPOSITE_STEP_TYPE = "step";
     public static final String COMPOSITE_GROUP_TYPE = "group";
     public static final String COMPOSITE_QUESTION_TYPE = "question";
@@ -99,9 +102,11 @@ public final class FormsConstants
     public static final String PARAMETER_DISPLAY_ORDER = "displayOrder";
     public static final String PARAMETER_ID_TRANSITION = "id_transition";
     public static final String PARAMETER_ID_CONTROL = "id_control";
-    public static final String PARAMETER_VALIDATOR_NAME = "validator_name";
+    public static final String PARAMETER_VALIDATOR_NAME = "validatorName";
     public static final String PARAMETER_CONTROL_VALUE = "control_value";
+    public static final String PARAMETER_REF_LIST_VALUE = "refListValue";
     public static final String PARAMETER_INDEX_STEP = "index_step";
+    public static final String PARAMETER_INFO_KEY = "info_key";
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
@@ -115,6 +120,8 @@ public final class FormsConstants
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
     public static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
     public static final String JSP_MANAGE_QUESTIONS = "jsp/admin/plugins/forms/ManageQuestions.jsp";
+    public static final String JSP_MANAGE_TRANSITIONS = "jsp/admin/plugins/forms/ManageTransitions.jsp";
+    public static final String JSP_MANAGE_CONTROLS = "jsp/admin/plugins/forms/ManageControls.jsp";
 
     // Properties
     public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "entrytype.myluteceuserattribute.attributes.list";

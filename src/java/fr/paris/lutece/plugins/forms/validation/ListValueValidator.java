@@ -35,14 +35,23 @@
 package fr.paris.lutece.plugins.forms.validation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  * 
@@ -51,6 +60,8 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class ListValueValidator implements IValidator
 {
+
+    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_value_template.html";
     private String _strValidatorName = StringUtils.EMPTY;
     private String _strDisplayName = StringUtils.EMPTY;
     private List<String> _listAvailableEntryType = new ArrayList<String>( );
@@ -82,6 +93,31 @@ public class ListValueValidator implements IValidator
     public String getValidatorDisplayName( )
     {
         return _strDisplayName;
+    }
+    
+    @Override
+    public String getDisplayHtml( Control control )
+    {    	
+    	Map<String, Object> model = new HashMap<String, Object>( );
+    	
+    	Question question = QuestionHome.findByPrimaryKey( control.getIdQuestion( ) );
+    	
+    	ReferenceList refListValue = new ReferenceList( );
+    	
+    	if( question.getEntry( ) != null && question.getEntry( ).getFields( ) != null )
+    	{
+    		for( Field field : question.getEntry( ).getFields( ) )
+    		{
+    			refListValue.addItem( field.getValue( ), field.getTitle( ) );
+    		}
+    	}
+    	
+    	model.put( FormsConstants.PARAMETER_REF_LIST_VALUE, refListValue );
+    	model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
+    	
+    	HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
+    	
+    	return htmlTemplateQuestion.getHtml( );
     }
 
     @Override

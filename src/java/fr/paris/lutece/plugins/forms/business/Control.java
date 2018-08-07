@@ -44,6 +44,7 @@ public class Control
 {
     private int _nId;
 
+    @NotEmpty( message = "#i18n{forms.validation.control.Value.notEmpty}" )
     private String _strValue;
 
     private String _strErrorMessage;

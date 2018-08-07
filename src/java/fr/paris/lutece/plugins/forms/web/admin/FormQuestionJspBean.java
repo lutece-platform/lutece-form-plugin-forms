@@ -35,7 +35,6 @@
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -48,9 +47,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
-import fr.paris.lutece.plugins.forms.business.Control;
-import fr.paris.lutece.plugins.forms.business.ControlHome;
-import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
@@ -61,7 +57,6 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
-import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -70,7 +65,6 @@ import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
-import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
@@ -110,9 +104,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String TEMPLATE_CREATE_GROUP = "/admin/plugins/forms/create_group.html";
     private static final String TEMPLATE_MODIFY_GROUP = "/admin/plugins/forms/modify_group.html";
     private static final String TEMPLATE_MOVE_COMPOSITE = "/admin/plugins/forms/move_composite.html";
-    private static final String TEMPLATE_MANAGE_CONDITION = "/admin/plugins/forms/modify_condition.html";
-    private static final String TEMPLATE_MANAGE_CONTROL = "/admin/plugins/forms/modify_question_control.html";
-
+    
     // Properties
     private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.create_Question.titleComment";
     private static final String PROPERTY_CREATE_QUESTION_TITLE = "forms.create_Question.titleQuestion";
@@ -130,11 +122,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String VIEW_MODIFY_GROUP = "modifyGroup";
     private static final String VIEW_MOVE_COMPOSITE = "moveComposite";
     private static final String VIEW_CONFIRM_REMOVE_COMPOSITE = "getConfirmRemoveComposite";
-    private static final String VIEW_MODIFY_CONDITION = "modifyCondition";
-    private static final String VIEW_CONFIRM_REMOVE_CONDITION = "getConfirmRemoveCondition";
-    private static final String VIEW_MODIFY_CONTROL = "modifyControl";
-    private static final String VIEW_CONFIRM_REMOVE_CONTROL = "getConfirmRemoveControl";
-
+    
     // Actions
     private static final String ACTION_CREATE_QUESTION = "createQuestion";
     private static final String ACTION_CREATE_QUESTION_AND_MANAGE_ENTRIES = "createQuestionAndManageEntries";
@@ -144,9 +132,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String ACTION_MODIFY_GROUP = "modifyGroup";
     private static final String ACTION_MOVE_COMPOSITE = "moveComposite";
     private static final String ACTION_REMOVE_COMPOSITE = "removeComposite";
-    private static final String ACTION_MODIFY_CONDITION = "modifyCondition";
-    private static final String ACTION_MODIFY_CONTROL = "modifyControl";
-    private static final String ACTION_REMOVE_CONTROL = "removeControl";
 
     // Markers
     private static final String MARK_WEBAPP_URL = "webapp_url";
@@ -161,7 +146,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     // Parameters
     private static final String PARAMETER_VALUE_VALIDATE_STEP = "validateStep";
     private static final String PARAMETER_VALUE_VALIDATE_GROUP = "validateGroup";
-    private static final String PARAMETER_VALUE_OLD_QUESTION = "old_question";
 
     // Error messages
     private static final String ERROR_QUESTION_NOT_CREATED = "forms.error.question.notCreated";
@@ -170,8 +154,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String ERROR_QUESTION_NOT_UPDATED = "forms.error.question.notUpdated";
     private static final String ERROR_STEP_OR_GROUP_NOT_VALIDATED = "forms.error.moveComposite.stepOrGroup.notvalidated";
     private static final String ERROR_OCCURED_MOVING_COMPOSITE = "forms.error.moveComposite.notCompleted";
-    private static final String ERROR_MODIFY_CONDITION_QUESTION = "forms.error.modifyCondition.question";
-    private static final String ERROR_MODIFY_CONDITION_VALIDATOR = "forms.error.modifyCondition.validator";
 
     // Infos messages
     private static final String INFO_QUESTION_CREATED = "forms.info.question.created";
@@ -181,19 +163,12 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String INFO_MOVE_COMPOSITE_SUCCESSFUL = "forms.info.moveComposite.successful";
     private static final String INFO_DELETE_COMPOSITE_SUCCESSFUL = "forms.info.deleteComposite.successful";
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
-    private static final String CONDITIONAL_DISPLAY_NONE = "forms.manageCondition.question.none";
-    private static final String INFO_CONTROL_REMOVED = "forms.info.control.removed";
 
     // Warning messages
     private static final String WARNING_CONFIRM_REMOVE_QUESTION = "forms.warning.deleteComposite.confirmRemoveQuestion";
     private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS = "forms.warning.deleteComposite.confirmRemoveGroup";
     private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
     private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveGroup.formActive";
-    private static final String WARNING_CONFIRM_REMOVE_CONTROL = "forms.warning.deleteControl.confirmRemoveControl";
-    private static final String WARNING_CONFIRM_REMOVE_CONDITION = "forms.warning.deleteControl.confirmRemoveCondition";
-
-    // Validation
-    private static final String CONTROL_VALIDATION_ATTRIBUTES_PREFIX = "forms.model.entity.control.attribute.";
 
     // Others
     private static final int INTEGER_MINUS_ONE = -1;
@@ -207,7 +182,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     private Question _question;
     private Group _group;
     private FormDisplay _formDisplay;
-    private Control _control;
 
     private int _nIdStepTarget;
 
@@ -230,6 +204,12 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _step = StepHome.findByPrimaryKey( nIdStep );
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+        
+        String strInfoKey = request.getParameter( FormsConstants.PARAMETER_INFO_KEY );
+        if( StringUtils.isNotEmpty( strInfoKey ) )
+        {
+        	addInfo( strInfoKey, getLocale( ) );
+        }
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_STEP, _step );
@@ -1193,339 +1173,6 @@ public class FormQuestionJspBean extends AbstractJspBean
             List<FormDisplay> listDisplayInOriginGroup = FormDisplayHome.getFormDisplayListByParent( nIdOriginStep, nIdOriginParent );
             _formDisplayService.rebuildDisplayPositionSequence( listDisplayInOriginGroup );
         }
-
     }
 
-    /**
-     * Gets the Control component page
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The conditional display component page
-     */
-    @View( value = VIEW_MODIFY_CONTROL )
-    public String getModifyControl( HttpServletRequest request )
-    {
-        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
-
-        _question = QuestionHome.findByPrimaryKey( nIdQuestion );
-
-        if ( _question == null )
-        {
-            return redirectToViewManageForm( request );
-        }
-
-        Map<String, Object> model = getModel( );
-
-        EntryType entryType = _question.getEntry( ).getEntryType( );
-        ReferenceList refListAvailableValidator = EntryServiceManager.getInstance( ).getAvailableValidator( entryType );
-
-        model.put( FormsConstants.MARK_AVAILABLE_VALIDATORS, refListAvailableValidator );
-
-        _control = ControlHome.getControlByQuestionAndType( _question.getId( ), ControlType.VALIDATION.getLabel( ) );
-
-        if ( _control == null )
-        {
-            _control = new Control( );
-            _control.setControlType( ControlType.VALIDATION.getLabel( ) );
-        }
-
-        model.put( FormsConstants.MARK_CONTROL, _control );
-        model.put( FormsConstants.MARK_QUESTION, _question );
-
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONTROL, getLocale( ), model );
-
-        return getAdminPage( template.getHtml( ) );
-    }
-
-    /**
-     * Action to process Condition modification
-     * 
-     * @param request
-     *            The httpRequest
-     * 
-     * @return the manage question page
-     */
-    @Action( value = ACTION_MODIFY_CONTROL )
-    public String doModifyControl( HttpServletRequest request )
-    {
-        if ( _control == null )
-        {
-            _control = new Control( );
-            _control.setControlType( ControlType.VALIDATION.getLabel( ) );
-        }
-
-        populate( _control, request, getLocale( ) );
-
-        if ( !validateControl( _control ) )
-        {
-            return redirect( request, VIEW_MODIFY_CONTROL, FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
-        }
-
-        if ( _control.getId( ) > 0 )
-        {
-            ControlHome.update( _control );
-        }
-        else
-        {
-            ControlHome.create( _control );
-        }
-
-        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _question.getIdStep( ) );
-    }
-
-    /**
-     * Validate the Control field values
-     * 
-     * @param control
-     *            the Control to validate
-     * 
-     * @return True if the control is valid
-     */
-    private boolean validateControl( Control control )
-    {
-        return validateBean( control, CONTROL_VALIDATION_ATTRIBUTES_PREFIX );
-    }
-
-    /**
-     * Manages the removal form of a Control whose identifier is in the http request
-     *
-     * @param request
-     *            The Http request
-     * @return the html code to confirm
-     */
-    @View( VIEW_CONFIRM_REMOVE_CONTROL )
-    public String getConfirmRemoveControl( HttpServletRequest request )
-    {
-        int nIdControlToRemove = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL ), FormsConstants.DEFAULT_ID_VALUE );
-        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-
-        if ( nIdControlToRemove == FormsConstants.DEFAULT_ID_VALUE )
-        {
-            return redirectToViewManageForm( request );
-        }
-
-        UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_CONTROL ) );
-        url.addParameter( FormsConstants.PARAMETER_ID_CONTROL, nIdControlToRemove );
-        url.addParameter( FormsConstants.PARAMETER_ID_STEP, nIdStep );
-
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, WARNING_CONFIRM_REMOVE_CONTROL, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
-
-        return redirect( request, strMessageUrl );
-    }
-
-    /**
-     * Gets the Conditional display component page
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The conditional display component page
-     */
-    @View( value = VIEW_MODIFY_CONDITION )
-    public String getModifyCondition( HttpServletRequest request )
-    {
-
-        // Get the display we are working on
-        int nIdDisplay = INTEGER_MINUS_ONE;
-
-        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
-
-        if ( nIdDisplay == INTEGER_MINUS_ONE )
-        {
-            return redirectView( request, VIEW_MANAGE_QUESTIONS );
-        }
-
-        FormDisplay display = FormDisplayHome.findByPrimaryKey( nIdDisplay );
-
-        // Retrieve the attached control
-        Control control = ControlHome.getConditionalDisplayControlByDisplay( nIdDisplay );
-        if ( control == null )
-        {
-            control = new Control( );
-        }
-
-        // The selected question should be the input parameter
-        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), INTEGER_MINUS_ONE );
-
-        // If not specified, it should be the question stored in the Control
-        if ( nIdQuestion == INTEGER_MINUS_ONE )
-        {
-            nIdQuestion = control.getIdQuestion( );
-        }
-
-        ReferenceList validatorList = new ReferenceList( );
-
-        // If still nothing, no question is loaded, therefore no validators
-
-        Question selectedQuestion = QuestionHome.findByPrimaryKey( nIdQuestion );
-
-        // Get all available validators
-        if ( selectedQuestion != null )
-        {
-            validatorList = EntryServiceManager.getInstance( ).getAvailableValidator( selectedQuestion.getEntry( ).getEntryType( ) );
-        }
-
-        // Get all questions from current step
-        // TODO Only get relevant question (not child questions)
-        List<Question> availableQuestions = QuestionHome.getQuestionsListByStep( display.getStepId( ) );
-
-        // Sort questions in alphabetical order
-        availableQuestions.sort( new Comparator<Question>( )
-        {
-            public int compare( Question q1, Question q2 )
-            {
-                return q1.getTitle( ).compareTo( q2.getTitle( ) );
-            };
-        } );
-
-        // Put all the questions in a ReferenceList containing with their id and
-        // label
-        ReferenceList questionsRefList = new ReferenceList( );
-        questionsRefList.addItem( NumberUtils.INTEGER_ZERO, I18nService.getLocalizedString( CONDITIONAL_DISPLAY_NONE, getLocale( ) ) );
-        for ( Question question : availableQuestions )
-        {
-            questionsRefList.addItem( question.getId( ), question.getTitle( ) );
-        }
-
-        // Fill the model
-        Map<String, Object> model = getModel( );
-        model.put( FormsConstants.MARK_ID_STEP, display.getStepId( ) );
-        model.put( FormsConstants.MARK_ID_QUESTION, nIdQuestion );
-        model.put( FormsConstants.MARK_ID_DISPLAY, nIdDisplay );
-        model.put( FormsConstants.MARK_LIST_QUESTIONS, questionsRefList );
-        model.put( FormsConstants.MARK_LIST_VALIDATORS, validatorList );
-        model.put( FormsConstants.MARK_CONTROL, control );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONDITION, getLocale( ), model );
-
-        return getAdminPage( template.getHtml( ) );
-    }
-
-    /**
-     * Action to process Condition modification
-     * 
-     * @param request
-     *            The httpRequest
-     * 
-     * @return the manage question page
-     */
-    @Action( value = ACTION_MODIFY_CONDITION )
-    public String doModifyCondition( HttpServletRequest request )
-    {
-        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
-
-        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
-
-        // Possibly Existing condition
-        Control oldControl = ControlHome.getConditionalDisplayControlByDisplay( nIdDisplay );
-
-        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), INTEGER_MINUS_ONE );
-
-        int nIdOldQuestion = NumberUtils.toInt( request.getParameter( PARAMETER_VALUE_OLD_QUESTION ), INTEGER_MINUS_ONE );
-
-        String strValidatorName = request.getParameter( FormsConstants.PARAMETER_VALIDATOR_NAME );
-
-        if ( nIdQuestion <= NumberUtils.INTEGER_ZERO )
-        {
-            // No condition were selected, delete existing condition
-            if ( oldControl != null )
-            {
-                ControlHome.remove( oldControl.getId( ) );
-            }
-        }
-        else
-        {
-
-            if ( nIdOldQuestion > NumberUtils.INTEGER_ZERO && nIdOldQuestion != nIdQuestion )
-            {
-                // a different question was selected, and not validated
-                addError( ERROR_MODIFY_CONDITION_QUESTION, request.getLocale( ) );
-                return redirect( request, VIEW_MODIFY_CONDITION, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
-            }
-
-            if ( strValidatorName == null || EMPTY_STRING.equals( strValidatorName ) )
-            {
-                // No validator selected
-                addError( ERROR_MODIFY_CONDITION_VALIDATOR, request.getLocale( ) );
-                return redirect( request, VIEW_MODIFY_CONDITION, FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
-            }
-
-            Control control = new Control( );
-
-            if ( oldControl != null )
-            {
-                control.setId( oldControl.getId( ) );
-            }
-
-            // Assign values
-            control.setValidatorName( strValidatorName );
-            control.setIdQuestion( nIdQuestion );
-            control.setIdTargetFormDisplay( nIdDisplay );
-            control.setValue( request.getParameter( FormsConstants.PARAMETER_CONTROL_VALUE ) );
-            control.setControlType( ControlType.CONDITIONAL.getLabel( ) );
-
-            // Save or update Control
-            if ( control.getId( ) > NumberUtils.INTEGER_ZERO )
-            {
-                ControlHome.update( control );
-            }
-            else
-            {
-                ControlHome.create( control );
-            }
-
-        }
-        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, nIdStep );
-    }
-
-    /**
-     * Manages the removal form of a Control whose identifier is in the http request
-     *
-     * @param request
-     *            The Http request
-     * @return the html code to confirm
-     */
-    @View( VIEW_CONFIRM_REMOVE_CONDITION )
-    public String getConfirmRemoveCondition( HttpServletRequest request )
-    {
-        int nIdControlToRemove = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL ), FormsConstants.DEFAULT_ID_VALUE );
-        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-
-        if ( nIdControlToRemove == FormsConstants.DEFAULT_ID_VALUE || nIdStep == FormsConstants.DEFAULT_ID_VALUE )
-        {
-            return redirectToViewManageForm( request );
-        }
-
-        UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_CONTROL ) );
-        url.addParameter( FormsConstants.PARAMETER_ID_CONTROL, nIdControlToRemove );
-        url.addParameter( FormsConstants.PARAMETER_ID_STEP, nIdStep );
-
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, WARNING_CONFIRM_REMOVE_CONDITION, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
-
-        return redirect( request, strMessageUrl );
-    }
-
-    /**
-     * Handles the removal of a Control
-     *
-     * @param request
-     *            The Http request
-     * @return the jsp URL to display the form to manage Transition
-     */
-    @Action( ACTION_REMOVE_CONTROL )
-    public String doRemoveControl( HttpServletRequest request )
-    {
-        int nIdControlToRemove = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL ), FormsConstants.DEFAULT_ID_VALUE );
-        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-
-        if ( nIdControlToRemove == FormsConstants.DEFAULT_ID_VALUE || nIdStep == FormsConstants.DEFAULT_ID_VALUE )
-        {
-            return redirectToViewManageForm( request );
-        }
-
-        ControlHome.remove( nIdControlToRemove );
-
-        addInfo( INFO_CONTROL_REMOVED, getLocale( ) );
-
-        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, nIdStep );
-    }
 }

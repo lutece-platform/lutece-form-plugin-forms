@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.validation.IValidator;
@@ -134,25 +135,44 @@ public final class EntryServiceManager
     }
 
     /**
-     * Get the right IValidator
+     * Get the available IValidator list for the given entryType
      * 
      * @param entryType
      *            The entrytype
-     * @return the IValidator
+     * @return the ReferenceList of IValidator
      */
-    public ReferenceList getAvailableValidator( EntryType entryType )
+    public ReferenceList getRefListAvailableValidator( EntryType entryType )
     {
-        ReferenceList availableValidator = new ReferenceList( );
+        ReferenceList refListAvailableValidator = new ReferenceList( );
+
+        for ( IValidator validator : getListAvailableValidator( entryType ) )
+        {
+            refListAvailableValidator.addItem( validator.getValidatorBeanName( ), validator.getValidatorDisplayName( ) );
+        }
+
+        return refListAvailableValidator;
+    }
+    
+    /**
+     * Get the available IValidator list for the given entryType
+     * 
+     * @param entryType
+     *            The entrytype
+     * @return the List of IValidator
+     */
+    public List<IValidator> getListAvailableValidator( EntryType entryType )
+    {
+        List<IValidator> listAvailableValidator = new ArrayList<IValidator>( );
 
         for ( IValidator validator : _listValidator )
         {
             if ( validator.getListAvailableEntryType( ).contains( entryType.getBeanName( ) ) )
             {
-                availableValidator.addItem( validator.getValidatorBeanName( ), validator.getValidatorDisplayName( ) );
+            	listAvailableValidator.add( validator );
             }
         }
 
-        return availableValidator;
+        return listAvailableValidator;
     }
 
     /**
