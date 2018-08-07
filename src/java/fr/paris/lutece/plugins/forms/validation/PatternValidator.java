@@ -92,17 +92,17 @@ public class PatternValidator implements IValidator
     {
         return _strDisplayName;
     }
-    
+
     @Override
     public String getDisplayHtml( Control control )
-    {    	
-    	Map<String, Object> model = new HashMap<String, Object>( );
-    	
-    	model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
-    	
-    	HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
-    	
-    	return htmlTemplateQuestion.getHtml( );
+    {
+        Map<String, Object> model = new HashMap<String, Object>( );
+
+        model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
+
+        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
+
+        return htmlTemplateQuestion.getHtml( );
     }
 
     @Override

@@ -94,30 +94,30 @@ public class ListValueValidator implements IValidator
     {
         return _strDisplayName;
     }
-    
+
     @Override
     public String getDisplayHtml( Control control )
-    {    	
-    	Map<String, Object> model = new HashMap<String, Object>( );
-    	
-    	Question question = QuestionHome.findByPrimaryKey( control.getIdQuestion( ) );
-    	
-    	ReferenceList refListValue = new ReferenceList( );
-    	
-    	if( question.getEntry( ) != null && question.getEntry( ).getFields( ) != null )
-    	{
-    		for( Field field : question.getEntry( ).getFields( ) )
-    		{
-    			refListValue.addItem( field.getValue( ), field.getTitle( ) );
-    		}
-    	}
-    	
-    	model.put( FormsConstants.PARAMETER_REF_LIST_VALUE, refListValue );
-    	model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
-    	
-    	HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
-    	
-    	return htmlTemplateQuestion.getHtml( );
+    {
+        Map<String, Object> model = new HashMap<String, Object>( );
+
+        Question question = QuestionHome.findByPrimaryKey( control.getIdQuestion( ) );
+
+        ReferenceList refListValue = new ReferenceList( );
+
+        if ( question.getEntry( ) != null && question.getEntry( ).getFields( ) != null )
+        {
+            for ( Field field : question.getEntry( ).getFields( ) )
+            {
+                refListValue.addItem( field.getValue( ), field.getTitle( ) );
+            }
+        }
+
+        model.put( FormsConstants.PARAMETER_REF_LIST_VALUE, refListValue );
+        model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
+
+        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
+
+        return htmlTemplateQuestion.getHtml( );
     }
 
     @Override

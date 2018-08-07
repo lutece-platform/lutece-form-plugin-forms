@@ -152,7 +152,7 @@ public final class EntryServiceManager
 
         return refListAvailableValidator;
     }
-    
+
     /**
      * Get the available IValidator list for the given entryType
      * 
@@ -168,7 +168,7 @@ public final class EntryServiceManager
         {
             if ( validator.getListAvailableEntryType( ).contains( entryType.getBeanName( ) ) )
             {
-            	listAvailableValidator.add( validator );
+                listAvailableValidator.add( validator );
             }
         }
 

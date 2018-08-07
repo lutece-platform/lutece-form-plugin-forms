@@ -104,7 +104,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String TEMPLATE_CREATE_GROUP = "/admin/plugins/forms/create_group.html";
     private static final String TEMPLATE_MODIFY_GROUP = "/admin/plugins/forms/modify_group.html";
     private static final String TEMPLATE_MOVE_COMPOSITE = "/admin/plugins/forms/move_composite.html";
-    
+
     // Properties
     private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.create_Question.titleComment";
     private static final String PROPERTY_CREATE_QUESTION_TITLE = "forms.create_Question.titleQuestion";
@@ -122,7 +122,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String VIEW_MODIFY_GROUP = "modifyGroup";
     private static final String VIEW_MOVE_COMPOSITE = "moveComposite";
     private static final String VIEW_CONFIRM_REMOVE_COMPOSITE = "getConfirmRemoveComposite";
-    
+
     // Actions
     private static final String ACTION_CREATE_QUESTION = "createQuestion";
     private static final String ACTION_CREATE_QUESTION_AND_MANAGE_ENTRIES = "createQuestionAndManageEntries";
@@ -204,11 +204,11 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _step = StepHome.findByPrimaryKey( nIdStep );
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
-        
+
         String strInfoKey = request.getParameter( FormsConstants.PARAMETER_INFO_KEY );
-        if( StringUtils.isNotEmpty( strInfoKey ) )
+        if ( StringUtils.isNotEmpty( strInfoKey ) )
         {
-        	addInfo( strInfoKey, getLocale( ) );
+            addInfo( strInfoKey, getLocale( ) );
         }
 
         Map<String, Object> model = getModel( );

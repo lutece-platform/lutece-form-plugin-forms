@@ -159,11 +159,11 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
 
         String strInfoKey = request.getParameter( FormsConstants.PARAMETER_INFO_KEY );
-        if( StringUtils.isNotEmpty( strInfoKey ) )
+        if ( StringUtils.isNotEmpty( strInfoKey ) )
         {
-        	addInfo( strInfoKey, getLocale( ) );
+            addInfo( strInfoKey, getLocale( ) );
         }
-        
+
         Map<String, Object> model = getModel( );
 
         List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( nIdStep );
@@ -282,7 +282,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
 
         addInfo( INFO_TRANSITION_CREATED, getLocale( ) );
-        
+
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
     }
 
@@ -302,7 +302,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
 
         addInfo( INFO_TRANSITION_CREATED, getLocale( ) );
-        
+
         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_CONTROLS );
         url.addParameter( FormsConstants.PARAMETER_ID_TRANSITION, _transition.getId( ) );
         url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, "modifyTransitionControl" );
