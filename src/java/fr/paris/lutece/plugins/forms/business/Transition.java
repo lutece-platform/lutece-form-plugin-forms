@@ -47,12 +47,12 @@ public class Transition implements Serializable
     // Variables declarations
     private int _nId;
 
-    @Min( value = 0, message = "#i18n{forms.validation.transition.FromStep.notEmpty}" )
+    @Min( value = 1, message = "#i18n{forms.validation.transition.FromStep.notEmpty}" )
     private int _nFromStep;
 
     private String _strFromStepTitle;
 
-    @Min( value = 0, message = "#i18n{forms.validation.transition.NextStep.notEmpty}" )
+    @Min( value = 1, message = "#i18n{forms.validation.transition.NextStep.notEmpty}" )
     private int _nNextStep;
 
     private String _strNextStepTitle;

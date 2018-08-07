@@ -49,7 +49,7 @@ public class Control
 
     private String _strErrorMessage;
 
-    @Min( value = 0, message = "#i18n{forms.validation.control.Question.notEmpty}" )
+    @Min( value = 1, message = "#i18n{forms.validation.control.Question.notEmpty}" )
     private int _nIdQuestion;
 
     @NotEmpty( message = "#i18n{forms.validation.control.ValidatorName.notEmpty}" )
