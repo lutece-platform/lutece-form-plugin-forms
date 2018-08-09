@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -144,7 +143,7 @@ public class FormXPage extends MVCApplication
         }
         catch( UserNotSignedException e )
         {
-            _currentStep = null;
+            _currentStep = StepHome.getInitialStep( form.getId( ) );
             _formResponseManager = null;
             _stepDisplayTree = null;
 
@@ -168,7 +167,7 @@ public class FormXPage extends MVCApplication
     {
         Map<String, Object> model = getModel( );
 
-        int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), INCORRECT_ID );
+        int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE && ( _currentStep == null || nIdForm != _currentStep.getIdForm( ) ) )
         {
@@ -417,17 +416,18 @@ public class FormXPage extends MVCApplication
 
         if ( _currentStep.isFinal( ) )
         {
-
-            FormResponse formResponse = new FormResponse( );
-
-            if ( _formResponseManager.getFormResponse( ) != null )
+        	FormResponse formResponse = _formResponseManager.getFormResponse( );
+        	
+            if ( formResponse == null )
             {
-                formResponse.setId( _formResponseManager.getFormResponse( ).getId( ) );
+            	formResponse = new FormResponse( );
+                _formResponseManager.setFormResponse( formResponse );
             }
-
+            
             formResponse.setFormId( _currentStep.getIdForm( ) );
+            formResponse.setFromSave( Boolean.FALSE );
 
-            _formService.saveForm( _formResponseManager, Boolean.FALSE );
+            _formService.saveForm( _formResponseManager );
 
             Map<String, String> model = new HashMap<String, String>( );
 
@@ -435,7 +435,8 @@ public class FormXPage extends MVCApplication
 
             if ( WorkflowService.getInstance( ).isAvailable( ) && ( form.getIdWorkflow( ) > 0 ) )
             {
-                WorkflowService.getInstance( ).getState( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), form.getId( ) );
+                WorkflowService.getInstance( ).getState( _formResponseManager.getFormResponse( ).getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ),
+                        form.getId( ) );
             }
 
             _formResponseManager = null;
@@ -551,11 +552,12 @@ public class FormXPage extends MVCApplication
             FormResponse formResponse = new FormResponse( );
             formResponse.setFormId( _currentStep.getIdForm( ) );
             formResponse.setGuid( user.getName( ) );
+            formResponse.setFromSave( Boolean.TRUE );
 
             _formResponseManager.setFormResponse( formResponse );
         }
 
-        _formService.saveForm( _formResponseManager, true );
+        _formService.saveForm( _formResponseManager );
 
         return redirectView( request, VIEW_STEP );
     }
