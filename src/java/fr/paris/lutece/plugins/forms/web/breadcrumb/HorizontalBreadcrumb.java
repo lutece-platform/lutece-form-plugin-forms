@@ -45,12 +45,12 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 /**
  * Horizontal display implementation of IBreadcrumb
  */
-public class HorizontalBreadcrumb implements IBreadcrumb 
+public class HorizontalBreadcrumb implements IBreadcrumb
 {
-	private static final String TEMPLATE_BREADCRUMB_HTML = "/skin/plugins/forms/breadcrumb/horizontal_breadcrumb.html";
-	private String _strBreadcrumbBeanName;
-	private String _strBreadcrumbDisplayBeanName;
-	
+    private static final String TEMPLATE_BREADCRUMB_HTML = "/skin/plugins/forms/breadcrumb/horizontal_breadcrumb.html";
+    private String _strBreadcrumbBeanName;
+    private String _strBreadcrumbDisplayBeanName;
+
     /**
      * Constructor of the HorizontalBreadcrumb
      * 
@@ -61,36 +61,36 @@ public class HorizontalBreadcrumb implements IBreadcrumb
      */
     public HorizontalBreadcrumb( String strBreadcrumbName, String strBreadcrumbDisplayName )
     {
-    	_strBreadcrumbBeanName = strBreadcrumbName;
-    	_strBreadcrumbDisplayBeanName = I18nService.getLocalizedString( strBreadcrumbDisplayName, I18nService.getDefaultLocale( ) );
+        _strBreadcrumbBeanName = strBreadcrumbName;
+        _strBreadcrumbDisplayBeanName = I18nService.getLocalizedString( strBreadcrumbDisplayName, I18nService.getDefaultLocale( ) );
     }
 
-	@Override
-	public String getBreadcrumbBeanName( ) 
-	{
-		return _strBreadcrumbBeanName;
-	}
+    @Override
+    public String getBreadcrumbBeanName( )
+    {
+        return _strBreadcrumbBeanName;
+    }
 
-	@Override
-	public String getBreadcrumbDisplayName( )
-	{
-		return _strBreadcrumbDisplayBeanName;
-	}
-	
-	@Override
-	public String getTopHtml( FormResponseManager formResponseManager ) 
-	{
-		Map<String, Object> model = new HashMap<String, Object>( );
-		model.put( FormsConstants.MARK_LIST_STEPS, formResponseManager.getListValidatedStep( ) );
+    @Override
+    public String getBreadcrumbDisplayName( )
+    {
+        return _strBreadcrumbDisplayBeanName;
+    }
+
+    @Override
+    public String getTopHtml( FormResponseManager formResponseManager )
+    {
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( FormsConstants.MARK_LIST_STEPS, formResponseManager.getListValidatedStep( ) );
         HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
-		
-		return htmlTemplateQuestion.getHtml( );
-	}
 
-	@Override
-	public String getBottomHtml( FormResponseManager formResponseManager ) 
-	{
-		return null;
-	}
+        return htmlTemplateQuestion.getHtml( );
+    }
+
+    @Override
+    public String getBottomHtml( FormResponseManager formResponseManager )
+    {
+        return null;
+    }
 
 }

@@ -223,9 +223,7 @@ public class FormJspBean extends AbstractJspBean
             ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( adminUser, getLocale( ) );
             model.put( MARK_WORKFLOW_REF_LIST, referenceList );
         }
-        
-        
-        
+
         model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
         model.put( MARK_FORM, _form );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
@@ -402,7 +400,7 @@ public class FormJspBean extends AbstractJspBean
                 ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( adminUser, getLocale( ) );
                 model.put( MARK_WORKFLOW_REF_LIST, referenceList );
             }
-            
+
             model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
 
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );

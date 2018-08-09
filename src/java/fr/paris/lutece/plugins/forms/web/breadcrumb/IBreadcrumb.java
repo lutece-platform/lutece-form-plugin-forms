@@ -51,17 +51,17 @@ public interface IBreadcrumb
      * @return the Breadcrumb display name
      */
     String getBreadcrumbDisplayName( );
-    
+
     /**
      * @param formResponseManager
-     * 			the object that contains the actual visited list of step
+     *            the object that contains the actual visited list of step
      * @return the HTML to display at the top of page
      */
     String getTopHtml( FormResponseManager formResponseManager );
 
     /**
      * @param formResponseManager
-     * 			the object that contains the actual visited list of step
+     *            the object that contains the actual visited list of step
      * @return the HTML to display at the bottom of page
      */
     String getBottomHtml( FormResponseManager formResponseManager );

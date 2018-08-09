@@ -48,12 +48,12 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 /**
  * Horizontal display implementation of IBreadcrumb
  */
-public class VerticalBreadcrumb implements IBreadcrumb 
+public class VerticalBreadcrumb implements IBreadcrumb
 {
-	private static final String TEMPLATE_BREADCRUMB_HTML = "/skin/plugins/forms/breadcrumb/vertical_breadcrumb.html";
-	private String _strBreadcrumbBeanName;
-	private String _strBreadcrumbDisplayBeanName;
-	
+    private static final String TEMPLATE_BREADCRUMB_HTML = "/skin/plugins/forms/breadcrumb/vertical_breadcrumb.html";
+    private String _strBreadcrumbBeanName;
+    private String _strBreadcrumbDisplayBeanName;
+
     /**
      * Constructor of the HorizontalBreadcrumb
      * 
@@ -64,77 +64,77 @@ public class VerticalBreadcrumb implements IBreadcrumb
      */
     public VerticalBreadcrumb( String strBreadcrumbName, String strBreadcrumbDisplayName )
     {
-    	_strBreadcrumbBeanName = strBreadcrumbName;
-    	_strBreadcrumbDisplayBeanName = I18nService.getLocalizedString( strBreadcrumbDisplayName, I18nService.getDefaultLocale( ) );
+        _strBreadcrumbBeanName = strBreadcrumbName;
+        _strBreadcrumbDisplayBeanName = I18nService.getLocalizedString( strBreadcrumbDisplayName, I18nService.getDefaultLocale( ) );
     }
 
-	@Override
-	public String getBreadcrumbBeanName( ) 
-	{
-		return _strBreadcrumbBeanName;
-	}
+    @Override
+    public String getBreadcrumbBeanName( )
+    {
+        return _strBreadcrumbBeanName;
+    }
 
-	@Override
-	public String getBreadcrumbDisplayName( )
-	{
-		return _strBreadcrumbDisplayBeanName;
-	}
-	
-	@Override
-	public String getTopHtml( FormResponseManager formResponseManager ) 
-	{
-		Step currentStep = formResponseManager.getListValidatedStep( ).get( formResponseManager.getListValidatedStep( ).size( ) - 1 );
-		
-		List<Step> listStep = StepHome.getStepsListByForm( currentStep.getIdForm( ) );
-				
-		int nCurrentStepIndex = getCurrentStepIndex( listStep, currentStep.getId( ) );
-		
-		listStep.subList( nCurrentStepIndex, listStep.size( ) ).clear( );
-		
-		Map<String, Object> model = new HashMap<String, Object>( );
-		model.put( FormsConstants.MARK_LIST_STEPS, listStep );
-        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
-		
-		return htmlTemplateQuestion.getHtml( );
-	}
+    @Override
+    public String getBreadcrumbDisplayName( )
+    {
+        return _strBreadcrumbDisplayBeanName;
+    }
 
-	@Override
-	public String getBottomHtml( FormResponseManager formResponseManager ) 
-	{
-		Step currentStep = formResponseManager.getListValidatedStep( ).get( formResponseManager.getListValidatedStep( ).size( ) - 1 );
-		
-		List<Step> listStep = StepHome.getStepsListByForm( currentStep.getIdForm( ) );
-				
-		int nCurrentStepIndex = getCurrentStepIndex( listStep, currentStep.getId( ) );
-		
-		listStep.subList( 0, nCurrentStepIndex + 1 ).clear( );
-		
-		Map<String, Object> model = new HashMap<String, Object>( );
-		model.put( FormsConstants.MARK_LIST_STEPS, listStep );
+    @Override
+    public String getTopHtml( FormResponseManager formResponseManager )
+    {
+        Step currentStep = formResponseManager.getListValidatedStep( ).get( formResponseManager.getListValidatedStep( ).size( ) - 1 );
+
+        List<Step> listStep = StepHome.getStepsListByForm( currentStep.getIdForm( ) );
+
+        int nCurrentStepIndex = getCurrentStepIndex( listStep, currentStep.getId( ) );
+
+        listStep.subList( nCurrentStepIndex, listStep.size( ) ).clear( );
+
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( FormsConstants.MARK_LIST_STEPS, listStep );
         HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
-		
-		return htmlTemplateQuestion.getHtml( );
-	}
-	
-	/**
-	 * 
-	 * @param listStep
-	 * 			the list of step
-	 * @param nIdCurrentStep
-	 * 			the current step id
-	 * @return the index of current step in list
-	 */
-	private int getCurrentStepIndex( List<Step> listStep, int nIdCurrentStep )
-	{		
-		for( Step step : listStep )
-		{
-			if ( step.getId( ) == nIdCurrentStep )
-			{
-				return listStep.indexOf( step );
-			}
-		}
-		
-		return 0;
-	}
+
+        return htmlTemplateQuestion.getHtml( );
+    }
+
+    @Override
+    public String getBottomHtml( FormResponseManager formResponseManager )
+    {
+        Step currentStep = formResponseManager.getListValidatedStep( ).get( formResponseManager.getListValidatedStep( ).size( ) - 1 );
+
+        List<Step> listStep = StepHome.getStepsListByForm( currentStep.getIdForm( ) );
+
+        int nCurrentStepIndex = getCurrentStepIndex( listStep, currentStep.getId( ) );
+
+        listStep.subList( 0, nCurrentStepIndex + 1 ).clear( );
+
+        Map<String, Object> model = new HashMap<String, Object>( );
+        model.put( FormsConstants.MARK_LIST_STEPS, listStep );
+        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
+
+        return htmlTemplateQuestion.getHtml( );
+    }
+
+    /**
+     * 
+     * @param listStep
+     *            the list of step
+     * @param nIdCurrentStep
+     *            the current step id
+     * @return the index of current step in list
+     */
+    private int getCurrentStepIndex( List<Step> listStep, int nIdCurrentStep )
+    {
+        for ( Step step : listStep )
+        {
+            if ( step.getId( ) == nIdCurrentStep )
+            {
+                return listStep.indexOf( step );
+            }
+        }
+
+        return 0;
+    }
 
 }

@@ -55,7 +55,7 @@ public class FormResponseManager
     private Map<Integer, List<FormQuestionResponse>> _mapStepFormResponses;
 
     private FormResponse _formResponse;
-    
+
     /**
      * Constructor
      */

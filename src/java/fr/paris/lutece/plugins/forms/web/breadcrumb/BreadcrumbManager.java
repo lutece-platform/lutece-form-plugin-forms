@@ -39,7 +39,7 @@ import fr.paris.lutece.util.ReferenceList;
 /**
  *
  */
-public final class BreadcrumbManager 
+public final class BreadcrumbManager
 {
     /**
      * Constructor
@@ -48,21 +48,20 @@ public final class BreadcrumbManager
     {
         throw new AssertionError( );
     }
-    
+
     /**
      * 
-     * @return
-     * 		the breadcrumb type reference list
+     * @return the breadcrumb type reference list
      */
-	public static ReferenceList getRefListBreadcrumb( )
-	{
-		ReferenceList refListBreadcrumbType = new ReferenceList( );
+    public static ReferenceList getRefListBreadcrumb( )
+    {
+        ReferenceList refListBreadcrumbType = new ReferenceList( );
 
-        for( IBreadcrumb breadcrumb : SpringContextService.getBeansOfType( IBreadcrumb.class ) )
+        for ( IBreadcrumb breadcrumb : SpringContextService.getBeansOfType( IBreadcrumb.class ) )
         {
-        	refListBreadcrumbType.addItem( breadcrumb.getBreadcrumbBeanName( ), breadcrumb.getBreadcrumbDisplayName( ) );
+            refListBreadcrumbType.addItem( breadcrumb.getBreadcrumbBeanName( ), breadcrumb.getBreadcrumbDisplayName( ) );
         }
-        
+
         return refListBreadcrumbType;
-	}
+    }
 }

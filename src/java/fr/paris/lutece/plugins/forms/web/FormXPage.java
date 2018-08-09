@@ -186,11 +186,11 @@ public class FormXPage extends MVCApplication
 
             if ( form.isActive( ) )
             {
-            	if( _breadcrumb == null )
+                if ( _breadcrumb == null )
                 {
-                	_breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
+                    _breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
                 }
-            	
+
                 getFormStepModel( form, request, model );
             }
             else
