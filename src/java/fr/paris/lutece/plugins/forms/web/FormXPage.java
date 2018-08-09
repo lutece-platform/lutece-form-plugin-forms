@@ -62,6 +62,7 @@ import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
+import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
@@ -102,7 +103,6 @@ public class FormXPage extends MVCApplication
 
     // Views
     private static final String VIEW_STEP = "stepView";
-    private static final String VIEW_RETRIEVE_STEP = "retrieveStepView";
     private static final String VIEW_GET_STEP = "getStep";
 
     // Actions
@@ -112,10 +112,6 @@ public class FormXPage extends MVCApplication
 
     // Templates
     private static final String TEMPLATE_VIEW_STEP = "/skin/plugins/forms/step_view.html";
-
-    // Parameters
-    private static final String ID_FORM = "formId";
-    private static final String ID_STEP = "stepId";
 
     // Constants
     private static final int INCORRECT_ID = -1;
@@ -129,6 +125,7 @@ public class FormXPage extends MVCApplication
     private FormResponseManager _formResponseManager;
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
+    private IBreadcrumb _breadcrumb;
 
     /**
      * 
@@ -189,7 +186,12 @@ public class FormXPage extends MVCApplication
 
             if ( form.isActive( ) )
             {
-                getModelForFormAndStep( form, request, model );
+            	if( _breadcrumb == null )
+                {
+                	_breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
+                }
+            	
+                getFormStepModel( form, request, model );
             }
             else
             {
@@ -210,7 +212,7 @@ public class FormXPage extends MVCApplication
      * @throws UserNotSignedException
      *             Exception
      */
-    private void getModelForFormAndStep( Form form, HttpServletRequest request, Map<String, Object> model ) throws UserNotSignedException
+    private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model ) throws UserNotSignedException
     {
         checkAuthentication( form, request );
 
@@ -261,14 +263,13 @@ public class FormXPage extends MVCApplication
             }
         }
 
-        model.put( FormsConstants.MARK_USER, user );
         model.put( FormsConstants.MARK_LIST_VALIDATORS, listDisplayValidators );
         model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
         model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
         model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
-        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), bIsForEdition ) );
-        model.put( FormsConstants.MARK_FORM_BREADCRUMB, _formResponseManager.getListValidatedStep( ) );
-        model.put( FormsConstants.MARK_STEP, _currentStep );
+        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), bIsForEdition, user ) );
+        model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( _formResponseManager ) );
+        model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( _formResponseManager ) );
     }
 
     /**

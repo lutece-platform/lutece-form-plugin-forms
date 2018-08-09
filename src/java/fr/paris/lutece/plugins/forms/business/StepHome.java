@@ -166,6 +166,19 @@ public final class StepHome
     }
 
     /**
+     * Load the id of all the step objects linked to a given form and returns them as a list
+     * 
+     * @param nIdForm
+     *            the form identifier
+     * 
+     * @return the list which contains the id of all the step objects
+     */
+    public static List<Integer> getIdStepsListByForm( int nIdForm )
+    {
+        return _dao.selectIdStepsListByForm( nIdForm, _plugin );
+    }
+
+    /**
      * Load the data of all the step objects and returns them as a referenceList
      * 
      * @return the referenceList which contains the data of all the step objects

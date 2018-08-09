@@ -1,8 +1,16 @@
 <div class="panel panel-default">
   <div class="panel-heading">
-    <h3 class="panel-title">${stepTitle}</h3>
+    <h3 class="panel-title">${step.title}</h3>
   </div>
   <div id="step-content" class="panel-body">
     ${stepContent}
+  </div>
+  <div class="panel-footer">
+	<input name="page" value="forms" type="hidden">
+	<input name="formId" value="${step.idForm}" type="hidden">
+	
+	<#if !step.initial ><button class="btn btn-primary btn-sm" name="action_doReturnStep"  type="submit" >#i18n{forms.step.previous}</button></#if>
+	<button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit"><#if step.final >#i18n{forms.step.save}<#else>#i18n{forms.step.next}</#if></button>
+	<#if user?? ><button class="btn btn-info btn-sm pull-right" name="action_doSaveResponse"  type="submit" >#i18n{forms.step.saveResponse}</button></#if>
   </div>
 </div>

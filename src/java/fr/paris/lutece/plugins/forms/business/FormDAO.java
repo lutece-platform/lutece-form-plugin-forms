@@ -50,11 +50,11 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormDAO implements IFormDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_form, title, description, creation_date, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed FROM forms_form WHERE id_form = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = "SELECT id_form, title, description, creation_date, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name FROM forms_form WHERE id_form = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ? WHERE id_form = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed FROM forms_form";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, breadcrumb_name = ? WHERE id_form = ?";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name FROM forms_form";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_form FROM forms_form";
 
     /**
@@ -76,6 +76,7 @@ public final class FormDAO implements IFormDAO
             daoUtil.setString( nIndex++, form.getWorkgroup( ) );
             daoUtil.setInt( nIndex++, form.getIdWorkflow( ) );
             daoUtil.setBoolean( nIndex++, form.getAuthentificationNeeded( ) );
+            daoUtil.setString( nIndex++, form.getBreadcrumbName( ) );
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
             {
@@ -115,7 +116,7 @@ public final class FormDAO implements IFormDAO
             form.setWorkgroup( daoUtil.getString( nIndex++ ) );
             form.setIdWorkflow( daoUtil.getInt( nIndex++ ) );
             form.setAuthentificationNeeded( daoUtil.getBoolean( nIndex++ ) );
-
+            form.setBreadcrumbName( daoUtil.getString( nIndex++ ) );
         }
 
         daoUtil.close( );
@@ -155,6 +156,7 @@ public final class FormDAO implements IFormDAO
         daoUtil.setString( nIndex++, form.getWorkgroup( ) );
         daoUtil.setInt( nIndex++, form.getIdWorkflow( ) );
         daoUtil.setBoolean( nIndex++, form.getAuthentificationNeeded( ) );
+        daoUtil.setString( nIndex++, form.getBreadcrumbName( ) );
         daoUtil.setInt( nIndex++, form.getId( ) );
 
         daoUtil.executeUpdate( );
@@ -186,6 +188,7 @@ public final class FormDAO implements IFormDAO
             form.setWorkgroup( daoUtil.getString( nIndex++ ) );
             form.setIdWorkflow( daoUtil.getInt( nIndex++ ) );
             form.setAuthentificationNeeded( daoUtil.getBoolean( nIndex++ ) );
+            form.setBreadcrumbName( daoUtil.getString( nIndex++ ) );
             formList.add( form );
         }
 

@@ -1,0 +1,11 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+  	<#list list_steps as step>
+	  	<#if step?has_next>
+	  		<li class="breadcrumb-item"><a href="jsp/site/Portal.jsp?page=forms&view=getStep&id_form=${step.idForm}&index_step=${step?index}">${step.title}</a></li>
+	  	<#else>
+	  		<li class="breadcrumb-item active" aria-current="page">${step.title}</li>
+	  	</#if>
+  	</#list>
+  </ol>
+</nav>

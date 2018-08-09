@@ -45,7 +45,9 @@ import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
@@ -58,7 +60,6 @@ public class StepDisplayTree
 {
     private static final String STEP_TEMPLATE = "/skin/plugins/forms/composite_template/view_step.html";
     private static final String STEP_TEMPLATE_READ_ONLY = "/admin/plugins/forms/composite/view_step.html";
-    private static final String STEP_TITLE_MARKER = "stepTitle";
     private static final String STEP_CONTENT_MARKER = "stepContent";
 
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
@@ -111,9 +112,11 @@ public class StepDisplayTree
      *            the locale
      * @param bIsForEdition
      *            The boolean which tell if the built Template is for edition or only for display value
+     * @param user
+     *            the lutece user
      * @return the html template of the tree as a String
      */
-    public String getCompositeHtml( Locale locale, boolean bIsForEdition )
+    public String getCompositeHtml( Locale locale, boolean bIsForEdition, LuteceUser user )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
 
@@ -124,7 +127,8 @@ public class StepDisplayTree
             strBuilder.append( child.getCompositeHtml( locale, bIsForEdition ) );
         }
 
-        model.put( STEP_TITLE_MARKER, _step.getTitle( ) );
+        model.put( FormsConstants.MARK_STEP, _step );
+        model.put( FormsConstants.MARK_USER, user );
         model.put( STEP_CONTENT_MARKER, strBuilder.toString( ) );
 
         String strTemplate = bIsForEdition ? STEP_TEMPLATE : STEP_TEMPLATE_READ_ONLY;

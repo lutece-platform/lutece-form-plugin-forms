@@ -91,6 +91,10 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private int _nIdWorkflow;
 
     private boolean _bAuthentificationNeeded;
+    
+    @NotEmpty( message = "#i18n{forms.validation.form.Breadcrumb.notEmpty}" )
+    @Size( max = 255, message = "#i18n{forms.validation.form.Breadcrumb.size}" )
+    private String _strBreadcrumbName;
 
     /**
      * Returns the Id
@@ -357,6 +361,27 @@ public class Form implements AdminWorkgroupResource, RBACResource
     public void setAuthentificationNeeded( boolean bAuthentificationNeeded )
     {
         this._bAuthentificationNeeded = bAuthentificationNeeded;
+    }
+    
+    /**
+     * Returns the BreadcrumbName
+     * 
+     * @return The BreadcrumbName
+     */
+    public String getBreadcrumbName( )
+    {
+        return _strBreadcrumbName;
+    }
+
+    /**
+     * Sets the Title
+     * 
+     * @param strBreadcrumbName
+     *            The breadcrumb bean name
+     */
+    public void setBreadcrumbName( String strBreadcrumbName )
+    {
+        _strBreadcrumbName = strBreadcrumbName;
     }
 
 }

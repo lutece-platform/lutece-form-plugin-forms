@@ -41,6 +41,16 @@
 		</constructor-arg>
 	</bean>
 	
+	<!-- Breadcrumb -->
+    <bean id="forms.horizontalBreadcrumb" class="fr.paris.lutece.plugins.forms.web.breadcrumb.HorizontalBreadcrumb">
+    	<constructor-arg type="java.lang.String" index="0" value="forms.horizontalBreadcrumb" />
+    	<constructor-arg type="java.lang.String" index="1" value="forms.breadcrumb.horizontal.name" />
+	</bean>
+	<bean id="forms.verticalBreadcrumb" class="fr.paris.lutece.plugins.forms.web.breadcrumb.VerticalBreadcrumb">
+    	<constructor-arg type="java.lang.String" index="0" value="forms.verticalBreadcrumb" />
+    	<constructor-arg type="java.lang.String" index="1" value="forms.breadcrumb.vertical.name" />
+	</bean>
+	
     <!-- EntryType -->
     <bean id="forms.entryTypeCheckBox" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox" />
 	<bean id="forms.entryTypeComment" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment" />
