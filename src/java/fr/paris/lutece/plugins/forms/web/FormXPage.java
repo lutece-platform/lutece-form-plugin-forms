@@ -416,14 +416,14 @@ public class FormXPage extends MVCApplication
 
         if ( _currentStep.isFinal( ) )
         {
-        	FormResponse formResponse = _formResponseManager.getFormResponse( );
-        	
+            FormResponse formResponse = _formResponseManager.getFormResponse( );
+
             if ( formResponse == null )
             {
-            	formResponse = new FormResponse( );
+                formResponse = new FormResponse( );
                 _formResponseManager.setFormResponse( formResponse );
             }
-            
+
             formResponse.setFormId( _currentStep.getIdForm( ) );
             formResponse.setFromSave( Boolean.FALSE );
 
