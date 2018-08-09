@@ -127,7 +127,7 @@ public final class FormResponseHome
      */
     public static FormResponse getFormResponseByGuidAndForm( String strGuid, int nIdForm )
     {
-        return _dao.selectFormResponseByGuidAndForm( strGuid, nIdForm, _plugin );
+        return _dao.selectFormResponseForBackup( strGuid, nIdForm, _plugin );
     }
 
     /**

@@ -7,7 +7,7 @@
   </div>
   <div class="panel-footer">
 	<input name="page" value="forms" type="hidden">
-	<input name="formId" value="${step.idForm}" type="hidden">
+	<input name="id_form" value="${step.idForm}" type="hidden">
 	
 	<#if !step.initial ><button class="btn btn-primary btn-sm" name="action_doReturnStep"  type="submit" >#i18n{forms.step.previous}</button></#if>
 	<button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit"><#if step.final >#i18n{forms.step.save}<#else>#i18n{forms.step.next}</#if></button>

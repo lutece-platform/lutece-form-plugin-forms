@@ -55,8 +55,6 @@ public class FormQuestionResponse
 
     private int _nIterationNumber;
 
-    private boolean _bFromSave;
-
     private List<Response> _entryResponses;
 
     /**
@@ -159,23 +157,6 @@ public class FormQuestionResponse
     public void setIterationNumber( int nIterationNumber )
     {
         this._nIterationNumber = nIterationNumber;
-    }
-
-    /**
-     * @return the _bFromSave
-     */
-    public boolean getFromSave( )
-    {
-        return _bFromSave;
-    }
-
-    /**
-     * @param bFromSave
-     *            the bFromSave to set
-     */
-    public void setFromSave( boolean bFromSave )
-    {
-        this._bFromSave = bFromSave;
     }
 
     /**

@@ -97,10 +97,8 @@ public final class FormService
      * 
      * @param formResponseManager
      *            The formResponseManager to save
-     * @param isBackUp
-     *            The boolean which indicate if the saving is a backup
      */
-    public void saveForm( FormResponseManager formResponseManager, boolean isBackUp )
+    public void saveForm( FormResponseManager formResponseManager )
     {
         if ( formResponseManager.getFormResponse( ).getId( ) > 0 )
         {
@@ -129,7 +127,6 @@ public final class FormService
                 IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
                 formQuestionResponse.setIdFormResponse( formResponseManager.getFormResponse( ).getId( ) );
                 formQuestionResponse.setIdStep( step.getId( ) );
-                formQuestionResponse.setFromSave( isBackUp );
                 dataService.saveFormQuestionResponse( formQuestionResponse );
             }
 

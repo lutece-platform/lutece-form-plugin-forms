@@ -51,15 +51,15 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number, from_save FROM forms_question_response WHERE id = ?";
-    private static final String SQL_QUERY_SELECT_BY_RESPONSE_FOR_SAVING = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number, from_save FROM forms_question_response WHERE id_form_response = ? AND from_save = 1";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question_response ( id_form_response, id_question, id_step, iteration_number, from_save ) VALUES ( ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number FROM forms_question_response WHERE id = ?";
+    private static final String SQL_QUERY_SELECT_BY_RESPONSE_FOR_SAVING = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number FROM forms_question_response WHERE id_form_response = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question_response ( id_form_response, id_question, id_step, iteration_number ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question_response WHERE id_question_response = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_question_response SET id_form_response = ?, id_question = ?, id_step = ?, iteration_number = ?, from_save = ? WHERE id = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_question_response, id_question, id_step, iteration_number, from_save FROM forms_question_response";
-    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number, from_save FROM forms_question_response"
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_question_response SET id_form_response = ?, id_question = ?, id_step = ?, iteration_number = ? WHERE id = ?";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_question_response, id_question, id_step, iteration_number FROM forms_question_response";
+    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number FROM forms_question_response"
             + " WHERE id_form_response = ? AND id_question = ?";
-    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number, from_save FROM forms_question_response"
+    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number FROM forms_question_response"
             + " WHERE id_form_response = ? AND id_step = ?";
     private static final String SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_QUESTION = "SELECT id_question_entry_response, id_entry_response FROM forms_question_entry_response WHERE id_question_response = ?";
     private static final String SQL_QUERY_DELETE_QUESTION_ENTRY_RESPONSE = "DELETE FROM forms_question_entry_response WHERE id_question_entry_response = ?";
@@ -83,7 +83,6 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             daoUtil.setInt( nIndex++, formQuestionResponse.getIdQuestion( ) );
             daoUtil.setInt( nIndex++, formQuestionResponse.getIdStep( ) );
             daoUtil.setInt( nIndex++, formQuestionResponse.getIterationNumber( ) );
-            daoUtil.setBoolean( nIndex++, formQuestionResponse.getFromSave( ) );
 
             daoUtil.executeUpdate( );
 
@@ -183,7 +182,6 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             daoUtil.setInt( nIndex++, formQuestionResponse.getIdQuestion( ) );
             daoUtil.setInt( nIndex++, formQuestionResponse.getIdStep( ) );
             daoUtil.setInt( nIndex++, formQuestionResponse.getIterationNumber( ) );
-            daoUtil.setBoolean( nIndex++, formQuestionResponse.getFromSave( ) );
 
             daoUtil.setInt( nIndex++, formQuestionResponse.getId( ) );
 
@@ -250,7 +248,6 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             formQuestionResponse.setIdQuestion( daoUtil.getInt( "id_question" ) );
             formQuestionResponse.setIdStep( daoUtil.getInt( "id_step" ) );
             formQuestionResponse.setIterationNumber( daoUtil.getInt( "iteration_number" ) );
-            formQuestionResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
 
             formQuestionResponseList.add( formQuestionResponse );
         }
@@ -282,7 +279,6 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             formQuestionResponse.setIdQuestion( daoUtil.getInt( "id_question" ) );
             formQuestionResponse.setIdStep( daoUtil.getInt( "id_step" ) );
             formQuestionResponse.setIterationNumber( daoUtil.getInt( "iteration_number" ) );
-            formQuestionResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
 
             formQuestionResponseList.add( formQuestionResponse );
         }
@@ -315,7 +311,6 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             formQuestionResponse.setIdQuestion( daoUtil.getInt( "id_question" ) );
             formQuestionResponse.setIdStep( daoUtil.getInt( "id_step" ) );
             formQuestionResponse.setIterationNumber( daoUtil.getInt( "iteration_number" ) );
-            formQuestionResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
 
             formQuestionResponseList.add( formQuestionResponse );
         }

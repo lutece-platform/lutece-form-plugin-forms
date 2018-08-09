@@ -60,6 +60,8 @@ public class FormResponse
 
     private List<FormQuestionResponse> _listResponses = new ArrayList<FormQuestionResponse>( );
 
+    private boolean _bFromSave;
+
     /**
      * @return the _nId
      */
@@ -160,6 +162,23 @@ public class FormResponse
     public void setListResponses( List<FormQuestionResponse> listResponses )
     {
         this._listResponses = listResponses;
+    }
+
+    /**
+     * @return the _bFromSave
+     */
+    public boolean getFromSave( )
+    {
+        return _bFromSave;
+    }
+
+    /**
+     * @param bFromSave
+     *            the bFromSave to set
+     */
+    public void setFromSave( boolean bFromSave )
+    {
+        this._bFromSave = bFromSave;
     }
 
 }

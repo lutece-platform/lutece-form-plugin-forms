@@ -142,7 +142,6 @@ CREATE TABLE IF NOT EXISTS forms_question_response (
   id_question int default '0' NOT NULL,
   id_step int default '0' NOT NULL,
   iteration_number int default '0',
-  from_save SMALLINT default 0,
   PRIMARY KEY (id_question_response)
 );
 
@@ -153,6 +152,7 @@ CREATE TABLE IF NOT EXISTS forms_response (
   guid varchar(255),
   creation_date timestamp default CURRENT_TIMESTAMP NOT NULL,
   update_date timestamp,
+  from_save SMALLINT default 0,
   PRIMARY KEY (id_response)
 );
 

@@ -50,13 +50,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormResponseDAO implements IFormResponseDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_response, id_form, guid, creation_date, update_date FROM forms_response WHERE id_response = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date ) VALUES ( ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response WHERE id_response = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save ) VALUES ( ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ? WHERE id_response = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date FROM forms_response";
-    private static final String SQL_QUERY_SELECT_BY_GUID_AND_FORM = "SELECT id_response, id_form, guid, creation_date, update_date FROM forms_response WHERE guid = ? AND id_form = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ? WHERE id_response = ?";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response";
+    private static final String SQL_QUERY_SELECT_FOR_BACKUP = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response WHERE guid = ? AND id_form = ? AND from_save = 1 ";
 
     /**
      * {@inheritDoc }
@@ -75,7 +75,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             Timestamp timestampCurrentTime = new Timestamp( System.currentTimeMillis( ) );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
-
+            daoUtil.setBoolean( nIndex++, formResponse.getFromSave( ) );
             daoUtil.executeUpdate( );
 
             if ( daoUtil.nextGeneratedKey( ) )
@@ -107,6 +107,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             formResponse.setId( daoUtil.getInt( "id_response" ) );
             formResponse.setFormId( daoUtil.getInt( "id_form" ) );
             formResponse.setGuid( daoUtil.getString( "guid" ) );
+            formResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
 
             Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
             formResponse.setDateCreation( timestampCreationDate );
@@ -156,6 +157,7 @@ public final class FormResponseDAO implements IFormResponseDAO
 
             Timestamp timestampCurrentTime = new Timestamp( System.currentTimeMillis( ) );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
+            daoUtil.setBoolean( nIndex++, formResponse.getFromSave( ) );
             daoUtil.setInt( nIndex++, formResponse.getId( ) );
 
             daoUtil.executeUpdate( );
@@ -184,9 +186,9 @@ public final class FormResponseDAO implements IFormResponseDAO
      * {@inheritDoc }
      */
     @Override
-    public FormResponse selectFormResponseByGuidAndForm( String strGuid, int nIdForm, Plugin plugin )
+    public FormResponse selectFormResponseForBackup( String strGuid, int nIdForm, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_GUID_AND_FORM, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FOR_BACKUP, plugin );
         daoUtil.setString( 1, strGuid );
         daoUtil.setInt( 2, nIdForm );
         daoUtil.executeQuery( );
@@ -199,6 +201,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             formResponse.setId( daoUtil.getInt( "id_response" ) );
             formResponse.setFormId( daoUtil.getInt( "id_form" ) );
             formResponse.setGuid( daoUtil.getString( "guid" ) );
+            formResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
 
             Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
             formResponse.setDateCreation( timestampCreationDate );
