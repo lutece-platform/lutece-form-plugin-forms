@@ -214,6 +214,34 @@ public final class QuestionDAO implements IQuestionDAO
         daoUtil.close( );
         return questionList;
     }
+    
+    @Override
+    public List<Question> selectQuestionsListByFormId( int nIdForm, Plugin plugin ) 
+    {
+        List<Question> questionList = new ArrayList<Question>( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin );
+        daoUtil.setInt( 1, nIdForm );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            Question question = new Question( );
+            int nIndex = 1;
+
+            question.setId( daoUtil.getInt( nIndex++ ) );
+            question.setTitle( daoUtil.getString( nIndex++ ) );
+            question.setDescription( daoUtil.getString( nIndex++ ) );
+            question.setIdEntry( daoUtil.getInt( nIndex++ ) );
+            question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+            question.setIdStep( daoUtil.getInt( nIndex++ ) );
+            question.setStep( getQuestionStep( question.getIdStep( ) ) );
+
+            questionList.add( question );
+        }
+
+        daoUtil.close( );
+        return questionList;
+    }
 
     /**
      * {@inheritDoc }
