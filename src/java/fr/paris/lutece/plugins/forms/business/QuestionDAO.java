@@ -214,9 +214,9 @@ public final class QuestionDAO implements IQuestionDAO
         daoUtil.close( );
         return questionList;
     }
-    
+
     @Override
-    public List<Question> selectQuestionsListByFormId( int nIdForm, Plugin plugin ) 
+    public List<Question> selectQuestionsListByFormId( int nIdForm, Plugin plugin )
     {
         List<Question> questionList = new ArrayList<Question>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin );

@@ -134,11 +134,12 @@ public final class QuestionHome
     {
         return _dao.selectQuestionsListByStep( nIdStep, _plugin );
     }
-    
+
     /**
      * Load the data of all the question objects for given form id and returns them as a list
+     * 
      * @param nIdForm
-     *          The id of the form
+     *            The id of the form
      * @return the list of all the question objects for the given form id
      */
     public static List<Question> getListQuestionByIdForm( int nIdForm )
@@ -177,5 +178,5 @@ public final class QuestionHome
     {
         return _dao.selectQuestionsReferenceListByForm( nIdForm, _plugin );
     }
-    
+
 }
