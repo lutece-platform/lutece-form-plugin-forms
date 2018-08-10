@@ -63,14 +63,14 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class PatternValidator implements IValidator
 {
-	private static final String BEAN_NAME_REGULAR_EXPRESSION = "regularExpressionService";
-	
+    private static final String BEAN_NAME_REGULAR_EXPRESSION = "regularExpressionService";
+
     private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/pattern_template.html";
     private String _strValidatorName = StringUtils.EMPTY;
     private String _strDisplayName = StringUtils.EMPTY;
     private List<String> _listAvailableEntryType = new ArrayList<String>( );
-    private Plugin _plugin = PluginService.getPlugin( "forms" ) ;
+    private Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
      * Constructor of the PatternValidator
@@ -105,13 +105,13 @@ public class PatternValidator implements IValidator
     public String getDisplayHtml( Control control )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
-        
+
         List<RegularExpression> listRegularExpression = RegularExpressionHome.getList( _plugin );
         ReferenceList refListRegularExpression = new ReferenceList( );
-        
-        for( RegularExpression regularExpression : listRegularExpression )
+
+        for ( RegularExpression regularExpression : listRegularExpression )
         {
-        	refListRegularExpression.addItem( regularExpression.getIdExpression( ), regularExpression.getTitle( ) );
+            refListRegularExpression.addItem( regularExpression.getIdExpression( ), regularExpression.getTitle( ) );
         }
 
         model.put( FormsConstants.PARAMETER_REF_LIST_VALUE, refListRegularExpression );
@@ -133,16 +133,16 @@ public class PatternValidator implements IValidator
     {
         RegularExpression regularExpression = RegularExpressionHome.findByPrimaryKey( Integer.valueOf( control.getValue( ) ), _plugin );
 
-        if( regularExpression != null )
+        if ( regularExpression != null )
         {
-        	IRegularExpressionService service = (IRegularExpressionService) SpringContextService.getBean( BEAN_NAME_REGULAR_EXPRESSION );
-	        for ( Response response : questionResponse.getEntryResponse( ) )
-	        {
-	        	if( StringUtils.isNoneEmpty( response.getResponseValue( ) ) )
-	        	{
-	        		return service.isMatches( response.getResponseValue( ), regularExpression );
-	        	}
-	        }
+            IRegularExpressionService service = (IRegularExpressionService) SpringContextService.getBean( BEAN_NAME_REGULAR_EXPRESSION );
+            for ( Response response : questionResponse.getEntryResponse( ) )
+            {
+                if ( StringUtils.isNoneEmpty( response.getResponseValue( ) ) )
+                {
+                    return service.isMatches( response.getResponseValue( ), regularExpression );
+                }
+            }
         }
         return false;
     }
