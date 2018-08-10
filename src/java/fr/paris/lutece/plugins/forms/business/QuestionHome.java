@@ -143,7 +143,7 @@ public final class QuestionHome
      */
     public static List<Question> getListQuestionByIdForm( int nIdForm )
     {
-        return _dao.selectQuestionsListByFormId( nIdForm, _plugin);
+        return _dao.selectQuestionsListByFormId( nIdForm, _plugin );
     }
 
     /**

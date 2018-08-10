@@ -225,18 +225,7 @@ public final class QuestionDAO implements IQuestionDAO
 
         while ( daoUtil.next( ) )
         {
-            Question question = new Question( );
-            int nIndex = 1;
-
-            question.setId( daoUtil.getInt( nIndex++ ) );
-            question.setTitle( daoUtil.getString( nIndex++ ) );
-            question.setDescription( daoUtil.getString( nIndex++ ) );
-            question.setIdEntry( daoUtil.getInt( nIndex++ ) );
-            question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
-            question.setIdStep( daoUtil.getInt( nIndex++ ) );
-            question.setStep( getQuestionStep( question.getIdStep( ) ) );
-
-            questionList.add( question );
+            questionList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
