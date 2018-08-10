@@ -60,7 +60,7 @@ public final class TransitionDAO implements ITransitionDAO
     private static final String SQL_FILTER_BY_STEP = " WHERE t.from_step = ? " + SQL_ORDER_BY_PRIORITY;
     private static final String SQL_FILTER_BY_STEP_AND_PRIORITY = " WHERE t.from_step = ? AND t.priority = ?";
     private static final String SQL_QUERY_SELECT_MAX_PRIORITY_BY_STEP = " SELECT MAX( t.priority ) FROM forms_transition t WHERE t.from_step = ?";
-    
+
     /**
      * {@inheritDoc }
      */
@@ -285,23 +285,22 @@ public final class TransitionDAO implements ITransitionDAO
     /**
      * 
      * @param daoUtil
-     * 			The daoutil
-     * @return
-     * 		The populated Transition object
+     *            The daoutil
+     * @return The populated Transition object
      */
     private Transition dataToObject( DAOUtil daoUtil )
     {
-    	Transition transition = new Transition( );
-    	
-    	transition.setId( daoUtil.getInt( "id_transition" ) );
+        Transition transition = new Transition( );
+
+        transition.setId( daoUtil.getInt( "id_transition" ) );
         transition.setFromStep( daoUtil.getInt( "from_step" ) );
         transition.setFromStepTitle( daoUtil.getString( "fromStep.title" ) );
         transition.setNextStep( daoUtil.getInt( "next_step" ) );
         transition.setNextStepTitle( daoUtil.getString( "nextStep.title" ) );
         transition.setIdControl( daoUtil.getInt( "id_control" ) );
         transition.setPriority( daoUtil.getInt( "priority" ) );
-	    
-	    return transition;
+
+        return transition;
     }
-    
+
 }

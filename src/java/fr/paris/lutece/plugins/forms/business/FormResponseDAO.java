@@ -50,7 +50,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormResponseDAO implements IFormResponseDAO
 {
     // Constants
-	private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save ) VALUES ( ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id = ? ";
@@ -103,7 +103,7 @@ public final class FormResponseDAO implements IFormResponseDAO
 
         if ( daoUtil.next( ) )
         {
-        	formResponse = dataToObject( daoUtil );
+            formResponse = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -200,19 +200,18 @@ public final class FormResponseDAO implements IFormResponseDAO
         daoUtil.close( );
 
     }
-    
+
     /**
      * 
      * @param daoUtil
-     * 			The daoutil
-     * @return
-     * 		The populated FormResponse object
+     *            The daoutil
+     * @return The populated FormResponse object
      */
     private FormResponse dataToObject( DAOUtil daoUtil )
     {
-    	FormResponse formResponse = new FormResponse( );
-    	
-    	formResponse = new FormResponse( );
+        FormResponse formResponse = new FormResponse( );
+
+        formResponse = new FormResponse( );
         formResponse.setId( daoUtil.getInt( "id_response" ) );
         formResponse.setFormId( daoUtil.getInt( "id_form" ) );
         formResponse.setGuid( daoUtil.getString( "guid" ) );
@@ -230,8 +229,8 @@ public final class FormResponseDAO implements IFormResponseDAO
 
             formResponse.setUpdate( timestampCreationDate );
         }
-        
-    	return formResponse;
+
+        return formResponse;
     }
 
 }

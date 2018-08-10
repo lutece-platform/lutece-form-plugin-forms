@@ -48,7 +48,7 @@ import java.util.List;
 public final class StepDAO implements IStepDAO
 {
     // Constants
-	private static final String SQL_QUERY_SELECTALL = "SELECT id_step, title, description, id_form, is_initial, is_final FROM forms_step";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_step, title, description, id_form, is_initial, is_final FROM forms_step";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_step = ?";
     private static final String SQL_QUERY_SELECT_INITIAL_STEP = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND is_initial = 1";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_step ( title, description, id_form, is_initial, is_final ) VALUES ( ?, ?, ?, ?, ? ) ";
@@ -57,7 +57,7 @@ public final class StepDAO implements IStepDAO
     private static final String SQL_QUERY_SELECTALL_BY_FORM = SQL_QUERY_SELECTALL + " where id_form = ?";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_step FROM forms_step";
     private static final String SQL_QUERY_SELECTALL_ID_BY_FORM = "SELECT id_step FROM forms_step WHERE id_form = ?";
-    
+
     /**
      * {@inheritDoc }
      */
@@ -99,7 +99,7 @@ public final class StepDAO implements IStepDAO
 
         if ( daoUtil.next( ) )
         {
-        	step =  dataToObject( daoUtil );
+            step = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -119,7 +119,7 @@ public final class StepDAO implements IStepDAO
 
         if ( daoUtil.next( ) )
         {
-            step =  dataToObject( daoUtil );
+            step = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -172,7 +172,7 @@ public final class StepDAO implements IStepDAO
 
         while ( daoUtil.next( ) )
         {
-            stepList.add(  dataToObject( daoUtil ) );
+            stepList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -273,26 +273,25 @@ public final class StepDAO implements IStepDAO
         daoUtil.close( );
         return stepReferenceList;
     }
-    
+
     /**
      * 
      * @param daoUtil
-     * 			The daoutil
-     * @return
-     * 		The populated Step object
+     *            The daoutil
+     * @return The populated Step object
      */
     private Step dataToObject( DAOUtil daoUtil )
     {
-    	Step step = new Step( );
-    	
-    	step.setId( daoUtil.getInt( "id_step" ) );
+        Step step = new Step( );
+
+        step.setId( daoUtil.getInt( "id_step" ) );
         step.setTitle( daoUtil.getString( "title" ) );
         step.setDescription( daoUtil.getString( "description" ) );
         step.setIdForm( daoUtil.getInt( "id_form" ) );
         step.setInitial( daoUtil.getBoolean( "is_initial" ) );
         step.setFinal( daoUtil.getBoolean( "is_final" ) );
-	    
-	    return step;
+
+        return step;
     }
 
 }

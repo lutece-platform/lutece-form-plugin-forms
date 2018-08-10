@@ -47,7 +47,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormResponseStepDAO implements IFormResponseStepDAO
 {
     // Constants
-	private static final String SQL_QUERY_SELECTALL = "SELECT id, id_form_response, id_step, order_response FROM forms_response_step";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id, id_form_response, id_step, order_response FROM forms_response_step";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response_step ( id_form_response, id_step, order_response ) VALUES ( ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response_step WHERE id = ? ";
@@ -104,7 +104,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
 
         return formResponseStep;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -193,19 +193,18 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     /**
      * 
      * @param daoUtil
-     * 			The daoutil
-     * @return
-     * 		The populated FormResponseStep object
+     *            The daoutil
+     * @return The populated FormResponseStep object
      */
     private FormResponseStep dataToObject( DAOUtil daoUtil )
     {
-    	FormResponseStep formResponseStep = new FormResponseStep( );
+        FormResponseStep formResponseStep = new FormResponseStep( );
         formResponseStep.setId( daoUtil.getInt( "id" ) );
         formResponseStep.setFormResponseId( daoUtil.getInt( "id_form_response" ) );
         formResponseStep.setIdStep( daoUtil.getInt( "id_step" ) );
         formResponseStep.setOrder( daoUtil.getInt( "order_response" ) );
-        
+
         return formResponseStep;
     }
-    
+
 }

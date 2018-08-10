@@ -44,7 +44,7 @@ import java.util.List;
  */
 public class FormActionDAO implements IFormActionDAO
 {
-	private static final String SQL_QUERY_SELECT_ALL_ACTIONS = "SELECT a.name_key, a.description_key, a.action_url, a.icon_url, a.action_permission ,a.form_state"
+    private static final String SQL_QUERY_SELECT_ALL_ACTIONS = "SELECT a.name_key, a.description_key, a.action_url, a.icon_url, a.action_permission ,a.form_state"
             + " FROM forms_action a";
     private static final String SQL_QUERY_SELECT_ACTIONS = SQL_QUERY_SELECT_ALL_ACTIONS + " where a.form_state=? ";
 
@@ -88,25 +88,24 @@ public class FormActionDAO implements IFormActionDAO
 
         return listActions;
     }
-    
+
     /**
      * 
      * @param daoUtil
-     * 			The daoutil
-     * @return
-     * 		The populated FormAction object
+     *            The daoutil
+     * @return The populated FormAction object
      */
     private FormAction dataToObject( DAOUtil daoUtil )
     {
-    	FormAction formAction = new FormAction( );
-    	
-    	formAction.setNameKey( daoUtil.getString( "name_key" ) );
-    	formAction.setDescriptionKey( daoUtil.getString( "description_key" ) );
-    	formAction.setUrl( daoUtil.getString( "action_url" ) );
-    	formAction.setIconUrl( daoUtil.getString( "icon_url" ) );
-    	formAction.setPermission( daoUtil.getString( "action_permission" ) );
-    	formAction.setFormState( daoUtil.getInt( "form_state" ) );
-        
-    	return formAction;
+        FormAction formAction = new FormAction( );
+
+        formAction.setNameKey( daoUtil.getString( "name_key" ) );
+        formAction.setDescriptionKey( daoUtil.getString( "description_key" ) );
+        formAction.setUrl( daoUtil.getString( "action_url" ) );
+        formAction.setIconUrl( daoUtil.getString( "icon_url" ) );
+        formAction.setPermission( daoUtil.getString( "action_permission" ) );
+        formAction.setFormState( daoUtil.getInt( "form_state" ) );
+
+        return formAction;
     }
 }

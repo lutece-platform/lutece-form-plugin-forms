@@ -51,16 +51,14 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 {
     // Constants
-	private static final String SQL_QUERY_SELECTALL = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number FROM forms_question_response";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number FROM forms_question_response";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id = ?";
     private static final String SQL_QUERY_SELECT_BY_RESPONSE_FOR_SAVING = SQL_QUERY_SELECTALL + " WHERE id_form_response = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question_response ( id_form_response, id_question, id_step, iteration_number ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question_response WHERE id_question_response = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_question_response SET id_form_response = ?, id_question = ?, id_step = ?, iteration_number = ? WHERE id = ?";
-    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION = SQL_QUERY_SELECTALL
-            + " WHERE id_form_response = ? AND id_question = ?";
-    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP = SQL_QUERY_SELECTALL
-            + " WHERE id_form_response = ? AND id_step = ?";
+    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_form_response = ? AND id_question = ?";
+    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP = SQL_QUERY_SELECTALL + " WHERE id_form_response = ? AND id_step = ?";
     private static final String SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_QUESTION = "SELECT id_question_entry_response, id_entry_response FROM forms_question_entry_response WHERE id_question_response = ?";
     private static final String SQL_QUERY_DELETE_QUESTION_ENTRY_RESPONSE = "DELETE FROM forms_question_entry_response WHERE id_question_entry_response = ?";
     private static final String SQL_QUERY_INSERT_ENTRY_RESPONSE = "INSERT INTO forms_question_entry_response ( id_question_response, id_entry_response ) VALUES ( ?, ? ) ";
@@ -126,10 +124,10 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
 
         FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
-        
-        if( daoUtil.next( ) )
+
+        if ( daoUtil.next( ) )
         {
-        	formQuestionResponse = dataToObject( daoUtil );
+            formQuestionResponse = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -226,10 +224,10 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         List<FormQuestionResponse> formQuestionResponseList = new ArrayList<FormQuestionResponse>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        
-        while( daoUtil.next( ) )
+
+        while ( daoUtil.next( ) )
         {
-        	formQuestionResponseList.add( dataToObject( daoUtil ) );
+            formQuestionResponseList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -276,7 +274,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
         while ( daoUtil.next( ) )
         {
-        	formQuestionResponseList.add( dataToObject( daoUtil ) );
+            formQuestionResponseList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -301,7 +299,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
         while ( daoUtil.next( ) )
         {
-        	formQuestionResponseList.add( dataToObject( daoUtil ) );
+            formQuestionResponseList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -373,25 +371,24 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             daoUtil.close( );
         }
     }
-    
+
     /**
      * 
      * @param daoUtil
-     * 			The daoutil
-     * @return
-     * 		The populated FormQuestionResponse object
+     *            The daoutil
+     * @return The populated FormQuestionResponse object
      */
     private FormQuestionResponse dataToObject( DAOUtil daoUtil )
     {
-    	FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
-    	
+        FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
+
         formQuestionResponse.setId( daoUtil.getInt( "id_question_response" ) );
         formQuestionResponse.setIdFormResponse( daoUtil.getInt( "id_form_response" ) );
         formQuestionResponse.setIdQuestion( daoUtil.getInt( "id_question" ) );
         formQuestionResponse.setIdStep( daoUtil.getInt( "id_step" ) );
         formQuestionResponse.setIterationNumber( daoUtil.getInt( "iteration_number" ) );
-        
-    	return formQuestionResponse;
+
+        return formQuestionResponse;
     }
 
 }

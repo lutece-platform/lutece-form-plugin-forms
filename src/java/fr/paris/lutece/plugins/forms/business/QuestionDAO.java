@@ -50,7 +50,7 @@ import java.util.List;
 public final class QuestionDAO implements IQuestionDAO
 {
     // Constants
-	private static final String SQL_QUERY_SELECTALL = "SELECT id_question, title, description, id_entry, id_step FROM forms_question";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_question, title, description, id_entry, id_step FROM forms_question";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_question = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question ( title, description, id_entry, id_step ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question WHERE id_question = ? ";
@@ -105,7 +105,6 @@ public final class QuestionDAO implements IQuestionDAO
         daoUtil.close( );
         return question;
     }
-    
 
     /**
      * {@inheritDoc }
@@ -151,7 +150,7 @@ public final class QuestionDAO implements IQuestionDAO
 
         while ( daoUtil.next( ) )
         {
-        	questionList.add( dataToObject( daoUtil ) );
+            questionList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -255,26 +254,25 @@ public final class QuestionDAO implements IQuestionDAO
     {
         return StepHome.findByPrimaryKey( nIdStep );
     }
-    
+
     /**
      * 
      * @param daoUtil
-     * 			The daoutil
-     * @return
-     * 		The populated Question object
+     *            The daoutil
+     * @return The populated Question object
      */
     private Question dataToObject( DAOUtil daoUtil )
     {
-    	Question question = new Question( );
-    	
-	    question.setId( daoUtil.getInt( "id_question" ) );
-	    question.setTitle( daoUtil.getString( "title" ) );
-	    question.setDescription( daoUtil.getString( "description" ) );
-	    question.setIdEntry( daoUtil.getInt( "id_entry" ) );
-	    question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
-	    question.setIdStep( daoUtil.getInt( "id_step" ) );
-	    question.setStep( getQuestionStep( question.getIdStep( ) ) );
-	    
-	    return question;
+        Question question = new Question( );
+
+        question.setId( daoUtil.getInt( "id_question" ) );
+        question.setTitle( daoUtil.getString( "title" ) );
+        question.setDescription( daoUtil.getString( "description" ) );
+        question.setIdEntry( daoUtil.getInt( "id_entry" ) );
+        question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+        question.setIdStep( daoUtil.getInt( "id_step" ) );
+        question.setStep( getQuestionStep( question.getIdStep( ) ) );
+
+        return question;
     }
 }
