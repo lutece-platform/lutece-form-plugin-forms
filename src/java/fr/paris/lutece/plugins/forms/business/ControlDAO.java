@@ -48,15 +48,17 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class ControlDAO implements IControlDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control WHERE id_control = ?";
-    private static final String SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control WHERE id_question = ? AND control_type = ?";
-    private static final String SQL_QUERY_SELECT_BY_DISPLAY_ID = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control WHERE id_display = ?";
+	private static final String SQL_QUERY_SELECTALL = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control";
+	
+    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_control = ?";
+    private static final String SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE = SQL_QUERY_SELECTALL + " WHERE id_question = ? AND control_type = ?";
+    private static final String SQL_QUERY_SELECT_BY_DISPLAY_ID = SQL_QUERY_SELECTALL + " WHERE id_display = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, id_question, validator_name, control_type, id_display ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_control WHERE id_control = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?, id_question = ?, validator_name = ?, control_type = ?, id_display = ? WHERE id_control = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control";
+    
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_control FROM forms_control";
-
+    
     /**
      * {@inheritDoc }
      */
@@ -99,16 +101,7 @@ public final class ControlDAO implements IControlDAO
 
         if ( daoUtil.next( ) )
         {
-            control = new Control( );
-            int nIndex = 1;
-
-            control.setId( daoUtil.getInt( nIndex++ ) );
-            control.setValue( daoUtil.getString( nIndex++ ) );
-            control.setErrorMessage( daoUtil.getString( nIndex++ ) );
-            control.setIdQuestion( daoUtil.getInt( nIndex++ ) );
-            control.setValidatorName( daoUtil.getString( nIndex++ ) );
-            control.setControlType( daoUtil.getString( nIndex++ ) );
-            control.setIdTargetFormDisplay( daoUtil.getInt( nIndex++ ) );
+            control = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -162,18 +155,7 @@ public final class ControlDAO implements IControlDAO
 
         while ( daoUtil.next( ) )
         {
-            Control control = new Control( );
-            int nIndex = 1;
-
-            control.setId( daoUtil.getInt( nIndex++ ) );
-            control.setValue( daoUtil.getString( nIndex++ ) );
-            control.setErrorMessage( daoUtil.getString( nIndex++ ) );
-            control.setIdQuestion( daoUtil.getInt( nIndex++ ) );
-            control.setValidatorName( daoUtil.getString( nIndex++ ) );
-            control.setControlType( daoUtil.getString( nIndex++ ) );
-            control.setIdTargetFormDisplay( daoUtil.getInt( nIndex++ ) );
-
-            controlList.add( control );
+            controlList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -192,7 +174,7 @@ public final class ControlDAO implements IControlDAO
 
         while ( daoUtil.next( ) )
         {
-            controlList.add( daoUtil.getInt( 1 ) );
+            controlList.add( daoUtil.getInt( "id_control" ) );
         }
 
         daoUtil.close( );
@@ -211,7 +193,7 @@ public final class ControlDAO implements IControlDAO
 
         while ( daoUtil.next( ) )
         {
-            controlList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            controlList.addItem( daoUtil.getInt( "id_control" ), daoUtil.getString( "value" ) );
         }
 
         daoUtil.close( );
@@ -229,16 +211,7 @@ public final class ControlDAO implements IControlDAO
 
         if ( daoUtil.next( ) )
         {
-            control = new Control( );
-            int nIndex = 1;
-
-            control.setId( daoUtil.getInt( nIndex++ ) );
-            control.setValue( daoUtil.getString( nIndex++ ) );
-            control.setErrorMessage( daoUtil.getString( nIndex++ ) );
-            control.setIdQuestion( daoUtil.getInt( nIndex++ ) );
-            control.setValidatorName( daoUtil.getString( nIndex++ ) );
-            control.setControlType( daoUtil.getString( nIndex++ ) );
-            control.setIdTargetFormDisplay( daoUtil.getInt( nIndex++ ) );
+        	control = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -257,20 +230,33 @@ public final class ControlDAO implements IControlDAO
 
         if ( daoUtil.next( ) )
         {
-            control = new Control( );
-            int nIndex = 1;
-
-            control.setId( daoUtil.getInt( nIndex++ ) );
-            control.setValue( daoUtil.getString( nIndex++ ) );
-            control.setErrorMessage( daoUtil.getString( nIndex++ ) );
-            control.setIdQuestion( daoUtil.getInt( nIndex++ ) );
-            control.setValidatorName( daoUtil.getString( nIndex++ ) );
-            control.setControlType( daoUtil.getString( nIndex++ ) );
-            control.setIdTargetFormDisplay( daoUtil.getInt( nIndex++ ) );
+            control = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
         return control;
+    }
+    
+    /**
+     * 
+     * @param daoUtil
+     * 			The daoutil
+     * @return
+     * 		The populated Control object
+     */
+    private Control dataToObject( DAOUtil daoUtil )
+    {
+    	Control control = new Control( );
+    	
+    	control.setId( daoUtil.getInt( "id_control" ) );
+        control.setValue( daoUtil.getString( "value" ) );
+        control.setErrorMessage( daoUtil.getString( "error_message" ) );
+        control.setIdQuestion( daoUtil.getInt( "id_question" ) );
+        control.setValidatorName( daoUtil.getString( "validator_name" ) );
+        control.setControlType( daoUtil.getString( "control_type" ) );
+        control.setIdTargetFormDisplay( daoUtil.getInt( "id_display" ) );
+        
+    	return control;
     }
 
 }

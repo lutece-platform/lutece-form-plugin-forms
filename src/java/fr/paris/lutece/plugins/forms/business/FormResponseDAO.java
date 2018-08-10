@@ -50,13 +50,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormResponseDAO implements IFormResponseDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response WHERE id_response = ?";
+	private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response";
+    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save ) VALUES ( ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ? WHERE id_response = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response";
-    private static final String SQL_QUERY_SELECT_FOR_BACKUP = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response WHERE guid = ? AND id_form = ? AND from_save = 1 ";
+    private static final String SQL_QUERY_SELECT_FOR_BACKUP = SQL_QUERY_SELECTALL + " WHERE guid = ? AND id_form = ? AND from_save = 1 ";
 
     /**
      * {@inheritDoc }
@@ -103,24 +103,7 @@ public final class FormResponseDAO implements IFormResponseDAO
 
         if ( daoUtil.next( ) )
         {
-            formResponse = new FormResponse( );
-            formResponse.setId( daoUtil.getInt( "id_response" ) );
-            formResponse.setFormId( daoUtil.getInt( "id_form" ) );
-            formResponse.setGuid( daoUtil.getString( "guid" ) );
-            formResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
-
-            Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
-            formResponse.setDateCreation( timestampCreationDate );
-            try
-            {
-                formResponse.setUpdate( daoUtil.getTimestamp( "update_date" ) );
-            }
-            catch( AppException exception )
-            {
-                AppLogService.error( "The update date of the FormResponse si not valid !" );
-
-                formResponse.setUpdate( timestampCreationDate );
-            }
+        	formResponse = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -197,24 +180,7 @@ public final class FormResponseDAO implements IFormResponseDAO
 
         if ( daoUtil.next( ) )
         {
-            formResponse = new FormResponse( );
-            formResponse.setId( daoUtil.getInt( "id_response" ) );
-            formResponse.setFormId( daoUtil.getInt( "id_form" ) );
-            formResponse.setGuid( daoUtil.getString( "guid" ) );
-            formResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
-
-            Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
-            formResponse.setDateCreation( timestampCreationDate );
-            try
-            {
-                formResponse.setUpdate( daoUtil.getTimestamp( "update_date" ) );
-            }
-            catch( AppException exception )
-            {
-                AppLogService.error( "The update date of the FormResponse si not valid !" );
-
-                formResponse.setUpdate( timestampCreationDate );
-            }
+            formResponse = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -233,6 +199,39 @@ public final class FormResponseDAO implements IFormResponseDAO
         daoUtil.executeUpdate( );
         daoUtil.close( );
 
+    }
+    
+    /**
+     * 
+     * @param daoUtil
+     * 			The daoutil
+     * @return
+     * 		The populated FormResponse object
+     */
+    private FormResponse dataToObject( DAOUtil daoUtil )
+    {
+    	FormResponse formResponse = new FormResponse( );
+    	
+    	formResponse = new FormResponse( );
+        formResponse.setId( daoUtil.getInt( "id_response" ) );
+        formResponse.setFormId( daoUtil.getInt( "id_form" ) );
+        formResponse.setGuid( daoUtil.getString( "guid" ) );
+        formResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
+
+        Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
+        formResponse.setDateCreation( timestampCreationDate );
+        try
+        {
+            formResponse.setUpdate( daoUtil.getTimestamp( "update_date" ) );
+        }
+        catch( AppException exception )
+        {
+            AppLogService.error( "The update date of the FormResponse si not valid !" );
+
+            formResponse.setUpdate( timestampCreationDate );
+        }
+        
+    	return formResponse;
     }
 
 }

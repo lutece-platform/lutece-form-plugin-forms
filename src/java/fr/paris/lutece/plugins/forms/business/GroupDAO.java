@@ -48,11 +48,11 @@ import java.util.List;
 public final class GroupDAO implements IGroupDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_group, title, description, id_step, collapsible, iteration_number FROM forms_group WHERE id_group = ?";
+	private static final String SQL_QUERY_SELECTALL = "SELECT id_group, title, description, id_step, collapsible, iteration_number FROM forms_group";
+    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_group = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_group ( title, description, id_step, collapsible, iteration_number ) VALUES ( ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_group WHERE id_group = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_group SET id_group = ?, title = ?, description = ?, id_step = ?, collapsible = ?, iteration_number = ? WHERE id_group = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_group, title, description, id_step, collapsible, iteration_number FROM forms_group";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_group FROM forms_group";
 
     /**
@@ -96,15 +96,7 @@ public final class GroupDAO implements IGroupDAO
 
         if ( daoUtil.next( ) )
         {
-            group = new Group( );
-            int nIndex = 1;
-
-            group.setId( daoUtil.getInt( nIndex++ ) );
-            group.setTitle( daoUtil.getString( nIndex++ ) );
-            group.setDescription( daoUtil.getString( nIndex++ ) );
-            group.setIdStep( daoUtil.getInt( nIndex++ ) );
-            group.setCollapsible( daoUtil.getBoolean( nIndex++ ) );
-            group.setIterationNumber( daoUtil.getInt( nIndex++ ) );
+            group = dataToObject( daoUtil );
         }
 
         daoUtil.free( );
@@ -156,17 +148,7 @@ public final class GroupDAO implements IGroupDAO
 
         while ( daoUtil.next( ) )
         {
-            Group group = new Group( );
-            int nIndex = 1;
-
-            group.setId( daoUtil.getInt( nIndex++ ) );
-            group.setTitle( daoUtil.getString( nIndex++ ) );
-            group.setDescription( daoUtil.getString( nIndex++ ) );
-            group.setIdStep( daoUtil.getInt( nIndex++ ) );
-            group.setCollapsible( daoUtil.getBoolean( nIndex++ ) );
-            group.setIterationNumber( daoUtil.getInt( nIndex++ ) );
-
-            groupList.add( group );
+            groupList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.free( );
@@ -209,5 +191,26 @@ public final class GroupDAO implements IGroupDAO
 
         daoUtil.free( );
         return groupList;
+    }
+    
+    /**
+     * 
+     * @param daoUtil
+     * 			The daoutil
+     * @return
+     * 		The populated Group object
+     */
+    private Group dataToObject( DAOUtil daoUtil )
+    {
+    	Group group = new Group( );
+    	
+    	group.setId( daoUtil.getInt( "id_group" ) );
+        group.setTitle( daoUtil.getString( "title" ) );
+        group.setDescription( daoUtil.getString( "description" ) );
+        group.setIdStep( daoUtil.getInt( "id_step" ) );
+        group.setCollapsible( daoUtil.getBoolean( "collapsible" ) );
+        group.setIterationNumber( daoUtil.getInt( "iteration_number" ) );
+        
+        return group;
     }
 }

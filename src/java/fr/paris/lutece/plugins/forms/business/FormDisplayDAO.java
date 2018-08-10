@@ -48,18 +48,19 @@ import java.util.List;
 public final class FormDisplayDAO implements IFormDisplayDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display WHERE id_display = ?";
-    private static final String SQL_QUERY_SELECT_BY_PARENT = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display WHERE id_step = ? AND id_parent = ? ORDER BY display_order ASC";
+	private static final String SQL_QUERY_SELECTALL = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display";
+	
+    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_display = ?";
+    private static final String SQL_QUERY_SELECT_BY_PARENT = SQL_QUERY_SELECTALL + " WHERE id_step = ? AND id_parent = ? ORDER BY display_order ASC";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_display ( id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_display WHERE id_display = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_display SET id_display = ?, id_form = ?, id_step = ?, id_composite = ?, id_parent = ?, display_order = ?, composite_type = ?, display_depth = ? WHERE id_display = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display";
     private static final String SQL_QUERY_NEXT_POSITION_BY_PARENT = "SELECT MAX(display_order) from forms_display WHERE id_step = ? AND id_parent = ?";
     private static final String SQL_QUERY_SELECTALL_GROUP_DISPLAY_BY_STEP = "SELECT d.id_display, g.title, d.id_form, d.id_step, d.id_composite, d.id_parent, d.display_order, d.composite_type, d.display_depth "
             + "FROM forms_display d INNER JOIN forms_group g ON d.id_composite = g.id_group "
             + "WHERE d.id_step = ? AND d.composite_type = ? order by d.id_parent, d.display_order";
-    private static final String SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display WHERE id_form = ? AND id_step = ? AND id_composite = ?";
-
+    private static final String SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND id_step = ? AND id_composite = ?";
+    
     /**
      * {@inheritDoc }
      */
@@ -105,17 +106,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
 
         if ( daoUtil.next( ) )
         {
-            formDisplay = new FormDisplay( );
-            int nIndex = 1;
-
-            formDisplay.setId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setFormId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setStepId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setCompositeId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setParentId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setDisplayOrder( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setCompositeType( daoUtil.getString( nIndex++ ) );
-            formDisplay.setDepth( daoUtil.getInt( nIndex++ ) );
+            formDisplay = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -171,19 +162,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
 
         while ( daoUtil.next( ) )
         {
-            FormDisplay formDisplay = new FormDisplay( );
-            int nIndex = 1;
-
-            formDisplay.setId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setFormId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setStepId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setCompositeId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setParentId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setDisplayOrder( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setCompositeType( daoUtil.getString( nIndex++ ) );
-            formDisplay.setDepth( daoUtil.getInt( nIndex++ ) );
-
-            formDisplayList.add( formDisplay );
+            formDisplayList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -205,19 +184,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
 
         while ( daoUtil.next( ) )
         {
-            FormDisplay formDisplay = new FormDisplay( );
-            int nIndex = 1;
-
-            formDisplay.setId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setFormId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setStepId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setCompositeId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setParentId( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setDisplayOrder( daoUtil.getInt( nIndex++ ) );
-            formDisplay.setCompositeType( daoUtil.getString( nIndex++ ) );
-            formDisplay.setDepth( daoUtil.getInt( nIndex++ ) );
-
-            formDisplayList.add( formDisplay );
+            formDisplayList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -266,7 +233,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
 
         while ( daoUtil.next( ) )
         {
-            groupList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            groupList.addItem( daoUtil.getInt( "id_display" ), daoUtil.getString( "title" ) );
         }
 
         daoUtil.close( );
@@ -289,19 +256,34 @@ public final class FormDisplayDAO implements IFormDisplayDAO
 
         if ( daoUtil.next( ) )
         {
-            formDisplay = new FormDisplay( );
-            formDisplay.setId( daoUtil.getInt( "id_display" ) );
-            formDisplay.setFormId( daoUtil.getInt( "id_form" ) );
-            formDisplay.setStepId( daoUtil.getInt( "id_step" ) );
-            formDisplay.setCompositeId( daoUtil.getInt( "id_composite" ) );
-            formDisplay.setParentId( daoUtil.getInt( "id_parent" ) );
-            formDisplay.setDisplayOrder( daoUtil.getInt( "display_order" ) );
-            formDisplay.setCompositeType( daoUtil.getString( "composite_type" ) );
-            formDisplay.setDepth( daoUtil.getInt( "display_depth" ) );
+            formDisplay = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
 
         return formDisplay;
+    }
+    
+    /**
+     * 
+     * @param daoUtil
+     * 			The daoutil
+     * @return
+     * 		The populated FormDisplay object
+     */
+    private FormDisplay dataToObject( DAOUtil daoUtil )
+    {
+    	FormDisplay formDisplay = new FormDisplay( );
+    	
+    	formDisplay.setId( daoUtil.getInt( "id_display" ) );
+        formDisplay.setFormId( daoUtil.getInt( "id_form" ) );
+        formDisplay.setStepId( daoUtil.getInt( "id_step" ) );
+        formDisplay.setCompositeId( daoUtil.getInt( "id_composite" ) );
+        formDisplay.setParentId( daoUtil.getInt( "id_parent" ) );
+        formDisplay.setDisplayOrder( daoUtil.getInt( "display_order" ) );
+        formDisplay.setCompositeType( daoUtil.getString( "composite_type" ) );
+        formDisplay.setDepth( daoUtil.getInt( "display_depth" ) );
+        
+    	return formDisplay;
     }
 }

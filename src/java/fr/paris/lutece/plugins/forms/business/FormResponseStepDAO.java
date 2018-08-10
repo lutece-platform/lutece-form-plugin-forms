@@ -47,12 +47,12 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormResponseStepDAO implements IFormResponseStepDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id, id_form_response, id_step, order_response FROM forms_response_step WHERE id_response = ?";
+	private static final String SQL_QUERY_SELECTALL = "SELECT id, id_form_response, id_step, order_response FROM forms_response_step";
+    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response_step ( id_form_response, id_step, order_response ) VALUES ( ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response_step WHERE id = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM_RESPONSE = "DELETE FROM forms_response_step WHERE id_form_response = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_response_step SET id_form_response = ?, id_step = ?, order_response = ? WHERE id = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id, id_form_response, id_step, order_response FROM forms_response_step";
     private static final String SQL_QUERY_SELECT_BY_ID_RESPONSE = "SELECT id_step FROM forms_response_step WHERE id_form_response = ? ORDER BY order_response ASC";
 
     /**
@@ -97,17 +97,14 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
 
         if ( daoUtil.next( ) )
         {
-            formResponseStep = new FormResponseStep( );
-            formResponseStep.setFormResponseId( daoUtil.getInt( "id_form_response" ) );
-            formResponseStep.setIdStep( daoUtil.getInt( "id_step" ) );
-            formResponseStep.setOrder( daoUtil.getInt( "order_response" ) );
+            formResponseStep = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
 
         return formResponseStep;
     }
-
+    
     /**
      * {@inheritDoc }
      */
@@ -193,4 +190,22 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
         return listIdStep;
     }
 
+    /**
+     * 
+     * @param daoUtil
+     * 			The daoutil
+     * @return
+     * 		The populated FormResponseStep object
+     */
+    private FormResponseStep dataToObject( DAOUtil daoUtil )
+    {
+    	FormResponseStep formResponseStep = new FormResponseStep( );
+        formResponseStep.setId( daoUtil.getInt( "id" ) );
+        formResponseStep.setFormResponseId( daoUtil.getInt( "id_form_response" ) );
+        formResponseStep.setIdStep( daoUtil.getInt( "id_step" ) );
+        formResponseStep.setOrder( daoUtil.getInt( "order_response" ) );
+        
+        return formResponseStep;
+    }
+    
 }

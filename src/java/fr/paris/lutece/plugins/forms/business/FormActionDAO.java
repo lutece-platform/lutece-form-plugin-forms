@@ -44,10 +44,9 @@ import java.util.List;
  */
 public class FormActionDAO implements IFormActionDAO
 {
-    private static final String SQL_QUERY_SELECT_ACTIONS = "SELECT a.name_key, a.description_key, a.action_url, a.icon_url, a.action_permission ,a.form_state"
-            + " FROM forms_action a  where a.form_state=? ";
-    private static final String SQL_QUERY_SELECT_ALL_ACTIONS = "SELECT a.name_key, a.description_key, a.action_url, a.icon_url, a.action_permission ,a.form_state"
+	private static final String SQL_QUERY_SELECT_ALL_ACTIONS = "SELECT a.name_key, a.description_key, a.action_url, a.icon_url, a.action_permission ,a.form_state"
             + " FROM forms_action a";
+    private static final String SQL_QUERY_SELECT_ACTIONS = SQL_QUERY_SELECT_ALL_ACTIONS + " where a.form_state=? ";
 
     /**
      * {@inheritDoc}
@@ -62,14 +61,7 @@ public class FormActionDAO implements IFormActionDAO
 
         while ( daoUtil.next( ) )
         {
-            FormAction action = new FormAction( );
-            action.setNameKey( daoUtil.getString( 1 ) );
-            action.setDescriptionKey( daoUtil.getString( 2 ) );
-            action.setUrl( daoUtil.getString( 3 ) );
-            action.setIconUrl( daoUtil.getString( 4 ) );
-            action.setPermission( daoUtil.getString( 5 ) );
-            action.setFormState( daoUtil.getInt( 6 ) );
-            listActions.add( action );
+            listActions.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -89,18 +81,32 @@ public class FormActionDAO implements IFormActionDAO
 
         while ( daoUtil.next( ) )
         {
-            FormAction action = new FormAction( );
-            action.setNameKey( daoUtil.getString( 1 ) );
-            action.setDescriptionKey( daoUtil.getString( 2 ) );
-            action.setUrl( daoUtil.getString( 3 ) );
-            action.setIconUrl( daoUtil.getString( 4 ) );
-            action.setPermission( daoUtil.getString( 5 ) );
-            action.setFormState( daoUtil.getInt( 6 ) );
-            listActions.add( action );
+            listActions.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
 
         return listActions;
+    }
+    
+    /**
+     * 
+     * @param daoUtil
+     * 			The daoutil
+     * @return
+     * 		The populated FormAction object
+     */
+    private FormAction dataToObject( DAOUtil daoUtil )
+    {
+    	FormAction formAction = new FormAction( );
+    	
+    	formAction.setNameKey( daoUtil.getString( "name_key" ) );
+    	formAction.setDescriptionKey( daoUtil.getString( "description_key" ) );
+    	formAction.setUrl( daoUtil.getString( "action_url" ) );
+    	formAction.setIconUrl( daoUtil.getString( "icon_url" ) );
+    	formAction.setPermission( daoUtil.getString( "action_permission" ) );
+    	formAction.setFormState( daoUtil.getInt( "form_state" ) );
+        
+    	return formAction;
     }
 }

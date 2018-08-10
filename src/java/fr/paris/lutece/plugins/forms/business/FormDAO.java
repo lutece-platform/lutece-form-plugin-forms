@@ -50,13 +50,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormDAO implements IFormDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_form, title, description, creation_date, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name FROM forms_form WHERE id_form = ?";
+	private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name FROM forms_form";
+    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_form = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, breadcrumb_name = ? WHERE id_form = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name FROM forms_form";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_form FROM forms_form";
-
+    
     /**
      * {@inheritDoc }
      */
@@ -103,20 +103,7 @@ public final class FormDAO implements IFormDAO
 
         if ( daoUtil.next( ) )
         {
-            form = new Form( );
-            int nIndex = 1;
-
-            form.setId( daoUtil.getInt( nIndex++ ) );
-            form.setTitle( daoUtil.getString( nIndex++ ) );
-            form.setDescription( daoUtil.getString( nIndex++ ) );
-            form.setCreationDate( daoUtil.getTimestamp( nIndex++ ) );
-            form.setUpdateDate( daoUtil.getTimestamp( nIndex++ ) );
-            form.setAvailabilityStartDate( daoUtil.getDate( nIndex++ ) );
-            form.setAvailabilityEndDate( daoUtil.getDate( nIndex++ ) );
-            form.setWorkgroup( daoUtil.getString( nIndex++ ) );
-            form.setIdWorkflow( daoUtil.getInt( nIndex++ ) );
-            form.setAuthentificationNeeded( daoUtil.getBoolean( nIndex++ ) );
-            form.setBreadcrumbName( daoUtil.getString( nIndex++ ) );
+            form = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -175,21 +162,7 @@ public final class FormDAO implements IFormDAO
 
         while ( daoUtil.next( ) )
         {
-            Form form = new Form( );
-            int nIndex = 1;
-
-            form.setId( daoUtil.getInt( nIndex++ ) );
-            form.setTitle( daoUtil.getString( nIndex++ ) );
-            form.setDescription( daoUtil.getString( nIndex++ ) );
-            form.setCreationDate( daoUtil.getTimestamp( nIndex++ ) );
-            form.setUpdateDate( daoUtil.getTimestamp( nIndex++ ) );
-            form.setAvailabilityStartDate( daoUtil.getDate( nIndex++ ) );
-            form.setAvailabilityEndDate( daoUtil.getDate( nIndex++ ) );
-            form.setWorkgroup( daoUtil.getString( nIndex++ ) );
-            form.setIdWorkflow( daoUtil.getInt( nIndex++ ) );
-            form.setAuthentificationNeeded( daoUtil.getBoolean( nIndex++ ) );
-            form.setBreadcrumbName( daoUtil.getString( nIndex++ ) );
-            formList.add( form );
+            formList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -209,7 +182,7 @@ public final class FormDAO implements IFormDAO
 
         while ( daoUtil.next( ) )
         {
-            formList.add( daoUtil.getInt( 1 ) );
+            formList.add( daoUtil.getInt( "id_form" ) );
         }
 
         daoUtil.close( );
@@ -229,10 +202,36 @@ public final class FormDAO implements IFormDAO
 
         while ( daoUtil.next( ) )
         {
-            formList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            formList.addItem( daoUtil.getInt( "id_form" ), daoUtil.getString( "title" ) );
         }
 
         daoUtil.close( );
         return formList;
+    }
+    
+    /**
+     * 
+     * @param daoUtil
+     * 			The daoutil
+     * @return
+     * 		The populated Form object
+     */
+    private Form dataToObject( DAOUtil daoUtil )
+    {
+    	Form form = new Form( );
+    	
+    	form.setId( daoUtil.getInt( "id_form" ) );
+        form.setTitle( daoUtil.getString( "title" ) );
+        form.setDescription( daoUtil.getString( "description" ) );
+        form.setCreationDate( daoUtil.getTimestamp( "creation_date" ) );
+        form.setUpdateDate( daoUtil.getTimestamp( "update_date" ) );
+        form.setAvailabilityStartDate( daoUtil.getDate( "availability_start_date" ) );
+        form.setAvailabilityEndDate( daoUtil.getDate( "availability_end_date" ) );
+        form.setWorkgroup( daoUtil.getString( "workgroup" ) );
+        form.setIdWorkflow( daoUtil.getInt( "id_workflow" ) );
+        form.setAuthentificationNeeded( daoUtil.getBoolean( "authentification_needed" ) );
+        form.setBreadcrumbName( daoUtil.getString( "breadcrumb_name" ) );
+        
+    	return form;
     }
 }

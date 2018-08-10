@@ -50,13 +50,13 @@ import java.util.List;
 public final class QuestionDAO implements IQuestionDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT id_question, title, description, id_entry, id_step FROM forms_question WHERE id_question = ?";
+	private static final String SQL_QUERY_SELECTALL = "SELECT id_question, title, description, id_entry, id_step FROM forms_question";
+    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_question = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question ( title, description, id_entry, id_step ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question WHERE id_question = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_question SET id_question = ?, title = ?, description = ?, id_entry = ?, id_step = ? WHERE id_question = ?";
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_question, title, description, id_entry, id_step FROM forms_question";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_question FROM forms_question";
-    private static final String SQL_QUERY_SELECT_BY_STEP = "SELECT id_question, title, description, id_entry, id_step FROM forms_question WHERE id_step = ?";
+    private static final String SQL_QUERY_SELECT_BY_STEP = SQL_QUERY_SELECTALL + " WHERE id_step = ?";
     private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
 
     /**
@@ -99,21 +99,13 @@ public final class QuestionDAO implements IQuestionDAO
 
         if ( daoUtil.next( ) )
         {
-            question = new Question( );
-            int nIndex = 1;
-
-            question.setId( daoUtil.getInt( nIndex++ ) );
-            question.setTitle( daoUtil.getString( nIndex++ ) );
-            question.setDescription( daoUtil.getString( nIndex++ ) );
-            question.setIdEntry( daoUtil.getInt( nIndex++ ) );
-            question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
-            question.setIdStep( daoUtil.getInt( nIndex++ ) );
-            question.setStep( getQuestionStep( question.getIdStep( ) ) );
+            question = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
         return question;
     }
+    
 
     /**
      * {@inheritDoc }
@@ -159,18 +151,7 @@ public final class QuestionDAO implements IQuestionDAO
 
         while ( daoUtil.next( ) )
         {
-            Question question = new Question( );
-            int nIndex = 1;
-
-            question.setId( daoUtil.getInt( nIndex++ ) );
-            question.setTitle( daoUtil.getString( nIndex++ ) );
-            question.setDescription( daoUtil.getString( nIndex++ ) );
-            question.setIdEntry( daoUtil.getInt( nIndex++ ) );
-            question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
-            question.setIdStep( daoUtil.getInt( nIndex++ ) );
-            question.setStep( getQuestionStep( question.getIdStep( ) ) );
-
-            questionList.add( question );
+        	questionList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -190,18 +171,7 @@ public final class QuestionDAO implements IQuestionDAO
 
         while ( daoUtil.next( ) )
         {
-            Question question = new Question( );
-            int nIndex = 1;
-
-            question.setId( daoUtil.getInt( nIndex++ ) );
-            question.setTitle( daoUtil.getString( nIndex++ ) );
-            question.setDescription( daoUtil.getString( nIndex++ ) );
-            question.setIdEntry( daoUtil.getInt( nIndex++ ) );
-            question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
-            question.setIdStep( daoUtil.getInt( nIndex++ ) );
-            question.setStep( getQuestionStep( question.getIdStep( ) ) );
-
-            questionList.add( question );
+            questionList.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -284,5 +254,27 @@ public final class QuestionDAO implements IQuestionDAO
     private Step getQuestionStep( int nIdStep )
     {
         return StepHome.findByPrimaryKey( nIdStep );
+    }
+    
+    /**
+     * 
+     * @param daoUtil
+     * 			The daoutil
+     * @return
+     * 		The populated Question object
+     */
+    private Question dataToObject( DAOUtil daoUtil )
+    {
+    	Question question = new Question( );
+    	
+	    question.setId( daoUtil.getInt( "id_question" ) );
+	    question.setTitle( daoUtil.getString( "title" ) );
+	    question.setDescription( daoUtil.getString( "description" ) );
+	    question.setIdEntry( daoUtil.getInt( "id_entry" ) );
+	    question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+	    question.setIdStep( daoUtil.getInt( "id_step" ) );
+	    question.setStep( getQuestionStep( question.getIdStep( ) ) );
+	    
+	    return question;
     }
 }
