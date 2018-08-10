@@ -38,8 +38,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,8 +45,15 @@ import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.regularexpression.business.RegularExpressionHome;
+import fr.paris.lutece.portal.business.regularexpression.RegularExpression;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.regularexpression.IRegularExpressionService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
@@ -58,11 +63,14 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class PatternValidator implements IValidator
 {
+	private static final String BEAN_NAME_REGULAR_EXPRESSION = "regularExpressionService";
+	
     private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/pattern_template.html";
     private String _strValidatorName = StringUtils.EMPTY;
     private String _strDisplayName = StringUtils.EMPTY;
     private List<String> _listAvailableEntryType = new ArrayList<String>( );
+    private Plugin _plugin = PluginService.getPlugin( "forms" ) ;
 
     /**
      * Constructor of the PatternValidator
@@ -97,7 +105,16 @@ public class PatternValidator implements IValidator
     public String getDisplayHtml( Control control )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
+        
+        List<RegularExpression> listRegularExpression = RegularExpressionHome.getList( _plugin );
+        ReferenceList refListRegularExpression = new ReferenceList( );
+        
+        for( RegularExpression regularExpression : listRegularExpression )
+        {
+        	refListRegularExpression.addItem( regularExpression.getIdExpression( ), regularExpression.getTitle( ) );
+        }
 
+        model.put( FormsConstants.PARAMETER_REF_LIST_VALUE, refListRegularExpression );
         model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
 
         HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
@@ -114,16 +131,18 @@ public class PatternValidator implements IValidator
     @Override
     public boolean validate( FormQuestionResponse questionResponse, Control control )
     {
-        Pattern pattern = Pattern.compile( control.getValue( ) );
-        Matcher matcher = null;
+        RegularExpression regularExpression = RegularExpressionHome.findByPrimaryKey( Integer.valueOf( control.getValue( ) ), _plugin );
 
-        for ( Response response : questionResponse.getEntryResponse( ) )
+        if( regularExpression != null )
         {
-            matcher = pattern.matcher( response.getResponseValue( ) );
-            if ( matcher.matches( ) )
-            {
-                return true;
-            }
+        	IRegularExpressionService service = (IRegularExpressionService) SpringContextService.getBean( BEAN_NAME_REGULAR_EXPRESSION );
+	        for ( Response response : questionResponse.getEntryResponse( ) )
+	        {
+	        	if( StringUtils.isNoneEmpty( response.getResponseValue( ) ) )
+	        	{
+	        		return service.isMatches( response.getResponseValue( ), regularExpression );
+	        	}
+	        }
         }
         return false;
     }
