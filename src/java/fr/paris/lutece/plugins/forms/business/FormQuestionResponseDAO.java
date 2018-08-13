@@ -53,7 +53,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     // Constants
     private static final String SQL_QUERY_SELECTALL = "SELECT id_question_response, id_form_response, id_question, id_step, iteration_number FROM forms_question_response";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id = ?";
-    private static final String SQL_QUERY_SELECT_BY_RESPONSE_FOR_SAVING = SQL_QUERY_SELECTALL + " WHERE id_form_response = ?";
+    private static final String SQL_QUERY_SELECT_BY_FORM_RESPONSE = SQL_QUERY_SELECTALL + " WHERE id_form_response = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question_response ( id_form_response, id_question, id_step, iteration_number ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question_response WHERE id_question_response = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_question_response SET id_form_response = ?, id_question = ?, id_step = ?, iteration_number = ? WHERE id = ?";
@@ -264,11 +264,11 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
      * {@inheritDoc }
      */
     @Override
-    public List<FormQuestionResponse> selectFormQuestionResponseListByFormResponseForSaving( int nIdFormResponse, Plugin plugin )
+    public List<FormQuestionResponse> selectFormQuestionResponseListByFormResponse( int nIdFormResponse, Plugin plugin )
     {
         List<FormQuestionResponse> formQuestionResponseList = new ArrayList<FormQuestionResponse>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESPONSE_FOR_SAVING, plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FORM_RESPONSE, plugin );
         daoUtil.setInt( 1, nIdFormResponse );
         daoUtil.executeQuery( );
 

@@ -148,9 +148,9 @@ public final class FormQuestionResponseHome
      *            The identifier of the FormResponse
      * @return the list which contains the data of all the formQuestionResponse objects
      */
-    public static List<FormQuestionResponse> getFormQuestionResponseListByFormResponseForSaving( int nIdFormResponse )
+    public static List<FormQuestionResponse> getFormQuestionResponseListByFormResponse( int nIdFormResponse )
     {
-        return _dao.selectFormQuestionResponseListByFormResponseForSaving( nIdFormResponse, _plugin );
+        return _dao.selectFormQuestionResponseListByFormResponse( nIdFormResponse, _plugin );
     }
 
     /**

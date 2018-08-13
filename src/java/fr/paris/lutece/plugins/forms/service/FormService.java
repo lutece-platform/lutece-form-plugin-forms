@@ -104,7 +104,7 @@ public final class FormService
         {
             FormResponseHome.update( formResponseManager.getFormResponse( ) );
 
-            for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponseForSaving( formResponseManager
+            for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponseManager
                     .getFormResponse( ).getId( ) ) )
             {
                 FormQuestionResponseHome.remove( formQuestionResponse );

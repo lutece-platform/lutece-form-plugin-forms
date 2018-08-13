@@ -116,7 +116,7 @@ public interface IFormQuestionResponseDAO
      *            the Plugin
      * @return The list which contains the data of all the FormQuestionResponse objects
      */
-    List<FormQuestionResponse> selectFormQuestionResponseListByFormResponseForSaving( int nIdFormResponse, Plugin plugin );
+    List<FormQuestionResponse> selectFormQuestionResponseListByFormResponse( int nIdFormResponse, Plugin plugin );
 
     /**
      * Retrieve all the FormQuestionResponse associated to the given FormResponse for the specified Question. Return an empty list if there is no
