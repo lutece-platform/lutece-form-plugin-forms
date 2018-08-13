@@ -1,7 +1,12 @@
 <#macro formTabs tab >
     <ul class="nav nav-tabs" role="tablist">
-        <li <#if tab="publication">class="active"</#if>>
+    	<li <#if tab="general">class="active"</#if>>
             <a href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}">
+                #i18n{forms.modify_form.tab.labelGeneral}
+            </a>
+        </li>
+        <li <#if tab="publication">class="active"</#if>>
+            <a href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&id_form=${form.id}">
                 #i18n{forms.modify_form.tab.labelPublication}
             </a>
         </li>

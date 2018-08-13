@@ -49,8 +49,6 @@ public class FormQuestionResponse
 
     private int _nIdQuestion;
 
-    private Question _question;
-
     private int _nIdStep;
 
     private int _nIterationNumber;
@@ -106,23 +104,6 @@ public class FormQuestionResponse
     public void setIdQuestion( int nIdQuestion )
     {
         this._nIdQuestion = nIdQuestion;
-    }
-
-    /**
-     * @return the _question
-     */
-    public Question getQuestion( )
-    {
-        return _question;
-    }
-
-    /**
-     * @param question
-     *            the question to set
-     */
-    public void setQuestion( Question question )
-    {
-        this._question = question;
     }
 
     /**

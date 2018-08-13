@@ -10,7 +10,10 @@
 	<input name="id_form" value="${step.idForm}" type="hidden">
 	
 	<#if !step.initial ><button class="btn btn-primary btn-sm" name="action_doReturnStep"  type="submit" >#i18n{forms.step.previous}</button></#if>
-	<button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit"><#if step.final >#i18n{forms.step.save}<#else>#i18n{forms.step.next}</#if></button>
-	<#if user?? ><button class="btn btn-info btn-sm pull-right" name="action_doSaveResponse"  type="submit" >#i18n{forms.step.saveResponse}</button></#if>
+	<#if step.final ><button class="btn btn-primary btn-sm" name="action_doSaveResponse"  type="submit">#i18n{forms.step.save}</button>
+	<#else>
+	<button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit">#i18n{forms.step.next}</button>
+	</#if>
+	<#if user?? ><button class="btn btn-info btn-sm pull-right" name="action_doSaveForBackup"  type="submit" >#i18n{forms.step.saveResponse}</button></#if>
   </div>
 </div>
