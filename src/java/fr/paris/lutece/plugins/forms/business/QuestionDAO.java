@@ -57,7 +57,7 @@ public final class QuestionDAO implements IQuestionDAO
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_question SET id_question = ?, title = ?, description = ?, id_entry = ?, id_step = ? WHERE id_question = ?";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_question FROM forms_question";
     private static final String SQL_QUERY_SELECT_BY_STEP = SQL_QUERY_SELECTALL + " WHERE id_step = ?";
-    private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
+    private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title, fq.description, fq.id_entry, fq.id_step FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
 
     /**
      * {@inheritDoc }
