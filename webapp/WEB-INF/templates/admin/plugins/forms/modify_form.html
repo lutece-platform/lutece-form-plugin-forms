@@ -1,9 +1,10 @@
+<#include "/admin/util/editor/editor.html" />
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
 <@box>
     <@boxHeader title='#i18n{forms.modify_form.title} ${form.title!}' />
     <@boxBody>
         <@tabs>
-            <@formTabs tab="publication" />
+            <@formTabs tab="general" />
         </@tabs>
         <@tabContent>
                 <div class="tab-pane active">
@@ -16,23 +17,6 @@
                             </@formGroup>
                             <@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' >
                                 <@input type='textarea' name='description'>${form.description}</@input>
-                            </@formGroup>
-
-                            <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' >
-                                <@inputGroup>
-                                    <@input type='text' name='availabilityStartDate' id='availabilityStartDate' value='${form.availabilityStartDate!}' />
-                                    <@inputGroupItem type='addon'>
-                                        <@icon style='calendar' />
-                                    </@inputGroupItem>
-                                </@inputGroup>
-                            </@formGroup>
-                            <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' >
-                                <@inputGroup>
-                                    <@input type='text' name='availabilityEndDate' id='availabilityEndDate' value='${form.availabilityEndDate!}' />
-                                    <@inputGroupItem type='addon'>
-                                        <@icon style='calendar' />
-                                    </@inputGroupItem>
-                                </@inputGroup>
                             </@formGroup>
                             <@formGroup labelKey='#i18n{forms.modify_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.modify_form.labelAuthentificationNeeded.help}' >
 				                <@checkBox labelFor='authentificationNeeded' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
@@ -49,6 +33,9 @@
 				                     <@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
 				                 </@inputGroup>
 				             </@formGroup>
+				             <@formGroup labelKey='#i18n{forms.modify_form.labelEndMessage}' helpKey='#i18n{forms.modify_form.labelEndMessage.help}' >
+                                <@input type='textarea' name='endMessage' richtext=true>${form.endMessage}</@input>
+                            </@formGroup>
                             <div class="form-group">
                                 <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
                                     <button  class="btn btn-primary" name="action_modifyForm" type="submit">
@@ -66,3 +53,4 @@
 </@box>
 <@getDatePickerBootstrap idField="availabilityStartDate" language=locale />
 <@getDatePickerBootstrap idField="availabilityEndDate" language=locale />
+<@initEditor />

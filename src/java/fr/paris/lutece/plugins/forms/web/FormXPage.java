@@ -106,11 +106,13 @@ public class FormXPage extends MVCApplication
 
     // Actions
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
+    private static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
     private static final String ACTION_SAVE_STEP = "doSaveStep";
     private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
 
     // Templates
     private static final String TEMPLATE_VIEW_STEP = "/skin/plugins/forms/step_view.html";
+    private static final String TEMPLATE_FORM_SUBMITTED = "/skin/plugins/forms/form_submitted_view.html";
 
     // Constants
     private static final int INCORRECT_ID = -1;
@@ -349,6 +351,117 @@ public class FormXPage extends MVCApplication
         _stepDisplayTree.setResponses( mapStepResponses );
     }
 
+    
+    
+    /**
+     * 
+     * @param request
+     *            The Http request
+     * @return the XPage
+     * 
+     * @throws SiteMessageException
+     *             Exception
+     * @throws UserNotSignedException
+     *             Exception
+     */
+    @Action( value = ACTION_SAVE_FORM_RESPONSE )
+    public XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
+    	if ( _currentStep == null )
+        {
+            int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), INCORRECT_ID );
+
+            if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
+            {
+                _currentStep = StepHome.getInitialStep( nIdForm );
+                _formResponseManager = null;
+
+                return redirectView( request, VIEW_STEP );
+            }
+
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+        }
+
+        Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
+
+        if ( !form.isActive( ) )
+        {
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+        }
+
+        if ( !getStepResponse( request ) )
+        {
+            return redirectView( request, VIEW_STEP );
+        }
+
+        FormResponse formResponse = _formResponseManager.getFormResponse( );
+
+        if ( formResponse == null )
+        {
+            formResponse = new FormResponse( );
+            _formResponseManager.setFormResponse( formResponse );
+        }
+
+        formResponse.setFormId( _currentStep.getIdForm( ) );
+        formResponse.setFromSave( Boolean.FALSE );
+
+        _formService.saveForm( _formResponseManager );
+
+        Map<String, Object> model = getModel( );
+
+        model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
+
+        if ( WorkflowService.getInstance( ).isAvailable( ) && ( form.getIdWorkflow( ) > 0 ) )
+        {
+            WorkflowService.getInstance( ).getState( _formResponseManager.getFormResponse( ).getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ),
+                    form.getId( ) );
+        }
+
+        _formResponseManager = null;
+        _currentStep = null;
+        _stepDisplayTree = null;
+        
+        model.put( FormsConstants.MARK_INFO, form.getEndMessage( ) );
+
+        return getXPage( TEMPLATE_FORM_SUBMITTED, request.getLocale( ), model );
+    }
+    
+    /**
+     * @param request
+     *            The Http request
+     * 		
+     * @return
+     * 		boolean that indicate if the responses are valid
+     */
+    private boolean getStepResponse( HttpServletRequest request )
+    {
+    	List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
+
+        boolean bValidStep = true;
+        List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
+
+        for ( Question question : stepQuestions )
+        {
+            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+            if ( entryDataService != null )
+            {
+                FormQuestionResponse questionResponseInstance = new FormQuestionResponse( );
+                boolean bHasError = entryDataService.getResponseFromRequest( question, request, questionResponseInstance );
+
+                if ( bHasError )
+                {
+                    bValidStep = false;
+                }
+
+                listResponsesTemp.add( questionResponseInstance );
+            }
+        }
+
+        _formResponseManager.getMapStepFormResponses( ).put( _currentStep.getId( ), listResponsesTemp );
+        
+        return bValidStep;
+    }
+    
     /**
      * 
      * @param request
@@ -385,73 +498,17 @@ public class FormXPage extends MVCApplication
             SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
         }
 
-        List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
-
-        boolean bValidStep = true;
-        List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
-
-        for ( Question question : stepQuestions )
-        {
-            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-            if ( entryDataService != null )
-            {
-                FormQuestionResponse questionResponseInstance = new FormQuestionResponse( );
-                boolean bHasError = entryDataService.getResponseFromRequest( question, request, questionResponseInstance );
-
-                if ( bHasError )
-                {
-                    bValidStep = false;
-                }
-
-                listResponsesTemp.add( questionResponseInstance );
-            }
-        }
-
-        _formResponseManager.getMapStepFormResponses( ).put( _currentStep.getId( ), listResponsesTemp );
-
-        if ( !bValidStep )
+        if ( !getStepResponse( request ) )
         {
             return redirectView( request, VIEW_STEP );
         }
 
-        if ( _currentStep.isFinal( ) )
-        {
-            FormResponse formResponse = _formResponseManager.getFormResponse( );
-
-            if ( formResponse == null )
-            {
-                formResponse = new FormResponse( );
-                _formResponseManager.setFormResponse( formResponse );
-            }
-
-            formResponse.setFormId( _currentStep.getIdForm( ) );
-            formResponse.setFromSave( Boolean.FALSE );
-
-            _formService.saveForm( _formResponseManager );
-
-            Map<String, String> model = new HashMap<String, String>( );
-
-            model.put( FormsConstants.PARAMETER_ID_FORM, Integer.toString( _currentStep.getIdForm( ) ) );
-
-            if ( WorkflowService.getInstance( ).isAvailable( ) && ( form.getIdWorkflow( ) > 0 ) )
-            {
-                WorkflowService.getInstance( ).getState( _formResponseManager.getFormResponse( ).getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ),
-                        form.getId( ) );
-            }
-
-            _formResponseManager = null;
-            _currentStep = null;
-            _stepDisplayTree = null;
-
-            return redirect( request, VIEW_STEP, model );
-        }
-        else
-        {
-            _currentStep = getNextStep( request );
-        }
+        _currentStep = getNextStep( request );
 
         return redirectView( request, VIEW_STEP );
     }
+    
+    
 
     /**
      * 
@@ -504,8 +561,8 @@ public class FormXPage extends MVCApplication
      * @throws UserNotSignedException
      *             Exception
      */
-    @Action( value = ACTION_SAVE_FORM_RESPONSE )
-    public XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    @Action( value = ACTION_SAVE_FOR_BACKUP )
+    public XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         if ( _currentStep == null )
         {

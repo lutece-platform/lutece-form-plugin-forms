@@ -52,6 +52,7 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
@@ -88,6 +89,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String TEMPLATE_MANAGE_FORMS = "/admin/plugins/forms/manage_forms.html";
     private static final String TEMPLATE_CREATE_FORM = "/admin/plugins/forms/create_form.html";
     private static final String TEMPLATE_MODIFY_FORM = "/admin/plugins/forms/modify_form.html";
+    private static final String TEMPLATE_MODIFY_FORM_PUBLICATION = "/admin/plugins/forms/modify_publication.html";
 
     private static final String PARAMETER_PAGE_INDEX = "page_index";
 
@@ -104,6 +106,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_BREADCRUMB_TYPE = "breadcrumbTypes";
     private static final String MARK_PERMISSION_CREATE_FORMS = "permission_create_forms";
     private static final String MARK_WORKFLOW_REF_LIST = "workflow_list";
+    private static final String MARK_WEBAPP_URL = "webapp_url";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -120,6 +123,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String VIEW_MANAGE_FORMS = "manageForms";
     private static final String VIEW_CREATE_FORM = "createForm";
     private static final String VIEW_MODIFY_FORM = "modifyForm";
+    private static final String VIEW_MODIFY_PUBLICATION = "modifyPublication";
     private static final String VIEW_CONFIRM_REMOVE_FORM = "confirmRemoveForm";
 
     // Actions
@@ -214,6 +218,8 @@ public class FormJspBean extends AbstractJspBean
     public String getCreateForm( HttpServletRequest request )
     {
         _form = ( _form != null ) ? _form : new Form( );
+        
+        _form.setEndMessage( I18nService.getLocalizedString( FormsConstants.FORM_DEFAULT_END_MESSAGE, getLocale( ) ) );
 
         Map<String, Object> model = getModel( );
 
@@ -227,6 +233,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
         model.put( MARK_FORM, _form );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
+        model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
 
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_CREATE_FORM, model );
     }
@@ -394,6 +401,7 @@ public class FormJspBean extends AbstractJspBean
             Map<String, Object> model = getModel( );
             model.put( MARK_FORM, formToBeModified );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
+            model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
 
             if ( WorkflowService.getInstance( ).isAvailable( ) )
             {
@@ -410,6 +418,39 @@ public class FormJspBean extends AbstractJspBean
 
     }
 
+    /**
+     * Returns the form to update info about a form
+     *
+     * @param request
+     *            The Http request
+     * @return The HTML form to update info
+     */
+    @View( VIEW_MODIFY_PUBLICATION )
+    public String getModifyFormPublication( HttpServletRequest request )
+    {
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+
+        Form formToBeModified = FormHome.findByPrimaryKey( nId );
+
+        if ( formToBeModified != null )
+        {
+            AdminUser adminUser = getUser( );
+
+            Map<String, Object> model = getModel( );
+            model.put( MARK_FORM, formToBeModified );
+            model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
+
+            return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM_PUBLICATION, model );
+        }
+
+        return redirectView( request, VIEW_MANAGE_FORMS );
+
+    }
     /**
      * Process the change form of a form
      *

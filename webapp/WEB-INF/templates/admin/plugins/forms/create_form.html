@@ -1,3 +1,4 @@
+<#include "/admin/util/editor/editor.html" />
 <@box>
     <@boxHeader title='#i18n{forms.create_form.title}' />
     <@boxBody>
@@ -43,6 +44,9 @@
                      <@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
                  </@inputGroup>
              </@formGroup>
+             <@formGroup labelKey='#i18n{forms.modify_form.labelEndMessage}' helpKey='#i18n{forms.modify_form.labelEndMessage.help}' >
+                 <@input type='textarea' name='endMessage' richtext=true>${form.endMessage!}</@input>
+             </@formGroup>
             <div class="form-group">
                 <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
                     <button  class="btn btn-primary" name="action_createForm" type="submit">
@@ -58,3 +62,4 @@
 </@box>
 <@getDatePickerBootstrap idField="availabilityStartDate" language=locale />
 <@getDatePickerBootstrap idField="availabilityEndDate" language=locale />
+<@initEditor />
