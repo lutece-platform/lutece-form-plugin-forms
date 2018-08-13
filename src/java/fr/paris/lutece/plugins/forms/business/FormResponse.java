@@ -35,8 +35,6 @@
 package fr.paris.lutece.plugins.forms.business;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This is the business class for the object FormResponse
@@ -57,8 +55,6 @@ public class FormResponse
     private Timestamp _dateCreation;
 
     private Timestamp _dateUpdate;
-
-    private List<FormQuestionResponse> _listResponses = new ArrayList<FormQuestionResponse>( );
 
     private boolean _bFromSave;
 
@@ -145,23 +141,6 @@ public class FormResponse
     public void setUpdate( Timestamp dateUpdate )
     {
         this._dateUpdate = dateUpdate;
-    }
-
-    /**
-     * @return the _listResponses
-     */
-    public List<FormQuestionResponse> getListResponses( )
-    {
-        return _listResponses;
-    }
-
-    /**
-     * @param listResponses
-     *            the listResponses to set
-     */
-    public void setListResponses( List<FormQuestionResponse> listResponses )
-    {
-        this._listResponses = listResponses;
     }
 
     /**
