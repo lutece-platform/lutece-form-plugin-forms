@@ -95,7 +95,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
     @NotEmpty( message = "#i18n{forms.validation.form.Breadcrumb.notEmpty}" )
     @Size( max = 255, message = "#i18n{forms.validation.form.Breadcrumb.size}" )
     private String _strBreadcrumbName;
-    
+
     @Size( max = 3000, message = "#i18n{forms.validation.form.EndMessage.size}" )
     private String _strEndMessage;
 
@@ -386,7 +386,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
     {
         _strBreadcrumbName = strBreadcrumbName;
     }
-    
+
     /**
      * Returns the End Message
      * 
@@ -405,7 +405,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
      */
     public void setEndMessage( String strEndMessage )
     {
-    	_strEndMessage = strEndMessage;
+        _strEndMessage = strEndMessage;
     }
 
 }

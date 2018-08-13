@@ -351,8 +351,6 @@ public class FormXPage extends MVCApplication
         _stepDisplayTree.setResponses( mapStepResponses );
     }
 
-    
-    
     /**
      * 
      * @param request
@@ -367,7 +365,7 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_SAVE_FORM_RESPONSE )
     public XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-    	if ( _currentStep == null )
+        if ( _currentStep == null )
         {
             int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), INCORRECT_ID );
 
@@ -420,22 +418,21 @@ public class FormXPage extends MVCApplication
         _formResponseManager = null;
         _currentStep = null;
         _stepDisplayTree = null;
-        
+
         model.put( FormsConstants.MARK_INFO, form.getEndMessage( ) );
 
         return getXPage( TEMPLATE_FORM_SUBMITTED, request.getLocale( ), model );
     }
-    
+
     /**
      * @param request
      *            The Http request
-     * 		
-     * @return
-     * 		boolean that indicate if the responses are valid
+     * 
+     * @return boolean that indicate if the responses are valid
      */
     private boolean getStepResponse( HttpServletRequest request )
     {
-    	List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
+        List<Question> stepQuestions = QuestionHome.getQuestionsListByStep( _currentStep.getId( ) );
 
         boolean bValidStep = true;
         List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
@@ -458,10 +455,10 @@ public class FormXPage extends MVCApplication
         }
 
         _formResponseManager.getMapStepFormResponses( ).put( _currentStep.getId( ), listResponsesTemp );
-        
+
         return bValidStep;
     }
-    
+
     /**
      * 
      * @param request
@@ -507,8 +504,6 @@ public class FormXPage extends MVCApplication
 
         return redirectView( request, VIEW_STEP );
     }
-    
-    
 
     /**
      * 

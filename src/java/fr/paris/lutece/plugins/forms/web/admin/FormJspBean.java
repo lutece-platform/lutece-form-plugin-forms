@@ -218,7 +218,7 @@ public class FormJspBean extends AbstractJspBean
     public String getCreateForm( HttpServletRequest request )
     {
         _form = ( _form != null ) ? _form : new Form( );
-        
+
         _form.setEndMessage( I18nService.getLocalizedString( FormsConstants.FORM_DEFAULT_END_MESSAGE, getLocale( ) ) );
 
         Map<String, Object> model = getModel( );
@@ -451,6 +451,7 @@ public class FormJspBean extends AbstractJspBean
         return redirectView( request, VIEW_MANAGE_FORMS );
 
     }
+
     /**
      * Process the change form of a form
      *
