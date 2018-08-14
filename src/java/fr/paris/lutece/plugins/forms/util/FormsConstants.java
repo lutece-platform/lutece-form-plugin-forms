@@ -78,6 +78,7 @@ public final class FormsConstants
     public static final String MARK_CONDITION_TITLE = "modify_condition_title";
 
     // Parameters
+    public static final String PARAMETER_PAGE = "page";
     public static final String PARAMETER_ID_FORM = "id_form";
     public static final String PARAMETER_ID_STEP = "id_step";
     public static final String PARAMETER_ID_ENTRY = "id_entry";
@@ -108,6 +109,7 @@ public final class FormsConstants
     public static final String PARAMETER_REF_LIST_VALUE = "refListValue";
     public static final String PARAMETER_INDEX_STEP = "index_step";
     public static final String PARAMETER_INFO_KEY = "info_key";
+    public static final String PARAMETER_BACK_URL = "back_url";
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
@@ -123,6 +125,7 @@ public final class FormsConstants
     public static final String JSP_MANAGE_QUESTIONS = "jsp/admin/plugins/forms/ManageQuestions.jsp";
     public static final String JSP_MANAGE_TRANSITIONS = "jsp/admin/plugins/forms/ManageTransitions.jsp";
     public static final String JSP_MANAGE_CONTROLS = "jsp/admin/plugins/forms/ManageControls.jsp";
+    public static final String JSP_FO_DISPLAY_FORM = "jsp/site/Portal.jsp";
 
     // Properties
     public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "entrytype.myluteceuserattribute.attributes.list";

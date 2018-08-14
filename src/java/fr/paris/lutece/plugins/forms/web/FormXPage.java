@@ -40,6 +40,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
@@ -59,6 +60,7 @@ import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
@@ -76,6 +78,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
+import fr.paris.lutece.util.url.UrlItem;
 
 /**
  * 
@@ -411,10 +414,36 @@ public class FormXPage extends MVCApplication
         _formResponseManager = null;
         _currentStep = null;
         _stepDisplayTree = null;
+        _breadcrumb = null;
 
         model.put( FormsConstants.MARK_INFO, form.getEndMessage( ) );
 
+        model.put( FormsConstants.PARAMETER_BACK_URL, getBackUrl( form ) );
+
         return getXPage( TEMPLATE_FORM_SUBMITTED, request.getLocale( ), model );
+    }
+
+    /**
+     * 
+     * @param form
+     *            The Form
+     * @return the back URL
+     */
+    private String getBackUrl( Form form )
+    {
+        if ( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
+        {
+            return form.getReturnUrl( );
+        }
+        else
+        {
+            UrlItem url = new UrlItem( FormsConstants.JSP_FO_DISPLAY_FORM );
+            url.addParameter( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
+            url.addParameter( FormsConstants.PARAMETER_PAGE, FormsPlugin.PLUGIN_NAME );
+            url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, VIEW_STEP );
+
+            return url.getUrl( );
+        }
     }
 
     /**

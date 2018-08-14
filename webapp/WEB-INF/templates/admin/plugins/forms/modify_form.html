@@ -36,6 +36,9 @@
 				             <@formGroup labelKey='#i18n{forms.modify_form.labelEndMessage}' helpKey='#i18n{forms.modify_form.labelEndMessage.help}' >
                                 <@input type='textarea' name='endMessage' richtext=true>${form.endMessage}</@input>
                             </@formGroup>
+                            <@formGroup labelKey='#i18n{forms.modify_form.labelReturnUrl}' helpKey='#i18n{forms.modify_form.labelReturnUrl.help}'>
+				                 <@input type='text' name='returnUrl' value='${form.returnUrl!}' />
+				             </@formGroup>
                             <div class="form-group">
                                 <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
                                     <button  class="btn btn-primary" name="action_modifyForm" type="submit">
