@@ -2,7 +2,9 @@
 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd" >
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd"
+       xmlns:p="http://www.springframework.org/schema/p"
+        >
 
 	<!-- DAO -->
     <bean id="forms.formDAO" class="fr.paris.lutece.plugins.forms.business.FormDAO" />
@@ -160,9 +162,14 @@
 		
 	<bean id="forms.asynchronousUploadHandler" class="fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler" />
 	
+    <!-- Transaction Manager -->
+    <bean id="forms.transactionManager"  class="fr.paris.lutece.portal.service.database.DAOUtilTransactionManager"
+        p:pluginName="forms" />
+
     <bean id="forms.formDisplayService" class="fr.paris.lutece.plugins.forms.service.FormDisplayService" />
     <bean id="forms.stepService" class="fr.paris.lutece.plugins.forms.service.StepService" />
     <bean id="forms.formService" class="fr.paris.lutece.plugins.forms.service.FormService" />
+    <bean id="forms.formWorkflowService" class="fr.paris.lutece.plugins.forms.service.workflow.FormWorkflowServiceImpl" />
     	
     <!-- Forms Multiview Authorization Service -->
     <bean id="forms.formsMultiviewAuthorizationService" class="fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService">

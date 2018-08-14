@@ -33,18 +33,18 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
-import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
@@ -52,6 +52,7 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.service.workflow.IFormWorkflowService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
 import fr.paris.lutece.plugins.forms.web.CompositeQuestionDisplay;
@@ -67,38 +68,47 @@ import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 
 /**
  * This is the service class related to the form
  */
-public final class FormService
+public class FormService
 {
-
     public static final String BEAN_NAME = "forms.formService";
 
+    @Inject
+    private IFormWorkflowService _formWorkflowService;
+
     /**
-     * Constructor
+     * Saves the specified form
+     * 
+     * @param form
+     *            the form to save
+     * @param formResponseManager
+     *            the formResponseManager containing the responses to save
      */
-    private FormService( )
+    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    public void saveForm( Form form, FormResponseManager formResponseManager )
     {
+        saveFormResponse( formResponseManager );
+        saveFormResponseSteps( formResponseManager );
+        _formWorkflowService.doProcessActionOnFormCreation( form, formResponseManager );
     }
 
     /**
-     * Save the FormResponse instance
+     * Saves the form response
      * 
      * @param formResponseManager
-     *            The formResponseManager to save
+     *            the formResponseManager containing the form response to save
      */
-    public void saveForm( FormResponseManager formResponseManager )
+    private void saveFormResponse( FormResponseManager formResponseManager )
     {
         if ( formResponseManager.getFormResponse( ).getId( ) > 0 )
         {
@@ -116,19 +126,21 @@ public final class FormService
         {
             FormResponseHome.create( formResponseManager.getFormResponse( ) );
         }
+    }
 
+    /**
+     * Saves the form response steps
+     * 
+     * @param formResponseManager
+     *            the formResponseManager containing the form response steps to save
+     */
+    private void saveFormResponseSteps( FormResponseManager formResponseManager )
+    {
         int nIndexOrder = 1;
 
         for ( Step step : formResponseManager.getListValidatedStep( ) )
         {
-            for ( FormQuestionResponse formQuestionResponse : formResponseManager.getMapStepFormResponses( ).get( step.getId( ) ) )
-            {
-                Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
-                IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-                formQuestionResponse.setIdFormResponse( formResponseManager.getFormResponse( ).getId( ) );
-                formQuestionResponse.setIdStep( step.getId( ) );
-                dataService.saveFormQuestionResponse( formQuestionResponse );
-            }
+            saveFormQuestionResponse( formResponseManager, step );
 
             FormResponseStep formResponseStep = new FormResponseStep( );
             formResponseStep.setFormResponseId( formResponseManager.getFormResponse( ).getId( ) );
@@ -139,6 +151,39 @@ public final class FormService
 
             nIndexOrder++;
         }
+    }
+
+    /**
+     * Saves the form question responses of the specified step
+     * 
+     * @param formResponseManager
+     *            the formResponseManager containing the form questions responses to save
+     * @param step
+     *            the step
+     */
+    private void saveFormQuestionResponse( FormResponseManager formResponseManager, Step step )
+    {
+        for ( FormQuestionResponse formQuestionResponse : formResponseManager.getMapStepFormResponses( ).get( step.getId( ) ) )
+        {
+            Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
+            IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+            formQuestionResponse.setIdFormResponse( formResponseManager.getFormResponse( ).getId( ) );
+            formQuestionResponse.setIdStep( step.getId( ) );
+            dataService.saveFormQuestionResponse( formQuestionResponse );
+        }
+    }
+
+    /**
+     * Saves the specified form for a backup
+     * 
+     * @param formResponseManager
+     *            The formResponseManager to save
+     */
+    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    public void saveFormForBackup( FormResponseManager formResponseManager )
+    {
+        saveFormResponse( formResponseManager );
+        saveFormResponseSteps( formResponseManager );
     }
 
     /**
@@ -190,6 +235,7 @@ public final class FormService
      * @param adminUser
      *            the user
      */
+    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
     public void removeForm( int nIdForm, AdminUser adminUser )
     {
         StepService stepService = SpringContextService.getBean( StepService.BEAN_NAME );
@@ -208,57 +254,7 @@ public final class FormService
 
         FormHome.remove( nIdForm );
 
-        removeFormWorkflowResources( nIdWorkflow, nIdForm, adminUser );
-    }
-
-    /**
-     * Remove the workflow resources linked a given workflow, form and user
-     * 
-     * @param nIdWorkflow
-     *            The workflow identifier
-     * 
-     * @param nIdForm
-     *            The form identifier
-     * 
-     * @param adminUser
-     *            the user
-     */
-    private void removeFormWorkflowResources( int nIdWorkflow, int nIdForm, AdminUser adminUser )
-    {
-        WorkflowService workflowService = WorkflowService.getInstance( );
-        if ( workflowService.isAvailable( ) )
-        {
-            List<Integer> listIdWorkflowState = getListIdWorkflowState( nIdWorkflow, adminUser );
-            List<Integer> listIdResources = workflowService.getAuthorizedResourceList( FormResponse.RESOURCE_TYPE, nIdWorkflow, listIdWorkflowState, nIdForm,
-                    adminUser );
-
-            workflowService.doRemoveWorkFlowResourceByListId( listIdResources, FormResponse.RESOURCE_TYPE, nIdWorkflow );
-        }
-
-    }
-
-    /**
-     * Retrieve the list of state identifiers of a given workflow
-     * 
-     * @param nIdWorkflow
-     *            the workflow identifier
-     * 
-     * @param adminUser
-     *            the user
-     * 
-     * @return the list of workflow state identifiers
-     */
-    private List<Integer> getListIdWorkflowState( int nIdWorkflow, AdminUser adminUser )
-    {
-        List<Integer> listIdState = new ArrayList<Integer>( );
-        Collection<State> collState = WorkflowService.getInstance( ).getAllStateByWorkflow( nIdWorkflow, adminUser );
-
-        for ( State state : collState )
-        {
-            listIdState.add( state.getId( ) );
-        }
-
-        return listIdState;
+        _formWorkflowService.removeResources( nIdWorkflow, nIdForm, adminUser );
     }
 
     /**

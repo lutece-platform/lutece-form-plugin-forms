@@ -73,7 +73,6 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
@@ -406,17 +405,11 @@ public class FormXPage extends MVCApplication
         formResponse.setFormId( _currentStep.getIdForm( ) );
         formResponse.setFromSave( Boolean.FALSE );
 
-        _formService.saveForm( _formResponseManager );
+        _formService.saveForm( form, _formResponseManager );
 
         Map<String, Object> model = getModel( );
 
         model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
-
-        if ( WorkflowService.getInstance( ).isAvailable( ) && ( form.getIdWorkflow( ) > 0 ) )
-        {
-            WorkflowService.getInstance( ).getState( _formResponseManager.getFormResponse( ).getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ),
-                    form.getId( ) );
-        }
 
         _formResponseManager = null;
         _currentStep = null;
@@ -638,7 +631,7 @@ public class FormXPage extends MVCApplication
             _formResponseManager.setFormResponse( formResponse );
         }
 
-        _formService.saveForm( _formResponseManager );
+        _formService.saveFormForBackup( _formResponseManager );
 
         return redirectView( request, VIEW_STEP );
     }
