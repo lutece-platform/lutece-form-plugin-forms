@@ -98,7 +98,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
 
     @Size( max = 3000, message = "#i18n{forms.validation.form.EndMessage.size}" )
     private String _strEndMessage;
-    
+
     @Size( max = 255, message = "#i18n{forms.validation.form.ReturnUrl.size}" )
     private String _strReturnUrl;
 
@@ -410,7 +410,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
     {
         _strEndMessage = strEndMessage;
     }
-    
+
     /**
      * Returns the return URL
      * 
@@ -429,9 +429,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
      */
     public void setReturnUrl( String strReturnUrl )
     {
-    	_strReturnUrl = strReturnUrl;
+        _strReturnUrl = strReturnUrl;
     }
-    
-    
 
 }

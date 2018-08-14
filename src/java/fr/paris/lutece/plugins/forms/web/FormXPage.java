@@ -424,33 +424,33 @@ public class FormXPage extends MVCApplication
         _breadcrumb = null;
 
         model.put( FormsConstants.MARK_INFO, form.getEndMessage( ) );
-        
+
         model.put( FormsConstants.PARAMETER_BACK_URL, getBackUrl( form ) );
 
         return getXPage( TEMPLATE_FORM_SUBMITTED, request.getLocale( ), model );
     }
-    
+
     /**
      * 
      * @param form
-     * 			The Form
+     *            The Form
      * @return the back URL
      */
     private String getBackUrl( Form form )
     {
-    	if( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
-    	{
-        	return form.getReturnUrl( );
-    	}
-    	else
-    	{
-    		UrlItem url = new UrlItem( FormsConstants.JSP_FO_DISPLAY_FORM );
-    		url.addParameter( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
-    		url.addParameter( FormsConstants.PARAMETER_PAGE, FormsPlugin.PLUGIN_NAME );
-    		url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, VIEW_STEP );
-            
-    		return url.getUrl( );
-    	}
+        if ( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
+        {
+            return form.getReturnUrl( );
+        }
+        else
+        {
+            UrlItem url = new UrlItem( FormsConstants.JSP_FO_DISPLAY_FORM );
+            url.addParameter( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
+            url.addParameter( FormsConstants.PARAMETER_PAGE, FormsPlugin.PLUGIN_NAME );
+            url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, VIEW_STEP );
+
+            return url.getUrl( );
+        }
     }
 
     /**
