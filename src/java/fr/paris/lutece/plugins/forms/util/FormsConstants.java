@@ -146,6 +146,9 @@ public final class FormsConstants
     public static final String MARKER_JS_PARAMETER_INPUT_VALUE = "inputValue";
     public static final String MARKER_JS_PARAMETER_CONTROL_VALUE = "controlValue";
 
+    // Beans
+    public static final String BEAN_TRANSACTION_MANAGER = "forms.transactionManager";
+
     // Other
     public static final String FORM_DEFAULT_END_MESSAGE = "forms.message.form.submitted";
 
