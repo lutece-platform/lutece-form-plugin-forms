@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
@@ -71,8 +72,6 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.security.SecurityService;
-import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 
@@ -323,44 +322,36 @@ public class FormService
     }
 
     /**
-     * check if authentification
+     * Creates a {@code FormResponseManager} object from a back up
      * 
-     * @param form
-     *            Form
-     * @param request
-     *            HttpServletRequest
-     * @throws UserNotSignedException
-     *             exception if the form requires an authentification and the user is not logged
+     * @param nIdForm
+     *            The form id
+     * @param strUserGuid
+     *            The user guid
      */
-    public void checkMyLuteceAuthentification( Form form, HttpServletRequest request ) throws UserNotSignedException
+    public FormResponseManager createFormResponseManagerFromBackUp( int nIdForm, String strUserGuid )
     {
-        // Try to register the user in case of external authentication
-        if ( SecurityService.isAuthenticationEnable( ) )
+        FormResponseManager formResponseManager = new FormResponseManager( );
+
+        FormResponse formResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, nIdForm );
+
+        if ( formResponse != null )
         {
-            if ( SecurityService.getInstance( ).isExternalAuthentication( ) )
+            formResponseManager.setFormResponse( formResponse );
+
+            for ( int nIdStep : FormResponseStepHome.getListIdStepByFormResponse( formResponse.getId( ) ) )
             {
-                // The authentication is external
-                // Should register the user if it's not already done
-                if ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
-                {
-                    if ( ( SecurityService.getInstance( ).getRemoteUser( request ) == null ) && ( form.getAuthentificationNeeded( ) ) )
-                    {
-                        // Authentication is required to access to the portal
-                        throw new UserNotSignedException( );
-                    }
-                }
-            }
-            else
-            {
-                // If portal authentication is enabled and user is null and the requested URL
-                // is not the login URL, user cannot access to Portal
-                if ( ( form.getAuthentificationNeeded( ) ) && ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
-                        && !SecurityService.getInstance( ).isLoginUrl( request ) )
-                {
-                    // Authentication is required to access to the portal
-                    throw new UserNotSignedException( );
-                }
+                Step step = StepHome.findByPrimaryKey( nIdStep );
+
+                formResponseManager.getListValidatedStep( ).add( step );
+
+                List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByStepAndFormResponse(
+                        formResponse.getId( ), step.getId( ) );
+
+                formResponseManager.getMapStepFormResponses( ).put( step.getId( ), listFormQuestionResponse );
             }
         }
+
+        return formResponseManager;
     }
 }

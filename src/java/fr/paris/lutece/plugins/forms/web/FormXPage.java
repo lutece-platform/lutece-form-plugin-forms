@@ -48,10 +48,7 @@ import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -143,7 +140,7 @@ public class FormXPage extends MVCApplication
     {
         try
         {
-            _formService.checkMyLuteceAuthentification( form, request );
+            checkMyLuteceAuthentification( form, request );
         }
         catch( UserNotSignedException e )
         {
@@ -152,6 +149,48 @@ public class FormXPage extends MVCApplication
             _stepDisplayTree = null;
 
             throw new UserNotSignedException( );
+        }
+    }
+
+    /**
+     * check if authentification
+     * 
+     * @param form
+     *            Form
+     * @param request
+     *            HttpServletRequest
+     * @throws UserNotSignedException
+     *             exception if the form requires an authentification and the user is not logged
+     */
+    public void checkMyLuteceAuthentification( Form form, HttpServletRequest request ) throws UserNotSignedException
+    {
+        // Try to register the user in case of external authentication
+        if ( SecurityService.isAuthenticationEnable( ) )
+        {
+            if ( SecurityService.getInstance( ).isExternalAuthentication( ) )
+            {
+                // The authentication is external
+                // Should register the user if it's not already done
+                if ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
+                {
+                    if ( ( SecurityService.getInstance( ).getRemoteUser( request ) == null ) && ( form.getAuthentificationNeeded( ) ) )
+                    {
+                        // Authentication is required to access to the portal
+                        throw new UserNotSignedException( );
+                    }
+                }
+            }
+            else
+            {
+                // If portal authentication is enabled and user is null and the requested URL
+                // is not the login URL, user cannot access to Portal
+                if ( ( form.getAuthentificationNeeded( ) ) && ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
+                        && !SecurityService.getInstance( ).isLoginUrl( request ) )
+                {
+                    // Authentication is required to access to the portal
+                    throw new UserNotSignedException( );
+                }
+            }
         }
     }
 
@@ -223,20 +262,24 @@ public class FormXPage extends MVCApplication
 
         if ( _formResponseManager == null )
         {
-            _formResponseManager = new FormResponseManager( );
-
             if ( user != null )
             {
-                loadFormResponseFromBackUp( form.getId( ), user.getName( ) );
+                _formResponseManager = _formService.createFormResponseManagerFromBackUp( form.getId( ), user.getName( ) );
 
                 if ( _formResponseManager.getFormResponse( ) != null )
                 {
+                    _currentStep = popLastStepFrom( _formResponseManager );
+
                     Object [ ] args = {
                         _formResponseManager.getFormResponse( ).getUpdate( ),
                     };
 
                     model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, request.getLocale( ) ) );
                 }
+            }
+            else
+            {
+                _formResponseManager = new FormResponseManager( );
             }
         }
 
@@ -637,37 +680,18 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * @param nIdForm
-     *            The form id
-     * @param strUserGuid
-     *            The user guid
+     * Pops the last step from the specified form response manager
+     * 
+     * @param formResponseManager
+     *            the form reposne manager
+     * @return the last step
      */
-    public void loadFormResponseFromBackUp( int nIdForm, String strUserGuid )
+    private Step popLastStepFrom( FormResponseManager formResponseManager )
     {
-        FormResponse formResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, nIdForm );
+        Step lastStep = formResponseManager.getListValidatedStep( ).get( formResponseManager.getListValidatedStep( ).size( ) - 1 );
 
-        if ( formResponse != null )
-        {
-            _formResponseManager.setFormResponse( formResponse );
+        formResponseManager.getListValidatedStep( ).remove( lastStep );
 
-            for ( int nIdStep : FormResponseStepHome.getListIdStepByFormResponse( formResponse.getId( ) ) )
-            {
-                Step step = StepHome.findByPrimaryKey( nIdStep );
-
-                _formResponseManager.getListValidatedStep( ).add( step );
-
-                List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByStepAndFormResponse(
-                        formResponse.getId( ), step.getId( ) );
-
-                _formResponseManager.getMapStepFormResponses( ).put( step.getId( ), listFormQuestionResponse );
-            }
-
-            Step lastStep = _formResponseManager.getListValidatedStep( ).get( _formResponseManager.getListValidatedStep( ).size( ) - 1 );
-
-            _currentStep = lastStep;
-
-            _formResponseManager.getListValidatedStep( ).remove( lastStep );
-        }
+        return lastStep;
     }
-
 }
