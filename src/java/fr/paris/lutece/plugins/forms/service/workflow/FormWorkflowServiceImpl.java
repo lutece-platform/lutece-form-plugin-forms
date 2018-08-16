@@ -75,7 +75,7 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
     public void removeResources( int nIdWorkflow, int nIdForm, AdminUser adminUser )
     {
         WorkflowService workflowService = WorkflowService.getInstance( );
-        
+
         if ( workflowService.isAvailable( ) )
         {
             List<Integer> listIdWorkflowState = getListIdWorkflowState( nIdWorkflow, adminUser );
