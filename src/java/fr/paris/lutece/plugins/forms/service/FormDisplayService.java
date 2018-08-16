@@ -37,6 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
+import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
@@ -82,10 +85,17 @@ public final class FormDisplayService
             {
                 // Delete all QuestionResponses associated to the Question, including the responses of different parent iterations
                 FormQuestionResponseHome.removeByQuestion( formDisplayCompositeId );
+
+                Control control = ControlHome.getControlByQuestionAndType( formDisplayCompositeId, ControlType.VALIDATION.getLabel( ) );
+                if ( control != null )
+                {
+                    ControlHome.remove( control.getId( ) );
+                }
+
+                // TODO : Remove conditionnal controls
+
                 // Delete the Question and its Entry
                 QuestionHome.remove( formDisplayCompositeId );
-
-                // TODO: delete all Controls associated to the composite
             }
 
             if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( formDisplayToDelete.getCompositeType( ) ) )
