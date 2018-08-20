@@ -115,25 +115,6 @@
 </#function>
 
 <#-- 
--- Get the response field from a given entry and a given code
--- @param responses the list of responses
--- @param entry the entry
--- @param fieldCode the code
--- @return the response field
--->
-<#function getResponseFieldByCode responses entry fieldCode>
-  <#if responses??>
-    <#list responses as response>
-      <#if response.entry.idEntry == entry.idEntry && response.field??>
-        <#if response.field.code == fieldCode>
-          <#return response.field />
-        </#if>
-      </#if>
-    </#list>
-  </#if>
-</#function>
-
-<#-- 
 -- Get the error for the given entry
 -- @param responses the list of responses
 -- @param entry the entry
