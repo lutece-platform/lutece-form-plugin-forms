@@ -45,7 +45,7 @@ public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitial
     // Constants
     private static final String FORM_RESPONSE_SELECT_QUERY = "response.id_response";
     private static final String FORMS_FROM_QUERY = "forms_form AS form";
-    private static final String FORMS_JOIN_QUERY = "INNER JOIN forms_response AS response ON response.id_form = form.id_form";
+    private static final String FORMS_JOIN_QUERY = "INNER JOIN forms_response AS response ON response.id_form = form.id_form AND response.from_save = 0";
 
     /**
      * Constructor
