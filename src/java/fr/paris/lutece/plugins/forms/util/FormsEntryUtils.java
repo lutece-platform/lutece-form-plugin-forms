@@ -150,4 +150,33 @@ public final class FormsEntryUtils
 
         return listEntryType;
     }
+
+    /**
+     * Finds a field with the specified code in the specified entry
+     * 
+     * @param entry
+     *            the entry
+     * @param strCode
+     *            the code
+     * @return the found field, or {@code null} otherwise
+     */
+    public static Field findFieldByCode( Entry entry, String strCode )
+    {
+        Field fieldFound = null;
+        List<Field> listField = entry.getFields( );
+
+        if ( listField != null )
+        {
+            for ( Field field : listField )
+            {
+                if ( strCode.equals( field.getCode( ) ) )
+                {
+                    fieldFound = field;
+                    break;
+                }
+            }
+        }
+
+        return fieldFound;
+    }
 }

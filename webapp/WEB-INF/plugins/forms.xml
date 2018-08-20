@@ -53,7 +53,17 @@
             <application-id>forms</application-id>
             <application-class>fr.paris.lutece.plugins.forms.web.FormXPage</application-class>
         </application>
+        <application>
+            <application-id>formsTermsOfService</application-id>
+            <application-class>fr.paris.lutece.plugins.forms.web.TermsOfServiceXPage</application-class>
+        </application>
     </applications>
+
+    <!-- Specific plugin JAVASCRIPT -->
+    <javascript-files>
+        <javascript-files-scope>portal</javascript-files-scope>
+        <javascript-file>forms/terms-of-service.js</javascript-file>
+    </javascript-files>
 
     <!-- Portlet parameters -->
     <portlets>

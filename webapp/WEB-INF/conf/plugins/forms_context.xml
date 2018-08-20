@@ -68,6 +68,7 @@
 	<bean id="forms.entryTypeTextArea" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTextArea" />
 	<bean id="forms.entryTypeMyLuteceUserattribute" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUserAttribute" />
 	<bean id="forms.entryTypeArray" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeArray" />
+    <bean id="forms.entryTypeTermsOfService" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService" />
 
 	<!-- DisplayService -->
 	<bean id="forms.entryTypeCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDisplayService">
@@ -112,6 +113,9 @@
 	<bean id="forms.entryTypeArrayDisplayService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeArray" />
 	</bean>
+    <bean id="forms.entryTypeTermsOfSerciceDisplayService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDisplayService">
+        <constructor-arg  type="java.lang.String" value="forms.entryTypeTermsOfService" />
+    </bean>
 	
 	<!-- DataService -->
 	<bean id="forms.entryTypeCheckBoxDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
@@ -159,6 +163,9 @@
 	<bean id="forms.entryTypeArrayDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeArray" />
 	</bean>
+    <bean id="forms.entryTypeTermsOfServiceDataService" class="fr.paris.lutece.plugins.forms.web.EntryTypeDefaultDataService">
+        <constructor-arg  type="java.lang.String" value="forms.entryTypeTermsOfService" />
+    </bean>
 		
 	<bean id="forms.asynchronousUploadHandler" class="fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler" />
 	

@@ -40,6 +40,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -338,7 +339,14 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
                 List<Response> listEntryResponse = new ArrayList<>( );
                 for ( Integer nIdEntryResponse : listIdResponse )
                 {
-                    listEntryResponse.add( ResponseHome.findByPrimaryKey( nIdEntryResponse ) );
+                    Response response = ResponseHome.findByPrimaryKey( nIdEntryResponse );
+
+                    if ( response.getField( ) != null )
+                    {
+                        response.setField( FieldHome.findByPrimaryKey( response.getField( ).getIdField( ) ) );
+                    }
+
+                    listEntryResponse.add( response );
                 }
 
                 formQuestionResponse.setEntryResponse( listEntryResponse );

@@ -52,6 +52,22 @@
 	</#if>
 </#function>
 
+<#--
+-- Get the field from a given code
+-- @param entry the entry
+-- @param fieldCode the code
+-- @return the field
+-->
+<#function getFieldByCode entry fieldCode>
+    <#if entry.fields?? && entry.fields?has_content>
+        <#list entry.fields as field>
+            <#if field?? && field.code?? && field.code == fieldCode>
+                <#return field>
+            </#if>
+        </#list>
+    </#if>
+</#function>
+
 <#-- 
 -- Get the field value from a given entry and a given title
 -- @param entry the entry
@@ -65,6 +81,71 @@
 	</#if>
 	<#return "">
 </#function>
+
+<#-- 
+-- Get the response containing the field with the given code
+-- @param responses the list of responses
+-- @param the fieldCode the code
+-- @return the response
+-->
+<#function getResponseContainingTheFieldWithCode responses fieldCode>
+  <#if responses??>
+    <#list responses as response>
+      <#if response.field?? && response.field.code?? && response.field.code == fieldCode >
+        <#return response />
+      </#if>
+    </#list>
+  </#if>
+</#function>
+
+<#-- 
+-- Get the response entry from a given entry
+-- @param responses the list of responses
+-- @param entry the entry
+-- @return the response entry
+-->
+<#function getResponseEntry responses entry>
+  <#if responses??>
+    <#list responses as response>
+      <#if response.entry.idEntry == entry.idEntry>
+        <#return response.entry />
+      </#if>
+    </#list>
+  </#if>
+</#function>
+
+<#-- 
+-- Get the response field from a given entry and a given code
+-- @param responses the list of responses
+-- @param entry the entry
+-- @param fieldCode the code
+-- @return the response field
+-->
+<#function getResponseFieldByCode responses entry fieldCode>
+  <#if responses??>
+    <#list responses as response>
+      <#if response.entry.idEntry == entry.idEntry && response.field??>
+        <#if response.field.code == fieldCode>
+          <#return response.field />
+        </#if>
+      </#if>
+    </#list>
+  </#if>
+</#function>
+
+<#-- 
+-- Get the error for the given entry
+-- @param responses the list of responses
+-- @param entry the entry
+-- @return the error
+-->
+<#function getError responses entry>
+  <#if getResponseEntry( responses, entry )??>
+    <#assign responseEntry = getResponseEntry( responses, entry ) >
+    <#return responseEntry.error />
+  </#if>
+</#function>
+
 
 <#-- 
 -- Get the max files value of an entry
@@ -108,5 +189,19 @@
 		<#return true />
 	</#if>
 	<#return false />
+</#function>
+
+<#--
+-- Build the entry name
+-- @param entry the entry
+-- @param entry_iteration_number the iteration number
+-- @return the name
+-->
+<#function buildEntryName entry entry_iteration_number='' >
+  <#assign name = 'attribute' + entry.idEntry>
+  <#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+    <#assign name = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
+  </#if>
+  <#return name />
 </#function>
 

@@ -1,0 +1,26 @@
+<#include "/admin/plugins/forms/commons.html" />
+
+<#if getError( list_responses, entry )?? >
+  <#assign error = getError( list_responses, entry ) >
+</#if> 
+<#assign name = buildEntryName( entry, entry_iteration_number )>
+<#assign fieldAgreement = getFieldByCode( entry, "agreement" ) >
+<#if list_responses?? && getResponseFieldByCode( list_responses, entry, "agreement" )?? >
+  <#assign responseFieldAgreement = getResponseFieldByCode( list_responses, entry, "agreement" ) >
+</#if>
+
+<div class="form-group">
+  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-md-offset-3 col-lg-offset-3">
+			
+    <input type="checkbox" name="${name}" id="${name}_${fieldAgreement.idField}" value="${fieldAgreement.idField}"
+      <#if responseFieldAgreement?? && responseFieldAgreement.value == "true">checked="checked" </#if>
+      class="${entry.CSSClass!} <#if error?? >error</#if>"
+    />
+
+    <#assign fieldLink = getFieldByCode( entry, "link" ) >
+    <a href="jsp/site/RunStandaloneApp.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}" onclick="javascript:openFormsTermsOfService(this.href); return false;" target="_blank">${fieldLink.value}</a>
+  </div>
+</div>
+<#if error?? && error.isDisplayableError>
+  <div class="alert alert-danger"><#if error.mandatoryError>${error.errorMessage}</#if></div>
+</#if>

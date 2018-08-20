@@ -31,3 +31,5 @@ INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_use
 (114,'Tableau',0,0,0,'forms.entryTypeArray','table','forms');
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
 (115,'Regroupement',1,0,0,'forms.entryTypeGroup','indent','forms');
+INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
+('116', 'Conditions d''utilisation', 0, 0, 0, 'forms.entryTypeTermsOfService', 'legal', 'forms');

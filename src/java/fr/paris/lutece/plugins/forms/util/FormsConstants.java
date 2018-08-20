@@ -136,6 +136,7 @@ public final class FormsConstants
     public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
     public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
     public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
+    public static final int ID_NOT_SET = -1;
 
     // Markers
     public static final String MARK_AVAILABLE_STEPS = "availableSteps";
