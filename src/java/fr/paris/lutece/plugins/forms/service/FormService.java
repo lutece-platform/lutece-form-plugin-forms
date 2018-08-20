@@ -328,6 +328,7 @@ public class FormService
      *            The form id
      * @param strUserGuid
      *            The user guid
+     * @return the created {@code FormResponseManager} object
      */
     public FormResponseManager createFormResponseManagerFromBackUp( int nIdForm, String strUserGuid )
     {
