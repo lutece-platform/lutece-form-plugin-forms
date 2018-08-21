@@ -13,7 +13,7 @@ ${entry.CSSClass!}
 			<#if entry.fieldInLine != true><div class="checkbox"></#if>
 				<label class="<#if entry.fieldInLine>checkbox-inline</#if>" for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> >
 				<input type="checkbox" name="${idName}" id="${idName}_${field.idField}" value="${field.idField}"
-					<#if list_responses??>
+					<#if list_responses?? && list_responses?has_content>
 						<#list list_responses as response>
 							<#if response.entry.idEntry == entry.idEntry && response.field??>
 								<#if response.field.idField == field.idField>checked="checked"</#if>

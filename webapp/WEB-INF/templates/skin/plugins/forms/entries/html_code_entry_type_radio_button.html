@@ -23,7 +23,7 @@ ${entry.CSSClass!}
 			<#if entry.fieldInLine != true><div class="radio"></#if>
 				<label <#if entry.fieldInLine>class="radio-inline"</#if> for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> > 
 					<input type="radio" id="${idName}_${field.idField}" name="${idName}" value="${field.idField}"
-					<#if list_responses??>
+					<#if list_responses?? && list_responses?has_content>
 						<#list list_responses as response>
 							<#if response.entry.idEntry == entry.idEntry && response.field??>
 								<#if response.field.idField == field.idField>checked="checked"<#break></#if>
