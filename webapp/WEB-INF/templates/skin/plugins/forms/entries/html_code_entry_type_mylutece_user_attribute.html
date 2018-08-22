@@ -1,4 +1,4 @@
-<#if entry.confirmField>
+<#if !entry.onlyDisplayInBack>
 		<#assign idName = 'attribute' + entry.idEntry>
 		<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
 			<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
