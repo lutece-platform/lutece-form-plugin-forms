@@ -89,34 +89,38 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     {
         boolean bHasError = false;
 
-        responseInstance.setEntryResponse( new ArrayList<Response>( ) );
-        responseInstance.setIdQuestion( question.getId( ) );
-
-        GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
-                responseInstance.getEntryResponse( ), request.getLocale( ) );
-
-        if ( error != null )
+        if ( !question.getEntry( ).isOnlyDisplayInBack( ) )
         {
-            bHasError = true;
-            setGenericAttributeError( error, responseInstance );
-        }
-        else
-        {
-            Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
 
-            if ( control != null )
+            responseInstance.setEntryResponse( new ArrayList<Response>( ) );
+            responseInstance.setIdQuestion( question.getId( ) );
+
+            GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
+                    responseInstance.getEntryResponse( ), request.getLocale( ) );
+
+            if ( error != null )
             {
-                IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-                if ( !validator.validate( responseInstance, control ) )
+                bHasError = true;
+                setGenericAttributeError( error, responseInstance );
+            }
+            else
+            {
+                Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
+
+                if ( control != null )
                 {
-                    error = new GenericAttributeError( );
+                    IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+                    if ( !validator.validate( responseInstance, control ) )
+                    {
+                        error = new GenericAttributeError( );
 
-                    error.setIsDisplayableError( true );
-                    error.setErrorMessage( control.getErrorMessage( ) );
+                        error.setIsDisplayableError( true );
+                        error.setErrorMessage( control.getErrorMessage( ) );
 
-                    setGenericAttributeError( error, responseInstance );
+                        setGenericAttributeError( error, responseInstance );
 
-                    bHasError = true;
+                        bHasError = true;
+                    }
                 }
             }
         }

@@ -389,7 +389,10 @@ public class FormXPage extends MVCApplication
             for ( FormQuestionResponse formQuestionResponse : listStepResponses )
             {
                 Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
-                mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
+                if ( question != null )
+                {
+                    mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
+                }
             }
         }
 
