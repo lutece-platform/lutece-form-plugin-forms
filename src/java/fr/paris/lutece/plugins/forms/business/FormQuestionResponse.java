@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.business;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 
 /**
@@ -159,6 +160,54 @@ public class FormQuestionResponse
     public void setEntryResponse( List<Response> entryResponse )
     {
         this._entryResponses = entryResponse;
+    }
+
+    /**
+     * Tests if the instance has an error
+     * 
+     * @return {@code true} if the instance has an error, {@code false} otherwise
+     */
+    public boolean hasError( )
+    {
+        boolean bHasError = false;
+
+        if ( _entryResponses.size( ) > 0 && _entryResponses.get( 0 ).getEntry( ) != null && _entryResponses.get( 0 ).getEntry( ).getError( ) != null )
+        {
+            bHasError = true;
+        }
+
+        return bHasError;
+    }
+
+    /**
+     * Gives the error
+     * 
+     * @return the error
+     */
+    public GenericAttributeError getError( )
+    {
+        GenericAttributeError error = null;
+
+        if ( hasError( ) )
+        {
+            error = _entryResponses.get( 0 ).getEntry( ).getError( );
+        }
+
+        return error;
+    }
+
+    /**
+     * Sets an error
+     * 
+     * @param error
+     *            the error to set
+     */
+    public void setError( GenericAttributeError error )
+    {
+        if ( _entryResponses.size( ) > 0 && _entryResponses.get( 0 ).getEntry( ) != null )
+        {
+            _entryResponses.get( 0 ).getEntry( ).setError( error );
+        }
     }
 
 }

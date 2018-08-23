@@ -292,7 +292,6 @@ public class FormXPage extends MVCApplication
 
         populateStepResponses( );
 
-
         // Add all the display controls for visualisation
         List<Control> listDisplayControls = _stepDisplayTree.getListDisplayControls( );
         model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
@@ -507,15 +506,14 @@ public class FormXPage extends MVCApplication
             IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
             if ( entryDataService != null )
             {
-                FormQuestionResponse questionResponseInstance = new FormQuestionResponse( );
-                boolean bHasError = entryDataService.getResponseFromRequest( question, request, questionResponseInstance );
+                FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request );
 
-                if ( bHasError )
+                if ( formQuestionResponse.hasError( ) )
                 {
                     bValidStep = false;
                 }
 
-                listResponsesTemp.add( questionResponseInstance );
+                listResponsesTemp.add( formQuestionResponse );
             }
         }
 
@@ -650,15 +648,14 @@ public class FormXPage extends MVCApplication
             IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
             if ( entryDataService != null )
             {
-                FormQuestionResponse questionResponseInstance = new FormQuestionResponse( );
-                boolean bHasError = entryDataService.getResponseFromRequest( question, request, questionResponseInstance );
+                FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request );
 
-                if ( !bHasError )
+                if ( !formQuestionResponse.hasError( ) )
                 {
-                    listResponsesTemp.add( questionResponseInstance );
+                    listResponsesTemp.add( formQuestionResponse );
                 }
 
-                mapStepResponses.put( question.getId( ), questionResponseInstance.getEntryResponse( ) );
+                mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
             }
         }
 

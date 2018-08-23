@@ -54,18 +54,16 @@ public interface IEntryDataService
      *            the questionResponse to save
      * @return
      */
-    void saveFormQuestionResponse( FormQuestionResponse questionResponse );
+    void save( FormQuestionResponse questionResponse );
 
     /**
-     * Get the response values from request for the given question
+     * Creates the response values from request for the given question
      * 
      * @param question
      *            the question to
      * @param request
      *            The Http request
-     * @param responseInstance
-     *            The instance of FormQuestionResponse
      * @return The response to the question
      */
-    boolean getResponseFromRequest( Question question, HttpServletRequest request, FormQuestionResponse responseInstance );
+    FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request );
 }

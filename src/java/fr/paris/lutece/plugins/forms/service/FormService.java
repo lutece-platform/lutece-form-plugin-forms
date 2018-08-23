@@ -167,7 +167,7 @@ public class FormService
             IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
             formQuestionResponse.setIdFormResponse( formResponseManager.getFormResponse( ).getId( ) );
             formQuestionResponse.setIdStep( step.getId( ) );
-            dataService.saveFormQuestionResponse( formQuestionResponse );
+            dataService.save( formQuestionResponse );
         }
     }
 

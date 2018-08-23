@@ -72,33 +72,48 @@ public class EntryTypeDefaultDataService implements IEntryDataService
         _strEntryServiceName = strEntryServiceName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDataServiceName( )
     {
         return _strEntryServiceName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void saveFormQuestionResponse( FormQuestionResponse questionResponse )
+    public void save( FormQuestionResponse questionResponse )
     {
-        FormQuestionResponseHome.create( questionResponse );
+        FormQuestionResponse responseSaved = FormQuestionResponseHome.findByPrimaryKey( questionResponse.getId( ) );
+
+        if ( responseSaved == null )
+        {
+            FormQuestionResponseHome.create( questionResponse );
+        }
+        else
+        {
+            FormQuestionResponseHome.update( questionResponse );
+        }
+
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public boolean getResponseFromRequest( Question question, HttpServletRequest request, FormQuestionResponse responseInstance )
+    public FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request )
     {
-        boolean bHasError = false;
-
-        responseInstance.setEntryResponse( new ArrayList<Response>( ) );
-        responseInstance.setIdQuestion( question.getId( ) );
+        FormQuestionResponse formQuestionResponse = createResponseFor( question );
 
         GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
-                responseInstance.getEntryResponse( ), request.getLocale( ) );
+                formQuestionResponse.getEntryResponse( ), request.getLocale( ) );
 
         if ( error != null )
         {
-            bHasError = true;
-            setGenericAttributeError( error, responseInstance );
+            formQuestionResponse.setError( error );
         }
         else
         {
@@ -107,37 +122,36 @@ public class EntryTypeDefaultDataService implements IEntryDataService
             if ( control != null )
             {
                 IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-                if ( !validator.validate( responseInstance, control ) )
+                if ( !validator.validate( formQuestionResponse, control ) )
                 {
                     error = new GenericAttributeError( );
 
                     error.setIsDisplayableError( true );
                     error.setErrorMessage( control.getErrorMessage( ) );
 
-                    setGenericAttributeError( error, responseInstance );
-
-                    bHasError = true;
+                    formQuestionResponse.setError( error );
                 }
             }
         }
 
-        return bHasError;
+        return formQuestionResponse;
     }
 
     /**
-     * Set the error in the question response instance object
+     * Creates a form question response for the specified question
      * 
-     * @param error
-     *            GenericAttributeError
-     * @param responseInstance
-     *            Question response instance
+     * @param question
+     *            the question
+     * @return the created form question response
      */
-    private void setGenericAttributeError( GenericAttributeError error, FormQuestionResponse responseInstance )
+    private FormQuestionResponse createResponseFor( Question question )
     {
-        if ( responseInstance.getEntryResponse( ).size( ) > 0 && responseInstance.getEntryResponse( ).get( 0 ).getEntry( ) != null )
-        {
-            responseInstance.getEntryResponse( ).get( 0 ).getEntry( ).setError( error );
-        }
+        FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
+        formQuestionResponse.setEntryResponse( new ArrayList<Response>( ) );
+        formQuestionResponse.setQuestion( question );
+        formQuestionResponse.setIdStep( question.getIdStep( ) );
+
+        return formQuestionResponse;
     }
 
 }
