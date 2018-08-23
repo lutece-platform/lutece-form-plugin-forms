@@ -513,12 +513,12 @@ public class FormXPage extends MVCApplication
                 if ( entryDataService != null )
                 {
                     FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request );
-    
+
                     if ( formQuestionResponse.hasError( ) )
                     {
                         bValidStep = false;
                     }
-    
+
                     listResponsesTemp.add( formQuestionResponse );
                 }
             }
@@ -658,12 +658,12 @@ public class FormXPage extends MVCApplication
                 if ( entryDataService != null )
                 {
                     FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request );
-        
+
                     if ( !formQuestionResponse.hasError( ) )
                     {
                         listResponsesTemp.add( formQuestionResponse );
                     }
-        
+
                     mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
                 }
             }
