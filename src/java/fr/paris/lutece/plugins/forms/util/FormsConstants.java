@@ -76,6 +76,7 @@ public final class FormsConstants
     public static final String MARK_INFO = "messageInfo";
     public static final String MARK_CONTROL_TEMPLATE = "control_template";
     public static final String MARK_CONDITION_TITLE = "modify_condition_title";
+    public static final String MARK_QUESTION_LIST_RESPONSES = "list_responses";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";

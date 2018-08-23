@@ -66,7 +66,6 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private static final String TEMPLATE_QUESTION_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_question.html";
 
     // Marks
-    private static final String MARK_QUESTION_LIST_RESPONSES = "list_responses";
     private static final String MARK_QUESTION_ENTRY = "questionEntry";
 
     private Question _question;
@@ -100,7 +99,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             if ( displayService != null )
             {
                 Map<String, Object> model = new HashMap<String, Object>( );
-                model.put( MARK_QUESTION_LIST_RESPONSES, _listResponses );
+                model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, _listResponses );
                 model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
 
                 strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale, model, displayType );
