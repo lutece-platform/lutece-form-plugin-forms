@@ -38,7 +38,7 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.IEntryDataService;
-import fr.paris.lutece.plugins.forms.web.IEntryDisplayService;
+import fr.paris.lutece.plugins.forms.web.display.IEntryDisplayService;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;

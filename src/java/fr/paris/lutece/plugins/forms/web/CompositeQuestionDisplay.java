@@ -48,6 +48,8 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.web.display.DisplayType;
+import fr.paris.lutece.plugins.forms.web.display.IEntryDisplayService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -59,10 +61,13 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class CompositeQuestionDisplay implements ICompositeDisplay
 {
-    private static final String QUESTION_TEMPLATE = "/skin/plugins/forms/composite_template/view_question.html";
-    private static final String QUESTION_TEMPLATE_READ_ONLY = "/admin/plugins/forms/composite/view_question.html";
-    private static final String QUESTION_LIST_RESPONSES = "list_responses";
-    private static final String QUESTION_ENTRY = "questionEntry";
+    // Templates
+    private static final String TEMPLATE_QUESTION_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_question.html";
+    private static final String TEMPLATE_QUESTION_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_question.html";
+
+    // Marks
+    private static final String MARK_QUESTION_LIST_RESPONSES = "list_responses";
+    private static final String MARK_QUESTION_ENTRY = "questionEntry";
 
     private Question _question;
     private FormDisplay _formDisplay;
@@ -80,8 +85,11 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getCompositeHtml( Locale locale, boolean bIsForEdition )
+    public String getCompositeHtml( Locale locale, DisplayType displayType )
     {
         String strQuestionTemplate = StringUtils.EMPTY;
 
@@ -92,20 +100,10 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             if ( displayService != null )
             {
                 Map<String, Object> model = new HashMap<String, Object>( );
-                model.put( QUESTION_LIST_RESPONSES, _listResponses );
-                model.put( QUESTION_ENTRY, _question.getEntry( ) );
+                model.put( MARK_QUESTION_LIST_RESPONSES, _listResponses );
+                model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
 
-                String strTemplate = StringUtils.EMPTY;
-                if ( bIsForEdition )
-                {
-                    strTemplate = QUESTION_TEMPLATE;
-                    strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale, model );
-                }
-                else
-                {
-                    strTemplate = QUESTION_TEMPLATE_READ_ONLY;
-                    strQuestionTemplate = displayService.getEntryResponseValueTemplateDisplay( _question.getEntry( ), locale, model );
-                }
+                strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale, model, displayType );
 
                 model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
                 model.put( FormsConstants.MARK_ID_QUESTION, _question.getId( ) );
@@ -114,13 +112,37 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                     model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdTargetFormDisplay( ) );
                 }
 
-                HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( strTemplate, locale, model );
+                HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, model );
 
                 strQuestionTemplate = htmlTemplateQuestion != null ? htmlTemplateQuestion.getHtml( ) : StringUtils.EMPTY;
             }
         }
 
         return strQuestionTemplate;
+    }
+
+    /**
+     * Finds the template to use for the specified display type
+     * 
+     * @param displayType
+     *            the display type
+     * @return the template
+     */
+    private String findTemplateFor( DisplayType displayType )
+    {
+        String strTemplate = StringUtils.EMPTY;
+
+        if ( displayType == DisplayType.EDITION_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_EDITION_FRONTOFFICE;
+        }
+
+        if ( displayType == DisplayType.READONLY_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_READONLY_BACKOFFICE;
+        }
+
+        return strTemplate;
     }
 
     @Override

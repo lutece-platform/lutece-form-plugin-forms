@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
@@ -46,6 +48,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.web.display.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -58,9 +61,12 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
  */
 public class StepDisplayTree
 {
-    private static final String STEP_TEMPLATE = "/skin/plugins/forms/composite_template/view_step.html";
-    private static final String STEP_TEMPLATE_READ_ONLY = "/admin/plugins/forms/composite/view_step.html";
-    private static final String STEP_CONTENT_MARKER = "stepContent";
+    // Templates
+    private static final String TEMPLATE_STEP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step.html";
+    private static final String TEMPLATE_STEP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_step.html";
+
+    // Marks
+    private static final String MARK_STEP_CONTENT = "stepContent";
 
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
@@ -110,13 +116,13 @@ public class StepDisplayTree
      * 
      * @param locale
      *            the locale
-     * @param bIsForEdition
-     *            The boolean which tell if the built Template is for edition or only for display value
+     * @param DisplayType
+     *            The display type
      * @param user
      *            the lutece user
      * @return the html template of the tree as a String
      */
-    public String getCompositeHtml( Locale locale, boolean bIsForEdition, LuteceUser user )
+    public String getCompositeHtml( Locale locale, DisplayType displayType, LuteceUser user )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
 
@@ -124,16 +130,40 @@ public class StepDisplayTree
 
         for ( ICompositeDisplay child : _listChildren )
         {
-            strBuilder.append( child.getCompositeHtml( locale, bIsForEdition ) );
+            strBuilder.append( child.getCompositeHtml( locale, displayType ) );
         }
 
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_USER, user );
-        model.put( STEP_CONTENT_MARKER, strBuilder.toString( ) );
+        model.put( MARK_STEP_CONTENT, strBuilder.toString( ) );
 
-        String strTemplate = bIsForEdition ? STEP_TEMPLATE : STEP_TEMPLATE_READ_ONLY;
+        String strTemplate = findTemplateFor( displayType );
 
         return AppTemplateService.getTemplate( strTemplate, locale, model ).getHtml( );
+    }
+
+    /**
+     * Finds the template to use for the specified display type
+     * 
+     * @param displayType
+     *            the display type
+     * @return the template
+     */
+    private String findTemplateFor( DisplayType displayType )
+    {
+        String strTemplate = StringUtils.EMPTY;
+
+        if ( displayType == DisplayType.EDITION_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_STEP_EDITION_FRONTOFFICE;
+        }
+
+        if ( displayType == DisplayType.READONLY_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_STEP_READONLY_BACKOFFICE;
+        }
+
+        return strTemplate;
     }
 
     /**

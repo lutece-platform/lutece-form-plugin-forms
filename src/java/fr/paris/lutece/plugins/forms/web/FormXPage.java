@@ -61,6 +61,7 @@ import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
+import fr.paris.lutece.plugins.forms.web.display.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
@@ -291,7 +292,6 @@ public class FormXPage extends MVCApplication
 
         populateStepResponses( );
 
-        boolean bIsForEdition = Boolean.TRUE;
 
         // Add all the display controls for visualisation
         List<Control> listDisplayControls = _stepDisplayTree.getListDisplayControls( );
@@ -313,7 +313,7 @@ public class FormXPage extends MVCApplication
         model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
         model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
         model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
-        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), bIsForEdition, user ) );
+        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request.getLocale( ), DisplayType.EDITION_FRONTOFFICE, user ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( _formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( _formResponseManager ) );
     }

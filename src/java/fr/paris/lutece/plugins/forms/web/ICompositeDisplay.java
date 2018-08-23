@@ -39,6 +39,7 @@ import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.web.display.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 
 /**
@@ -51,11 +52,11 @@ public interface ICompositeDisplay
     /**
      * @param locale
      *            The locale
-     * @param bIsForEdition
-     *            The boolean which tell if the built Html is for edition or only for display value
+     * @param displayType
+     *            The display type
      * @return the composite html to display
      */
-    String getCompositeHtml( Locale locale, boolean bIsForEdition );
+    String getCompositeHtml( Locale locale, DisplayType displayType );
 
     /**
      * 

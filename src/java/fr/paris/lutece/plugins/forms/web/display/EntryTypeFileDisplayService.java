@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web;
+package fr.paris.lutece.plugins.forms.web.display;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,20 +101,38 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     }
 
     @Override
-    public String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
+    public String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType )
     {
+        String strEntryHtml = StringUtils.EMPTY;
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
 
-        String strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, true ), locale, setModel( entry, service, model ) ).getHtml( );
+        switch( displayType.getMode( ) )
+        {
+            case EDITION:
+                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale,
+                        setModel( entry, service, model ) ).getHtml( );
+                break;
+            case READONLY:
+                strEntryHtml = getEntryResponseValueTemplateDisplay( entry, locale, model );
+                break;
+            default: // Nothing to do
+        }
 
         return strEntryHtml;
     }
 
     /**
-     * {@inheritDoc}
+     * Return the template of an Entry with its Response
+     * 
+     * @param entry
+     *            The Entry to display
+     * @param locale
+     *            The Locale to use to build the model
+     * @param model
+     *            The model to populate
+     * @return the template of the given Entry with its Response value
      */
-    @Override
-    public String getEntryResponseValueTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
+    private String getEntryResponseValueTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
     {
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
 

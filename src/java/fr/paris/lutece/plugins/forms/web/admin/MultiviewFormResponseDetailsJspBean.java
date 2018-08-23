@@ -71,6 +71,7 @@ import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.IFormsMultiviewAuthorizationService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
+import fr.paris.lutece.plugins.forms.web.display.DisplayType;
 import fr.paris.lutece.plugins.forms.web.form.response.view.FormResponseViewModelProcessorFactory;
 import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewModelProcessor;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -263,11 +264,10 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             for ( Step step : listStep )
             {
                 int nIdStep = step.getId( );
-                boolean bIsForEdition = Boolean.FALSE;
 
                 StepDisplayTree stepDisplayTree = new StepDisplayTree( nIdStep );
                 stepDisplayTree.setResponses( buildStepMapResponse( nIdStep, nIdFormResponse ) );
-                listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( getLocale( ), bIsForEdition, null ) );
+                listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( getLocale( ), DisplayType.READONLY_BACKOFFICE, null ) );
             }
         }
 

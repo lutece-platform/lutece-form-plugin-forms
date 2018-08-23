@@ -49,6 +49,7 @@ import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.web.display.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -61,11 +62,17 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
  */
 public class CompositeGroupDisplay implements ICompositeDisplay
 {
-    private static final String GROUP_TEMPLATE = "/skin/plugins/forms/composite_template/view_group.html";
-    private static final String GROUP_TEMPLATE_READ_ONLY = "/admin/plugins/forms/composite/view_group.html";
-    private static final String GROUP_MARKER = "group";
-    private static final String GROUP_CONTENT_MARKER = "groupContent";
+    // Templates
+    private static final String TEMPLATE_GROUP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group.html";
+    private static final String TEMPLATE_GROUP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_group.html";
+
+    // Marks
+    private static final String MARK_GROUP = "group";
+    private static final String MARK_GROUP_CONTENT = "groupContent";
+
+    // Properties
     private static final String PROPERTY_COMPOSITE_GROUP_ICON = "forms.composite.group.icon";
+
     private static final String DEFAULT_GROUP_ICON = "indent";
 
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
@@ -94,8 +101,11 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getCompositeHtml( Locale locale, boolean bIsForEdition )
+    public String getCompositeHtml( Locale locale, DisplayType displayType )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
 
@@ -103,19 +113,43 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         for ( ICompositeDisplay child : _listChildren )
         {
-            strBuilder.append( child.getCompositeHtml( locale, bIsForEdition ) );
+            strBuilder.append( child.getCompositeHtml( locale, displayType ) );
         }
 
-        model.put( GROUP_MARKER, _group );
-        model.put( GROUP_CONTENT_MARKER, strBuilder.toString( ) );
+        model.put( MARK_GROUP, _group );
+        model.put( MARK_GROUP_CONTENT, strBuilder.toString( ) );
         if ( _formDisplay.getDisplayControl( ) != null )
         {
             model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdTargetFormDisplay( ) );
         }
 
-        String strTemplate = bIsForEdition ? GROUP_TEMPLATE : GROUP_TEMPLATE_READ_ONLY;
+        String strTemplate = findTemplateFor( displayType );
 
         return AppTemplateService.getTemplate( strTemplate, locale, model ).getHtml( );
+    }
+
+    /**
+     * Finds the template to use for the specified display type
+     * 
+     * @param displayType
+     *            the display type
+     * @return the template
+     */
+    private String findTemplateFor( DisplayType displayType )
+    {
+        String strTemplate = StringUtils.EMPTY;
+
+        if ( displayType == DisplayType.EDITION_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_GROUP_EDITION_FRONTOFFICE;
+        }
+
+        if ( displayType == DisplayType.READONLY_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_GROUP_READONLY_BACKOFFICE;
+        }
+
+        return strTemplate;
     }
 
     @Override

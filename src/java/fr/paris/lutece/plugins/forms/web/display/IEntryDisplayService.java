@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web;
+package fr.paris.lutece.plugins.forms.web.display;
 
 import java.util.Locale;
 import java.util.Map;
@@ -57,20 +57,9 @@ public interface IEntryDisplayService
      *            The given locale
      * @param model
      *            The given model
+     * @param displayType
+     *            the display type
      * @return the template Html of the given entry
      */
-    String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model );
-
-    /**
-     * Return the template of an Entry with its Response
-     * 
-     * @param entry
-     *            The Entry to display
-     * @param locale
-     *            The Locale to use to build the model
-     * @param model
-     *            The model to populate
-     * @return the template of the given Entry with its Response value
-     */
-    String getEntryResponseValueTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model );
+    String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType );
 }

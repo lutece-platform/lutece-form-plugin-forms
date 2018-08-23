@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web;
+package fr.paris.lutece.plugins.forms.web.display;
 
 import java.util.Locale;
 import java.util.Map;
@@ -78,30 +78,36 @@ public class EntryTypeDefaultDisplayService implements IEntryDisplayService
         return model;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDisplayServiceName( )
     {
         return _strEntryServiceName;
     }
 
-    @Override
-    public String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
-    {
-        IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
-
-        String strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, true ), locale, setModel( entry, model ) ).getHtml( );
-
-        return strEntryHtml;
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getEntryResponseValueTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
+    public String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType )
     {
+        String strEntryHtml = StringUtils.EMPTY;
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
 
-        return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( ), locale, setModel( entry, model ) ).getHtml( );
+        switch( displayType.getMode( ) )
+        {
+            case EDITION:
+                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, model ) )
+                        .getHtml( );
+                break;
+            case READONLY:
+                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( ), locale, setModel( entry, model ) ).getHtml( );
+                break;
+            default: // Nothing to do
+        }
+
+        return strEntryHtml;
     }
 }
