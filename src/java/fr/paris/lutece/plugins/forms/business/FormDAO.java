@@ -55,7 +55,6 @@ public final class FormDAO implements IFormDAO
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name, end_message, return_url ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, breadcrumb_name = ?, end_message = ?, return_url = ? WHERE id_form = ?";
-    private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_form FROM forms_form";
 
     /**
      * {@inheritDoc }
@@ -167,26 +166,6 @@ public final class FormDAO implements IFormDAO
         while ( daoUtil.next( ) )
         {
             formList.add( dataToObject( daoUtil ) );
-        }
-
-        daoUtil.close( );
-
-        return formList;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public List<Integer> selectIdFormsList( Plugin plugin )
-    {
-        List<Integer> formList = new ArrayList<Integer>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
-        {
-            formList.add( daoUtil.getInt( "id_form" ) );
         }
 
         daoUtil.close( );

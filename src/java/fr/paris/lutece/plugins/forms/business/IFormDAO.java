@@ -97,15 +97,6 @@ public interface IFormDAO
     List<Form> selectFormsList( Plugin plugin );
 
     /**
-     * Load the id of all the form objects and returns them as a list
-     * 
-     * @param plugin
-     *            the Plugin
-     * @return The list which contains the id of all the form objects
-     */
-    List<Integer> selectIdFormsList( Plugin plugin );
-
-    /**
      * Load the data of all the form objects and returns them as a referenceList
      * 
      * @param plugin

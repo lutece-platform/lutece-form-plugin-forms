@@ -118,16 +118,6 @@ public final class FormHome
     }
 
     /**
-     * Load the id of all the form objects and returns them as a list
-     * 
-     * @return the list which contains the id of all the form objects
-     */
-    public static List<Integer> getIdFormsList( )
-    {
-        return _dao.selectIdFormsList( _plugin );
-    }
-
-    /**
      * Load the data of all the form objects and returns them as a referenceList
      * 
      * @return the referenceList which contains the data of all the form objects
