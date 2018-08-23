@@ -11,7 +11,15 @@ ${entry.CSSClass!}
       <#if entry.fieldInLine != true><div class="checkbox"></#if>
       <label class="<#if entry.fieldInLine>checkbox-inline</#if>" for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> >
         <input type="checkbox" name="${idName}" id="${idName}_${field.idField}" value="${field.idField}"
-          <#if field.defaultValue>checked="checked" </#if>
+          <#if list_responses?? && list_responses?has_content>
+            <#list list_responses as response>
+              <#if response.entry.idEntry == entry.idEntry && response.field??>
+                <#if response.field.idField == field.idField>checked="checked"</#if>
+              </#if>
+            </#list>
+          <#else>
+              <#if field.defaultValue>checked="checked" </#if>
+          </#if>
           <#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
             <#assign idConditional = 'div' + field.idField>
             onclick="doCheckboxEffect(this.checked,${idConditional}.id);"
@@ -47,15 +55,38 @@ ${entry.CSSClass!}
     </#if>  
   </div>
 </div>
-<#list entry.fields as field>
-  <#if field.defaultValue && field.conditionalQuestions?exists && field.conditionalQuestions?size != 0>
-    <script type="text/javascript">>
-      var baliseId = "div" + ${field.idField};
+<#if list_responses??>
+  <script type="text/javascript">
+  <#list list_responses as response>
+    var idName = '';
+    <#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+        idName = '_nIt' + ${entry_iteration_number} + '_';
+    </#if>
+    <#if response.entry.idEntry == entry.idEntry && response.field??>
+      var baliseId = "div" + idName + ${response.field.idField};
       if(document.getElementById && document.getElementById(baliseId) != null)
       {
         document.getElementById(baliseId).style.visibility='visible';
         document.getElementById(baliseId).style.display='block';
       }
-    </script>
-  </#if>
-</#list>
+    </#if>
+  </#list>
+  </script>
+<#else>
+  <#list entry.fields as field>
+    <#if field.defaultValue && field.conditionalQuestions?exists && field.conditionalQuestions?size != 0>
+      <script type="text/javascript">
+        var idName = '';
+        <#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+          idName = '_nIt' + ${entry_iteration_number} + '_';
+        </#if>
+        var baliseId = "div" + idName + ${field.idField};
+        if(document.getElementById && document.getElementById(baliseId) != null)
+        {
+          document.getElementById(baliseId).style.visibility='visible';
+          document.getElementById(baliseId).style.display='block';
+        }
+      </script>
+    </#if>
+  </#list>
+</#if>
