@@ -517,8 +517,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 String strError = workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, getLocale( ) );
                 if ( strError != null )
                 {
-                    addError( strError );
-                    return redirect( request, VIEW_TASKS_FORM, PARAMETER_ID_FORM_RESPONSE, nIdFormResponse, PARAMETER_ID_ACTION, nIdAction );
+                    return redirect( request, strError );
                 }
             }
             catch( AppException e )
