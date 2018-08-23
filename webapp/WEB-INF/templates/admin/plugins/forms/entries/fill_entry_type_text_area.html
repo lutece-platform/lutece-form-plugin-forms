@@ -1,0 +1,33 @@
+<#include "/admin/plugins/forms/commons.html" />
+
+<#macro getTextAreaContent responseContent has_error entry field>
+  <#assign idName = buildEntryName( entry, entry_iteration_number )>
+  <!#--   fieldInLine means use rich text -->
+  <#if has_error>
+    <textarea name="${idName}" id="${idName}" cols="${field.width}" rows="${field.height}" class="alert alert-danger<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
+  <#else>
+    <textarea name="${idName}" id="${idName}" cols="${field.width}" rows="${field.height}" class="${entry.CSSClass!}<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
+  </#if>
+</#macro>
+
+<div class="form-group">
+  <#assign idName = buildEntryName( entry, entry_iteration_number )>
+  <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+    <#list entry.fields as field>
+      <#if field.value?exists>
+        <@getTextAreaContent responseContent=field.value has_error=false entry=entry field=field/>
+      <#else>
+        <@getTextAreaContent responseContent="" has_error=false entry=entry field=field/>
+      </#if>
+    </#list>
+    <#if entry.helpMessage?exists&&entry.helpMessage!=''>
+      <span class="help-block">${entry.helpMessage}</span>
+    </#if>
+  </div>
+</div>
+
+<#if entry.fieldInLine>
+  <#include "/util/editor/editor.html" />
+  <@initEditor />
+</#if>    

@@ -114,6 +114,22 @@
   </#if>
 </#function>
 
+<#-- 
+-- Get the response from a given entry
+-- WARNING : use only if the entry has ONE response
+-- @param responses the list of responses
+-- @param entry the entry
+-- @return the response entry
+-->
+<#function getResponse responses entry>
+  <#if responses??>
+    <#list responses as response>
+      <#if response.entry.idEntry == entry.idEntry>
+        <#return response />
+      </#if>
+    </#list>
+  </#if>
+</#function>
 
 <#-- 
 -- Get the response entry from a given entry
@@ -197,7 +213,7 @@
 -->
 <#function buildEntryName entry entry_iteration_number='' >
   <#assign name = 'attribute' + entry.idEntry>
-  <#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+  <#if entry_iteration_number?? && entry_iteration_number?has_content && entry_iteration_number gt 0>
     <#assign name = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
   </#if>
   <#return name />

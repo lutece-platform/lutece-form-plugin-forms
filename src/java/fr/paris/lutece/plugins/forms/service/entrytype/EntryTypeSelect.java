@@ -45,8 +45,9 @@ public class EntryTypeSelect extends AbstractEntryTypeSelect
 {
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_select.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_select.html";
-    private static final String TEMPLATE_ENTRY_READ_ONLY = "admin/plugins/forms/entries/template_read_only_entry_type_select.html";
-    private static final String TEMPLATE_HTML_CODE = "skin/plugins/forms/entries/html_code_entry_type_select.html";
+    private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_select.html";
+    private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_select.html";
+    private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_select.html";
 
     /**
      * {@inheritDoc}
@@ -54,7 +55,12 @@ public class EntryTypeSelect extends AbstractEntryTypeSelect
     @Override
     public String getTemplateHtmlForm( Entry entry, boolean bDisplayFront )
     {
-        return TEMPLATE_HTML_CODE;
+        if ( bDisplayFront )
+        {
+            return TEMPLATE_EDITION_FRONTOFFICE;
+        }
+
+        return TEMPLATE_EDITION_BACKOFFICE;
     }
 
     /**
@@ -81,6 +87,6 @@ public class EntryTypeSelect extends AbstractEntryTypeSelect
     @Override
     public String getTemplateEntryReadOnly( )
     {
-        return TEMPLATE_ENTRY_READ_ONLY;
+        return TEMPLATE_READONLY_BACKOFFICE;
     }
 }
