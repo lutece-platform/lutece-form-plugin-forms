@@ -95,7 +95,7 @@ public interface IFormResponseStepDAO
     List<FormResponseStep> selectFormResponseStepList( Plugin plugin );
 
     /**
-     * Load the order step id list by FormResponse id
+     * Load the order steps list by FormResponse id
      * 
      * @param nIdFormResponse
      *            The identifier of the FormResponse
@@ -103,7 +103,7 @@ public interface IFormResponseStepDAO
      *            the Plugin
      * @return The list which contains the data of all the FormResponseStep objects
      */
-    List<Integer> selectListIdStepByFormResponse( int nIdFormResponse, Plugin plugin );
+    List<FormResponseStep> selectFormResponseStepsByFormResponse( int nIdFormResponse, Plugin plugin );
 
     /**
      * Remove all the formResponseStep linked to a given FormResponse

@@ -47,7 +47,7 @@ public class FormQuestionResponse
 
     private int _nIdFormResponse;
 
-    private int _nIdQuestion;
+    private Question _question;
 
     private int _nIdStep;
 
@@ -90,20 +90,24 @@ public class FormQuestionResponse
     }
 
     /**
-     * @return the nIdQuestion
+     * Gives the question associated to this question response
+     * 
+     * @return the question
      */
-    public int getIdQuestion( )
+    public Question getQuestion( )
     {
-        return _nIdQuestion;
+        return _question;
     }
 
     /**
-     * @param nIdQuestion
-     *            the nIdQuestion to set
+     * Sets the question associated to this question response
+     * 
+     * @param question
+     *            the question
      */
-    public void setIdQuestion( int nIdQuestion )
+    public void setQuestion( Question question )
     {
-        this._nIdQuestion = nIdQuestion;
+        _question = question;
     }
 
     /**

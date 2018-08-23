@@ -119,8 +119,18 @@ public interface IFormQuestionResponseDAO
     List<FormQuestionResponse> selectFormQuestionResponseListByFormResponse( int nIdFormResponse, Plugin plugin );
 
     /**
-     * Retrieve all the FormQuestionResponse associated to the given FormResponse for the specified Question. Return an empty list if there is no
-     * FormQuestionResponse associated to the given parameters.
+     * Retrieves the form question responses associated to the specified question.
+     * 
+     * @param nIdQuestion
+     *            The identifier of the Question
+     * @param plugin
+     *            The Plugin to use to execute the query
+     * @return the list of form question responses
+     */
+    List<FormQuestionResponse> selectFormQuestionResponseByQuestion( int nIdQuestion, Plugin plugin );
+
+    /**
+     * Retrieves the form question response associated to the given form response for the specified question.
      * 
      * @param nIdFormResponse
      *            The identifier of the FormResponse
@@ -128,18 +138,8 @@ public interface IFormQuestionResponseDAO
      *            The identifier of the Question
      * @param plugin
      *            The Plugin to use to execute the query
-     * @return the list of all FormQuestionResponse associated to the given formResponse and Question, return an empty list if there is no result.
+     * @return the found form question response, or {@code null} if not found.
      */
-    List<FormQuestionResponse> selectFormQuestionResponseListByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin );
-
-    /**
-     * Delete all the FormQuestionResponse records related to a given Question
-     * 
-     * @param nIdQuestion
-     *            The identifier of the Question
-     * @param plugin
-     *            the Plugin
-     */
-    void deleteByQuestion( int nIdQuestion, Plugin plugin );
+    FormQuestionResponse selectFormQuestionResponseByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin );
 
 }

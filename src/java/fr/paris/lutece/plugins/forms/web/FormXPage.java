@@ -388,7 +388,7 @@ public class FormXPage extends MVCApplication
         {
             for ( FormQuestionResponse formQuestionResponse : listStepResponses )
             {
-                Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
+                Question question = formQuestionResponse.getQuestion( );
                 mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
             }
         }
@@ -594,7 +594,7 @@ public class FormXPage extends MVCApplication
 
                 for ( FormQuestionResponse questionResponse : _formResponseManager.getMapStepFormResponses( ).get( targetQuestion.getIdStep( ) ) )
                 {
-                    if ( transitionControl.getIdQuestion( ) == questionResponse.getIdQuestion( ) )
+                    if ( transitionControl.getIdQuestion( ) == questionResponse.getQuestion( ).getId( ) )
                     {
                         IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
 

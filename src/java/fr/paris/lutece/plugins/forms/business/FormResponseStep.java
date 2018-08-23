@@ -34,6 +34,8 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.List;
+
 /**
  * This is the business class for the object FormResponse
  */
@@ -44,9 +46,11 @@ public class FormResponseStep
 
     private int _nFormResponseId;
 
-    private int _nIdStep;
+    private Step _step;
 
     private int _nOrder;
+
+    private List<FormQuestionResponse> _listFormQuestionResponse;
 
     /**
      * @return the _nId
@@ -83,20 +87,24 @@ public class FormResponseStep
     }
 
     /**
-     * @return the _nIdStep
+     * Gives the step associated to this response step
+     * 
+     * @return the step
      */
-    public int getIdStep( )
+    public Step getStep( )
     {
-        return _nIdStep;
+        return _step;
     }
 
     /**
-     * @param nIdStep
-     *            the nIdStep to set
+     * Sets the step associated to this response step
+     * 
+     * @param step
+     *            the step
      */
-    public void setIdStep( int nIdStep )
+    public void setStep( Step step )
     {
-        this._nIdStep = nIdStep;
+        _step = step;
     }
 
     /**
@@ -114,6 +122,27 @@ public class FormResponseStep
     public void setOrder( int nOrder )
     {
         this._nOrder = nOrder;
+    }
+
+    /**
+     * Gives the questions containing responses for this step
+     * 
+     * @return the questions
+     */
+    public List<FormQuestionResponse> getQuestions( )
+    {
+        return _listFormQuestionResponse;
+    }
+
+    /**
+     * Sets the questions containing responses for this step
+     * 
+     * @param listFormQuestionResponse
+     *            the list of questions
+     */
+    public void setQuestions( List<FormQuestionResponse> listFormQuestionResponse )
+    {
+        _listFormQuestionResponse = listFormQuestionResponse;
     }
 
 }

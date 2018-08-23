@@ -37,8 +37,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
-import java.util.List;
-
 /**
  * This class provides instances management methods (create, find, ...) for FormResponseHome objects
  */
@@ -103,17 +101,24 @@ public final class FormResponseHome
      */
     public static FormResponse findByPrimaryKey( int nKey )
     {
-        return _dao.load( nKey, _plugin );
+        FormResponse formResponse = _dao.load( nKey, _plugin );
+        completeWithSteps( formResponse );
+
+        return formResponse;
     }
 
     /**
-     * Load the data of all the formResponse objects and returns them as a list
+     * Completes the specified form response with the steps
      * 
-     * @return the list which contains the data of all the formResponse objects
+     * @param formResponse
+     *            the form response
      */
-    public static List<FormResponse> getFormResponseList( )
+    private static void completeWithSteps( FormResponse formResponse )
     {
-        return _dao.selectFormResponseList( _plugin );
+        if ( formResponse != null )
+        {
+            formResponse.setSteps( FormResponseStepHome.findStepsByFormResponse( formResponse.getId( ) ) );
+        }
     }
 
     /**
@@ -127,7 +132,10 @@ public final class FormResponseHome
      */
     public static FormResponse getFormResponseByGuidAndForm( String strGuid, int nIdForm )
     {
-        return _dao.selectFormResponseForBackup( strGuid, nIdForm, _plugin );
+        FormResponse formResponse = _dao.selectFormResponseForBackup( strGuid, nIdForm, _plugin );
+        completeWithSteps( formResponse );
+
+        return formResponse;
     }
 
     /**

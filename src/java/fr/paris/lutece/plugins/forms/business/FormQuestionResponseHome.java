@@ -102,7 +102,12 @@ public final class FormQuestionResponseHome
      */
     public static void removeByQuestion( int nIdQuestion )
     {
-        _dao.deleteByQuestion( nIdQuestion, _plugin );
+        List<FormQuestionResponse> listFormQuestionResponse = findFormQuestionResponseByQuestion( nIdQuestion );
+
+        for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
+        {
+            remove( formQuestionResponse );
+        }
     }
 
     /**
@@ -114,7 +119,24 @@ public final class FormQuestionResponseHome
      */
     public static FormQuestionResponse findByPrimaryKey( int nKey )
     {
-        return _dao.load( nKey, _plugin );
+        FormQuestionResponse formQuestionResponse = _dao.load( nKey, _plugin );
+        completeWithQuestion( formQuestionResponse );
+
+        return formQuestionResponse;
+    }
+
+    /**
+     * Completes the specified form question response with the question
+     * 
+     * @param formQuestionResponse
+     *            the specified form question response
+     */
+    private static void completeWithQuestion( FormQuestionResponse formQuestionResponse )
+    {
+        if ( formQuestionResponse != null )
+        {
+            formQuestionResponse.setQuestion( QuestionHome.findByPrimaryKey( formQuestionResponse.getQuestion( ).getId( ) ) );
+        }
     }
 
     /**
@@ -124,7 +146,24 @@ public final class FormQuestionResponseHome
      */
     public static List<FormQuestionResponse> getFormQuestionResponseList( )
     {
-        return _dao.selectFormQuestionResponseList( _plugin );
+        List<FormQuestionResponse> listFormQuestionResponse = _dao.selectFormQuestionResponseList( _plugin );
+        completeWithQuestions( listFormQuestionResponse );
+
+        return listFormQuestionResponse;
+    }
+
+    /**
+     * Completes the specified list of form question responses with the questions
+     * 
+     * @param listFormQuestionResponse
+     *            the list of form question responses
+     */
+    private static void completeWithQuestions( List<FormQuestionResponse> listFormQuestionResponse )
+    {
+        for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
+        {
+            completeWithQuestion( formQuestionResponse );
+        }
     }
 
     /**
@@ -136,9 +175,12 @@ public final class FormQuestionResponseHome
      *            The identifier of the Step
      * @return the list which contains the data of all the formQuestionResponse objects
      */
-    public static List<FormQuestionResponse> getFormQuestionResponseListByStepAndFormResponse( int nIdFormResponse, int nIdStep )
+    public static List<FormQuestionResponse> findQuestionsByStepAndFormResponse( int nIdFormResponse, int nIdStep )
     {
-        return _dao.selectFormQuestionResponseListByStepAndFormResponse( nIdFormResponse, nIdStep, _plugin );
+        List<FormQuestionResponse> listFormQuestionResponse = _dao.selectFormQuestionResponseListByStepAndFormResponse( nIdFormResponse, nIdStep, _plugin );
+        completeWithQuestions( listFormQuestionResponse );
+
+        return listFormQuestionResponse;
     }
 
     /**
@@ -150,21 +192,41 @@ public final class FormQuestionResponseHome
      */
     public static List<FormQuestionResponse> getFormQuestionResponseListByFormResponse( int nIdFormResponse )
     {
-        return _dao.selectFormQuestionResponseListByFormResponse( nIdFormResponse, _plugin );
+        List<FormQuestionResponse> listFormQuestionResponse = _dao.selectFormQuestionResponseListByFormResponse( nIdFormResponse, _plugin );
+        completeWithQuestions( listFormQuestionResponse );
+
+        return listFormQuestionResponse;
     }
 
     /**
-     * Retrieve all the FormQuestionResponse associated to the given FormResponse for the specified Question. Return an empty list if there is no
-     * FormQuestionResponse associated to the given parameters.
+     * Retrieves the list of form question responses associated to the specified question.
+     * 
+     * @param nIdQuestion
+     *            The identifier of the Question
+     * @return the list of form question responses
+     */
+    public static List<FormQuestionResponse> findFormQuestionResponseByQuestion( int nIdQuestion )
+    {
+        List<FormQuestionResponse> listFormQuestionResponse = _dao.selectFormQuestionResponseByQuestion( nIdQuestion, _plugin );
+        completeWithQuestions( listFormQuestionResponse );
+
+        return listFormQuestionResponse;
+    }
+
+    /**
+     * Retrieves the form question response associated to the given form response for the specified question.
      * 
      * @param nIdFormResponse
      *            The identifier of the FormResponse
      * @param nIdQuestion
      *            The identifier of the Question
-     * @return the list of all FormQuestionResponse associated to the given formResponse and Question, return an empty list if there is no result.
+     * @return the found form question response, or {@code null} if not found.
      */
-    public static List<FormQuestionResponse> getFormQuestionResponseListByResponseQuestion( int nIdFormResponse, int nIdQuestion )
+    public static FormQuestionResponse findFormQuestionResponseByResponseQuestion( int nIdFormResponse, int nIdQuestion )
     {
-        return _dao.selectFormQuestionResponseListByResponseForQuestion( nIdFormResponse, nIdQuestion, _plugin );
+        FormQuestionResponse formQuestionResponse = _dao.selectFormQuestionResponseByResponseForQuestion( nIdFormResponse, nIdQuestion, _plugin );
+        completeWithQuestion( formQuestionResponse );
+
+        return formQuestionResponse;
     }
 }

@@ -50,7 +50,6 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.workflow.IFormWorkflowService;
@@ -143,7 +142,7 @@ public class FormService
 
             FormResponseStep formResponseStep = new FormResponseStep( );
             formResponseStep.setFormResponseId( formResponseManager.getFormResponse( ).getId( ) );
-            formResponseStep.setIdStep( step.getId( ) );
+            formResponseStep.setStep( step );
             formResponseStep.setOrder( nIndexOrder );
 
             FormResponseStepHome.create( formResponseStep );
@@ -164,7 +163,7 @@ public class FormService
     {
         for ( FormQuestionResponse formQuestionResponse : formResponseManager.getMapStepFormResponses( ).get( step.getId( ) ) )
         {
-            Question question = QuestionHome.findByPrimaryKey( formQuestionResponse.getIdQuestion( ) );
+            Question question = formQuestionResponse.getQuestion( );
             IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
             formQuestionResponse.setIdFormResponse( formResponseManager.getFormResponse( ).getId( ) );
             formQuestionResponse.setIdStep( step.getId( ) );
@@ -340,16 +339,12 @@ public class FormService
         {
             formResponseManager.setFormResponse( formResponse );
 
-            for ( int nIdStep : FormResponseStepHome.getListIdStepByFormResponse( formResponse.getId( ) ) )
+            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
             {
-                Step step = StepHome.findByPrimaryKey( nIdStep );
+                Step step = formResponseStep.getStep( );
 
                 formResponseManager.getListValidatedStep( ).add( step );
-
-                List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByStepAndFormResponse(
-                        formResponse.getId( ), step.getId( ) );
-
-                formResponseManager.getMapStepFormResponses( ).put( step.getId( ), listFormQuestionResponse );
+                formResponseManager.getMapStepFormResponses( ).put( step.getId( ), formResponseStep.getQuestions( ) );
             }
         }
 

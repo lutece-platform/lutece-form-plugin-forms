@@ -313,14 +313,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     {
         List<Response> listResponseQuestions = new ArrayList<>( );
 
-        List<FormQuestionResponse> formQuestionResponses = FormQuestionResponseHome
-                .getFormQuestionResponseListByResponseQuestion( nIdFormResponse, nIdQuestion );
-        if ( !CollectionUtils.isEmpty( formQuestionResponses ) )
+        FormQuestionResponse formQuestionResponse = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion( nIdFormResponse, nIdQuestion );
+
+        if ( formQuestionResponse != null )
         {
-            for ( FormQuestionResponse formQuestionResponse : formQuestionResponses )
-            {
-                listResponseQuestions.addAll( formQuestionResponse.getEntryResponse( ) );
-            }
+            listResponseQuestions.addAll( formQuestionResponse.getEntryResponse( ) );
         }
 
         return listResponseQuestions;

@@ -103,7 +103,40 @@ public final class FormResponseStepHome
      */
     public static FormResponseStep findByPrimaryKey( int nKey )
     {
-        return _dao.load( nKey, _plugin );
+        FormResponseStep formResponseStep = _dao.load( nKey, _plugin );
+        completeWithStep( formResponseStep );
+        completeWithQuestionResponse( formResponseStep );
+
+        return formResponseStep;
+    }
+
+    /**
+     * Completes the specified form response step with the step
+     * 
+     * @param formResponseStep
+     *            the form response step
+     */
+    private static void completeWithStep( FormResponseStep formResponseStep )
+    {
+        if ( formResponseStep != null )
+        {
+            formResponseStep.setStep( StepHome.findByPrimaryKey( formResponseStep.getStep( ).getId( ) ) );
+        }
+    }
+
+    /**
+     * Completes the specified form response step with the questions containing responses
+     * 
+     * @param formResponseStep
+     *            the form response step
+     */
+    private static void completeWithQuestionResponse( FormResponseStep formResponseStep )
+    {
+        if ( formResponseStep != null )
+        {
+            formResponseStep.setQuestions( FormQuestionResponseHome.findQuestionsByStepAndFormResponse( formResponseStep.getFormResponseId( ), formResponseStep
+                    .getStep( ).getId( ) ) );
+        }
     }
 
     /**
@@ -113,7 +146,39 @@ public final class FormResponseStepHome
      */
     public static List<FormResponseStep> getFormResponseStepList( )
     {
-        return _dao.selectFormResponseStepList( _plugin );
+        List<FormResponseStep> listFormResponseStep = _dao.selectFormResponseStepList( _plugin );
+        completeWithSteps( listFormResponseStep );
+        completeWithQuestionResponses( listFormResponseStep );
+
+        return listFormResponseStep;
+    }
+
+    /**
+     * Completes the specified list of form response steps with the step
+     * 
+     * @param listFormResponseStep
+     *            the list of form response steps
+     */
+    private static void completeWithSteps( List<FormResponseStep> listFormResponseStep )
+    {
+        for ( FormResponseStep formResponseStep : listFormResponseStep )
+        {
+            completeWithStep( formResponseStep );
+        }
+    }
+
+    /**
+     * Completes the specified list of form response steps with the questions containing responses
+     * 
+     * @param listFormResponseStep
+     *            the list of form response steps
+     */
+    private static void completeWithQuestionResponses( List<FormResponseStep> listFormResponseStep )
+    {
+        for ( FormResponseStep formResponseStep : listFormResponseStep )
+        {
+            completeWithQuestionResponse( formResponseStep );
+        }
     }
 
     /**
@@ -134,9 +199,13 @@ public final class FormResponseStepHome
      *            The form Identifier
      * @return the list which contains the data of all the formResponseStep objects
      */
-    public static List<Integer> getListIdStepByFormResponse( int nIdFormResponse )
+    public static List<FormResponseStep> findStepsByFormResponse( int nIdFormResponse )
     {
-        return _dao.selectListIdStepByFormResponse( nIdFormResponse, _plugin );
+        List<FormResponseStep> listFormResponseStep = _dao.selectFormResponseStepsByFormResponse( nIdFormResponse, _plugin );
+        completeWithSteps( listFormResponseStep );
+        completeWithQuestionResponses( listFormResponseStep );
+
+        return listFormResponseStep;
     }
 
 }

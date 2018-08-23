@@ -35,6 +35,7 @@
 package fr.paris.lutece.plugins.forms.business;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 /**
  * This is the business class for the object FormResponse
@@ -57,6 +58,8 @@ public class FormResponse
     private Timestamp _dateUpdate;
 
     private boolean _bFromSave;
+
+    private List<FormResponseStep> _listFormResponseStep;
 
     /**
      * @return the _nId
@@ -158,6 +161,27 @@ public class FormResponse
     public void setFromSave( boolean bFromSave )
     {
         this._bFromSave = bFromSave;
+    }
+
+    /**
+     * Gives the steps containing responses
+     * 
+     * @return the steps
+     */
+    public List<FormResponseStep> getSteps( )
+    {
+        return _listFormResponseStep;
+    }
+
+    /**
+     * Sets the steps containing responses
+     * 
+     * @param listFormResponseStep
+     *            the list of steps
+     */
+    public void setSteps( List<FormResponseStep> listFormResponseStep )
+    {
+        _listFormResponseStep = listFormResponseStep;
     }
 
 }

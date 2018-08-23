@@ -53,7 +53,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response_step WHERE id = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM_RESPONSE = "DELETE FROM forms_response_step WHERE id_form_response = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_response_step SET id_form_response = ?, id_step = ?, order_response = ? WHERE id = ?";
-    private static final String SQL_QUERY_SELECT_BY_ID_RESPONSE = "SELECT id_step FROM forms_response_step WHERE id_form_response = ? ORDER BY order_response ASC";
+    private static final String SQL_QUERY_SELECT_BY_ID_RESPONSE = SQL_QUERY_SELECTALL + " WHERE id_form_response = ? ORDER BY order_response ASC";
 
     /**
      * {@inheritDoc }
@@ -67,7 +67,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponseStep.getFormResponseId( ) );
-            daoUtil.setInt( nIndex++, formResponseStep.getIdStep( ) );
+            daoUtil.setInt( nIndex++, formResponseStep.getStep( ).getId( ) );
             daoUtil.setInt( nIndex++, formResponseStep.getOrder( ) );
 
             daoUtil.executeUpdate( );
@@ -129,7 +129,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponseStep.getFormResponseId( ) );
-            daoUtil.setInt( nIndex++, formResponseStep.getIdStep( ) );
+            daoUtil.setInt( nIndex++, formResponseStep.getStep( ).getId( ) );
             daoUtil.setInt( nIndex++, formResponseStep.getOrder( ) );
 
             daoUtil.setInt( nIndex++, formResponseStep.getId( ) );
@@ -172,9 +172,9 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
      * {@inheritDoc }
      */
     @Override
-    public List<Integer> selectListIdStepByFormResponse( int nIdFormResponse, Plugin plugin )
+    public List<FormResponseStep> selectFormResponseStepsByFormResponse( int nIdFormResponse, Plugin plugin )
     {
-        List<Integer> listIdStep = new ArrayList<Integer>( );
+        List<FormResponseStep> listIdStep = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_RESPONSE, plugin );
 
         daoUtil.setInt( 1, nIdFormResponse );
@@ -182,7 +182,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
 
         while ( daoUtil.next( ) )
         {
-            listIdStep.add( daoUtil.getInt( 1 ) );
+            listIdStep.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
@@ -201,7 +201,11 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
         FormResponseStep formResponseStep = new FormResponseStep( );
         formResponseStep.setId( daoUtil.getInt( "id" ) );
         formResponseStep.setFormResponseId( daoUtil.getInt( "id_form_response" ) );
-        formResponseStep.setIdStep( daoUtil.getInt( "id_step" ) );
+
+        Step step = new Step( );
+        step.setId( daoUtil.getInt( "id_step" ) );
+        formResponseStep.setStep( step );
+
         formResponseStep.setOrder( daoUtil.getInt( "order_response" ) );
 
         return formResponseStep;
