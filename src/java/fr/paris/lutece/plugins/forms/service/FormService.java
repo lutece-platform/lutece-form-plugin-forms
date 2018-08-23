@@ -164,10 +164,14 @@ public class FormService
         for ( FormQuestionResponse formQuestionResponse : formResponseManager.getMapStepFormResponses( ).get( step.getId( ) ) )
         {
             Question question = formQuestionResponse.getQuestion( );
-            IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-            formQuestionResponse.setIdFormResponse( formResponseManager.getFormResponse( ).getId( ) );
-            formQuestionResponse.setIdStep( step.getId( ) );
-            dataService.save( formQuestionResponse );
+
+            if ( question != null )
+            {
+                IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+                formQuestionResponse.setIdFormResponse( formResponseManager.getFormResponse( ).getId( ) );
+                formQuestionResponse.setIdStep( step.getId( ) );
+                dataService.save( formQuestionResponse );
+            }
         }
     }
 

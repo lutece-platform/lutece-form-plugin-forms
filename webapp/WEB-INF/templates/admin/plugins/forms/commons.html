@@ -99,6 +99,23 @@
 </#function>
 
 <#-- 
+-- Get the response containing the field with the given title
+-- @param responses the list of responses
+-- @param the fieldCode the code
+-- @return the response
+-->
+<#function getResponseContainingTheFieldWithTitle responses fieldTitle>
+  <#if responses??>
+    <#list responses as response>
+      <#if response.field?? && response.field.title?? && response.field.title == fieldTitle >
+        <#return response />
+      </#if>
+    </#list>
+  </#if>
+</#function>
+
+
+<#-- 
 -- Get the response entry from a given entry
 -- @param responses the list of responses
 -- @param entry the entry

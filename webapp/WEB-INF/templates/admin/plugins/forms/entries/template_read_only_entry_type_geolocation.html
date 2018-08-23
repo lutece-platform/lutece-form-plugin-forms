@@ -1,37 +1,48 @@
-<div class="form-group">
-    <label class="col-xs-12 col-sm-3 control-label">
-        ${entry.title!''}
-    </label>
-    <#if list_responses?has_content>
-        <#assign first = true>
-        <#list list_responses as response>
-            <#if first>
-                <#assign first = false>
-                <div class="col-xs-12 col-sm-9">
-            <#else>
-                <div class="col-xs-12 col-sm-9 col-sm-offset-3">
-            </#if>
-            <#if response.field?exists>
-                <#if response.field.title == 'address'>
-                    <#if response.value?has_content>
-                        ${response.value}
-                    <#else>
-                        -
+<#include "/admin/plugins/forms/commons.html" />
+
+<@formGroup labelFor='${entry.idEntry}_address' labelKey='${entry.title}' helpKey=entry.helpMessage mandatory=entry.mandatory>
+    <#assign responseX = "" >
+    <#assign responseY = "" >
+    <#if getResponseContainingTheFieldWithTitle( list_responses, "address" )?? >
+       <#assign responseAddress = getResponseContainingTheFieldWithTitle( list_responses, "address" ).toStringValueResponse >
+    </#if>
+    <#if getResponseContainingTheFieldWithTitle( list_responses, "geometry" )?? >
+       <#assign responseGeometry = getResponseContainingTheFieldWithTitle( list_responses, "geometry" ).toStringValueResponse >
+    </#if>
+    <#if getResponseContainingTheFieldWithTitle( list_responses, "X" )?? >
+       <#assign responseX = getResponseContainingTheFieldWithTitle( list_responses, "X" ).toStringValueResponse >
+    </#if>
+    <#if getResponseContainingTheFieldWithTitle( list_responses, "Y" )?? >
+       <#assign responseY = getResponseContainingTheFieldWithTitle( list_responses, "Y" ).toStringValueResponse >
+    </#if>
+    <#if responseX == "" || responseX == "0" || responseY == "" || responseY == "0">
+        #i18n{forms.entryType.geolocalisation.message.noGeolocation}
+    <#else>
+        ${(responseAddress)!}
+        
+        <input type="hidden" id="${entry.idEntry}_address" name="${entry.idEntry}_address" value="${(responseAddress)!}">
+        <input type="hidden" id="${entry.idEntry}_geometry" name="${entry.idEntry}_geometry" value="${(responseGeometry)!}" />
+        <input type="hidden" id="${entry.idEntry}_x" name="${entry.idEntry}_x" value="${(responseX)!}">
+        <input type="hidden" id="${entry.idEntry}_y" name="${entry.idEntry}_y" value="${(responseY)!}">
+
+        <#assign editModeValue = "ReadOnly">
+
+        <#assign viewNumberValue = "1">
+        <#assign viewNumberValue = getFieldValue( entry, "viewNumber" )>
+
+        <#if entry.mapProvider?has_content>
+                <#if entry.mapProvider.key?has_content && entry.mapProvider.key == "gismap" >
+                    <#if entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
+                        <#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter >
                     </#if>
-                <#elseif response.field.title == 'X'>
-                    <#if !(response.value?has_content) || (response.value == '0')>
-                        #i18n{forms.entryType.geolocalisation.message.noGeolocation}
-                    <#else>
-                        <input type="hidden" name="geolocation" value="${response.entry.idEntry}" />
-                        <input type="hidden" id="${response.entry.idEntry}_x" name="x" value="${response.value}"/>
-                    </#if>
-                <#elseif response.field.title == 'Y'>
-                    <#if response.value?has_content && response.value != '0'>
-                        <input type="hidden" id="${response.entry.idEntry}_y" name="y" value="${response.value}"/>
+                    
+                    <#if entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).addressParam??>
+                        <#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam >
                     </#if>
                 </#if>
-            </#if>
-            </div>
-        </#list>
+                
+                <#include entry.mapProvider.htmlCode />
+        </#if>
     </#if>
-</div>
+</@formGroup>
+                

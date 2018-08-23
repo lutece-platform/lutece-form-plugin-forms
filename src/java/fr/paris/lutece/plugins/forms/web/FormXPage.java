@@ -388,7 +388,11 @@ public class FormXPage extends MVCApplication
             for ( FormQuestionResponse formQuestionResponse : listStepResponses )
             {
                 Question question = formQuestionResponse.getQuestion( );
-                mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
+
+                if ( question != null )
+                {
+                    mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
+                }
             }
         }
 
@@ -503,17 +507,20 @@ public class FormXPage extends MVCApplication
 
         for ( Question question : stepQuestions )
         {
-            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-            if ( entryDataService != null )
+            if ( !question.getEntry( ).isOnlyDisplayInBack( ) )
             {
-                FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request );
-
-                if ( formQuestionResponse.hasError( ) )
+                IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+                if ( entryDataService != null )
                 {
-                    bValidStep = false;
+                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request );
+    
+                    if ( formQuestionResponse.hasError( ) )
+                    {
+                        bValidStep = false;
+                    }
+    
+                    listResponsesTemp.add( formQuestionResponse );
                 }
-
-                listResponsesTemp.add( formQuestionResponse );
             }
         }
 
@@ -645,17 +652,20 @@ public class FormXPage extends MVCApplication
 
         for ( Question question : stepQuestions )
         {
-            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-            if ( entryDataService != null )
+            if ( !question.getEntry( ).isOnlyDisplayInBack( ) )
             {
-                FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request );
-
-                if ( !formQuestionResponse.hasError( ) )
+                IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+                if ( entryDataService != null )
                 {
-                    listResponsesTemp.add( formQuestionResponse );
+                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request );
+        
+                    if ( !formQuestionResponse.hasError( ) )
+                    {
+                        listResponsesTemp.add( formQuestionResponse );
+                    }
+        
+                    mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
                 }
-
-                mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
             }
         }
 

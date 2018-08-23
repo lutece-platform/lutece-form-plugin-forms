@@ -55,6 +55,9 @@
 						<@formGroup id='iterationAddingLabel' labelFor='iteration_adding_label' labelKey='#i18n{forms.createEntry.labelIterationAddingLabel}' helpKey='#i18n{forms.createEntry.labelHelpIterationAddingLabel}' params=style >
 							<@input type='text' name='iteration_adding_label' value='${iterationAddingLabel}' maxlength=255 />
 						</@formGroup>
+                        <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
+                            <@checkBox name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
+                        </@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' >
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>

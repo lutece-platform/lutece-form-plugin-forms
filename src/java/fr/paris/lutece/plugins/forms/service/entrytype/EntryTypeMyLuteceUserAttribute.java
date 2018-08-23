@@ -74,7 +74,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_mylutece_user_attribute.html";
     private static final String TEMPLATE_ENTRY_READ_ONLY = "admin/plugins/forms/entries/template_read_only_entry_type_mylutece_user_attribute.html";
     private static final String PROPERTY_ENTRY_TITLE = "forms.entryTypeMyLuteceUserAttribute.title";
-    private static final String PARAMETER_DISPLAY_IN_FRONT_OFFICE = "display_front_office";
+    private static final String PARAMETER_ONLY_DISPLAY_IN_BACK = "only_display_in_back";
     private static final String PARAMETER_MYLUTECE_ATTRIBUTE_NAME = "mylutece_attribute_name";
 
     private ReferenceList _refListUserAttributes;
@@ -115,7 +115,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         entry.setTitle( I18nService.getLocalizedString( PROPERTY_ENTRY_TITLE, locale ) );
 
         entry.setComment( StringUtils.EMPTY );
-        entry.setConfirmField( Boolean.parseBoolean( request.getParameter( PARAMETER_DISPLAY_IN_FRONT_OFFICE ) ) );
+        entry.setOnlyDisplayInBack( Boolean.parseBoolean( request.getParameter( PARAMETER_ONLY_DISPLAY_IN_BACK ) ) );
         entry.setMandatory( entry.isConfirmField( ) && Boolean.parseBoolean( request.getParameter( PARAMETER_MANDATORY ) ) );
         entry.setCSSClass( request.getParameter( PARAMETER_CSS_CLASS ) );
         entry.setTitle( request.getParameter( PARAMETER_TITLE ) );

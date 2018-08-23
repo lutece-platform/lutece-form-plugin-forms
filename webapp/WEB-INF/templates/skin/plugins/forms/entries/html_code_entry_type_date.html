@@ -1,3 +1,4 @@
+<#if !entry.onlyDisplayInBack>
 	<div class="form-group">
 		<#assign idName = 'attribute' + entry.idEntry>
 		<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
@@ -39,12 +40,13 @@
 		</#list>
 	</#if>
  
-<@getDatePickerBootstrap idField="${idName}" language=locale.language />
-
-<script type="text/javascript">
-$( document ).ready(function() {
-	$("#attribute${idName}").on('changeDate', function(ev){
-		$(this).datepicker('hide');
+	<@getDatePickerBootstrap idField="${idName}" language=locale.language />
+	
+	<script type="text/javascript">
+	$( document ).ready(function() {
+		$("#attribute${idName}").on('changeDate', function(ev){
+			$(this).datepicker('hide');
+		});
 	});
-});
-</script>
+	</script>
+</#if>

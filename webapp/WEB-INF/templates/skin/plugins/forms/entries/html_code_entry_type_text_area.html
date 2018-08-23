@@ -1,60 +1,62 @@
-<#macro getTextAreaContent responseContent has_error entry field>
-	<#assign idName = 'attribute' + entry.idEntry>
-	<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
-		<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
-	</#if>
-	<!#-- 	fieldInLine means use rich text -->
-	<#if has_error>
-		<textarea name="${idName}" id="${idName}" cols="${field.width}" rows="${field.height}" class="alert alert-danger<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
-	<#else>
-		<textarea name="${idName}" id="${idName}" cols="${field.width}" rows="${field.height}" class="${entry.CSSClass!}<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
-	</#if>
-</#macro>
-
-	<div class="form-group">
+<#if !entry.onlyDisplayInBack>
+	<#macro getTextAreaContent responseContent has_error entry field>
 		<#assign idName = 'attribute' + entry.idEntry>
 		<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
 			<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
 		</#if>
-		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-			<#list entry.fields as field>
-				<#if list_responses?? && list_responses?has_content>
-					<#list list_responses as response>
-						<#if response.entry.idEntry == entry.idEntry && response.toStringValueResponse??>
-							<#if response.entry.error??>
-								<@getTextAreaContent responseContent=response.toStringValueResponse has_error=true entry=entry field=field/>
-							<#else>
-								<@getTextAreaContent responseContent=response.toStringValueResponse has_error=false entry=entry field=field/>
-							</#if>
-						</#if>
-					</#list>
-				<#else>
-					<#if field.value?exists>
-						<@getTextAreaContent responseContent=field.value has_error=false entry=entry field=field/>
-					<#else>
-						<@getTextAreaContent responseContent="" has_error=false entry=entry field=field/>
-					</#if>
-				</#if>
-			</#list>
-			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="help-block">${entry.helpMessage}</span>
-			</#if>
-		</div>
-	</div>
+		<!#-- 	fieldInLine means use rich text -->
+		<#if has_error>
+			<textarea name="${idName}" id="${idName}" cols="${field.width}" rows="${field.height}" class="alert alert-danger<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
+		<#else>
+			<textarea name="${idName}" id="${idName}" cols="${field.width}" rows="${field.height}" class="${entry.CSSClass!}<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
+		</#if>
+	</#macro>
 	
-	<#if list_responses??>
-	<#list list_responses as response>
-	<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-	<div class="alert alert-danger">
-		<#assign error = response.entry.error>
-		<#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if>
-	</div>
-	</#if>
-	</#list>
-	</#if>
-
-<#if entry.fieldInLine>
-	<#include "/util/editor/editor.html" />
-	<@initEditor />
-</#if>		
+		<div class="form-group">
+			<#assign idName = 'attribute' + entry.idEntry>
+			<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+				<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
+			</#if>
+			<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+				<#list entry.fields as field>
+					<#if list_responses?? && list_responses?has_content>
+						<#list list_responses as response>
+							<#if response.entry.idEntry == entry.idEntry && response.toStringValueResponse??>
+								<#if response.entry.error??>
+									<@getTextAreaContent responseContent=response.toStringValueResponse has_error=true entry=entry field=field/>
+								<#else>
+									<@getTextAreaContent responseContent=response.toStringValueResponse has_error=false entry=entry field=field/>
+								</#if>
+							</#if>
+						</#list>
+					<#else>
+						<#if field.value?exists>
+							<@getTextAreaContent responseContent=field.value has_error=false entry=entry field=field/>
+						<#else>
+							<@getTextAreaContent responseContent="" has_error=false entry=entry field=field/>
+						</#if>
+					</#if>
+				</#list>
+				<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+					<span class="help-block">${entry.helpMessage}</span>
+				</#if>
+			</div>
+		</div>
+		
+		<#if list_responses??>
+		<#list list_responses as response>
+		<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+		<div class="alert alert-danger">
+			<#assign error = response.entry.error>
+			<#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if>
+		</div>
+		</#if>
+		</#list>
+		</#if>
+	
+	<#if entry.fieldInLine>
+		<#include "/util/editor/editor.html" />
+		<@initEditor />
+	</#if>		
+</#if>
