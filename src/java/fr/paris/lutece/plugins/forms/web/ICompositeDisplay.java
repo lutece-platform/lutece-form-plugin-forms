@@ -39,7 +39,7 @@ import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
-import fr.paris.lutece.plugins.forms.web.display.DisplayType;
+import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 
 /**

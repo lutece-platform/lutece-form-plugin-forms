@@ -32,7 +32,7 @@
  * License 1.0
  */
 
-package fr.paris.lutece.plugins.forms.web;
+package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import java.util.ArrayList;
 

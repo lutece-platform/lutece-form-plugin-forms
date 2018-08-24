@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web.display;
+package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import java.util.Locale;
 import java.util.Map;

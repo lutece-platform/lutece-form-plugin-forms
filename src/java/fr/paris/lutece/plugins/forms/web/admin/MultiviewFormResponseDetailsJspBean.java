@@ -71,7 +71,7 @@ import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.IFormsMultiviewAuthorizationService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
-import fr.paris.lutece.plugins.forms.web.display.DisplayType;
+import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.form.response.view.FormResponseViewModelProcessorFactory;
 import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewModelProcessor;
 import fr.paris.lutece.plugins.genericattributes.business.Response;

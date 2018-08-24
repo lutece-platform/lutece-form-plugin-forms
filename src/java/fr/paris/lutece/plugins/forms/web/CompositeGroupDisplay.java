@@ -49,7 +49,7 @@ import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.web.display.DisplayType;
+import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;

@@ -31,39 +31,62 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web;
-
-import javax.servlet.http.HttpServletRequest;
-
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
-import fr.paris.lutece.plugins.forms.business.Question;
+package fr.paris.lutece.plugins.forms.web.entrytype;
 
 /**
- * Interface for the entry data services
+ * This class represents a type of display
+ *
  */
-public interface IEntryDataService
+public class DisplayType
 {
-    /**
-     * @return the data service name
-     */
-    String getDataServiceName( );
+    public static final DisplayType EDITION_BACKOFFICE = new DisplayType( Mode.EDITION, false );
+    public static final DisplayType EDITION_FRONTOFFICE = new DisplayType( Mode.EDITION, true );
+    public static final DisplayType READONLY_BACKOFFICE = new DisplayType( Mode.READONLY, false );
+    public static final DisplayType READONLY_FRONTOFFICE = new DisplayType( Mode.READONLY, true );
 
     /**
-     * 
-     * @param questionResponse
-     *            the questionResponse to save
-     * @return
+     * The display mode
+     *
      */
-    void save( FormQuestionResponse questionResponse );
+    public enum Mode
+    {
+        EDITION, READONLY
+    };
+
+    private final Mode _mode;
+    private final boolean _bIsFront;
 
     /**
-     * Creates the response values from request for the given question
+     * Constructor
      * 
-     * @param question
-     *            the question to
-     * @param request
-     *            The Http request
-     * @return The response to the question
+     * @param mode
+     *            the mode
+     * @param bIsFront
+     *            {@code true} if the display is for front-office, {@code false} if it is for back-office
      */
-    FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request );
+    private DisplayType( Mode mode, boolean bIsFront )
+    {
+        _mode = mode;
+        _bIsFront = bIsFront;
+    }
+
+    /**
+     * Gives the mode
+     * 
+     * @return the mode
+     */
+    public Mode getMode( )
+    {
+        return _mode;
+    }
+
+    /**
+     * Tests if the display is for front-office or for back-office
+     * 
+     * @return {@code true} if the display is for front-office, {@code false} if it is for back-office
+     */
+    public boolean isFront( )
+    {
+        return _bIsFront;
+    }
 }

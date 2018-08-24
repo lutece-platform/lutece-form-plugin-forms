@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web.display;
+package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import java.util.Locale;
 import java.util.Map;
@@ -45,21 +45,19 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
 /**
- * The display service for entry type date
+ * The default display service
  */
-public class EntryTypeDateDisplayService implements IEntryDisplayService
+public class EntryTypeDefaultDisplayService implements IEntryDisplayService
 {
-    private static final String LOCALE_MARKER = "locale";
-
     private String _strEntryServiceName = StringUtils.EMPTY;
 
     /**
-     * Constructor of the EntryTypeDateDisplayService
+     * Constructor of the EntryTypeDefaultDisplayService
      * 
      * @param strEntryServiceName
      *            The entry service name
      */
-    public EntryTypeDateDisplayService( String strEntryServiceName )
+    public EntryTypeDefaultDisplayService( String strEntryServiceName )
     {
         _strEntryServiceName = strEntryServiceName;
     }
@@ -69,26 +67,29 @@ public class EntryTypeDateDisplayService implements IEntryDisplayService
      * 
      * @param entry
      *            The given entry
-     * @param locale
-     *            The given locale
      * @param model
      *            The given model
      * @return the completed model
      */
-    private Map<String, Object> setModel( Entry entry, Locale locale, Map<String, Object> model )
+    private Map<String, Object> setModel( Entry entry, Map<String, Object> model )
     {
         model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
-        model.put( LOCALE_MARKER, locale );
 
         return model;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDisplayServiceName( )
     {
         return _strEntryServiceName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType )
     {
@@ -98,11 +99,11 @@ public class EntryTypeDateDisplayService implements IEntryDisplayService
         switch( displayType.getMode( ) )
         {
             case EDITION:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale,
-                        setModel( entry, locale, model ) ).getHtml( );
+                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, model ) )
+                        .getHtml( );
                 break;
             case READONLY:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( ), locale, setModel( entry, locale, model ) ).getHtml( );
+                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( ), locale, setModel( entry, model ) ).getHtml( );
                 break;
             default: // Nothing to do
         }
