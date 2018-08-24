@@ -66,4 +66,24 @@ public interface IEntryDataService
      * @return The response to the question
      */
     FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request );
+
+    /**
+     * Tests if a response has changed
+     * 
+     * @param listResponseReference
+     *            the reference response
+     * @param listResponseNew
+     *            the new response
+     * @return {@code true} if the response has changed, {@code false} otherwise
+     */
+    boolean isResponseChanged( FormQuestionResponse responseReference, FormQuestionResponse responseNew );
+
+    /**
+     * Converts the specified response into a {@code String}
+     * 
+     * @param formQuestionResponse
+     *            the response to convert
+     * @return the {@code String}
+     */
+    String responseToString( FormQuestionResponse formQuestionResponse );
 }

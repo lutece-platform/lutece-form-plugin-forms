@@ -33,7 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import java.util.List;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeTextArea;
 
 /**
@@ -41,7 +44,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntry
  * class EntryTypeTextArea
  *
  */
-public class EntryTypeTextArea extends AbstractEntryTypeTextArea
+public class EntryTypeTextArea extends AbstractEntryTypeTextArea implements IResponseComparator
 {
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_text_area.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_text_area.html";
@@ -88,5 +91,27 @@ public class EntryTypeTextArea extends AbstractEntryTypeTextArea
     public String getTemplateEntryReadOnly( )
     {
         return TEMPLATE_READONLY_BACKOFFICE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
+    {
+        String strResponseReference = listResponseReference.get( 0 ).getToStringValueResponse( );
+        String strResponseNew = listResponseNew.get( 0 ).getToStringValueResponse( );
+
+        if ( strResponseReference == null && strResponseNew == null )
+        {
+            return false;
+        }
+
+        if ( strResponseReference == null && strResponseNew != null )
+        {
+            return true;
+        }
+
+        return !strResponseReference.equals( strResponseNew );
     }
 }

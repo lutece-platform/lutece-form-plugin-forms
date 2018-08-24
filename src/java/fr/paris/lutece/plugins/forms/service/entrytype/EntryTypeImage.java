@@ -33,8 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import java.util.List;
+
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
 import fr.paris.lutece.util.url.UrlItem;
@@ -44,7 +47,7 @@ import fr.paris.lutece.util.url.UrlItem;
  * class EntryTypeImage
  *
  */
-public class EntryTypeImage extends AbstractEntryTypeFile
+public class EntryTypeImage extends AbstractEntryTypeFile implements IResponseComparator
 {
     /**
      * Name of the bean of this service
@@ -128,5 +131,57 @@ public class EntryTypeImage extends AbstractEntryTypeFile
     public String getTemplateEntryReadOnly( )
     {
         return TEMPLATE_READONLY_BACKOFFICE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
+    {
+        if ( listResponseReference.size( ) != listResponseNew.size( ) )
+        {
+            return true;
+        }
+
+        boolean bAllResponsesEquals = true;
+
+        for ( Response responseNew : listResponseNew )
+        {
+            Response responseReference = findReferenceResponseAssociatedToNewResponse( responseNew, listResponseReference );
+
+            if ( responseReference == null || responseReference.getFile( ).getSize( ) != responseNew.getFile( ).getSize( ) )
+            {
+                bAllResponsesEquals = false;
+                break;
+            }
+        }
+
+        return !bAllResponsesEquals;
+    }
+
+    /**
+     * Finds the reference response associated to the new response
+     * 
+     * @param responseNew
+     *            the new response
+     * @param listResponseReference
+     *            the list of reference responses
+     * @return the found response or {@code null} if not found
+     */
+    private Response findReferenceResponseAssociatedToNewResponse( Response responseNew, List<Response> listResponseReference )
+    {
+        Response response = null;
+
+        for ( Response responseReference : listResponseReference )
+        {
+            if ( responseReference.getFile( ).getTitle( ).equals( responseNew.getFile( ).getTitle( ) ) )
+            {
+                response = responseReference;
+                break;
+            }
+        }
+
+        return response;
     }
 }

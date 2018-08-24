@@ -33,7 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import java.util.List;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeCheckBox;
 
 /**
@@ -41,7 +45,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntry
  * class EntryTypeCheckBox
  *
  */
-public class EntryTypeCheckBox extends AbstractEntryTypeCheckBox
+public class EntryTypeCheckBox extends AbstractEntryTypeCheckBox implements IResponseComparator
 {
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_check_box.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_check_box.html";
@@ -88,5 +92,78 @@ public class EntryTypeCheckBox extends AbstractEntryTypeCheckBox
     public String getTemplateEntryReadOnly( )
     {
         return TEMPLATE_READONLY_BACKOFFICE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
+    {
+        if ( listResponseReference.size( ) != listResponseNew.size( ) )
+        {
+            return true;
+        }
+
+        if ( listResponseNew.size( ) == 1 )
+        {
+            Field fieldReference = listResponseReference.get( 0 ).getField( );
+            Field fieldNew = listResponseNew.get( 0 ).getField( );
+
+            if ( fieldReference == null && fieldNew == null )
+            {
+                return false;
+            }
+
+            if ( fieldReference != null && fieldNew == null )
+            {
+                return true;
+            }
+
+            if ( fieldReference == null && fieldNew != null )
+            {
+                return true;
+            }
+        }
+
+        boolean bAllResponsesEquals = true;
+
+        for ( Response responseNew : listResponseNew )
+        {
+            Response responseReference = findReferenceResponseAssociatedToNewResponse( responseNew, listResponseReference );
+
+            if ( responseReference == null || !responseReference.getResponseValue( ).equals( responseNew.getResponseValue( ) ) )
+            {
+                bAllResponsesEquals = false;
+                break;
+            }
+        }
+
+        return !bAllResponsesEquals;
+    }
+
+    /**
+     * Finds the reference response associated to the new response
+     * 
+     * @param responseNew
+     *            the new response
+     * @param listResponseReference
+     *            the list of reference responses
+     * @return the found response or {@code null} if not found
+     */
+    private Response findReferenceResponseAssociatedToNewResponse( Response responseNew, List<Response> listResponseReference )
+    {
+        Response response = null;
+
+        for ( Response responseReference : listResponseReference )
+        {
+            if ( responseReference.getField( ).getValue( ).equals( responseNew.getField( ).getValue( ) ) )
+            {
+                response = responseReference;
+                break;
+            }
+        }
+
+        return response;
     }
 }

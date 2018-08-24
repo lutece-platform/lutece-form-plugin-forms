@@ -58,7 +58,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
  * This class is a service for the entry type Terms of service
  *
  */
-public class EntryTypeTermsOfService extends EntryTypeService
+public class EntryTypeTermsOfService extends EntryTypeService implements IResponseComparator
 {
     // Fields
     public static final String FIELD_TOS_CODE = "tos";
@@ -335,5 +335,14 @@ public class EntryTypeTermsOfService extends EntryTypeService
         response.setField( fieldAcceptedTermsOfService );
 
         return response;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
+    {
+        return false;
     }
 }

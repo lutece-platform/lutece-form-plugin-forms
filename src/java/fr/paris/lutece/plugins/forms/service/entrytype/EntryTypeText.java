@@ -33,7 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import java.util.List;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeText;
 
 /**
@@ -41,7 +44,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntry
  * class EntryTypeText
  *
  */
-public class EntryTypeText extends AbstractEntryTypeText
+public class EntryTypeText extends AbstractEntryTypeText implements IResponseComparator
 {
     public static final String BEAN_FORM_RESPONSE_SERVICE = "forms.responseService";
 
@@ -90,5 +93,27 @@ public class EntryTypeText extends AbstractEntryTypeText
     public String getTemplateEntryReadOnly( )
     {
         return TEMPLATE_READONLY_BACKOFFICE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
+    {
+        String strResponseReference = listResponseReference.get( 0 ).getResponseValue( );
+        String strResponseNew = listResponseNew.get( 0 ).getResponseValue( );
+
+        if ( strResponseReference == null && strResponseNew == null )
+        {
+            return false;
+        }
+
+        if ( strResponseReference == null && strResponseNew != null )
+        {
+            return true;
+        }
+
+        return !strResponseReference.equals( strResponseNew );
     }
 }
