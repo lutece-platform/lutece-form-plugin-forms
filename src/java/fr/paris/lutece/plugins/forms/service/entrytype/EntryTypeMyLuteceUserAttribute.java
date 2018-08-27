@@ -60,7 +60,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * class EntryTypeText
  */
-public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUser
+public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUser implements IResponseComparator
 {
     /**
      * Name of the bean of this service
@@ -249,5 +249,14 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     public String getTemplateEntryReadOnly( )
     {
         return TEMPLATE_READONLY_BACKOFFICE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
+    {
+        return false;
     }
 }

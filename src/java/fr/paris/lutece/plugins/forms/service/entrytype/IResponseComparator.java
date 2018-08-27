@@ -35,52 +35,22 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 
 import java.util.List;
 
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeMyLuteceUser;
 
 /**
- * class EntryTypeText
+ * This interface enables to compare list of responses
+ *
  */
-public class EntryTypeMyLuteceUser extends AbstractEntryTypeMyLuteceUser implements IResponseComparator
+public interface IResponseComparator
 {
     /**
-     * Name of the bean of this service
+     * Tests if the response has changed for an {@code Entry}
+     * 
+     * @param listResponseReference
+     *            the list of reference responses for the {@code Entry}
+     * @param listResponseNew
+     *            the list of new responses for the {@code Entry}
+     * @return {@code true} if the response has changed, {@code false} otherwise
      */
-    public static final String BEAN_NAME = "forms.entryTypeMyLuteceUser";
-    private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_mylutece_user.html";
-    private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_mylutece_user.html";
-    private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_mylutece_user.html";
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTemplateHtmlForm( Entry entry, boolean bDisplayFront )
-    {
-        if ( bDisplayFront )
-        {
-            return TEMPLATE_EDITION_FRONTOFFICE;
-        }
-
-        return TEMPLATE_EDITION_BACKOFFICE;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getTemplateEntryReadOnly( )
-    {
-        return TEMPLATE_READONLY_BACKOFFICE;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
-    {
-        return false;
-    }
+    boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew );
 }

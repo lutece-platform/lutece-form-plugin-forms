@@ -33,7 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import java.util.List;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeComment;
 
 /**
@@ -41,7 +44,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntry
  * class EntryTypeComment
  *
  */
-public class EntryTypeComment extends AbstractEntryTypeComment
+public class EntryTypeComment extends AbstractEntryTypeComment implements IResponseComparator
 {
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_comment.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_comment.html";
@@ -88,5 +91,14 @@ public class EntryTypeComment extends AbstractEntryTypeComment
     public String getTemplateEntryReadOnly( )
     {
         return TEMPLATE_READONLY_BACKOFFICE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
+    {
+        return false;
     }
 }

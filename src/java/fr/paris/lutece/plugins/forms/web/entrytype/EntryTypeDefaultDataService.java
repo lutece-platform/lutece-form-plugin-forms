@@ -47,10 +47,14 @@ import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
+import fr.paris.lutece.plugins.forms.service.entrytype.IResponseComparator;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
  * 
@@ -152,6 +156,56 @@ public class EntryTypeDefaultDataService implements IEntryDataService
         formQuestionResponse.setIdStep( question.getIdStep( ) );
 
         return formQuestionResponse;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResponseChanged( FormQuestionResponse responseReference, FormQuestionResponse responseNew )
+    {
+        if ( responseReference == null && responseNew == null )
+        {
+            return false;
+        }
+
+        if ( responseReference == null && responseNew != null )
+        {
+            return true;
+        }
+
+        if ( responseReference != null && responseNew == null )
+        {
+            return true;
+        }
+
+        boolean bIsChanged = false;
+
+        IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( responseReference.getQuestion( ).getEntry( ) );
+
+        if ( service instanceof IResponseComparator )
+        {
+            bIsChanged = ( (IResponseComparator) service ).isResponseChanged( responseReference.getEntryResponse( ), responseNew.getEntryResponse( ) );
+        }
+
+        return bIsChanged;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String responseToString( FormQuestionResponse formQuestionResponse )
+    {
+        StringBuilder sb = new StringBuilder( );
+        Entry entry = formQuestionResponse.getQuestion( ).getEntry( );
+
+        for ( Response response : formQuestionResponse.getEntryResponse( ) )
+        {
+            sb.append( EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForRecap( entry, null, response, I18nService.getDefaultLocale( ) ) );
+        }
+
+        return sb.toString( );
     }
 
 }

@@ -33,13 +33,16 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import java.util.List;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeNumbering;
 
 /**
  * EntryTypeNumbering
  */
-public class EntryTypeNumbering extends AbstractEntryTypeNumbering
+public class EntryTypeNumbering extends AbstractEntryTypeNumbering implements IResponseComparator
 {
     /**
      * Name of the bean of this service
@@ -92,5 +95,27 @@ public class EntryTypeNumbering extends AbstractEntryTypeNumbering
     public String getTemplateEntryReadOnly( )
     {
         return TEMPLATE_READONLY_BACKOFFICE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
+    {
+        String strResponseReference = listResponseReference.get( 0 ).getResponseValue( );
+        String strResponseNew = listResponseNew.get( 0 ).getResponseValue( );
+
+        if ( strResponseReference == null && strResponseNew == null )
+        {
+            return false;
+        }
+
+        if ( strResponseReference == null && strResponseNew != null )
+        {
+            return true;
+        }
+
+        return !strResponseReference.equals( strResponseNew );
     }
 }
