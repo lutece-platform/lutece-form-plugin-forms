@@ -46,6 +46,9 @@
                         <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' showLabel=false rows=2>
                             <@checkBox name='only_display_in_back' id='only_display_in_back' value='1'  labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
                         </@formGroup>
+                        <@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}' showLabel=false rows=2>
+                            <@checkBox name='editable_back' id='editable_back' value='1' labelKey='#i18n{forms.createEntry.labelEditableInBO}' checked=entry.editableBack />
+                        </@formGroup>
             <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' rows=2>
 							<@input type='text' name='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
