@@ -118,9 +118,9 @@ public class TermsOfServiceXPage extends MVCApplication
      */
     private String findTermsOfServiceFromEntry( HttpServletRequest request ) throws SiteMessageException
     {
-        int nIdEntry = NumberUtils.toInt( request.getParameter( PARAMETER_ENTRY_ID ), FormsConstants.ID_NOT_SET );
+        int nIdEntry = NumberUtils.toInt( request.getParameter( PARAMETER_ENTRY_ID ), FormsConstants.DEFAULT_ID_VALUE );
 
-        if ( nIdEntry == FormsConstants.ID_NOT_SET )
+        if ( nIdEntry == FormsConstants.DEFAULT_ID_VALUE )
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_TERMS_OF_SERVICE_NOT_FOUND, SiteMessage.TYPE_STOP );
         }
@@ -208,9 +208,9 @@ public class TermsOfServiceXPage extends MVCApplication
      */
     private String findTermsOfServiceFromResponse( HttpServletRequest request ) throws SiteMessageException
     {
-        int nIdResponse = NumberUtils.toInt( request.getParameter( PARAMETER_RESPONSE_ID ), FormsConstants.ID_NOT_SET );
+        int nIdResponse = NumberUtils.toInt( request.getParameter( PARAMETER_RESPONSE_ID ), FormsConstants.DEFAULT_ID_VALUE );
 
-        if ( nIdResponse == FormsConstants.ID_NOT_SET )
+        if ( nIdResponse == FormsConstants.DEFAULT_ID_VALUE )
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_TERMS_OF_SERVICE_NOT_FOUND, SiteMessage.TYPE_STOP );
         }

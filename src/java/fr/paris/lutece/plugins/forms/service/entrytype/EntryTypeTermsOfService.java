@@ -241,7 +241,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     @Override
     public GenericAttributeError getResponseData( Entry entry, HttpServletRequest request, List<Response> listResponse, Locale locale )
     {
-        int nIdFieldAgreement = NumberUtils.toInt( request.getParameter( PREFIX_ATTRIBUTE + entry.getIdEntry( ) ), FormsConstants.ID_NOT_SET );
+        int nIdFieldAgreement = NumberUtils.toInt( request.getParameter( PREFIX_ATTRIBUTE + entry.getIdEntry( ) ), FormsConstants.DEFAULT_ID_VALUE );
         Response responseAgreement = createResponse( entry, request );
         listResponse.add( responseAgreement );
 
@@ -298,7 +298,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     {
         GenericAttributeError error = null;
 
-        if ( nIdFieldAgreement == FormsConstants.ID_NOT_SET )
+        if ( nIdFieldAgreement == FormsConstants.DEFAULT_ID_VALUE )
         {
             error = new GenericAttributeError( );
             error.setMandatoryError( true );
