@@ -430,7 +430,7 @@ public class FormXPage extends MVCApplication
 
         for ( Step step : listStep )
         {
-            StepDisplayTree stepDisplayTree = new StepDisplayTree( step.getId( ) );
+            StepDisplayTree stepDisplayTree = new StepDisplayTree( step.getId( ), _formResponseManager.getFormResponse( ) );
 
             listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( _formResponseManager.findResponsesFor( step ), request.getLocale( ),
                     DisplayType.READONLY_FRONTOFFICE, null ) );
