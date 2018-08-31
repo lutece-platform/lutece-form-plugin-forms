@@ -39,7 +39,6 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.web.FormResponseManager;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
@@ -54,10 +53,10 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
      * {@inheritDoc}
      */
     @Override
-    public void doProcessActionOnFormCreation( Form form, FormResponseManager formResponseManager )
+    public void doProcessActionOnFormCreation( Form form, FormResponse formResponse )
     {
         int nIdWorkflow = form.getIdWorkflow( );
-        int nIdFormResponse = formResponseManager.getFormResponse( ).getId( );
+        int nIdFormResponse = formResponse.getId( );
         WorkflowService workflowService = WorkflowService.getInstance( );
 
         if ( nIdWorkflow > 0 && workflowService.isAvailable( ) )

@@ -52,8 +52,6 @@ public class FormQuestionResponse
 
     private int _nIdStep;
 
-    private int _nIterationNumber;
-
     private List<Response> _entryResponses;
 
     /**
@@ -126,23 +124,6 @@ public class FormQuestionResponse
     public void setIdStep( int nIdStep )
     {
         this._nIdStep = nIdStep;
-    }
-
-    /**
-     * @return the _nIterationNumber
-     */
-    public int getIterationNumber( )
-    {
-        return _nIterationNumber;
-    }
-
-    /**
-     * @param nIterationNumber
-     *            the nIterationNumber to set
-     */
-    public void setIterationNumber( int nIterationNumber )
-    {
-        this._nIterationNumber = nIterationNumber;
     }
 
     /**

@@ -31,41 +31,54 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service.workflow;
+package fr.paris.lutece.plugins.forms.web.http;
 
-import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.portal.business.user.AdminUser;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * This interface represents a workflow service for the forms
+ * 
+ * Wrapper of ServletRequest for entry of type iterable Group
  *
  */
-public interface IFormWorkflowService
+public class IterationHttpServletRequestWrapper extends HttpServletRequestWrapper
 {
-    String BEAN_NAME = "forms.formWorkflowService";
+    // Pattern
+    private static final String PATTERN_PARAM_PREFIX_ITERATION = "nIt%s_";
+
+    public static final String ATTRIBUTE_RESPONSE_ITERATION_NUMBER = "response_iteration_number";
+
+    // Variable
+    private String _strIterationParameterName;
 
     /**
-     * Processes the workflow action when a form is created
+     * Constructor
      * 
-     * @param form
-     *            the form linked to the workflow
-     * @param formResponse
-     *            the form response to inject in the workflow
+     * @param request
+     *            The HttpServletRequest base
+     * @param nIterationNumber
+     *            The iteration number
      */
-    void doProcessActionOnFormCreation( Form form, FormResponse formResponse );
+    public IterationHttpServletRequestWrapper( HttpServletRequest request, int nIterationNumber )
+    {
+        super( request );
+        _strIterationParameterName = String.format( PATTERN_PARAM_PREFIX_ITERATION, nIterationNumber );
+        request.setAttribute( ATTRIBUTE_RESPONSE_ITERATION_NUMBER, nIterationNumber );
+    }
 
     /**
-     * Removes the resources linked to the specified workflow and form
-     * 
-     * @param nIdWorkflow
-     *            The workflow id
-     * 
-     * @param nIdForm
-     *            The form id
-     * 
-     * @param adminUser
-     *            the user performing the remove action
+     * {@inheritDoc}
      */
-    void removeResources( int nIdWorkflow, int nIdForm, AdminUser adminUser );
+    public String [ ] getParameterValues( String name )
+    {
+        return super.getParameterValues( _strIterationParameterName + name );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getParameter( String name )
+    {
+        return super.getParameter( _strIterationParameterName + name );
+    }
 }

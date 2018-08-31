@@ -81,7 +81,7 @@ public class HorizontalBreadcrumb implements IBreadcrumb
     public String getTopHtml( FormResponseManager formResponseManager )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
-        model.put( FormsConstants.MARK_LIST_STEPS, formResponseManager.getListValidatedStep( ) );
+        model.put( FormsConstants.MARK_LIST_STEPS, formResponseManager.getValidatedSteps( ) );
         HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
 
         return htmlTemplateQuestion.getHtml( );

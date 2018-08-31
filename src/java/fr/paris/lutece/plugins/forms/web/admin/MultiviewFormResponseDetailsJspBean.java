@@ -59,12 +59,9 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
@@ -74,7 +71,6 @@ import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.form.response.view.FormResponseViewModelProcessorFactory;
 import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewModelProcessor;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.rbac.RBACService;
@@ -220,7 +216,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         // it will be ready
         List<Step> listStep = StepHome.getStepsListByForm( form.getId( ) );
 
-        List<String> listStepDisplayTree = buildFormStepDisplayTreeList( listStep, formResponse.getId( ) );
+        List<String> listStepDisplayTree = buildFormStepDisplayTreeList( listStep, formResponse );
         mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, listStepDisplayTree );
 
         int nIdWorkflow = form.getIdWorkflow( );
@@ -251,11 +247,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      * 
      * @param listStep
      *            The list of all Step on which the DisplayTree must be build
-     * @param nIdFormResponse
-     *            The identifier of FormResponse on which to retrieve the Response objects
+     * @param formResponse
+     *            The form response on which to retrieve the Response objects
      * @return the list of all DisplayTree for the given list of Step
      */
-    private List<String> buildFormStepDisplayTreeList( List<Step> listStep, int nIdFormResponse )
+    private List<String> buildFormStepDisplayTreeList( List<Step> listStep, FormResponse formResponse )
     {
         List<String> listFormDisplayTrees = new ArrayList<>( );
 
@@ -265,62 +261,14 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             {
                 int nIdStep = step.getId( );
 
-                StepDisplayTree stepDisplayTree = new StepDisplayTree( nIdStep );
-                stepDisplayTree.setResponses( buildStepMapResponse( nIdStep, nIdFormResponse ) );
-                listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( getLocale( ), DisplayType.READONLY_BACKOFFICE, null ) );
+                StepDisplayTree stepDisplayTree = new StepDisplayTree( nIdStep, formResponse );
+                listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml(
+                        FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) ), getLocale( ),
+                        DisplayType.READONLY_BACKOFFICE, null ) );
             }
         }
 
         return listFormDisplayTrees;
-    }
-
-    /**
-     * Return the map which associate for each Question of a Step its List of Response for the given FormResponse
-     * 
-     * @param nIdStep
-     *            The identifier of the Step to retrieve the Question from
-     * @param nIdFormResponse
-     *            The identifier of the FormResponse on which to retrieve the Response from
-     * @return the map which associate for each Question of a Step its List of Response for the given FormResponse
-     */
-    private Map<Integer, List<Response>> buildStepMapResponse( int nIdStep, int nIdFormResponse )
-    {
-        Map<Integer, List<Response>> mapStepResponses = new LinkedHashMap<>( );
-
-        List<Question> listQuestions = QuestionHome.getQuestionsListByStep( nIdStep );
-        if ( !CollectionUtils.isEmpty( listQuestions ) )
-        {
-            for ( Question question : listQuestions )
-            {
-                int nIdQuestion = question.getId( );
-                mapStepResponses.put( nIdQuestion, buildQuestionResponseList( nIdFormResponse, nIdQuestion ) );
-            }
-        }
-
-        return mapStepResponses;
-    }
-
-    /**
-     * Return the list of all Response for the given iFormResponse for the given Question
-     * 
-     * @param nIdFormResponse
-     *            The identifier of the FormResponse on which to retrieve the list of Response
-     * @param nIdQuestion
-     *            The identifier of the Question on which to retrieve the list of Response from
-     * @return the list of all Response for the given iFormResponse for the given Question
-     */
-    private List<Response> buildQuestionResponseList( int nIdFormResponse, int nIdQuestion )
-    {
-        List<Response> listResponseQuestions = new ArrayList<>( );
-
-        FormQuestionResponse formQuestionResponse = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion( nIdFormResponse, nIdQuestion );
-
-        if ( formQuestionResponse != null )
-        {
-            listResponseQuestions.addAll( formQuestionResponse.getEntryResponse( ) );
-        }
-
-        return listResponseQuestions;
     }
 
     /**

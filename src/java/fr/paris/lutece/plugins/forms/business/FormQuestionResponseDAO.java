@@ -76,7 +76,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         daoUtil.setInt( nIndex++, formQuestionResponse.getIdFormResponse( ) );
         daoUtil.setInt( nIndex++, formQuestionResponse.getQuestion( ).getId( ) );
         daoUtil.setInt( nIndex++, formQuestionResponse.getIdStep( ) );
-        daoUtil.setInt( nIndex++, formQuestionResponse.getIterationNumber( ) );
+        daoUtil.setInt( nIndex++, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
 
         daoUtil.executeUpdate( );
 
@@ -180,7 +180,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         daoUtil.setInt( nIndex++, formQuestionResponse.getIdFormResponse( ) );
         daoUtil.setInt( nIndex++, formQuestionResponse.getQuestion( ).getId( ) );
         daoUtil.setInt( nIndex++, formQuestionResponse.getIdStep( ) );
-        daoUtil.setInt( nIndex++, formQuestionResponse.getIterationNumber( ) );
+        daoUtil.setInt( nIndex++, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
 
         daoUtil.setInt( nIndex++, formQuestionResponse.getId( ) );
 
@@ -389,7 +389,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         formQuestionResponse.setQuestion( question );
 
         formQuestionResponse.setIdStep( daoUtil.getInt( "id_step" ) );
-        formQuestionResponse.setIterationNumber( daoUtil.getInt( "iteration_number" ) );
+        question.setIterationNumber( daoUtil.getInt( "iteration_number" ) );
 
         return formQuestionResponse;
     }

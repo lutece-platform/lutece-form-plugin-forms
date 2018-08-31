@@ -1,9 +1,11 @@
+<#include "/admin/plugins/forms/commons.html" />
+
 <#if !entry.onlyDisplayInBack>
 	<#assign hide="">
 	<#list entry.fields as field>
 		<#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
 			<#assign idName = 'div'>
-			<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+			<#if entry_iteration_number?has_content>
 				<#assign idName = 'div_nIt' + entry_iteration_number + '_'>
 			</#if>
 			<#assign idConditional = idName + field.idField>
@@ -17,10 +19,7 @@
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 			<#assign inLine = entry.fieldInLine>
 			<#list entry.fields as field>
-				<#assign idName = 'attribute' + entry.idEntry>
-				<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
-					<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
-				</#if>
+				<#assign idName = buildEntryName( entry, entry_iteration_number )>
 				<#if entry.fieldInLine != true><div class="radio"></#if>
 					<label <#if entry.fieldInLine>class="radio-inline"</#if> for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> > 
 						<input type="radio" id="${idName}_${field.idField}" name="${idName}" value="${field.idField}"
@@ -34,7 +33,7 @@
 							<#if field.defaultValue>checked="checked"</#if>
 						</#if> onclick="${hide} <#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
 							<#assign idName = 'div'>
-							<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+							<#if entry_iteration_number?has_content>
 								<#assign idName = 'div_nIt' + entry_iteration_number + '_'>
 							</#if>
 							<#assign idConditional = idName + field.idField>
@@ -84,7 +83,7 @@
 		<script type="text/javascript">
 			<#list list_responses as response>
 				var idName = '';
-				<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+				<#if entry_iteration_number?has_content >
 					idName = '_nIt' + ${entry_iteration_number} + '_';
 				</#if>
 				<#if response.entry.idEntry == entry.idEntry && response.field??>
@@ -102,7 +101,7 @@
 			<#if field.defaultValue && field.conditionalQuestions?exists && field.conditionalQuestions?size != 0>
 				<script type="text/javascript">
 					var idName = '';
-					<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+					<#if entry_iteration_number?has_content >
 						idName = '_nIt' + ${entry_iteration_number} + '_';
 					</#if>
 					var baliseId = "div" + idName + ${field.idField};

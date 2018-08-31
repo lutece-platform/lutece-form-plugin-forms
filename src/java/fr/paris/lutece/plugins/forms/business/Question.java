@@ -43,7 +43,7 @@ import java.io.Serializable;
 /**
  * This is the business class for the object Question
  */
-public class Question implements Serializable
+public class Question implements Serializable, Cloneable
 {
     private static final long serialVersionUID = 1L;
 
@@ -64,6 +64,8 @@ public class Question implements Serializable
     private int _nIdStep;
 
     private Step _step;
+
+    private int _nIterationNumber;
 
     /**
      * Returns the Id
@@ -202,5 +204,45 @@ public class Question implements Serializable
     public void setStep( Step step )
     {
         this._step = step;
+    }
+
+    /**
+     * Returns the iteration number
+     * 
+     * @return The iteration number
+     */
+    public int getIterationNumber( )
+    {
+        return _nIterationNumber;
+    }
+
+    /**
+     * Sets the iteration number
+     * 
+     * @param nIterationNumber
+     *            The iteration number
+     */
+    public void setIterationNumber( int nIterationNumber )
+    {
+        _nIterationNumber = nIterationNumber;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Question clone( )
+    {
+        Question question = new Question( );
+        question._entry = _entry;
+        question._nId = _nId;
+        question._nIdEntry = _nIdEntry;
+        question._nIdStep = _nIdStep;
+        question._nIterationNumber = _nIterationNumber;
+        question._step = _step;
+        question._strDescription = _strDescription;
+        question._strTitle = _strTitle;
+
+        return question;
     }
 }

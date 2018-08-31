@@ -135,7 +135,11 @@ public final class FormQuestionResponseHome
     {
         if ( formQuestionResponse != null )
         {
-            formQuestionResponse.setQuestion( QuestionHome.findByPrimaryKey( formQuestionResponse.getQuestion( ).getId( ) ) );
+            Question questionIncomplete = formQuestionResponse.getQuestion( );
+            Question questionSaved = QuestionHome.findByPrimaryKey( questionIncomplete.getId( ) );
+            questionSaved.setIterationNumber( questionIncomplete.getIterationNumber( ) );
+
+            formQuestionResponse.setQuestion( questionSaved );
         }
     }
 

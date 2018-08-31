@@ -44,6 +44,9 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
@@ -73,6 +76,7 @@ public class StepDisplayTree
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
     private Step _step;
+    private final FormResponse _formResponse;
     private Map<Integer, List<Response>> _mapStepResponses = new HashMap<Integer, List<Response>>( );
     private List<Control> _listDisplayControls = new ArrayList<Control>( );
 
@@ -84,6 +88,23 @@ public class StepDisplayTree
      */
     public StepDisplayTree( int nIdStep )
     {
+        _formResponse = null;
+
+        initStepTree( nIdStep );
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param nIdStep
+     *            the step identifier
+     * @param formResponse
+     *            the form response containing the responses
+     */
+    public StepDisplayTree( int nIdStep, FormResponse formResponse )
+    {
+        _formResponse = formResponse;
+
         initStepTree( nIdStep );
     }
 
@@ -103,17 +124,32 @@ public class StepDisplayTree
             _listDisplayControls = new ArrayList<Control>( );
             for ( FormDisplay formDisplayChild : listStepFormDisplay )
             {
-                ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild );
+                ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild, _formResponse, 0 );
                 _listChildren.add( composite );
-                composite.initComposite( formDisplayChild );
                 _listDisplayControls.addAll( composite.getAllDisplayControls( ) );
             }
         }
     }
 
     /**
+     * Iterates the specified form display
+     * 
+     * @param nIdFormDisplay
+     *            the id of the form display to iterate
+     */
+    public void iterate( int nIdFormDisplay )
+    {
+        for ( ICompositeDisplay composite : _listChildren )
+        {
+            composite.iterate( nIdFormDisplay );
+        }
+    }
+
+    /**
      * Build and return the html template of the tree for Front-Office display
      * 
+     * @param listFormQuestionResponse
+     *            the list of form question responses
      * @param locale
      *            the locale
      * @param DisplayType
@@ -122,7 +158,7 @@ public class StepDisplayTree
      *            the lutece user
      * @return the html template of the tree as a String
      */
-    public String getCompositeHtml( Locale locale, DisplayType displayType, LuteceUser user )
+    public String getCompositeHtml( List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType, LuteceUser user )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
 
@@ -130,7 +166,7 @@ public class StepDisplayTree
 
         for ( ICompositeDisplay child : _listChildren )
         {
-            strBuilder.append( child.getCompositeHtml( locale, displayType ) );
+            strBuilder.append( child.getCompositeHtml( listFormQuestionResponse, locale, displayType ) );
         }
 
         model.put( FormsConstants.MARK_STEP, _step );
@@ -208,25 +244,27 @@ public class StepDisplayTree
 
     /**
      * 
-     * @param mapStepResponses
-     *            The map containing question responses and potential errors
-     */
-    public void setResponses( Map<Integer, List<Response>> mapStepResponses )
-    {
-        _mapStepResponses = mapStepResponses;
-
-        for ( ICompositeDisplay composite : _listChildren )
-        {
-            composite.setResponses( mapStepResponses );
-        }
-    }
-
-    /**
-     * 
      * @return the list of display controls for this display tree
      */
     public List<Control> getListDisplayControls( )
     {
         return _listDisplayControls;
+    }
+
+    /**
+     * Gives all the questions
+     * 
+     * @return the questions
+     */
+    public List<Question> getQuestions( )
+    {
+        List<Question> listQuestion = new ArrayList<>( );
+
+        for ( ICompositeDisplay composite : _listChildren )
+        {
+            composite.addQuestions( listQuestion );
+        }
+
+        return listQuestion;
     }
 }

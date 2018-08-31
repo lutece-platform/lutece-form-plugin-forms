@@ -83,7 +83,7 @@ public class VerticalBreadcrumb implements IBreadcrumb
     @Override
     public String getTopHtml( FormResponseManager formResponseManager )
     {
-        Step currentStep = formResponseManager.getListValidatedStep( ).get( formResponseManager.getListValidatedStep( ).size( ) - 1 );
+        Step currentStep = formResponseManager.getValidatedSteps( ).get( formResponseManager.getValidatedSteps( ).size( ) - 1 );
 
         List<Step> listStep = StepHome.getStepsListByForm( currentStep.getIdForm( ) );
 
@@ -101,7 +101,7 @@ public class VerticalBreadcrumb implements IBreadcrumb
     @Override
     public String getBottomHtml( FormResponseManager formResponseManager )
     {
-        Step currentStep = formResponseManager.getListValidatedStep( ).get( formResponseManager.getListValidatedStep( ).size( ) - 1 );
+        Step currentStep = formResponseManager.getValidatedSteps( ).get( formResponseManager.getValidatedSteps( ).size( ) - 1 );
 
         List<Step> listStep = StepHome.getStepsListByForm( currentStep.getIdForm( ) );
 

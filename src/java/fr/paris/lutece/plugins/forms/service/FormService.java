@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -89,87 +90,91 @@ public class FormService
      * 
      * @param form
      *            the form to save
-     * @param formResponseManager
-     *            the formResponseManager containing the responses to save
+     * @param formResponse
+     *            the form response to save
      */
     @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
-    public void saveForm( Form form, FormResponseManager formResponseManager )
+    public void saveForm( Form form, FormResponse formResponse )
     {
-        saveFormResponse( formResponseManager );
-        saveFormResponseSteps( formResponseManager );
-        _formWorkflowService.doProcessActionOnFormCreation( form, formResponseManager );
+        formResponse.setFromSave( Boolean.FALSE );
+
+        filterFinalSteps( formResponse );
+        saveFormResponse( formResponse );
+        saveFormResponseSteps( formResponse );
+        _formWorkflowService.doProcessActionOnFormCreation( form, formResponse );
+    }
+
+    /**
+     * Filters the responses to keep the final responses
+     * 
+     * @param formResponse
+     *            the form response containing the responses to filter
+     */
+    private void filterFinalSteps( FormResponse formResponse )
+    {
+        formResponse.setSteps( formResponse.getSteps( ).stream( ).filter( step -> step.getOrder( ) != FormsConstants.ORDER_NOT_SET )
+                .collect( Collectors.toList( ) ) );
     }
 
     /**
      * Saves the form response
      * 
-     * @param formResponseManager
-     *            the formResponseManager containing the form response to save
+     * @param formResponse
+     *            the form response to save
      */
-    private void saveFormResponse( FormResponseManager formResponseManager )
+    private void saveFormResponse( FormResponse formResponse )
     {
-        if ( formResponseManager.getFormResponse( ).getId( ) > 0 )
+        if ( formResponse.getId( ) > 0 )
         {
-            FormResponseHome.update( formResponseManager.getFormResponse( ) );
+            FormResponseHome.update( formResponse );
 
-            for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponseManager
-                    .getFormResponse( ).getId( ) ) )
+            for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) ) )
             {
                 FormQuestionResponseHome.remove( formQuestionResponse );
             }
 
-            FormResponseStepHome.removeByFormResponse( formResponseManager.getFormResponse( ).getId( ) );
+            FormResponseStepHome.removeByFormResponse( formResponse.getId( ) );
         }
         else
         {
-            FormResponseHome.create( formResponseManager.getFormResponse( ) );
+            FormResponseHome.create( formResponse );
         }
     }
 
     /**
      * Saves the form response steps
      * 
-     * @param formResponseManager
-     *            the formResponseManager containing the form response steps to save
+     * @param formResponse
+     *            the form response containing the form response steps to save
      */
-    private void saveFormResponseSteps( FormResponseManager formResponseManager )
+    private void saveFormResponseSteps( FormResponse formResponse )
     {
-        int nIndexOrder = 1;
-
-        for ( Step step : formResponseManager.getListValidatedStep( ) )
+        for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
         {
-            saveFormQuestionResponse( formResponseManager, step );
+            formResponseStep.setFormResponseId( formResponse.getId( ) );
 
-            FormResponseStep formResponseStep = new FormResponseStep( );
-            formResponseStep.setFormResponseId( formResponseManager.getFormResponse( ).getId( ) );
-            formResponseStep.setStep( step );
-            formResponseStep.setOrder( nIndexOrder );
+            saveFormQuestionResponse( formResponseStep );
 
             FormResponseStepHome.create( formResponseStep );
-
-            nIndexOrder++;
         }
     }
 
     /**
      * Saves the form question responses of the specified step
      * 
-     * @param formResponseManager
-     *            the formResponseManager containing the form questions responses to save
-     * @param step
-     *            the step
+     * @param formResponseStep
+     *            the form response step containing the form questions responses to save
      */
-    private void saveFormQuestionResponse( FormResponseManager formResponseManager, Step step )
+    private void saveFormQuestionResponse( FormResponseStep formResponseStep )
     {
-        for ( FormQuestionResponse formQuestionResponse : formResponseManager.getMapStepFormResponses( ).get( step.getId( ) ) )
+        for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
         {
             Question question = formQuestionResponse.getQuestion( );
 
             if ( question != null )
             {
                 IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-                formQuestionResponse.setIdFormResponse( formResponseManager.getFormResponse( ).getId( ) );
-                formQuestionResponse.setIdStep( step.getId( ) );
+                formQuestionResponse.setIdFormResponse( formResponseStep.getFormResponseId( ) );
                 dataService.save( formQuestionResponse );
             }
         }
@@ -178,14 +183,16 @@ public class FormService
     /**
      * Saves the specified form for a backup
      * 
-     * @param formResponseManager
-     *            The formResponseManager to save
+     * @param formResponse
+     *            The form response to save
      */
     @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
-    public void saveFormForBackup( FormResponseManager formResponseManager )
+    public void saveFormForBackup( FormResponse formResponse )
     {
-        saveFormResponse( formResponseManager );
-        saveFormResponseSteps( formResponseManager );
+        formResponse.setFromSave( Boolean.TRUE );
+
+        saveFormResponse( formResponse );
+        saveFormResponseSteps( formResponse );
     }
 
     /**
@@ -207,22 +214,24 @@ public class FormService
      * 
      * @param formDisplay
      *            The formDisplay
+     * @param formResponse
+     *            the form response
+     * @param nIterationNumber
+     *            the iteration number
      * @return the right composite
      */
-    public ICompositeDisplay formDisplayToComposite( FormDisplay formDisplay )
+    public ICompositeDisplay formDisplayToComposite( FormDisplay formDisplay, FormResponse formResponse, int nIterationNumber )
     {
         ICompositeDisplay composite = null;
         if ( FormsConstants.COMPOSITE_GROUP_TYPE.equals( formDisplay.getCompositeType( ) ) )
         {
-            composite = new CompositeGroupDisplay( );
-            composite.setFormDisplay( formDisplay );
+            composite = new CompositeGroupDisplay( formDisplay, formResponse, nIterationNumber );
 
         }
         else
             if ( FormsConstants.COMPOSITE_QUESTION_TYPE.equals( formDisplay.getCompositeType( ) ) )
             {
-                composite = new CompositeQuestionDisplay( );
-                composite.setFormDisplay( formDisplay );
+                composite = new CompositeQuestionDisplay( formDisplay, formResponse, nIterationNumber );
             }
 
         return composite;
@@ -327,29 +336,25 @@ public class FormService
     /**
      * Creates a {@code FormResponseManager} object from a back up
      * 
-     * @param nIdForm
-     *            The form id
+     * @param form
+     *            The form
      * @param strUserGuid
      *            The user guid
      * @return the created {@code FormResponseManager} object
      */
-    public FormResponseManager createFormResponseManagerFromBackUp( int nIdForm, String strUserGuid )
+    public FormResponseManager createFormResponseManagerFromBackUp( Form form, String strUserGuid )
     {
-        FormResponseManager formResponseManager = new FormResponseManager( );
+        FormResponseManager formResponseManager = null;
 
-        FormResponse formResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, nIdForm );
+        FormResponse formResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, form.getId( ) );
 
         if ( formResponse != null )
         {
-            formResponseManager.setFormResponse( formResponse );
-
-            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
-            {
-                Step step = formResponseStep.getStep( );
-
-                formResponseManager.getListValidatedStep( ).add( step );
-                formResponseManager.getMapStepFormResponses( ).put( step.getId( ), formResponseStep.getQuestions( ) );
-            }
+            formResponseManager = new FormResponseManager( formResponse );
+        }
+        else
+        {
+            formResponseManager = new FormResponseManager( form );
         }
 
         return formResponseManager;

@@ -49,6 +49,7 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.entrytype.IResponseComparator;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
+import fr.paris.lutece.plugins.forms.web.http.IterationHttpServletRequestWrapper;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -111,6 +112,7 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     public FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request )
     {
         FormQuestionResponse formQuestionResponse = createResponseFor( question );
+        request = convertToIterationRequest( question, request );
 
         GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
                 formQuestionResponse.getEntryResponse( ), request.getLocale( ) );
@@ -156,6 +158,20 @@ public class EntryTypeDefaultDataService implements IEntryDataService
         formQuestionResponse.setIdStep( question.getIdStep( ) );
 
         return formQuestionResponse;
+    }
+
+    /**
+     * Converts the specified request into an iteration request
+     * 
+     * @param question
+     *            the question containing the iteration number
+     * @param request
+     *            the request
+     * @return the converted request
+     */
+    private HttpServletRequest convertToIterationRequest( Question question, HttpServletRequest request )
+    {
+        return new IterationHttpServletRequestWrapper( request, question.getIterationNumber( ) );
     }
 
     /**

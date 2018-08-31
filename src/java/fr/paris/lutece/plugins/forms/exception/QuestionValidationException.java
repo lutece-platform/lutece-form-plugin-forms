@@ -31,41 +31,49 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service.workflow;
-
-import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.portal.business.user.AdminUser;
+package fr.paris.lutece.plugins.forms.exception;
 
 /**
- * This interface represents a workflow service for the forms
+ *
+ * Exception thrown when the question is not valid
  *
  */
-public interface IFormWorkflowService
+public class QuestionValidationException extends Exception
 {
-    String BEAN_NAME = "forms.formWorkflowService";
+    /**
+     * Generated serial ID
+     */
+    private static final long serialVersionUID = 1990270916129694275L;
 
     /**
-     * Processes the workflow action when a form is created
-     * 
-     * @param form
-     *            the form linked to the workflow
-     * @param formResponse
-     *            the form response to inject in the workflow
+     * Constructor
+     *
+     * @param strMessage
+     *            The error message
      */
-    void doProcessActionOnFormCreation( Form form, FormResponse formResponse );
+    public QuestionValidationException( String strMessage )
+    {
+        super( strMessage );
+    }
 
     /**
-     * Removes the resources linked to the specified workflow and form
-     * 
-     * @param nIdWorkflow
-     *            The workflow id
-     * 
-     * @param nIdForm
-     *            The form id
-     * 
-     * @param adminUser
-     *            the user performing the remove action
+     * Constructor
+     *
+     * @param strMessage
+     *            The error message
+     * @param exception
+     *            The initial exception
      */
-    void removeResources( int nIdWorkflow, int nIdForm, AdminUser adminUser );
+    public QuestionValidationException( String strMessage, Exception exception )
+    {
+        super( strMessage, exception );
+    }
+
+    /**
+     * Constructor
+     */
+    public QuestionValidationException( )
+    {
+        super( );
+    }
 }

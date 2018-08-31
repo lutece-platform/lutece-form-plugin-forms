@@ -45,12 +45,15 @@ import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
+import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -69,6 +72,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     // Marks
     private static final String MARK_GROUP = "group";
     private static final String MARK_GROUP_CONTENT = "groupContent";
+    private static final String MARK_IS_ITERABLE = "isIterable";
 
     // Properties
     private static final String PROPERTY_COMPOSITE_GROUP_ICON = "forms.composite.group.icon";
@@ -76,28 +80,132 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     private static final String DEFAULT_GROUP_ICON = "indent";
 
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    private int _nIterationNumber;
 
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private Group _group;
     private FormDisplay _formDisplay;
     private String _strIconName;
 
-    @Override
-    public void initComposite( FormDisplay formDisplay )
+    /**
+     * Constructor
+     * 
+     * @param formDisplay
+     *            the form display
+     * @param formResponse
+     *            the form response
+     * @param nIterationNumber
+     *            the iteration number
+     */
+    public CompositeGroupDisplay( FormDisplay formDisplay, FormResponse formResponse, int nIterationNumber )
     {
-        if ( !StringUtils.isEmpty( formDisplay.getCompositeType( ) ) )
+        _formDisplay = formDisplay;
+
+        initComposite( formResponse, nIterationNumber );
+    }
+
+    /**
+     * Initializes the composite
+     * 
+     * @param formResponse
+     *            the form response
+     * @param nIterationNumber
+     *            the iteration number
+     */
+    private void initComposite( FormResponse formResponse, int nIterationNumber )
+    {
+        if ( !StringUtils.isEmpty( _formDisplay.getCompositeType( ) ) )
         {
-            _group = GroupHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
+            _group = GroupHome.findByPrimaryKey( _formDisplay.getCompositeId( ) );
             _strIconName = AppPropertiesService.getProperty( PROPERTY_COMPOSITE_GROUP_ICON, DEFAULT_GROUP_ICON );
         }
 
-        List<FormDisplay> formDisplayList = FormDisplayHome.getFormDisplayListByParent( formDisplay.getStepId( ), formDisplay.getId( ) );
+        List<FormDisplay> listFormDisplayChildren = FormDisplayHome.getFormDisplayListByParent( _formDisplay.getStepId( ), _formDisplay.getId( ) );
+        FormResponseStep formResponseStep = findResponseStep( _formDisplay, formResponse );
+        _nIterationNumber = findIterationNumber( listFormDisplayChildren, formResponseStep );
 
-        for ( FormDisplay formDisplayChild : formDisplayList )
+        for ( int i = 0; i <= _nIterationNumber; i++ )
         {
-            ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild );
+            addChildren( listFormDisplayChildren, formResponse, i );
+        }
+    }
+
+    /**
+     * Finds the form response step associated to the step of this instance
+     * 
+     * @param formDisplay
+     *            the form display
+     * @param formResponse
+     *            the form response
+     * @return the form response step
+     */
+    private FormResponseStep findResponseStep( FormDisplay formDisplay, FormResponse formResponse )
+    {
+        FormResponseStep formResponseStepResult = null;
+
+        if ( formResponse != null )
+        {
+            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+            {
+                if ( formResponseStep.getStep( ).getId( ) == formDisplay.getStepId( ) )
+                {
+                    formResponseStepResult = formResponseStep;
+                    break;
+                }
+            }
+        }
+
+        return formResponseStepResult;
+    }
+
+    /**
+     * Finds the iteration number for this instance
+     * 
+     * @param listFormDisplayChildren
+     *            the children list of form displays of this instance
+     * @param formResponseStep
+     *            the form response step
+     * @return the iteration number
+     */
+    private int findIterationNumber( List<FormDisplay> listFormDisplayChildren, FormResponseStep formResponseStep )
+    {
+        int nIterationNumber = 0;
+
+        if ( formResponseStep != null )
+        {
+            for ( FormDisplay formDisplayChildren : listFormDisplayChildren )
+            {
+                for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+                {
+                    Question question = formQuestionResponse.getQuestion( );
+
+                    if ( question.getId( ) == formDisplayChildren.getCompositeId( ) )
+                    {
+                        nIterationNumber = Math.max( nIterationNumber, question.getIterationNumber( ) );
+                    }
+                }
+            }
+        }
+
+        return nIterationNumber;
+    }
+
+    /**
+     * Adds children from the specified list of form displays
+     * 
+     * @param listFormDisplayChildren
+     *            the list of form displays
+     * @param formResponse
+     *            the form response
+     * @param nIterationNumber
+     *            the iteration number
+     */
+    private void addChildren( List<FormDisplay> listFormDisplayChildren, FormResponse formResponse, int nIterationNumber )
+    {
+        for ( FormDisplay formDisplayChild : listFormDisplayChildren )
+        {
+            ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild, formResponse, nIterationNumber );
             _listChildren.add( composite );
-            composite.initComposite( formDisplayChild );
         }
     }
 
@@ -105,7 +213,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
      * {@inheritDoc}
      */
     @Override
-    public String getCompositeHtml( Locale locale, DisplayType displayType )
+    public String getCompositeHtml( List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
 
@@ -113,11 +221,14 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         for ( ICompositeDisplay child : _listChildren )
         {
-            strBuilder.append( child.getCompositeHtml( locale, displayType ) );
+            strBuilder.append( child.getCompositeHtml( listFormQuestionResponse, locale, displayType ) );
         }
 
         model.put( MARK_GROUP, _group );
         model.put( MARK_GROUP_CONTENT, strBuilder.toString( ) );
+        model.put( FormsConstants.PARAMETER_ID_GROUP, _formDisplay.getId( ) );
+        model.put( MARK_IS_ITERABLE, isIterable( ) );
+
         if ( _formDisplay.getDisplayControl( ) != null )
         {
             model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdTargetFormDisplay( ) );
@@ -152,12 +263,54 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         return strTemplate;
     }
 
-    @Override
-    public void setResponses( Map<Integer, List<Response>> mapStepResponses )
+    /**
+     * Tests if this instance is iterable or not
+     * 
+     * @return {@code true} if this instance is iterable, {@code false} otherwise
+     */
+    private boolean isIterable( )
     {
-        for ( ICompositeDisplay composite : _listChildren )
+        boolean bIsIterable = true;
+
+        if ( !_listChildren.isEmpty( ) )
         {
-            composite.setResponses( mapStepResponses );
+            for ( ICompositeDisplay composite : _listChildren )
+            {
+                if ( CompositeDisplayType.GROUP.getLabel( ).equals( composite.getType( ) ) )
+                {
+                    bIsIterable = false;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            bIsIterable = false;
+        }
+
+        return bIsIterable;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void iterate( int nIdFormDisplay )
+    {
+        if ( _formDisplay.getId( ) == nIdFormDisplay && isIterable( ) )
+        {
+            _nIterationNumber++;
+
+            List<FormDisplay> listFormDisplayChildren = FormDisplayHome.getFormDisplayListByParent( _formDisplay.getStepId( ), _formDisplay.getId( ) );
+
+            addChildren( listFormDisplayChildren, null, _nIterationNumber );
+        }
+        else
+        {
+            for ( ICompositeDisplay composite : _listChildren )
+            {
+                composite.iterate( nIdFormDisplay );
+            }
         }
     }
 
@@ -189,13 +342,6 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     public String getType( )
     {
         return _group != null ? CompositeDisplayType.GROUP.getLabel( ) : StringUtils.EMPTY;
-    }
-
-    @Override
-    public void setFormDisplay( FormDisplay formDisplay )
-    {
-        _formDisplay = formDisplay;
-
     }
 
     @Override
@@ -232,5 +378,17 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         }
 
         return listDisplayControls;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addQuestions( List<Question> listQuestion )
+    {
+        for ( ICompositeDisplay child : _listChildren )
+        {
+            child.addQuestions( listQuestion );
+        }
     }
 }

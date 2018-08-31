@@ -44,6 +44,8 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
@@ -67,20 +69,47 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     // Marks
     private static final String MARK_QUESTION_ENTRY = "questionEntry";
+    private static final String MARK_ENTRY_ITERATION_NUMBER = "entry_iteration_number";
 
     private Question _question;
     private FormDisplay _formDisplay;
     private String _strIconName;
-    private List<Response> _listResponses = new ArrayList<Response>( );
 
-    @Override
-    public void initComposite( FormDisplay formDisplay )
+    /**
+     * Constructor
+     * 
+     * @param formDisplay
+     *            the form display
+     * @param formResponse
+     *            the form response
+     * @param nIterationNumber
+     *            the iteration number
+     */
+    public CompositeQuestionDisplay( FormDisplay formDisplay, FormResponse formResponse, int nIterationNumber )
     {
-        _question = QuestionHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
+        _formDisplay = formDisplay;
+
+        initComposite( formResponse, nIterationNumber );
+    }
+
+    /**
+     * Initializes the composite
+     * 
+     * @param formResponse
+     *            the form response
+     * @param nIterationNumber
+     *            the iteration number
+     */
+    private void initComposite( FormResponse formResponse, int nIterationNumber )
+    {
+        _question = QuestionHome.findByPrimaryKey( _formDisplay.getCompositeId( ) );
+
         if ( _question.getEntry( ) != null && _question.getEntry( ).getEntryType( ) != null )
         {
             _strIconName = _question.getEntry( ).getEntryType( ).getIconName( );
         }
+
+        _question.setIterationNumber( nIterationNumber );
 
     }
 
@@ -88,7 +117,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
      * {@inheritDoc}
      */
     @Override
-    public String getCompositeHtml( Locale locale, DisplayType displayType )
+    public String getCompositeHtml( List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
     {
         String strQuestionTemplate = StringUtils.EMPTY;
 
@@ -99,7 +128,8 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             if ( displayService != null )
             {
                 Map<String, Object> model = new HashMap<String, Object>( );
-                model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, _listResponses );
+                model.put( MARK_ENTRY_ITERATION_NUMBER, _question.getIterationNumber( ) );
+                model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, findResponses( listFormQuestionResponse ) );
                 model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
 
                 strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale, model, displayType );
@@ -118,6 +148,34 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
 
         return strQuestionTemplate;
+    }
+
+    /**
+     * Finds the responses associated to this instance among the specified list of form question responses
+     * 
+     * @param listFormQuestionResponse
+     *            the list of form question responses
+     * @return the responses
+     */
+    private List<Response> findResponses( List<FormQuestionResponse> listFormQuestionResponse )
+    {
+        List<Response> listResponse = new ArrayList<>( );
+
+        if ( listFormQuestionResponse != null )
+        {
+            for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
+            {
+                Question question = formQuestionResponse.getQuestion( );
+
+                if ( _question.getId( ) == question.getId( ) && _question.getIterationNumber( ) == question.getIterationNumber( ) )
+                {
+                    listResponse = formQuestionResponse.getEntryResponse( );
+                    break;
+                }
+            }
+        }
+
+        return listResponse;
     }
 
     /**
@@ -144,18 +202,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         return strTemplate;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void setResponses( Map<Integer, List<Response>> mapStepResponses )
+    public void iterate( int nIdFormDisplay )
     {
-        List<Response> listResponse = mapStepResponses.get( _question.getId( ) );
-        if ( listResponse != null )
-        {
-            _listResponses = listResponse;
-        }
-        else
-        {
-            _listResponses = new ArrayList<Response>( );
-        }
+
     }
 
     @Override
@@ -190,12 +243,6 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     }
 
     @Override
-    public void setFormDisplay( FormDisplay formDisplay )
-    {
-        _formDisplay = formDisplay;
-    }
-
-    @Override
     public String getIcon( )
     {
         return _strIconName;
@@ -218,6 +265,15 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
 
         return listDisplayControls;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addQuestions( List<Question> listQuestion )
+    {
+        listQuestion.add( _question );
     }
 
 }

@@ -119,6 +119,7 @@ public final class FormsConstants
     public static final String PARAMETER_SORT_COLUMN_POSITION = "column_position";
     public static final String PARAMETER_SORT_ATTRIBUTE_NAME = "sorted_attribute_name";
     public static final String PARAMETER_SORT_ASC_VALUE = "asc_sort";
+    public static final String PARAMETER_ACTION_PREFIX = "action_";
 
     // Jsp
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
@@ -137,6 +138,7 @@ public final class FormsConstants
     public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
     public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
     public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
+    public static final int ORDER_NOT_SET = NumberUtils.INTEGER_MINUS_ONE;
 
     // Markers
     public static final String MARK_AVAILABLE_STEPS = "availableSteps";

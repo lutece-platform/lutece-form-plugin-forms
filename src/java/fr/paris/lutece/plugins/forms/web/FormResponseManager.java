@@ -35,13 +35,14 @@
 package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 
 /**
  * 
@@ -50,80 +51,259 @@ import fr.paris.lutece.plugins.forms.business.Step;
  */
 public class FormResponseManager
 {
-    private List<Step> _listValidatedStep;
-
-    private Map<Integer, List<FormQuestionResponse>> _mapStepFormResponses;
-
-    private FormResponse _formResponse;
+    private final List<Step> _listValidatedStep;
+    private final FormResponse _formResponse;
 
     /**
      * Constructor
+     * 
+     * @param form
+     *            the form
      */
-    public FormResponseManager( )
+    public FormResponseManager( Form form )
     {
         _listValidatedStep = new ArrayList<Step>( );
-        _mapStepFormResponses = new HashMap<Integer, List<FormQuestionResponse>>( );
+        _formResponse = new FormResponse( );
+        _formResponse.setFormId( form.getId( ) );
+        _formResponse.setSteps( new ArrayList<>( ) );
     }
 
     /**
+     * Constructor
      * 
-     * @param nIndexStep
-     *            The wanted current step index
+     * @param formResponse
+     *            the form response
      */
-    public void setCurrentStep( int nIndexStep )
+    public FormResponseManager( FormResponse formResponse )
     {
-        _listValidatedStep.subList( nIndexStep + 1, _listValidatedStep.size( ) ).clear( );
+        _listValidatedStep = new ArrayList<Step>( );
+        _formResponse = formResponse;
+
+        initValidatedStep( );
     }
 
     /**
-     * @return the _listValidatedStep
+     * Initializes the validated steps
      */
-    public List<Step> getListValidatedStep( )
+    private void initValidatedStep( )
     {
-        return _listValidatedStep;
+        for ( FormResponseStep formResponseStep : _formResponse.getSteps( ) )
+        {
+            int nStepOrder = formResponseStep.getOrder( );
+
+            if ( nStepOrder != FormsConstants.ORDER_NOT_SET )
+            {
+                _listValidatedStep.add( nStepOrder, formResponseStep.getStep( ) );
+            }
+        }
     }
 
     /**
-     * @param listValidatedStep
-     *            the listValidatedStep to set
+     * Gives the current step
+     * 
+     * @return the current step
      */
-    public void setListValidatedStep( List<Step> listValidatedStep )
+    public Step getCurrentStep( )
     {
-        this._listValidatedStep = listValidatedStep;
+        Step step = null;
+
+        if ( !_listValidatedStep.isEmpty( ) )
+        {
+            step = _listValidatedStep.get( _listValidatedStep.size( ) - 1 );
+        }
+
+        return step;
     }
 
     /**
-     * @return the _mapStepFormResponses
-     */
-    public Map<Integer, List<FormQuestionResponse>> getMapStepFormResponses( )
-    {
-        return _mapStepFormResponses;
-    }
-
-    /**
-     * @param mapStepFormResponses
-     *            the mapStepFormResponses to set
-     */
-    public void setMapStepFormResponses( Map<Integer, List<FormQuestionResponse>> mapStepFormResponses )
-    {
-        this._mapStepFormResponses = mapStepFormResponses;
-    }
-
-    /**
-     * @return the _formResponse
+     * Gives the form response
+     * 
+     * @return the form response
      */
     public FormResponse getFormResponse( )
     {
+        initStepsOrder( );
+
         return _formResponse;
     }
 
     /**
-     * @param formResponse
-     *            the formResponse to set
+     * Initializes the steps order
      */
-    public void setFormResponse( FormResponse formResponse )
+    private void initStepsOrder( )
     {
-        this._formResponse = formResponse;
+        for ( FormResponseStep formResponseStep : _formResponse.getSteps( ) )
+        {
+            formResponseStep.setOrder( FormsConstants.ORDER_NOT_SET );
+        }
+
+        for ( int i = 0; i < _listValidatedStep.size( ); i++ )
+        {
+            Step step = _listValidatedStep.get( i );
+
+            for ( FormResponseStep formResponseStep : _formResponse.getSteps( ) )
+            {
+                if ( formResponseStep.getStep( ).getId( ) == step.getId( ) )
+                {
+                    formResponseStep.setOrder( i );
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Adds the specified step
+     * 
+     * @param step
+     *            the step to add
+     */
+    public void add( Step step )
+    {
+        if ( isStepValidated( step ) )
+        {
+            throw new IllegalStateException( "The step is already validated !" );
+        }
+
+        _listValidatedStep.add( step );
+
+        FormResponseStep formResponseStep = findFormResponseStepFor( step );
+
+        if ( formResponseStep == null )
+        {
+            _formResponse.getSteps( ).add( createFormResponseStepFrom( step ) );
+        }
+    }
+
+    /**
+     * Tests if the specified step is validated or not
+     * 
+     * @param step
+     *            the step
+     * @return {@code true} if the step is validated, {@code false} otherwise
+     */
+    private boolean isStepValidated( Step step )
+    {
+        return _listValidatedStep.stream( ).anyMatch( stepValidate -> stepValidate.getId( ) == step.getId( ) );
+    }
+
+    /**
+     * Creates a form response step from the specified step
+     * 
+     * @param step
+     *            the step
+     * @return the created form response step
+     */
+    private FormResponseStep createFormResponseStepFrom( Step step )
+    {
+        FormResponseStep formResponseStep = new FormResponseStep( );
+        formResponseStep.setFormResponseId( _formResponse.getId( ) );
+        formResponseStep.setQuestions( new ArrayList<>( ) );
+        formResponseStep.setStep( step );
+
+        return formResponseStep;
+    }
+
+    /**
+     * Goes to the step of the specified index
+     * 
+     * @param nStepIndex
+     *            the step index
+     * @return the Step
+     */
+    public Step goTo( int nStepIndex )
+    {
+        if ( nStepIndex + 1 < _listValidatedStep.size( ) )
+        {
+            _listValidatedStep.subList( nStepIndex + 1, _listValidatedStep.size( ) ).clear( );
+        }
+
+        return getCurrentStep( );
+    }
+
+    /**
+     * Finds the responses for the specified step
+     * 
+     * @param step
+     *            the step
+     * @return the found responses
+     */
+    public List<FormQuestionResponse> findResponsesFor( Step step )
+    {
+        List<FormQuestionResponse> listFormQuestionResponse = new ArrayList<>( );
+
+        if ( isStepValidated( step ) )
+        {
+            listFormQuestionResponse = findFormResponseStepFor( step ).getQuestions( );
+        }
+
+        return listFormQuestionResponse;
+    }
+
+    /**
+     * Finds the form response step for the specified step
+     * 
+     * @param step
+     *            the step
+     * @return the found form response step
+     */
+    private FormResponseStep findFormResponseStepFor( Step step )
+    {
+        FormResponseStep formResponseStepResult = null;
+
+        for ( FormResponseStep formResponseStep : _formResponse.getSteps( ) )
+        {
+            if ( formResponseStep.getStep( ).getId( ) == step.getId( ) )
+            {
+                formResponseStepResult = formResponseStep;
+                break;
+            }
+        }
+
+        return formResponseStepResult;
+    }
+
+    /**
+     * Adds the specified responses
+     * 
+     * @param listFormQuestionResponse
+     *            the responses to add
+     */
+    public void addResponses( List<FormQuestionResponse> listFormQuestionResponse )
+    {
+        FormResponseStep formResponseStep = findFormResponseStepFor( getCurrentStep( ) );
+
+        if ( formResponseStep != null )
+        {
+            formResponseStep.setQuestions( listFormQuestionResponse );
+        }
+    }
+
+    /**
+     * Pops the last step
+     * 
+     * @return the last step, or {@code null} if there no step to pop
+     */
+    public Step popStep( )
+    {
+        Step step = getCurrentStep( );
+
+        if ( !_listValidatedStep.isEmpty( ) )
+        {
+            _listValidatedStep.remove( _listValidatedStep.size( ) - 1 );
+        }
+
+        return step;
+    }
+
+    /**
+     * Gives the validated steps
+     * 
+     * @return the validated steps
+     */
+    public List<Step> getValidatedSteps( )
+    {
+        return _listValidatedStep;
     }
 
 }

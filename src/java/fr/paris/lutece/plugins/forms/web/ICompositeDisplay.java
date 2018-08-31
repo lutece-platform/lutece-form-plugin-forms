@@ -35,12 +35,12 @@ package fr.paris.lutece.plugins.forms.web;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
 
 /**
  * 
@@ -50,27 +50,25 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 public interface ICompositeDisplay
 {
     /**
+     * Builds the HTML of the composite
+     * 
+     * @param listFormQuestionResponse
+     *            the list of form question responses
      * @param locale
      *            The locale
      * @param displayType
      *            The display type
-     * @return the composite html to display
+     * @return the HTML
      */
-    String getCompositeHtml( Locale locale, DisplayType displayType );
+    String getCompositeHtml( List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType );
 
     /**
+     * Iterates the specified form display
      * 
-     * @param formDisplay
-     *            The parent formDisplay
+     * @param nIdFormDisplay
+     *            the id of the form display to iterate
      */
-    void initComposite( FormDisplay formDisplay );
-
-    /**
-     * 
-     * @param mapStepResponses
-     *            The map containing question responses and potential errors
-     */
-    void setResponses( Map<Integer, List<Response>> mapStepResponses );
+    void iterate( int nIdFormDisplay );
 
     /**
      * Return the full list of children ICompositeDisplay of an initialized CompositeDisplay
@@ -92,14 +90,6 @@ public interface ICompositeDisplay
     String getType( );
 
     /**
-     * Set the formDisplay
-     * 
-     * @param formDisplay
-     *            the FormDisplay to set
-     */
-    void setFormDisplay( FormDisplay formDisplay );
-
-    /**
      * return the FormDisplay
      * 
      * @return the FormDisplay
@@ -115,6 +105,7 @@ public interface ICompositeDisplay
      * @param strIconName
      *            the icon name to set
      */
+    // TODO : remove this method
     void setIcon( String strIconName );
 
     /**
@@ -122,5 +113,13 @@ public interface ICompositeDisplay
      * @return all the Display Controls in the child
      */
     List<Control> getAllDisplayControls( );
+
+    /**
+     * Add the questions into the specified list
+     * 
+     * @param listQuestion
+     *            the list of question to complete
+     */
+    void addQuestions( List<Question> listQuestion );
 
 }
