@@ -20,6 +20,10 @@
     <bean id="forms.formResponseStepDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseStepDAO" />
     <bean id="forms.controlDAO" class="fr.paris.lutece.plugins.forms.business.ControlDAO" />
     
+    <!-- Listener services -->
+    <bean id="forms.formRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
+    <bean id="forms.questionRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
+    
     <!-- Validator -->
     <bean id="forms.patternValidator" class="fr.paris.lutece.plugins.forms.validation.PatternValidator">
     	<constructor-arg type="java.lang.String" index="0" value="forms.patternValidator" />
