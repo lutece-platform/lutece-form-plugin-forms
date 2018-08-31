@@ -116,27 +116,21 @@ public class EntryTypeDefaultDataService implements IEntryDataService
 
         GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
                 formQuestionResponse.getEntryResponse( ), request.getLocale( ) );
+        formQuestionResponse.setError( error );
 
-        if ( error != null )
-        {
-            formQuestionResponse.setError( error );
-        }
-        else
-        {
-            Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
+        Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
 
-            if ( control != null )
+        if ( control != null )
+        {
+            IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+            if ( !validator.validate( formQuestionResponse, control ) )
             {
-                IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-                if ( !validator.validate( formQuestionResponse, control ) )
-                {
-                    error = new GenericAttributeError( );
+                error = new GenericAttributeError( );
 
-                    error.setIsDisplayableError( true );
-                    error.setErrorMessage( control.getErrorMessage( ) );
+                error.setIsDisplayableError( true );
+                error.setErrorMessage( control.getErrorMessage( ) );
 
-                    formQuestionResponse.setError( error );
-                }
+                formQuestionResponse.setError( error );
             }
         }
 
