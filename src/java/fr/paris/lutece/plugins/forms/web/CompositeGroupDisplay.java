@@ -260,6 +260,11 @@ public class CompositeGroupDisplay implements ICompositeDisplay
             strTemplate = TEMPLATE_GROUP_READONLY_BACKOFFICE;
         }
 
+        if ( displayType == DisplayType.READONLY_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_GROUP_READONLY_BACKOFFICE;
+        }
+
         return strTemplate;
     }
 

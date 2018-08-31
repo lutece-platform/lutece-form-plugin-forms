@@ -16,6 +16,7 @@ workgroup varchar(255),
 id_workflow INT DEFAULT NULL,
 authentification_needed SMALLINT,
 breadcrumb_name varchar(255) default '' NOT NULL,
+display_summary SMALLINT default 0 NOT NULL,
 end_message varchar(3000) default '',
 return_url varchar(255) default '',
 PRIMARY KEY (id_form)

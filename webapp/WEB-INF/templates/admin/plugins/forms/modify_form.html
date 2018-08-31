@@ -33,6 +33,9 @@
 				                     <@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
 				                 </@inputGroup>
 				             </@formGroup>
+				             <@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' >
+				                <@checkBox labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
+				             </@formGroup>
 				             <@formGroup labelKey='#i18n{forms.modify_form.labelEndMessage}' helpKey='#i18n{forms.modify_form.labelEndMessage.help}' >
                                 <@input type='textarea' name='endMessage' richtext=true>${form.endMessage}</@input>
                             </@formGroup>

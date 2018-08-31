@@ -199,6 +199,11 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             strTemplate = TEMPLATE_QUESTION_READONLY_BACKOFFICE;
         }
 
+        if ( displayType == DisplayType.READONLY_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_READONLY_BACKOFFICE;
+        }
+
         return strTemplate;
     }
 
