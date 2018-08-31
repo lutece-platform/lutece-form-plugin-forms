@@ -102,13 +102,6 @@ public interface ICompositeDisplay
     String getIcon( );
 
     /**
-     * @param strIconName
-     *            the icon name to set
-     */
-    // TODO : remove this method
-    void setIcon( String strIconName );
-
-    /**
      * 
      * @return all the Display Controls in the child
      */

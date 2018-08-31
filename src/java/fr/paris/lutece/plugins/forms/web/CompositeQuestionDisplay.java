@@ -254,12 +254,6 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     }
 
     @Override
-    public void setIcon( String strIconName )
-    {
-        _strIconName = strIconName;
-    }
-
-    @Override
     public List<Control> getAllDisplayControls( )
     {
         List<Control> listDisplayControls = new ArrayList<Control>( );
