@@ -76,7 +76,9 @@ title varchar(255) default '' NOT NULL,
 description varchar(255) default '',
 id_step int default '0',
 collapsible SMALLINT,
-iteration_number int default '0',
+iteration_min int default '0',
+iteration_max int default '0',
+iteration_label varchar(255) default '',
 PRIMARY KEY (id_group)
 );
 

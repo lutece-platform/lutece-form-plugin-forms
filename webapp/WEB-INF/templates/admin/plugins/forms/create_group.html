@@ -16,6 +16,15 @@
              <@formGroup labelKey='#i18n{forms.create_group.labelCollapsible}' helpKey='#i18n{forms.create_group.labelCollapsible.help}' >
                 <@checkBox labelFor='collapsible' name='collapsible' id='collapsible' value='1' checked=(group?exists && group.collapsible??) />
              </@formGroup>
+             <@formGroup labelKey='#i18n{forms.create_group.labelIterationMin}' helpKey='#i18n{forms.create_group.labelIterationMin.help}' >
+                 <@input type='text' name='iterationMin' value='${group.iterationMin!}' />
+             </@formGroup>
+             <@formGroup labelKey='#i18n{forms.create_group.labelIterationMax}' helpKey='#i18n{forms.create_group.labelIterationMax.help}' >
+                 <@input type='text' name='iterationMax' value='${group.iterationMax!}' />
+             </@formGroup>
+             <@formGroup labelKey='#i18n{forms.create_group.labelIterationLabel}' helpKey='#i18n{forms.create_group.labelIterationLabel.help}' >
+                 <@input type='text' name='iterationLabel' value='${group.iterationLabel!}' />
+             </@formGroup>
             <div class="form-group">
                 <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
                     <button  class="btn btn-primary" name="action_createGroup" type="submit">

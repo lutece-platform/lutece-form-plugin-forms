@@ -170,7 +170,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
      */
     private int findIterationNumber( List<FormDisplay> listFormDisplayChildren, FormResponseStep formResponseStep )
     {
-        int nIterationNumber = 0;
+        int nIterationNumber = _group.getIterationMin( ) - 1;
 
         if ( formResponseStep != null )
         {
@@ -278,21 +278,22 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     {
         boolean bIsIterable = true;
 
-        if ( !_listChildren.isEmpty( ) )
-        {
-            for ( ICompositeDisplay composite : _listChildren )
-            {
-                if ( CompositeDisplayType.GROUP.getLabel( ).equals( composite.getType( ) ) )
-                {
-                    bIsIterable = false;
-                    break;
-                }
-            }
-        }
-        else
+        if ( _group.getIterationMax( ) > 0 && _group.getIterationMax( ) - 1 <= _nIterationNumber )
         {
             bIsIterable = false;
         }
+        else
+            if ( !_listChildren.isEmpty( ) )
+            {
+                for ( ICompositeDisplay composite : _listChildren )
+                {
+                    if ( CompositeDisplayType.GROUP.getLabel( ).equals( composite.getType( ) ) )
+                    {
+                        bIsIterable = false;
+                        break;
+                    }
+                }
+            }
 
         return bIsIterable;
     }
@@ -323,14 +324,15 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     @Override
     public List<ICompositeDisplay> getCompositeList( )
     {
-        List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
-        listICompositeDisplay.add( this );
+        List<ICompositeDisplay> listCompositeDisplay = new ArrayList<ICompositeDisplay>( );
+        listCompositeDisplay.add( this );
 
-        for ( ICompositeDisplay child : _listChildren )
+        for ( FormDisplay child : FormDisplayHome.getFormDisplayListByParent( this.getFormDisplay( ).getStepId( ), this.getFormDisplay( ).getId( ) ) )
         {
-            listICompositeDisplay.addAll( child.getCompositeList( ) );
+            ICompositeDisplay compositeChild = _formService.formDisplayToComposite( child, null, 0 );
+            listCompositeDisplay.addAll( compositeChild.getCompositeList( ) );
         }
-        return listICompositeDisplay;
+        return listCompositeDisplay;
     }
 
     @Override
