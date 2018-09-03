@@ -173,7 +173,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
     // Validations
     private static final String GROUP_VALIDATION_ATTRIBUTES_PREFIX = "forms.model.entity.group.attribute.";
-    
+
     // Others
     private static final int INTEGER_MINUS_ONE = -1;
 
@@ -315,7 +315,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         int nParentGroup;
 
         nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE  );
+        nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
         {
@@ -360,7 +360,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         int nParentGroup = INTEGER_MINUS_ONE;
 
         nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE  );
+        nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -369,10 +369,10 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _group = ( _group != null ) ? _group : new Group( );
         populate( _group, request );
-        
-        if( !validateGroup( ) )
+
+        if ( !validateGroup( ) )
         {
-        	return redirect( request, VIEW_CREATE_GROUP, FormsConstants.PARAMETER_ID_DISPLAY_PARENT, nParentGroup );
+            return redirect( request, VIEW_CREATE_GROUP, FormsConstants.PARAMETER_ID_DISPLAY_PARENT, nParentGroup );
         }
 
         GroupHome.create( _group );
@@ -420,7 +420,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         int nIdGroup = INTEGER_MINUS_ONE;
 
         nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ), FormsConstants.DEFAULT_ID_VALUE  );
+        nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
         {
@@ -472,10 +472,10 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _group = ( _group != null ) ? _group : new Group( );
         populate( _group, request );
-        
-        if( !validateGroup( ) )
+
+        if ( !validateGroup( ) )
         {
-        	return redirectView( request, VIEW_MODIFY_GROUP );
+            return redirectView( request, VIEW_MODIFY_GROUP );
         }
 
         GroupHome.update( _group );
@@ -500,20 +500,20 @@ public class FormQuestionJspBean extends AbstractJspBean
      */
     private boolean validateGroup( )
     {
-    	boolean bValidGroup = true;
-    	
-    	if( _group.getIterationMax( ) != 0 && _group.getIterationMin( ) > _group.getIterationMax( ) )
-    	{
-    		bValidGroup = false;
-    		addError( ERROR_ITERATION_NUMBER, getLocale( ) );
-    	}
-    	
-    	if( !validateBean( _group, GROUP_VALIDATION_ATTRIBUTES_PREFIX ) )
-    	{
-    		bValidGroup = false;
-    	}
-    	
-    	return bValidGroup;
+        boolean bValidGroup = true;
+
+        if ( _group.getIterationMax( ) != 0 && _group.getIterationMin( ) > _group.getIterationMax( ) )
+        {
+            bValidGroup = false;
+            addError( ERROR_ITERATION_NUMBER, getLocale( ) );
+        }
+
+        if ( !validateBean( _group, GROUP_VALIDATION_ATTRIBUTES_PREFIX ) )
+        {
+            bValidGroup = false;
+        }
+
+        return bValidGroup;
     }
 
     /**

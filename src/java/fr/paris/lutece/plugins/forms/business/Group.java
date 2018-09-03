@@ -61,10 +61,10 @@ public class Group implements Serializable
 
     @Min( value = 0, message = "#i18n{forms.validation.group.IterationMin.notEmpty}" )
     private int _nIterationMin;
-    
+
     @Min( value = 0, message = "#i18n{forms.validation.group.IterationMax.notEmpty}" )
     private int _nIterationMax;
-    
+
     private String _strIterationLabel;
 
     /**
@@ -192,7 +192,7 @@ public class Group implements Serializable
     {
         _nIterationMin = nIterationMin;
     }
-    
+
     /**
      * Returns the _nIterationMax
      * 
@@ -211,9 +211,9 @@ public class Group implements Serializable
      */
     public void setIterationMax( int nIterationMax )
     {
-    	_nIterationMax = nIterationMax;
+        _nIterationMax = nIterationMax;
     }
-    
+
     /**
      * Returns the _strIterationLabel
      * 
@@ -232,7 +232,7 @@ public class Group implements Serializable
      */
     public void setIterationLabel( String strIterationLabel )
     {
-    	_strIterationLabel = strIterationLabel;
+        _strIterationLabel = strIterationLabel;
     }
-    
+
 }

@@ -215,7 +215,6 @@ public final class GroupDAO implements IGroupDAO
         group.setIterationMin( daoUtil.getInt( "iteration_min" ) );
         group.setIterationMax( daoUtil.getInt( "iteration_max" ) );
         group.setIterationLabel( daoUtil.getString( "iteration_label" ) );
-        
 
         return group;
     }

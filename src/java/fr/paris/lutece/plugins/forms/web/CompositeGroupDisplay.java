@@ -277,21 +277,22 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     {
         boolean bIsIterable = true;
 
-        if( _group.getIterationMax( ) > 0 && _group.getIterationMax( ) - 1 <= _nIterationNumber )
-    	{
-    		bIsIterable = false;
-    	}
-        else if ( !_listChildren.isEmpty( ) )
+        if ( _group.getIterationMax( ) > 0 && _group.getIterationMax( ) - 1 <= _nIterationNumber )
         {
-            for ( ICompositeDisplay composite : _listChildren )
+            bIsIterable = false;
+        }
+        else
+            if ( !_listChildren.isEmpty( ) )
             {
-                if ( CompositeDisplayType.GROUP.getLabel( ).equals( composite.getType( ) ) )
+                for ( ICompositeDisplay composite : _listChildren )
                 {
-                    bIsIterable = false;
-                    break;
+                    if ( CompositeDisplayType.GROUP.getLabel( ).equals( composite.getType( ) ) )
+                    {
+                        bIsIterable = false;
+                        break;
+                    }
                 }
             }
-        }
 
         return bIsIterable;
     }
@@ -327,8 +328,8 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         for ( FormDisplay child : FormDisplayHome.getFormDisplayListByParent( this.getFormDisplay( ).getStepId( ), this.getFormDisplay( ).getId( ) ) )
         {
-        	ICompositeDisplay compositeChild = _formService.formDisplayToComposite( child, null, 0 );
-        	listCompositeDisplay.addAll( compositeChild.getCompositeList( ) );
+            ICompositeDisplay compositeChild = _formService.formDisplayToComposite( child, null, 0 );
+            listCompositeDisplay.addAll( compositeChild.getCompositeList( ) );
         }
         return listCompositeDisplay;
     }
