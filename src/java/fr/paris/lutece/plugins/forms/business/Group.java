@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import java.io.Serializable;
@@ -58,7 +59,13 @@ public class Group implements Serializable
 
     private boolean _bCollapsible;
 
-    private int _nIterationNumber;
+    @Min( value = 0, message = "#i18n{forms.validation.group.IterationMin.notEmpty}" )
+    private int _nIterationMin;
+    
+    @Min( value = 0, message = "#i18n{forms.validation.group.IterationMax.notEmpty}" )
+    private int _nIterationMax;
+    
+    private String _strIterationLabel;
 
     /**
      * Returns the Id
@@ -166,23 +173,66 @@ public class Group implements Serializable
     }
 
     /**
-     * Returns the IterationNumber
+     * Returns the _nIterationMin
      * 
-     * @return The IterationNumber
+     * @return The _nIterationMin
      */
-    public int getIterationNumber( )
+    public int getIterationMin( )
     {
-        return _nIterationNumber;
+        return _nIterationMin;
     }
 
     /**
      * Sets the IterationNumber
      * 
-     * @param nIterationNumber
-     *            The IterationNumber
+     * @param nIterationMin
+     *            The nIterationMin
      */
-    public void setIterationNumber( int nIterationNumber )
+    public void setIterationMin( int nIterationMin )
     {
-        _nIterationNumber = nIterationNumber;
+        _nIterationMin = nIterationMin;
     }
+    
+    /**
+     * Returns the _nIterationMax
+     * 
+     * @return The _nIterationMax
+     */
+    public int getIterationMax( )
+    {
+        return _nIterationMax;
+    }
+
+    /**
+     * Sets the nIterationMax
+     * 
+     * @param nIterationMax
+     *            The nIterationMax
+     */
+    public void setIterationMax( int nIterationMax )
+    {
+    	_nIterationMax = nIterationMax;
+    }
+    
+    /**
+     * Returns the _strIterationLabel
+     * 
+     * @return The _strIterationLabel
+     */
+    public String getIterationLabel( )
+    {
+        return _strIterationLabel;
+    }
+
+    /**
+     * Sets the _strIterationLabel
+     * 
+     * @param strIterationLabel
+     *            The strIterationLabel
+     */
+    public void setIterationLabel( String strIterationLabel )
+    {
+    	_strIterationLabel = strIterationLabel;
+    }
+    
 }

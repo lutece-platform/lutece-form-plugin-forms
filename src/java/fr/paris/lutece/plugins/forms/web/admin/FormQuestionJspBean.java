@@ -154,6 +154,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String ERROR_QUESTION_NOT_UPDATED = "forms.error.question.notUpdated";
     private static final String ERROR_STEP_OR_GROUP_NOT_VALIDATED = "forms.error.moveComposite.stepOrGroup.notvalidated";
     private static final String ERROR_OCCURED_MOVING_COMPOSITE = "forms.error.moveComposite.notCompleted";
+    private static final String ERROR_ITERATION_NUMBER = "forms.error.group.iterationNumber";
 
     // Infos messages
     private static final String INFO_QUESTION_CREATED = "forms.info.question.created";
@@ -170,6 +171,9 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
     private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveGroup.formActive";
 
+    // Validations
+    private static final String GROUP_VALIDATION_ATTRIBUTES_PREFIX = "forms.model.entity.group.attribute.";
+    
     // Others
     private static final int INTEGER_MINUS_ONE = -1;
 
@@ -310,10 +314,10 @@ public class FormQuestionJspBean extends AbstractJspBean
         int nIdStep = INTEGER_MINUS_ONE;
         int nParentGroup;
 
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
+        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE  );
 
-        if ( ( _step == null ) || nIdStep != _step.getId( ) )
+        if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
@@ -326,8 +330,10 @@ public class FormQuestionJspBean extends AbstractJspBean
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
         _group = new Group( );
+        _group.setIterationMin( NumberUtils.INTEGER_ONE );
+        _group.setIterationMax( NumberUtils.INTEGER_ONE );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_GROUP, _group );
@@ -353,8 +359,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         int nIdStep = INTEGER_MINUS_ONE;
         int nParentGroup = INTEGER_MINUS_ONE;
 
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
+        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE  );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -363,6 +369,11 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _group = ( _group != null ) ? _group : new Group( );
         populate( _group, request );
+        
+        if( !validateGroup( ) )
+        {
+        	return redirect( request, VIEW_CREATE_GROUP, FormsConstants.PARAMETER_ID_DISPLAY_PARENT, nParentGroup );
+        }
 
         GroupHome.create( _group );
 
@@ -408,10 +419,10 @@ public class FormQuestionJspBean extends AbstractJspBean
         int nIdStep = INTEGER_MINUS_ONE;
         int nIdGroup = INTEGER_MINUS_ONE;
 
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        nIdGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ) );
+        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ), FormsConstants.DEFAULT_ID_VALUE  );
 
-        if ( ( _step == null ) || nIdStep != _step.getId( ) )
+        if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
@@ -423,12 +434,12 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
-        if ( _group == null || _group.getId( ) != nIdGroup )
+        if ( _group == null || ( nIdGroup != FormsConstants.DEFAULT_ID_VALUE && _group.getId( ) != nIdGroup ) )
         {
             _group = GroupHome.findByPrimaryKey( nIdGroup );
         }
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_GROUP, _group );
@@ -461,6 +472,11 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _group = ( _group != null ) ? _group : new Group( );
         populate( _group, request );
+        
+        if( !validateGroup( ) )
+        {
+        	return redirectView( request, VIEW_MODIFY_GROUP );
+        }
 
         GroupHome.update( _group );
 
@@ -475,6 +491,29 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
 
+    }
+
+    /**
+     * Perform the group bean validation
+     * 
+     * @return The boolean which indicate if a group is valid
+     */
+    private boolean validateGroup( )
+    {
+    	boolean bValidGroup = true;
+    	
+    	if( _group.getIterationMax( ) != 0 && _group.getIterationMin( ) > _group.getIterationMax( ) )
+    	{
+    		bValidGroup = false;
+    		addError( ERROR_ITERATION_NUMBER, getLocale( ) );
+    	}
+    	
+    	if( !validateBean( _group, GROUP_VALIDATION_ATTRIBUTES_PREFIX ) )
+    	{
+    		bValidGroup = false;
+    	}
+    	
+    	return bValidGroup;
     }
 
     /**

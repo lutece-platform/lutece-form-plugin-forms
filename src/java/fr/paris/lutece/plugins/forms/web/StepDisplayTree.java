@@ -157,7 +157,7 @@ public class StepDisplayTree
      *            the list of form question responses
      * @param locale
      *            the locale
-     * @param DisplayType
+     * @param displayType
      *            The display type
      * @param user
      *            the lutece user
