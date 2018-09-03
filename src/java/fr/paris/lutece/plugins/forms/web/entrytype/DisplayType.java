@@ -37,7 +37,7 @@ package fr.paris.lutece.plugins.forms.web.entrytype;
  * This class represents a type of display
  *
  */
-public class DisplayType
+public final class DisplayType
 {
     public static final DisplayType EDITION_BACKOFFICE = new DisplayType( Mode.EDITION, false );
     public static final DisplayType EDITION_FRONTOFFICE = new DisplayType( Mode.EDITION, true );

@@ -113,7 +113,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
                         setModel( entry, service, model ) ).getHtml( );
                 break;
             case READONLY:
-                strEntryHtml = getEntryResponseValueTemplateDisplay( entry, locale, model );
+                strEntryHtml = getEntryResponseValueTemplateDisplay( entry, displayType, locale, model );
                 break;
             default: // Nothing to do
         }
@@ -126,13 +126,15 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
      * 
      * @param entry
      *            The Entry to display
+     * @param displayType
+     *            the DisplayType
      * @param locale
      *            The Locale to use to build the model
      * @param model
      *            The model to populate
      * @return the template of the given Entry with its Response value
      */
-    private String getEntryResponseValueTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model )
+    private String getEntryResponseValueTemplateDisplay( Entry entry, DisplayType displayType, Locale locale, Map<String, Object> model )
     {
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
 
@@ -149,7 +151,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
             }
         }
 
-        return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( ), locale, setModel( entry, service, model ) ).getHtml( );
+        return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, service, model ) ).getHtml( );
     }
 
     /**

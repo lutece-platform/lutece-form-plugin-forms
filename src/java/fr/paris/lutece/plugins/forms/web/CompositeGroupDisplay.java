@@ -67,6 +67,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 {
     // Templates
     private static final String TEMPLATE_GROUP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group.html";
+    private static final String TEMPLATE_GROUP_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group_read_only.html";
     private static final String TEMPLATE_GROUP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_group.html";
 
     // Marks
@@ -262,7 +263,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         if ( displayType == DisplayType.READONLY_FRONTOFFICE )
         {
-            strTemplate = TEMPLATE_GROUP_READONLY_BACKOFFICE;
+            strTemplate = TEMPLATE_GROUP_READONLY_FRONTOFFICE;
         }
 
         return strTemplate;
