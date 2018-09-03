@@ -298,25 +298,32 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
      * {@inheritDoc}
      */
     @Override
-    public FormQuestionResponse selectFormQuestionResponseByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin )
+    public List<FormQuestionResponse> selectFormQuestionResponseByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin )
     {
-        FormQuestionResponse formQuestionResponseList = null;
+        List<FormQuestionResponse> listFormQuestionResponse = new ArrayList<>( );
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION, plugin );
-        daoUtil.setInt( 1, nIdFormResponse );
-        daoUtil.setInt( 2, nIdQuestion );
-        daoUtil.executeQuery( );
 
-        if ( daoUtil.next( ) )
+        try
         {
-            formQuestionResponseList = dataToObject( daoUtil );
+            daoUtil.setInt( 1, nIdFormResponse );
+            daoUtil.setInt( 2, nIdQuestion );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                FormQuestionResponse formQuestionResponse = dataToObject( daoUtil );
+                completeWithEntryResponses( formQuestionResponse, plugin );
+
+                listFormQuestionResponse.add( formQuestionResponse );
+            }
+        }
+        finally
+        {
+            daoUtil.close( );
         }
 
-        daoUtil.close( );
-
-        completeWithEntryResponses( formQuestionResponseList, plugin );
-
-        return formQuestionResponseList;
+        return listFormQuestionResponse;
     }
 
     /**

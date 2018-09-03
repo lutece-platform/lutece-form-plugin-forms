@@ -130,7 +130,7 @@ public interface IFormQuestionResponseDAO
     List<FormQuestionResponse> selectFormQuestionResponseByQuestion( int nIdQuestion, Plugin plugin );
 
     /**
-     * Retrieves the form question response associated to the given form response for the specified question.
+     * Retrieves the form question responses associated to the given form response for the specified question.
      * 
      * @param nIdFormResponse
      *            The identifier of the FormResponse
@@ -138,8 +138,8 @@ public interface IFormQuestionResponseDAO
      *            The identifier of the Question
      * @param plugin
      *            The Plugin to use to execute the query
-     * @return the found form question response, or {@code null} if not found.
+     * @return the found form question responses
      */
-    FormQuestionResponse selectFormQuestionResponseByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin );
+    List<FormQuestionResponse> selectFormQuestionResponseByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin );
 
 }
