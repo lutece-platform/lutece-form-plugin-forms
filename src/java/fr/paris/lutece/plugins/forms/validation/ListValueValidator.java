@@ -62,6 +62,7 @@ public class ListValueValidator implements IValidator
 {
 
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_value_template.html";
+    private static final String TEMPLATE_JAVASCRIPT = "/skin/plugins/forms/validators/list_value_javascript.html";
     private String _strValidatorName = StringUtils.EMPTY;
     private String _strDisplayName = StringUtils.EMPTY;
     private List<String> _listAvailableEntryType = new ArrayList<String>( );
@@ -108,7 +109,7 @@ public class ListValueValidator implements IValidator
         {
             for ( Field field : question.getEntry( ).getFields( ) )
             {
-                refListValue.addItem( field.getValue( ), field.getTitle( ) );
+                refListValue.addItem( field.getIdField( ), field.getTitle( ) );
             }
         }
 
@@ -142,7 +143,10 @@ public class ListValueValidator implements IValidator
     @Override
     public String getJavascriptValidation( )
     {
-        return null;
+        Map<String, Object> model = new HashMap<String, Object>( );
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, I18nService.getDefaultLocale( ), model );
+
+        return htmlTemplate.getHtml( );
     }
 
 }

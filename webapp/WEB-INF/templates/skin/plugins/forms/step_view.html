@@ -33,10 +33,12 @@
 	function getFieldValue(elm)
 	{
 		var result = '';
-		if(elm.is(':radio'))
+		if(elm.is(':radio') || elm.is(':checkbox'))
 		{
 			var input = $('input[name=' + elm.attr('name') + ']:checked');
 			result = input.val();
+		} else if (elm.is('select')) {
+			result = elm[0].options[elm[0].selectedIndex].value;
 		}
 		//add other specific implementations here
 		else
