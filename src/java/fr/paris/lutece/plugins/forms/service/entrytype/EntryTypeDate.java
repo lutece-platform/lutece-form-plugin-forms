@@ -99,7 +99,6 @@ public class EntryTypeDate extends AbstractEntryTypeDate implements IResponseCom
         return TEMPLATE_READONLY_BACKOFFICE;
     }
 
-
     /**
      * {@inheritDoc}
      */

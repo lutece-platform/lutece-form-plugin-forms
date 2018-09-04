@@ -102,7 +102,8 @@ public class EntryTypeDateDisplayService implements IEntryDisplayService
                         setModel( entry, locale, model ) ).getHtml( );
                 break;
             case READONLY:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, locale, model ) ).getHtml( );
+                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale,
+                        setModel( entry, locale, model ) ).getHtml( );
                 break;
             default: // Nothing to do
         }

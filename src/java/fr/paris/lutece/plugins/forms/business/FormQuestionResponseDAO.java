@@ -347,7 +347,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             {
                 Response response = formQuestionEntryResponse._response;
 
-                if ( response.getField( ) != null )
+                if ( response != null && response.getField( ) != null )
                 {
                     response.setField( FieldHome.findByPrimaryKey( response.getField( ).getIdField( ) ) );
                 }
@@ -502,7 +502,10 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
             daoUtil.close( );
 
-            ResponseHome.remove( formQuestionEntryResponse._response.getIdResponse( ) );
+            if ( formQuestionEntryResponse._response != null )
+            {
+                ResponseHome.remove( formQuestionEntryResponse._response.getIdResponse( ) );
+            }
         }
 
         /**

@@ -103,7 +103,8 @@ public class EntryTypeDefaultDisplayService implements IEntryDisplayService
                         .getHtml( );
                 break;
             case READONLY:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, model ) ).getHtml( );
+                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, model ) )
+                        .getHtml( );
                 break;
             default: // Nothing to do
         }

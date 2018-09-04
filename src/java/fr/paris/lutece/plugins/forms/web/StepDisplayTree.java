@@ -71,7 +71,6 @@ public class StepDisplayTree
     private static final String TEMPLATE_STEP_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step_read_only.html";
     private static final String TEMPLATE_STEP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_step.html";
 
-    
     // Marks
     private static final String MARK_STEP_CONTENT = "stepContent";
 

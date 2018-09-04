@@ -106,7 +106,6 @@ public class FormXPage extends MVCApplication
     // Views
     private static final String VIEW_STEP = "stepView";
     private static final String VIEW_GET_STEP = "getStep";
-    private static final String VIEW_FORM_RESPONSE_SUMMARY = "formResponseSummary";
 
     // Actions
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
@@ -114,6 +113,7 @@ public class FormXPage extends MVCApplication
     private static final String ACTION_SAVE_STEP = "doSaveStep";
     private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
     private static final String ACTION_ADD_ITERATION = "addIteration";
+    private static final String ACTION_FORM_RESPONSE_SUMMARY = "formResponseSummary";
 
     // Templates
     private static final String TEMPLATE_VIEW_STEP = "/skin/plugins/forms/step_view.html";
@@ -375,16 +375,17 @@ public class FormXPage extends MVCApplication
      * @throws SiteMessageException
      *             if there is an error during the page generation
      */
-    @View( value = VIEW_FORM_RESPONSE_SUMMARY )
-    public XPage getResponseSummary( HttpServletRequest request ) throws SiteMessageException
+    @Action( value = ACTION_FORM_RESPONSE_SUMMARY )
+    public XPage doFormResponseSummary( HttpServletRequest request ) throws SiteMessageException
     {
         Form form = null;
 
         try
         {
             findFormFrom( request );
+            fillResponseManagerWithResponses( request );
         }
-        catch( FormNotFoundException exception )
+        catch( FormNotFoundException | QuestionValidationException exception )
         {
             return redirectView( request, VIEW_STEP );
         }
