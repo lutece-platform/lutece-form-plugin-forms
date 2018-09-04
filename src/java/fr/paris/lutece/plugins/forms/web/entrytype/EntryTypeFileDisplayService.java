@@ -151,7 +151,8 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
             }
         }
 
-        return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, service, model ) ).getHtml( );
+        return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, service, model ) )
+                .getHtml( );
     }
 
     /**
