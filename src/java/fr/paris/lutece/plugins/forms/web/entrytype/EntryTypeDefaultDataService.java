@@ -144,7 +144,7 @@ public class EntryTypeDefaultDataService implements IEntryDataService
      *            the question
      * @return the created form question response
      */
-    private FormQuestionResponse createResponseFor( Question question )
+    protected FormQuestionResponse createResponseFor( Question question )
     {
         FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
         formQuestionResponse.setEntryResponse( new ArrayList<Response>( ) );

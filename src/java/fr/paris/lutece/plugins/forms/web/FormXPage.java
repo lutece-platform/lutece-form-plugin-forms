@@ -106,6 +106,7 @@ public class FormXPage extends MVCApplication
     // Views
     private static final String VIEW_STEP = "stepView";
     private static final String VIEW_GET_STEP = "getStep";
+    private static final String VIEW_FORM_RESPONSE_SUMMARY = "formResponseSummary";
 
     // Actions
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
@@ -117,12 +118,14 @@ public class FormXPage extends MVCApplication
     // Templates
     private static final String TEMPLATE_VIEW_STEP = "/skin/plugins/forms/step_view.html";
     private static final String TEMPLATE_FORM_SUBMITTED = "/skin/plugins/forms/form_submitted_view.html";
+    private static final String TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY = "/skin/plugins/forms/form_response_summary.html";
 
     // Constants
     private static final int INCORRECT_ID = -1;
 
     // Markers
     private static final String STEP_HTML_MARKER = "stepContent";
+    private static final String MARK_LIST_SUMMARY_STEP_DISPLAY = "list_summary_step_display";
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
@@ -364,6 +367,79 @@ public class FormXPage extends MVCApplication
     }
 
     /**
+     * Gives the summary page
+     * 
+     * @param request
+     *            The request
+     * @return the summary page
+     * @throws SiteMessageException
+     *             if there is an error during the page generation
+     */
+    @View( value = VIEW_FORM_RESPONSE_SUMMARY )
+    public XPage getResponseSummary( HttpServletRequest request ) throws SiteMessageException
+    {
+        Form form = null;
+
+        try
+        {
+            findFormFrom( request );
+        }
+        catch( FormNotFoundException exception )
+        {
+            return redirectView( request, VIEW_STEP );
+        }
+
+        Map<String, Object> model = buildModelForSummary( request, form );
+
+        return getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, request.getLocale( ), model );
+    }
+
+    /**
+     * Builds the model for the summary page
+     * 
+     * @param request
+     *            the request
+     * @param form
+     *            The form
+     * @return the model
+     */
+    private Map<String, Object> buildModelForSummary( HttpServletRequest request, Form form )
+    {
+        Map<String, Object> mapFormResponseSummaryModel = new HashMap<>( );
+
+        List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
+
+        List<String> listStepHtml = buildStepsHtml( request, listValidatedStep );
+        mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, listStepHtml );
+
+        return mapFormResponseSummaryModel;
+    }
+
+    /**
+     * Builds the HTML for the specified list of steps
+     * 
+     * @param request
+     *            The request
+     * @param listStep
+     *            The list of steps
+     * @return the list of HTML
+     */
+    private List<String> buildStepsHtml( HttpServletRequest request, List<Step> listStep )
+    {
+        List<String> listFormDisplayTrees = new ArrayList<>( );
+
+        for ( Step step : listStep )
+        {
+            StepDisplayTree stepDisplayTree = new StepDisplayTree( step.getId( ), _formResponseManager.getFormResponse( ) );
+
+            listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( _formResponseManager.findResponsesFor( step ), request.getLocale( ),
+                    DisplayType.READONLY_FRONTOFFICE, null ) );
+        }
+
+        return listFormDisplayTrees;
+    }
+
+    /**
      * 
      * @param request
      *            The Http request
@@ -382,7 +458,11 @@ public class FormXPage extends MVCApplication
         try
         {
             form = findFormFrom( request );
-            fillResponseManagerWithResponses( request );
+
+            if ( !form.isDisplaySummary( ) )
+            {
+                fillResponseManagerWithResponses( request );
+            }
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {

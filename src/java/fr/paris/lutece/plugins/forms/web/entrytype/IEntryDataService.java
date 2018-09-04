@@ -70,9 +70,9 @@ public interface IEntryDataService
     /**
      * Tests if a response has changed
      * 
-     * @param listResponseReference
+     * @param responseReference
      *            the reference response
-     * @param listResponseNew
+     * @param responseNew
      *            the new response
      * @return {@code true} if the response has changed, {@code false} otherwise
      */

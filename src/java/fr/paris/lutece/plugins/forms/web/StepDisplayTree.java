@@ -42,8 +42,10 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -66,8 +68,10 @@ public class StepDisplayTree
 {
     // Templates
     private static final String TEMPLATE_STEP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step.html";
+    private static final String TEMPLATE_STEP_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step_read_only.html";
     private static final String TEMPLATE_STEP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_step.html";
 
+    
     // Marks
     private static final String MARK_STEP_CONTENT = "stepContent";
 
@@ -76,6 +80,7 @@ public class StepDisplayTree
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
     private Step _step;
+    private Form _form;
     private final FormResponse _formResponse;
     private Map<Integer, List<Response>> _mapStepResponses = new HashMap<Integer, List<Response>>( );
     private List<Control> _listDisplayControls = new ArrayList<Control>( );
@@ -120,6 +125,8 @@ public class StepDisplayTree
 
         if ( _step != null )
         {
+            _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+
             List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, 0 );
             _listDisplayControls = new ArrayList<Control>( );
             for ( FormDisplay formDisplayChild : listStepFormDisplay )
@@ -152,7 +159,7 @@ public class StepDisplayTree
      *            the list of form question responses
      * @param locale
      *            the locale
-     * @param DisplayType
+     * @param displayType
      *            The display type
      * @param user
      *            the lutece user
@@ -169,6 +176,7 @@ public class StepDisplayTree
             strBuilder.append( child.getCompositeHtml( listFormQuestionResponse, locale, displayType ) );
         }
 
+        model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_USER, user );
         model.put( MARK_STEP_CONTENT, strBuilder.toString( ) );
@@ -197,6 +205,11 @@ public class StepDisplayTree
         if ( displayType == DisplayType.READONLY_BACKOFFICE )
         {
             strTemplate = TEMPLATE_STEP_READONLY_BACKOFFICE;
+        }
+
+        if ( displayType == DisplayType.READONLY_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_STEP_READONLY_FRONTOFFICE;
         }
 
         return strTemplate;

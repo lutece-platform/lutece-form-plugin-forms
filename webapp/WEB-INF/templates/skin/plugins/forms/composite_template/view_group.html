@@ -1,6 +1,11 @@
 <fieldset <#if id_display??>class="display_field_${id_display}" hidden</#if>>
  <legend>
- 	${group.title}
+    ${group.title}
+    <#if isIterable >
+        <button class="btn btn-primary btn-sm" name="action_addIteration" value="${id_group}" type="submit">
+            <span class="glyphicon glyphicon-plus-sign"></span> ${group.iterationLabel!}
+        </button>
+    </#if>
  </legend>
  <div class="step-group-value-content">${groupContent}</div>
 </fieldset>

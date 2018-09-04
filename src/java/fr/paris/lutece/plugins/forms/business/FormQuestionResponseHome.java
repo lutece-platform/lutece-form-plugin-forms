@@ -218,19 +218,19 @@ public final class FormQuestionResponseHome
     }
 
     /**
-     * Retrieves the form question response associated to the given form response for the specified question.
+     * Retrieves the form question responses associated to the given form response for the specified question.
      * 
      * @param nIdFormResponse
      *            The identifier of the FormResponse
      * @param nIdQuestion
      *            The identifier of the Question
-     * @return the found form question response, or {@code null} if not found.
+     * @return the found form question responses
      */
-    public static FormQuestionResponse findFormQuestionResponseByResponseQuestion( int nIdFormResponse, int nIdQuestion )
+    public static List<FormQuestionResponse> findFormQuestionResponseByResponseQuestion( int nIdFormResponse, int nIdQuestion )
     {
-        FormQuestionResponse formQuestionResponse = _dao.selectFormQuestionResponseByResponseForQuestion( nIdFormResponse, nIdQuestion, _plugin );
-        completeWithQuestion( formQuestionResponse );
+        List<FormQuestionResponse> listFormQuestionResponse = _dao.selectFormQuestionResponseByResponseForQuestion( nIdFormResponse, nIdQuestion, _plugin );
+        completeWithQuestions( listFormQuestionResponse );
 
-        return formQuestionResponse;
+        return listFormQuestionResponse;
     }
 }

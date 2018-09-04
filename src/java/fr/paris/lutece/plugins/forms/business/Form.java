@@ -102,6 +102,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     @Size( max = 255, message = "#i18n{forms.validation.form.ReturnUrl.size}" )
     private String _strReturnUrl;
 
+    private boolean _bDisplaySummary;
+
     /**
      * Returns the Id
      * 
@@ -430,6 +432,27 @@ public class Form implements AdminWorkgroupResource, RBACResource
     public void setReturnUrl( String strReturnUrl )
     {
         _strReturnUrl = strReturnUrl;
+    }
+
+    /**
+     * Tells if the summary must be displayed
+     * 
+     * @return {@code true} if the summary must be displayed, {@code false} otherwise
+     */
+    public boolean isDisplaySummary( )
+    {
+        return _bDisplaySummary;
+    }
+
+    /**
+     * Sets if the summary must be displayed
+     * 
+     * @param bDisplaySummary
+     *            {@code true} if the summary must be displayed, {@code false} otherwise
+     */
+    public void setDisplaySummary( boolean bDisplaySummary )
+    {
+        _bDisplaySummary = bDisplaySummary;
     }
 
 }

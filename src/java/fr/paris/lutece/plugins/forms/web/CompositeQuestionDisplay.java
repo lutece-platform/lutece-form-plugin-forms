@@ -66,6 +66,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     // Templates
     private static final String TEMPLATE_QUESTION_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_question.html";
     private static final String TEMPLATE_QUESTION_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_question.html";
+    private static final String TEMPLATE_QUESTION_EDITION_BACKOFFICE = TEMPLATE_QUESTION_READONLY_BACKOFFICE;
 
     // Marks
     private static final String MARK_QUESTION_ENTRY = "questionEntry";
@@ -194,7 +195,17 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             strTemplate = TEMPLATE_QUESTION_EDITION_FRONTOFFICE;
         }
 
+        if ( displayType == DisplayType.EDITION_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_EDITION_BACKOFFICE;
+        }
+
         if ( displayType == DisplayType.READONLY_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_READONLY_BACKOFFICE;
+        }
+
+        if ( displayType == DisplayType.READONLY_FRONTOFFICE )
         {
             strTemplate = TEMPLATE_QUESTION_READONLY_BACKOFFICE;
         }
@@ -246,12 +257,6 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     public String getIcon( )
     {
         return _strIconName;
-    }
-
-    @Override
-    public void setIcon( String strIconName )
-    {
-        _strIconName = strIconName;
     }
 
     @Override

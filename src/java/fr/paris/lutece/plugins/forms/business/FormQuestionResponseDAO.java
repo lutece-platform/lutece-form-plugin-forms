@@ -60,7 +60,8 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_question_response SET id_form_response = ?, id_question = ?, id_step = ?, iteration_number = ? WHERE id_question_response = ?";
     private static final String SQL_QUERY_SELECT_BY_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_question = ?";
     private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_form_response = ? AND id_question = ?";
-    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP = SQL_QUERY_SELECTALL + " WHERE id_form_response = ? AND id_step = ?";
+    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP = SQL_QUERY_SELECTALL
+            + " WHERE id_form_response = ? AND id_step = ? ORDER BY id_question_response ASC";
 
     private static final FormQuestionEntryResponseDAO _formQuestionEntryResponseDAO = new FormQuestionEntryResponseDAO( );
 
@@ -297,25 +298,32 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
      * {@inheritDoc}
      */
     @Override
-    public FormQuestionResponse selectFormQuestionResponseByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin )
+    public List<FormQuestionResponse> selectFormQuestionResponseByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin )
     {
-        FormQuestionResponse formQuestionResponseList = null;
+        List<FormQuestionResponse> listFormQuestionResponse = new ArrayList<>( );
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION, plugin );
-        daoUtil.setInt( 1, nIdFormResponse );
-        daoUtil.setInt( 2, nIdQuestion );
-        daoUtil.executeQuery( );
 
-        if ( daoUtil.next( ) )
+        try
         {
-            formQuestionResponseList = dataToObject( daoUtil );
+            daoUtil.setInt( 1, nIdFormResponse );
+            daoUtil.setInt( 2, nIdQuestion );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                FormQuestionResponse formQuestionResponse = dataToObject( daoUtil );
+                completeWithEntryResponses( formQuestionResponse, plugin );
+
+                listFormQuestionResponse.add( formQuestionResponse );
+            }
+        }
+        finally
+        {
+            daoUtil.close( );
         }
 
-        daoUtil.close( );
-
-        completeWithEntryResponses( formQuestionResponseList, plugin );
-
-        return formQuestionResponseList;
+        return listFormQuestionResponse;
     }
 
     /**

@@ -16,6 +16,7 @@ workgroup varchar(255),
 id_workflow INT DEFAULT NULL,
 authentification_needed SMALLINT,
 breadcrumb_name varchar(255) default '' NOT NULL,
+display_summary SMALLINT default 0 NOT NULL,
 end_message varchar(3000) default '',
 return_url varchar(255) default '',
 PRIMARY KEY (id_form)
@@ -75,7 +76,9 @@ title varchar(255) default '' NOT NULL,
 description varchar(255) default '',
 id_step int default '0',
 collapsible SMALLINT,
-iteration_number int default '0',
+iteration_min int default '0',
+iteration_max int default '0',
+iteration_label varchar(255) default '',
 PRIMARY KEY (id_group)
 );
 

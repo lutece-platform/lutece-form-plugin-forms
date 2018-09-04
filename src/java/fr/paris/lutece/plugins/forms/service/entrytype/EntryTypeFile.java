@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -55,6 +57,7 @@ public class EntryTypeFile extends AbstractEntryTypeFile implements IResponseCom
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_file.html";
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_file.html";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_file.html";
+    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_file.html";
 
     /**
      * {@inheritDoc}
@@ -122,8 +125,13 @@ public class EntryTypeFile extends AbstractEntryTypeFile implements IResponseCom
      * {@inheritDoc}
      */
     @Override
-    public String getTemplateEntryReadOnly( )
+    public String getTemplateEntryReadOnly( boolean bDisplayFront )
     {
+        if ( bDisplayFront )
+        {
+            return TEMPLATE_READONLY_FRONTOFFICE;
+        }
+
         return TEMPLATE_READONLY_BACKOFFICE;
     }
 
@@ -133,49 +141,6 @@ public class EntryTypeFile extends AbstractEntryTypeFile implements IResponseCom
     @Override
     public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
     {
-        if ( listResponseReference.size( ) != listResponseNew.size( ) )
-        {
-            return true;
-        }
-
-        boolean bAllResponsesEquals = true;
-
-        for ( Response responseNew : listResponseNew )
-        {
-            Response responseReference = findReferenceResponseAssociatedToNewResponse( responseNew, listResponseReference );
-
-            if ( responseReference == null || responseReference.getFile( ).getSize( ) != responseNew.getFile( ).getSize( ) )
-            {
-                bAllResponsesEquals = false;
-                break;
-            }
-        }
-
-        return !bAllResponsesEquals;
-    }
-
-    /**
-     * Finds the reference response associated to the new response
-     * 
-     * @param responseNew
-     *            the new response
-     * @param listResponseReference
-     *            the list of reference responses
-     * @return the found response or {@code null} if not found
-     */
-    private Response findReferenceResponseAssociatedToNewResponse( Response responseNew, List<Response> listResponseReference )
-    {
-        Response response = null;
-
-        for ( Response responseReference : listResponseReference )
-        {
-            if ( responseReference.getFile( ).getTitle( ).equals( responseNew.getFile( ).getTitle( ) ) )
-            {
-                response = responseReference;
-                break;
-            }
-        }
-
-        return response;
+        return CollectionUtils.isNotEmpty( listResponseNew );
     }
 }

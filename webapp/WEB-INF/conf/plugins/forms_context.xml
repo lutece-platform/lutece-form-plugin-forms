@@ -131,7 +131,7 @@
 	<bean id="forms.entryTypeDateDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeDate" />
 	</bean>
-	<bean id="forms.entryTypeFileDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
+	<bean id="forms.entryTypeFileDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeFile" />
 	</bean>
 	<bean id="forms.entryTypeGeolocationDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
@@ -140,7 +140,7 @@
 	<bean id="forms.entryTypeGroupDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeGroup" />
 	</bean>
-	<bean id="forms.entryTypeImageDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
+	<bean id="forms.entryTypeImageDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeImage" />
 	</bean>
 	<bean id="forms.entryTypeMyLuteceUserDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">

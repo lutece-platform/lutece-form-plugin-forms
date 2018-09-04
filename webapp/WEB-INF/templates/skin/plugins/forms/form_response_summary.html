@@ -1,0 +1,17 @@
+ <form class="form-horizontal" id="summary_validate" action="jsp/site/Portal.jsp?page=forms" method="post">
+  <div id="form-response-summary" class="box-body">
+    <#if list_summary_step_display?has_content>
+      <#list list_summary_step_display as summary_step_display>
+        ${summary_step_display}
+      </#list>
+    </#if>
+  </div>
+  <div class="panel-footer">
+    <button type="submit" class="btn btn-primary btn-sm"  name="action_doSaveResponse" >
+      <i class="glyphicon glyphicon-ok"></i>&nbsp;#i18n{forms.summary.validate}
+    </button>
+    <button type="button" class="btn btn-default btn-sm" onclick="javascript:history.go(-1)" >
+      <i class="glyphicon glyphicon-remove-circle"></i>&nbsp;#i18n{forms.summary.step.previous}
+    </button>
+  </div>
+</form>
