@@ -31,39 +31,27 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
-import java.util.ArrayList;
-
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
-import fr.paris.lutece.plugins.forms.service.entrytype.IResponseComparator;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.forms.web.http.IterationHttpServletRequestWrapper;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
- * 
- * Default entry data service
+ * Data service for iterable entry type
  *
  */
-public class EntryTypeDefaultDataService implements IEntryDataService
+public class EntryTypeIterableDataService extends EntryTypeDefaultDataService
 {
-    private String _strEntryServiceName = StringUtils.EMPTY;
 
     /**
      * Constructor
@@ -71,37 +59,9 @@ public class EntryTypeDefaultDataService implements IEntryDataService
      * @param strEntryServiceName
      *            the service name
      */
-    public EntryTypeDefaultDataService( String strEntryServiceName )
+    public EntryTypeIterableDataService( String strEntryServiceName )
     {
-        _strEntryServiceName = strEntryServiceName;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDataServiceName( )
-    {
-        return _strEntryServiceName;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void save( FormQuestionResponse questionResponse )
-    {
-        FormQuestionResponse responseSaved = FormQuestionResponseHome.findByPrimaryKey( questionResponse.getId( ) );
-
-        if ( responseSaved == null )
-        {
-            FormQuestionResponseHome.create( questionResponse );
-        }
-        else
-        {
-            FormQuestionResponseHome.update( questionResponse );
-        }
-
+        super( strEntryServiceName );
     }
 
     /**
@@ -111,6 +71,7 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     public FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request )
     {
         FormQuestionResponse formQuestionResponse = createResponseFor( question );
+        request = convertToIterationRequest( question, request );
 
         GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
                 formQuestionResponse.getEntryResponse( ), request.getLocale( ) );
@@ -136,70 +97,17 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     }
 
     /**
-     * Creates a form question response for the specified question
+     * Converts the specified request into an iteration request
      * 
      * @param question
-     *            the question
-     * @return the created form question response
+     *            the question containing the iteration number
+     * @param request
+     *            the request
+     * @return the converted request
      */
-    protected FormQuestionResponse createResponseFor( Question question )
+    private HttpServletRequest convertToIterationRequest( Question question, HttpServletRequest request )
     {
-        FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
-        formQuestionResponse.setEntryResponse( new ArrayList<Response>( ) );
-        formQuestionResponse.setQuestion( question );
-        formQuestionResponse.setIdStep( question.getIdStep( ) );
-
-        return formQuestionResponse;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isResponseChanged( FormQuestionResponse responseReference, FormQuestionResponse responseNew )
-    {
-        if ( responseReference == null && responseNew == null )
-        {
-            return false;
-        }
-
-        if ( responseReference == null && responseNew != null )
-        {
-            return true;
-        }
-
-        if ( responseReference != null && responseNew == null )
-        {
-            return true;
-        }
-
-        boolean bIsChanged = false;
-
-        IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( responseReference.getQuestion( ).getEntry( ) );
-
-        if ( service instanceof IResponseComparator )
-        {
-            bIsChanged = ( (IResponseComparator) service ).isResponseChanged( responseReference.getEntryResponse( ), responseNew.getEntryResponse( ) );
-        }
-
-        return bIsChanged;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String responseToString( FormQuestionResponse formQuestionResponse )
-    {
-        StringBuilder sb = new StringBuilder( );
-        Entry entry = formQuestionResponse.getQuestion( ).getEntry( );
-
-        for ( Response response : formQuestionResponse.getEntryResponse( ) )
-        {
-            sb.append( EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForRecap( entry, null, response, I18nService.getDefaultLocale( ) ) );
-        }
-
-        return sb.toString( );
+        return new IterationHttpServletRequestWrapper( request, question.getIterationNumber( ) );
     }
 
 }
