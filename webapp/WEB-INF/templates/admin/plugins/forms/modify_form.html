@@ -37,7 +37,7 @@
 				                <@checkBox labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
 				             </@formGroup>
 				             <@formGroup labelKey='#i18n{forms.modify_form.labelEndMessage}' helpKey='#i18n{forms.modify_form.labelEndMessage.help}' >
-                                <@input type='textarea' name='endMessage' richtext=true>${form.endMessage}</@input>
+                                <@input type='textarea' name='endMessage' richtext=true>${form.endMessage!}</@input>
                             </@formGroup>
                             <@formGroup labelKey='#i18n{forms.modify_form.labelReturnUrl}' helpKey='#i18n{forms.modify_form.labelReturnUrl.help}'>
 				                 <@input type='text' name='returnUrl' value='${form.returnUrl!}' />
