@@ -8,4 +8,4 @@ ALTER TABLE forms_group	ADD COLUMN iteration_min INT  DEFAULT '1' AFTER collapsi
 ALTER TABLE forms_group	ADD COLUMN iteration_max INT  DEFAULT '1' AFTER iteration_min;
 ALTER TABLE forms_group	ADD COLUMN iteration_label varchar(255) default '' AFTER iteration_max;
 
-ALTER TABLE forms_question	CHANGE COLUMN description description TEXT NULL DEFAULT '' COLLATE 'utf8_unicode_ci' AFTER title;
+ALTER TABLE forms_question	CHANGE COLUMN description description LONGTEXT NULL DEFAULT '' COLLATE 'utf8_unicode_ci' AFTER title;
