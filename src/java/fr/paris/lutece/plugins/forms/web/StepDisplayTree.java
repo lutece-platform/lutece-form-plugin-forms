@@ -150,6 +150,22 @@ public class StepDisplayTree
             composite.iterate( nIdFormDisplay );
         }
     }
+    
+    /**
+     * Remove the specified iteration of group
+     * 
+     * @param nIdGroupParent
+     *            the id of the parent group
+     * @param nIndexIterationToRemove
+     *            the index of the iteration to remove in group
+     */
+    public void removeIteration( int nIdGroupParent, int nIndexIterationToRemove )
+    {
+		for ( ICompositeDisplay composite : _listChildren )
+        {
+    		composite.removeIteration( nIdGroupParent, nIndexIterationToRemove, _formResponse );
+        }
+    }
 
     /**
      * Build and return the html template of the tree for Front-Office display

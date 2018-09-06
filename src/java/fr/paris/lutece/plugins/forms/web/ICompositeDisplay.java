@@ -39,6 +39,7 @@ import java.util.Locale;
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 
@@ -69,6 +70,18 @@ public interface ICompositeDisplay
      *            the id of the form display to iterate
      */
     void iterate( int nIdFormDisplay );
+    
+    /**
+     * Remove the specified iteration of group
+     * 
+     * @param nIdGroupParent
+     *            the id of the group
+     * @param nIndexIterationToRemove
+     *            the index of the iteration to remove in group
+     * @param formResponse
+     *            the form responses
+     */
+    void removeIteration( int nIdGroupParent, int nIndexIterationToRemove, FormResponse formResponse );
 
     /**
      * Return the full list of children ICompositeDisplay of an initialized CompositeDisplay

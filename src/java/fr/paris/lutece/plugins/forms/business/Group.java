@@ -65,7 +65,9 @@ public class Group implements Serializable
     @Min( value = 0, message = "#i18n{forms.validation.group.IterationMax.notEmpty}" )
     private int _nIterationMax;
 
-    private String _strIterationLabel;
+    private String _strIterationAddLabel;
+    
+    private String _strIterationRemoveLabel;
 
     /**
      * Returns the Id
@@ -215,24 +217,44 @@ public class Group implements Serializable
     }
 
     /**
-     * Returns the _strIterationLabel
+     * Returns the _strIterationAddLabel
      * 
-     * @return The _strIterationLabel
+     * @return The _strIterationAddLabel
      */
-    public String getIterationLabel( )
+    public String getIterationAddLabel( )
     {
-        return _strIterationLabel;
+        return _strIterationAddLabel;
     }
 
     /**
-     * Sets the _strIterationLabel
+     * Sets the _strIterationAddLabel
      * 
-     * @param strIterationLabel
-     *            The strIterationLabel
+     * @param strIterationAddLabel
+     *            The strIterationAddLabel
      */
-    public void setIterationLabel( String strIterationLabel )
+    public void setIterationAddLabel( String strIterationAddLabel )
     {
-        _strIterationLabel = strIterationLabel;
+    	_strIterationAddLabel = strIterationAddLabel;
     }
 
+    /**
+     * Returns the _strIterationRemoveLabel
+     * 
+     * @return The _strIterationRemoveLabel
+     */
+    public String getIterationRemoveLabel( )
+    {
+        return _strIterationRemoveLabel;
+    }
+
+    /**
+     * Sets the _strIterationRemoveLabel
+     * 
+     * @param strIterationRemoveLabel
+     *            The strIterationRemoveLabel
+     */
+    public void setIterationRemoveLabel( String strIterationRemoveLabel )
+    {
+    	_strIterationRemoveLabel = strIterationRemoveLabel;
+    }
 }

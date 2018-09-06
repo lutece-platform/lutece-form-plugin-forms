@@ -221,6 +221,15 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
 
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeIteration( int nIdGroupParent, int nIndexIterationToRemove, FormResponse formResponse )
+    {
+
+    }
 
     @Override
     public List<ICompositeDisplay> getCompositeList( )

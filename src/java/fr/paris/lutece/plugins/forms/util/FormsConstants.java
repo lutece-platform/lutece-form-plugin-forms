@@ -77,6 +77,7 @@ public final class FormsConstants
     public static final String MARK_CONTROL_TEMPLATE = "control_template";
     public static final String MARK_CONDITION_TITLE = "modify_condition_title";
     public static final String MARK_QUESTION_LIST_RESPONSES = "list_responses";
+    public static final String MARK_ITERATION_INFO = "iterationInfo";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -157,6 +158,7 @@ public final class FormsConstants
 
     // Other
     public static final String FORM_DEFAULT_END_MESSAGE = "forms.message.form.submitted";
+    public static final String SEPARATOR_UNDERSCORE = "_";
 
     /**
      * Default private constructor. Do not call

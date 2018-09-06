@@ -2,5 +2,9 @@
  <legend>
  	${group.title}
  </legend>
- <div class="step-group-value-content">${groupContent}</div>
+ <div class="step-group-value-content">
+	<#list groupContent as childrenHtml>
+		${childrenHtml}
+	</#list>
+ </div>
 </fieldset>
