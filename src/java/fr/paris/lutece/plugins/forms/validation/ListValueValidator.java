@@ -132,7 +132,7 @@ public class ListValueValidator implements IValidator
     {
         for ( Response response : questionResponse.getEntryResponse( ) )
         {
-            if ( control.getValue( ).equals( response.getResponseValue( ) ) )
+            if ( response.getField( ) != null && control.getValue( ).equals( Integer.toString( response.getField( ).getIdField( ) ) ) )
             {
                 return true;
             }

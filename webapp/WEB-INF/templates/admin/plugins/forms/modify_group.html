@@ -21,8 +21,11 @@
              <@formGroup labelKey='#i18n{forms.modify_group.labelIterationMax}' helpKey='#i18n{forms.modify_group.labelIterationMax.help}' >
                  <@input type='text' name='iterationMax' value='${group.iterationMax!}' />
              </@formGroup>
-             <@formGroup labelKey='#i18n{forms.modify_group.labelIterationLabel}' helpKey='#i18n{forms.modify_group.labelIterationLabel.help}' >
-                 <@input type='text' name='iterationLabel' value='${group.iterationLabel!}' />
+             <@formGroup labelKey='#i18n{forms.modify_group.labelIterationAddLabel}' helpKey='#i18n{forms.modify_group.labelIterationAddLabel.help}' >
+                 <@input type='text' name='iterationAddLabel' value='${group.iterationAddLabel!}' />
+             </@formGroup>
+             <@formGroup labelKey='#i18n{forms.modify_group.labelIterationRemoveLabel}' helpKey='#i18n{forms.modify_group.labelIterationRemoveLabel.help}' >
+                 <@input type='text' name='iterationRemoveLabel' value='${group.iterationRemoveLabel!}' />
              </@formGroup>
             <div class="form-group">
                 <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
