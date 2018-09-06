@@ -66,7 +66,7 @@ public class Group implements Serializable
     private int _nIterationMax;
 
     private String _strIterationAddLabel;
-    
+
     private String _strIterationRemoveLabel;
 
     /**
@@ -234,7 +234,7 @@ public class Group implements Serializable
      */
     public void setIterationAddLabel( String strIterationAddLabel )
     {
-    	_strIterationAddLabel = strIterationAddLabel;
+        _strIterationAddLabel = strIterationAddLabel;
     }
 
     /**
@@ -255,6 +255,6 @@ public class Group implements Serializable
      */
     public void setIterationRemoveLabel( String strIterationRemoveLabel )
     {
-    	_strIterationRemoveLabel = strIterationRemoveLabel;
+        _strIterationRemoveLabel = strIterationRemoveLabel;
     }
 }

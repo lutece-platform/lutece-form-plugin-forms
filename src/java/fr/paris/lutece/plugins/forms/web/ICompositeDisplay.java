@@ -70,7 +70,7 @@ public interface ICompositeDisplay
      *            the id of the form display to iterate
      */
     void iterate( int nIdFormDisplay );
-    
+
     /**
      * Remove the specified iteration of group
      * 

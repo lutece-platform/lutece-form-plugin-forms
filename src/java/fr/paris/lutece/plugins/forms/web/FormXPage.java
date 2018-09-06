@@ -751,7 +751,7 @@ public class FormXPage extends MVCApplication
 
         return redirectView( request, VIEW_STEP );
     }
-    
+
     /**
      * Remove an iteration
      * 
@@ -766,7 +766,7 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_REMOVE_ITERATION )
     public XPage doRemoveIteration( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-    	try
+        try
         {
             findFormFrom( request );
             fillResponseManagerWithResponses( request );
@@ -775,14 +775,14 @@ public class FormXPage extends MVCApplication
         {
             return redirectView( request, VIEW_STEP );
         }
-    	
+
         String strIterationInfo = request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_REMOVE_ITERATION );
-        
-        String[] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
-        
-        int nIdGroupParent = Integer.valueOf( arrayIterationInfo[0] );
-        int nIndexIteration = Integer.valueOf( arrayIterationInfo[1] );
-        
+
+        String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
+
+        int nIdGroupParent = Integer.valueOf( arrayIterationInfo [0] );
+        int nIndexIteration = Integer.valueOf( arrayIterationInfo [1] );
+
         _stepDisplayTree.removeIteration( nIdGroupParent, nIndexIteration );
 
         return redirectView( request, VIEW_STEP );

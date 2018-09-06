@@ -150,7 +150,7 @@ public class StepDisplayTree
             composite.iterate( nIdFormDisplay );
         }
     }
-    
+
     /**
      * Remove the specified iteration of group
      * 
@@ -161,9 +161,9 @@ public class StepDisplayTree
      */
     public void removeIteration( int nIdGroupParent, int nIndexIterationToRemove )
     {
-		for ( ICompositeDisplay composite : _listChildren )
+        for ( ICompositeDisplay composite : _listChildren )
         {
-    		composite.removeIteration( nIdGroupParent, nIndexIterationToRemove, _formResponse );
+            composite.removeIteration( nIdGroupParent, nIndexIterationToRemove, _formResponse );
         }
     }
 

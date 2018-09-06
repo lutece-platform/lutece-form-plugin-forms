@@ -230,7 +230,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
 
     }
-    
+
     /**
      * {@inheritDoc}
      */
