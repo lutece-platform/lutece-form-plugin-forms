@@ -1,4 +1,4 @@
-<div class="row <#if id_display??>display_field_${id_display}</#if>" displayControl="${id_question}" <#if id_display??> hidden </#if>>${questionContent}</div>
+<div class="row <#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if>" displayControl="${question.id}_${question.iterationNumber}" <#if id_display??> hidden </#if>>${questionContent}</div>
 
 <#if validator??>
 	<script>
@@ -11,18 +11,19 @@
 			}
 		</#if>
 		
-		var input${control.id} = getInputElement(${control.idQuestion});
-		input${control.id}.change(function(){
-			var inputValue = getFieldValue(input${control.id});
+		var displayControl = ${control.idQuestion} + "_" + ${question.iterationNumber};
+		var input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
+		input${control.id}_${question.iterationNumber}.change(function(){
+			var inputValue = getFieldValue(input${control.id}_${question.iterationNumber});
 			if(validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
 			{
-				$('.display_field_${control.idTargetFormDisplay!''}').show();		
+				$('.display_field_${control.idTargetFormDisplay!''}_${question.iterationNumber}').show();		
 			}
 			else
 			{
-				$('.display_field_${control.idTargetFormDisplay!''}').hide();
+				$('.display_field_${control.idTargetFormDisplay!''}_${question.iterationNumber}').hide();
 			}
 		});
-		input${control.id}.change();
+		input${control.id}_${question.iterationNumber}.change();
 	</script>
 </#if>
