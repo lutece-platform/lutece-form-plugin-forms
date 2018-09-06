@@ -1,1 +1,28 @@
 <div class="row <#if id_display??>display_field_${id_display}</#if>" displayControl="${id_question}" <#if id_display??> hidden </#if>>${questionContent}</div>
+
+<#if validator??>
+	<script>
+		<#assign validNames = [] />
+		<#if !validNames?seq_contains(validator.validatorBeanName)>
+			<#assign validNames = validNames + [validator.validatorBeanName] />
+			function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue)
+			{
+				${validator.getJavascriptValidation()!'return true;'}
+			}
+		</#if>
+		
+		var input${control.id} = getInputElement(${control.idQuestion});
+		input${control.id}.change(function(){
+			var inputValue = getFieldValue(input${control.id});
+			if(validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
+			{
+				$('.display_field_${control.idTargetFormDisplay!''}').show();		
+			}
+			else
+			{
+				$('.display_field_${control.idTargetFormDisplay!''}').hide();
+			}
+		});
+		input${control.id}.change();
+	</script>
+</#if>

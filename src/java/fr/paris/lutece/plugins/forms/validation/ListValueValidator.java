@@ -149,4 +149,9 @@ public class ListValueValidator implements IValidator
         return htmlTemplate.getHtml( );
     }
 
+    @Override
+    public String getJavascriptControlValue( Control control )
+    {
+        return control.getValue( );
+    }
 }

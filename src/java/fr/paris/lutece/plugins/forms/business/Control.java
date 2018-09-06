@@ -40,7 +40,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 /**
  * This is the business class for the object Control
  */
-public class Control
+public class Control implements Cloneable
 {
     private int _nId;
 
@@ -179,5 +179,24 @@ public class Control
     public void setIdTargetFormDisplay( int nIdTargetFormDisplay )
     {
         this._nIdTargetFormDisplay = nIdTargetFormDisplay;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Control clone( )
+    {
+        Control controlNew = new Control( );
+
+        controlNew.setId( _nId );
+        controlNew.setIdQuestion( _nIdQuestion );
+        controlNew.setControlType( _strControlType );
+        controlNew.setErrorMessage( _strErrorMessage );
+        controlNew.setIdTargetFormDisplay( _nIdTargetFormDisplay );
+        controlNew.setValidatorName( _strValidatorName );
+        controlNew.setValue( _strValue );
+
+        return controlNew;
     }
 }

@@ -2,18 +2,7 @@
 <@addRequiredJsFiles />
 <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
 
-<form class="form-horizontal" id="form-validate" action="jsp/site/Portal.jsp?page=forms" method="post" enctype="multipart/form-data">
-	<#if messageInfo?? >
-	<div class="alert alert-info" role="alert">
-		${messageInfo}
-	</div>
-	</#if>
-	${formTopBreadcrumb!}
-	${stepContent!}
-	${formBottomBreadcrumb!}
-</form>
 <script>
-
 	function getInputElement(displayControl)
 	{
 		var types = ['input','select','textarea'];
@@ -32,47 +21,41 @@
 
 	function getFieldValue(elm)
 	{
-		var result = '';
-		if(elm.is(':radio') || elm.is(':checkbox'))
+		if(elm.is(':radio'))
 		{
 			var input = $('input[name=' + elm.attr('name') + ']:checked');
-			result = input.val();
-		} else if (elm.is('select')) {
-			result = elm[0].options[elm[0].selectedIndex].value;
+			return input.val();
+		}
+		else if (elm.is(':checkbox'))
+		{
+			var resultChecked = [];
+			for(var i=0;i< elm.length;i++)
+			{
+				if (elm [i].checked)
+				{
+					resultChecked.push(elm[i].value);
+				}
+			}
+			return resultChecked;
+		}
+		else if (elm.is('select')) {
+			return elm[0].options[elm[0].selectedIndex].value;
 		}
 		//add other specific implementations here
 		else
 		{
-			result = elm.val();
+			return elm.val();
 		}
-		return result;
 	}
-	
-	<#assign validNames = [] />
-	<#list list_validators as validator >
-		<#if !validNames?seq_contains(validator.validatorBeanName)>
-			<#assign validNames = validNames + [validator.validatorBeanName] />
-			function validator_${validator.validatorBeanName?replace('.','_')}(${inputValue},${controlValue})
-			{
-				${validator.getJavascriptValidation()!'return true;'}
-			}
-		</#if>
-	</#list>
-	
-	<#list list_controls as control>
-	var input${control.id} = getInputElement(${control.idQuestion});
-		input${control.id}.change(function(){
-		var inputValue = getFieldValue(input${control.id});
-		if(validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
-		{
-			$('.display_field_${control.idTargetFormDisplay!''}').show();		
-		}
-		else
-		{
-			$('.display_field_${control.idTargetFormDisplay!''}').hide();
-		}
-	});
-	input${control.id}.change();
-	
-	</#list>
 </script>
+
+<form class="form-horizontal" id="form-validate" action="jsp/site/Portal.jsp?page=forms" method="post" enctype="multipart/form-data">
+	<#if messageInfo?? >
+	<div class="alert alert-info" role="alert">
+		${messageInfo}
+	</div>
+	</#if>
+	${formTopBreadcrumb!}
+	${stepContent!}
+	${formBottomBreadcrumb!}
+</form>
