@@ -299,26 +299,6 @@ public class FormXPage extends MVCApplication
             _formResponseManager.add( _currentStep );
         }
 
-        // Add all the display controls for visualisation
-        List<Control> listDisplayControls = _stepDisplayTree.getListDisplayControls( );
-        model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
-
-        // Add all the validators to generate their Javascript
-        List<IValidator> listDisplayValidators = new ArrayList<IValidator>( );
-        for ( Control control : listDisplayControls )
-        {
-            IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-
-            if ( validator != null )
-            {
-                listDisplayValidators.add( validator );
-            }
-        }
-
-        model.put( FormsConstants.MARK_LIST_VALIDATORS, listDisplayValidators );
-        model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
-        model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
-        model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
         model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( _formResponseManager.findResponsesFor( _currentStep ), request.getLocale( ),
                 DisplayType.EDITION_FRONTOFFICE, user ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( _formResponseManager ) );

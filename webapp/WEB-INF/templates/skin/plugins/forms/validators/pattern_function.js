@@ -1,2 +1,2 @@
 var regex = new RegExp(controlValue);
-return regex.test(${inputValue});
+return regex.test(inputValue);

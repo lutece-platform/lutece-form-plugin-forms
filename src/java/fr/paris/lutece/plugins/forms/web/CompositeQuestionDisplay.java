@@ -50,6 +50,7 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -139,7 +140,15 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 model.put( FormsConstants.MARK_ID_QUESTION, _question.getId( ) );
                 if ( _formDisplay.getDisplayControl( ) != null )
                 {
-                    model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdTargetFormDisplay( ) );
+                    Control control = _formDisplay.getDisplayControl( );
+                    IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+
+                    model.put( FormsConstants.MARK_VALIDATOR, validator );
+                    Control controlNew = control.clone( );
+                    controlNew.setValue( validator.getJavascriptControlValue( control ) );
+                    model.put( FormsConstants.MARK_CONTROL, controlNew );
+
+                    model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdTargetFormDisplay( ) );
                 }
 
                 HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, model );
