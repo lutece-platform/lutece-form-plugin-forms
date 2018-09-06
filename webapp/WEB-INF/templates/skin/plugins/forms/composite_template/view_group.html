@@ -3,9 +3,24 @@
     ${group.title}
     <#if isIterable >
         <button class="btn btn-primary btn-sm" name="action_addIteration" value="${id_group}" type="submit">
-            <span class="glyphicon glyphicon-plus-sign"></span> ${group.iterationLabel!}
+            <span class="glyphicon glyphicon-plus-sign"></span> ${group.iterationAddLabel!}
         </button>
     </#if>
  </legend>
- <div class="step-group-value-content">${groupContent}</div>
+ <div class="step-group-value-content">
+	<#list groupContent as childrenHtml>
+		${childrenHtml}
+		<#assign indexIteration = ( childrenHtml?index / nbBaseChildren )?int />
+		<#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />
+		
+		<#if ( ( childrenHtml?index + 1 ) % nbBaseChildren ) == 0 && ( group.iterationMin == 0 || nbTotalIteration > group.iterationMin  ) >
+			<div class="row text-center">
+				<button class="btn btn-danger btn-sm" name="action_removeIteration" value="${group.id}_${indexIteration}" type="submit">
+			    	<i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!}
+				</button>
+			</div>
+		</#if>
+	</#list>
+	
+ </div>
 </fieldset>

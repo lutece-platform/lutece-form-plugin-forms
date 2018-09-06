@@ -132,7 +132,7 @@ public class ListValueValidator implements IValidator
     {
         for ( Response response : questionResponse.getEntryResponse( ) )
         {
-            if ( control.getValue( ).equals( response.getResponseValue( ) ) )
+            if ( response.getField( ) != null && control.getValue( ).equals( Integer.toString( response.getField( ).getIdField( ) ) ) )
             {
                 return true;
             }
@@ -149,4 +149,9 @@ public class ListValueValidator implements IValidator
         return htmlTemplate.getHtml( );
     }
 
+    @Override
+    public String getJavascriptControlValue( Control control )
+    {
+        return control.getValue( );
+    }
 }

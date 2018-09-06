@@ -48,11 +48,11 @@ import java.util.List;
 public final class GroupDAO implements IGroupDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_group, title, description, id_step, collapsible, iteration_min, iteration_max, iteration_label FROM forms_group";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_group, title, description, id_step, collapsible, iteration_min, iteration_max, iteration_add_label, iteration_remove_label FROM forms_group";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_group = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_group ( title, description, id_step, collapsible, iteration_min, iteration_max, iteration_label ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_group ( title, description, id_step, collapsible, iteration_min, iteration_max, iteration_add_label, iteration_remove_label ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_group WHERE id_group = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_group SET id_group = ?, title = ?, description = ?, id_step = ?, collapsible = ?, iteration_min = ?, iteration_max = ?, iteration_label = ? WHERE id_group = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_group SET id_group = ?, title = ?, description = ?, id_step = ?, collapsible = ?, iteration_min = ?, iteration_max = ?, iteration_add_label = ?, iteration_remove_label = ? WHERE id_group = ?";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_group FROM forms_group";
 
     /**
@@ -71,7 +71,8 @@ public final class GroupDAO implements IGroupDAO
             daoUtil.setBoolean( nIndex++, group.getCollapsible( ) );
             daoUtil.setInt( nIndex++, group.getIterationMin( ) );
             daoUtil.setInt( nIndex++, group.getIterationMax( ) );
-            daoUtil.setString( nIndex++, group.getIterationLabel( ) );
+            daoUtil.setString( nIndex++, group.getIterationAddLabel( ) );
+            daoUtil.setString( nIndex++, group.getIterationRemoveLabel( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -133,7 +134,8 @@ public final class GroupDAO implements IGroupDAO
         daoUtil.setBoolean( nIndex++, group.getCollapsible( ) );
         daoUtil.setInt( nIndex++, group.getIterationMin( ) );
         daoUtil.setInt( nIndex++, group.getIterationMax( ) );
-        daoUtil.setString( nIndex++, group.getIterationLabel( ) );
+        daoUtil.setString( nIndex++, group.getIterationAddLabel( ) );
+        daoUtil.setString( nIndex++, group.getIterationRemoveLabel( ) );
         daoUtil.setInt( nIndex, group.getId( ) );
 
         daoUtil.executeUpdate( );
@@ -214,7 +216,8 @@ public final class GroupDAO implements IGroupDAO
         group.setCollapsible( daoUtil.getBoolean( "collapsible" ) );
         group.setIterationMin( daoUtil.getInt( "iteration_min" ) );
         group.setIterationMax( daoUtil.getInt( "iteration_max" ) );
-        group.setIterationLabel( daoUtil.getString( "iteration_label" ) );
+        group.setIterationAddLabel( daoUtil.getString( "iteration_add_label" ) );
+        group.setIterationRemoveLabel( daoUtil.getString( "iteration_remove_label" ) );
 
         return group;
     }

@@ -78,7 +78,8 @@ id_step int default '0',
 collapsible SMALLINT,
 iteration_min int default '1',
 iteration_max int default '1',
-iteration_label varchar(255) default '',
+iteration_add_label varchar(255) default '',
+iteration_remove_label varchar(255) default '',
 PRIMARY KEY (id_group)
 );
 

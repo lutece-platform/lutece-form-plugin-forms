@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -74,6 +75,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     private static final String MARK_GROUP = "group";
     private static final String MARK_GROUP_CONTENT = "groupContent";
     private static final String MARK_IS_ITERABLE = "isIterable";
+    private static final String MARK_NB_BASE_CHILDREN = "nbBaseChildren";
 
     // Properties
     private static final String PROPERTY_COMPOSITE_GROUP_ICON = "forms.composite.group.icon";
@@ -82,6 +84,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     private int _nIterationNumber;
+    private int _nNbBaseChildren;
 
     private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private Group _group;
@@ -122,6 +125,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         }
 
         List<FormDisplay> listFormDisplayChildren = FormDisplayHome.getFormDisplayListByParent( _formDisplay.getStepId( ), _formDisplay.getId( ) );
+        _nNbBaseChildren = listFormDisplayChildren.size( );
         FormResponseStep formResponseStep = findResponseStep( _formDisplay, formResponse );
         _nIterationNumber = findIterationNumber( listFormDisplayChildren, formResponseStep );
 
@@ -218,17 +222,18 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     {
         Map<String, Object> model = new HashMap<String, Object>( );
 
-        StringBuilder strBuilder = new StringBuilder( );
+        List<String> listChildrenHtml = new ArrayList<String>( );
 
         for ( ICompositeDisplay child : _listChildren )
         {
-            strBuilder.append( child.getCompositeHtml( listFormQuestionResponse, locale, displayType ) );
+            listChildrenHtml.add( child.getCompositeHtml( listFormQuestionResponse, locale, displayType ) );
         }
 
         model.put( MARK_GROUP, _group );
-        model.put( MARK_GROUP_CONTENT, strBuilder.toString( ) );
+        model.put( MARK_GROUP_CONTENT, listChildrenHtml );
         model.put( FormsConstants.PARAMETER_ID_GROUP, _formDisplay.getId( ) );
         model.put( MARK_IS_ITERABLE, isIterable( ) );
+        model.put( MARK_NB_BASE_CHILDREN, _nNbBaseChildren );
 
         if ( _formDisplay.getDisplayControl( ) != null )
         {
@@ -317,6 +322,96 @@ public class CompositeGroupDisplay implements ICompositeDisplay
             for ( ICompositeDisplay composite : _listChildren )
             {
                 composite.iterate( nIdFormDisplay );
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void removeIteration( int nIdGroupParent, int nIndexIterationToRemove, FormResponse formResponse )
+    {
+        if ( nIdGroupParent == _group.getId( ) )
+        {
+            int nNbIterationToAdd = _nIterationNumber - nIndexIterationToRemove;
+
+            _nIterationNumber = nIndexIterationToRemove - 1;
+
+            int nIndexIterationStart = nIndexIterationToRemove * _nNbBaseChildren;
+
+            _listChildren.subList( nIndexIterationStart, _listChildren.size( ) ).clear( );
+
+            List<FormDisplay> listGroupChildren = FormDisplayHome.getFormDisplayListByParent( _group.getIdStep( ), _formDisplay.getId( ) );
+
+            updateIterationResponse( formResponse, listGroupChildren, nIndexIterationToRemove );
+
+            for ( int i = 0; i < nNbIterationToAdd; i++ )
+            {
+                _nIterationNumber++;
+                addChildren( listGroupChildren, formResponse, _nIterationNumber );
+            }
+        }
+        else
+        {
+            for ( ICompositeDisplay child : _listChildren )
+            {
+                child.removeIteration( nIdGroupParent, nIndexIterationToRemove, formResponse );
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param formResponse
+     *            The Form responses
+     * @param listFormDisplayChildren
+     *            The children of current formDisplay
+     * @param nIndexIterationToRemove
+     *            The index of iteration to remove
+     */
+    private void updateIterationResponse( FormResponse formResponse, List<FormDisplay> listFormDisplayChildren, int nIndexIterationToRemove )
+    {
+        List<FormQuestionResponse> listFormQuestionResponse = new ArrayList<FormQuestionResponse>( );
+
+        for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+        {
+            if ( formResponseStep.getStep( ).getId( ) == _group.getIdStep( ) )
+            {
+                listFormQuestionResponse = formResponseStep.getQuestions( );
+            }
+        }
+
+        List<Integer> listQuestionIdChildren = new ArrayList<Integer>( );
+
+        for ( FormDisplay formDisplayChild : listFormDisplayChildren )
+        {
+            if ( FormsConstants.COMPOSITE_QUESTION_TYPE.equals( formDisplayChild.getCompositeType( ) ) )
+            {
+                listQuestionIdChildren.add( formDisplayChild.getCompositeId( ) );
+            }
+        }
+
+        Iterator<FormQuestionResponse> responseIterator = listFormQuestionResponse.iterator( );
+        FormQuestionResponse formQuestionResponseTemp = new FormQuestionResponse( );
+
+        while ( responseIterator.hasNext( ) )
+        {
+            formQuestionResponseTemp = responseIterator.next( );
+
+            if ( listQuestionIdChildren.contains( formQuestionResponseTemp.getQuestion( ).getId( ) ) )
+            {
+                int nResponseIterationNumber = formQuestionResponseTemp.getQuestion( ).getIterationNumber( );
+
+                if ( nResponseIterationNumber == nIndexIterationToRemove )
+                {
+                    responseIterator.remove( );
+                }
+                else
+                    if ( nResponseIterationNumber > nIndexIterationToRemove )
+                    {
+                        formQuestionResponseTemp.getQuestion( ).setIterationNumber( nResponseIterationNumber - 1 );
+                    }
             }
         }
     }

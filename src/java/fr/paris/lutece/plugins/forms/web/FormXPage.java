@@ -113,6 +113,7 @@ public class FormXPage extends MVCApplication
     private static final String ACTION_SAVE_STEP = "doSaveStep";
     private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
     private static final String ACTION_ADD_ITERATION = "addIteration";
+    private static final String ACTION_REMOVE_ITERATION = "removeIteration";
     private static final String ACTION_FORM_RESPONSE_SUMMARY = "formResponseSummary";
 
     // Templates
@@ -298,26 +299,6 @@ public class FormXPage extends MVCApplication
             _formResponseManager.add( _currentStep );
         }
 
-        // Add all the display controls for visualisation
-        List<Control> listDisplayControls = _stepDisplayTree.getListDisplayControls( );
-        model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
-
-        // Add all the validators to generate their Javascript
-        List<IValidator> listDisplayValidators = new ArrayList<IValidator>( );
-        for ( Control control : listDisplayControls )
-        {
-            IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-
-            if ( validator != null )
-            {
-                listDisplayValidators.add( validator );
-            }
-        }
-
-        model.put( FormsConstants.MARK_LIST_VALIDATORS, listDisplayValidators );
-        model.put( FormsConstants.MARK_LIST_CONTROLS, listDisplayControls );
-        model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
-        model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
         model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( _formResponseManager.findResponsesFor( _currentStep ), request.getLocale( ),
                 DisplayType.EDITION_FRONTOFFICE, user ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( _formResponseManager ) );
@@ -767,6 +748,42 @@ public class FormXPage extends MVCApplication
         {
             _stepDisplayTree.iterate( nIdGroup );
         }
+
+        return redirectView( request, VIEW_STEP );
+    }
+
+    /**
+     * Remove an iteration
+     * 
+     * @param request
+     *            the request
+     * @return the XPage
+     * @throws SiteMessageException
+     *             if there is an error during the iteration
+     * @throws UserNotSignedException
+     *             if the user is not signed in
+     */
+    @Action( value = ACTION_REMOVE_ITERATION )
+    public XPage doRemoveIteration( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
+        try
+        {
+            findFormFrom( request );
+            fillResponseManagerWithResponses( request );
+        }
+        catch( FormNotFoundException | QuestionValidationException exception )
+        {
+            return redirectView( request, VIEW_STEP );
+        }
+
+        String strIterationInfo = request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_REMOVE_ITERATION );
+
+        String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
+
+        int nIdGroupParent = Integer.valueOf( arrayIterationInfo [0] );
+        int nIndexIteration = Integer.valueOf( arrayIterationInfo [1] );
+
+        _stepDisplayTree.removeIteration( nIdGroupParent, nIndexIteration );
 
         return redirectView( request, VIEW_STEP );
     }

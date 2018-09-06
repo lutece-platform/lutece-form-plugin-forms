@@ -3,6 +3,8 @@
         ${group.title}
     </legend>
     <div class="form-group-value-content">
-        ${groupContent}
+		<#list groupContent as childrenHtml>
+			${childrenHtml}
+		</#list>
     </div>
 </fieldset>

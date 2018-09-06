@@ -150,11 +150,15 @@ public class PatternValidator implements IValidator
     @Override
     public String getJavascriptValidation( )
     {
-
         Map<String, Object> model = new HashMap<String, Object>( );
-        model.put( FormsConstants.MARKER_JS_PARAMETER_CONTROL_VALUE, FormsConstants.JS_PARAMETER_CONTROL_VALUE );
-        model.put( FormsConstants.MARKER_JS_PARAMETER_INPUT_VALUE, FormsConstants.JS_PARAMETER_INPUT_VALUE );
-
         return AppTemplateService.getTemplate( TEMPLATE_JS_FUNCTION, I18nService.getDefaultLocale( ), model ).getHtml( );
+    }
+
+    @Override
+    public String getJavascriptControlValue( Control control )
+    {
+        RegularExpression regularExpression = RegularExpressionHome.findByPrimaryKey( Integer.valueOf( control.getValue( ) ), _plugin );
+
+        return regularExpression.getValue( );
     }
 }
