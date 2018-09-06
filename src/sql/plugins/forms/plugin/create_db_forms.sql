@@ -59,7 +59,7 @@ DROP TABLE IF EXISTS forms_question;
 CREATE TABLE forms_question (
 id_question int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
-description varchar(255) default '',
+description LONGTEXT default '',
 id_entry int default '0',
 id_step int default '0',
 PRIMARY KEY (id_question)
