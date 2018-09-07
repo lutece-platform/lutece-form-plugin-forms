@@ -19,6 +19,7 @@
     <bean id="forms.formResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseDAO" />
     <bean id="forms.formResponseStepDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseStepDAO" />
     <bean id="forms.controlDAO" class="fr.paris.lutece.plugins.forms.business.ControlDAO" />
+    <bean id="forms.formMessageDAO" class="fr.paris.lutece.plugins.forms.business.FormMessageDAO" />
     
     <!-- Listener services -->
     <bean id="forms.formRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />

@@ -17,7 +17,6 @@ id_workflow INT DEFAULT NULL,
 authentification_needed SMALLINT,
 breadcrumb_name varchar(255) default '' NOT NULL,
 display_summary SMALLINT default 0 NOT NULL,
-end_message varchar(3000) default '',
 return_url varchar(255) default '',
 PRIMARY KEY (id_form)
 );
@@ -131,6 +130,19 @@ id_display int default '0' NOT NULL,
 validator_name varchar(255) NOT NULL,
 control_type varchar(255) NOT NULL,
 PRIMARY KEY (id_control)
+);
+
+--
+-- Structure for table forms_message
+--
+
+DROP TABLE IF EXISTS forms_message;
+CREATE TABLE forms_message (
+id int AUTO_INCREMENT,
+id_form int NOT NULL,
+end_message_display SMALLINT,
+end_message varchar(3000) default '',
+PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS forms_question_entry_response;

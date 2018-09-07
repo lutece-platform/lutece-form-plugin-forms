@@ -50,11 +50,11 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormDAO implements IFormDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name, display_summary, end_message, return_url FROM forms_form";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name, display_summary, return_url FROM forms_form";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_form = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name, display_summary, end_message, return_url ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name, display_summary, return_url ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, breadcrumb_name = ?, display_summary = ?, end_message = ?, return_url = ? WHERE id_form = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, breadcrumb_name = ?, display_summary = ?, return_url = ? WHERE id_form = ?";
 
     /**
      * {@inheritDoc }
@@ -77,7 +77,6 @@ public final class FormDAO implements IFormDAO
             daoUtil.setBoolean( nIndex++, form.getAuthentificationNeeded( ) );
             daoUtil.setString( nIndex++, form.getBreadcrumbName( ) );
             daoUtil.setBoolean( nIndex++, form.isDisplaySummary( ) );
-            daoUtil.setString( nIndex++, form.getEndMessage( ) );
             daoUtil.setString( nIndex++, form.getReturnUrl( ) );
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -147,7 +146,6 @@ public final class FormDAO implements IFormDAO
         daoUtil.setBoolean( nIndex++, form.getAuthentificationNeeded( ) );
         daoUtil.setString( nIndex++, form.getBreadcrumbName( ) );
         daoUtil.setBoolean( nIndex++, form.isDisplaySummary( ) );
-        daoUtil.setString( nIndex++, form.getEndMessage( ) );
         daoUtil.setString( nIndex++, form.getReturnUrl( ) );
         daoUtil.setInt( nIndex++, form.getId( ) );
 
@@ -216,7 +214,6 @@ public final class FormDAO implements IFormDAO
         form.setAuthentificationNeeded( daoUtil.getBoolean( "authentification_needed" ) );
         form.setBreadcrumbName( daoUtil.getString( "breadcrumb_name" ) );
         form.setDisplaySummary( daoUtil.getBoolean( "display_summary" ) );
-        form.setEndMessage( daoUtil.getString( "end_message" ) );
         form.setReturnUrl( daoUtil.getString( "return_url" ) );
 
         return form;
