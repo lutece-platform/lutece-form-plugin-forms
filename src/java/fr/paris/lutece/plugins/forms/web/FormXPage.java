@@ -469,16 +469,16 @@ public class FormXPage extends MVCApplication
         String strBackUrl = getBackUrl( form );
 
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
-        
-        if( formMessage != null && formMessage.getEndMessageDisplay( ) )
+
+        if ( formMessage != null && formMessage.getEndMessageDisplay( ) )
         {
-        	model.put( FormsConstants.MARK_INFO, formMessage.getEndMessage( ) );
+            model.put( FormsConstants.MARK_INFO, formMessage.getEndMessage( ) );
         }
         else
         {
-        	return redirect( request, strBackUrl );
+            return redirect( request, strBackUrl );
         }
-        
+
         model.put( FormsConstants.PARAMETER_BACK_URL, strBackUrl );
 
         return getXPage( TEMPLATE_FORM_SUBMITTED, request.getLocale( ), model );

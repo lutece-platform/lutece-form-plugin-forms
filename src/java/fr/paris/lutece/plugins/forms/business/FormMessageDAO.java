@@ -72,7 +72,7 @@ public final class FormMessageDAO implements IFormMessageDAO
 
             if ( daoUtil.nextGeneratedKey( ) )
             {
-            	formMessage.setId( daoUtil.getGeneratedKeyInt( 1 ) );
+                formMessage.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
         finally
@@ -95,7 +95,7 @@ public final class FormMessageDAO implements IFormMessageDAO
 
         if ( daoUtil.next( ) )
         {
-        	formMessage = dataToObject( daoUtil );
+            formMessage = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
@@ -114,7 +114,7 @@ public final class FormMessageDAO implements IFormMessageDAO
         daoUtil.executeUpdate( );
         daoUtil.close( );
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -141,7 +141,7 @@ public final class FormMessageDAO implements IFormMessageDAO
             daoUtil.setInt( nIndex++, formMessage.getIdForm( ) );
             daoUtil.setBoolean( nIndex++, formMessage.getEndMessageDisplay( ) );
             daoUtil.setString( nIndex++, formMessage.getEndMessage( ) );
-            
+
             daoUtil.setInt( nIndex++, formMessage.getId( ) );
 
             daoUtil.executeUpdate( );
@@ -151,7 +151,7 @@ public final class FormMessageDAO implements IFormMessageDAO
             daoUtil.close( );
         }
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -166,14 +166,14 @@ public final class FormMessageDAO implements IFormMessageDAO
 
         if ( daoUtil.next( ) )
         {
-        	formMessage = dataToObject( daoUtil );
+            formMessage = dataToObject( daoUtil );
         }
 
         daoUtil.close( );
 
         return formMessage;
     }
-    
+
     /**
      * 
      * @param daoUtil
@@ -182,13 +182,13 @@ public final class FormMessageDAO implements IFormMessageDAO
      */
     private FormMessage dataToObject( DAOUtil daoUtil )
     {
-    	FormMessage formMessage = new FormMessage( );
+        FormMessage formMessage = new FormMessage( );
 
-    	formMessage = new FormMessage( );
-    	formMessage.setId( daoUtil.getInt( "id" ) );
-    	formMessage.setIdForm( daoUtil.getInt( "id_form" ) );
-    	formMessage.setEndMessageDisplay( daoUtil.getBoolean( "end_message_display" ) );
-    	formMessage.setEndMessage( daoUtil.getString( "end_message" ) );
+        formMessage = new FormMessage( );
+        formMessage.setId( daoUtil.getInt( "id" ) );
+        formMessage.setIdForm( daoUtil.getInt( "id_form" ) );
+        formMessage.setEndMessageDisplay( daoUtil.getBoolean( "end_message_display" ) );
+        formMessage.setEndMessage( daoUtil.getString( "end_message" ) );
 
         return formMessage;
     }

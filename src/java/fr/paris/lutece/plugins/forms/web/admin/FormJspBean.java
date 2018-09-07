@@ -263,10 +263,10 @@ public class FormJspBean extends AbstractJspBean
         }
 
         FormHome.create( _form );
-        
+
         _formMessage.setIdForm( _form.getId( ) );
         FormMessageHome.create( _formMessage );
-        
+
         addInfo( INFO_FORM_CREATED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_FORMS );
@@ -408,13 +408,13 @@ public class FormJspBean extends AbstractJspBean
         if ( formToBeModified != null )
         {
             _formMessage = FormMessageHome.findByForm( formToBeModified.getId( ) );
-            
-            if( _formMessage == null )
+
+            if ( _formMessage == null )
             {
-            	_formMessage = new FormMessage( );
-            	_formMessage.setEndMessage( I18nService.getLocalizedString( FormsConstants.FORM_DEFAULT_END_MESSAGE, getLocale( ) ) );
+                _formMessage = new FormMessage( );
+                _formMessage.setEndMessage( I18nService.getLocalizedString( FormsConstants.FORM_DEFAULT_END_MESSAGE, getLocale( ) ) );
             }
-            
+
             AdminUser adminUser = getUser( );
 
             Map<String, Object> model = getModel( );
@@ -501,7 +501,7 @@ public class FormJspBean extends AbstractJspBean
             addError( ERROR_FORM_NOT_UPDATED, getLocale( ) );
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
+
         populate( _form, request, request.getLocale( ) );
         populate( _formMessage, request, request.getLocale( ) );
 
@@ -509,18 +509,18 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirect( request, VIEW_MODIFY_FORM, FormsConstants.PARAMETER_ID_FORM, _form.getId( ) );
         }
-        
+
         FormHome.update( _form );
-        
-        if( _formMessage.getId( ) == 0 )
+
+        if ( _formMessage.getId( ) == 0 )
         {
-        	FormMessageHome.create( _formMessage );
+            FormMessageHome.create( _formMessage );
         }
         else
         {
-        	FormMessageHome.update( _formMessage );
+            FormMessageHome.update( _formMessage );
         }
-        
+
         addInfo( INFO_FORM_UPDATED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_FORMS );

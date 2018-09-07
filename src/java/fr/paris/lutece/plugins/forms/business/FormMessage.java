@@ -42,45 +42,48 @@ public class FormMessage
 {
     // Variables declarations
     private int _nId;
-    
-	private int _nIdForm;
-	
-	private boolean _bEndMessageDisplay;
-    
-	@Size( max = 3000, message = "#i18n{forms.validation.form.EndMessage.size}" )
+
+    private int _nIdForm;
+
+    private boolean _bEndMessageDisplay;
+
+    @Size( max = 3000, message = "#i18n{forms.validation.form.EndMessage.size}" )
     private String _strEndMessage;
+
     /**
-	 * @return the _nId
-	 */
-	public int getId( ) 
-	{
-		return _nId;
-	}
+     * @return the _nId
+     */
+    public int getId( )
+    {
+        return _nId;
+    }
 
-	/**
-	 * @param nId the nId to set
-	 */
-	public void setId( int nId ) 
-	{
-		this._nId = nId;
-	}
+    /**
+     * @param nId
+     *            the nId to set
+     */
+    public void setId( int nId )
+    {
+        this._nId = nId;
+    }
 
-	/**
-	 * @return the _nIdForm
-	 */
-	public int getIdForm( ) 
-	{
-		return _nIdForm;
-	}
+    /**
+     * @return the _nIdForm
+     */
+    public int getIdForm( )
+    {
+        return _nIdForm;
+    }
 
-	/**
-	 * @param nIdForm the nIdForm to set
-	 */
-	public void setIdForm( int nIdForm ) 
-	{
-		this._nIdForm = nIdForm;
-	}
-	
+    /**
+     * @param nIdForm
+     *            the nIdForm to set
+     */
+    public void setIdForm( int nIdForm )
+    {
+        this._nIdForm = nIdForm;
+    }
+
     /**
      * @return the _bEndMessageDisplay
      */
@@ -98,20 +101,21 @@ public class FormMessage
         this._bEndMessageDisplay = bEndMessageDisplay;
     }
 
-	/**
-	 * @return the _strEndMessage
-	 */
-	public String getEndMessage( ) 
-	{
-		return _strEndMessage;
-	}
+    /**
+     * @return the _strEndMessage
+     */
+    public String getEndMessage( )
+    {
+        return _strEndMessage;
+    }
 
-	/**
-	 * @param strEndMessage the strEndMessage to set
-	 */
-	public void setEndMessage( String strEndMessage ) 
-	{
-		this._strEndMessage = strEndMessage;
-	}
+    /**
+     * @param strEndMessage
+     *            the strEndMessage to set
+     */
+    public void setEndMessage( String strEndMessage )
+    {
+        this._strEndMessage = strEndMessage;
+    }
 
 }

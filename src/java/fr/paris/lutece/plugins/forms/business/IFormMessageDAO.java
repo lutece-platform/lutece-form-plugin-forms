@@ -69,7 +69,7 @@ public interface IFormMessageDAO
      *            the Plugin
      */
     void delete( int nKey, Plugin plugin );
-    
+
     /**
      * Delete a record from the table for given form
      * 
@@ -94,7 +94,6 @@ public interface IFormMessageDAO
      */
     FormMessage load( int nKey, Plugin plugin );
 
-    
     /**
      * Load the data for the given id_form
      * 

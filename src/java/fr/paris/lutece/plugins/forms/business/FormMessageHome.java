@@ -91,7 +91,7 @@ public final class FormMessageHome
     {
         _dao.delete( nKey, _plugin );
     }
-    
+
     /**
      * Remove the formMessage whose form identifier is specified in parameter
      * 
@@ -112,11 +112,11 @@ public final class FormMessageHome
      */
     public static FormMessage findByPrimaryKey( int nKey )
     {
-    	FormMessage formMessage = _dao.load( nKey, _plugin );
+        FormMessage formMessage = _dao.load( nKey, _plugin );
 
         return formMessage;
     }
-    
+
     /**
      * Returns an instance of a formMessage for the given form id
      * 
@@ -126,7 +126,7 @@ public final class FormMessageHome
      */
     public static FormMessage findByForm( int nIdForm )
     {
-    	FormMessage formMessage = _dao.selectByForm( nIdForm, _plugin );
+        FormMessage formMessage = _dao.selectByForm( nIdForm, _plugin );
 
         return formMessage;
     }
