@@ -10,3 +10,15 @@ ALTER TABLE forms_group	ADD COLUMN iteration_add_label varchar(255) default '' A
 ALTER TABLE forms_group	ADD COLUMN iteration_remove_label varchar(255) default '' AFTER iteration_add_label;
 
 ALTER TABLE forms_question	CHANGE COLUMN description description LONGTEXT NULL DEFAULT '' COLLATE 'utf8_unicode_ci' AFTER title;
+
+
+ALTER TABLE forms_form DROP COLUMN end_message;
+
+DROP TABLE IF EXISTS forms_message;
+CREATE TABLE forms_message (
+id int AUTO_INCREMENT,
+id_form int NOT NULL,
+end_message_display SMALLINT,
+end_message varchar(3000) default '',
+PRIMARY KEY (id)
+);

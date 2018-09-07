@@ -47,8 +47,11 @@
              <@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' >
                 <@checkBox labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
              </@formGroup>
+             <@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}' >
+                <@checkBox labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
+             </@formGroup>
              <@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' helpKey='#i18n{forms.create_form.labelEndMessage.help}' >
-                 <@input type='textarea' name='endMessage' richtext=true>${form.endMessage!}</@input>
+                 <@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
              </@formGroup>
              <@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}'>
                  <@input type='text' name='returnUrl' value='${form.returnUrl!}' />

@@ -137,7 +137,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale, model, displayType );
 
                 model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
-                model.put( FormsConstants.MARK_ID_QUESTION, _question.getId( ) );
+                model.put( FormsConstants.MARK_QUESTION, _question );
                 if ( _formDisplay.getDisplayControl( ) != null )
                 {
                     Control control = _formDisplay.getDisplayControl( );

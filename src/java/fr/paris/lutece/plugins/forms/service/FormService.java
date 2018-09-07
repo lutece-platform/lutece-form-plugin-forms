@@ -44,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.FormMessageHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
@@ -259,6 +260,7 @@ public class FormService
         }
 
         FormResponseHome.removeByForm( nIdForm );
+        FormMessageHome.removeByForm( nIdForm );
 
         Form form = FormHome.findByPrimaryKey( nIdForm );
         int nIdWorkflow = form.getIdWorkflow( );

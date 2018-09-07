@@ -42,6 +42,8 @@ import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.plugins.forms.business.FormActionHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.FormMessage;
+import fr.paris.lutece.plugins.forms.business.FormMessageHome;
 import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -103,6 +105,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     private static final String MARK_LOCALE = "locale";
     private static final String MARK_FORM = "form";
+    private static final String MARK_FORM_MESSAGE = "formMessage";
     private static final String MARK_BREADCRUMB_TYPE = "breadcrumbTypes";
     private static final String MARK_PERMISSION_CREATE_FORMS = "permission_create_forms";
     private static final String MARK_WORKFLOW_REF_LIST = "workflow_list";
@@ -144,6 +147,7 @@ public class FormJspBean extends AbstractJspBean
 
     // Session variable to store working values
     private Form _form;
+    private FormMessage _formMessage;
 
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
@@ -218,8 +222,9 @@ public class FormJspBean extends AbstractJspBean
     public String getCreateForm( HttpServletRequest request )
     {
         _form = ( _form != null ) ? _form : new Form( );
+        _formMessage = ( _formMessage != null ) ? _formMessage : new FormMessage( );
 
-        _form.setEndMessage( I18nService.getLocalizedString( FormsConstants.FORM_DEFAULT_END_MESSAGE, getLocale( ) ) );
+        _formMessage.setEndMessage( I18nService.getLocalizedString( FormsConstants.FORM_DEFAULT_END_MESSAGE, getLocale( ) ) );
 
         Map<String, Object> model = getModel( );
 
@@ -232,6 +237,7 @@ public class FormJspBean extends AbstractJspBean
 
         model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
         model.put( MARK_FORM, _form );
+        model.put( MARK_FORM_MESSAGE, _formMessage );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
 
@@ -249,13 +255,18 @@ public class FormJspBean extends AbstractJspBean
     public String doCreateForm( HttpServletRequest request )
     {
         populate( _form, request, request.getLocale( ) );
+        populate( _formMessage, request, request.getLocale( ) );
 
-        if ( !validateForm( _form ) )
+        if ( !validateForm( _form ) || !validateBean( _formMessage, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
             return redirectView( request, VIEW_CREATE_FORM );
         }
 
         FormHome.create( _form );
+
+        _formMessage.setIdForm( _form.getId( ) );
+        FormMessageHome.create( _formMessage );
+
         addInfo( INFO_FORM_CREATED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_FORMS );
@@ -396,10 +407,19 @@ public class FormJspBean extends AbstractJspBean
 
         if ( formToBeModified != null )
         {
+            _formMessage = FormMessageHome.findByForm( formToBeModified.getId( ) );
+
+            if ( _formMessage == null )
+            {
+                _formMessage = new FormMessage( );
+                _formMessage.setEndMessage( I18nService.getLocalizedString( FormsConstants.FORM_DEFAULT_END_MESSAGE, getLocale( ) ) );
+            }
+
             AdminUser adminUser = getUser( );
 
             Map<String, Object> model = getModel( );
             model.put( MARK_FORM, formToBeModified );
+            model.put( MARK_FORM_MESSAGE, _formMessage );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
             model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
 
@@ -481,14 +501,26 @@ public class FormJspBean extends AbstractJspBean
             addError( ERROR_FORM_NOT_UPDATED, getLocale( ) );
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        populate( _form, request, request.getLocale( ) );
 
-        if ( !validateForm( _form ) )
+        populate( _form, request, request.getLocale( ) );
+        populate( _formMessage, request, request.getLocale( ) );
+
+        if ( !validateForm( _form ) || !validateBean( _formMessage, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
             return redirect( request, VIEW_MODIFY_FORM, FormsConstants.PARAMETER_ID_FORM, _form.getId( ) );
         }
 
         FormHome.update( _form );
+
+        if ( _formMessage.getId( ) == 0 )
+        {
+            FormMessageHome.create( _formMessage );
+        }
+        else
+        {
+            FormMessageHome.update( _formMessage );
+        }
+
         addInfo( INFO_FORM_UPDATED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_FORMS );

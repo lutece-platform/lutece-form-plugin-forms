@@ -47,6 +47,8 @@ import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.FormMessage;
+import fr.paris.lutece.plugins.forms.business.FormMessageHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -468,9 +470,20 @@ public class FormXPage extends MVCApplication
         _stepDisplayTree = null;
         _breadcrumb = null;
 
-        model.put( FormsConstants.MARK_INFO, form.getEndMessage( ) );
+        String strBackUrl = getBackUrl( form );
 
-        model.put( FormsConstants.PARAMETER_BACK_URL, getBackUrl( form ) );
+        FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
+
+        if ( formMessage != null && formMessage.getEndMessageDisplay( ) )
+        {
+            model.put( FormsConstants.MARK_INFO, formMessage.getEndMessage( ) );
+        }
+        else
+        {
+            return redirect( request, strBackUrl );
+        }
+
+        model.put( FormsConstants.PARAMETER_BACK_URL, strBackUrl );
 
         return getXPage( TEMPLATE_FORM_SUBMITTED, request.getLocale( ), model );
     }
