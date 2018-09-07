@@ -218,7 +218,7 @@ public class FormXPage extends MVCApplication
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         Map<String, Object> model = getModel( );
-        String strTitleForm =StringUtils.EMPTY;
+        String strTitleForm = StringUtils.EMPTY;
         int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE && ( _currentStep == null || nIdForm != _currentStep.getIdForm( ) ) )
@@ -234,7 +234,7 @@ public class FormXPage extends MVCApplication
         else
         {
             Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
-            strTitleForm = form.getTitle();
+            strTitleForm = form.getTitle( );
             if ( form.isActive( ) )
             {
                 if ( _breadcrumb == null )
@@ -250,11 +250,11 @@ public class FormXPage extends MVCApplication
             }
         }
 
-        XPage xPage =  getXPage( TEMPLATE_VIEW_STEP, request.getLocale( ), model );
-        xPage.setTitle(strTitleForm);
-        xPage.setPathLabel(strTitleForm);
-        
-        return xPage; 
+        XPage xPage = getXPage( TEMPLATE_VIEW_STEP, request.getLocale( ), model );
+        xPage.setTitle( strTitleForm );
+        xPage.setPathLabel( strTitleForm );
+
+        return xPage;
     }
 
     /**
