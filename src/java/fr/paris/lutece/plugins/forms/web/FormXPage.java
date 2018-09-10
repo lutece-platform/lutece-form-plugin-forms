@@ -61,7 +61,6 @@ import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormService;
-import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
@@ -470,11 +469,11 @@ public class FormXPage extends MVCApplication
         _stepDisplayTree = null;
         _breadcrumb = null;
 
-        String strBackUrl = getBackUrl( form );
-
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
+        boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
+        String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed );
 
-        if ( formMessage != null && formMessage.getEndMessageDisplay( ) )
+        if ( formMessage != null && bIsEndMessageDisplayed )
         {
             model.put( FormsConstants.MARK_INFO, formMessage.getEndMessage( ) );
         }
@@ -541,9 +540,11 @@ public class FormXPage extends MVCApplication
      * 
      * @param form
      *            The Form
+     * @param bIsEndMessageDisplayed
+     *            {@code true} if the end message is displayed, {@code false} otherwise
      * @return the back URL
      */
-    private String getBackUrl( Form form )
+    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed )
     {
         if ( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
         {
@@ -551,10 +552,18 @@ public class FormXPage extends MVCApplication
         }
         else
         {
-            UrlItem url = new UrlItem( FormsConstants.JSP_FO_DISPLAY_FORM );
+            UrlItem url = null;
+
+            if ( bIsEndMessageDisplayed )
+            {
+                url = new UrlItem( getViewFullUrl( VIEW_STEP ) );
+            }
+            else
+            {
+                url = new UrlItem( getViewUrl( VIEW_STEP ) );
+            }
+
             url.addParameter( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
-            url.addParameter( FormsConstants.PARAMETER_PAGE, FormsPlugin.PLUGIN_NAME );
-            url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, VIEW_STEP );
 
             return url.getUrl( );
         }
