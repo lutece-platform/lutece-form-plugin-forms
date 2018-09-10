@@ -144,6 +144,31 @@
                     <img src="images/Forms-step-edition-admin.png" />
                  </p>
                  <p>
+                    Iteration:<br/>
+                    <img src="images/Forms-question-iteration-admin.png" />
+                 </p>
+                 <p>
+                	The plugin-forms let you iterate over a group of questions. This is possible when a group only contains questions (and not other groups).
+					To configure the group iteration you have to navigate into the modify group page. This page let you define a minimum and a maximum number of iterations.
+					The minimum number define the number of iteration that first will be shown to the user (these are not deletable). For the maximum, 0 means limitless.
+                 	<br/>
+                 </p>
+                 <p>
+                    <img src="images/Forms-question-iteration-FO.png" />
+                 </p>
+                 <p>
+                    Draft:<br/>
+                    <img src="images/Forms-form-draft-admin.png" />
+                 </p>
+                 <p>
+                	If the form is configure with the authentication mode enabled, the user would be able to save his progress on any step of the form.
+					His answers and breadcrumb will be save in database, and when the user will reconnect, this save will be load.
+					<br/>
+                 </p>
+                 <p>
+                    <img src="images/Forms-form-draft-FO.png" />
+                 </p>
+                 <p>
                     Control modification for a step transition:
                     <img src="images/Forms-transition-edition-admin.png" /><br/>
                  </p>

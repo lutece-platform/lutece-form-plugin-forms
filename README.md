@@ -78,6 +78,18 @@ Form modification:![](http://dev.lutece.paris.fr/plugins/plugin-forms/images/For
 
 Step modification:![](http://dev.lutece.paris.fr/plugins/plugin-forms/images/Forms-step-edition-admin.png)
 
+Iteration:![](http://dev.lutece.paris.fr/plugins/plugin-forms/images/Forms-question-iteration-admin.png)
+
+The plugin-forms let you iterate over a group of questions. This is possible when a group only contains questions (and not other groups). To configure the group iteration you have to navigate into the modify group page. This page let you define a minimum and a maximum number of iterations.The minimum number define the number of iteration that first will be shown to the user (these are not deletable). For the maximum, 0 means limitless.
+
+![](http://dev.lutece.paris.fr/plugins/plugin-forms/images/Forms-question-iteration-FO.png)
+
+Draft:![](http://dev.lutece.paris.fr/plugins/plugin-forms/images/Forms-form-draft-admin.png)
+
+If the form is configure with the authentication mode enabled, the user would be able to save his progress on any step of the form. His answers and breadcrumb will be save in database, and when the user will reconnect, this save will be load.
+
+![](http://dev.lutece.paris.fr/plugins/plugin-forms/images/Forms-form-draft-FO.png)
+
 Control modification for a step transition:![](http://dev.lutece.paris.fr/plugins/plugin-forms/images/Forms-transition-edition-admin.png)
 
 
