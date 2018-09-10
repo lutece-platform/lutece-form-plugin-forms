@@ -9,7 +9,7 @@ ALTER TABLE forms_group	ADD COLUMN iteration_max INT  DEFAULT '1' AFTER iteratio
 ALTER TABLE forms_group	ADD COLUMN iteration_add_label varchar(255) default '' AFTER iteration_max;
 ALTER TABLE forms_group	ADD COLUMN iteration_remove_label varchar(255) default '' AFTER iteration_add_label;
 
-ALTER TABLE forms_question	CHANGE COLUMN description description LONGTEXT NULL DEFAULT '' COLLATE 'utf8_unicode_ci' AFTER title;
+ALTER TABLE forms_question	CHANGE COLUMN description description LONGTEXT NULL COLLATE 'utf8_unicode_ci' AFTER title;
 
 
 ALTER TABLE forms_form DROP COLUMN end_message;
