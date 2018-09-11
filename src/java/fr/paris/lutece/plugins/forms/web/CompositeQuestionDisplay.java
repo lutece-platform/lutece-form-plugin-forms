@@ -116,46 +116,47 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
 
         _question.setIterationNumber( nIterationNumber );
-        
+
         Question question = getQuestionFromFormResponse( formResponse );
-        
-        if( question != null ) 
+
+        if ( question != null )
         {
-        	_question.setIsVisible( question.isVisible( ) );
+            _question.setIsVisible( question.isVisible( ) );
         }
     }
-    
+
     /**
      * 
      * @param formResponse
-     * 			the formResponse
+     *            the formResponse
      * @return the current question from the given formResponse
      */
-	private Question getQuestionFromFormResponse( FormResponse formResponse ) 
-	{
-		if( formResponse != null && !formResponse.getSteps( ).isEmpty( ) )
+    private Question getQuestionFromFormResponse( FormResponse formResponse )
+    {
+        if ( formResponse != null && !formResponse.getSteps( ).isEmpty( ) )
         {
-        	List<FormResponseStep> listSteps = formResponse.getSteps( );
-        	
-        	for( FormResponseStep formResponseStep : listSteps )
-        	{
-        		if ( formResponseStep.getStep( ).getId( ) == _question.getIdStep( ) )
-        		{
-        			List<FormQuestionResponse> questionsResponse = formResponseStep.getQuestions( );
-        			
-        	        for( FormQuestionResponse questionResponse : questionsResponse )
-        	        {
-        	        	if( questionResponse.getQuestion( ).getId( ) == _question.getId( ) && questionResponse.getQuestion( ).getIterationNumber( ) == _question.getIterationNumber( ) )
-        	        	{
-        	        		return questionResponse.getQuestion( );
-        	        	}
-        	        }
-        		}
-        	}
+            List<FormResponseStep> listSteps = formResponse.getSteps( );
+
+            for ( FormResponseStep formResponseStep : listSteps )
+            {
+                if ( formResponseStep.getStep( ).getId( ) == _question.getIdStep( ) )
+                {
+                    List<FormQuestionResponse> questionsResponse = formResponseStep.getQuestions( );
+
+                    for ( FormQuestionResponse questionResponse : questionsResponse )
+                    {
+                        if ( questionResponse.getQuestion( ).getId( ) == _question.getId( )
+                                && questionResponse.getQuestion( ).getIterationNumber( ) == _question.getIterationNumber( ) )
+                        {
+                            return questionResponse.getQuestion( );
+                        }
+                    }
+                }
+            }
         }
-		
+
         return null;
-	}
+    }
 
     /**
      * {@inheritDoc}
@@ -171,9 +172,9 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
             if ( displayService != null )
             {
-            	List<Response> listResponse = findResponses( listFormQuestionResponse );
-            	setQuestionVisibility( listResponse, displayType );
-            	
+                List<Response> listResponse = findResponses( listFormQuestionResponse );
+                setQuestionVisibility( listResponse, displayType );
+
                 Map<String, Object> model = new HashMap<String, Object>( );
                 model.put( MARK_ENTRY_ITERATION_NUMBER, _question.getIterationNumber( ) );
                 model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
@@ -261,36 +262,36 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
         if ( displayType == DisplayType.READONLY_FRONTOFFICE )
         {
-        	strTemplate = TEMPLATE_QUESTION_READONLY_FRONTOFFICE;
+            strTemplate = TEMPLATE_QUESTION_READONLY_FRONTOFFICE;
         }
 
         return strTemplate;
     }
-    
+
     /**
      * 
      * @param listResponse
-     * 			The current question responses
+     *            The current question responses
      * @param displayType
-     * 			The current displayType
+     *            The current displayType
      */
-    private void setQuestionVisibility(  List<Response> listResponse, DisplayType displayType )
+    private void setQuestionVisibility( List<Response> listResponse, DisplayType displayType )
     {
-    	if ( displayType == DisplayType.READONLY_BACKOFFICE && _formDisplay != null  )
+        if ( displayType == DisplayType.READONLY_BACKOFFICE && _formDisplay != null )
         {
-    		Control controlConditionnalDisplay = ControlHome.getConditionalDisplayControlByDisplay( _formDisplay.getId( ) );
-    		
-    		if( controlConditionnalDisplay != null )
-    		{
-    			if ( CollectionUtils.isNotEmpty( listResponse ) )
-    			{
-    				_question.setIsVisible( true );
-    			}
-    		}
-    		else
-    		{
-    			_question.setIsVisible( true );
-    		}
+            Control controlConditionnalDisplay = ControlHome.getConditionalDisplayControlByDisplay( _formDisplay.getId( ) );
+
+            if ( controlConditionnalDisplay != null )
+            {
+                if ( CollectionUtils.isNotEmpty( listResponse ) )
+                {
+                    _question.setIsVisible( true );
+                }
+            }
+            else
+            {
+                _question.setIsVisible( true );
+            }
         }
     }
 

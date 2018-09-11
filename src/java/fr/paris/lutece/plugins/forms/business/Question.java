@@ -66,7 +66,7 @@ public class Question implements Serializable, Cloneable
     private Step _step;
 
     private int _nIterationNumber;
-    
+
     private boolean _bIsVisible;
 
     /**
@@ -89,22 +89,23 @@ public class Question implements Serializable, Cloneable
     {
         _nId = nId;
     }
-    
-	/**
-	 * @return the isVisible
-	 */
-	public boolean isVisible() 
-	{
-		return _bIsVisible;
-	}
 
-	/**
-	 * @param isVisible the isVisible to set
-	 */
-	public void setIsVisible( boolean isVisible )
-	{
-		_bIsVisible = isVisible;
-	}
+    /**
+     * @return the isVisible
+     */
+    public boolean isVisible( )
+    {
+        return _bIsVisible;
+    }
+
+    /**
+     * @param isVisible
+     *            the isVisible to set
+     */
+    public void setIsVisible( boolean isVisible )
+    {
+        _bIsVisible = isVisible;
+    }
 
     /**
      * Returns the Title
