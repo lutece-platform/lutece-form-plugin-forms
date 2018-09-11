@@ -583,8 +583,23 @@ public class FormXPage extends MVCApplication
         boolean bValidStep = true;
         List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
 
+        String[] listConditionalQuestionsValues = request.getParameterValues( FormsConstants.PARAMETER_DISPLAYED_QUESTIONS );
+        
         for ( Question question : listQuestionStep )
         {
+        	for( int i = 0 ; i < listConditionalQuestionsValues.length ; i++ )
+        	{
+        		String[] listQuestionId = listConditionalQuestionsValues[i].split( FormsConstants.SEPARATOR_UNDERSCORE );
+        		if( !StringUtils.isEmpty( listQuestionId[0] ) && Integer.parseInt( listQuestionId[0] ) == question.getId( ) && Integer.parseInt( listQuestionId[1] ) == question.getIterationNumber( ) )
+        		{
+        			question.setIsVisible( true );
+        			break;
+        		} 
+        		else
+        		{
+        			question.setIsVisible( false );
+        		}
+        	}
             if ( !question.getEntry( ).isOnlyDisplayInBack( ) )
             {
                 IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );

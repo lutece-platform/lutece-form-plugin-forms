@@ -110,6 +110,7 @@ public final class FormsConstants
     public static final String PARAMETER_INDEX_STEP = "index_step";
     public static final String PARAMETER_INFO_KEY = "info_key";
     public static final String PARAMETER_BACK_URL = "back_url";
+    public static final String PARAMETER_DISPLAYED_QUESTIONS = "displayed_questions";
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";

@@ -39,13 +39,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
@@ -68,6 +71,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private static final String TEMPLATE_QUESTION_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_question.html";
     private static final String TEMPLATE_QUESTION_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_question.html";
     private static final String TEMPLATE_QUESTION_EDITION_BACKOFFICE = TEMPLATE_QUESTION_READONLY_BACKOFFICE;
+    private static final String TEMPLATE_QUESTION_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_question_read_only.html";
 
     // Marks
     private static final String MARK_QUESTION_ENTRY = "questionEntry";
@@ -112,8 +116,46 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
 
         _question.setIterationNumber( nIterationNumber );
-
+        
+        Question question = getQuestionFromFormResponse( formResponse );
+        
+        if( question != null ) 
+        {
+        	_question.setIsVisible( question.isVisible( ) );
+        }
     }
+    
+    /**
+     * 
+     * @param formResponse
+     * 			the formResponse
+     * @return the current question from the given formResponse
+     */
+	private Question getQuestionFromFormResponse( FormResponse formResponse ) 
+	{
+		if( formResponse != null && !formResponse.getSteps( ).isEmpty( ) )
+        {
+        	List<FormResponseStep> listSteps = formResponse.getSteps( );
+        	
+        	for( FormResponseStep formResponseStep : listSteps )
+        	{
+        		if ( formResponseStep.getStep( ).getId( ) == _question.getIdStep( ) )
+        		{
+        			List<FormQuestionResponse> questionsResponse = formResponseStep.getQuestions( );
+        			
+        	        for( FormQuestionResponse questionResponse : questionsResponse )
+        	        {
+        	        	if( questionResponse.getQuestion( ).getId( ) == _question.getId( ) && questionResponse.getQuestion( ).getIterationNumber( ) == _question.getIterationNumber( ) )
+        	        	{
+        	        		return questionResponse.getQuestion( );
+        	        	}
+        	        }
+        		}
+        	}
+        }
+		
+        return null;
+	}
 
     /**
      * {@inheritDoc}
@@ -129,9 +171,12 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
             if ( displayService != null )
             {
+            	List<Response> listResponse = findResponses( listFormQuestionResponse );
+            	setQuestionVisibility( listResponse, displayType );
+            	
                 Map<String, Object> model = new HashMap<String, Object>( );
                 model.put( MARK_ENTRY_ITERATION_NUMBER, _question.getIterationNumber( ) );
-                model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, findResponses( listFormQuestionResponse ) );
+                model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
                 model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
 
                 strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale, model, displayType );
@@ -216,10 +261,37 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
         if ( displayType == DisplayType.READONLY_FRONTOFFICE )
         {
-            strTemplate = TEMPLATE_QUESTION_READONLY_BACKOFFICE;
+        	strTemplate = TEMPLATE_QUESTION_READONLY_FRONTOFFICE;
         }
 
         return strTemplate;
+    }
+    
+    /**
+     * 
+     * @param listResponse
+     * 			The current question responses
+     * @param displayType
+     * 			The current displayType
+     */
+    private void setQuestionVisibility(  List<Response> listResponse, DisplayType displayType )
+    {
+    	if ( displayType == DisplayType.READONLY_BACKOFFICE && _formDisplay != null  )
+        {
+    		Control controlConditionnalDisplay = ControlHome.getConditionalDisplayControlByDisplay( _formDisplay.getId( ) );
+    		
+    		if( controlConditionnalDisplay != null )
+    		{
+    			if ( CollectionUtils.isNotEmpty( listResponse ) )
+    			{
+    				_question.setIsVisible( true );
+    			}
+    		}
+    		else
+    		{
+    			_question.setIsVisible( true );
+    		}
+        }
     }
 
     /**

@@ -172,7 +172,7 @@ public class FormService
         {
             Question question = formQuestionResponse.getQuestion( );
 
-            if ( question != null )
+            if ( question != null && question.isVisible( ) )
             {
                 IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
                 formQuestionResponse.setIdFormResponse( formResponseStep.getFormResponseId( ) );
