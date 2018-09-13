@@ -530,7 +530,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         if ( strReturnUrl != null )
         {
-        	return redirect( request,strReturnUrl );
+            return redirect( request, strReturnUrl );
         }
         else
         {
@@ -805,7 +805,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         if ( strReturnUrl != null )
         {
-            return redirect( request,strReturnUrl);
+            return redirect( request, strReturnUrl );
         }
         else
         {
