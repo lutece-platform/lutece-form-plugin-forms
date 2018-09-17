@@ -57,7 +57,6 @@ public class Group implements Serializable
 
     private int _nIdStep;
 
-    private boolean _bCollapsible;
 
     @Min( value = 0, message = "#i18n{forms.validation.group.IterationMin.notEmpty}" )
     private int _nIterationMin;
@@ -153,26 +152,6 @@ public class Group implements Serializable
         _nIdStep = nIdStep;
     }
 
-    /**
-     * Returns the Collapsible
-     * 
-     * @return The Collapsible
-     */
-    public boolean getCollapsible( )
-    {
-        return _bCollapsible;
-    }
-
-    /**
-     * Sets the Collapsible
-     * 
-     * @param bCollapsible
-     *            The Collapsible
-     */
-    public void setCollapsible( boolean bCollapsible )
-    {
-        _bCollapsible = bCollapsible;
-    }
 
     /**
      * Returns the _nIterationMin
