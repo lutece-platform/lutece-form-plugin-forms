@@ -177,6 +177,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     // Others
     private static final int INTEGER_MINUS_ONE = -1;
 
+    private static final int DEFAULT_PARENT = 0;
+
     private static final FormDisplayService _formDisplayService = SpringContextService.getBean( FormDisplayService.BEAN_NAME );
     private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
@@ -191,6 +193,8 @@ public class FormQuestionJspBean extends AbstractJspBean
 
     private int _nIdParentTarget;
 
+    private int _nIdParentSelected = DEFAULT_PARENT;
+
     /**
      * Build the Manage View
      * 
@@ -203,6 +207,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     {
         Locale locale = getLocale( );
         int nIdStep = INTEGER_MINUS_ONE;
+
         List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
 
@@ -223,9 +228,9 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
 
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
+        model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
 
         setPageTitleProperty( EMPTY_STRING );
-
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_QUESTIONS, locale, model );
 
         return getAdminPage( templateList.getHtml( ) );
@@ -244,11 +249,10 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         int nIdStep = INTEGER_MINUS_ONE;
         int nIdTypeEntry = INTEGER_MINUS_ONE;
-        int nParentGroup;
 
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         nIdTypeEntry = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ) );
-        nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
+        _nIdParentSelected = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
 
         _step = StepHome.findByPrimaryKey( nIdStep );
         if ( ( _step == null ) )
@@ -278,7 +282,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
-        model.put( FormsConstants.MARK_ID_PARENT, nParentGroup );
+        model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_LIST_PARAM_DEFAULT_VALUES, listParamDefaultValues );
@@ -312,10 +316,9 @@ public class FormQuestionJspBean extends AbstractJspBean
     {
 
         int nIdStep = INTEGER_MINUS_ONE;
-        int nParentGroup;
 
         nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
+        _nIdParentSelected = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
         {
@@ -337,7 +340,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_GROUP, _group );
-        model.put( FormsConstants.MARK_ID_PARENT, nParentGroup );
+        model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
 
         setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
 
