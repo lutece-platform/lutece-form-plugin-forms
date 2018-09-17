@@ -57,7 +57,6 @@ public class Group implements Serializable
 
     private int _nIdStep;
 
-
     @Min( value = 0, message = "#i18n{forms.validation.group.IterationMin.notEmpty}" )
     private int _nIterationMin;
 
@@ -151,7 +150,6 @@ public class Group implements Serializable
     {
         _nIdStep = nIdStep;
     }
-
 
     /**
      * Returns the _nIterationMin
