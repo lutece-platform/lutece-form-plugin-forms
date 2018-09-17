@@ -225,8 +225,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_FORM, _form );
 
         listICompositeDisplay = _formService.getStepCompositeList( nIdStep );
-        model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
 
+        model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
 
