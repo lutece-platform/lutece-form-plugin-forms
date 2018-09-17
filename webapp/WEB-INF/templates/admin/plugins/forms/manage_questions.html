@@ -27,7 +27,7 @@
                                         <th class="col-sm-3">#i18n{forms.manage_questions.columnAction}</th>
                                     </tr>
                                     <tr>
-                                        <td class="col-sm-1"><@fieldInputRadioBox 'forms.manage_questions.selectRootLevel' 'id_parent' '0' false true /></td>
+                                        <td class="col-sm-1"><@fieldInputRadioBox 'forms.manage_questions.selectRootLevel' 'id_parent' '0' false id_parent==0  /></td>
                                         <td class="col-sm-6"><h4>${step.title}</h4></td>
                                         <td class="col-sm-1"></td>
                                         <td class="col-sm-1">
@@ -39,7 +39,7 @@
                                     		<#assign group=composite.type == 'group' />
                                         <tr>
                                             <#if group>
-                                                <td class="col-sm-1"><@fieldInputRadioBox "" 'id_parent' '${composite.formDisplay.id}'/></td>
+                                                <td class="col-sm-1"><@fieldInputRadioBox "" 'id_parent' composite.formDisplay.id?string false id_parent==composite.formDisplay.id /></td>
                                             <#else>
                                                 <td class="col-sm-1"></td>
                                             </#if>
