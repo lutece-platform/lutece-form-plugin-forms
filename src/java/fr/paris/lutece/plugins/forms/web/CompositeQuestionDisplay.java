@@ -293,6 +293,11 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _question.setIsVisible( true );
             }
         }
+
+        if ( displayType == DisplayType.EDITION_BACKOFFICE )
+        {
+            _question.setIsVisible( true );
+        }
     }
 
     /**
