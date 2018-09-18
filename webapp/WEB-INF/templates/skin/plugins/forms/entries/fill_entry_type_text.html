@@ -47,7 +47,7 @@
 	</#if>
 	<#if entry.confirmField>
 		<div class="form-group">
-			<#assign idName = 'attribute' + entry.idEntry>
+			<#assign idName =  buildEntryName( entry, entry_iteration_number )>
 			<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
 				<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
 			</#if>
