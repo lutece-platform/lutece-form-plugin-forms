@@ -97,7 +97,7 @@
 											</#if>     	
 										</td>
 										<td>
-											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}' title='#i18n{portal.util.labelModify}' buttonIcon='edit' showTitle=false />
+											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' title='#i18n{portal.util.labelModify}' buttonIcon='edit' showTitle=false />
 											<#if cpt!=1>
 											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveUp}' buttonIcon='chevron-up' showTitle=false />
 											</#if> 
