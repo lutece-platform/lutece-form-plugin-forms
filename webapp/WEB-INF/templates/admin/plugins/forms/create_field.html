@@ -18,13 +18,13 @@
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createField.labelComment}'>
 							<@input type='textarea' name='comment' id='comment'></@input>
 						</@formGroup>
-						<@formGroup>
-							<@checkBox name='default_value' value='1' labelKey='#i18n{forms.createField.labelDefaultValue}' />
+						<@formGroup labelFor='default_value' labelKey='#i18n{forms.createField.labelDefaultValue}'>
+							<@checkBox name='default_value' value='1' />
 						</@formGroup>
 						<#if option_no_display_title>
-							<@formGroup>
+							<@formGroup labelFor='no_display_title' labelKey='#i18n{forms.createField.labelNoDisplayTitle}'>
 								<#if field.noDisplayTitle><#assign checked = true /></#if>
-								<@checkBox name='no_display_title' value='1' checked=checked labelKey='#i18n{forms.createField.labelNoDisplayTitle}' />
+								<@checkBox name='no_display_title' value='1' checked=checked />
 							</@formGroup>
 						</#if>
 						<#if field.parentEntry.roleAssociated && role_list?exists >

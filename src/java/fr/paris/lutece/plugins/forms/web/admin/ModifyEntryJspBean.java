@@ -253,6 +253,16 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         HashMap<String, Object> model = new HashMap<String, Object>( );
         Locale locale = getLocale( );
+
+        if ( request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null )
+        {
+            model.put( MARK_OPTION_NO_DISPLAY_TITLE, true );
+        }
+        else
+        {
+            model.put( MARK_OPTION_NO_DISPLAY_TITLE, false );
+        }
+
         model.put( FormsConstants.MARK_FIELD, field );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_ID_ENTRY, _nIdEntry );
