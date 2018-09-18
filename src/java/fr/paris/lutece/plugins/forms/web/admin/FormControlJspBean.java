@@ -63,6 +63,7 @@ import fr.paris.lutece.util.url.UrlItem;
 
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -318,6 +319,11 @@ public class FormControlJspBean extends AbstractJspBean
     private void buildControlModel( HttpServletRequest request, Map<String, Object> model )
     {
         String strValidatorName = request.getParameter( FormsConstants.PARAMETER_VALIDATOR_NAME );
+        int idStep = _step.getId( );
+        if ( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) != null )
+        {
+            idStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        }
 
         if ( StringUtils.isNotEmpty( strValidatorName ) && _control.getValidatorName( ) != strValidatorName )
         {
@@ -360,12 +366,20 @@ public class FormControlJspBean extends AbstractJspBean
             strValidatorTemplate = validator.getDisplayHtml( _control );
         }
 
+        ReferenceList referenceListQuestion = new ReferenceList( );
+        for ( Question question : QuestionHome.getQuestionsListByStep( idStep ) )
+        {
+            referenceListQuestion.addItem( question.getId( ), question.getTitle( ) );
+        }
+
         model.put( FormsConstants.MARK_TRANSITION, _transition );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_CONTROL_TEMPLATE, strValidatorTemplate );
         model.put( FormsConstants.MARK_CONTROL, _control );
-        model.put( FormsConstants.MARK_QUESTION_LIST, QuestionHome.getQuestionsReferenceListByForm( _step.getIdForm( ) ) );
+        model.put( FormsConstants.MARK_ID_STEP, idStep );
+        model.put( FormsConstants.MARK_QUESTION_LIST, referenceListQuestion );
+        model.put( FormsConstants.MARK_AVAILABLE_STEPS, StepHome.getStepReferenceListByForm( _step.getIdForm( ) ) );
         model.put( FormsConstants.MARK_CONDITION_TITLE, _strControlTitle );
     }
 
