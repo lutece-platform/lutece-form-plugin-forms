@@ -1000,10 +1000,10 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
 
         String strValidateButtonValue = request.getParameter( "view_moveComposite" );
+        boolean bIsValidationButtonUsed = StringUtils.isNotBlank( strValidateButtonValue );
 
-        if ( StringUtils.isNotBlank( strValidateButtonValue ) )
+        if ( bIsValidationButtonUsed )
         {
-            nTargetPosition = 1;
 
             if ( PARAMETER_VALUE_VALIDATE_STEP.equals( strValidateButtonValue ) )
             {
@@ -1058,6 +1058,11 @@ public class FormQuestionJspBean extends AbstractJspBean
         boolean bMoveToDifferentGroup = ( ( _formDisplay.getParentId( ) != nIdParentTarget ) || ( _formDisplay.getStepId( ) != nIdStepTarget ) );
         ReferenceList listAvailablePositionsInParentGroup = FormsDisplayUtils.getlistAvailablePositionsInGroup( nIdStepTarget, nIdParentTarget,
                 bMoveToDifferentGroup, getLocale( ) );
+
+        if ( bIsValidationButtonUsed )
+        {
+            nTargetPosition = listAvailablePositionsInParentGroup.size( );
+        }
 
         Map<String, Object> model = getModel( );
 
