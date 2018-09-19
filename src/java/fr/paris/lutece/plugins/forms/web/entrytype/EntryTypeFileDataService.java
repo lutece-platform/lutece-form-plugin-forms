@@ -69,32 +69,10 @@ public class EntryTypeFileDataService extends EntryTypeDefaultDataService
      * {@inheritDoc}
      */
     @Override
-    public FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request )
-    {
-        FormQuestionResponse formQuestionResponse = createResponseFor( question );
-        request = convertToIterationRequest( question, request );
-
-        GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
-                formQuestionResponse.getEntryResponse( ), request.getLocale( ) );
-        formQuestionResponse.setError( error );
-
-        Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
-
-        if ( control != null )
-        {
-            IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-            if ( !validator.validate( formQuestionResponse, control ) )
-            {
-                error = new GenericAttributeError( );
-
-                error.setIsDisplayableError( true );
-                error.setErrorMessage( control.getErrorMessage( ) );
-
-                formQuestionResponse.setError( error );
-            }
-        }
-
-        return formQuestionResponse;
+    public FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request, boolean bValidateQuestion )
+    { 
+    	HttpServletRequest requestConverted = convertToIterationRequest( question, request );
+         return super.createResponseFromRequest( question, requestConverted, bValidateQuestion );
     }
 
     /**

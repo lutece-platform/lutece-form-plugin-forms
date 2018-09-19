@@ -108,28 +108,31 @@ public class EntryTypeDefaultDataService implements IEntryDataService
      * {@inheritDoc}
      */
     @Override
-    public FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request )
+    public FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request, boolean bValidateQuestion )
     {
         FormQuestionResponse formQuestionResponse = createResponseFor( question );
 
         GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
                 formQuestionResponse.getEntryResponse( ), request.getLocale( ) );
-        formQuestionResponse.setError( error );
-
-        Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
-
-        if ( control != null )
-        {
-            IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-            if ( !validator.validate( formQuestionResponse, control ) )
-            {
-                error = new GenericAttributeError( );
-
-                error.setIsDisplayableError( true );
-                error.setErrorMessage( control.getErrorMessage( ) );
-
-                formQuestionResponse.setError( error );
-            }
+        
+        if(bValidateQuestion) {
+	        formQuestionResponse.setError( error );
+	
+	        Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
+	
+	        if ( control != null )
+	        {
+	            IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+	            if ( !validator.validate( formQuestionResponse, control ) )
+	            {
+	                error = new GenericAttributeError( );
+	
+	                error.setIsDisplayableError( true );
+	                error.setErrorMessage( control.getErrorMessage( ) );
+	
+	                formQuestionResponse.setError( error );
+	            }
+	        }
         }
 
         return formQuestionResponse;
@@ -142,7 +145,7 @@ public class EntryTypeDefaultDataService implements IEntryDataService
      *            the question
      * @return the created form question response
      */
-    protected FormQuestionResponse createResponseFor( Question question )
+    private FormQuestionResponse createResponseFor( Question question )
     {
         FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
         formQuestionResponse.setEntryResponse( new ArrayList<Response>( ) );
@@ -201,5 +204,7 @@ public class EntryTypeDefaultDataService implements IEntryDataService
 
         return sb.toString( );
     }
+
+
 
 }

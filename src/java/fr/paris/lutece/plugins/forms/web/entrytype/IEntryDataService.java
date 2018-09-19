@@ -63,9 +63,11 @@ public interface IEntryDataService
      *            the question to
      * @param request
      *            The Http request
+     * @param bValidateQuestion
+     * 				the boolean to validate question
      * @return The response to the question
      */
-    FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request );
+    FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request, boolean bValidateQuestion );
 
     /**
      * Tests if a response has changed
