@@ -70,7 +70,7 @@ public class EntryTypeIterableDataService extends EntryTypeDefaultDataService
     @Override
     public FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request, boolean bValidateQuestion )
     {
-    	HttpServletRequest requestConverted = convertToIterationRequest( question, request );
+        HttpServletRequest requestConverted = convertToIterationRequest( question, request );
         return super.createResponseFromRequest( question, requestConverted, bValidateQuestion );
     }
 

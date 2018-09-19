@@ -114,25 +114,26 @@ public class EntryTypeDefaultDataService implements IEntryDataService
 
         GenericAttributeError error = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) ).getResponseData( question.getEntry( ), request,
                 formQuestionResponse.getEntryResponse( ), request.getLocale( ) );
-        
-        if(bValidateQuestion) {
-	        formQuestionResponse.setError( error );
-	
-	        Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
-	
-	        if ( control != null )
-	        {
-	            IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-	            if ( !validator.validate( formQuestionResponse, control ) )
-	            {
-	                error = new GenericAttributeError( );
-	
-	                error.setIsDisplayableError( true );
-	                error.setErrorMessage( control.getErrorMessage( ) );
-	
-	                formQuestionResponse.setError( error );
-	            }
-	        }
+
+        if ( bValidateQuestion )
+        {
+            formQuestionResponse.setError( error );
+
+            Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
+
+            if ( control != null )
+            {
+                IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+                if ( !validator.validate( formQuestionResponse, control ) )
+                {
+                    error = new GenericAttributeError( );
+
+                    error.setIsDisplayableError( true );
+                    error.setErrorMessage( control.getErrorMessage( ) );
+
+                    formQuestionResponse.setError( error );
+                }
+            }
         }
 
         return formQuestionResponse;
@@ -204,7 +205,5 @@ public class EntryTypeDefaultDataService implements IEntryDataService
 
         return sb.toString( );
     }
-
-
 
 }

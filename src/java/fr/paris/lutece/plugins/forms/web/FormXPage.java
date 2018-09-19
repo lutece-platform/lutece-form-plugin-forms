@@ -606,10 +606,10 @@ public class FormXPage extends MVCApplication
                 IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
                 if ( entryDataService != null )
                 {
-                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible() );
+                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( ) );
 
                     if ( formQuestionResponse.hasError( ) )
-                    { 
+                    {
                         bValidStep = false;
                     }
 
@@ -737,7 +737,7 @@ public class FormXPage extends MVCApplication
                 IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
                 if ( entryDataService != null )
                 {
-                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible() );
+                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( ) );
 
                     if ( !formQuestionResponse.hasError( ) )
                     {

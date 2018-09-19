@@ -70,9 +70,9 @@ public class EntryTypeFileDataService extends EntryTypeDefaultDataService
      */
     @Override
     public FormQuestionResponse createResponseFromRequest( Question question, HttpServletRequest request, boolean bValidateQuestion )
-    { 
-    	HttpServletRequest requestConverted = convertToIterationRequest( question, request );
-         return super.createResponseFromRequest( question, requestConverted, bValidateQuestion );
+    {
+        HttpServletRequest requestConverted = convertToIterationRequest( question, request );
+        return super.createResponseFromRequest( question, requestConverted, bValidateQuestion );
     }
 
     /**
