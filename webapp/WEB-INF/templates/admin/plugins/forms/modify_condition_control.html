@@ -4,6 +4,15 @@
     <@tform class="form-horizontal" method="post" name="modify_control" action="jsp/admin/plugins/forms/ManageControls.jsp">
          <@messages errors=errors />
          
+            <@formGroup labelKey='#i18n{forms.modify_control.labelStep}' helpKey='#i18n{forms.modify_control.labelStep.help}' mandatory=true>
+                 <@inputGroup>
+                     <@select name='id_step' items=availableSteps default_value='${id_step!}' />
+                     <@inputGroupItem>
+	                     <@button type='submit' name="view_modifyControl" value="validateStep" showTitle=false buttonIcon='check'/>
+	                 </@inputGroupItem>
+                 </@inputGroup>
+            </@formGroup>
+
          	<@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}' mandatory=true>
                  <@inputGroup>
                      <@select name='id_question' items=listQuestion default_value='${control.idQuestion!}' />
@@ -23,10 +32,6 @@
              </@formGroup>
 
              ${control_template}
-             
-             <@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' >
-                <@input type='text' name='errorMessage' value='${control.errorMessage!}' />
-             </@formGroup>
              
             <div class="form-group">
                 <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">

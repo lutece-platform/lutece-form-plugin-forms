@@ -49,6 +49,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
  */
 public class EntryTypeDefaultDisplayService implements IEntryDisplayService
 {
+    private static final String MARK_ENTRY_TYPE_SERVICE = "entryTypeService";
     private String _strEntryServiceName = StringUtils.EMPTY;
 
     /**
@@ -103,6 +104,7 @@ public class EntryTypeDefaultDisplayService implements IEntryDisplayService
                         .getHtml( );
                 break;
             case READONLY:
+                model.put( MARK_ENTRY_TYPE_SERVICE, service );
                 strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, model ) )
                         .getHtml( );
                 break;

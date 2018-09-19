@@ -24,6 +24,12 @@
               </#if>
 							<@checkBox name='default_value' value='1' checked=checked />
 						</@formGroup>
+						<#if option_no_display_title>
+							<@formGroup labelFor='no_display_title' labelKey='#i18n{forms.createField.labelNoDisplayTitle}'>
+								<#if field.noDisplayTitle><#assign checked = true /></#if>
+								<@checkBox name='no_display_title' value='1' checked=checked />
+							</@formGroup>
+						</#if>
             <#if field.parentEntry.roleAssociated && role_list?exists >
 						<@formGroup labelFor='role_key' labelKey='#i18n{forms.createField.labelRole}' helpKey='#i18n{forms.createField.labelRoleComment}'>
 							<#if field.roleKey?exists>
