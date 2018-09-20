@@ -608,7 +608,7 @@ public class FormXPage extends MVCApplication
                 IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
                 if ( entryDataService != null )
                 {
-                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request );
+                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( ) );
 
                     if ( formQuestionResponse.hasError( ) )
                     {
@@ -739,7 +739,7 @@ public class FormXPage extends MVCApplication
                 IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
                 if ( entryDataService != null )
                 {
-                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request );
+                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( ) );
 
                     if ( !formQuestionResponse.hasError( ) )
                     {

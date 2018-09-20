@@ -47,8 +47,6 @@ public class GroupBusinessTest extends LuteceTestCase
     private static final String DESCRIPTION2 = "Description2";
     private static final int IDSTEP1 = 1;
     private static final int IDSTEP2 = 2;
-    private static final boolean COLLAPSIBLE1 = true;
-    private static final boolean COLLAPSIBLE2 = false;
     private static final int ITERATIONNUMBER1 = 1;
     private static final int ITERATIONNUMBER2 = 2;
 
@@ -62,7 +60,6 @@ public class GroupBusinessTest extends LuteceTestCase
         group.setTitle( TITLE1 );
         group.setDescription( DESCRIPTION1 );
         group.setIdStep( IDSTEP1 );
-        group.setCollapsible( COLLAPSIBLE1 );
         group.setIterationMin( ITERATIONNUMBER1 );
 
         // Create test
@@ -71,21 +68,18 @@ public class GroupBusinessTest extends LuteceTestCase
         assertEquals( groupStored.getTitle( ), group.getTitle( ) );
         assertEquals( groupStored.getDescription( ), group.getDescription( ) );
         assertEquals( groupStored.getIdStep( ), group.getIdStep( ) );
-        assertEquals( groupStored.getCollapsible( ), group.getCollapsible( ) );
         assertEquals( groupStored.getIterationMin( ), group.getIterationMin( ) );
 
         // Update test
         group.setTitle( TITLE2 );
         group.setDescription( DESCRIPTION2 );
         group.setIdStep( IDSTEP2 );
-        group.setCollapsible( COLLAPSIBLE2 );
         group.setIterationMin( ITERATIONNUMBER2 );
         GroupHome.update( group );
         groupStored = GroupHome.findByPrimaryKey( group.getId( ) );
         assertEquals( groupStored.getTitle( ), group.getTitle( ) );
         assertEquals( groupStored.getDescription( ), group.getDescription( ) );
         assertEquals( groupStored.getIdStep( ), group.getIdStep( ) );
-        assertEquals( groupStored.getCollapsible( ), group.getCollapsible( ) );
         assertEquals( groupStored.getIterationMin( ), group.getIterationMin( ) );
 
         // List test
