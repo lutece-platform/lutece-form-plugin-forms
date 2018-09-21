@@ -56,7 +56,7 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorCon
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterFactory;
-import fr.paris.lutece.plugins.forms.business.form.filter.impl.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
