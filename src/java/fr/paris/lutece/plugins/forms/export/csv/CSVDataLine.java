@@ -50,38 +50,38 @@ import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
  */
 public class CSVDataLine
 {
-	private final Map<String, String> _mapDataToExport = new HashMap<String, String>( );
-	
-	
-	/**
-	 * 
-	 * @param formQuestionResponse
-	 * 			The data to add
-	 */
-	public void addData( FormQuestionResponse formQuestionResponse )
-	{
-		IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( formQuestionResponse.getQuestion( ).getEntry( ).getEntryType( ) );
-				
-		StringBuilder sbQuestionTitle = new StringBuilder( );
-		sbQuestionTitle.append( formQuestionResponse.getQuestion( ).getTitle( ) );
-		
-		if( formQuestionResponse.getQuestion( ) .getIterationNumber( ) > 0 )
-		{
-			
-			sbQuestionTitle.append( StringUtils.SPACE ).append( formQuestionResponse.getQuestion( ) .getIterationNumber( ) );
-		}
-		
-		_mapDataToExport.put( sbQuestionTitle.toString( ), Objects.toString( entryDataService.responseToString( formQuestionResponse ), StringUtils.EMPTY ) );
-	}
+    private final Map<String, String> _mapDataToExport = new HashMap<String, String>( );
 
-	/**
-	 * @param strColumnName
-	 * 			The column name
-	 * @return the _mapDataToExport
-	 */
-	public String getDataToExport( String strColumnName )
-	{
-		return _mapDataToExport.get( strColumnName );
-	}	
+    /**
+     * 
+     * @param formQuestionResponse
+     *            The data to add
+     */
+    public void addData( FormQuestionResponse formQuestionResponse )
+    {
+        IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService(
+                formQuestionResponse.getQuestion( ).getEntry( ).getEntryType( ) );
+
+        StringBuilder sbQuestionTitle = new StringBuilder( );
+        sbQuestionTitle.append( formQuestionResponse.getQuestion( ).getTitle( ) );
+
+        if ( formQuestionResponse.getQuestion( ).getIterationNumber( ) > 0 )
+        {
+
+            sbQuestionTitle.append( StringUtils.SPACE ).append( formQuestionResponse.getQuestion( ).getIterationNumber( ) );
+        }
+
+        _mapDataToExport.put( sbQuestionTitle.toString( ), Objects.toString( entryDataService.responseToString( formQuestionResponse ), StringUtils.EMPTY ) );
+    }
+
+    /**
+     * @param strColumnName
+     *            The column name
+     * @return the _mapDataToExport
+     */
+    public String getDataToExport( String strColumnName )
+    {
+        return _mapDataToExport.get( strColumnName );
+    }
 
 }

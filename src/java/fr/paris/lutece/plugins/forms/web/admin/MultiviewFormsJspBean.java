@@ -56,7 +56,7 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorCon
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterFactory;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.impl.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
@@ -88,7 +88,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 {
     // Generated serial UID
     private static final long serialVersionUID = 2122079505317782087L;
-    
+
     // Actions
     private static final String ACTION_EXPORT_RESPONSES = "doExportResponses";
 
@@ -153,7 +153,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Sort the list of FormResponseItem of the FormPanel with the request information
         sortFormResponseItemList( request, _formPanelDisplayActive.getFormResponseItemList( ) );
-        
+
         // Build the template of each form filter display
         if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
         {
@@ -169,7 +169,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         model.put( MARK_PAGINATOR, getPaginator( ) );
         model.put( MARK_LOCALE, getLocale( ) );
         model.put( MARK_FORM_FILTER_LIST, _listFormFilterDisplay );
-        
+
         // Add the template of column to the model
         String strSortUrl = String.format( BASE_SORT_URL_PATTERN, _strSelectedPanelTechnicalCode );
         String strRedirectionDetailsBaseUrl = buildRedirectionDetailsBaseUrl( );
@@ -185,55 +185,55 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW, model );
     }
-    
+
     /**
      * Perform the responses export
      * 
      * @param request
      *            The HTTP request
-     * @throws IOException 
+     * @throws IOException
      */
     @Action( ACTION_EXPORT_RESPONSES )
     public void doExportResponses( HttpServletRequest request ) throws IOException
     {
-    	IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
-    	
-    	List<FormResponseItem> listFormResponseItemToDisplay = _formPanelDisplayActive.getFormResponseItemList( );
+        IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
 
-    	if( formatExport != null && listFormResponseItemToDisplay != null )
-    	{
-    		byte[] arrByteExportFile = formatExport.getByteExportFile( getFormResponseToExport( listFormResponseItemToDisplay ) );
-    		
-        	download( arrByteExportFile, I18nService.getLocalizedString( EXPORT_FILE_NAME, getLocale( ) ), formatExport.getFormatContentType( ) );
-    	}
+        List<FormResponseItem> listFormResponseItemToDisplay = _formPanelDisplayActive.getFormResponseItemList( );
+
+        if ( formatExport != null && listFormResponseItemToDisplay != null )
+        {
+            byte [ ] arrByteExportFile = formatExport.getByteExportFile( getFormResponseToExport( listFormResponseItemToDisplay ) );
+
+            download( arrByteExportFile, I18nService.getLocalizedString( EXPORT_FILE_NAME, getLocale( ) ), formatExport.getFormatContentType( ) );
+        }
     }
-    
+
     /**
      * 
      * @param listFormResponseItemToDisplay
-     * 				The list of FormResponse to display
+     *            The list of FormResponse to display
      * @return the list of FormResponse to export
      */
     private List<FormResponse> getFormResponseToExport( List<FormResponseItem> listFormResponseItemToDisplay )
     {
-    	List<FormResponse> listFormResponse = new ArrayList<FormResponse>( );
-    	
-    	for( FormResponseItem formResponseItem : listFormResponseItemToDisplay )
-		{			
-			FormResponse formResponse = FormResponseHome.findByPrimaryKey( formResponseItem.getIdFormResponse( ) );
-			
-			for( FormResponseStep formResponseStep : formResponse.getSteps( ) )
-			{
-				for( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
-				{
-					//TODO Remove the formQuestionResponse from the formResponse if the associated question is not exportable
-				}
-			}
-			
-			listFormResponse.add( formResponse );
-		}
-    	
-    	return listFormResponse;
+        List<FormResponse> listFormResponse = new ArrayList<FormResponse>( );
+
+        for ( FormResponseItem formResponseItem : listFormResponseItemToDisplay )
+        {
+            FormResponse formResponse = FormResponseHome.findByPrimaryKey( formResponseItem.getIdFormResponse( ) );
+
+            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+            {
+                for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+                {
+                    // TODO Remove the formQuestionResponse from the formResponse if the associated question is not exportable
+                }
+            }
+
+            listFormResponse.add( formResponse );
+        }
+
+        return listFormResponse;
     }
 
     /**
@@ -454,7 +454,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         return listFormResponseItemToDisplay;
     }
-    
 
     /**
      * Return the base url of the controller for the view which display the list of reponses

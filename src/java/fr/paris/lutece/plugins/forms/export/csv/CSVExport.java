@@ -48,12 +48,12 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  *
  */
 public class CSVExport implements IFormatExport
-{	
-	private static final String CONSTANT_MIME_TYPE_CSV = "application/csv";
-	
-	private final String _strFormatExportName;
-	private final String _strFormatExportDisplayName;
-	
+{
+    private static final String CONSTANT_MIME_TYPE_CSV = "application/csv";
+
+    private final String _strFormatExportName;
+    private final String _strFormatExportDisplayName;
+
     /**
      * Constructor of the PatternValidator
      * 
@@ -64,41 +64,41 @@ public class CSVExport implements IFormatExport
      */
     public CSVExport( String strFormatExportName, String strFormatExportDisplayName )
     {
-    	_strFormatExportName = strFormatExportName;
-    	_strFormatExportDisplayName = I18nService.getLocalizedString( strFormatExportDisplayName, I18nService.getDefaultLocale( ) );
+        _strFormatExportName = strFormatExportName;
+        _strFormatExportDisplayName = I18nService.getLocalizedString( strFormatExportDisplayName, I18nService.getDefaultLocale( ) );
     }
 
-	@Override
-	public String getFormatExportBeanName( ) 
-	{
-		return _strFormatExportName;
-	}
+    @Override
+    public String getFormatExportBeanName( )
+    {
+        return _strFormatExportName;
+    }
 
-	@Override
-	public String getFormatExportDisplayName( ) 
-	{
-		return _strFormatExportDisplayName;
-	}
-	
-	@Override
-	public String getFormatContentType( ) 
-	{
-		return CONSTANT_MIME_TYPE_CSV;
-	}
+    @Override
+    public String getFormatExportDisplayName( )
+    {
+        return _strFormatExportDisplayName;
+    }
 
-	@Override
-	public byte[] getByteExportFile( List<FormResponse> listFormResponse )
-	{
-		if( CollectionUtils.isNotEmpty( listFormResponse ) )
-		{
-			FormResponseCsvExport formResponseExport =  new FormResponseCsvExport( listFormResponse );
-			
-			String strFinalOutput = formResponseExport.getCsvColumnToExport( ) + formResponseExport.getCsvDataToExport( );
-			
-			return strFinalOutput.getBytes( StandardCharsets.UTF_8 );
-		}
-		
-		return null;
-	}
-	
+    @Override
+    public String getFormatContentType( )
+    {
+        return CONSTANT_MIME_TYPE_CSV;
+    }
+
+    @Override
+    public byte [ ] getByteExportFile( List<FormResponse> listFormResponse )
+    {
+        if ( CollectionUtils.isNotEmpty( listFormResponse ) )
+        {
+            FormResponseCsvExport formResponseExport = new FormResponseCsvExport( listFormResponse );
+
+            String strFinalOutput = formResponseExport.getCsvColumnToExport( ) + formResponseExport.getCsvDataToExport( );
+
+            return strFinalOutput.getBytes( StandardCharsets.UTF_8 );
+        }
+
+        return null;
+    }
+
 }

@@ -201,7 +201,9 @@ public class EntryTypeDefaultDataService implements IEntryDataService
 
         for ( Response response : formQuestionResponse.getEntryResponse( ) )
         {
-        	sb.append( Objects.toString( EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForRecap( entry, null, response, I18nService.getDefaultLocale( ) ), StringUtils.EMPTY ) );
+            sb.append( Objects.toString(
+                    EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForRecap( entry, null, response, I18nService.getDefaultLocale( ) ),
+                    StringUtils.EMPTY ) );
         }
 
         return sb.toString( );

@@ -51,94 +51,95 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
  */
 public class FormResponseCsvExport
 {
-	private final ColumnDefinition _columnDefinition = new ColumnDefinition( );
-	
-	private final List<CSVDataLine> _listDataToExport = new ArrayList<CSVDataLine>( );
-		
-	private String _strCsvColumnToExport;
-	
-	private String _strCsvDataToExport;
-	
-	/**
-	 * Constructor
-	 * 
-	 * @param listFormResponse
-	 * 			The list of data to export
-	 */
-	public FormResponseCsvExport( List<FormResponse> listFormResponse )
-	{
-		for( FormResponse formResponse : listFormResponse )
-		{
-			CSVDataLine csvDataLine = new CSVDataLine( );
-			
-			for( FormResponseStep formResponseStep : formResponse.getSteps( ) )
-			{
-				for( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
-				{
-					_columnDefinition.addColumnDef( formQuestionResponse.getQuestion( ) );
-					csvDataLine.addData( formQuestionResponse );
-				}
-			}
-			
-			_listDataToExport.add( csvDataLine );
-		}
-		
-		buildCsvColumnToExport( );
-		buildCsvDataToExport( );
-	}
-	
-	/**
-	 * Build the CSV string for column line
-	 */
-	private void buildCsvColumnToExport( )
-	{
-		StringBuilder sbCsvColumn = new StringBuilder( );
-		_columnDefinition.buildColumnToExport( );
-		
-		for ( String strColumnName : _columnDefinition.getColumnToExport( ) ) 
-		{
-			sbCsvColumn.append( strColumnName ).append( FormsConstants.SEPARATOR_SEMICOLON );
-		}
-		
-		_strCsvColumnToExport = sbCsvColumn.append( FormsConstants.END_OF_LINE ).toString( );
-	}
-	
-	/**
-	 * Build the CSV string for all data lines
-	 */
-	private void buildCsvDataToExport( )
-	{
-		StringBuilder sbCsvData = new StringBuilder( );
-		
-		for( CSVDataLine csvDataLine : _listDataToExport )
-		{
-			StringBuilder sbRecordContent = new StringBuilder( );
-			
-			for( String strColumnName : _columnDefinition.getColumnToExport( ) )
-			{
-				sbRecordContent.append( Objects.toString( csvDataLine.getDataToExport( strColumnName ), StringUtils.EMPTY ) ).append( FormsConstants.SEPARATOR_SEMICOLON );
-			}
-			
-			sbCsvData.append( sbRecordContent.toString( ) ).append( FormsConstants.END_OF_LINE );
-		}
-		
-		_strCsvDataToExport = sbCsvData.toString( );
-	}
+    private final ColumnDefinition _columnDefinition = new ColumnDefinition( );
 
-	/**
-	 * @return the _strCsvColumnToExport
-	 */
-	public String getCsvColumnToExport( )
-	{
-		return _strCsvColumnToExport;
-	}
-	
-	/**
-	 * @return the _strCsvDataToExport
-	 */
-	public String getCsvDataToExport( )
-	{
-		return _strCsvDataToExport;
-	}
+    private final List<CSVDataLine> _listDataToExport = new ArrayList<CSVDataLine>( );
+
+    private String _strCsvColumnToExport;
+
+    private String _strCsvDataToExport;
+
+    /**
+     * Constructor
+     * 
+     * @param listFormResponse
+     *            The list of data to export
+     */
+    public FormResponseCsvExport( List<FormResponse> listFormResponse )
+    {
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            CSVDataLine csvDataLine = new CSVDataLine( );
+
+            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+            {
+                for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+                {
+                    _columnDefinition.addColumnDef( formQuestionResponse.getQuestion( ) );
+                    csvDataLine.addData( formQuestionResponse );
+                }
+            }
+
+            _listDataToExport.add( csvDataLine );
+        }
+
+        buildCsvColumnToExport( );
+        buildCsvDataToExport( );
+    }
+
+    /**
+     * Build the CSV string for column line
+     */
+    private void buildCsvColumnToExport( )
+    {
+        StringBuilder sbCsvColumn = new StringBuilder( );
+        _columnDefinition.buildColumnToExport( );
+
+        for ( String strColumnName : _columnDefinition.getColumnToExport( ) )
+        {
+            sbCsvColumn.append( strColumnName ).append( FormsConstants.SEPARATOR_SEMICOLON );
+        }
+
+        _strCsvColumnToExport = sbCsvColumn.append( FormsConstants.END_OF_LINE ).toString( );
+    }
+
+    /**
+     * Build the CSV string for all data lines
+     */
+    private void buildCsvDataToExport( )
+    {
+        StringBuilder sbCsvData = new StringBuilder( );
+
+        for ( CSVDataLine csvDataLine : _listDataToExport )
+        {
+            StringBuilder sbRecordContent = new StringBuilder( );
+
+            for ( String strColumnName : _columnDefinition.getColumnToExport( ) )
+            {
+                sbRecordContent.append( Objects.toString( csvDataLine.getDataToExport( strColumnName ), StringUtils.EMPTY ) ).append(
+                        FormsConstants.SEPARATOR_SEMICOLON );
+            }
+
+            sbCsvData.append( sbRecordContent.toString( ) ).append( FormsConstants.END_OF_LINE );
+        }
+
+        _strCsvDataToExport = sbCsvData.toString( );
+    }
+
+    /**
+     * @return the _strCsvColumnToExport
+     */
+    public String getCsvColumnToExport( )
+    {
+        return _strCsvColumnToExport;
+    }
+
+    /**
+     * @return the _strCsvDataToExport
+     */
+    public String getCsvDataToExport( )
+    {
+        return _strCsvDataToExport;
+    }
 
 }

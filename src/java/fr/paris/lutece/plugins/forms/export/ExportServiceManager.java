@@ -50,7 +50,7 @@ public final class ExportServiceManager
      */
     private ExportServiceManager( )
     {
-    	_listFormatExport = SpringContextService.getBeansOfType( IFormatExport.class );
+        _listFormatExport = SpringContextService.getBeansOfType( IFormatExport.class );
     }
 
     /**
@@ -94,7 +94,7 @@ public final class ExportServiceManager
 
         for ( IFormatExport formatExport : _listFormatExport )
         {
-        	refListFormatExport.addItem( formatExport.getFormatExportBeanName( ), formatExport.getFormatExportDisplayName( ) );
+            refListFormatExport.addItem( formatExport.getFormatExportBeanName( ), formatExport.getFormatExportDisplayName( ) );
         }
 
         return refListFormatExport;

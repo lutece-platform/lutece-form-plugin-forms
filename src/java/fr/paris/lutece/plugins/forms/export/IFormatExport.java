@@ -42,7 +42,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
  * @author a614328
  *
  */
-public interface IFormatExport 
+public interface IFormatExport
 {
     /**
      * 
@@ -55,7 +55,7 @@ public interface IFormatExport
      * @return the FormatExport display name
      */
     String getFormatExportDisplayName( );
-    
+
     /**
      * 
      * @return the FormatExport display name
@@ -67,5 +67,5 @@ public interface IFormatExport
      *            The list of responses to export
      * @return the export file
      */
-    byte[] getByteExportFile( List<FormResponse> listFormResponse );
+    byte [ ] getByteExportFile( List<FormResponse> listFormResponse );
 }

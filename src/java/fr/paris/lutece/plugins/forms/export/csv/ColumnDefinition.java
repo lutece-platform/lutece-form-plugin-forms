@@ -49,66 +49,67 @@ import fr.paris.lutece.plugins.forms.business.Question;
  */
 public class ColumnDefinition
 {
-	private Map<String, Integer> _mapColumnDef = new HashMap<String, Integer>( );
-	
-	private final List<String> _listColumnToExport = new ArrayList<String>( );
+    private Map<String, Integer> _mapColumnDef = new HashMap<String, Integer>( );
 
-	/**
-	 * @return the _mapColumnDef
-	 */
-	public Map<String, Integer> getColumnDef( ) 
-	{
-		return _mapColumnDef;
-	}
+    private final List<String> _listColumnToExport = new ArrayList<String>( );
 
-	/**
-	 * @param mapColumnDef the mapColumnDef to set
-	 */
-	public void setColumnDef( Map<String, Integer> mapColumnDef )
-	{
-		this._mapColumnDef = mapColumnDef;
-	}
+    /**
+     * @return the _mapColumnDef
+     */
+    public Map<String, Integer> getColumnDef( )
+    {
+        return _mapColumnDef;
+    }
 
-	/**
-	 * @param question 
-	 * 			the question to add
-	 */
-	public void addColumnDef( Question question )
-	{
-		if( !_mapColumnDef.containsKey( question.getTitle( ) ) || _mapColumnDef.get( question.getTitle( ) ) < question.getIterationNumber( ) )
-		{
-			_mapColumnDef.put( question.getTitle( ), question.getIterationNumber( ) );
-		}
-	}
-	
-	/**
-	 * Build the final list of column to export (with iteration number)
-	 */
-	public void buildColumnToExport( )
-	{
-		for ( Map.Entry<String, Integer> column : _mapColumnDef.entrySet( ) ) 
-		{
-			_listColumnToExport.add( column.getKey( ) );
-			
-			if( column.getValue( ) > 0 )
-			{
-				String strColumnFinalName = StringUtils.EMPTY;
-				
-				for( int i = 1 ; i <= column.getValue( ) ; i++ )
-				{
-					strColumnFinalName = column.getKey( ) + StringUtils.SPACE + i;
-					
-					_listColumnToExport.add( strColumnFinalName );
-				}
-			}
-		}
-	}
-	
-	/**
-	 * @return the _listFinalColumnToExport
-	 */
-	public List<String> getColumnToExport( )
-	{
-		return _listColumnToExport;
-	}
+    /**
+     * @param mapColumnDef
+     *            the mapColumnDef to set
+     */
+    public void setColumnDef( Map<String, Integer> mapColumnDef )
+    {
+        this._mapColumnDef = mapColumnDef;
+    }
+
+    /**
+     * @param question
+     *            the question to add
+     */
+    public void addColumnDef( Question question )
+    {
+        if ( !_mapColumnDef.containsKey( question.getTitle( ) ) || _mapColumnDef.get( question.getTitle( ) ) < question.getIterationNumber( ) )
+        {
+            _mapColumnDef.put( question.getTitle( ), question.getIterationNumber( ) );
+        }
+    }
+
+    /**
+     * Build the final list of column to export (with iteration number)
+     */
+    public void buildColumnToExport( )
+    {
+        for ( Map.Entry<String, Integer> column : _mapColumnDef.entrySet( ) )
+        {
+            _listColumnToExport.add( column.getKey( ) );
+
+            if ( column.getValue( ) > 0 )
+            {
+                String strColumnFinalName = StringUtils.EMPTY;
+
+                for ( int i = 1; i <= column.getValue( ); i++ )
+                {
+                    strColumnFinalName = column.getKey( ) + StringUtils.SPACE + i;
+
+                    _listColumnToExport.add( strColumnFinalName );
+                }
+            }
+        }
+    }
+
+    /**
+     * @return the _listFinalColumnToExport
+     */
+    public List<String> getColumnToExport( )
+    {
+        return _listColumnToExport;
+    }
 }
