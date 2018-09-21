@@ -369,7 +369,7 @@ public class FormXPage extends MVCApplication
         try
         {
             findFormFrom( request );
-            fillResponseManagerWithResponses( request , true );
+            fillResponseManagerWithResponses( request, true );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -448,7 +448,7 @@ public class FormXPage extends MVCApplication
 
             if ( !form.isDisplaySummary( ) )
             {
-                fillResponseManagerWithResponses( request , true );
+                fillResponseManagerWithResponses( request, true );
             }
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -573,7 +573,7 @@ public class FormXPage extends MVCApplication
      * @param request
      *            The Http request
      * @param bValidateQuestionStep
-     * 		valid question ton next step
+     *            valid question ton next step
      * 
      * @throws QuestionValidationException
      *             if there is at least one question not valid
@@ -608,8 +608,9 @@ public class FormXPage extends MVCApplication
                 IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
                 if ( entryDataService != null )
                 {
-                   
-                	FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( )&& bValidateQuestionStep);
+
+                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( )
+                            && bValidateQuestionStep );
 
                     if ( formQuestionResponse.hasError( ) )
                     {
@@ -779,7 +780,7 @@ public class FormXPage extends MVCApplication
         try
         {
             findFormFrom( request );
-            fillResponseManagerWithResponses( request ,false  );
+            fillResponseManagerWithResponses( request, false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -814,7 +815,7 @@ public class FormXPage extends MVCApplication
         try
         {
             findFormFrom( request );
-            fillResponseManagerWithResponses( request , false );
+            fillResponseManagerWithResponses( request, false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
