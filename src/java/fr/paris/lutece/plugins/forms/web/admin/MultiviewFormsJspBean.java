@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +46,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparator;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig;
@@ -54,6 +59,8 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterFactory;
 import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
+import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
+import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.column.display.FormColumnDisplayFactory;
@@ -65,8 +72,10 @@ import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListTemplateBui
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.MultiviewFormUtil;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDisplayFactory;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
@@ -80,6 +89,9 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     // Generated serial UID
     private static final long serialVersionUID = 2122079505317782087L;
 
+    // Actions
+    private static final String ACTION_EXPORT_RESPONSES = "doExportResponses";
+
     // Templates
     private static final String TEMPLATE_FORMS_MULTIVIEW = "admin/plugins/forms/multiview/forms_multiview.html";
 
@@ -91,12 +103,14 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
     // Constants
     private static final String BASE_SORT_URL_PATTERN = JSP_FORMS_MULTIVIEW + "?current_selected_panel=%s";
+    private static final String EXPORT_FILE_NAME = "forms.adminFeature.multiviewForms.export.filePath";
 
     // Views
     private static final String VIEW_MULTIVIEW_FORMS = "view_multiview_forms";
 
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";
+    private static final String PARAMETER_FORMAT_EXPORT = "format_export";
 
     // Marks
     private static final String MARK_LOCALE = "locale";
@@ -105,6 +119,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String MARK_CURRENT_SELECTED_PANEL = "current_selected_panel";
     private static final String MARK_FORM_FILTER_LIST = "form_filter_list";
     private static final String MARK_TABLE_TEMPLATE = "table_template";
+    private static final String MARK_LIST_FORMAT_EXPORT = "format_export_list";
 
     // Session variables
     private String _strSelectedPanelTechnicalCode = StringUtils.EMPTY;
@@ -166,8 +181,59 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Add the list of all form panel
         model.put( MARK_FORM_PANEL_LIST, _listFormPanelDisplay );
         model.put( MARK_CURRENT_SELECTED_PANEL, _strSelectedPanelTechnicalCode );
+        model.put( MARK_LIST_FORMAT_EXPORT, ExportServiceManager.getInstance( ).getRefListFormatExport( ) );
 
         return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW, model );
+    }
+
+    /**
+     * Perform the responses export
+     * 
+     * @param request
+     *            The HTTP request
+     * @throws IOException
+     */
+    @Action( ACTION_EXPORT_RESPONSES )
+    public void doExportResponses( HttpServletRequest request ) throws IOException
+    {
+        IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
+
+        List<FormResponseItem> listFormResponseItemToDisplay = _formPanelDisplayActive.getFormResponseItemList( );
+
+        if ( formatExport != null && listFormResponseItemToDisplay != null )
+        {
+            byte [ ] arrByteExportFile = formatExport.getByteExportFile( getFormResponseToExport( listFormResponseItemToDisplay ) );
+
+            download( arrByteExportFile, I18nService.getLocalizedString( EXPORT_FILE_NAME, getLocale( ) ), formatExport.getFormatContentType( ) );
+        }
+    }
+
+    /**
+     * 
+     * @param listFormResponseItemToDisplay
+     *            The list of FormResponse to display
+     * @return the list of FormResponse to export
+     */
+    private List<FormResponse> getFormResponseToExport( List<FormResponseItem> listFormResponseItemToDisplay )
+    {
+        List<FormResponse> listFormResponse = new ArrayList<FormResponse>( );
+
+        for ( FormResponseItem formResponseItem : listFormResponseItemToDisplay )
+        {
+            FormResponse formResponse = FormResponseHome.findByPrimaryKey( formResponseItem.getIdFormResponse( ) );
+
+            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+            {
+                for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+                {
+                    // TODO Remove the formQuestionResponse from the formResponse if the associated question is not exportable
+                }
+            }
+
+            listFormResponse.add( formResponse );
+        }
+
+        return listFormResponse;
     }
 
     /**

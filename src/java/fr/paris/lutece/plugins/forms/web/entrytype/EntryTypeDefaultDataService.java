@@ -35,6 +35,7 @@
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -200,7 +201,9 @@ public class EntryTypeDefaultDataService implements IEntryDataService
 
         for ( Response response : formQuestionResponse.getEntryResponse( ) )
         {
-            sb.append( EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForRecap( entry, null, response, I18nService.getDefaultLocale( ) ) );
+            sb.append( Objects.toString(
+                    EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForRecap( entry, null, response, I18nService.getDefaultLocale( ) ),
+                    StringUtils.EMPTY ) );
         }
 
         return sb.toString( );

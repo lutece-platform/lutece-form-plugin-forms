@@ -144,7 +144,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
             for ( Response response : listResponse )
             {
                 File file = response.getFile( );
-                if ( response.getFile( ) != null )
+                if ( file != null && file.getPhysicalFile( ) == null )
                 {
                     response.setFile( FileHome.findByPrimaryKey( file.getIdFile( ) ) );
                 }

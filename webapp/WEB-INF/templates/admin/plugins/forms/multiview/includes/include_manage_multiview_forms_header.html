@@ -10,7 +10,17 @@
 							    ${form_filter.template!''}
 							</#list>
 						</#if>
+						
+						<@btnGroup class='col-sm-offset-5'>
+							<@btnGroup>
+								<@select name='format_export' default_value='' items=format_export_list />
+							</@btnGroup>
+							<@button type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' showTitle=false buttonIcon='download' />
+						</@btnGroup>
+					</div>
             		</div>
+
+            		
                 </div>
         	</div>
 
