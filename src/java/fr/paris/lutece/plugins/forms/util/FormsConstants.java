@@ -151,6 +151,8 @@ public final class FormsConstants
     // Other
     public static final String FORM_DEFAULT_END_MESSAGE = "forms.message.form.submitted";
     public static final String SEPARATOR_UNDERSCORE = "_";
+    public static final String SEPARATOR_SEMICOLON = ";";
+    public static final String END_OF_LINE = "\n";
 
     /**
      * Default private constructor. Do not call
