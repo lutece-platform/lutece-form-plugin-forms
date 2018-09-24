@@ -730,11 +730,14 @@ public class FormXPage extends MVCApplication
         checkAuthentication( form, request );
 
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-        try {
-			fillResponseManagerWithResponses(request, false);
-		} catch (QuestionValidationException e) {
-			 return redirectView( request, VIEW_STEP );
-		}
+        try
+        {
+            fillResponseManagerWithResponses( request, false );
+        }
+        catch( QuestionValidationException e )
+        {
+            return redirectView( request, VIEW_STEP );
+        }
 
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         formResponse.setGuid( user.getName( ) );
