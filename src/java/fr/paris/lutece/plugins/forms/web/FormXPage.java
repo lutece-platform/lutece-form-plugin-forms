@@ -730,32 +730,11 @@ public class FormXPage extends MVCApplication
         checkAuthentication( form, request );
 
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-
-        List<Question> listQuestionStep = _stepDisplayTree.getQuestions( );
-
-        Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
-        List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
-
-        for ( Question question : listQuestionStep )
-        {
-            if ( !question.getEntry( ).isOnlyDisplayInBack( ) )
-            {
-                IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-                if ( entryDataService != null )
-                {
-                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( ) );
-
-                    if ( !formQuestionResponse.hasError( ) )
-                    {
-                        listResponsesTemp.add( formQuestionResponse );
-                    }
-
-                    mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
-                }
-            }
-        }
-
-        _formResponseManager.addResponses( listResponsesTemp );
+        try {
+			fillResponseManagerWithResponses(request, false);
+		} catch (QuestionValidationException e) {
+			 return redirectView( request, VIEW_STEP );
+		}
 
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         formResponse.setGuid( user.getName( ) );
