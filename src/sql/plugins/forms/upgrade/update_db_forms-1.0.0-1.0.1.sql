@@ -53,3 +53,6 @@ BEGIN
     CLOSE entry_cursor;
 END; //
 CALL updateFieldForMyLuteceAttributeEntry(@id_field_max);
+
+UPDATE genatt_field SET value = 'user.name.family' WHERE value = 'user.family_name';
+UPDATE genatt_field SET value = 'user.name.given' WHERE value = 'user.first_name';
