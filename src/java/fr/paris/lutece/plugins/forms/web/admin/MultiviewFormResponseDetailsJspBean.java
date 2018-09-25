@@ -217,7 +217,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         // it will be ready
         List<Step> listStep = StepHome.getStepsListByForm( form.getId( ) );
 
-        List<String> listStepDisplayTree = buildFormStepDisplayTreeList( listStep, formResponse );
+        List<String> listStepDisplayTree = buildFormStepDisplayTreeList( request, listStep, formResponse );
         mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, listStepDisplayTree );
 
         int nIdWorkflow = form.getIdWorkflow( );
@@ -246,13 +246,15 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     /**
      * Return the list of all DisplayTree for the given list of Step
      * 
+     * @param request
+     *            the request
      * @param listStep
      *            The list of all Step on which the DisplayTree must be build
      * @param formResponse
      *            The form response on which to retrieve the Response objects
      * @return the list of all DisplayTree for the given list of Step
      */
-    private List<String> buildFormStepDisplayTreeList( List<Step> listStep, FormResponse formResponse )
+    private List<String> buildFormStepDisplayTreeList( HttpServletRequest request, List<Step> listStep, FormResponse formResponse )
     {
         List<String> listFormDisplayTrees = new ArrayList<>( );
 
@@ -263,7 +265,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 int nIdStep = step.getId( );
 
                 StepDisplayTree stepDisplayTree = new StepDisplayTree( nIdStep, formResponse );
-                listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml(
+                listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request,
                         FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) ), getLocale( ),
                         DisplayType.READONLY_BACKOFFICE, null ) );
             }

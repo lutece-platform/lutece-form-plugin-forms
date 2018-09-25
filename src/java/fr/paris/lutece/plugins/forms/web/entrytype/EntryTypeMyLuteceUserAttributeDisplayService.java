@@ -44,23 +44,27 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
 /**
- * The default display service
+ * The display service for entry type date
  */
-public class EntryTypeDefaultDisplayService implements IEntryDisplayService
+public class EntryTypeMyLuteceUserAttributeDisplayService implements IEntryDisplayService
 {
-    private static final String MARK_ENTRY_TYPE_SERVICE = "entryTypeService";
+    private static final String MARK_USER = "user";
+
     private String _strEntryServiceName = StringUtils.EMPTY;
 
     /**
-     * Constructor of the EntryTypeDefaultDisplayService
+     * Constructor of the EntryTypeDateDisplayService
      * 
      * @param strEntryServiceName
      *            The entry service name
      */
-    public EntryTypeDefaultDisplayService( String strEntryServiceName )
+    public EntryTypeMyLuteceUserAttributeDisplayService( String strEntryServiceName )
     {
         _strEntryServiceName = strEntryServiceName;
     }
@@ -70,29 +74,59 @@ public class EntryTypeDefaultDisplayService implements IEntryDisplayService
      * 
      * @param entry
      *            The given entry
+     * @param request
+     *            the request
+     * @param displayType
+     *            The display type
      * @param model
      *            The given model
      * @return the completed model
      */
-    private Map<String, Object> setModel( Entry entry, Map<String, Object> model )
+    private Map<String, Object> setModel( Entry entry, HttpServletRequest request, DisplayType displayType, Map<String, Object> model )
     {
         model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
+
+        if ( displayType.isFront( ) )
+        {
+            LuteceUser user = findLuteceUserFrom( request );
+            model.put( MARK_USER, user );
+        }
 
         return model;
     }
 
     /**
-     * {@inheritDoc}
+     * Finds the LuteceUser associated to the request
+     * 
+     * @param request
+     *            The request to retrieve the LuteceUser from
+     * @return the LuteceUser of the request
      */
+    private static LuteceUser findLuteceUserFrom( HttpServletRequest request )
+    {
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+
+        if ( user == null && SecurityService.isAuthenticationEnable( ) && SecurityService.getInstance( ).isExternalAuthentication( ) )
+        {
+            try
+            {
+                user = SecurityService.getInstance( ).getRemoteUser( request );
+            }
+            catch( UserNotSignedException e )
+            {
+                // Nothing to do : lutece user is not mandatory
+            }
+        }
+
+        return user;
+    }
+
     @Override
     public String getDisplayServiceName( )
     {
         return _strEntryServiceName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getEntryTemplateDisplay( HttpServletRequest request, Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType )
     {
@@ -102,13 +136,12 @@ public class EntryTypeDefaultDisplayService implements IEntryDisplayService
         switch( displayType.getMode( ) )
         {
             case EDITION:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, model ) )
-                        .getHtml( );
+                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale,
+                        setModel( entry, request, displayType, model ) ).getHtml( );
                 break;
             case READONLY:
-                model.put( MARK_ENTRY_TYPE_SERVICE, service );
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, model ) )
-                        .getHtml( );
+                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale,
+                        setModel( entry, request, displayType, model ) ).getHtml( );
                 break;
             default: // Nothing to do
         }

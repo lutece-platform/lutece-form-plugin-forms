@@ -67,7 +67,6 @@ import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -305,7 +304,7 @@ public class FormXPage extends MVCApplication
             _formResponseManager.add( _currentStep );
         }
 
-        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( _formResponseManager.findResponsesFor( _currentStep ), request.getLocale( ),
+        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( _currentStep ), request.getLocale( ),
                 DisplayType.EDITION_FRONTOFFICE, user ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( _formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( _formResponseManager ) );
@@ -420,7 +419,7 @@ public class FormXPage extends MVCApplication
         {
             StepDisplayTree stepDisplayTree = new StepDisplayTree( step.getId( ), _formResponseManager.getFormResponse( ) );
 
-            listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( _formResponseManager.findResponsesFor( step ), request.getLocale( ),
+            listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( step ), request.getLocale( ),
                     DisplayType.READONLY_FRONTOFFICE, null ) );
         }
 
