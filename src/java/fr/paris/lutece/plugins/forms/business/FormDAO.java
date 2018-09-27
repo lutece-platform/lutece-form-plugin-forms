@@ -56,6 +56,7 @@ public final class FormDAO implements IFormDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, breadcrumb_name = ?, display_summary = ?, return_url = ?, max_number_response = ? WHERE id_form = ?";
     private static final String SQL_QUERY_COUNT_NUMBER_OF_RESPONSE = "SELECT count(id_form) FROM forms_response WHERE id_form = ?";
+
     /**
      * {@inheritDoc }
      */
@@ -193,15 +194,17 @@ public final class FormDAO implements IFormDAO
         daoUtil.close( );
         return formList;
     }
+
     /**
      * {@inheritDoc }
      */
-	@Override
-	public int countNumberOfResponseForms(int nIdForm) {
-		DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_NUMBER_OF_RESPONSE);
-		daoUtil.setInt( 1, nIdForm );
-	    daoUtil.executeQuery( );
-	    int nCount = 0;
+    @Override
+    public int countNumberOfResponseForms( int nIdForm )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_NUMBER_OF_RESPONSE );
+        daoUtil.setInt( 1, nIdForm );
+        daoUtil.executeQuery( );
+        int nCount = 0;
 
         if ( daoUtil.next( ) )
         {
@@ -211,7 +214,8 @@ public final class FormDAO implements IFormDAO
         daoUtil.close( );
 
         return nCount;
-	}
+    }
+
     /**
      * 
      * @param daoUtil
@@ -236,7 +240,7 @@ public final class FormDAO implements IFormDAO
         form.setBreadcrumbName( daoUtil.getString( "breadcrumb_name" ) );
         form.setDisplaySummary( daoUtil.getBoolean( "display_summary" ) );
         form.setReturnUrl( daoUtil.getString( "return_url" ) );
-        form.setMaxNumberResponse(daoUtil.getInt( "max_number_response" ));
+        form.setMaxNumberResponse( daoUtil.getInt( "max_number_response" ) );
 
         return form;
     }

@@ -238,13 +238,15 @@ public class FormXPage extends MVCApplication
         {
             Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
             strTitleForm = form.getTitle( );
-            
-            if (form.getMaxNumberResponse()!=0) {
-            	int nNumberReponseForm = FormHome.getNumberOfResponseForms(form.getId());
-            	if( nNumberReponseForm >= form.getMaxNumberResponse() ) {
-            		SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
-            	}
-            	
+
+            if ( form.getMaxNumberResponse( ) != 0 )
+            {
+                int nNumberReponseForm = FormHome.getNumberOfResponseForms( form.getId( ) );
+                if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
+                {
+                    SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+                }
+
             }
             if ( form.isActive( ) )
             {
