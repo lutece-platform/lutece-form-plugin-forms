@@ -98,6 +98,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_PATH = "forms.xpage.form.view.pagePathLabel";
     protected static final String MESSAGE_ERROR_NO_STEP = "forms.xpage.form.error.noStep";
     protected static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.xpage.form.error.inactive";
+    protected static final String MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM = "forms.xpage.form.error.MaxResponse";
     protected static final String MESSAGE_LOAD_BACKUP = "forms.xpage.form.view.loadBackUp";
 
     /**
@@ -237,6 +238,14 @@ public class FormXPage extends MVCApplication
         {
             Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
             strTitleForm = form.getTitle( );
+            
+            if (form.getMaxNumberResponse()!=0) {
+            	int nNumberReponseForm = FormHome.getNumberOfResponseForms(form.getId());
+            	if( nNumberReponseForm >= form.getMaxNumberResponse() ) {
+            		SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+            	}
+            	
+            }
             if ( form.isActive( ) )
             {
                 if ( _breadcrumb == null )

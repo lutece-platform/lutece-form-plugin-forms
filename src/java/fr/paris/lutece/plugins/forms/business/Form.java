@@ -100,8 +100,10 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private String _strReturnUrl;
 
     private boolean _bDisplaySummary;
+    private int _nMaxNumberResponse;
 
-    /**
+
+	/**
      * Returns the Id
      * 
      * @return The Id
@@ -430,5 +432,23 @@ public class Form implements AdminWorkgroupResource, RBACResource
     {
         _bDisplaySummary = bDisplaySummary;
     }
-
+    
+    /**
+     * Returns the number Max of response form
+     * 
+     * @return The number max of reponse for
+     */
+    public int getMaxNumberResponse() {
+		return _nMaxNumberResponse;
+	}
+    
+    /**
+     * Sets the number Max of response form
+     * 
+     * @param nMaxNumberResponse
+     *            The number max of reponse form 
+     */
+	public void setMaxNumberResponse(int nMaxNumberResponse) {
+		_nMaxNumberResponse = nMaxNumberResponse;
+	}
 }

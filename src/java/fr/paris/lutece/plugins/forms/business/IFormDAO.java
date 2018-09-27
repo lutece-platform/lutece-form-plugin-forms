@@ -104,4 +104,10 @@ public interface IFormDAO
      * @return The referenceList which contains the data of all the form objects
      */
     ReferenceList selectFormsReferenceList( Plugin plugin );
+    /**
+     * count the number of response for a form
+     * @param nidForm
+     * @return the number of the responses for a form
+     */
+    int countNumberOfResponseForms(int nidForm);
 }

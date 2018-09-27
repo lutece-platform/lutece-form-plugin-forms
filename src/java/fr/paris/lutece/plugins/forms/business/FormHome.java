@@ -126,5 +126,13 @@ public final class FormHome
     {
         return _dao.selectFormsReferenceList( _plugin );
     }
+    /**
+     * count the number of response for a form
+     * @param nIdFormm
+     * @return the number of response for a form
+     */
+    public static int getNumberOfResponseForms(int nIdFormm) {
+    	return _dao.countNumberOfResponseForms(nIdFormm);
+    }
 
 }

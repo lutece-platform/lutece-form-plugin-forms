@@ -27,6 +27,9 @@
                                     </@inputGroupItem>
                                 </@inputGroup>
                             </@formGroup>
+                             <@formGroup labelFor='max_number_response' labelKey='#i18n{forms.createForm.labelMaxNumberResponse}' helpKey='#i18n{forms.createForm.labelMaxNumberResponseComment.help}'>
+								<@input name='maxNumberResponse' id='MaxNumberResponse' type='number' value=form.maxNumberResponse?string!'0' />
+							 </@formGroup>
                             <div class="form-group">
                                 <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
                                     <button  class="btn btn-primary" name="action_modifyForm" type="submit">

@@ -14,6 +14,8 @@ ALTER TABLE forms_question	CHANGE COLUMN description description LONGTEXT NULL C
 
 
 ALTER TABLE forms_form DROP COLUMN end_message;
+ALTER TABLE forms_form ADD COLUMN max_number_response INT default 0 AFTER availability_end_date;
+
 
 DROP TABLE IF EXISTS forms_message;
 CREATE TABLE forms_message (
