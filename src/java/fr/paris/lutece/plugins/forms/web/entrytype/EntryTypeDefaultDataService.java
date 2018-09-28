@@ -136,6 +136,10 @@ public class EntryTypeDefaultDataService implements IEntryDataService
                 }
             }
         }
+        else
+        {
+            formQuestionResponse.setError( null );
+        }
 
         return formQuestionResponse;
     }

@@ -2,7 +2,7 @@
 <@row>
     <@columns>
         <@box color='primary' collapsed=true>
-            <@boxHeader title='#i18n{forms.manageForm.pageTitle} : ${form.title} - #i18n{forms.modify_step.title} : ${step.title}' boxTools=true>
+            <@boxHeader title='#i18n{forms.manageForm.pageTitle} : <a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" title="Liste des étapes">${form.title}</a> - #i18n{forms.modify_step.title} : ${step.title}' boxTools=true>
                 <#if !step.final>               
                     <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}' buttonIcon='plus' title='#i18n{forms.manage_transitions.buttonAdd}' showTitleXs=false size='' />
                 </#if>

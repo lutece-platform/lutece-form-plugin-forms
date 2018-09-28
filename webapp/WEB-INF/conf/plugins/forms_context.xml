@@ -118,7 +118,7 @@
 	<bean id="forms.entryTypeTextAreaDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeTextArea" />
 	</bean>
-	<bean id="forms.entryTypeMyLuteceUserattributeDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
+	<bean id="forms.entryTypeMyLuteceUserattributeDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeMyLuteceUserAttributeDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeMyLuteceUserattribute" />
 	</bean>
 	<bean id="forms.entryTypeArrayDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">

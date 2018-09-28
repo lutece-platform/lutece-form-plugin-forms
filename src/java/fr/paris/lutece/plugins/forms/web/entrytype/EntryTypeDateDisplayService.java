@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.forms.web.entrytype;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -90,7 +92,7 @@ public class EntryTypeDateDisplayService implements IEntryDisplayService
     }
 
     @Override
-    public String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType )
+    public String getEntryTemplateDisplay( HttpServletRequest request, Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType )
     {
         String strEntryHtml = StringUtils.EMPTY;
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );

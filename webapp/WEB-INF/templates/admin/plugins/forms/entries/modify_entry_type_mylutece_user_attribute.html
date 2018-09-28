@@ -1,4 +1,9 @@
  <#include "/admin/util/editor/editor.html" />
+ <#include "/admin/plugins/forms/commons.html" />
+
+<#assign fieldIsOnlyDisplayedInBack = getFieldByCode( entry, "only_display_in_back" ) >
+<#assign fieldMyLuteceAttributeName = getFieldByCode( entry, "attribute_name" ) >
+
 <@row>
 	<@columns>
 		<@box color='primary'>
@@ -20,19 +25,13 @@
 							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
 						</@formGroup>
 						<@formGroup labelFor='mylutece_attribute_name' labelKey='#i18n{forms.createEntry.labelMyLuteceUserAttribute}'>
-							<#list entry.fields as field>
-								<#assign attributeValue=field.value>
-							</#list>
-							<#if !attributeValue??>
-								<#assign attributeValue="">
-							</#if>
-							<@select items=entryTypeService.getLuteceUserAttributesRefList(locale) name='mylutece_attribute_name' default_value=attributeValue />
+							<@select items=entryTypeService.getLuteceUserAttributesRefList(locale) name='mylutece_attribute_name' default_value=fieldMyLuteceAttributeName.value />
 						</@formGroup>
 						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
 							<@checkBox name='mandatory' id='mandatory' value='true' checked=entry.mandatory />
 						</@formGroup>
                         <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
-                            <@checkBox name='only_display_in_back' id='only_display_in_back' value='true' checked=entry.onlyDisplayInBack />
+                            <@checkBox name='only_display_in_back' id='only_display_in_back' value='true' checked=fieldIsOnlyDisplayedInBack.value=='1' />
                         </@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />

@@ -114,4 +114,14 @@ public interface IFormResponseStepDAO
      *            the Plugin
      */
     void deleteByFormResponse( int nIdFormResponse, Plugin plugin );
+
+    /**
+     * Removes all the formResponseStep linked to a given step
+     * 
+     * @param nIdStep
+     *            The step id
+     * @param plugin
+     *            the Plugin
+     */
+    void deleteByStep( int nIdStep, Plugin plugin );
 }

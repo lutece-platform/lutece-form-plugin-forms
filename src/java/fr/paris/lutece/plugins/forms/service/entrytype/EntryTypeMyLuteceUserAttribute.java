@@ -79,6 +79,13 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     private static final String PARAMETER_ONLY_DISPLAY_IN_BACK = "only_display_in_back";
     private static final String PARAMETER_MYLUTECE_ATTRIBUTE_NAME = "mylutece_attribute_name";
 
+    private static final int FIELD_MYLUTECE_ATTRIBUTE_NAME_INDEX = 0;
+    private static final String FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE = "attribute_name";
+    private static final int FIELD_IS_ONLY_DISPLAYED_IN_BACK_INDEX = 1;
+    private static final String FIELD_ONLY_DISPLAY_IN_BACK_CODE = PARAMETER_ONLY_DISPLAY_IN_BACK;
+    private static final String FIELD_IS_ONLY_DISPLAYED_IN_BACK_FALSE = "0";
+    private static final String FIELD_IS_ONLY_DISPLAYED_IN_BACK_TRUE = "1";
+
     private ReferenceList _refListUserAttributes;
 
     /**
@@ -122,23 +129,34 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         entry.setTitle( I18nService.getLocalizedString( PROPERTY_ENTRY_TITLE, locale ) );
 
         entry.setComment( StringUtils.EMPTY );
-        entry.setOnlyDisplayInBack( Boolean.parseBoolean( request.getParameter( PARAMETER_ONLY_DISPLAY_IN_BACK ) ) );
         entry.setMandatory( entry.isConfirmField( ) && Boolean.parseBoolean( request.getParameter( PARAMETER_MANDATORY ) ) );
         entry.setCSSClass( request.getParameter( PARAMETER_CSS_CLASS ) );
         entry.setTitle( request.getParameter( PARAMETER_TITLE ) );
         entry.setHelpMessage( request.getParameter( PARAMETER_HELP_MESSAGE ) );
 
+        Field fieldAttributeName = null;
+        Field fieldIsOnlyDisplayedInBack = null;
+
         if ( entry.getFields( ) == null )
         {
             ArrayList<Field> listFields = new ArrayList<Field>( );
-            Field field = new Field( );
-            listFields.add( field );
+            fieldAttributeName = new Field( );
+            fieldIsOnlyDisplayedInBack = new Field( );
+            listFields.add( fieldAttributeName );
+            listFields.add( fieldIsOnlyDisplayedInBack );
             entry.setFields( listFields );
         }
 
-        entry.getFields( ).get( 0 ).setValue( request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
-        entry.getFields( ).get( 0 ).setWidth( 50 );
-        entry.getFields( ).get( 0 ).setMaxSizeEnter( 0 );
+        fieldAttributeName = entry.getFields( ).get( FIELD_MYLUTECE_ATTRIBUTE_NAME_INDEX );
+        fieldAttributeName.setCode( FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE );
+        fieldAttributeName.setValue( request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
+        fieldAttributeName.setWidth( 50 );
+        fieldAttributeName.setMaxSizeEnter( 0 );
+
+        fieldIsOnlyDisplayedInBack = entry.getFields( ).get( FIELD_IS_ONLY_DISPLAYED_IN_BACK_INDEX );
+        fieldIsOnlyDisplayedInBack.setCode( FIELD_ONLY_DISPLAY_IN_BACK_CODE );
+        fieldIsOnlyDisplayedInBack.setValue( request.getParameter( PARAMETER_ONLY_DISPLAY_IN_BACK ) == null ? FIELD_IS_ONLY_DISPLAYED_IN_BACK_FALSE
+                : FIELD_IS_ONLY_DISPLAYED_IN_BACK_TRUE );
 
         return null;
     }

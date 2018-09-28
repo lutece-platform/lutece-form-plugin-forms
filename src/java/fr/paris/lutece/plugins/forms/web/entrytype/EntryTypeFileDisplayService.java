@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -101,7 +103,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     }
 
     @Override
-    public String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType )
+    public String getEntryTemplateDisplay( HttpServletRequest request, Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType )
     {
         String strEntryHtml = StringUtils.EMPTY;
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );

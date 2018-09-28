@@ -193,6 +193,24 @@ public final class FormResponseStepHome
     }
 
     /**
+     * Removes all the formResponse linked to a given step
+     * 
+     * @param nIdStep
+     *            The step id
+     */
+    public static void removeByStep( int nIdStep )
+    {
+        List<Question> listQuestion = QuestionHome.getQuestionsListByStep( nIdStep );
+
+        for ( Question question : listQuestion )
+        {
+            FormQuestionResponseHome.removeByQuestion( question.getId( ) );
+        }
+
+        _dao.deleteByStep( nIdStep, _plugin );
+    }
+
+    /**
      * Load the order step id list by FormResponse id
      * 
      * @param nIdFormResponse

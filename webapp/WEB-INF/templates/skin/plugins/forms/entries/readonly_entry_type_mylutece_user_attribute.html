@@ -1,4 +1,8 @@
-<#if !entry.onlyDisplayInBack>
+<#include "/admin/plugins/forms/commons.html" />
+
+<#assign fieldIsOnlyDisplayedInBack = getFieldByCode( entry, "only_display_in_back" ) >
+
+<#if fieldIsOnlyDisplayedInBack.value != '1'>
 	<#if mylutece_user_login?? && mylutece_user_infos_list?has_content>
 	    <fieldset>
 	        <label>#i18n{forms.entryType.myLuteceUser.labelLogin} :</label> ${mylutece_user_login}

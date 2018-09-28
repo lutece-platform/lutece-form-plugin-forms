@@ -1,6 +1,6 @@
 <#include "/admin/plugins/forms/edit_step_tabs.html" />
 <@box>
-   <@boxHeader title='#i18n{forms.manageForm.pageTitle} : ${form.title} - #i18n{forms.modify_step.title} : ${step.title}' boxTools=true></@boxHeader>
+   <@boxHeader title='#i18n{forms.manageForm.pageTitle} : <a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" title="Liste des étapes">${form.title}</a> - #i18n{forms.modify_step.title} :  ${step.title}' boxTools=true></@boxHeader>
     <@boxBody>
         <@tabs>
             <@formStepTabs tab="general" />

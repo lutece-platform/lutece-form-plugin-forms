@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -162,7 +164,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
      * {@inheritDoc}
      */
     @Override
-    public String getCompositeHtml( List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
+    public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
     {
         String strQuestionTemplate = StringUtils.EMPTY;
 
@@ -180,7 +182,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
                 model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
 
-                strQuestionTemplate = displayService.getEntryTemplateDisplay( _question.getEntry( ), locale, model, displayType );
+                strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale, model, displayType );
 
                 model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
                 model.put( FormsConstants.MARK_QUESTION, _question );
