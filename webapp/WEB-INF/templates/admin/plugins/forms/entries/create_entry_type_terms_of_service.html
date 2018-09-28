@@ -1,6 +1,7 @@
 <#include "/admin/plugins/forms/commons.html" />
+ <#include "/admin/util/editor/editor.html" />
 
-<@row>
+ <@row>
   <@columns>
     <@box color='primary'>
       <@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
@@ -40,6 +41,5 @@
   </@columns>
 </@row>
 
- <#include "/admin/util/editor/editor.html" />
  <@initEditor />
  
