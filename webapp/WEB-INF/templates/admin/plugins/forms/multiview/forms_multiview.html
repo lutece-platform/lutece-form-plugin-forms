@@ -1,11 +1,9 @@
 <@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' class2='form-inline'>
 <#include "includes/include_manage_multiview_forms_header.html">
+<div class="row">
 <div class="tab-content">
     <@columns>
         <div class="box box-forms-tab-content">
-            <div class="box-header">
-                <h3 class="box-title"></h3>
-            </div>
             <#if table_template?has_content>
                 <div id="multi-form-list" class="box-body table-responsive forms">
 				    ${table_template}
@@ -22,5 +20,6 @@
         </div>
         <script src="js/plugins/forms/multiview/forms-multiview.js"></script>
     </@columns>
+</div>
 </div>
 </@tform>
