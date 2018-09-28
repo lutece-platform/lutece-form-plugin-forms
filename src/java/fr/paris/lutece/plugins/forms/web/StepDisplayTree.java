@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
@@ -170,6 +172,8 @@ public class StepDisplayTree
     /**
      * Build and return the html template of the tree for Front-Office display
      * 
+     * @param request
+     *            the request
      * @param listFormQuestionResponse
      *            the list of form question responses
      * @param locale
@@ -180,7 +184,8 @@ public class StepDisplayTree
      *            the lutece user
      * @return the html template of the tree as a String
      */
-    public String getCompositeHtml( List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType, LuteceUser user )
+    public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType,
+            LuteceUser user )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
 
@@ -188,7 +193,7 @@ public class StepDisplayTree
 
         for ( ICompositeDisplay child : _listChildren )
         {
-            strBuilder.append( child.getCompositeHtml( listFormQuestionResponse, locale, displayType ) );
+            strBuilder.append( child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType ) );
         }
 
         model.put( FormsConstants.MARK_FORM, _form );

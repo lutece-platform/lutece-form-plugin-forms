@@ -347,12 +347,15 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             {
                 Response response = formQuestionEntryResponse._response;
 
-                if ( response != null && response.getField( ) != null )
+                if ( response != null )
                 {
-                    response.setField( FieldHome.findByPrimaryKey( response.getField( ).getIdField( ) ) );
-                }
+                    listEntryResponse.add( response );
 
-                listEntryResponse.add( response );
+                    if ( response.getField( ) != null )
+                    {
+                        response.setField( FieldHome.findByPrimaryKey( response.getField( ).getIdField( ) ) );
+                    }
+                }
             }
 
             formQuestionResponse.setEntryResponse( listEntryResponse );

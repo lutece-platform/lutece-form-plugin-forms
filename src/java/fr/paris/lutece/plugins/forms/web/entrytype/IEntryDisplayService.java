@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.forms.web.entrytype;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 
 /**
@@ -51,6 +53,8 @@ public interface IEntryDisplayService
     /**
      * Get the Html of the given step
      * 
+     * @param request
+     *            the request
      * @param entry
      *            The given entry
      * @param locale
@@ -61,5 +65,5 @@ public interface IEntryDisplayService
      *            the display type
      * @return the template Html of the given entry
      */
-    String getEntryTemplateDisplay( Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType );
+    String getEntryTemplateDisplay( HttpServletRequest request, Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType );
 }

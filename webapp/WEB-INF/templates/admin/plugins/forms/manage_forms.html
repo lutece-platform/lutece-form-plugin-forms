@@ -32,7 +32,7 @@
                             <td class="col-sm-2">
                                 <#setting locale=locale.language>
                                 <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
-                                    #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${forms.availabilityStartDate}
+                                    #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
                                 <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
                                     #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
                                 <#elseif form.availabilityStartDate??>

@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.forms.web;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -53,6 +55,8 @@ public interface ICompositeDisplay
     /**
      * Builds the HTML of the composite
      * 
+     * @param request
+     *            the request
      * @param listFormQuestionResponse
      *            the list of form question responses
      * @param locale
@@ -61,7 +65,7 @@ public interface ICompositeDisplay
      *            The display type
      * @return the HTML
      */
-    String getCompositeHtml( List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType );
+    String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType );
 
     /**
      * Iterates the specified form display

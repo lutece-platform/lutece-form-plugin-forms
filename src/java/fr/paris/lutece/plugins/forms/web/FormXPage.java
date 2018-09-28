@@ -67,7 +67,6 @@ import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -98,6 +97,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_PATH = "forms.xpage.form.view.pagePathLabel";
     protected static final String MESSAGE_ERROR_NO_STEP = "forms.xpage.form.error.noStep";
     protected static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.xpage.form.error.inactive";
+    protected static final String MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM = "forms.xpage.form.error.MaxResponse";
     protected static final String MESSAGE_LOAD_BACKUP = "forms.xpage.form.view.loadBackUp";
 
     /**
@@ -237,6 +237,16 @@ public class FormXPage extends MVCApplication
         {
             Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
             strTitleForm = form.getTitle( );
+
+            if ( form.getMaxNumberResponse( ) != 0 )
+            {
+                int nNumberReponseForm = FormHome.getNumberOfResponseForms( form.getId( ) );
+                if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
+                {
+                    SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+                }
+
+            }
             if ( form.isActive( ) )
             {
                 if ( _breadcrumb == null )
@@ -305,7 +315,7 @@ public class FormXPage extends MVCApplication
             _formResponseManager.add( _currentStep );
         }
 
-        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( _formResponseManager.findResponsesFor( _currentStep ), request.getLocale( ),
+        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( _currentStep ), request.getLocale( ),
                 DisplayType.EDITION_FRONTOFFICE, user ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( _formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( _formResponseManager ) );
@@ -370,7 +380,7 @@ public class FormXPage extends MVCApplication
         try
         {
             findFormFrom( request );
-            fillResponseManagerWithResponses( request );
+            fillResponseManagerWithResponses( request, true );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -420,7 +430,7 @@ public class FormXPage extends MVCApplication
         {
             StepDisplayTree stepDisplayTree = new StepDisplayTree( step.getId( ), _formResponseManager.getFormResponse( ) );
 
-            listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( _formResponseManager.findResponsesFor( step ), request.getLocale( ),
+            listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( step ), request.getLocale( ),
                     DisplayType.READONLY_FRONTOFFICE, null ) );
         }
 
@@ -449,7 +459,7 @@ public class FormXPage extends MVCApplication
 
             if ( !form.isDisplaySummary( ) )
             {
-                fillResponseManagerWithResponses( request );
+                fillResponseManagerWithResponses( request, true );
             }
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -574,11 +584,13 @@ public class FormXPage extends MVCApplication
     /**
      * @param request
      *            The Http request
+     * @param bValidateQuestionStep
+     *            valid question ton next step
      * 
      * @throws QuestionValidationException
      *             if there is at least one question not valid
      */
-    private void fillResponseManagerWithResponses( HttpServletRequest request ) throws QuestionValidationException
+    private void fillResponseManagerWithResponses( HttpServletRequest request, boolean bValidateQuestionStep ) throws QuestionValidationException
     {
         List<Question> listQuestionStep = _stepDisplayTree.getQuestions( );
 
@@ -608,7 +620,9 @@ public class FormXPage extends MVCApplication
                 IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
                 if ( entryDataService != null )
                 {
-                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( ) );
+
+                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( )
+                            && bValidateQuestionStep );
 
                     if ( formQuestionResponse.hasError( ) )
                     {
@@ -645,7 +659,7 @@ public class FormXPage extends MVCApplication
         try
         {
             findFormFrom( request );
-            fillResponseManagerWithResponses( request );
+            fillResponseManagerWithResponses( request, true );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -726,32 +740,14 @@ public class FormXPage extends MVCApplication
         checkAuthentication( form, request );
 
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-
-        List<Question> listQuestionStep = _stepDisplayTree.getQuestions( );
-
-        Map<Integer, List<Response>> mapStepResponses = new HashMap<Integer, List<Response>>( );
-        List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
-
-        for ( Question question : listQuestionStep )
+        try
         {
-            if ( !question.getEntry( ).isOnlyDisplayInBack( ) )
-            {
-                IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-                if ( entryDataService != null )
-                {
-                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( ) );
-
-                    if ( !formQuestionResponse.hasError( ) )
-                    {
-                        listResponsesTemp.add( formQuestionResponse );
-                    }
-
-                    mapStepResponses.put( question.getId( ), formQuestionResponse.getEntryResponse( ) );
-                }
-            }
+            fillResponseManagerWithResponses( request, false );
         }
-
-        _formResponseManager.addResponses( listResponsesTemp );
+        catch( QuestionValidationException e )
+        {
+            return redirectView( request, VIEW_STEP );
+        }
 
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         formResponse.setGuid( user.getName( ) );
@@ -778,7 +774,7 @@ public class FormXPage extends MVCApplication
         try
         {
             findFormFrom( request );
-            fillResponseManagerWithResponses( request );
+            fillResponseManagerWithResponses( request, false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -813,7 +809,7 @@ public class FormXPage extends MVCApplication
         try
         {
             findFormFrom( request );
-            fillResponseManagerWithResponses( request );
+            fillResponseManagerWithResponses( request, false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {

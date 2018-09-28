@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
@@ -218,7 +220,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
      * {@inheritDoc}
      */
     @Override
-    public String getCompositeHtml( List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
+    public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
 
@@ -226,7 +228,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         for ( ICompositeDisplay child : _listChildren )
         {
-            listChildrenHtml.add( child.getCompositeHtml( listFormQuestionResponse, locale, displayType ) );
+            listChildrenHtml.add( child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType ) );
         }
 
         model.put( MARK_GROUP, _group );
