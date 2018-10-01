@@ -156,16 +156,18 @@ public class StepDisplayTree
     /**
      * Remove the specified iteration of group
      * 
+     * @param request
+     *            the request
      * @param nIdGroupParent
      *            the id of the parent group
      * @param nIndexIterationToRemove
      *            the index of the iteration to remove in group
      */
-    public void removeIteration( int nIdGroupParent, int nIndexIterationToRemove )
+    public void removeIteration( HttpServletRequest request, int nIdGroupParent, int nIndexIterationToRemove )
     {
         for ( ICompositeDisplay composite : _listChildren )
         {
-            composite.removeIteration( nIdGroupParent, nIndexIterationToRemove, _formResponse );
+            composite.removeIteration( request, nIdGroupParent, nIndexIterationToRemove, _formResponse );
         }
     }
 

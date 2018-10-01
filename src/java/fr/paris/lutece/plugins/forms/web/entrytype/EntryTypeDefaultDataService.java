@@ -213,4 +213,22 @@ public class EntryTypeDefaultDataService implements IEntryDataService
         return sb.toString( );
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void questionRemoved( HttpServletRequest request, Question question )
+    {
+        // Nothing to do
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void questionMoved( HttpServletRequest request, Question question, int nNewIterationNumber )
+    {
+        // Nothing to do
+    }
+
 }

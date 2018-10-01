@@ -823,7 +823,7 @@ public class FormXPage extends MVCApplication
         int nIdGroupParent = Integer.valueOf( arrayIterationInfo [0] );
         int nIndexIteration = Integer.valueOf( arrayIterationInfo [1] );
 
-        _stepDisplayTree.removeIteration( nIdGroupParent, nIndexIteration );
+        _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
 
         return redirectView( request, VIEW_STEP );
     }
