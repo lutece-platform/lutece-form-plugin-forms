@@ -175,7 +175,7 @@ public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation implement
 
         return response;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -211,7 +211,7 @@ public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation implement
         if ( StringUtils.isNotBlank( strFieldError ) )
         {
             Object [ ] tabRequiredFields = {
-                    I18nService.getLocalizedString( strFieldError, locale ),
+                I18nService.getLocalizedString( strFieldError, locale ),
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
@@ -291,7 +291,7 @@ public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation implement
             getAdditionalAddressEntry( entryAdditionalAddress, locale, update );
 
             Question question = new Question( );
-            String strTitleAdditionnalAddress =  entryAdditionalAddress.getTitle( );
+            String strTitleAdditionnalAddress = entryAdditionalAddress.getTitle( );
             question.setTitle( strTitleAdditionnalAddress );
             question.setDescription( entryAdditionalAddress.getComment( ) );
             question.setIdEntry( entryAdditionalAddress.getIdEntry( ) );
@@ -316,9 +316,6 @@ public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation implement
         }
         return null;
     }
-    
-
-
 
     /**
      * Builds the field.
@@ -370,7 +367,6 @@ public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation implement
 
         return fieldMapProvider;
     }
-    
 
     /**
      * {@inheritDoc}
