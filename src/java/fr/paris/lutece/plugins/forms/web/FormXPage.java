@@ -81,7 +81,7 @@ import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.url.UrlItem;
-
+import java.util.Locale;
 /**
  * 
  * Controller for form display
@@ -99,15 +99,16 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.xpage.form.error.inactive";
     protected static final String MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM = "forms.xpage.form.error.MaxResponse";
     protected static final String MESSAGE_LOAD_BACKUP = "forms.xpage.form.view.loadBackUp";
-
+    protected static final String MESSAGE_LIST_FORMS_PAGETITLE = "forms.xpage.listForms.pagetitle";
+    protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
     /**
      * Generated serial id
      */
     private static final long serialVersionUID = -8380962697376893817L;
-
     // Views
     private static final String VIEW_STEP = "stepView";
     private static final String VIEW_GET_STEP = "getStep";
+    private static final String VIEW_LIST_FORM = "listForm";
 
     // Actions
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
@@ -122,6 +123,7 @@ public class FormXPage extends MVCApplication
     private static final String TEMPLATE_VIEW_STEP = "/skin/plugins/forms/step_view.html";
     private static final String TEMPLATE_FORM_SUBMITTED = "/skin/plugins/forms/form_submitted_view.html";
     private static final String TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY = "/skin/plugins/forms/form_response_summary.html";
+    private static final String TEMPLATE_LIST_FORMS = "skin/plugins/forms/list_forms.html";
 
     // Constants
     private static final int INCORRECT_ID = -1;
@@ -129,6 +131,7 @@ public class FormXPage extends MVCApplication
     // Markers
     private static final String STEP_HTML_MARKER = "stepContent";
     private static final String MARK_LIST_SUMMARY_STEP_DISPLAY = "list_summary_step_display";
+    private static final String MARK_FORM_LIST = "form_list";
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
@@ -137,6 +140,28 @@ public class FormXPage extends MVCApplication
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
     private IBreadcrumb _breadcrumb;
+    
+    /**
+     * Return the default XPage with the list of all available Form
+     * 
+     * @param request
+     *            The HttpServletRequest
+     * @return the list of all available forms
+     * @throws SiteMessageException
+     * @throws UserNotSignedException
+     */
+    @View( value = VIEW_LIST_FORM, defaultView = true )
+    public XPage getListFormView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    { 
+    	Locale locale = request.getLocale( );
+        List<Form> listFormsAll = FormHome.getFormList( );
+        Map<String, Object> model = getModel( );
+        model.put( MARK_FORM_LIST, listFormsAll );
+        XPage xPage = getXPage( TEMPLATE_LIST_FORMS, locale, model );
+        xPage.setTitle( I18nService.getLocalizedString( MESSAGE_LIST_FORMS_PAGETITLE, locale ) );
+        xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_LIST_FORMS_PATHLABEL, locale ) );
+        return xPage;
+    }
 
     /**
      * 
@@ -216,7 +241,7 @@ public class FormXPage extends MVCApplication
      * @throws UserNotSignedException
      *             Exception
      */
-    @View( value = VIEW_STEP, defaultView = true )
+    @View( value = VIEW_STEP )
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         Map<String, Object> model = getModel( );
