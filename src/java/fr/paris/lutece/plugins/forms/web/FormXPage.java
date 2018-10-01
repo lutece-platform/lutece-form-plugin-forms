@@ -82,6 +82,7 @@ import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.url.UrlItem;
 import java.util.Locale;
+
 /**
  * 
  * Controller for form display
@@ -140,7 +141,7 @@ public class FormXPage extends MVCApplication
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
     private IBreadcrumb _breadcrumb;
-    
+
     /**
      * Return the default XPage with the list of all available Form
      * 
@@ -152,8 +153,8 @@ public class FormXPage extends MVCApplication
      */
     @View( value = VIEW_LIST_FORM, defaultView = true )
     public XPage getListFormView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
-    { 
-    	Locale locale = request.getLocale( );
+    {
+        Locale locale = request.getLocale( );
         List<Form> listFormsAll = FormHome.getFormList( );
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM_LIST, listFormsAll );
