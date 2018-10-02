@@ -84,7 +84,7 @@ public class FormPanelFactory
 
         return listFormPanelForms;
     }
-    
+
     /**
      * 
      * @param formPanelConfiguration
@@ -93,10 +93,10 @@ public class FormPanelFactory
      */
     public FormPanel buildFormPanel( IFormPanelConfiguration formPanelConfiguration )
     {
-    	FormPanel formPanel = new FormPanel( );
+        FormPanel formPanel = new FormPanel( );
         formPanel.setFormPanelConfiguration( formPanelConfiguration );
-        
-    	for ( String strInitializerName : formPanelConfiguration.getListFormPanelInitializerName( ) )
+
+        for ( String strInitializerName : formPanelConfiguration.getListFormPanelInitializerName( ) )
         {
             Class<? extends IFormPanelInitializer> formPanelInitializerClass;
             try
@@ -110,8 +110,8 @@ public class FormPanelFactory
                 AppLogService.error( e );
             }
         }
-        
+
         return formPanel;
     }
-    
+
 }

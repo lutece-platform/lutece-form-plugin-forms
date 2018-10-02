@@ -255,17 +255,17 @@ public class Question implements Serializable, Cloneable
     @Override
     public Question clone( ) throws CloneNotSupportedException
     {
-    	Question question = new Question( );
-    	
+        Question question = new Question( );
+
         try
         {
-        	question = ( Question ) super.clone( );
+            question = (Question) super.clone( );
         }
         catch( CloneNotSupportedException e )
         {
             AppLogService.error( e );
         }
-        
+
         question._entry = _entry;
         question._nId = _nId;
         question._nIdEntry = _nIdEntry;

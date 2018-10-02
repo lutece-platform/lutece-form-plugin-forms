@@ -130,7 +130,7 @@ public class FormPanel
      */
     public void setFormPanelConfiguration( IFormPanelConfiguration formPanelConfiguration )
     {
-    	_formPanelConfiguration = formPanelConfiguration;
+        _formPanelConfiguration = formPanelConfiguration;
     }
 
     /**
@@ -153,5 +153,5 @@ public class FormPanel
     {
         _listFormPanelInitializer = listFormPanelInitializer;
     }
-    
+
 }

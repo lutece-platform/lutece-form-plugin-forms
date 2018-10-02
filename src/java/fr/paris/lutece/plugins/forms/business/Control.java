@@ -191,11 +191,11 @@ public class Control implements Cloneable
     @Override
     public Control clone( )
     {
-    	Control controlNew = new Control( );
-    	
+        Control controlNew = new Control( );
+
         try
         {
-        	controlNew = ( Control ) super.clone( );
+            controlNew = (Control) super.clone( );
         }
         catch( CloneNotSupportedException e )
         {

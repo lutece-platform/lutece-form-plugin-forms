@@ -407,7 +407,7 @@ public class FormJspBean extends AbstractJspBean
 
         if ( formToBeModified != null )
         {
-        	setFormResponseMessage( formToBeModified.getId( ) );
+            setFormResponseMessage( formToBeModified.getId( ) );
 
             AdminUser adminUser = getUser( );
 
@@ -430,15 +430,16 @@ public class FormJspBean extends AbstractJspBean
 
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
-    
+
     /**
      * Set the _formMessage
+     * 
      * @param nIdForm
-     * 		The FormMessage FormId
+     *            The FormMessage FormId
      */
     private void setFormResponseMessage( int nIdForm )
     {
-    	_formMessage = FormMessageHome.findByForm( nIdForm );
+        _formMessage = FormMessageHome.findByForm( nIdForm );
 
         if ( _formMessage == null )
         {
@@ -468,11 +469,11 @@ public class FormJspBean extends AbstractJspBean
 
         if ( formToBeModified != null )
         {
-        	Map<String, Object> model = getModel( );
-        	
-        	setFormResponseMessage( formToBeModified.getId( ) );
-        	
-        	model.put( MARK_FORM_MESSAGE, _formMessage );
+            Map<String, Object> model = getModel( );
+
+            setFormResponseMessage( formToBeModified.getId( ) );
+
+            model.put( MARK_FORM_MESSAGE, _formMessage );
             model.put( MARK_FORM, formToBeModified );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
 
