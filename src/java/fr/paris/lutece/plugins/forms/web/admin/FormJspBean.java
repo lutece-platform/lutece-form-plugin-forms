@@ -514,6 +514,8 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
+        _formMessage = FormMessageHome.findByForm( _form.getId( ) );
+
         populate( _form, request, request.getLocale( ) );
         populate( _formMessage, request, request.getLocale( ) );
 

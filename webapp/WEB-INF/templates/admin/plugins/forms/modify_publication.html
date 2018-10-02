@@ -10,8 +10,6 @@
                     <@tform class="form-horizontal" method="post" name="modify_form" action="jsp/admin/plugins/forms/ManageForms.jsp">
                         <@messages errors=errors />
                         <input type="hidden" id="id_form" name="id_form" value="${form.id}"/>
-                        <input type="hidden" id="endMessageDisplay" name="endMessageDisplay" value="${formMessage.endMessageDisplay?c}"/>
-                        <input type="hidden" id="endMessage" name="endMessage" value="${formMessage.endMessage}"/>
 
                             <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' >
                                 <@inputGroup>
