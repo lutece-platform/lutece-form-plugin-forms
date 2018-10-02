@@ -200,7 +200,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         List<FormResponseItem> listFormResponseItemToDisplay = _formPanelDisplayActive.getFormResponseItemList( );
 
-        if ( formatExport != null && listFormResponseItemToDisplay != null )
+        if ( formatExport != null && CollectionUtils.isNotEmpty( listFormResponseItemToDisplay ) )
         {
             byte [ ] arrByteExportFile = formatExport.getByteExportFile( getFormResponseToExport( listFormResponseItemToDisplay ) );
 
