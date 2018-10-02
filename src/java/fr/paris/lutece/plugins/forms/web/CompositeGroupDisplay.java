@@ -332,8 +332,13 @@ public class CompositeGroupDisplay implements ICompositeDisplay
      * {@inheritDoc}
      */
     @Override
-    public void removeIteration( int nIdGroupParent, int nIndexIterationToRemove, FormResponse formResponse )
+    public void removeIteration( HttpServletRequest request, int nIdGroupParent, int nIndexIterationToRemove, FormResponse formResponse )
     {
+        for ( ICompositeDisplay child : _listChildren )
+        {
+            child.removeIteration( request, nIdGroupParent, nIndexIterationToRemove, formResponse );
+        }
+
         if ( nIdGroupParent == _group.getId( ) )
         {
             int nNbIterationToAdd = _nIterationNumber - nIndexIterationToRemove;
@@ -352,13 +357,6 @@ public class CompositeGroupDisplay implements ICompositeDisplay
             {
                 _nIterationNumber++;
                 addChildren( listGroupChildren, formResponse, _nIterationNumber );
-            }
-        }
-        else
-        {
-            for ( ICompositeDisplay child : _listChildren )
-            {
-                child.removeIteration( nIdGroupParent, nIndexIterationToRemove, formResponse );
             }
         }
     }

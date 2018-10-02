@@ -48,10 +48,11 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
 {
     // Constants
     private static final String SQL_QUERY_SELECTALL = "SELECT id, id_form_response, id_step, order_response FROM forms_response_step";
-    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
+    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_step = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response_step ( id_form_response, id_step, order_response ) VALUES ( ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response_step WHERE id = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM_RESPONSE = "DELETE FROM forms_response_step WHERE id_form_response = ? ";
+    private static final String SQL_QUERY_DELETE_BY_STEP = "DELETE FROM forms_response_step WHERE id_step = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_response_step SET id_form_response = ?, id_step = ?, order_response = ? WHERE id = ?";
     private static final String SQL_QUERY_SELECT_BY_ID_RESPONSE = SQL_QUERY_SELECTALL + " WHERE id_form_response = ? ORDER BY order_response ASC";
 
@@ -164,6 +165,18 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORM_RESPONSE, plugin );
         daoUtil.setInt( 1, nIdFormResponse );
+        daoUtil.executeUpdate( );
+        daoUtil.close( );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteByStep( int nIdStep, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_STEP, plugin );
+        daoUtil.setInt( 1, nIdStep );
         daoUtil.executeUpdate( );
         daoUtil.close( );
     }

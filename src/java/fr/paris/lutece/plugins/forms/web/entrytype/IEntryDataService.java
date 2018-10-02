@@ -88,4 +88,26 @@ public interface IEntryDataService
      * @return the {@code String}
      */
     String responseToString( FormQuestionResponse formQuestionResponse );
+
+    /**
+     * Performs a treatment when the question is removed in front-office
+     * 
+     * @param request
+     *            the request
+     * @param question
+     *            the removed question
+     */
+    void questionRemoved( HttpServletRequest request, Question question );
+
+    /**
+     * Performs a treatment when the question is moved in front-office
+     * 
+     * @param request
+     *            the request
+     * @param question
+     *            the moved question
+     * @param nNewIterationNumber
+     *            the new iteration number
+     */
+    void questionMoved( HttpServletRequest request, Question question, int nNewIterationNumber );
 }

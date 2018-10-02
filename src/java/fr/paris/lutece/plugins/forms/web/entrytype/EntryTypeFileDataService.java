@@ -33,11 +33,21 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.web.http.IterationMultipartHttpServletRequestWrapper;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.math.NumberUtils;
+
+import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
+import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 
 /**
@@ -46,6 +56,7 @@ import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
  */
 public class EntryTypeFileDataService extends EntryTypeDefaultDataService
 {
+    private static final String SEPARATOR = "_";
 
     /**
      * Constructor
@@ -85,6 +96,81 @@ public class EntryTypeFileDataService extends EntryTypeDefaultDataService
         }
 
         return request;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void questionRemoved( HttpServletRequest request, Question question )
+    {
+        IAsyncUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
+        String strAttributeName = getAttributeName( question, question.getIterationNumber( ) );
+        List<FileItem> listFileItem = handler.getListUploadedFiles( strAttributeName, request.getSession( ) );
+
+        for ( int i = 0; i < listFileItem.size( ); i++ )
+        {
+            handler.removeFileItem( strAttributeName, request.getSession( ), i );
+        }
+    }
+
+    /**
+     * Gives the attribute name of the specified question for the specified iteration number
+     * 
+     * @param question
+     *            the question
+     * @param nIterationNumber
+     *            the iteration number
+     * @return the attribute name
+     */
+    private String getAttributeName( Question question, int nIterationNumber )
+    {
+        Entry entry = question.getEntry( );
+        StringBuilder sbAttributeName = new StringBuilder( IEntryTypeService.PREFIX_ATTRIBUTE ).append( Integer.toString( entry.getIdEntry( ) ) );
+
+        if ( nIterationNumber != NumberUtils.INTEGER_MINUS_ONE )
+        {
+            sbAttributeName = new StringBuilder( IEntryTypeService.PREFIX_ITERATION_ATTRIBUTE ).append( nIterationNumber ).append( SEPARATOR )
+                    .append( sbAttributeName );
+        }
+
+        return sbAttributeName.toString( );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void questionMoved( HttpServletRequest request, Question question, int nNewIterationNumber )
+    {
+        IAsyncUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
+        String strCurrentAttributeName = getAttributeName( question, question.getIterationNumber( ) );
+        String strNewAttributeName = getAttributeName( question, nNewIterationNumber );
+        List<FileItem> listCurrentFileItem = handler.getListUploadedFiles( strCurrentAttributeName, request.getSession( ) );
+        List<FileItem> listNewFileItem = handler.getListUploadedFiles( strNewAttributeName, request.getSession( ) );
+        int nCurrentFileItemNumber = listCurrentFileItem.size( );
+        int nNewFileItemNumber = listNewFileItem.size( );
+
+        // Adds previous file items into new file item
+        listNewFileItem.addAll( listCurrentFileItem );
+
+        // Adds new file items into previous file item
+        for ( int i = 0; i < nNewFileItemNumber; i++ )
+        {
+            listCurrentFileItem.add( listNewFileItem.get( i ) );
+        }
+
+        // Removes previous file items
+        for ( int i = 0; i < nCurrentFileItemNumber; i++ )
+        {
+            listCurrentFileItem.remove( i );
+        }
+
+        // Removes new file items
+        for ( int i = 0; i < nNewFileItemNumber; i++ )
+        {
+            listNewFileItem.remove( i );
+        }
     }
 
 }

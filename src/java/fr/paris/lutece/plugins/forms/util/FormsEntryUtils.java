@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.forms.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
@@ -128,6 +130,29 @@ public final class FormsEntryUtils
         }
 
         return refListEntryType;
+    }
+
+    /**
+     * Return an instance of EntryType whose beanName is given in parameter
+     * 
+     * @param strBeanName
+     *            the bean name
+     * 
+     * @return an instance of EntryType
+     */
+    public static EntryType getEntryTypebyBeanName( String strBeanName )
+    {
+        List<EntryType> listEntryType = EntryTypeHome.getList( FormsPlugin.PLUGIN_NAME );
+
+        for ( EntryType entryType : listEntryType )
+        {
+            if ( !StringUtils.isEmpty( entryType.getBeanName( ) ) && !StringUtils.isEmpty( strBeanName )
+                    && entryType.getBeanName( ).equalsIgnoreCase( strBeanName ) )
+            {
+                return entryType;
+            }
+        }
+        return null;
     }
 
     /**
