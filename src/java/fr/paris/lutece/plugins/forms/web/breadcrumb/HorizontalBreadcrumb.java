@@ -48,8 +48,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class HorizontalBreadcrumb implements IBreadcrumb
 {
     private static final String TEMPLATE_BREADCRUMB_HTML = "/skin/plugins/forms/breadcrumb/horizontal_breadcrumb.html";
-    private String _strBreadcrumbBeanName;
-    private String _strBreadcrumbDisplayBeanName;
+    private final String _strBreadcrumbBeanName;
+    private final String _strBreadcrumbDisplayBeanName;
 
     /**
      * Constructor of the HorizontalBreadcrumb

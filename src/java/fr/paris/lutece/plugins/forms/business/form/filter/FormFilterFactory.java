@@ -33,8 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 /**
@@ -43,25 +45,25 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 public class FormFilterFactory
 {
     // Variables
-    private final List<IFormFilter> _listFormFilter;
+    private final List<IFormFilterConfiguration> _listFormFilterConfiguration;
 
     /**
      * Constructor
      */
     public FormFilterFactory( )
     {
-        _listFormFilter = SpringContextService.getBeansOfType( IFormFilter.class );
+        _listFormFilterConfiguration = SpringContextService.getBeansOfType( IFormFilterConfiguration.class );
     }
 
     /**
      * Constructor
      * 
-     * @param listFormFilter
-     *            The list of FormFilter to use for the Factory
+     * @param listFormFilterConfiguration
+     *            The list of FormFilterConfiguration to use for the Factory
      */
-    public FormFilterFactory( List<IFormFilter> listFormFilter )
+    public FormFilterFactory( List<IFormFilterConfiguration> listFormFilterConfiguration )
     {
-        _listFormFilter = listFormFilter;
+        _listFormFilterConfiguration = listFormFilterConfiguration;
     }
 
     /**
@@ -69,8 +71,17 @@ public class FormFilterFactory
      * 
      * @return the list of all FormFilter
      */
-    public List<IFormFilter> buildFormFilterList( )
+    public List<FormFilter> buildFormFilterList( )
     {
-        return _listFormFilter;
+        List<FormFilter> listFormFilter = new ArrayList<>( );
+
+        for ( IFormFilterConfiguration formFilterConfiguration : _listFormFilterConfiguration )
+        {
+            FormFilter formFilter = new FormFilter( );
+            formFilter.setFormFilterConfiguration( formFilterConfiguration );
+            listFormFilter.add( formFilter );
+        }
+
+        return listFormFilter;
     }
 }

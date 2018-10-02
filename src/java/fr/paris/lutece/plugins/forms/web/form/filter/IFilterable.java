@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.web.form.filter;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 
 /**
  * Global interface for Filter objects
@@ -49,14 +49,14 @@ public interface IFilterable
      * @param formFilter
      *            The FormFilter to associate to the FormFilterDisplay
      */
-    void setFormFilter( IFormFilter formFilter );
+    void setFormFilter( FormFilter formFilter );
 
     /**
      * Return the FormFilter of the FilterDisplay
      * 
      * @return the FormFilter of the FilterDisplay
      */
-    IFormFilter getFormFilter( );
+    FormFilter getFormFilter( );
 
     /**
      * Create a FormParameters for the filter with the data in the given request

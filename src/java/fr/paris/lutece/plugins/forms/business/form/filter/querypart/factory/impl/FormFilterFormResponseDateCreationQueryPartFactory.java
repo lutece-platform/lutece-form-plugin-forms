@@ -33,8 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.impl.FormFilterFormResponseDateCreation;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateCreationConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.IFormFilterQueryPartFactory;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterFormResponseDateCreationQueryPart;
@@ -48,11 +48,11 @@ public class FormFilterFormResponseDateCreationQueryPartFactory implements IForm
      * {@inheritDoc}
      */
     @Override
-    public IFormFilterQueryPart buildFormFilterQueryPart( IFormFilter formFilter )
+    public IFormFilterQueryPart buildFormFilterQueryPart( FormFilter formFilter )
     {
         IFormFilterQueryPart formFilterFormResponseDateCreationQueryPart = null;
 
-        if ( formFilter instanceof FormFilterFormResponseDateCreation )
+        if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterDateCreationConfiguration )
         {
             formFilterFormResponseDateCreationQueryPart = new FormFilterFormResponseDateCreationQueryPart( );
         }

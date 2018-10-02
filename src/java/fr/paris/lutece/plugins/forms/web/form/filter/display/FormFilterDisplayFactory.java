@@ -41,8 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.FormFilterDisplayFactoryFacade;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.IFormFilterDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
@@ -61,14 +61,14 @@ public class FormFilterDisplayFactory
      *            The list of IFormFilter used for building IFormFilterDisplay
      * @return the list of all FormFilterDisplay ordered by their position
      */
-    public List<IFormFilterDisplay> createFormFilterDisplayList( HttpServletRequest request, List<IFormFilter> listFormFilter )
+    public List<IFormFilterDisplay> createFormFilterDisplayList( HttpServletRequest request, List<FormFilter> listFormFilter )
     {
         List<IFormFilterDisplay> listFormFilterDisplay = new ArrayList<>( );
         List<IFormFilterDisplayFactory> listFormFilterDisplayFactory = new FormFilterDisplayFactoryFacade( ).buildFormFilterDisplayFactoryList( );
 
         if ( !CollectionUtils.isEmpty( listFormFilter ) && !CollectionUtils.isEmpty( listFormFilterDisplayFactory ) )
         {
-            for ( IFormFilter formFilter : listFormFilter )
+            for ( FormFilter formFilter : listFormFilter )
             {
                 IFormFilterDisplay formFilterDisplay = null;
                 for ( IFormFilterDisplayFactory formFilterDisplayFactory : listFormFilterDisplayFactory )
@@ -101,11 +101,12 @@ public class FormFilterDisplayFactory
      * @param formFilterDisplay
      *            The FormFilterDisplay from which the FormFilterItem must be created
      */
-    private void manageFormFilterDisplay( HttpServletRequest request, IFormFilter formFilter, IFormFilterDisplay formFilterDisplay )
+    private void manageFormFilterDisplay( HttpServletRequest request, FormFilter formFilter, IFormFilterDisplay formFilterDisplay )
     {
         formFilterDisplay.createFormParameters( request );
 
-        FormFilterConfiguration formFilterConfiguration = formFilter.getFormFilterConfiguration( );
+        IFormFilterConfiguration formFilterConfiguration = formFilter.getFormFilterConfiguration( );
+
         if ( formFilterConfiguration != null )
         {
             formFilterDisplay.setPosition( formFilterConfiguration.getPosition( ) );

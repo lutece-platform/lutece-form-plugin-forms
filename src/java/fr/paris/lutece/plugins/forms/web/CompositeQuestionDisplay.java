@@ -82,7 +82,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private static final String MARK_ENTRY_ITERATION_NUMBER = "entry_iteration_number";
 
     private Question _question;
-    private FormDisplay _formDisplay;
+    private final FormDisplay _formDisplay;
     private String _strIconName;
 
     /**

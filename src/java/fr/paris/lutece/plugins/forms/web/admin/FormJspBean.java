@@ -407,13 +407,7 @@ public class FormJspBean extends AbstractJspBean
 
         if ( formToBeModified != null )
         {
-            _formMessage = FormMessageHome.findByForm( formToBeModified.getId( ) );
-
-            if ( _formMessage == null )
-            {
-                _formMessage = new FormMessage( );
-                _formMessage.setEndMessage( I18nService.getLocalizedString( FormsConstants.FORM_DEFAULT_END_MESSAGE, getLocale( ) ) );
-            }
+            setFormResponseMessage( formToBeModified.getId( ) );
 
             AdminUser adminUser = getUser( );
 
@@ -435,7 +429,23 @@ public class FormJspBean extends AbstractJspBean
         }
 
         return redirectView( request, VIEW_MANAGE_FORMS );
+    }
 
+    /**
+     * Set the _formMessage
+     * 
+     * @param nIdForm
+     *            The FormMessage FormId
+     */
+    private void setFormResponseMessage( int nIdForm )
+    {
+        _formMessage = FormMessageHome.findByForm( nIdForm );
+
+        if ( _formMessage == null )
+        {
+            _formMessage = new FormMessage( );
+            _formMessage.setEndMessage( I18nService.getLocalizedString( FormsConstants.FORM_DEFAULT_END_MESSAGE, getLocale( ) ) );
+        }
     }
 
     /**
@@ -459,9 +469,11 @@ public class FormJspBean extends AbstractJspBean
 
         if ( formToBeModified != null )
         {
-            AdminUser adminUser = getUser( );
-
             Map<String, Object> model = getModel( );
+
+            setFormResponseMessage( formToBeModified.getId( ) );
+
+            model.put( MARK_FORM_MESSAGE, _formMessage );
             model.put( MARK_FORM, formToBeModified );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
 

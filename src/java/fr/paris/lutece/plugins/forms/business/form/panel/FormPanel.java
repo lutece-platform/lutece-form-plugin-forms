@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.panel.impl;
+package fr.paris.lutece.plugins.forms.business.form.panel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,35 +39,38 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
-import fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
 
 /**
  * Abstract class for implementation of the IFormPanel
  */
-public abstract class AbstractFormPanel implements IFormPanel
+public class FormPanel
 {
     // Constants
     private static final String DEFAULT_FORM_PANEL_TITLE = StringUtils.EMPTY;
     private static final String DEFAULT_FORM_PANEL_TECHNICAL_CODE = StringUtils.EMPTY;
 
     // Variables
-    private FormPanelConfiguration _formPanelConfiguration;
+    private IFormPanelConfiguration _formPanelConfiguration;
     private List<FormResponseItem> _listFormResponse = new ArrayList<>( );
+    private List<IFormPanelInitializer> _listFormPanelInitializer = new ArrayList<>( );
 
     /**
-     * {@inheritDoc}
+     * Return the FormPanelConfiguration of the FormPanel. This configuration contains all informations of the FormPanel.
+     * 
+     * @return the FormPanelConfiguration of the FormPanel
      */
-    @Override
-    public FormPanelConfiguration getFormPanelConfiguration( )
+    public IFormPanelConfiguration getFormPanelConfiguration( )
     {
         return _formPanelConfiguration;
     }
 
     /**
-     * {@inheritDoc}
+     * Return the title of the panel from the configuration. This is the title which will be display on the table view.
+     * 
+     * @return the title of the panel from the configuration
      */
-    @Override
     public String getTitle( )
     {
         String strTitle = DEFAULT_FORM_PANEL_TITLE;
@@ -81,9 +84,11 @@ public abstract class AbstractFormPanel implements IFormPanel
     }
 
     /**
-     * {@inheritDoc}
+     * Return the technical code of the panel from the configuration. This code is used as unique identifier for a FormPanel to manage the case of the selected
+     * FormPanel.
+     * 
+     * @return the technical code of the panel from the configuration
      */
-    @Override
     public String getTechnicalCode( )
     {
         String strTechnicalCode = DEFAULT_FORM_PANEL_TECHNICAL_CODE;
@@ -97,18 +102,21 @@ public abstract class AbstractFormPanel implements IFormPanel
     }
 
     /**
-     * {@inheritDoc}
+     * Return the list of FormResponseItem of the Panel
+     * 
+     * @return the list of all FormResponseItem of the Panel
      */
-    @Override
     public List<FormResponseItem> getFormResponseItemList( )
     {
         return _listFormResponse;
     }
 
     /**
-     * {@inheritDoc}
+     * Set the list of FormResponseItem
+     * 
+     * @param listFormResponseItem
+     *            The list of FormResponseItem to set to the Panel
      */
-    @Override
     public void setFormResponseItemList( List<FormResponseItem> listFormResponseItem )
     {
         _listFormResponse = listFormResponseItem;
@@ -120,8 +128,30 @@ public abstract class AbstractFormPanel implements IFormPanel
      * @param formPanelConfiguration
      *            The FormPanelconfiguration to set the FormPanel
      */
-    protected void setFormPanelConfiguration( FormPanelConfiguration formPanelConfiguration )
+    public void setFormPanelConfiguration( IFormPanelConfiguration formPanelConfiguration )
     {
         _formPanelConfiguration = formPanelConfiguration;
     }
+
+    /**
+     * Return the list of FormPanelInitializer class name of the FormPanelConfiguration
+     * 
+     * @return the list of FormPanelInitializer class name of the FormPanelConfiguration
+     */
+    public List<IFormPanelInitializer> getListFormPanelInitializer( )
+    {
+        return _listFormPanelInitializer;
+    }
+
+    /**
+     * Set the list of IFormPanelInitializer
+     * 
+     * @param listFormPanelInitializer
+     *            The list of IFormPanelInitializer to set to the Panel
+     */
+    public void setListFormPanelInitializer( List<IFormPanelInitializer> listFormPanelInitializer )
+    {
+        _listFormPanelInitializer = listFormPanelInitializer;
+    }
+
 }

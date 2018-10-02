@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
@@ -67,7 +67,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
     private int _nPosition;
     private String _strValue = StringUtils.EMPTY;
     private String _strTemplate = StringUtils.EMPTY;
-    private IFormFilter _formFilter;
+    private FormFilter _formFilter;
 
     /**
      * {@inheritDoc}
@@ -131,7 +131,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public IFormFilter getFormFilter( )
+    public FormFilter getFormFilter( )
     {
         return _formFilter;
     }
@@ -140,7 +140,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public void setFormFilter( IFormFilter formFilter )
+    public void setFormFilter( FormFilter formFilter )
     {
         _formFilter = formFilter;
     }
@@ -218,7 +218,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
     {
         String strFormFilterDisplayLabel = DEFAULT_FORM_FILTER_LABEL;
 
-        IFormFilter formFilter = getFormFilter( );
+        FormFilter formFilter = getFormFilter( );
         if ( formFilter != null && formFilter.getFormFilterConfiguration( ) != null )
         {
             strFormFilterDisplayLabel = formFilter.getFormFilterConfiguration( ).getFormFilterLabel( );

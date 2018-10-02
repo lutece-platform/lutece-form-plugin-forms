@@ -36,8 +36,8 @@ package fr.paris.lutece.plugins.forms.business.form.list;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 
 /**
  * DAO for retrieving the data of a list of FormColumn values from a list of FormFilter
@@ -57,5 +57,5 @@ public interface IFormListDAO
      * @param listFormFilter
      *            The list of FormFilter used for filtering the data to retrieve
      */
-    void populateFormColumns( IFormPanel formPanel, List<IFormColumn> listFormColumn, List<IFormFilter> listFormFilter );
+    void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter );
 }

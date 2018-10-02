@@ -145,7 +145,6 @@ public class FormStepJspBean extends AbstractJspBean
     @View( value = VIEW_MANAGE_STEPS, defaultView = true )
     public String getManageSteps( HttpServletRequest request )
     {
-        Locale locale = getLocale( );
         int nIdForm = -1;
         try
         {
@@ -179,6 +178,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         setPageTitleProperty( EMPTY_STRING );
 
+        Locale locale = getLocale( );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_STEPS, locale, model );
 
         return getAdminPage( templateList.getHtml( ) );
@@ -250,7 +250,7 @@ public class FormStepJspBean extends AbstractJspBean
     public String getConfirmRemoveStep( HttpServletRequest request )
     {
         int nId = -1;
-        String strConfirmRemoveMessage = MESSAGE_CONFIRM_REMOVE_STEP;
+
         try
         {
             nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
@@ -265,6 +265,8 @@ public class FormStepJspBean extends AbstractJspBean
         _step = StepHome.findByPrimaryKey( nId );
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+
+        String strConfirmRemoveMessage = MESSAGE_CONFIRM_REMOVE_STEP;
 
         if ( _form != null && _form.isActive( ) )
         {
@@ -291,7 +293,6 @@ public class FormStepJspBean extends AbstractJspBean
     public String doDuplicateStep( HttpServletRequest request )
     {
         int nIdStep = -1;
-        int nIdForm = -1;
 
         try
         {
@@ -303,6 +304,8 @@ public class FormStepJspBean extends AbstractJspBean
 
             return redirectToViewManageForm( request );
         }
+
+        int nIdForm = -1;
 
         if ( ( nIdStep != -1 ) )
         {
@@ -340,9 +343,6 @@ public class FormStepJspBean extends AbstractJspBean
     @Action( ACTION_REMOVE_STEP )
     public String doRemoveStep( HttpServletRequest request )
     {
-
-        int nIdForm = -1;
-
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nIdStep == -1 )
@@ -354,6 +354,8 @@ public class FormStepJspBean extends AbstractJspBean
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
+
+        int nIdForm = -1;
 
         if ( _step != null )
         {

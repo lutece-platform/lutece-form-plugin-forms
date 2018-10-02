@@ -31,54 +31,26 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.impl;
-
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterConfiguration;
+package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
 /**
- * Abstract class for FormFilter objects
+ * Configuration for a FormFilter object
  */
-public abstract class AbstractFormFilter implements IFormFilter
+public interface IFormFilterConfiguration
 {
-    // Variables
-    private FormParameters _formParameters = new FormParameters( );
-    private FormFilterConfiguration _formFilterConfiguration;
 
     /**
-     * {@inheritDoc}
+     * Return the position of the FormFilter
+     * 
+     * @return the position of the FormFilter
      */
-    @Override
-    public FormParameters getFormParameters( )
-    {
-        return _formParameters;
-    }
+    int getPosition( );
 
     /**
-     * {@inheritDoc}
+     * Return the label of the FormFilter
+     * 
+     * @return the label of the FormFilter
      */
-    @Override
-    public void setFormParameters( FormParameters formParameters )
-    {
-        _formParameters = formParameters;
-    }
+    String getFormFilterLabel( );
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public FormFilterConfiguration getFormFilterConfiguration( )
-    {
-        return _formFilterConfiguration;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setFormFilterConfiguration( FormFilterConfiguration formFilterConfiguration )
-    {
-        _formFilterConfiguration = formFilterConfiguration;
-    }
 }

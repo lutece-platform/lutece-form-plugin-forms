@@ -43,10 +43,14 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
 import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.ReferenceList;
 
 /**
@@ -155,12 +159,12 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
     {
         List<State> listWorkflowState = new ArrayList<>( );
 
-        /**
-         * [FIXME] Form form = FormHome.findByPrimaryKey( nIdForm );
-         * 
-         * if ( form != null && form.getIdWorkflow( ) > ID_WORKFLOW_UNSET ) { listWorkflowState.addAll( WorkflowService.getInstance( ) .getAllStateByWorkflow(
-         * form.getIdWorkflow( ), AdminUserService.getAdminUser( request ) ) ); }
-         **/
+        Form form = FormHome.findByPrimaryKey( nIdForm );
+
+        if ( form != null && form.getIdWorkflow( ) > ID_WORKFLOW_UNSET )
+        {
+            listWorkflowState.addAll( WorkflowService.getInstance( ).getAllStateByWorkflow( form.getIdWorkflow( ), AdminUserService.getAdminUser( request ) ) );
+        }
 
         return listWorkflowState;
     }

@@ -75,7 +75,7 @@ public final class FormDAO implements IFormDAO
             daoUtil.setDate( nIndex++, form.getAvailabilityEndDate( ) );
             daoUtil.setString( nIndex++, form.getWorkgroup( ) );
             daoUtil.setInt( nIndex++, form.getIdWorkflow( ) );
-            daoUtil.setBoolean( nIndex++, form.getAuthentificationNeeded( ) );
+            daoUtil.setBoolean( nIndex++, form.isAuthentificationNeeded( ) );
             daoUtil.setString( nIndex++, form.getBreadcrumbName( ) );
             daoUtil.setBoolean( nIndex++, form.isDisplaySummary( ) );
             daoUtil.setString( nIndex++, form.getReturnUrl( ) );
@@ -145,7 +145,7 @@ public final class FormDAO implements IFormDAO
         daoUtil.setDate( nIndex++, form.getAvailabilityEndDate( ) );
         daoUtil.setString( nIndex++, form.getWorkgroup( ) );
         daoUtil.setInt( nIndex++, form.getIdWorkflow( ) );
-        daoUtil.setBoolean( nIndex++, form.getAuthentificationNeeded( ) );
+        daoUtil.setBoolean( nIndex++, form.isAuthentificationNeeded( ) );
         daoUtil.setString( nIndex++, form.getBreadcrumbName( ) );
         daoUtil.setBoolean( nIndex++, form.isDisplaySummary( ) );
         daoUtil.setString( nIndex++, form.getReturnUrl( ) );

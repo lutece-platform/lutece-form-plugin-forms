@@ -37,6 +37,8 @@ import javax.validation.constraints.Min;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import fr.paris.lutece.portal.service.util.AppLogService;
+
 /**
  * This is the business class for the object Control
  */
@@ -183,11 +185,22 @@ public class Control implements Cloneable
 
     /**
      * {@inheritDoc}
+     * 
+     * @throws CloneNotSupportedException
      */
     @Override
     public Control clone( )
     {
         Control controlNew = new Control( );
+
+        try
+        {
+            controlNew = (Control) super.clone( );
+        }
+        catch( CloneNotSupportedException e )
+        {
+            AppLogService.error( e );
+        }
 
         controlNew.setId( _nId );
         controlNew.setIdQuestion( _nIdQuestion );

@@ -200,7 +200,7 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         if ( _step != null )
         {
-            buildTransitionModel( _step, _transition, model );
+            buildTransitionModel( model );
         }
         else
         {
@@ -235,7 +235,7 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         if ( _transition != null && _step != null )
         {
-            buildTransitionModel( _step, _transition, model );
+            buildTransitionModel( model );
         }
         else
         {
@@ -248,14 +248,10 @@ public class FormTransitionJspBean extends AbstractJspBean
     /**
      * Build the model for Create and Modify Transition views
      * 
-     * @param step
-     *            the Step object
-     * @param transition
-     *            the Transition object
      * @param model
      *            the Model
      */
-    private void buildTransitionModel( Step step, Transition transition, Map<String, Object> model )
+    private void buildTransitionModel( Map<String, Object> model )
     {
         ReferenceList listTransitionTargetSteps = getTransitionTargetStepReferenceList( _step.getIdForm( ), _step.getId( ) );
 

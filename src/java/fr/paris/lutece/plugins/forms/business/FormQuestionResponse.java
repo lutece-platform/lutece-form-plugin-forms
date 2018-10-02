@@ -152,7 +152,7 @@ public class FormQuestionResponse
     {
         boolean bHasError = false;
 
-        if ( _entryResponses.size( ) > 0 && _entryResponses.get( 0 ).getEntry( ) != null && _entryResponses.get( 0 ).getEntry( ).getError( ) != null )
+        if ( !_entryResponses.isEmpty( ) && _entryResponses.get( 0 ).getEntry( ) != null && _entryResponses.get( 0 ).getEntry( ).getError( ) != null )
         {
             bHasError = true;
         }
@@ -185,7 +185,7 @@ public class FormQuestionResponse
      */
     public void setError( GenericAttributeError error )
     {
-        if ( _entryResponses.size( ) > 0 && _entryResponses.get( 0 ).getEntry( ) != null )
+        if ( !_entryResponses.isEmpty( ) && _entryResponses.get( 0 ).getEntry( ) != null )
         {
             _entryResponses.get( 0 ).getEntry( ).setError( error );
         }

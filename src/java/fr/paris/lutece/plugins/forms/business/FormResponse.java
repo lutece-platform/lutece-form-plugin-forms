@@ -149,7 +149,7 @@ public class FormResponse
     /**
      * @return the _bFromSave
      */
-    public boolean getFromSave( )
+    public boolean isFromSave( )
     {
         return _bFromSave;
     }

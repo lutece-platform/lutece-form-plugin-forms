@@ -37,6 +37,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 import java.io.Serializable;
 
@@ -248,11 +249,23 @@ public class Question implements Serializable, Cloneable
 
     /**
      * {@inheritDoc}
+     * 
+     * @throws CloneNotSupportedException
      */
     @Override
-    public Question clone( )
+    public Question clone( ) throws CloneNotSupportedException
     {
         Question question = new Question( );
+
+        try
+        {
+            question = (Question) super.clone( );
+        }
+        catch( CloneNotSupportedException e )
+        {
+            AppLogService.error( e );
+        }
+
         question._entry = _entry;
         question._nId = _nId;
         question._nIdEntry = _nIdEntry;

@@ -34,12 +34,9 @@
 
 package fr.paris.lutece.plugins.forms.validation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -63,9 +60,9 @@ public class ListValueValidator implements IValidator
 
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_value_template.html";
     private static final String TEMPLATE_JAVASCRIPT = "/skin/plugins/forms/validators/list_value_javascript.html";
-    private String _strValidatorName = StringUtils.EMPTY;
-    private String _strDisplayName = StringUtils.EMPTY;
-    private List<String> _listAvailableEntryType = new ArrayList<String>( );
+    private final String _strValidatorName;
+    private final String _strDisplayName;
+    private final List<String> _listAvailableEntryType;
 
     /**
      * Constructor of the PatternValidator

@@ -38,8 +38,8 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 
 /**
  * Mock implementation of the FormListDAO
@@ -64,7 +64,7 @@ public class FormListDAOMock implements IFormListDAO
      * {@inheritDoc}
      */
     @Override
-    public void populateFormColumns( IFormPanel formPanel, List<IFormColumn> listFormColumn, List<IFormFilter> listFormFilter )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter )
     {
         List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
 

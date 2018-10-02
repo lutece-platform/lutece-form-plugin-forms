@@ -207,23 +207,19 @@ public class ModifyEntryJspBean extends AbstractJspBean
     @View( value = VIEW_MODIFY_FIELD )
     public String getModifyField( HttpServletRequest request )
     {
-        Field field = null;
-        Entry entry = null;
-        String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
-
         if ( !updateStepAndQuestion( request ) )
         {
             return redirectToViewManageForm( request );
         }
 
-        _nIdEntry = _question.getIdEntry( );
-
-        int nIdField = -1;
-
         if ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null )
         {
             return redirectToViewManageForm( request );
         }
+
+        String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
+
+        int nIdField = -1;
 
         try
         {
@@ -236,6 +232,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
             return getJspManageQuestions( request, _step.getId( ) );
         }
 
+        Field field = null;
+
         if ( nIdField != -1 )
         {
             field = FieldHome.findByPrimaryKey( nIdField );
@@ -246,6 +244,10 @@ public class ModifyEntryJspBean extends AbstractJspBean
         {
             return getJspManageQuestions( request, _step.getId( ) );
         }
+
+        Entry entry = null;
+
+        _nIdEntry = _question.getIdEntry( );
 
         entry = EntryHome.findByPrimaryKey( field.getParentEntry( ).getIdEntry( ) );
 

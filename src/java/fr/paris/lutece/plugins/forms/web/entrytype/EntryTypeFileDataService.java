@@ -37,14 +37,15 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.web.http.IterationMultipartHttpServletRequestWrapper;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.math.NumberUtils;
 
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
-import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
-import fr.paris.lutece.plugins.forms.web.http.IterationMultipartHttpServletRequestWrapper;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;

@@ -33,9 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * Factory for all FormPanel
@@ -43,25 +47,25 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 public class FormPanelFactory
 {
     // Variables
-    private final List<IFormPanel> _listFormPanel;
+    private final List<IFormPanelConfiguration> _listFormPanelConfiguration;
 
     /**
      * Constructor
      */
     public FormPanelFactory( )
     {
-        _listFormPanel = SpringContextService.getBeansOfType( IFormPanel.class );
+        _listFormPanelConfiguration = SpringContextService.getBeansOfType( IFormPanelConfiguration.class );
     }
 
     /**
      * Constructor
      * 
-     * @param listFormPanel
-     *            The list of FormPanel to use for the Factory
+     * @param listFormPanelConfiguration
+     *            The list of FormPanelConfiguration to use for the Factory
      */
-    public FormPanelFactory( List<IFormPanel> listFormPanel )
+    public FormPanelFactory( List<IFormPanelConfiguration> listFormPanelConfiguration )
     {
-        _listFormPanel = listFormPanel;
+        _listFormPanelConfiguration = listFormPanelConfiguration;
     }
 
     /**
@@ -69,8 +73,45 @@ public class FormPanelFactory
      * 
      * @return the list of all FormPanel
      */
-    public List<IFormPanel> buildFormPanelList( )
+    public List<FormPanel> buildFormPanelList( )
     {
-        return _listFormPanel;
+        List<FormPanel> listFormPanelForms = new ArrayList<>( );
+
+        for ( IFormPanelConfiguration formPanelConfiguration : _listFormPanelConfiguration )
+        {
+            listFormPanelForms.add( buildFormPanel( formPanelConfiguration ) );
+        }
+
+        return listFormPanelForms;
     }
+
+    /**
+     * 
+     * @param formPanelConfiguration
+     *            The FormPanelConfiguration to use for the FormPanel
+     * @return the list of all FormPanel
+     */
+    public FormPanel buildFormPanel( IFormPanelConfiguration formPanelConfiguration )
+    {
+        FormPanel formPanel = new FormPanel( );
+        formPanel.setFormPanelConfiguration( formPanelConfiguration );
+
+        for ( String strInitializerName : formPanelConfiguration.getListFormPanelInitializerName( ) )
+        {
+            Class<? extends IFormPanelInitializer> formPanelInitializerClass;
+            try
+            {
+                formPanelInitializerClass = Class.forName( strInitializerName ).asSubclass( IFormPanelInitializer.class );
+                IFormPanelInitializer formPanelInitializer = (IFormPanelInitializer) formPanelInitializerClass.newInstance( );
+                formPanel.getListFormPanelInitializer( ).add( formPanelInitializer );
+            }
+            catch( ClassNotFoundException | InstantiationException | IllegalAccessException e )
+            {
+                AppLogService.error( e );
+            }
+        }
+
+        return formPanel;
+    }
+
 }

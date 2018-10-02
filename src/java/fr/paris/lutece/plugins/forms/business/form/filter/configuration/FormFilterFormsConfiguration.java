@@ -31,24 +31,49 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.panel.impl;
-
-import fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration;
+package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
 /**
- * Implementation of the IFormPanel for the panel of all FormResponse
+ * Configuration for a FormFilter object
  */
-public class FormPanelForms extends AbstractFormPanel
+public class FormFilterFormsConfiguration implements IFormFilterConfiguration
 {
+    // Variables
+    private final int _nPosition;
+    private final String _strFormFilterLabel;
+
     /**
      * Constructor
      * 
-     * @param formPanelConfiguration
-     *            The FormPanelConfiguration of the FormPanel
+     * @param nPosition
+     *            The position of the FormFilter
+     * @param strFormFilterLabel
+     *            The label of the FormFilter
      */
-    public FormPanelForms( FormPanelConfiguration formPanelConfiguration )
+    public FormFilterFormsConfiguration( int nPosition, String strFormFilterLabel )
     {
-        super( );
-        setFormPanelConfiguration( formPanelConfiguration );
+        _nPosition = nPosition;
+        _strFormFilterLabel = strFormFilterLabel;
     }
+
+    /**
+     * Return the position of the FormFilter
+     * 
+     * @return the position of the FormFilter
+     */
+    public int getPosition( )
+    {
+        return _nPosition;
+    }
+
+    /**
+     * Return the label of the FormFilter
+     * 
+     * @return the label of the FormFilter
+     */
+    public String getFormFilterLabel( )
+    {
+        return _strFormFilterLabel;
+    }
+
 }

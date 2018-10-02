@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 
 /**
@@ -48,5 +48,5 @@ public interface IFormFilterQueryPartFactory
      *            The IFormFilter from which to build theFormFilterqueryPart
      * @return the IformFilterQueryPart associated to the given IFormFilter
      */
-    IFormFilterQueryPart buildFormFilterQueryPart( IFormFilter formFilter );
+    IFormFilterQueryPart buildFormFilterQueryPart( FormFilter formFilter );
 }
