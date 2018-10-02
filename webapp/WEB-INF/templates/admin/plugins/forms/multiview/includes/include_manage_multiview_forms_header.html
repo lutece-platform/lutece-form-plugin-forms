@@ -3,15 +3,15 @@
 			<div class="box-body col-sm-offset-1">
 				<input type="hidden" name="current_selected_panel" value="${current_selected_panel!''}"/>
 				<div class="row">
-					<div class="col-xs-12 col-sm-10">
+					<div class="col-xs-12 col-sm-9">
 						<#if form_filter_list?has_content>
 							<#list form_filter_list as form_filter>
 								${form_filter.template!''}
 							</#list>
 						</#if>
 					</div>
-					<div class="col-xs-12 col-sm-2">
-						<@btnGroup class='col-sm-offset-5'>
+					<div class="col-xs-12 col-sm-3">
+						<@btnGroup>
 							<@btnGroup>
 								<@select name='format_export' default_value='' items=format_export_list />
 							</@btnGroup>
