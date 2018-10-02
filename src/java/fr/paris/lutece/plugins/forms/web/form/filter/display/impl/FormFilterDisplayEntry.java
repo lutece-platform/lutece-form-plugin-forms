@@ -49,9 +49,9 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -273,7 +273,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
     {
         int nPosition = NumberUtils.INTEGER_MINUS_ONE;
 
-        IFormFilter formFilter = getFormFilter( );
+        FormFilter formFilter = getFormFilter( );
         if ( formFilter != null && formFilter.getFormFilterConfiguration( ) != null )
         {
             nPosition = formFilter.getFormFilterConfiguration( ).getPosition( );
@@ -291,10 +291,10 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
     {
         IFormColumn formColumnResult = null;
 
-        IFormFilter formFilter = getFormFilter( );
+        FormFilter formFilter = getFormFilter( );
         if ( formFilter != null )
         {
-            FormFilterConfiguration formFilterConfiguration = formFilter.getFormFilterConfiguration( );
+            IFormFilterConfiguration formFilterConfiguration = formFilter.getFormFilterConfiguration( );
             if ( formFilterConfiguration instanceof FormFilterEntryConfiguration )
             {
                 FormFilterEntryConfiguration formFilterEntryConfiguration = (FormFilterEntryConfiguration) formFilterConfiguration;

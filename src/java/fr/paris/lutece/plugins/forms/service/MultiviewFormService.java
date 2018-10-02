@@ -38,9 +38,9 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
@@ -77,7 +77,7 @@ public final class MultiviewFormService
      * @param listFormFilter
      *            The list of FormFilter to use for retrieving the data of the columns to populate
      */
-    public void populateFormColumns( IFormPanel formPanel, List<IFormColumn> listFormColumn, List<IFormFilter> listFormFilter )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter )
     {
         FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
         formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter );

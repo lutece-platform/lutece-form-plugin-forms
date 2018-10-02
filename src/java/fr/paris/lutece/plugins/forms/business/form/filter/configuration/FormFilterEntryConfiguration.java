@@ -38,9 +38,11 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 /**
  * Specific configuration for the Filter of an Entry
  */
-public class FormFilterEntryConfiguration extends FormFilterConfiguration
+public class FormFilterEntryConfiguration implements IFormFilterConfiguration
 {
     // Variables
+    private final int _nPosition;
+    private final String _strFormFilterLabel;
     private final IFormColumn _formColumn;
 
     /**
@@ -55,8 +57,29 @@ public class FormFilterEntryConfiguration extends FormFilterConfiguration
      */
     public FormFilterEntryConfiguration( int nPosition, String strFormFilterLabel, IFormColumn formColumn )
     {
-        super( nPosition, strFormFilterLabel );
+        _nPosition = nPosition;
+        _strFormFilterLabel = strFormFilterLabel;
         _formColumn = formColumn;
+    }
+
+    /**
+     * Return the position of the FormFilter
+     * 
+     * @return the position of the FormFilter
+     */
+    public int getPosition( )
+    {
+        return _nPosition;
+    }
+
+    /**
+     * Return the label of the FormFilter
+     * 
+     * @return the label of the FormFilter
+     */
+    public String getFormFilterLabel( )
+    {
+        return _strFormFilterLabel;
     }
 
     /**

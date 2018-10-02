@@ -44,8 +44,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
-import fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
+import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -71,7 +71,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay, IFo
     // Variables
     private boolean _bActive;
     private String _strTemplate;
-    private IFormPanel _formPanel;
+    private FormPanel _formPanel;
 
     /**
      * {@inheritDoc}
@@ -83,7 +83,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay, IFo
 
         if ( _formPanel != null )
         {
-            FormPanelConfiguration formPanelConfiguration = _formPanel.getFormPanelConfiguration( );
+            IFormPanelConfiguration formPanelConfiguration = _formPanel.getFormPanelConfiguration( );
 
             if ( formPanelConfiguration != null )
             {
@@ -150,7 +150,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay, IFo
     {
         String strTechnicalCode = StringUtils.EMPTY;
 
-        IFormPanel formPanel = getFormPanel( );
+        FormPanel formPanel = getFormPanel( );
         if ( formPanel != null )
         {
             strTechnicalCode = formPanel.getTechnicalCode( );
@@ -179,7 +179,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay, IFo
      * {@inheritDoc}
      */
     @Override
-    public IFormPanel getFormPanel( )
+    public FormPanel getFormPanel( )
     {
         return _formPanel;
     }
@@ -188,7 +188,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay, IFo
      * {@inheritDoc}
      */
     @Override
-    public void setFormPanel( IFormPanel formPanel )
+    public void setFormPanel( FormPanel formPanel )
     {
         _formPanel = formPanel;
     }
@@ -202,7 +202,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay, IFo
         String strTechnicalCode = StringUtils.EMPTY;
         String strTitle = StringUtils.EMPTY;
 
-        IFormPanel formPanel = getFormPanel( );
+        FormPanel formPanel = getFormPanel( );
         if ( formPanel != null )
         {
             strTechnicalCode = formPanel.getTechnicalCode( );

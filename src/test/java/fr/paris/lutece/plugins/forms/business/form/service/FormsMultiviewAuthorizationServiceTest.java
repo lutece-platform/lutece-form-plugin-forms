@@ -51,9 +51,8 @@ import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormsMo
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowStateMock;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListDAOMock;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration;
-import fr.paris.lutece.plugins.forms.business.form.panel.impl.FormPanelForms;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormResponseInitializerMock;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormsInitializerMock;
@@ -67,7 +66,7 @@ import fr.paris.lutece.test.LuteceTestCase;
 public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 {
     // Variables
-    private IFormPanel _formPanel;
+    private FormPanel _formPanel;
     private FormColumnFactory _formColumnFactory;
 
     /**
@@ -78,15 +77,13 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
     {
         super.setUp( );
 
-        IFormPanelInitializer formPanelFormsInitializer = new FormPanelFormsInitializerMock( );
-        IFormPanelInitializer formPanelFormResponseInitializer = new FormPanelFormResponseInitializerMock( );
+        List<String> listFormPanelInitializerName = new ArrayList<>( );
+        listFormPanelInitializerName.add( "fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormsInitializer" );
+        listFormPanelInitializerName.add( "fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormResponseInitializer" );
 
-        List<IFormPanelInitializer> listFormPanelInitializer = new ArrayList<>( );
-        listFormPanelInitializer.add( formPanelFormsInitializer );
-        listFormPanelInitializer.add( formPanelFormResponseInitializer );
-
-        FormPanelConfiguration formPanelConfiguration = new FormPanelConfiguration( "code_technique", 1, "titre", listFormPanelInitializer );
-        _formPanel = new FormPanelForms( formPanelConfiguration );
+        FormPanelConfiguration formPanelConfiguration = new FormPanelConfiguration( "code_technique", 1, "titre", listFormPanelInitializerName );
+        _formPanel = new FormPanel( );
+        _formPanel.setFormPanelConfiguration( formPanelConfiguration );
 
         List<IFormColumn> listFormColumn = new ArrayList<>( );
         listFormColumn.add( new FormColumnFormsMock( 1, "form" ) );
@@ -115,8 +112,8 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 
         FormListDAOMock formListDAOMock = new FormListDAOMock( listAuthorizedId );
         FormListFacade formListFacade = new FormListFacade( formListDAOMock );
-        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( _formPanel, formListFacade,
-                _formColumnFactory );
+        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService(
+                _formPanel.getFormPanelConfiguration( ), formListFacade, _formColumnFactory );
 
         boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.TRUE ) );
@@ -133,8 +130,8 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 
         FormListDAOMock formListDAOMock = new FormListDAOMock( listAuthorizedId );
         FormListFacade formListFacade = new FormListFacade( formListDAOMock );
-        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( _formPanel, formListFacade,
-                _formColumnFactory );
+        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService(
+                _formPanel.getFormPanelConfiguration( ), formListFacade, _formColumnFactory );
 
         boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );
@@ -150,8 +147,8 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 
         FormListDAOMock formListDAOMock = new FormListDAOMock( listAuthorizedId );
         FormListFacade formListFacade = new FormListFacade( formListDAOMock );
-        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( _formPanel, formListFacade,
-                _formColumnFactory );
+        IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService(
+                _formPanel.getFormPanelConfiguration( ), formListFacade, _formColumnFactory );
 
         boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );

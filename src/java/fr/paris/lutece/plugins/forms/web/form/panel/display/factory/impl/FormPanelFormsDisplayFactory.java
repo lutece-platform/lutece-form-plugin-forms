@@ -33,8 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.panel.display.factory.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
-import fr.paris.lutece.plugins.forms.business.form.panel.impl.FormPanelForms;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
+import fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.IFormPanelDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.impl.FormPanelFormsDisplay;
@@ -48,11 +48,11 @@ public class FormPanelFormsDisplayFactory implements IFormPanelDisplayFactory
      * {@inheritDoc}
      */
     @Override
-    public IFormPanelDisplay buildFormPanelDisplay( IFormPanel formPanel )
+    public IFormPanelDisplay buildFormPanelDisplay( FormPanel formPanel )
     {
         FormPanelFormsDisplay formPanelFormsDisplay = null;
 
-        if ( formPanel instanceof FormPanelForms )
+        if ( formPanel.getFormPanelConfiguration( ) instanceof FormPanelConfiguration )
         {
             formPanelFormsDisplay = new FormPanelFormsDisplay( );
             formPanelFormsDisplay.setFormPanel( formPanel );

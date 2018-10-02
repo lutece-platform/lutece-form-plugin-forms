@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Locale;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
 
 /**
@@ -86,7 +86,7 @@ public interface IFormPanelDisplay extends IFormListPosition
      * 
      * @return the formPanel
      */
-    IFormPanel getFormPanel( );
+    FormPanel getFormPanel( );
 
     /**
      * Set the FormPanel of the FormPanelDisplay
@@ -94,7 +94,7 @@ public interface IFormPanelDisplay extends IFormListPosition
      * @param formPanel
      *            The FormPanel of the FormPanelDisplay
      */
-    void setFormPanel( IFormPanel formPanel );
+    void setFormPanel( FormPanel formPanel );
 
     /**
      * Return the list of FormItem of the FormPanelDisplay

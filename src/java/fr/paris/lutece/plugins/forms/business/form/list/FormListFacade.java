@@ -39,8 +39,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 
 /**
  * Facade used to populate a list of FormColumn
@@ -75,7 +75,7 @@ public class FormListFacade
      * @param listFormFilter
      *            The list of FormFilter to use for retrieving the data of the columns to populate
      */
-    public void populateFormColumns( IFormPanel formPanel, List<IFormColumn> listFormColumn, List<IFormFilter> listFormFilter )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter )
     {
         listFormColumn.sort( Comparator.comparing( IFormColumn::getFormColumnPosition ) );
 

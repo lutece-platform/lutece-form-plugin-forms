@@ -35,18 +35,16 @@ package fr.paris.lutece.plugins.forms.business.form.panel.configuration;
 
 import java.util.List;
 
-import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
-
 /**
  * Configuration for a FormPanel
  */
-public class FormPanelConfiguration
+public class FormPanelConfiguration implements IFormPanelConfiguration
 {
     // Variables
     private final int _nPosition;
     private final String _strTechnicalCode;
     private final String _strTitle;
-    private final List<IFormPanelInitializer> _listFormPanelInitializer;
+    private final List<String> _listFormPanelInitializerName;
 
     /**
      * Constructor
@@ -57,54 +55,38 @@ public class FormPanelConfiguration
      *            The position of the FormPanel
      * @param strTitle
      *            The title of the FormPanel
-     * @param listFormPanelInitializer
-     *            The list of all FormPanelInitializer used to built the initialize list of the table associated to the given panel
+     * @param listFormPanelInitializerName
+     *            The list of all FormPanelInitializer names used to built the initialize list of the table associated to the given panel
      */
-    public FormPanelConfiguration( String strTechnicalCode, int nPosition, String strTitle, List<IFormPanelInitializer> listFormPanelInitializer )
+    public FormPanelConfiguration( String strTechnicalCode, int nPosition, String strTitle, List<String> listFormPanelInitializerName )
     {
         _strTechnicalCode = strTechnicalCode;
         _nPosition = nPosition;
         _strTitle = strTitle;
-        _listFormPanelInitializer = listFormPanelInitializer;
+        _listFormPanelInitializerName = listFormPanelInitializerName;
     }
 
-    /**
-     * Return the technical code of the FormPanel
-     * 
-     * @return the technical code of the FormPanel
-     */
+    @Override
     public String getTechnicalCode( )
     {
         return _strTechnicalCode;
     }
 
-    /**
-     * Return the position of the FormPanel
-     * 
-     * @return the position of the FormPanel
-     */
+    @Override
     public int getPosition( )
     {
         return _nPosition;
     }
 
-    /**
-     * Return the title of the FormPanel
-     * 
-     * @return the title of the FormPanel
-     */
+    @Override
     public String getTitle( )
     {
         return _strTitle;
     }
 
-    /**
-     * Return the list of FormPanelInitializer of the FormPanelConfiguration
-     * 
-     * @return the list of FormPanelInitializer of the FormPanelConfiguration
-     */
-    public List<IFormPanelInitializer> getListFormPanelInitializer( )
+    @Override
+    public List<String> getListFormPanelInitializerName( )
     {
-        return _listFormPanelInitializer;
+        return _listFormPanelInitializerName;
     }
 }

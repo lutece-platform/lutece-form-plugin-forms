@@ -43,8 +43,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
-import fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
+import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
@@ -71,7 +71,7 @@ public class FormPanelDisplayFactory
      *            The list of all IFormPanel used for building IFormFilterDisplay
      * @return the list of all FormPanelDisplay ordered by their position
      */
-    public List<IFormPanelDisplay> createFormPanelDisplayList( HttpServletRequest request, List<IFormPanel> listFormPanel )
+    public List<IFormPanelDisplay> createFormPanelDisplayList( HttpServletRequest request, List<FormPanel> listFormPanel )
     {
         List<IFormPanelDisplay> listFormPanelDisplay = new ArrayList<>( );
         List<IFormPanelDisplayFactory> listFormPanelDisplayFactory = new FormPanelDisplayFactoryFacade( ).buildFormPanelDisplayFactoryList( );
@@ -79,7 +79,7 @@ public class FormPanelDisplayFactory
         if ( !CollectionUtils.isEmpty( listFormPanelDisplayFactory ) )
         {
             IFormPanelDisplay formPanelDisplay = null;
-            for ( IFormPanel formPanel : listFormPanel )
+            for ( FormPanel formPanel : listFormPanel )
             {
                 for ( IFormPanelDisplayFactory formPanelDisplayFactory : listFormPanelDisplayFactory )
                 {
@@ -160,20 +160,20 @@ public class FormPanelDisplayFactory
      * @param formPanel
      *            The IFormPanel to the FormPanelInitializer from
      */
-    public void buildFormPanelDisplayInitializer( HttpServletRequest request, IFormPanel formPanel )
+    public void buildFormPanelDisplayInitializer( HttpServletRequest request, FormPanel formPanel )
     {
         List<IFormPanelDisplayInitializerFactory> listFormPanelDisplayInitializerFactory = new FormDisplayInitializerFactoryFacade( )
                 .buildFormPanelDisplayInitializerList( );
 
         if ( !CollectionUtils.isEmpty( listFormPanelDisplayInitializerFactory ) && formPanel != null )
         {
-            FormPanelConfiguration formPanelConfiguration = formPanel.getFormPanelConfiguration( );
+            IFormPanelConfiguration formPanelConfiguration = formPanel.getFormPanelConfiguration( );
 
             if ( formPanelConfiguration != null )
             {
                 for ( IFormPanelDisplayInitializerFactory formPanelDisplayInitializerFactory : listFormPanelDisplayInitializerFactory )
                 {
-                    List<IFormPanelInitializer> listFormPanelInitializer = formPanelConfiguration.getListFormPanelInitializer( );
+                    List<IFormPanelInitializer> listFormPanelInitializer = formPanel.getListFormPanelInitializer( );
 
                     buildPanelDisplayInitializerFormParameters( request, formPanelDisplayInitializerFactory, listFormPanelInitializer );
                 }
