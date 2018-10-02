@@ -31,24 +31,49 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.impl;
-
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterConfiguration;
+package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
 /**
- * Implementation of the IFormFilter for filter on a workflow state
+ * Configuration for a FormFilter object
  */
-public class FormFilterWorkflowState extends AbstractFormFilter
+public class FormFilterWorkflowConfiguration implements IFormFilterConfiguration
 {
+    // Variables
+    private final int _nPosition;
+    private final String _strFormFilterLabel;
+
     /**
      * Constructor
      * 
-     * @param formFilterConfiguration
-     *            The FormFilterConfiguration to set to the FormFilter
+     * @param nPosition
+     *            The position of the FormFilter
+     * @param strFormFilterLabel
+     *            The label of the FormFilter
      */
-    public FormFilterWorkflowState( FormFilterConfiguration formFilterConfiguration )
+    public FormFilterWorkflowConfiguration( int nPosition, String strFormFilterLabel )
     {
-        super( );
-        setFormFilterConfiguration( formFilterConfiguration );
+        _nPosition = nPosition;
+        _strFormFilterLabel = strFormFilterLabel;
     }
+
+    /**
+     * Return the position of the FormFilter
+     * 
+     * @return the position of the FormFilter
+     */
+    public int getPosition( )
+    {
+        return _nPosition;
+    }
+
+    /**
+     * Return the label of the FormFilter
+     * 
+     * @return the label of the FormFilter
+     */
+    public String getFormFilterLabel( )
+    {
+        return _strFormFilterLabel;
+    }
+
 }
