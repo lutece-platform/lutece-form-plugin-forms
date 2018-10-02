@@ -89,7 +89,8 @@ public interface IValidator
     String getJavascriptValidation( );
 
     /**
-     * 
+     * @param control
+     *            The control
      * @return the control value needed for javascript
      */
     String getJavascriptControlValue( Control control );

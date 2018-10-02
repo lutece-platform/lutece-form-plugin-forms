@@ -354,7 +354,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
     /**
      * @return the _bAuthentificationNeeded
      */
-    public boolean getAuthentificationNeeded( )
+    public boolean isAuthentificationNeeded( )
     {
         return _bAuthentificationNeeded;
     }

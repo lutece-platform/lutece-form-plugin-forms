@@ -88,9 +88,9 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     private int _nIterationNumber;
     private int _nNbBaseChildren;
 
-    private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
+    private final List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
     private Group _group;
-    private FormDisplay _formDisplay;
+    private final FormDisplay _formDisplay;
     private String _strIconName;
 
     /**

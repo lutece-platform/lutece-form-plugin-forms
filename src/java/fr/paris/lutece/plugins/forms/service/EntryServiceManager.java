@@ -48,11 +48,11 @@ import fr.paris.lutece.util.ReferenceList;
  */
 public final class EntryServiceManager
 {
-    private List<IEntryDisplayService> _listEntryDisplayService;
+    private final List<IEntryDisplayService> _listEntryDisplayService;
 
-    private List<IEntryDataService> _listEntryDataService;
+    private final List<IEntryDataService> _listEntryDataService;
 
-    private List<IValidator> _listValidator;
+    private final List<IValidator> _listValidator;
 
     /**
      * Constructor for EntryServiceManager class

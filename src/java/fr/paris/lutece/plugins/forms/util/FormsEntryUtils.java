@@ -67,13 +67,13 @@ public final class FormsEntryUtils
      */
     public static Entry createEntryByType( int nIdType )
     {
-        Entry entry = null;
-        EntryType entryType;
-
         if ( nIdType == -1 )
         {
             return null;
         }
+
+        Entry entry = null;
+        EntryType entryType;
 
         entryType = EntryTypeHome.findByPrimaryKey( nIdType );
 

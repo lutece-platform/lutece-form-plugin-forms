@@ -75,7 +75,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             Timestamp timestampCurrentTime = new Timestamp( System.currentTimeMillis( ) );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
-            daoUtil.setBoolean( nIndex++, formResponse.getFromSave( ) );
+            daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
             daoUtil.executeUpdate( );
 
             if ( daoUtil.nextGeneratedKey( ) )
@@ -140,7 +140,7 @@ public final class FormResponseDAO implements IFormResponseDAO
 
             Timestamp timestampCurrentTime = new Timestamp( System.currentTimeMillis( ) );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
-            daoUtil.setBoolean( nIndex++, formResponse.getFromSave( ) );
+            daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
             daoUtil.setInt( nIndex++, formResponse.getId( ) );
 
             daoUtil.executeUpdate( );

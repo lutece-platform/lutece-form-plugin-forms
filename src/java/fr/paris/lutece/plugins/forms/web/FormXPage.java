@@ -183,7 +183,7 @@ public class FormXPage extends MVCApplication
                 // Should register the user if it's not already done
                 if ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
                 {
-                    if ( ( SecurityService.getInstance( ).getRemoteUser( request ) == null ) && ( form.getAuthentificationNeeded( ) ) )
+                    if ( ( SecurityService.getInstance( ).getRemoteUser( request ) == null ) && ( form.isAuthentificationNeeded( ) ) )
                     {
                         // Authentication is required to access to the portal
                         throw new UserNotSignedException( );
@@ -194,7 +194,7 @@ public class FormXPage extends MVCApplication
             {
                 // If portal authentication is enabled and user is null and the requested URL
                 // is not the login URL, user cannot access to Portal
-                if ( ( form.getAuthentificationNeeded( ) ) && ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
+                if ( ( form.isAuthentificationNeeded( ) ) && ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
                         && !SecurityService.getInstance( ).isLoginUrl( request ) )
                 {
                     // Authentication is required to access to the portal
@@ -280,7 +280,7 @@ public class FormXPage extends MVCApplication
             {
                 _formResponseManager = _formService.createFormResponseManagerFromBackUp( form, user.getName( ) );
 
-                if ( _formResponseManager.getFormResponse( ).getFromSave( ) )
+                if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
                 {
                     _currentStep = _formResponseManager.getCurrentStep( );
                     _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
@@ -364,8 +364,6 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_FORM_RESPONSE_SUMMARY )
     public XPage doFormResponseSummary( HttpServletRequest request ) throws SiteMessageException
     {
-        Form form = null;
-
         try
         {
             findFormFrom( request );
@@ -376,7 +374,7 @@ public class FormXPage extends MVCApplication
             return redirectView( request, VIEW_STEP );
         }
 
-        Map<String, Object> model = buildModelForSummary( request, form );
+        Map<String, Object> model = buildModelForSummary( request );
 
         return getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, request.getLocale( ), model );
     }
@@ -386,11 +384,9 @@ public class FormXPage extends MVCApplication
      * 
      * @param request
      *            the request
-     * @param form
-     *            The form
      * @return the model
      */
-    private Map<String, Object> buildModelForSummary( HttpServletRequest request, Form form )
+    private Map<String, Object> buildModelForSummary( HttpServletRequest request )
     {
         Map<String, Object> mapFormResponseSummaryModel = new HashMap<>( );
 
@@ -655,18 +651,15 @@ public class FormXPage extends MVCApplication
             return redirectView( request, VIEW_STEP );
         }
 
-        _currentStep = getNextStep( request );
+        _currentStep = getNextStep( );
 
         return redirectView( request, VIEW_STEP );
     }
 
     /**
-     * 
-     * @param request
-     *            The Http request
      * @return The next Step
      */
-    private Step getNextStep( HttpServletRequest request )
+    private Step getNextStep( )
     {
         List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( _currentStep.getId( ) );
 
@@ -728,7 +721,6 @@ public class FormXPage extends MVCApplication
 
         checkAuthentication( form, request );
 
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         try
         {
             fillResponseManagerWithResponses( request, false );
@@ -737,6 +729,8 @@ public class FormXPage extends MVCApplication
         {
             return redirectView( request, VIEW_STEP );
         }
+
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         formResponse.setGuid( user.getName( ) );
