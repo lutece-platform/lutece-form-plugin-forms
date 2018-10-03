@@ -33,8 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.impl.FormFilterEntry;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.IFormFilterDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayEntry;
@@ -48,11 +48,11 @@ public class FormFilterDisplayEntryFactory implements IFormFilterDisplayFactory
      * {@inheritDoc}
      */
     @Override
-    public IFormFilterDisplay buildFilterDisplay( IFormFilter formFilter )
+    public IFormFilterDisplay buildFilterDisplay( FormFilter formFilter )
     {
         FormFilterDisplayEntry formFilterDisplayEntry = null;
 
-        if ( formFilter instanceof FormFilterEntry )
+        if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterEntryConfiguration )
         {
             formFilterDisplayEntry = new FormFilterDisplayEntry( );
             formFilterDisplayEntry.setFormFilter( formFilter );

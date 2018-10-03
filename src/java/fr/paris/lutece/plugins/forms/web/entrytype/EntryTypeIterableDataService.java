@@ -35,16 +35,9 @@ package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.forms.business.Control;
-import fr.paris.lutece.plugins.forms.business.ControlHome;
-import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
-import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.http.IterationHttpServletRequestWrapper;
-import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 
 /**
  * Data service for iterable entry type

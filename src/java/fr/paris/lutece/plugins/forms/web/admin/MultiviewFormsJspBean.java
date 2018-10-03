@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,10 +54,10 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparator;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterFactory;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
@@ -191,16 +190,15 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * 
      * @param request
      *            The HTTP request
-     * @throws IOException
      */
     @Action( ACTION_EXPORT_RESPONSES )
-    public void doExportResponses( HttpServletRequest request ) throws IOException
+    public void doExportResponses( HttpServletRequest request )
     {
         IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
 
         List<FormResponseItem> listFormResponseItemToDisplay = _formPanelDisplayActive.getFormResponseItemList( );
 
-        if ( formatExport != null && listFormResponseItemToDisplay != null )
+        if ( formatExport != null && CollectionUtils.isNotEmpty( listFormResponseItemToDisplay ) )
         {
             byte [ ] arrByteExportFile = formatExport.getByteExportFile( getFormResponseToExport( listFormResponseItemToDisplay ) );
 
@@ -267,8 +265,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     private void initFormRelatedLists( HttpServletRequest request )
     {
-        List<IFormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( );
-        List<IFormPanel> listFormPanel = new FormPanelFactory( ).buildFormPanelList( );
+        List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( );
+        List<FormPanel> listFormPanel = new FormPanelFactory( ).buildFormPanelList( );
 
         FormColumnFactory formColumnFactory = SpringContextService.getBean( FormColumnFactory.BEAN_NAME );
         _listFormColumn = formColumnFactory.buildFormColumnList( );
@@ -302,12 +300,12 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private void buildFormPanelDisplayWithData( )
     {
         // Retrieve the list of all FormFilter
-        List<IFormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
+        List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
         for ( IFormPanelDisplay formPanelDisplay : _listFormPanelDisplay )
         {
             // Retrieve the FormPanel from the FormPanelDisplay
-            IFormPanel formPanel = formPanelDisplay.getFormPanel( );
+            FormPanel formPanel = formPanelDisplay.getFormPanel( );
 
             // Populate the FormColumns from the information of the list of FormResponseItem of the given FormPanel
             MultiviewFormService.getInstance( ).populateFormColumns( formPanel, _listFormColumn, listFormFilter );

@@ -34,7 +34,6 @@
 
 package fr.paris.lutece.plugins.forms.validation;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,9 +66,9 @@ public class PatternValidator implements IValidator
 
     private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/pattern_template.html";
-    private String _strValidatorName = StringUtils.EMPTY;
-    private String _strDisplayName = StringUtils.EMPTY;
-    private List<String> _listAvailableEntryType = new ArrayList<String>( );
+    private final String _strValidatorName;
+    private final String _strDisplayName;
+    private List<String> _listAvailableEntryType;
     private Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**

@@ -199,6 +199,11 @@ public class FormControlJspBean extends AbstractJspBean
             _control = new Control( );
             _control.setControlType( ControlType.TRANSITION.getLabel( ) );
         }
+        else
+        {
+            Question question = QuestionHome.findByPrimaryKey( _control.getIdQuestion( ) );
+            _step = StepHome.findByPrimaryKey( question.getIdStep( ) );
+        }
 
         _strControlTemplate = TEMPLATE_MODIFY_TRANSITION_CONTROL;
 
@@ -272,6 +277,11 @@ public class FormControlJspBean extends AbstractJspBean
             _control = new Control( );
             _control.setIdTargetFormDisplay( nIdCompositeDisplay );
             _control.setControlType( ControlType.CONDITIONAL.getLabel( ) );
+        }
+        else
+        {
+            Question question = QuestionHome.findByPrimaryKey( _control.getIdQuestion( ) );
+            _step = StepHome.findByPrimaryKey( question.getIdStep( ) );
         }
 
         _strControlTemplate = TEMPLATE_MODIFY_CONDITION_CONTROL;

@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.filter.display.factory;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
 
 /**
@@ -49,5 +49,5 @@ public interface IFormFilterDisplayFactory
      * @return the IFormFilterDisplay associated to the given FormFilter or null if the specified FormFilter is not linked to the type of the
      *         FilterDisplayFactory
      */
-    IFormFilterDisplay buildFilterDisplay( IFormFilter formFilter );
+    IFormFilterDisplay buildFilterDisplay( FormFilter formFilter );
 }

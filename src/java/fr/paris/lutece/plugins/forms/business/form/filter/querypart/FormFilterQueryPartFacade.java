@@ -37,7 +37,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.IFormFilterQueryPartFactory;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
@@ -75,7 +75,7 @@ public class FormFilterQueryPartFacade
      *            The FormFilter to retrieve the associated QueryPart
      * @return the IFormFilterQueryPart linked to the given filter or null if not found
      */
-    public IFormFilterQueryPart getFormFilterQueryPart( IFormFilter formFilter )
+    public IFormFilterQueryPart getFormFilterQueryPart( FormFilter formFilter )
     {
         IFormFilterQueryPart formFilterQueryPart = null;
 

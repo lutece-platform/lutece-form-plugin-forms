@@ -46,11 +46,11 @@ import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.FormColumnQueryPartFacade;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.FormFilterQueryPartFacade;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
-import fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
+import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.FormPanelInitializerQueryPartFacade;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
@@ -68,7 +68,7 @@ public class FormListDAO implements IFormListDAO
      * {@inheritDoc}
      */
     @Override
-    public void populateFormColumns( IFormPanel formPanel, List<IFormColumn> listFormColumn, List<IFormFilter> listFormFilter )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter )
     {
         // To retrieve the values to display on the table we must have a FormPanel and a list of FormColumn
         if ( formPanel == null || CollectionUtils.isEmpty( listFormColumn ) )
@@ -166,15 +166,15 @@ public class FormListDAO implements IFormListDAO
      *            The list of all parameter values to used to fill the DAOUtil statement
      * @return the list of all FormPanelInitializerQueryPart associate to all the FormPanelInitializer to retrieve from the given FormPanel
      */
-    private static List<IFormPanelInitializerQueryPart> buildFormPanelInitializerQueryPartList( IFormPanel formPanel, List<String> listQueryParametersValue )
+    private static List<IFormPanelInitializerQueryPart> buildFormPanelInitializerQueryPartList( FormPanel formPanel, List<String> listQueryParametersValue )
     {
         List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart = new ArrayList<>( );
 
-        FormPanelConfiguration formPanelConfiguration = formPanel.getFormPanelConfiguration( );
+        IFormPanelConfiguration formPanelConfiguration = formPanel.getFormPanelConfiguration( );
 
-        if ( formPanelConfiguration != null && !CollectionUtils.isEmpty( formPanelConfiguration.getListFormPanelInitializer( ) ) )
+        if ( formPanelConfiguration != null && !CollectionUtils.isEmpty( formPanel.getListFormPanelInitializer( ) ) )
         {
-            List<IFormPanelInitializer> listFormPanelInitializer = formPanelConfiguration.getListFormPanelInitializer( );
+            List<IFormPanelInitializer> listFormPanelInitializer = formPanel.getListFormPanelInitializer( );
 
             for ( IFormPanelInitializer formPanelInitializer : listFormPanelInitializer )
             {
@@ -276,13 +276,13 @@ public class FormListDAO implements IFormListDAO
      *            The list of all parameter values to used to fill the DAOUtil statement
      * @return the list of form filter query part from the given list of form filter
      */
-    private static List<IFormFilterQueryPart> buildFormFilterQueryPartList( List<IFormFilter> listFormFilter, List<String> listQueryParametersPositionValue )
+    private static List<IFormFilterQueryPart> buildFormFilterQueryPartList( List<FormFilter> listFormFilter, List<String> listQueryParametersPositionValue )
     {
         List<IFormFilterQueryPart> listFormFilterQueryPart = new ArrayList<>( );
 
         if ( !CollectionUtils.isEmpty( listFormFilter ) )
         {
-            for ( IFormFilter formFilter : listFormFilter )
+            for ( FormFilter formFilter : listFormFilter )
             {
                 IFormFilterQueryPart formFilterQueryPart = retrieveFormFilterQueryPart( formFilter, listQueryParametersPositionValue );
                 if ( formFilterQueryPart != null )
@@ -304,7 +304,7 @@ public class FormListDAO implements IFormListDAO
      *            The list of all parameter values to used to fill the DAOUtil statement
      * @return the form filter query part associated to the given form filter
      */
-    private static IFormFilterQueryPart retrieveFormFilterQueryPart( IFormFilter formFilter, List<String> listQueryParametersPositionValue )
+    private static IFormFilterQueryPart retrieveFormFilterQueryPart( FormFilter formFilter, List<String> listQueryParametersPositionValue )
     {
         IFormFilterQueryPart formFilterQueryPartResult = null;
 

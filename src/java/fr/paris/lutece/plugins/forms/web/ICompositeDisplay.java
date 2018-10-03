@@ -78,6 +78,8 @@ public interface ICompositeDisplay
     /**
      * Remove the specified iteration of group
      * 
+     * @param request
+     *            the request
      * @param nIdGroupParent
      *            the id of the group
      * @param nIndexIterationToRemove
@@ -85,7 +87,7 @@ public interface ICompositeDisplay
      * @param formResponse
      *            the form responses
      */
-    void removeIteration( int nIdGroupParent, int nIndexIterationToRemove, FormResponse formResponse );
+    void removeIteration( HttpServletRequest request, int nIdGroupParent, int nIndexIterationToRemove, FormResponse formResponse );
 
     /**
      * Return the full list of children ICompositeDisplay of an initialized CompositeDisplay

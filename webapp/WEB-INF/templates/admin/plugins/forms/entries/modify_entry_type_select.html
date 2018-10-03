@@ -64,7 +64,7 @@
 	<@columns md=9 lg=9 xl=9>
 		<@box color='primary'>
 			<@boxHeader title='#i18n{forms.createEntry.manageField.title}' boxTools=true>
-				<@tform class='form-inline pull-right' action='jsp/admin/plugins/forms/ModifyEntry.jsp'>
+				<@tform class='form-inline pull-right' action='jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true'>
 				    <input name="id_question" value="${question.id}" type="hidden" />
 					<@button type='submit' name='view_createField' title='#i18n{forms.createEntry.manageField.buttonInsert}' showTitleXs=false buttonIcon='plus' size='' />
 				</@tform>

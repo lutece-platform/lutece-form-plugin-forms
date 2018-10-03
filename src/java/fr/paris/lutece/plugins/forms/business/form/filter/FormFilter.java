@@ -34,40 +34,46 @@
 package fr.paris.lutece.plugins.forms.business.form.filter;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 
 /**
- * Interface for a FormFilter object
+ * Abstract class for FormFilter objects
  */
-public interface IFormFilter
+public class FormFilter
 {
-    /**
-     * Return the FormParameters of the FormFilter
-     * 
-     * @return the FormParameters of the FormFilter
-     */
-    FormParameters getFormParameters( );
+    // Variables
+    private FormParameters _formParameters = new FormParameters( );
+    private IFormFilterConfiguration _formFilterConfiguration;
 
     /**
-     * Set the FormParameters to the FormFilter
-     * 
-     * @param formParameters
-     *            The FormParameters to set to the FormFilter
+     * {@inheritDoc}
      */
-    void setFormParameters( FormParameters formParameters );
+    public FormParameters getFormParameters( )
+    {
+        return _formParameters;
+    }
 
     /**
-     * Return the FormFilterConfiguration of the FormFilter
-     * 
-     * @return the FormFilterConfiguration of the FormFilter
+     * {@inheritDoc}
      */
-    FormFilterConfiguration getFormFilterConfiguration( );
+    public void setFormParameters( FormParameters formParameters )
+    {
+        _formParameters = formParameters;
+    }
 
     /**
-     * Set the FormFilterConfiguration of the FormFilter
-     * 
-     * @param formFilterConfiguration
-     *            The FormFilterConfiguration to set for the FormFilter
+     * {@inheritDoc}
      */
-    void setFormFilterConfiguration( FormFilterConfiguration formFilterConfiguration );
+    public IFormFilterConfiguration getFormFilterConfiguration( )
+    {
+        return _formFilterConfiguration;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setFormFilterConfiguration( IFormFilterConfiguration formFilterConfiguration )
+    {
+        _formFilterConfiguration = formFilterConfiguration;
+    }
 }

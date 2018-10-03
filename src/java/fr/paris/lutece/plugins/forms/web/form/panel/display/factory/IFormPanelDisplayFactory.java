@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.panel.display.factory;
 
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 
 /**
@@ -49,5 +49,5 @@ public interface IFormPanelDisplayFactory
      * @return the IFormPanelDisplay associated to the given IFormPanel or null if the specified IFormPanel is not linked to the type of the
      *         IFormPanelDisplayFactory
      */
-    IFormPanelDisplay buildFormPanelDisplay( IFormPanel formPanel );
+    IFormPanelDisplay buildFormPanelDisplay( FormPanel formPanel );
 }

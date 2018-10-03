@@ -78,12 +78,12 @@ public class StepDisplayTree
 
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
-    private List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
-    private List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
+    private final List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
+    private final List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
     private Step _step;
     private Form _form;
     private final FormResponse _formResponse;
-    private Map<Integer, List<Response>> _mapStepResponses = new HashMap<Integer, List<Response>>( );
+    private final Map<Integer, List<Response>> _mapStepResponses = new HashMap<Integer, List<Response>>( );
     private List<Control> _listDisplayControls = new ArrayList<Control>( );
 
     /**
@@ -156,16 +156,18 @@ public class StepDisplayTree
     /**
      * Remove the specified iteration of group
      * 
+     * @param request
+     *            the request
      * @param nIdGroupParent
      *            the id of the parent group
      * @param nIndexIterationToRemove
      *            the index of the iteration to remove in group
      */
-    public void removeIteration( int nIdGroupParent, int nIndexIterationToRemove )
+    public void removeIteration( HttpServletRequest request, int nIdGroupParent, int nIndexIterationToRemove )
     {
         for ( ICompositeDisplay composite : _listChildren )
         {
-            composite.removeIteration( nIdGroupParent, nIndexIterationToRemove, _formResponse );
+            composite.removeIteration( request, nIdGroupParent, nIndexIterationToRemove, _formResponse );
         }
     }
 

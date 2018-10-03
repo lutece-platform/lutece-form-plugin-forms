@@ -33,8 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.impl.FormFilterEntry;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.IFormFilterQueryPartFactory;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterEntryQueryPart;
@@ -48,11 +48,11 @@ public class FormFilterEntryQueryPartFactory implements IFormFilterQueryPartFact
      * {@inheritDoc}
      */
     @Override
-    public IFormFilterQueryPart buildFormFilterQueryPart( IFormFilter formFilter )
+    public IFormFilterQueryPart buildFormFilterQueryPart( FormFilter formFilter )
     {
         IFormFilterQueryPart formFilterEntryQueryPart = null;
 
-        if ( formFilter instanceof FormFilterEntry )
+        if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterEntryConfiguration )
         {
             formFilterEntryQueryPart = new FormFilterEntryQueryPart( );
         }

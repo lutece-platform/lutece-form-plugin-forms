@@ -34,51 +34,51 @@
 package fr.paris.lutece.plugins.forms.export.csv;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
- * 
- * @author a614328
+ * This class represents a CSV header
  *
  */
-public class ColumnDefinition
+public class CSVHeader
 {
-    private Map<String, Integer> _mapColumnDef = new HashMap<String, Integer>( );
+    private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
+    private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
 
-    private final List<String> _listColumnToExport = new ArrayList<String>( );
+    private final List<String> _listFormResponseColumn;
+    private final List<String> _listQuestionColumn;
+
+    private final List<String> _listColumnToExport;
 
     /**
-     * @return the _mapColumnDef
+     * Constructor
      */
-    public Map<String, Integer> getColumnDef( )
+    public CSVHeader( )
     {
-        return _mapColumnDef;
+        _listFormResponseColumn = new ArrayList<>( );
+        _listQuestionColumn = new ArrayList<>( );
+        _listColumnToExport = new ArrayList<>( );
+
+        _listFormResponseColumn.add( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) );
+        _listFormResponseColumn.add( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION, I18nService.getDefaultLocale( ) ) );
     }
 
     /**
-     * @param mapColumnDef
-     *            the mapColumnDef to set
-     */
-    public void setColumnDef( Map<String, Integer> mapColumnDef )
-    {
-        this._mapColumnDef = mapColumnDef;
-    }
-
-    /**
+     * Adds the header for the specified question
+     * 
      * @param question
      *            the question to add
      */
-    public void addColumnDef( Question question )
+    public void addHeader( Question question )
     {
-        if ( !_mapColumnDef.containsKey( question.getTitle( ) ) || _mapColumnDef.get( question.getTitle( ) ) < question.getIterationNumber( ) )
+        String strColumnName = CSVUtil.buildColumnName( question );
+
+        if ( !_listQuestionColumn.contains( strColumnName ) )
         {
-            _mapColumnDef.put( question.getTitle( ), question.getIterationNumber( ) );
+            _listQuestionColumn.add( strColumnName );
         }
     }
 
@@ -87,22 +87,9 @@ public class ColumnDefinition
      */
     public void buildColumnToExport( )
     {
-        for ( Map.Entry<String, Integer> column : _mapColumnDef.entrySet( ) )
-        {
-            _listColumnToExport.add( column.getKey( ) );
-
-            if ( column.getValue( ) > 0 )
-            {
-                String strColumnFinalName = StringUtils.EMPTY;
-
-                for ( int i = 1; i <= column.getValue( ); i++ )
-                {
-                    strColumnFinalName = column.getKey( ) + StringUtils.SPACE + i;
-
-                    _listColumnToExport.add( strColumnFinalName );
-                }
-            }
-        }
+        _listColumnToExport.clear( );
+        _listColumnToExport.addAll( _listFormResponseColumn );
+        _listColumnToExport.addAll( _listQuestionColumn );
     }
 
     /**

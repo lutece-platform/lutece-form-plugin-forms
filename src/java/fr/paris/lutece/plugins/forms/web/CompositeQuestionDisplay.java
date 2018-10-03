@@ -48,6 +48,7 @@ import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
@@ -57,6 +58,7 @@ import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
+import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -80,7 +82,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private static final String MARK_ENTRY_ITERATION_NUMBER = "entry_iteration_number";
 
     private Question _question;
-    private FormDisplay _formDisplay;
+    private final FormDisplay _formDisplay;
     private String _strIconName;
 
     /**
@@ -315,9 +317,28 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
      * {@inheritDoc}
      */
     @Override
-    public void removeIteration( int nIdGroupParent, int nIndexIterationToRemove, FormResponse formResponse )
+    public void removeIteration( HttpServletRequest request, int nIdGroupParent, int nIndexIterationToRemove, FormResponse formResponse )
     {
+        FormDisplay formDisplayParent = FormDisplayHome.findByPrimaryKey( _formDisplay.getParentId( ) );
 
+        if ( formDisplayParent != null && FormsConstants.COMPOSITE_GROUP_TYPE.equals( formDisplayParent.getCompositeType( ) )
+                && formDisplayParent.getCompositeId( ) == nIdGroupParent )
+        {
+            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( _question.getEntry( ).getEntryType( ) );
+
+            if ( entryDataService != null )
+            {
+                if ( _question.getIterationNumber( ) == nIndexIterationToRemove )
+                {
+                    entryDataService.questionRemoved( request, _question );
+                }
+
+                if ( _question.getIterationNumber( ) > nIndexIterationToRemove )
+                {
+                    entryDataService.questionMoved( request, _question, _question.getIterationNumber( ) - 1 );
+                }
+            }
+        }
     }
 
     @Override

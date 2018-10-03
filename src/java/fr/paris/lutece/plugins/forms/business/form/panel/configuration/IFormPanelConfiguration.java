@@ -31,48 +31,41 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
+package fr.paris.lutece.plugins.forms.business.form.panel.configuration;
+
+import java.util.List;
 
 /**
- * Configuration for a FormFilter object
+ * Configuration for a FormPanel
  */
-public class FormFilterConfiguration
+public interface IFormPanelConfiguration
 {
-    // Variables
-    private final int _nPosition;
-    private final String _strFormFilterLabel;
 
     /**
-     * Constructor
+     * Return the technical code of the FormPanel
      * 
-     * @param nPosition
-     *            The position of the FormFilter
-     * @param strFormFilterLabel
-     *            The label of the FormFilter
+     * @return the technical code of the FormPanel
      */
-    public FormFilterConfiguration( int nPosition, String strFormFilterLabel )
-    {
-        _nPosition = nPosition;
-        _strFormFilterLabel = strFormFilterLabel;
-    }
+    String getTechnicalCode( );
 
     /**
-     * Return the position of the FormFilter
+     * Return the position of the FormPanel
      * 
-     * @return the position of the FormFilter
+     * @return the position of the FormPanel
      */
-    public int getPosition( )
-    {
-        return _nPosition;
-    }
+    int getPosition( );
 
     /**
-     * Return the label of the FormFilter
+     * Return the title of the FormPanel
      * 
-     * @return the label of the FormFilter
+     * @return the title of the FormPanel
      */
-    public String getFormFilterLabel( )
-    {
-        return _strFormFilterLabel;
-    }
+    String getTitle( );
+
+    /**
+     * Return the list of FormPanelInitializer class name of the FormPanelConfiguration
+     * 
+     * @return the list of FormPanelInitializer class name of the FormPanelConfiguration
+     */
+    List<String> getListFormPanelInitializerName( );
 }

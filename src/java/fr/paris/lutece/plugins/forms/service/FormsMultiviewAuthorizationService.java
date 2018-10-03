@@ -46,7 +46,9 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
-import fr.paris.lutece.plugins.forms.business.form.panel.IFormPanel;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
+import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDisplayFactory;
 
 /**
@@ -55,23 +57,25 @@ import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDis
 public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthorizationService
 {
     // Variables
-    private final IFormPanel _formPanel;
+    private FormPanel _formPanel;
     private final FormListFacade _formListFacade;
     private final FormColumnFactory _formColumnFactory;
 
     /**
      * Constructor
      * 
-     * @param formPanel
-     *            The FormPanel on which the authorization is based
+     * @param formPanelConfiguration
+     *            The FormPanelConfiguration to set to the FormPanel
      * @param formListFacade
      *            The FormListFacade to use by the service
      * @param formColumnFactory
      *            The FormColumnFactory to use by the service
      */
-    public FormsMultiviewAuthorizationService( IFormPanel formPanel, FormListFacade formListFacade, FormColumnFactory formColumnFactory )
+    public FormsMultiviewAuthorizationService( IFormPanelConfiguration formPanelConfiguration, FormListFacade formListFacade,
+            FormColumnFactory formColumnFactory )
     {
-        _formPanel = formPanel;
+        _formPanel = new FormPanel( );
+        _formPanel.setFormPanelConfiguration( formPanelConfiguration );
         _formListFacade = formListFacade;
         _formColumnFactory = formColumnFactory;
     }
@@ -82,6 +86,8 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
     @Override
     public boolean isUserAuthorizedOnFormResponse( HttpServletRequest request, int nIdFormResponse )
     {
+        _formPanel = new FormPanelFactory( ).buildFormPanel( _formPanel.getFormPanelConfiguration( ) );
+
         boolean bIsUserAuthorizedOnFormResponse = Boolean.FALSE;
 
         if ( nIdFormResponse != NumberUtils.INTEGER_MINUS_ONE && _formPanel != null )

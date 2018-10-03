@@ -33,8 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.IFormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.impl.FormFilterFormResponseDateCreation;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateCreationConfiguration;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.IFormFilterDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayFormResponseDateCreation;
@@ -48,11 +48,11 @@ public class FormFilterDisplayFormResponseDateCreationFactory implements IFormFi
      * {@inheritDoc}
      */
     @Override
-    public IFormFilterDisplay buildFilterDisplay( IFormFilter formFilter )
+    public IFormFilterDisplay buildFilterDisplay( FormFilter formFilter )
     {
         FormFilterDisplayFormResponseDateCreation formFilterDisplayFormResponseDateCreation = null;
 
-        if ( formFilter instanceof FormFilterFormResponseDateCreation )
+        if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterDateCreationConfiguration )
         {
             formFilterDisplayFormResponseDateCreation = new FormFilterDisplayFormResponseDateCreation( );
             formFilterDisplayFormResponseDateCreation.setFormFilter( formFilter );

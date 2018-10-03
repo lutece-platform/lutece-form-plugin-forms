@@ -125,12 +125,12 @@ public final class FormsDisplayUtils
      */
     public static boolean isDescendantDisplay( int nDisplayId, FormDisplay formDisplay )
     {
-        boolean bIsChild = false;
-
         if ( nDisplayId == formDisplay.getId( ) )
         {
             return true;
         }
+
+        boolean bIsChild = false;
 
         List<FormDisplay> listFormDisplay = FormDisplayHome.getFormDisplayListByParent( formDisplay.getStepId( ), formDisplay.getId( ) );
 

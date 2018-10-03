@@ -31,24 +31,44 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.impl;
+package fr.paris.lutece.plugins.forms.export.csv;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterConfiguration;
+import fr.paris.lutece.plugins.forms.business.Question;
 
 /**
- * Implementation of the IFormFilter for filter on the Entry values
+ * This class provides utilitary methods for CSV export
+ *
  */
-public class FormFilterEntry extends AbstractFormFilter
+public final class CSVUtil
 {
+    private static final String ITERATION_PREFIX = " (";
+    private static final String ITERATION_SUFFIX = ")";
+
     /**
      * Constructor
-     * 
-     * @param formFilterConfiguration
-     *            The FormFilterConfiguration to set to the FormFilter
      */
-    public FormFilterEntry( FormFilterConfiguration formFilterConfiguration )
+    private CSVUtil( )
     {
-        super( );
-        setFormFilterConfiguration( formFilterConfiguration );
+
+    }
+
+    /**
+     * Builds the column name for the specified question
+     * 
+     * @param question
+     *            the question
+     * @return the column name
+     */
+    public static String buildColumnName( Question question )
+    {
+        String strColumnName = question.getTitle( );
+
+        if ( question.getIterationNumber( ) > 0 )
+        {
+            strColumnName = new StringBuilder( question.getTitle( ) ).append( ITERATION_PREFIX ).append( question.getIterationNumber( ) )
+                    .append( ITERATION_SUFFIX ).toString( );
+        }
+
+        return strColumnName;
     }
 }

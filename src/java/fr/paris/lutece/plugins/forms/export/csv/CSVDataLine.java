@@ -33,24 +33,52 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
- * 
- * @author a614328
+ * This class represents a CSV line
  *
  */
 public class CSVDataLine
 {
-    private final Map<String, String> _mapDataToExport = new HashMap<String, String>( );
+    private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
+    private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
+    private static final String PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT = "forms.export.formResponse.form.date.creation.format";
+
+    private final Map<String, String> _mapDataToExport;
+
+    /**
+     * Constructor
+     * 
+     * @param formResponse
+     *            the form response associated to this instance
+     */
+    public CSVDataLine( FormResponse formResponse )
+    {
+        _mapDataToExport = new HashMap<>( );
+
+        Locale locale = I18nService.getDefaultLocale( );
+        DateFormat dateFormat = new SimpleDateFormat( AppPropertiesService.getProperty( PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT ), locale );
+        Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
+        _mapDataToExport.put( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, locale ), form.getTitle( ) );
+        _mapDataToExport.put( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION, locale ), dateFormat.format( formResponse.getCreation( ) ) );
+    }
 
     /**
      * 
@@ -62,16 +90,8 @@ public class CSVDataLine
         IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService(
                 formQuestionResponse.getQuestion( ).getEntry( ).getEntryType( ) );
 
-        StringBuilder sbQuestionTitle = new StringBuilder( );
-        sbQuestionTitle.append( formQuestionResponse.getQuestion( ).getTitle( ) );
-
-        if ( formQuestionResponse.getQuestion( ).getIterationNumber( ) > 0 )
-        {
-
-            sbQuestionTitle.append( StringUtils.SPACE ).append( formQuestionResponse.getQuestion( ).getIterationNumber( ) );
-        }
-
-        _mapDataToExport.put( sbQuestionTitle.toString( ), Objects.toString( entryDataService.responseToString( formQuestionResponse ), StringUtils.EMPTY ) );
+        _mapDataToExport.put( CSVUtil.buildColumnName( formQuestionResponse.getQuestion( ) ),
+                Objects.toString( entryDataService.responseToString( formQuestionResponse ), StringUtils.EMPTY ) );
     }
 
     /**

@@ -89,16 +89,18 @@ public class CSVExport implements IFormatExport
     @Override
     public byte [ ] getByteExportFile( List<FormResponse> listFormResponse )
     {
+        byte [ ] byteExportFile = { };
+
         if ( CollectionUtils.isNotEmpty( listFormResponse ) )
         {
             FormResponseCsvExport formResponseExport = new FormResponseCsvExport( listFormResponse );
 
             String strFinalOutput = formResponseExport.getCsvColumnToExport( ) + formResponseExport.getCsvDataToExport( );
 
-            return strFinalOutput.getBytes( StandardCharsets.UTF_8 );
+            byteExportFile = strFinalOutput.getBytes( StandardCharsets.UTF_8 );
         }
 
-        return null;
+        return byteExportFile;
     }
 
 }
