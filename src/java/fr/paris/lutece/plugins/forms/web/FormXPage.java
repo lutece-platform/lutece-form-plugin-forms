@@ -489,9 +489,7 @@ public class FormXPage extends MVCApplication
             return redirectView( request, VIEW_STEP );
         }
 
-        FormResponse formResponse = _formResponseManager.getFormResponse( );
-
-        _formService.saveForm( form, formResponse );
+        testNumberMaxResponsesAndSave(form, request);
 
         FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
         Map<String, Object> model = getModel( );
@@ -566,7 +564,6 @@ public class FormXPage extends MVCApplication
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
         }
-
         return form;
     }
 
@@ -846,5 +843,21 @@ public class FormXPage extends MVCApplication
         _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
 
         return redirectView( request, VIEW_STEP );
+    }
+    
+    private synchronized void testNumberMaxResponsesAndSave( Form form ,HttpServletRequest request ) throws SiteMessageException {
+        if ( form.getMaxNumberResponse( ) != 0 )
+        {
+            int nNumberReponseForm = FormHome.getNumberOfResponseForms( form.getId( ) );
+            if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
+            {
+                SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+            }
+            else {
+            	FormResponse formResponse = _formResponseManager.getFormResponse( );
+            	  _formService.saveForm( form, formResponse );
+            }
+
+        }
     }
 }
