@@ -845,6 +845,13 @@ public class FormXPage extends MVCApplication
         return redirectView( request, VIEW_STEP );
     }
 
+    /**
+     * verify the number max of response and save the response
+     * 
+     * @param form
+     * @param request
+     * @throws SiteMessageException
+     */
     private synchronized void testNumberMaxResponsesAndSave( Form form, HttpServletRequest request ) throws SiteMessageException
     {
         if ( form.getMaxNumberResponse( ) != 0 )
