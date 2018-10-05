@@ -55,7 +55,7 @@ public final class FormDAO implements IFormDAO
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name, display_summary, return_url, max_number_response ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, breadcrumb_name = ?, display_summary = ?, return_url = ?, max_number_response = ? WHERE id_form = ?";
-    private static final String SQL_QUERY_COUNT_NUMBER_OF_RESPONSE = "SELECT count(id_form) FROM forms_response WHERE id_form = ?";
+    private static final String SQL_QUERY_COUNT_NUMBER_OF_RESPONSE = "SELECT count(id_form) FROM forms_response WHERE id_form = ? and from_save = 0";
 
     /**
      * {@inheritDoc }
