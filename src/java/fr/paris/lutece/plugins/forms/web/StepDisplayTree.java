@@ -58,6 +58,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
@@ -182,13 +183,11 @@ public class StepDisplayTree
      *            the locale
      * @param displayType
      *            The display type
-     * @param user
-     *            the lutece user
      * @return the html template of the tree as a String
      */
-    public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType,
-            LuteceUser user )
+    public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
     {
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         Map<String, Object> model = new HashMap<String, Object>( );
 
         StringBuilder strBuilder = new StringBuilder( );

@@ -342,7 +342,7 @@ public class FormXPage extends MVCApplication
         }
 
         model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( _currentStep ), request.getLocale( ),
-                DisplayType.EDITION_FRONTOFFICE, user ) );
+                DisplayType.EDITION_FRONTOFFICE ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( _formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( _formResponseManager ) );
     }
@@ -453,7 +453,7 @@ public class FormXPage extends MVCApplication
             StepDisplayTree stepDisplayTree = new StepDisplayTree( step.getId( ), _formResponseManager.getFormResponse( ) );
 
             listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( step ), request.getLocale( ),
-                    DisplayType.READONLY_FRONTOFFICE, null ) );
+                    DisplayType.READONLY_FRONTOFFICE ) );
         }
 
         return listFormDisplayTrees;
