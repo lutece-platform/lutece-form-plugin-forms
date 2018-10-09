@@ -864,12 +864,8 @@ public class FormXPage extends MVCApplication
             {
                 SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
             }
-            else
-            {
-                FormResponse formResponse = _formResponseManager.getFormResponse( );
-                _formService.saveForm( form, formResponse );
-            }
-
         }
+        FormResponse formResponse = _formResponseManager.getFormResponse( );
+        _formService.saveForm( form, formResponse );
     }
 }
