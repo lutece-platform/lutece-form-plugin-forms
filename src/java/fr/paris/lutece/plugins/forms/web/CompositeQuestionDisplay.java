@@ -84,6 +84,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private Question _question;
     private final FormDisplay _formDisplay;
     private String _strIconName;
+    private final Map<String, Object> _model;
 
     /**
      * Constructor
@@ -98,6 +99,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     public CompositeQuestionDisplay( FormDisplay formDisplay, FormResponse formResponse, int nIterationNumber )
     {
         _formDisplay = formDisplay;
+        _model = new HashMap<>( );
 
         initComposite( formResponse, nIterationNumber );
     }
@@ -179,29 +181,28 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 List<Response> listResponse = findResponses( listFormQuestionResponse );
                 setQuestionVisibility( listResponse, displayType );
 
-                Map<String, Object> model = new HashMap<String, Object>( );
-                model.put( MARK_ENTRY_ITERATION_NUMBER, _question.getIterationNumber( ) );
-                model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
-                model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
+                _model.put( MARK_ENTRY_ITERATION_NUMBER, _question.getIterationNumber( ) );
+                _model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
+                _model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
 
-                strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale, model, displayType );
+                strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale, _model, displayType );
 
-                model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
-                model.put( FormsConstants.MARK_QUESTION, _question );
+                _model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
+                _model.put( FormsConstants.MARK_QUESTION, _question );
                 if ( _formDisplay.getDisplayControl( ) != null )
                 {
                     Control control = _formDisplay.getDisplayControl( );
                     IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
 
-                    model.put( FormsConstants.MARK_VALIDATOR, validator );
+                    _model.put( FormsConstants.MARK_VALIDATOR, validator );
                     Control controlNew = control.clone( );
                     controlNew.setValue( validator.getJavascriptControlValue( control ) );
-                    model.put( FormsConstants.MARK_CONTROL, controlNew );
+                    _model.put( FormsConstants.MARK_CONTROL, controlNew );
 
-                    model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdTargetFormDisplay( ) );
+                    _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdTargetFormDisplay( ) );
                 }
 
-                HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, model );
+                HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, _model );
 
                 strQuestionTemplate = htmlTemplateQuestion != null ? htmlTemplateQuestion.getHtml( ) : StringUtils.EMPTY;
             }
@@ -398,6 +399,15 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     public void addQuestions( List<Question> listQuestion )
     {
         listQuestion.add( _question );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addModel( Map<String, Object> model )
+    {
+        _model.putAll( model );
     }
 
 }

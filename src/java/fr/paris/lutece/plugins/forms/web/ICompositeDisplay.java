@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -133,5 +134,13 @@ public interface ICompositeDisplay
      *            the list of question to complete
      */
     void addQuestions( List<Question> listQuestion );
+
+    /**
+     * Adds the specified model in the model of this instance
+     * 
+     * @param model
+     *            the model to add
+     */
+    void addModel( Map<String, Object> model );
 
 }
