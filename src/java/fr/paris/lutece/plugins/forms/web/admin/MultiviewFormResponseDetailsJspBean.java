@@ -96,11 +96,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     // Rights
     public static final String RIGHT_FORMS_MULTIVIEW = "FORMS_MULTIVIEW";
 
+    // JSP path
+    public static final String CONTROLLER_JSP_NAME_WITH_PATH = "jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp";
+
     // Generated serial UID
     private static final long serialVersionUID = 3673744119212180461L;
-
-    // JSP path
-    private static final String CONTROLLER_JSP_NAME_WITH_PATH = "jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp";
 
     // Templates
     private static final String TEMPLATE_VIEW_FORM_RESPONSE = "admin/plugins/forms/multiview/view_form_response.html";
