@@ -72,8 +72,11 @@ public interface IBreadcrumb
 
     /**
      * Gives the model to use for the current step
-     * @param request the request
-     * @param formResponseManager the form response manager
+     * 
+     * @param request
+     *            the request
+     * @param formResponseManager
+     *            the form response manager
      * @return the model
      */
     default Map<String, Object> getModelForCurrentStep( HttpServletRequest request, FormResponseManager formResponseManager )
