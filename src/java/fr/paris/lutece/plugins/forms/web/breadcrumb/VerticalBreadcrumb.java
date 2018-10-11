@@ -37,6 +37,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -68,20 +70,29 @@ public class VerticalBreadcrumb implements IBreadcrumb
         _strBreadcrumbDisplayBeanName = I18nService.getLocalizedString( strBreadcrumbDisplayName, I18nService.getDefaultLocale( ) );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getBreadcrumbBeanName( )
     {
         return _strBreadcrumbBeanName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getBreadcrumbDisplayName( )
     {
         return _strBreadcrumbDisplayBeanName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getTopHtml( FormResponseManager formResponseManager )
+    public String getTopHtml( HttpServletRequest request, FormResponseManager formResponseManager )
     {
         Step currentStep = formResponseManager.getValidatedSteps( ).get( formResponseManager.getValidatedSteps( ).size( ) - 1 );
 
@@ -93,13 +104,16 @@ public class VerticalBreadcrumb implements IBreadcrumb
 
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( FormsConstants.MARK_LIST_STEPS, listStep );
-        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
 
-        return htmlTemplateQuestion.getHtml( );
+        return template.getHtml( );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getBottomHtml( FormResponseManager formResponseManager )
+    public String getBottomHtml( HttpServletRequest request, FormResponseManager formResponseManager )
     {
         Step currentStep = formResponseManager.getValidatedSteps( ).get( formResponseManager.getValidatedSteps( ).size( ) - 1 );
 
@@ -111,9 +125,9 @@ public class VerticalBreadcrumb implements IBreadcrumb
 
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( FormsConstants.MARK_LIST_STEPS, listStep );
-        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
 
-        return htmlTemplateQuestion.getHtml( );
+        return template.getHtml( );
     }
 
     /**

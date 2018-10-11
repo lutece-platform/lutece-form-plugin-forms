@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.forms.web.breadcrumb;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.FormResponseManager;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -65,30 +67,42 @@ public class HorizontalBreadcrumb implements IBreadcrumb
         _strBreadcrumbDisplayBeanName = I18nService.getLocalizedString( strBreadcrumbDisplayName, I18nService.getDefaultLocale( ) );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getBreadcrumbBeanName( )
     {
         return _strBreadcrumbBeanName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getBreadcrumbDisplayName( )
     {
         return _strBreadcrumbDisplayBeanName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getTopHtml( FormResponseManager formResponseManager )
+    public String getTopHtml( HttpServletRequest request, FormResponseManager formResponseManager )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
         model.put( FormsConstants.MARK_LIST_STEPS, formResponseManager.getValidatedSteps( ) );
-        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
 
-        return htmlTemplateQuestion.getHtml( );
+        return template.getHtml( );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public String getBottomHtml( FormResponseManager formResponseManager )
+    public String getBottomHtml( HttpServletRequest request, FormResponseManager formResponseManager )
     {
         return null;
     }

@@ -267,7 +267,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 StepDisplayTree stepDisplayTree = new StepDisplayTree( nIdStep, formResponse );
                 listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request,
                         FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) ), getLocale( ),
-                        DisplayType.READONLY_BACKOFFICE, null ) );
+                        DisplayType.READONLY_BACKOFFICE ) );
             }
         }
 

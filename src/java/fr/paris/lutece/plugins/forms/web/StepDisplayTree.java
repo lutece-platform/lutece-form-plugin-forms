@@ -58,6 +58,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
@@ -85,6 +86,7 @@ public class StepDisplayTree
     private final FormResponse _formResponse;
     private final Map<Integer, List<Response>> _mapStepResponses = new HashMap<Integer, List<Response>>( );
     private List<Control> _listDisplayControls = new ArrayList<Control>( );
+    private final Map<String, Object> _model = new HashMap<>( );
 
     /**
      * Constructor
@@ -182,30 +184,28 @@ public class StepDisplayTree
      *            the locale
      * @param displayType
      *            The display type
-     * @param user
-     *            the lutece user
      * @return the html template of the tree as a String
      */
-    public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType,
-            LuteceUser user )
+    public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
         StringBuilder strBuilder = new StringBuilder( );
 
         for ( ICompositeDisplay child : _listChildren )
         {
+            child.addModel( _model );
             strBuilder.append( child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType ) );
         }
 
-        model.put( FormsConstants.MARK_FORM, _form );
-        model.put( FormsConstants.MARK_STEP, _step );
-        model.put( FormsConstants.MARK_USER, user );
-        model.put( MARK_STEP_CONTENT, strBuilder.toString( ) );
+        _model.put( FormsConstants.MARK_FORM, _form );
+        _model.put( FormsConstants.MARK_STEP, _step );
+        _model.put( FormsConstants.MARK_USER, user );
+        _model.put( MARK_STEP_CONTENT, strBuilder.toString( ) );
 
         String strTemplate = findTemplateFor( displayType );
 
-        return AppTemplateService.getTemplate( strTemplate, locale, model ).getHtml( );
+        return AppTemplateService.getTemplate( strTemplate, locale, _model ).getHtml( );
     }
 
     /**
@@ -301,5 +301,16 @@ public class StepDisplayTree
         }
 
         return listQuestion;
+    }
+
+    /**
+     * Adds the specified model in the model of this instance
+     * 
+     * @param model
+     *            the model to add
+     */
+    public void addModel( Map<String, Object> model )
+    {
+        _model.putAll( model );
     }
 }

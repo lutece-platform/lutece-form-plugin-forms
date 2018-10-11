@@ -92,6 +92,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     private Group _group;
     private final FormDisplay _formDisplay;
     private String _strIconName;
+    private final Map<String, Object> _model = new HashMap<>( );
 
     /**
      * Constructor
@@ -222,29 +223,28 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     @Override
     public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
-
         List<String> listChildrenHtml = new ArrayList<String>( );
 
         for ( ICompositeDisplay child : _listChildren )
         {
+            child.addModel( _model );
             listChildrenHtml.add( child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType ) );
         }
 
-        model.put( MARK_GROUP, _group );
-        model.put( MARK_GROUP_CONTENT, listChildrenHtml );
-        model.put( FormsConstants.PARAMETER_ID_GROUP, _formDisplay.getId( ) );
-        model.put( MARK_IS_ITERABLE, isIterable( ) );
-        model.put( MARK_NB_BASE_CHILDREN, _nNbBaseChildren );
+        _model.put( MARK_GROUP, _group );
+        _model.put( MARK_GROUP_CONTENT, listChildrenHtml );
+        _model.put( FormsConstants.PARAMETER_ID_GROUP, _formDisplay.getId( ) );
+        _model.put( MARK_IS_ITERABLE, isIterable( ) );
+        _model.put( MARK_NB_BASE_CHILDREN, _nNbBaseChildren );
 
         if ( _formDisplay.getDisplayControl( ) != null )
         {
-            model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdTargetFormDisplay( ) );
+            _model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdTargetFormDisplay( ) );
         }
 
         String strTemplate = findTemplateFor( displayType );
 
-        return AppTemplateService.getTemplate( strTemplate, locale, model ).getHtml( );
+        return AppTemplateService.getTemplate( strTemplate, locale, _model ).getHtml( );
     }
 
     /**
@@ -487,5 +487,14 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         {
             child.addQuestions( listQuestion );
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addModel( Map<String, Object> model )
+    {
+        _model.putAll( model );
     }
 }

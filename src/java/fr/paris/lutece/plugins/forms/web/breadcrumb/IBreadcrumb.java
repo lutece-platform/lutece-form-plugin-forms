@@ -33,6 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.web.breadcrumb;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.forms.web.FormResponseManager;
 
 /**
@@ -41,28 +46,49 @@ import fr.paris.lutece.plugins.forms.web.FormResponseManager;
 public interface IBreadcrumb
 {
     /**
+     * Gives the bean name of the breadcrumb
      * 
      * @return the Breadcrumb bean name
      */
     String getBreadcrumbBeanName( );
 
     /**
+     * Gives the display name of the breadcrumb
      * 
      * @return the Breadcrumb display name
      */
     String getBreadcrumbDisplayName( );
 
     /**
+     * Gives the HTML displayed before the current step
+     * 
+     * @param request
+     *            the request
      * @param formResponseManager
      *            the object that contains the actual visited list of step
-     * @return the HTML to display at the top of page
+     * @return the HTML displayed before the current step
      */
-    String getTopHtml( FormResponseManager formResponseManager );
+    String getTopHtml( HttpServletRequest request, FormResponseManager formResponseManager );
 
     /**
+     * Gives the model to use for the current step
+     * @param request the request
+     * @param formResponseManager the form response manager
+     * @return the model
+     */
+    default Map<String, Object> getModelForCurrentStep( HttpServletRequest request, FormResponseManager formResponseManager )
+    {
+        return new HashMap<>( );
+    }
+
+    /**
+     * Gives the HTML displayed after the current step
+     * 
+     * @param request
+     *            the request
      * @param formResponseManager
      *            the object that contains the actual visited list of step
-     * @return the HTML to display at the bottom of page
+     * @return the HTML displayed after the current step
      */
-    String getBottomHtml( FormResponseManager formResponseManager );
+    String getBottomHtml( HttpServletRequest request, FormResponseManager formResponseManager );
 }

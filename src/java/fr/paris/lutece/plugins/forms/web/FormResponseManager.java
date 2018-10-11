@@ -303,7 +303,14 @@ public class FormResponseManager
      */
     public List<Step> getValidatedSteps( )
     {
-        return _listValidatedStep;
+        List<Step> listStep = new ArrayList<>( _listValidatedStep.size( ) );
+
+        for ( Step step : _listValidatedStep )
+        {
+            listStep.add( step );
+        }
+
+        return listStep;
     }
 
 }

@@ -341,10 +341,13 @@ public class FormXPage extends MVCApplication
             _formResponseManager.add( _currentStep );
         }
 
+        Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
+        _stepDisplayTree.addModel( modelForStep );
+
         model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( _currentStep ), request.getLocale( ),
-                DisplayType.EDITION_FRONTOFFICE, user ) );
-        model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( _formResponseManager ) );
-        model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( _formResponseManager ) );
+                DisplayType.EDITION_FRONTOFFICE ) );
+        model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
+        model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
     }
 
     /**
@@ -453,7 +456,7 @@ public class FormXPage extends MVCApplication
             StepDisplayTree stepDisplayTree = new StepDisplayTree( step.getId( ), _formResponseManager.getFormResponse( ) );
 
             listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( step ), request.getLocale( ),
-                    DisplayType.READONLY_FRONTOFFICE, null ) );
+                    DisplayType.READONLY_FRONTOFFICE ) );
         }
 
         return listFormDisplayTrees;
@@ -861,12 +864,8 @@ public class FormXPage extends MVCApplication
             {
                 SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
             }
-            else
-            {
-                FormResponse formResponse = _formResponseManager.getFormResponse( );
-                _formService.saveForm( form, formResponse );
-            }
-
         }
+        FormResponse formResponse = _formResponseManager.getFormResponse( );
+        _formService.saveForm( form, formResponse );
     }
 }

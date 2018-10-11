@@ -1,14 +1,33 @@
 <#include "/admin/plugins/forms/commons.html" />
 <#if !entry.onlyDisplayInBack>
-    <@formGroup labelFor='${entry.idEntry}_address' labelKey='${entry.title}' helpKey=entry.helpMessage mandatory=entry.mandatory>
-        <#assign responseAddress = "">
-        <#if getResponseContainingTheFieldWithTitle( list_responses, "address" )?? >
-           <#assign responseAddress = getResponseContainingTheFieldWithTitle( list_responses, "address" ).toStringValueResponse >
-        </#if>
-        <#if responseAddress == "" >
-            #i18n{forms.entryType.geolocalisation.message.noGeolocation}
-        <#else>
-            ${(responseAddress)!}   
-        </#if>
-    </@formGroup>
+	<@formGroup labelFor='${entry.idEntry}_address' labelKey='${entry.title}' helpKey=entry.helpMessage mandatory=entry.mandatory>
+	    <#assign responseX = "" >
+	    <#assign responseY = "" >
+	    <#if getResponseContainingTheFieldWithTitle( list_responses, "address" )?? >
+	       <#assign responseAddress = getResponseContainingTheFieldWithTitle( list_responses, "address" ).toStringValueResponse >
+	    </#if>
+	    <#if getResponseContainingTheFieldWithTitle( list_responses, "geometry" )?? >
+	       <#assign responseGeometry = getResponseContainingTheFieldWithTitle( list_responses, "geometry" ).toStringValueResponse >
+	    </#if>
+	    <#if getResponseContainingTheFieldWithTitle( list_responses, "X" )?? >
+	       <#assign responseX = getResponseContainingTheFieldWithTitle( list_responses, "X" ).toStringValueResponse >
+	    </#if>
+	    <#if getResponseContainingTheFieldWithTitle( list_responses, "Y" )?? >
+	       <#assign responseY = getResponseContainingTheFieldWithTitle( list_responses, "Y" ).toStringValueResponse >
+	    </#if>
+	    <#if responseX == "" || responseX == "0" || responseY == "" || responseY == "0">
+	        #i18n{forms.entryType.geolocalisation.message.noGeolocation}
+	    <#else>
+	        ${(responseAddress)!}
+	        
+	        <input type="hidden" id="${entry.idEntry}_address" name="${entry.idEntry}_address" value="${(responseAddress)!}">
+	        <input type="hidden" id="${entry.idEntry}_geometry" name="${entry.idEntry}_geometry" value="${(responseGeometry)!}" />
+	        <input type="hidden" id="${entry.idEntry}_x" name="${entry.idEntry}_x" value="${(responseX)!}">
+	        <input type="hidden" id="${entry.idEntry}_y" name="${entry.idEntry}_y" value="${(responseY)!}">
+	
+	        <#assign editModeValue = "ReadOnly">
+	
+            <#include entry.mapProvider.htmlCode />
+	    </#if>
+	</@formGroup>
 </#if>
