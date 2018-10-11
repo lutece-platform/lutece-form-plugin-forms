@@ -50,6 +50,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class CSVExport implements IFormatExport
 {
     private static final String CONSTANT_MIME_TYPE_CSV = "application/csv";
+    private static final char CHARACTER_UTF_8_BOM = '\uFEFF';
 
     private final String _strFormatExportName;
     private final String _strFormatExportDisplayName;
@@ -95,9 +96,10 @@ public class CSVExport implements IFormatExport
         {
             FormResponseCsvExport formResponseExport = new FormResponseCsvExport( listFormResponse );
 
-            String strFinalOutput = formResponseExport.getCsvColumnToExport( ) + formResponseExport.getCsvDataToExport( );
+            StringBuilder sbExportFile = new StringBuilder( );
+            sbExportFile.append( CHARACTER_UTF_8_BOM ).append( formResponseExport.getCsvColumnToExport( ) ).append( formResponseExport.getCsvDataToExport( ) );
 
-            byteExportFile = strFinalOutput.getBytes( StandardCharsets.UTF_8 );
+            byteExportFile = sbExportFile.toString( ).getBytes( StandardCharsets.UTF_8 );
         }
 
         return byteExportFile;
