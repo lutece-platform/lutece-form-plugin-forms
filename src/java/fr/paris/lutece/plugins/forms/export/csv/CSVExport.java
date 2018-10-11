@@ -43,8 +43,7 @@ import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
- * 
- * @author a614328
+ * This class performs a CSV export
  *
  */
 public class CSVExport implements IFormatExport
@@ -69,24 +68,36 @@ public class CSVExport implements IFormatExport
         _strFormatExportDisplayName = I18nService.getLocalizedString( strFormatExportDisplayName, I18nService.getDefaultLocale( ) );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getFormatExportBeanName( )
     {
         return _strFormatExportName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getFormatExportDisplayName( )
     {
         return _strFormatExportDisplayName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getFormatContentType( )
     {
         return CONSTANT_MIME_TYPE_CSV;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public byte [ ] getByteExportFile( List<FormResponse> listFormResponse )
     {
