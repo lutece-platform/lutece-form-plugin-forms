@@ -21,19 +21,26 @@
 }
 
 .btn-forms {
-	padding:15px; 
-	margin-left:15px;
+	padding: 15px; 
+	margin-left: 15px;
 }
 
 .box-forms {
 	border-radius:0; 
 	margin-bottom:0; 
+	padding: 0 20px; 
 	box-shadow:none; 
 	border-top:3px solid #d2d6de;
 }
 
+.box-forms .box-body{
+	padding: 0;
+	padding-top: 15px;
+}
+
 .box-forms-borderless {
-	border-top:0
+	border-top:0;
+	margin-top: 5px;
 
 }
 .box-forms-tab-content {
@@ -47,9 +54,6 @@
 	display:inline-block; 
 }
 
-.header-form-response { 
-	min-height: 10em;
-}
 
 .label-form-response-history { 
     padding-top:initial !important;
@@ -234,19 +238,20 @@ table.table-hover tbody tr:hover {
 	text-transform:uppercase;
 }
 
-#filter-forms {
-	font-size:1rem; 
-	color:#000;
+#filter-forms .well-sm {
+	padding: 4px;
 }
+#filter-forms .well-sm .badge{
+	padding: 4px 8px;
+	font-size: 16px;
+	border-radius: 50%;
+	background-color: #3c8dbc;
+}
+
 #filter-forms h3 {
 	color:#fff;
 }
-#filter-forms .form-control {
-	
-}
-#filter-forms .input-group-btn > .btn {
-	
-}
+
 #filter-forms span {
 	text-transform:uppercase;
 }
@@ -262,6 +267,7 @@ table.table-hover tbody tr:hover {
 	-moz-appearance:none; 
 	appearance:none; 
 	cursor:pointer;
+	max-width: 360px;
 }
 #filter-forms select::-ms-expand { 
 	display:none;
@@ -297,26 +303,19 @@ table.table-hover tbody tr:hover {
 	position:absolute; 
 	pointer-events:none;
 }
-#filter-forms .btn {
-	
-}
 
 #multiview-no-forms { 
 	width: 100%; 
 	text-align: center; 
 	min-height: 520px;
 }
+
 #multiview-no-forms img { 
 	position: absolute; 
 	top: 60%; 
 	left: 60%; 
 	margin-top: -250px; 
 	margin-left: -250px;
-}
-
-#form-response-details {
-    font-family:'Montserrat-Light','Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif; 
-    padding-top:50px;
 }
 
 #form-response-details legend {
@@ -335,7 +334,7 @@ table.table-hover tbody tr:hover {
 }
 
 #info-right {
-	padding:50px 0 0 0;
+	padding:5px 15px;
 }
 
 #info-right .title { 

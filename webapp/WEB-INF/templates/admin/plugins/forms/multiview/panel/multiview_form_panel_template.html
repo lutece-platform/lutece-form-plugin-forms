@@ -1,5 +1,3 @@
-<li class="<#if panel_active>active</#if>" role="presentation">
-    <button type="submit" name="selected_panel" value="${panel_technical_code}">
-        <i class="fa fa-inbox"></i> ${panel_title} <span class="badge">${panel_formResponseNumber}</span>
-    </button>
-</li>
+<#if panel_formResponseNumber &gt; 0>
+    <div class="well well-sm text-center"><#if panel_formResponseNumber=1>Une r&eacute;ponse<#else> Nombre de r&eacute;ponses <span class="badge">${panel_formResponseNumber}</span></#if></div>
+</#if>
