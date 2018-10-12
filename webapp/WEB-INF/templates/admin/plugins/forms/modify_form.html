@@ -1,5 +1,6 @@
 <#include "/admin/util/editor/editor.html" />
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#include "/admin/plugins/form/commons.html" />
 <@box>
     <@boxHeader title='#i18n{forms.modify_form.title} ${form.title!}' />
     <@boxBody>
@@ -21,6 +22,10 @@
                             <@formGroup labelKey='#i18n{forms.modify_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.modify_form.labelAuthentificationNeeded.help}' >
 				                <@checkBox labelFor='authentificationNeeded' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
 				             </@formGroup>
+				              <@formGroup labelKey='#i18n{forms.create_Form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_Form.labelLimitNumberResponse.help}'>
+								<@checkBox name='OneResponseByUser' id='OneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser)
+				 				labelFor='OneResponseByUser' />
+							</@formGroup>
                             <#if workflow_list?has_content>
                                <@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' helpKey='#i18n{forms.modify_form.workflow.label.help}'>
                                    <@inputGroup>

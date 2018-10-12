@@ -138,4 +138,18 @@ public final class FormHome
         return _dao.countNumberOfResponseForms( nIdFormm );
     }
 
+    /**
+     * count the number of response for form
+     *
+     * @param nIdForm
+     * 			id of form
+     * @param strGuid
+     * 			the name of user
+     * @return the number of response for form corresponding of user
+     */
+    public static int getNumberOfResponseFormByUser( int nIdForm, String strGuid )
+    {
+        return _dao.countNumberOfResponseFormByUser( nIdForm, strGuid );
+    }
+
 }

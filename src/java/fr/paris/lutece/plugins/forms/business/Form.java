@@ -101,6 +101,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
 
     private boolean _bDisplaySummary;
     private int _nMaxNumberResponse;
+    private boolean _bOneResponseByUser;
 
     /**
      * Returns the Id
@@ -451,5 +452,26 @@ public class Form implements AdminWorkgroupResource, RBACResource
     public void setMaxNumberResponse( int nMaxNumberResponse )
     {
         _nMaxNumberResponse = nMaxNumberResponse;
+    }
+
+    /**
+     * Check the user can only submit one form.
+     * 
+     * @return true if the user can submit just one form
+     */
+    public boolean isOneResponseByUser( )
+    {
+        return _bOneResponseByUser;
+    }
+
+    /**
+     * set true if the user can submit just once the form
+     * 
+     * @param bOneResponseByUser
+     *            true if the user can submit just one form
+     */
+    public void setOneResponseByUser( boolean bOneResponseByUser )
+    {
+        _bOneResponseByUser = bOneResponseByUser;
     }
 }

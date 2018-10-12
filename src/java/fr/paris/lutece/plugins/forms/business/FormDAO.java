@@ -50,12 +50,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormDAO implements IFormDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name, display_summary, return_url, max_number_response FROM forms_form";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, one_response_by_user, breadcrumb_name, display_summary, return_url, max_number_response FROM forms_form";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_form = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, breadcrumb_name, display_summary, return_url, max_number_response ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, one_response_by_user, breadcrumb_name, display_summary, return_url, max_number_response ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, breadcrumb_name = ?, display_summary = ?, return_url = ?, max_number_response = ? WHERE id_form = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, one_response_by_user = ?, breadcrumb_name = ?, display_summary = ?, return_url = ?, max_number_response = ? WHERE id_form = ?";
     private static final String SQL_QUERY_COUNT_NUMBER_OF_RESPONSE = "SELECT count(id_form) FROM forms_response WHERE id_form = ? and from_save = 0";
+    private static final String SQL_QUERY_COUNT_NUMBER__RESPONSE_USER = "SELECT count(id_form) FROM forms_response WHERE id_form=? and guid= ?";
 
     /**
      * {@inheritDoc }
@@ -76,6 +77,7 @@ public final class FormDAO implements IFormDAO
             daoUtil.setString( nIndex++, form.getWorkgroup( ) );
             daoUtil.setInt( nIndex++, form.getIdWorkflow( ) );
             daoUtil.setBoolean( nIndex++, form.isAuthentificationNeeded( ) );
+            daoUtil.setBoolean( nIndex++, form.isOneResponseByUser( ) );
             daoUtil.setString( nIndex++, form.getBreadcrumbName( ) );
             daoUtil.setBoolean( nIndex++, form.isDisplaySummary( ) );
             daoUtil.setString( nIndex++, form.getReturnUrl( ) );
@@ -146,6 +148,7 @@ public final class FormDAO implements IFormDAO
         daoUtil.setString( nIndex++, form.getWorkgroup( ) );
         daoUtil.setInt( nIndex++, form.getIdWorkflow( ) );
         daoUtil.setBoolean( nIndex++, form.isAuthentificationNeeded( ) );
+        daoUtil.setBoolean( nIndex++, form.isOneResponseByUser( ) );
         daoUtil.setString( nIndex++, form.getBreadcrumbName( ) );
         daoUtil.setBoolean( nIndex++, form.isDisplaySummary( ) );
         daoUtil.setString( nIndex++, form.getReturnUrl( ) );
@@ -217,6 +220,28 @@ public final class FormDAO implements IFormDAO
     }
 
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int countNumberOfResponseFormByUser( int nIdForm, String strGuid )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_NUMBER__RESPONSE_USER );
+        daoUtil.setInt( 1, nIdForm );
+        daoUtil.setString( 2, strGuid );
+        daoUtil.executeQuery( );
+        int nCount = 0;
+
+        if ( daoUtil.next( ) )
+        {
+            nCount = daoUtil.getInt( 1 );
+        }
+
+        daoUtil.close( );
+
+        return nCount;
+    }
+
+    /**
      * 
      * @param daoUtil
      *            The daoutil
@@ -237,6 +262,7 @@ public final class FormDAO implements IFormDAO
         form.setWorkgroup( daoUtil.getString( "workgroup" ) );
         form.setIdWorkflow( daoUtil.getInt( "id_workflow" ) );
         form.setAuthentificationNeeded( daoUtil.getBoolean( "authentification_needed" ) );
+        form.setOneResponseByUser( daoUtil.getBoolean( "one_response_by_user" ) );
         form.setBreadcrumbName( daoUtil.getString( "breadcrumb_name" ) );
         form.setDisplaySummary( daoUtil.getBoolean( "display_summary" ) );
         form.setReturnUrl( daoUtil.getString( "return_url" ) );
@@ -244,5 +270,6 @@ public final class FormDAO implements IFormDAO
 
         return form;
     }
+
 
 }

@@ -99,6 +99,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_ERROR_NO_STEP = "forms.xpage.form.error.noStep";
     protected static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.xpage.form.error.inactive";
     protected static final String MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM = "forms.xpage.form.error.MaxResponse";
+    protected static final String MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM_ = "forms.xpage.form.error.limitNumberResponse";
     protected static final String MESSAGE_LOAD_BACKUP = "forms.xpage.form.view.loadBackUp";
     protected static final String MESSAGE_LIST_FORMS_PAGETITLE = "forms.xpage.listForms.pagetitle";
     protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
@@ -262,17 +263,11 @@ public class FormXPage extends MVCApplication
         else
         {
             Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
+            checkAuthentication( form, request );
+            checkIfUserResponseForm( form, request );
+            checkNumberMaxResponseForm( form, request );
             strTitleForm = form.getTitle( );
 
-            if ( form.getMaxNumberResponse( ) != 0 )
-            {
-                int nNumberReponseForm = FormHome.getNumberOfResponseForms( form.getId( ) );
-                if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
-                {
-                    SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
-                }
-
-            }
             if ( form.isActive( ) )
             {
                 if ( _breadcrumb == null )
@@ -307,8 +302,6 @@ public class FormXPage extends MVCApplication
      */
     private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model ) throws UserNotSignedException
     {
-        checkAuthentication( form, request );
-
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
         if ( _formResponseManager == null )
@@ -492,8 +485,7 @@ public class FormXPage extends MVCApplication
             return redirectView( request, VIEW_STEP );
         }
 
-        testNumberMaxResponsesAndSave( form, request );
-
+        saveFormResponse( form, request );
         FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
         Map<String, Object> model = getModel( );
 
@@ -849,23 +841,73 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * verify the number max of response and save the response
+     * save the response of form
      * 
-     * @param form
+     * @param form 
+     * 			the form
      * @param request
+     * 			The Http request request
      * @throws SiteMessageException
+     * 					the exception
+     * @throws UserNotSignedException
+     * 					the exception
      */
-    private synchronized void testNumberMaxResponsesAndSave( Form form, HttpServletRequest request ) throws SiteMessageException
+    private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException 
     {
-        if ( form.getMaxNumberResponse( ) != 0 )
+        synchronized( FormXPage.class )
         {
-            int nNumberReponseForm = FormHome.getNumberOfResponseForms( form.getId( ) );
+        	checkNumberMaxResponseForm( form, request );
+        	checkIfUserResponseForm( form, request );
+            FormResponse formResponse = _formResponseManager.getFormResponse( );
+            if ( form.isAuthentificationNeeded( ) )
+            {
+                LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+                formResponse.setGuid( user.getName( ) );
+        	}
+            _formService.saveForm( form, formResponse );
+        }
+    }
+    
+    /**
+     * check if form is reached the number max of response
+     * @param form
+     * 			the form
+     * @param request
+     * 			the request
+     * @throws SiteMessageException
+     * 					the exception
+     */
+    private void checkNumberMaxResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException{
+    	if ( form.getMaxNumberResponse( ) != 0 )
+    	{
+    		int nNumberReponseForm = FormHome.getNumberOfResponseForms( form.getId( ) );
             if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
             {
-                SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+            	SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
             }
         }
-        FormResponse formResponse = _formResponseManager.getFormResponse( );
-        _formService.saveForm( form, formResponse );
+    }
+
+     /**
+      * check if user can answer the form again
+      * @param form
+      * 		the form
+      * @param request
+      * 		the request
+      * @throws SiteMessageException
+      * 					Exception
+      * @throws UserNotSignedException
+      * 					Exception
+      */
+    private void checkIfUserResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException{
+    	if ( form.isAuthentificationNeeded( ) )
+    	{
+    		LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+	        int nLimitNumberResponse = FormHome.getNumberOfResponseFormByUser( form.getId(), user.getName( ) );
+	        if ( nLimitNumberResponse >= 1 )
+	        {
+	        	SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM_, SiteMessage.TYPE_ERROR );
+	        }
+    	}
     }
 }

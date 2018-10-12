@@ -109,7 +109,17 @@ public interface IFormDAO
      * count the number of response for a form
      * 
      * @param nidForm
+     * 			id of form
      * @return the number of the responses for a form
      */
     int countNumberOfResponseForms( int nidForm );
+    /**
+     * count the number of response by the name of user
+     * @param nIdForm
+     * 			id of form
+     * @param strGuid
+     * 			the name of user
+     * @return return the number of response of form of user
+     */
+    int countNumberOfResponseFormByUser( int nIdForm, String strGuid );
 }
