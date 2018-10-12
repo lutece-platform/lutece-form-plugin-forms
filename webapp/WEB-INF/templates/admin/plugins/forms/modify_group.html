@@ -10,7 +10,7 @@
                  <@input type='text' name='title' value='${group.title!}' />
              </@formGroup>
              <@formGroup labelKey='#i18n{forms.modify_group.labelDescription}' helpKey='#i18n{forms.modify_group.labelDescription.help}' >
-                 <@input type='textarea' name='description'>${group.description!}</@input>
+                 <@input type='textarea' name='description' class='richtext'>${group.description!}</@input>
              </@formGroup>
              <@formGroup labelKey='#i18n{forms.modify_group.labelIterationMin}' helpKey='#i18n{forms.modify_group.labelIterationMin.help}' >
                  <@input type='text' name='iterationMin' value='${group.iterationMin!}' />
@@ -37,3 +37,6 @@
     </@tform>
     </@boxBody>
 </@box>
+
+<#include "/admin/util/editor/editor.html" />
+<@initEditor />

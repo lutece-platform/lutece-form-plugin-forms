@@ -25,7 +25,7 @@
 -- @param referecen_list the default values list
 -- @return the value of the parameter
 -->
-<#function getName code reference_list>
+<#function getName code reference_list default=''>
 	<#if reference_list?has_content>
 		<#list reference_list as reference_item>
 			<#if reference_item.code = code>
@@ -33,7 +33,7 @@
   			</#if>
   		</#list>
 	</#if>
-	<#return "">
+	<#return default>
 </#function>
 
 <#--
