@@ -142,9 +142,9 @@ public final class FormHome
      * count the number of response for form
      *
      * @param nIdForm
-     * 			id of form
+     *            id of form
      * @param strGuid
-     * 			the name of user
+     *            the name of user
      * @return the number of response for form corresponding of user
      */
     public static int getNumberOfResponseFormByUser( int nIdForm, String strGuid )

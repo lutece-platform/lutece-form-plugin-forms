@@ -843,71 +843,75 @@ public class FormXPage extends MVCApplication
     /**
      * save the response of form
      * 
-     * @param form 
-     * 			the form
+     * @param form
+     *            the form
      * @param request
-     * 			The Http request request
+     *            The Http request request
      * @throws SiteMessageException
-     * 					the exception
+     *             the exception
      * @throws UserNotSignedException
-     * 					the exception
+     *             the exception
      */
-    private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException 
+    private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         synchronized( FormXPage.class )
         {
-        	checkNumberMaxResponseForm( form, request );
-        	checkIfUserResponseForm( form, request );
+            checkNumberMaxResponseForm( form, request );
+            checkIfUserResponseForm( form, request );
             FormResponse formResponse = _formResponseManager.getFormResponse( );
             if ( form.isAuthentificationNeeded( ) )
             {
                 LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
                 formResponse.setGuid( user.getName( ) );
-        	}
+            }
             _formService.saveForm( form, formResponse );
         }
     }
-    
+
     /**
      * check if form is reached the number max of response
+     * 
      * @param form
-     * 			the form
+     *            the form
      * @param request
-     * 			the request
+     *            the request
      * @throws SiteMessageException
-     * 					the exception
+     *             the exception
      */
-    private void checkNumberMaxResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException{
-    	if ( form.getMaxNumberResponse( ) != 0 )
-    	{
-    		int nNumberReponseForm = FormHome.getNumberOfResponseForms( form.getId( ) );
+    private void checkNumberMaxResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException
+    {
+        if ( form.getMaxNumberResponse( ) != 0 )
+        {
+            int nNumberReponseForm = FormHome.getNumberOfResponseForms( form.getId( ) );
             if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
             {
-            	SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+                SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
             }
         }
     }
 
-     /**
-      * check if user can answer the form again
-      * @param form
-      * 		the form
-      * @param request
-      * 		the request
-      * @throws SiteMessageException
-      * 					Exception
-      * @throws UserNotSignedException
-      * 					Exception
-      */
-    private void checkIfUserResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException{
-    	if ( form.isAuthentificationNeeded( ) )
-    	{
-    		LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-	        int nLimitNumberResponse = FormHome.getNumberOfResponseFormByUser( form.getId(), user.getName( ) );
-	        if ( nLimitNumberResponse >= 1 )
-	        {
-	        	SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM_, SiteMessage.TYPE_ERROR );
-	        }
-    	}
+    /**
+     * check if user can answer the form again
+     * 
+     * @param form
+     *            the form
+     * @param request
+     *            the request
+     * @throws SiteMessageException
+     *             Exception
+     * @throws UserNotSignedException
+     *             Exception
+     */
+    private void checkIfUserResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
+        if ( form.isAuthentificationNeeded( ) )
+        {
+            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+            int nLimitNumberResponse = FormHome.getNumberOfResponseFormByUser( form.getId( ), user.getName( ) );
+            if ( nLimitNumberResponse >= 1 )
+            {
+                SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM_, SiteMessage.TYPE_ERROR );
+            }
+        }
     }
 }
