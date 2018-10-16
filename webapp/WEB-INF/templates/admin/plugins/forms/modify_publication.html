@@ -1,4 +1,5 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#include "/admin/plugins/form/commons.html" />
 <@box>
     <@boxHeader title='#i18n{forms.modify_form.title} ${form.title!}' />
     <@boxBody>
@@ -11,6 +12,19 @@
                         <@messages errors=errors />
                         <input type="hidden" id="id_form" name="id_form" value="${form.id}"/>
 
+                        <#-- problem with populate method because it puts the value of checkbox to false -->
+                        <#if form?has_content && form.displaySummary>
+                          <input type="hidden" id="displaySummary" name="displaySummary" value="1"/>
+                        </#if>
+                         <#if formMessage?has_content && formMessage.endMessageDisplay>
+                          <input type="hidden" id="endMessageDisplay" name="endMessageDisplay" value="1"/>
+                        </#if>
+                         <#if form?has_content && form.oneResponseByUser>
+                          <input type="hidden" id="oneResponseByUser" name="oneResponseByUser" value="1"/>
+                        </#if>
+                         <#if form?has_content && form.authentificationNeeded>
+                          <input type="hidden" id="authentificationNeeded" name="authentificationNeeded" value="1"/>
+                        </#if>
                             <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' >
                                 <@inputGroup>
                                     <@input type='text' name='availabilityStartDate' id='availabilityStartDate' value='${form.availabilityStartDate!}' />
