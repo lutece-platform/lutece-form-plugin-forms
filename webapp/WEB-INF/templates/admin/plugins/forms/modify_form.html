@@ -23,8 +23,7 @@
 				                <@checkBox labelFor='authentificationNeeded' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
 				             </@formGroup>
 				              <@formGroup labelKey='#i18n{forms.create_Form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_Form.labelLimitNumberResponse.help}'>
-								<@checkBox name='OneResponseByUser' id='OneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser)
-				 				labelFor='OneResponseByUser' />
+								<@checkBox name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser labelFor='oneResponseByUser' />
 							</@formGroup>
                             <#if workflow_list?has_content>
                                <@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' helpKey='#i18n{forms.modify_form.workflow.label.help}'>
