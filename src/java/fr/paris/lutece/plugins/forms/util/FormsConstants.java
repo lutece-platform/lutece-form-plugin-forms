@@ -76,6 +76,7 @@ public final class FormsConstants
     public static final String MARK_CONDITION_TITLE = "modify_condition_title";
     public static final String MARK_QUESTION_LIST_RESPONSES = "list_responses";
     public static final String MARK_VALIDATOR = "validator";
+    public static final String MARK_VALIDATOR_MANAGER = "validatorManager";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -99,6 +100,7 @@ public final class FormsConstants
     public static final String PARAMETER_ID_QUESTION = "id_question";
     public static final String PARAMETER_ID_DISPLAY = "id_display";
     public static final String PARAMETER_ID_PARENT = "id_parent";
+    public static final String PARAMETER_ID_TARGET = "id_target";
     public static final String PARAMETER_STEP_VALIDATED = "stepValidated";
     public static final String PARAMETER_GROUP_VALIDATED = "groupValidated";
     public static final String PARAMETER_DISPLAY_ORDER = "displayOrder";

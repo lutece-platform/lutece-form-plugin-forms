@@ -137,6 +137,6 @@ public interface IControlDAO
      *            the Plugin
      * @return The control
      */
-    Control selectControlByQuestionAndType( int nIdQuestion, String strControlType, Plugin plugin );
-
+    List<Control> selectControlByQuestionAndType( int nIdQuestion, String strControlType, Plugin plugin );
+    
 }

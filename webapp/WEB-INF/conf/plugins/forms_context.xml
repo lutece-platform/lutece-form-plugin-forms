@@ -53,6 +53,16 @@
 			</list>
 		</constructor-arg>
 	</bean>
+	<bean id="forms.uniqueValidator" class="fr.paris.lutece.plugins.forms.validation.UniqueValidator">
+    	<constructor-arg type="java.lang.String" index="0" value="forms.uniqueValidator" />
+    	<constructor-arg type="java.lang.String" index="1" value="forms.validator.unique.name" />
+		<constructor-arg index="2" >
+			<list>
+				<value type="java.lang.String">forms.entryTypeText</value>
+				<value type="java.lang.String">forms.entryTypeMyLuteceUserattribute</value>
+			</list>
+		</constructor-arg>
+	</bean>
 	
 	<!-- Breadcrumb -->
     <bean id="forms.horizontalBreadcrumb" class="fr.paris.lutece.plugins.forms.web.breadcrumb.HorizontalBreadcrumb">

@@ -37,12 +37,18 @@ package fr.paris.lutece.plugins.forms.web;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.validation.IValidator;
+import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 
 /**
  * 
@@ -311,6 +317,45 @@ public class FormResponseManager
         }
 
         return listStep;
+    }
+    
+    /**
+     * 
+     * @return the form validation result
+     */
+    public boolean validateFormResponses( )
+    {
+    	for( Step step : _listValidatedStep )
+    	{
+    		List<FormQuestionResponse> listFormQuestionResponse = findResponsesFor( step );
+    		
+    		for( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
+    		{
+    			List<Control> listControl = ControlHome.getControlByQuestionAndType( formQuestionResponse.getQuestion( ).getId( ), ControlType.VALIDATION.getLabel( ) );
+
+                for ( Control control : listControl )
+                {
+                    IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+                    GenericAttributeError error = new GenericAttributeError( );
+                    
+                    if ( !validator.validate( formQuestionResponse, control ) )
+                    {
+                        error = new GenericAttributeError( );
+
+                        error.setIsDisplayableError( true );
+                        error.setErrorMessage( control.getErrorMessage( ) );
+
+                        formQuestionResponse.setError( error );
+                        
+                        goTo( _listValidatedStep.indexOf( step ) );
+                        
+                        return false;
+                    }
+                }
+    		}
+    	}
+    	
+    	return true;
     }
 
 }

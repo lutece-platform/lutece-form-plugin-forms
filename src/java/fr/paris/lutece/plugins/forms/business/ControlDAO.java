@@ -219,22 +219,23 @@ public final class ControlDAO implements IControlDAO
     }
 
     @Override
-    public Control selectControlByQuestionAndType( int nIdQuestion, String strControlType, Plugin plugin )
+    public List<Control> selectControlByQuestionAndType( int nIdQuestion, String strControlType, Plugin plugin )
     {
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE, plugin );
         daoUtil.setInt( 1, nIdQuestion );
         daoUtil.setString( 2, strControlType );
         daoUtil.executeQuery( );
-        Control control = null;
+        List<Control> listControl = new ArrayList<>( );
 
-        if ( daoUtil.next( ) )
+        while ( daoUtil.next( ) )
         {
-            control = dataToObject( daoUtil );
+        	listControl.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
-        return control;
+        
+        return listControl;
     }
 
     /**

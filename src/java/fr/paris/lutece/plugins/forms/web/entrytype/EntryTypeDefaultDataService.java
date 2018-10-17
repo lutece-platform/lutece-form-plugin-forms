@@ -120,9 +120,9 @@ public class EntryTypeDefaultDataService implements IEntryDataService
         {
             formQuestionResponse.setError( error );
 
-            Control control = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
+            List<Control> listControl = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
 
-            if ( control != null )
+            for ( Control control : listControl )
             {
                 IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
                 if ( !validator.validate( formQuestionResponse, control ) )
@@ -133,6 +133,8 @@ public class EntryTypeDefaultDataService implements IEntryDataService
                     error.setErrorMessage( control.getErrorMessage( ) );
 
                     formQuestionResponse.setError( error );
+                    
+                    break;
                 }
             }
         }

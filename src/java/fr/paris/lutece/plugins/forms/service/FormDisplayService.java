@@ -86,8 +86,9 @@ public final class FormDisplayService
                 // Delete all QuestionResponses associated to the Question, including the responses of different parent iterations
                 FormQuestionResponseHome.removeByQuestion( formDisplayCompositeId );
 
-                Control control = ControlHome.getControlByQuestionAndType( formDisplayCompositeId, ControlType.VALIDATION.getLabel( ) );
-                if ( control != null )
+                List<Control> listControl = ControlHome.getControlByQuestionAndType( formDisplayCompositeId, ControlType.VALIDATION.getLabel( ) );
+                
+                for( Control control : listControl )
                 {
                     ControlHome.remove( control.getId( ) );
                 }

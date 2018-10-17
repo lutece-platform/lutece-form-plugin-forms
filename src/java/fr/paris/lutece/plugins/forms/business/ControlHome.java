@@ -158,9 +158,8 @@ public final class ControlHome
      *            the control type
      * @return the requested Control
      */
-    public static Control getControlByQuestionAndType( int nIdQuestion, String strControlType )
+    public static List<Control> getControlByQuestionAndType( int nIdQuestion, String strControlType )
     {
         return _dao.selectControlByQuestionAndType( nIdQuestion, strControlType, _plugin );
     }
-
 }
