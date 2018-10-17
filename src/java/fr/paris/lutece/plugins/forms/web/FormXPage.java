@@ -183,7 +183,7 @@ public class FormXPage extends MVCApplication
         }
         catch( UserNotSignedException e )
         {
-        	init( form.getId() );
+            init( form.getId( ) );
 
             throw new UserNotSignedException( );
         }
@@ -245,19 +245,21 @@ public class FormXPage extends MVCApplication
     @View( value = VIEW_STEP )
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-    	String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
-    	if ( paramInit!=null ) { 
-	    	if ( paramInit.equals(PARAMETER_INIT) ) {
-	    		 init( );
-	    	 }
-    	}
-    	Map<String, Object> model = getModel( );
+        String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
+        if ( paramInit != null )
+        {
+            if ( paramInit.equals( PARAMETER_INIT ) )
+            {
+                init( );
+            }
+        }
+        Map<String, Object> model = getModel( );
         String strTitleForm = StringUtils.EMPTY;
         int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE && ( _currentStep == null || nIdForm != _currentStep.getIdForm( ) ) )
         {
-        	init( nIdForm );
+            init( nIdForm );
         }
 
         if ( _currentStep == null )
@@ -495,7 +497,7 @@ public class FormXPage extends MVCApplication
 
         model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
 
-        init();
+        init( );
 
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
@@ -914,26 +916,29 @@ public class FormXPage extends MVCApplication
             }
         }
     }
+
     /**
      * initialize the object.
      */
-    private void init() 
+    private void init( )
     {
-    	  _formResponseManager = null;
-          _currentStep = null;
-          _stepDisplayTree = null;
-          _breadcrumb = null;
+        _formResponseManager = null;
+        _currentStep = null;
+        _stepDisplayTree = null;
+        _breadcrumb = null;
     }
+
     /**
      * initialize the object
+     * 
      * @param nIdForm
-     * 			id form
+     *            id form
      */
-    private void init( int nIdForm ) 
+    private void init( int nIdForm )
     {
-	    _currentStep = StepHome.getInitialStep( nIdForm );
-	    _formResponseManager = null;
-	    _stepDisplayTree = null;
-	    _breadcrumb = null;
+        _currentStep = StepHome.getInitialStep( nIdForm );
+        _formResponseManager = null;
+        _stepDisplayTree = null;
+        _breadcrumb = null;
     }
 }
