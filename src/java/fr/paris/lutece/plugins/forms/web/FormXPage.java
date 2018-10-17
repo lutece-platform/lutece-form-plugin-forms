@@ -129,6 +129,7 @@ public class FormXPage extends MVCApplication
 
     // Constants
     private static final int INCORRECT_ID = -1;
+    private static final String PARAMETER_INIT = "true";
 
     // Markers
     private static final String STEP_HTML_MARKER = "stepContent";
@@ -182,9 +183,7 @@ public class FormXPage extends MVCApplication
         }
         catch( UserNotSignedException e )
         {
-            _currentStep = StepHome.getInitialStep( form.getId( ) );
-            _formResponseManager = null;
-            _stepDisplayTree = null;
+            init( form.getId( ) );
 
             throw new UserNotSignedException( );
         }
@@ -246,14 +245,21 @@ public class FormXPage extends MVCApplication
     @View( value = VIEW_STEP )
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
+        String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
+        if ( paramInit != null )
+        {
+            if ( paramInit.equals( PARAMETER_INIT ) )
+            {
+                init( );
+            }
+        }
         Map<String, Object> model = getModel( );
         String strTitleForm = StringUtils.EMPTY;
         int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE && ( _currentStep == null || nIdForm != _currentStep.getIdForm( ) ) )
         {
-            _currentStep = StepHome.getInitialStep( nIdForm );
-            _formResponseManager = null;
+            init( nIdForm );
         }
 
         if ( _currentStep == null )
@@ -509,10 +515,7 @@ public class FormXPage extends MVCApplication
 
         model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
 
-        _formResponseManager = null;
-        _currentStep = null;
-        _stepDisplayTree = null;
-        _breadcrumb = null;
+        init( );
 
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
@@ -560,8 +563,7 @@ public class FormXPage extends MVCApplication
                     throw new FormNotFoundException( );
                 }
 
-                _currentStep = StepHome.getInitialStep( nIdForm );
-                _formResponseManager = null;
+                init( nIdForm );
             }
             else
             {
@@ -931,5 +933,30 @@ public class FormXPage extends MVCApplication
                 SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM_, SiteMessage.TYPE_ERROR );
             }
         }
+    }
+
+    /**
+     * initialize the object.
+     */
+    private void init( )
+    {
+        _formResponseManager = null;
+        _currentStep = null;
+        _stepDisplayTree = null;
+        _breadcrumb = null;
+    }
+
+    /**
+     * initialize the object
+     * 
+     * @param nIdForm
+     *            id form
+     */
+    private void init( int nIdForm )
+    {
+        _currentStep = StepHome.getInitialStep( nIdForm );
+        _formResponseManager = null;
+        _stepDisplayTree = null;
+        _breadcrumb = null;
     }
 }
