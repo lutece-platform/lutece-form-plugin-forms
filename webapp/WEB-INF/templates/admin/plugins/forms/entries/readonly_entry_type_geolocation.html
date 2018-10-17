@@ -31,16 +31,13 @@
         <#assign viewNumberValue = getFieldValue( entry, "viewNumber" )>
 
         <#if entry.mapProvider?has_content>
-                <#if entry.mapProvider.key?has_content && entry.mapProvider.key == "gismap" >
                     <#if entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
                         <#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter >
                     </#if>
                     
-                    <#if entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).addressParam??>
+                    <#if entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).addressParam?? >
                         <#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam >
                     </#if>
-                </#if>
-                
                 <#include entry.mapProvider.htmlCode />
         </#if>
     </#if>
