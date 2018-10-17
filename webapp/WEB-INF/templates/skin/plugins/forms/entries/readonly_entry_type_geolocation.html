@@ -26,8 +26,18 @@
 	        <input type="hidden" id="${entry.idEntry}_y" name="${entry.idEntry}_y" value="${(responseY)!}">
 	
 	        <#assign editModeValue = "ReadOnly">
-	
-            <#include entry.mapProvider.htmlCode />
-	    </#if>
+			<#assign viewNumberValue = "1">
+			<#assign viewNumberValue = getFieldValue( entry, "viewNumber" )>
+			<#if entry.mapProvider?has_content>
+				<#if entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
+					<#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter >
+				</#if>
+				
+				<#if entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).addressParam?? >
+					<#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam >
+				</#if>
+				<#include entry.mapProvider.htmlCode />
+			</#if>
+		</#if>	
 	</@formGroup>
 </#if>

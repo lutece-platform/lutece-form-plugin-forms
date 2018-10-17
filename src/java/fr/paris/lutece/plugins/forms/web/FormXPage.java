@@ -906,7 +906,7 @@ public class FormXPage extends MVCApplication
      */
     private void checkIfUserResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-        if ( form.isAuthentificationNeeded( ) )
+        if ( form.isAuthentificationNeeded( ) && form.isOneResponseByUser() )
         {
             LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
             int nLimitNumberResponse = FormHome.getNumberOfResponseFormByUser( form.getId( ), user.getName( ) );
