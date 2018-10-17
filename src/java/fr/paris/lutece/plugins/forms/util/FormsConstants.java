@@ -107,7 +107,7 @@ public final class FormsConstants
     public static final String PARAMETER_VALIDATOR_NAME = "validatorName";
     public static final String PARAMETER_CONTROL_VALUE = "control_value";
     public static final String PARAMETER_REF_LIST_VALUE = "refListValue";
-    public static final String PARAMETER_INDEX_STEP = "index_step";
+    public static final String PARAMETER_ACTION_GO_TO_STEP = "action_doGoToStep";
     public static final String PARAMETER_INFO_KEY = "info_key";
     public static final String PARAMETER_BACK_URL = "back_url";
     public static final String PARAMETER_DISPLAYED_QUESTIONS = "displayed_questions";

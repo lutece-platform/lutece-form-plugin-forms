@@ -109,7 +109,6 @@ public class FormXPage extends MVCApplication
     private static final long serialVersionUID = -8380962697376893817L;
     // Views
     private static final String VIEW_STEP = "stepView";
-    private static final String VIEW_GET_STEP = "getStep";
     private static final String VIEW_LIST_FORM = "listForm";
 
     // Actions
@@ -117,6 +116,7 @@ public class FormXPage extends MVCApplication
     private static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
     private static final String ACTION_SAVE_STEP = "doSaveStep";
     private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
+    private static final String ACTION_GO_TO_STEP = "doGoToStep";
     private static final String ACTION_ADD_ITERATION = "addIteration";
     private static final String ACTION_REMOVE_ITERATION = "removeIteration";
     private static final String ACTION_FORM_RESPONSE_SUMMARY = "formResponseSummary";
@@ -355,6 +355,15 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_PREVIOUS_STEP )
     public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException
     {
+        try
+        {
+            fillResponseManagerWithResponses( request, false );
+        }
+        catch( QuestionValidationException e )
+        {
+            // this cannot happen because the validation is not performed
+        }
+
         _formResponseManager.popStep( );
 
         _currentStep = _formResponseManager.getCurrentStep( );
@@ -373,10 +382,19 @@ public class FormXPage extends MVCApplication
      * @throws SiteMessageException
      *             Exception
      */
-    @View( value = VIEW_GET_STEP )
-    public XPage getPreviousStep( HttpServletRequest request ) throws SiteMessageException
+    @Action( value = ACTION_GO_TO_STEP )
+    public XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException
     {
-        int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_INDEX_STEP ), INCORRECT_ID );
+        try
+        {
+            fillResponseManagerWithResponses( request, false );
+        }
+        catch( QuestionValidationException e )
+        {
+            // this cannot happen because the validation is not performed
+        }
+
+        int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ACTION_GO_TO_STEP ), INCORRECT_ID );
 
         _currentStep = _formResponseManager.goTo( nIndexStep );
 
