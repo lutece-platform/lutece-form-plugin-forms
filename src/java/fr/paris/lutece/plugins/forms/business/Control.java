@@ -47,15 +47,15 @@ public class Control implements Cloneable
     private int _nId;
 
     private String _strValue;
-    
+
     private String _strErrorMessage;
 
     @Min( value = 1, message = "#i18n{forms.validation.control.Question.notEmpty}" )
     private int _nIdQuestion;
-    
+
     @NotEmpty( message = "#i18n{forms.validation.control.ValidatorName.notEmpty}" )
     private String _strValidatorName;
-    
+
     @NotEmpty( message = "#i18n{forms.validation.control.ControlType.notEmpty}" )
     private String _strControlType;
 

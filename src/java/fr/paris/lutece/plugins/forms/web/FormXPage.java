@@ -508,13 +508,13 @@ public class FormXPage extends MVCApplication
         {
             return redirectView( request, VIEW_STEP );
         }
-        
-        if( !_formResponseManager.validateFormResponses( ) )
+
+        if ( !_formResponseManager.validateFormResponses( ) )
         {
-        	_currentStep = _formResponseManager.getCurrentStep( );
-        	_stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-        	
-        	return redirectView( request, VIEW_STEP );
+            _currentStep = _formResponseManager.getCurrentStep( );
+            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+
+            return redirectView( request, VIEW_STEP );
         }
 
         saveFormResponse( form, request );

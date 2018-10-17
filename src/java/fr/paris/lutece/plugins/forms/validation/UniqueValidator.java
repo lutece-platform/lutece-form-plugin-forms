@@ -101,29 +101,29 @@ public class UniqueValidator implements IValidator
     @Override
     public boolean validate( FormQuestionResponse formQuestionResponse, Control control )
     {
-    	if( formQuestionResponse != null && !formQuestionResponse.getEntryResponse( ).isEmpty( ) )
-    	{
-    		Response response = formQuestionResponse.getEntryResponse().get( 0 );
-    		
-    		ResponseFilter filter = new ResponseFilter( );
+        if ( formQuestionResponse != null && !formQuestionResponse.getEntryResponse( ).isEmpty( ) )
+        {
+            Response response = formQuestionResponse.getEntryResponse( ).get( 0 );
+
+            ResponseFilter filter = new ResponseFilter( );
             filter.setIdEntry( response.getEntry( ).getIdEntry( ) );
 
             Collection<Response> listSubmittedResponses = ResponseHome.getResponseList( filter );
-            
+
             String strValueEntry = response.getResponseValue( );
 
             for ( Response submittedResponse : listSubmittedResponses )
             {
                 String strSubmittedResponse = submittedResponse.getToStringValueResponse( );
 
-                if ( !strValueEntry.equals( StringUtils.EMPTY ) && ( strSubmittedResponse != null )
-                        && !strSubmittedResponse.equals( StringUtils.EMPTY ) && strValueEntry.equalsIgnoreCase( strSubmittedResponse ) )
+                if ( !strValueEntry.equals( StringUtils.EMPTY ) && ( strSubmittedResponse != null ) && !strSubmittedResponse.equals( StringUtils.EMPTY )
+                        && strValueEntry.equalsIgnoreCase( strSubmittedResponse ) )
                 {
-                	return false;
+                    return false;
                 }
             }
-    	}
-        
+        }
+
         return true;
     }
 

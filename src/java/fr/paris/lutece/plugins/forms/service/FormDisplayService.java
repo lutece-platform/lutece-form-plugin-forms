@@ -87,8 +87,8 @@ public final class FormDisplayService
                 FormQuestionResponseHome.removeByQuestion( formDisplayCompositeId );
 
                 List<Control> listControl = ControlHome.getControlByQuestionAndType( formDisplayCompositeId, ControlType.VALIDATION.getLabel( ) );
-                
-                for( Control control : listControl )
+
+                for ( Control control : listControl )
                 {
                     ControlHome.remove( control.getId( ) );
                 }
