@@ -86,12 +86,12 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
     @Override
     public boolean isUserAuthorizedOnFormResponse( HttpServletRequest request, int nIdFormResponse )
     {
-        _formPanel = new FormPanelFactory( ).buildFormPanel( _formPanel.getFormPanelConfiguration( ) );
-
         boolean bIsUserAuthorizedOnFormResponse = Boolean.FALSE;
 
-        if ( nIdFormResponse != NumberUtils.INTEGER_MINUS_ONE && _formPanel != null )
+        if ( nIdFormResponse != NumberUtils.INTEGER_MINUS_ONE && _formPanel.getFormPanelConfiguration( ) != null )
         {
+            _formPanel = new FormPanelFactory( ).buildFormPanel( _formPanel.getFormPanelConfiguration( ) );
+
             List<IFormColumn> listFormResponseColumn = _formColumnFactory.buildFormColumnList( );
 
             // Rebuild all the FormPanelInitializer to reset the previous data
