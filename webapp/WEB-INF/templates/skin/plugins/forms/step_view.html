@@ -50,6 +50,7 @@
 </script>
 
 <form class="form-horizontal" id="form-validate" action="jsp/site/Portal.jsp?page=forms" method="post" enctype="multipart/form-data">
+	<@messages warnings=warnings />
 	<#if messageInfo?? >
 	<div class="alert alert-info" role="alert">
 		${messageInfo}

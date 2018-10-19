@@ -1,4 +1,5 @@
  <form class="form-horizontal" id="summary_validate" action="jsp/site/Portal.jsp?page=forms" method="post">
+ <input name="id_form" value="${id_form}" type="hidden" />
   <div id="form-response-summary" class="box-body">
     <#if list_summary_step_display?has_content>
       <#list list_summary_step_display as summary_step_display>
