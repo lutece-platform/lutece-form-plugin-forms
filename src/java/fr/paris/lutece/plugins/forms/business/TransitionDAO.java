@@ -48,13 +48,13 @@ import java.util.List;
 public final class TransitionDAO implements ITransitionDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT t.id_transition, t.from_step, fromStep.title, t.next_step, nextStep.title, t.id_control, t.priority FROM forms_transition t "
+    private static final String SQL_QUERY_SELECT = "SELECT t.id_transition, t.from_step, fromStep.title, t.next_step, nextStep.title, t.priority FROM forms_transition t "
             + "INNER JOIN forms_step fromStep ON fromStep.id_step = t.from_step " + "INNER JOIN forms_step nextStep ON nextStep.id_step = t.next_step ";
     private static final String SQL_FILTER_BY_ID = " WHERE t.id_transition = ? ";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_transition ( from_step, next_step, id_control, priority ) VALUES ( ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_transition ( from_step, next_step, priority ) VALUES ( ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_transition WHERE id_transition = ? ";
     private static final String SQL_QUERY_DELETE_BY_STEP = "DELETE FROM forms_transition WHERE from_step = ? OR next_step = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_transition SET id_transition = ?, from_step = ?, next_step = ?, id_control = ?, priority = ? WHERE id_transition = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_transition SET id_transition = ?, from_step = ?, next_step = ?, priority = ? WHERE id_transition = ?";
     private static final String SQL_ORDER_BY_PRIORITY = " ORDER BY priority ASC";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_transition FROM forms_transition";
     private static final String SQL_FILTER_BY_STEP = " WHERE t.from_step = ? " + SQL_ORDER_BY_PRIORITY;
@@ -73,7 +73,6 @@ public final class TransitionDAO implements ITransitionDAO
             int nIndex = 1;
             daoUtil.setInt( nIndex++, transition.getFromStep( ) );
             daoUtil.setInt( nIndex++, transition.getNextStep( ) );
-            daoUtil.setInt( nIndex++, transition.getIdControl( ) );
             daoUtil.setInt( nIndex++, transition.getPriority( ) );
 
             daoUtil.executeUpdate( );
@@ -154,7 +153,6 @@ public final class TransitionDAO implements ITransitionDAO
         daoUtil.setInt( nIndex++, transition.getId( ) );
         daoUtil.setInt( nIndex++, transition.getFromStep( ) );
         daoUtil.setInt( nIndex++, transition.getNextStep( ) );
-        daoUtil.setInt( nIndex++, transition.getIdControl( ) );
         daoUtil.setInt( nIndex++, transition.getPriority( ) );
         daoUtil.setInt( nIndex, transition.getId( ) );
 
@@ -297,7 +295,6 @@ public final class TransitionDAO implements ITransitionDAO
         transition.setFromStepTitle( daoUtil.getString( "fromStep.title" ) );
         transition.setNextStep( daoUtil.getInt( "next_step" ) );
         transition.setNextStepTitle( daoUtil.getString( "nextStep.title" ) );
-        transition.setIdControl( daoUtil.getInt( "id_control" ) );
         transition.setPriority( daoUtil.getInt( "priority" ) );
 
         return transition;

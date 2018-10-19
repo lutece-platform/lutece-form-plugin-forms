@@ -61,3 +61,8 @@ UPDATE genatt_field SET value = 'user.name.family' WHERE value = 'user.family_na
 UPDATE genatt_field SET value = 'user.name.given' WHERE value = 'user.first_name';
 
 UPDATE forms_action SET action_url = 'jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps' WHERE id_action = 1;
+
+ALTER TABLE forms_control CHANGE COLUMN id_display id_control_target INT(11) NOT NULL DEFAULT '0' AFTER control_type;
+UPDATE forms_control fc INNER JOIN forms_transition ft ON fc.id_control = ft.id_control SET id_control_target = id_transition;
+ALTER TABLE forms_transition DROP COLUMN id_control;
+UPDATE forms_control SET id_control_target = id_question WHERE control_type = 'validation';

@@ -45,6 +45,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormMessage;
@@ -722,15 +723,17 @@ public class FormXPage extends MVCApplication
 
         for ( Transition transition : listTransition )
         {
-            if ( transition.getIdControl( ) <= 0 )
+            List<Control> listTransitionControl = ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION );
+            boolean controlsValidated = true;
+            
+            if( listTransitionControl.isEmpty( ) )
             {
-                return StepHome.findByPrimaryKey( transition.getNextStep( ) );
+            	return StepHome.findByPrimaryKey( transition.getNextStep( ) );
             }
-            else
+            
+            for( Control transitionControl : listTransitionControl )
             {
-                Control transitionControl = ControlHome.findByPrimaryKey( transition.getIdControl( ) );
-
-                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
+            	Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
                 Step stepTarget = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
 
                 for ( FormQuestionResponse questionResponse : _formResponseManager.findResponsesFor( stepTarget ) )
@@ -739,13 +742,20 @@ public class FormXPage extends MVCApplication
                     {
                         IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
 
-                        if ( validator != null && validator.validate( questionResponse, transitionControl ) )
+                        if ( validator != null && !validator.validate( questionResponse, transitionControl ) )
                         {
-                            return StepHome.findByPrimaryKey( transition.getNextStep( ) );
+                        	controlsValidated = false;
+                        	break;
                         }
                     }
                 }
             }
+            
+            if( controlsValidated )
+            {
+            	return StepHome.findByPrimaryKey( transition.getNextStep( ) );
+            }
+            
         }
 
         return null;

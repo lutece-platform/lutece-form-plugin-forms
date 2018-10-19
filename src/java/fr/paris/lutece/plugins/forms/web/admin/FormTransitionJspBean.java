@@ -35,6 +35,7 @@
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -407,10 +408,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         {
             TransitionHome.remove( _transition.getId( ) );
 
-            if ( _transition.getIdControl( ) != 0 )
-            {
-                ControlHome.remove( _transition.getIdControl( ) );
-            }
+            ControlHome.removeByControlTarget( _transition.getId( ), ControlType.TRANSITION );
 
             TransitionHome.rebuildPrioritySequence( _transition.getFromStep( ) );
 

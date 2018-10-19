@@ -239,7 +239,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
         if ( _formDisplay.getDisplayControl( ) != null )
         {
-            _model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdTargetFormDisplay( ) );
+            _model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdControlTarget( ) );
         }
 
         String strTemplate = findTemplateFor( displayType );

@@ -59,7 +59,7 @@ public class Control implements Cloneable
     @NotEmpty( message = "#i18n{forms.validation.control.ControlType.notEmpty}" )
     private String _strControlType;
 
-    private int _nIdTargetFormDisplay;
+    private int _nIdControlTarget;
 
     /**
      * @return the _nId
@@ -167,19 +167,19 @@ public class Control implements Cloneable
      * 
      * @return the _nIdTargetFormDisplay
      */
-    public int getIdTargetFormDisplay( )
+    public int getIdControlTarget( )
     {
-        return _nIdTargetFormDisplay;
+        return _nIdControlTarget;
     }
 
     /**
      * 
-     * @param nIdTargetFormDisplay
-     *            the nIdTargetFormDisplay to set
+     * @param nIdControlTarget
+     *            the nIdControlTarget to set
      */
-    public void setIdTargetFormDisplay( int nIdTargetFormDisplay )
+    public void setIdControlTarget( int nIdControlTarget )
     {
-        this._nIdTargetFormDisplay = nIdTargetFormDisplay;
+        this._nIdControlTarget = nIdControlTarget;
     }
 
     /**
@@ -205,7 +205,7 @@ public class Control implements Cloneable
         controlNew.setIdQuestion( _nIdQuestion );
         controlNew.setControlType( _strControlType );
         controlNew.setErrorMessage( _strErrorMessage );
-        controlNew.setIdTargetFormDisplay( _nIdTargetFormDisplay );
+        controlNew.setIdControlTarget( _nIdControlTarget );
         controlNew.setValidatorName( _strValidatorName );
         controlNew.setValue( _strValue );
 

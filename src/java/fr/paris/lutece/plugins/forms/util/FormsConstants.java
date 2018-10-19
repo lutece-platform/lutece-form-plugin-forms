@@ -68,6 +68,7 @@ public final class FormsConstants
     public static final String MARK_DISPLAY_ORDER = "displayOrder";
     public static final String MARK_TRANSITION = "transition";
     public static final String MARK_CONTROL = "control";
+    public static final String MARK_CONTROL_TYPE = "control_type";
     public static final String MARK_FORM_TOP_BREADCRUMB = "formTopBreadcrumb";
     public static final String MARK_FORM_BOTTOM_BREADCRUMB = "formBottomBreadcrumb";
     public static final String MARK_QUESTION_CONTENT = "questionContent";
@@ -108,6 +109,7 @@ public final class FormsConstants
     public static final String PARAMETER_ID_CONTROL = "id_control";
     public static final String PARAMETER_VALIDATOR_NAME = "validatorName";
     public static final String PARAMETER_CONTROL_VALUE = "control_value";
+    public static final String PARAMETER_CONTROL_TYPE = "control_type";
     public static final String PARAMETER_REF_LIST_VALUE = "refListValue";
     public static final String PARAMETER_ACTION_GO_TO_STEP = "action_doGoToStep";
     public static final String PARAMETER_INFO_KEY = "info_key";

@@ -53,7 +53,7 @@ public interface IControlDAO
      *            the Plugin
      */
     void insert( Control control, Plugin plugin );
-
+    
     /**
      * Update the record in the table
      * 
@@ -73,6 +73,18 @@ public interface IControlDAO
      *            the Plugin
      */
     void delete( int nKey, Plugin plugin );
+    
+    /**
+     * Delete a record from the table by the control target
+     * 
+     * @param nIdControlTarget
+     *            The identifier of the Control target
+     * @param controlType
+     *            The control type
+     * @param plugin
+     *            the Plugin
+     */
+    void deleteByControlTarget( int nIdControlTarget, ControlType controlType, Plugin plugin );
 
     // /////////////////////////////////////////////////////////////////////////
     // Finders
@@ -118,16 +130,18 @@ public interface IControlDAO
     /**
      * Select a control for conditional display based on its attached display id
      * 
-     * @param nIdDisplay
-     *            the display id
+     * @param nIdControlTarget
+     *            the control target id
+     * @param controlType
+     *            the control type
      * @param plugin
      *            the Plugin
      * @return The control
      */
-    Control selectControlByDisplay( int nIdDisplay, Plugin plugin );
+    List<Control> selectControlByControlTargetAndType( int nIdControlTarget, ControlType controlType, Plugin plugin );
 
     /**
-     * Select a control based on its attached question and control type
+     * Select control list based on its attached question and control type
      * 
      * @param nIdQuestion
      *            the question id

@@ -1,8 +1,8 @@
 <@row>
     <@columns>
         <@box color='primary' collapsed=true>
-            <@boxHeader title='#i18n{forms.manage_controls.title}' boxTools=true>
-                <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyQuestionControl&id_step=${step.id}&id_question=${question.id}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' showTitleXs=false size='' />
+            <@boxHeader title='#i18n{forms.manage_controls.title.${control_type?lower_case}}' boxTools=true>
+                <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' showTitleXs=false size='' />
             </@boxHeader>
         </@box>
         <@box color='solid'>
@@ -23,7 +23,7 @@
                             	${validator.validatorDisplayName}
                             </td>
                             <td class="col-sm-3">
-                                <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyQuestionControl&id_step=${step.id}&id_question=${question.id}&id_control=${control.id}' title='#i18n{forms.manage_questions.action.control}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
+                                <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}' title='#i18n{forms.manage_questions.action.control}' showTitle=false buttonIcon='edit' color='btn-primary' size='sm' />
                             	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' />
                             	
                             </td>
@@ -31,7 +31,11 @@
                     </#list>
                 </@table>
                 <@paginationAdmin paginator=paginator />
-                <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' showTitleXs=false size='' />
+                <#if control_type == 'VALIDATION'>
+                	<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' showTitleXs=false size='' />
+            	<#else>
+                	<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' showTitleXs=false size='' />
+            	</#if>
             </@boxBody>
         </@box>
     </@columns>

@@ -94,6 +94,19 @@ public final class ControlHome
     {
         _dao.delete( nKey, _plugin );
     }
+    
+    /**
+     * Remove the control whose control target identifier is specified in parameter
+     * 
+     * @param nIdControlTarget
+     *            The control target Id
+     * @param controlType
+     *            The control type
+     */
+    public static void removeByControlTarget( int nIdControlTarget, ControlType controlType )
+    {
+        _dao.deleteByControlTarget( nIdControlTarget, controlType, _plugin );
+    }
 
     /**
      * Returns an instance of a control whose identifier is specified in parameter
@@ -140,23 +153,25 @@ public final class ControlHome
     /**
      * Loads an existing control based on the display it is linked to (for conditional display)
      * 
-     * @param nIdDisplay
+     * @param nIdControlTarget
      *            the Display
+     * @param controlType
+     *            the control type
      * @return the requested Control
      */
-    public static Control getConditionalDisplayControlByDisplay( int nIdDisplay )
+    public static List<Control> getControlByControlTargetAndType( int nIdControlTarget, ControlType controlType )
     {
-        return _dao.selectControlByDisplay( nIdDisplay, _plugin );
+        return _dao.selectControlByControlTargetAndType( nIdControlTarget, controlType, _plugin );
     }
 
     /**
-     * Loads an existing control based on the attached question and control type
+     * Loads control list based on its attached question and control type
      * 
      * @param nIdQuestion
      *            the question id
      * @param strControlType
      *            the control type
-     * @return the requested Control
+     * @return the requested Control list
      */
     public static List<Control> getControlByQuestionAndType( int nIdQuestion, String strControlType )
     {

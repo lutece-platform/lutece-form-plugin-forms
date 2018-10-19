@@ -47,7 +47,6 @@ CREATE TABLE forms_transition (
 id_transition int AUTO_INCREMENT,
 from_step int NOT NULL,
 next_step int NOT NULL,
-id_control int default NULL,
 priority int default '0',
 PRIMARY KEY (id_transition)
 );
@@ -127,9 +126,9 @@ id_control int AUTO_INCREMENT,
 value varchar(255),
 error_message varchar(255) default '',
 id_question int NOT NULL,
-id_display int default '0' NOT NULL,
 validator_name varchar(255) NOT NULL,
 control_type varchar(255) NOT NULL,
+id_control_target int default '0' NOT NULL,
 PRIMARY KEY (id_control)
 );
 

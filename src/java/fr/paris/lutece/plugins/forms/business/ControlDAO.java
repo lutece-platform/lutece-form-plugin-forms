@@ -48,18 +48,19 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class ControlDAO implements IControlDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_display FROM forms_control";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_control_target FROM forms_control";
 
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_control = ?";
     private static final String SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE = SQL_QUERY_SELECTALL + " WHERE id_question = ? AND control_type = ?";
-    private static final String SQL_QUERY_SELECT_BY_DISPLAY_ID = SQL_QUERY_SELECTALL + " WHERE id_display = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, id_question, validator_name, control_type, id_display ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT_BY_CONTROL_TARGET = SQL_QUERY_SELECTALL + " WHERE id_control_target = ? AND control_type = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, id_question, validator_name, control_type, id_control_target ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_control WHERE id_control = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?, id_question = ?, validator_name = ?, control_type = ?, id_display = ? WHERE id_control = ?";
+    private static final String SQL_QUERY_DELETE_BY_CONTROL_TARGET = "DELETE FROM forms_control WHERE id_control_target = ? AND control_type = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?, id_question = ?, validator_name = ?, control_type = ?, id_control_target = ? WHERE id_control = ?";
 
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_control FROM forms_control";
-
-    /**
+    
+/**
      * {@inheritDoc }
      */
     @Override
@@ -74,7 +75,7 @@ public final class ControlDAO implements IControlDAO
             daoUtil.setInt( nIndex++, control.getIdQuestion( ) );
             daoUtil.setString( nIndex++, control.getValidatorName( ) );
             daoUtil.setString( nIndex++, control.getControlType( ) );
-            daoUtil.setInt( nIndex++, control.getIdTargetFormDisplay( ) );
+            daoUtil.setInt( nIndex++, control.getIdControlTarget( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -119,6 +120,19 @@ public final class ControlDAO implements IControlDAO
         daoUtil.executeUpdate( );
         daoUtil.close( );
     }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteByControlTarget( int nIdControlTarget, ControlType controlType, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_CONTROL_TARGET, plugin );
+        daoUtil.setInt( 1, nIdControlTarget );
+        daoUtil.setString( 2, controlType.getLabel( ) );
+        daoUtil.executeUpdate( );
+        daoUtil.close( );
+    }
 
     /**
      * {@inheritDoc }
@@ -135,7 +149,7 @@ public final class ControlDAO implements IControlDAO
         daoUtil.setInt( nIndex++, control.getIdQuestion( ) );
         daoUtil.setString( nIndex++, control.getValidatorName( ) );
         daoUtil.setString( nIndex++, control.getControlType( ) );
-        daoUtil.setInt( nIndex++, control.getIdTargetFormDisplay( ) );
+        daoUtil.setInt( nIndex++, control.getIdControlTarget( ) );
 
         daoUtil.setInt( nIndex, control.getId( ) );
 
@@ -201,21 +215,23 @@ public final class ControlDAO implements IControlDAO
     }
 
     @Override
-    public Control selectControlByDisplay( int nIdDisplay, Plugin plugin )
+    public List<Control> selectControlByControlTargetAndType( int nIdControlTarget, ControlType controlType, Plugin plugin )
     {
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_DISPLAY_ID, plugin );
-        daoUtil.setInt( 1, nIdDisplay );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_CONTROL_TARGET, plugin );
+        daoUtil.setInt( 1, nIdControlTarget );
+        daoUtil.setString( 2, controlType.getLabel( ) );
         daoUtil.executeQuery( );
-        Control control = null;
+        List<Control> listControl = new ArrayList<>( );
 
-        if ( daoUtil.next( ) )
+        while ( daoUtil.next( ) )
         {
-            control = dataToObject( daoUtil );
+            listControl.add( dataToObject( daoUtil ) );
         }
 
         daoUtil.close( );
-        return control;
+
+        return listControl;
     }
 
     @Override
@@ -238,6 +254,7 @@ public final class ControlDAO implements IControlDAO
         return listControl;
     }
 
+    
     /**
      * 
      * @param daoUtil
@@ -254,7 +271,7 @@ public final class ControlDAO implements IControlDAO
         control.setIdQuestion( daoUtil.getInt( "id_question" ) );
         control.setValidatorName( daoUtil.getString( "validator_name" ) );
         control.setControlType( daoUtil.getString( "control_type" ) );
-        control.setIdTargetFormDisplay( daoUtil.getInt( "id_display" ) );
+        control.setIdControlTarget( daoUtil.getInt( "id_control_target" ) );
 
         return control;
     }

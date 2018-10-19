@@ -181,7 +181,12 @@ public final class FormDisplayHome
      */
     public static void initConditionalDisplayForFormDisplay( FormDisplay formDisplay )
     {
-        formDisplay.setDisplayControl( ControlHome.getConditionalDisplayControlByDisplay( formDisplay.getId( ) ) );
+    	List<Control> listControl = ControlHome.getControlByControlTargetAndType( formDisplay.getId( ), ControlType.CONDITIONAL );
+    	
+    	if( !listControl.isEmpty( ) )
+    	{
+    		formDisplay.setDisplayControl( listControl.get( 0 ) );
+    	}
     }
 
 }
