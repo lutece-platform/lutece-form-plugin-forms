@@ -105,7 +105,10 @@ public final class FormDisplayHome
     public static FormDisplay findByPrimaryKey( int nKey )
     {
         FormDisplay formDisplay = _dao.load( nKey, _plugin );
-        initConditionalDisplayForFormDisplay( formDisplay );
+        if ( formDisplay != null )
+        {
+            initConditionalDisplayForFormDisplay( formDisplay );
+        }
         return formDisplay;
     }
 
