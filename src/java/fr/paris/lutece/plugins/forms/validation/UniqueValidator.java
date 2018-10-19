@@ -55,7 +55,7 @@ public class UniqueValidator implements IValidator
 {
     private final String _strValidatorName;
     private final String _strDisplayName;
-    private List<String> _listAvailableEntryType;
+    private final List<String> _listAvailableEntryType;
 
     /**
      * Constructor of the PatternValidator
