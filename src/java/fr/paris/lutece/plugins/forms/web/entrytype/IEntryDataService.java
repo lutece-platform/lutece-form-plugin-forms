@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -81,13 +83,13 @@ public interface IEntryDataService
     boolean isResponseChanged( FormQuestionResponse responseReference, FormQuestionResponse responseNew );
 
     /**
-     * Converts the specified response into a {@code String}
+     * Extracts the responses from the specified form question response as a list of {@code String} objects
      * 
      * @param formQuestionResponse
      *            the response to convert
-     * @return the {@code String}
+     * @return the list of {@code String} objects
      */
-    String responseToString( FormQuestionResponse formQuestionResponse );
+    List<String> responseToStrings( FormQuestionResponse formQuestionResponse );
 
     /**
      * Performs a treatment when the question is removed in front-office

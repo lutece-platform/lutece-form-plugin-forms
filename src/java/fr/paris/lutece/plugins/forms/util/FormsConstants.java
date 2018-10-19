@@ -68,6 +68,7 @@ public final class FormsConstants
     public static final String MARK_DISPLAY_ORDER = "displayOrder";
     public static final String MARK_TRANSITION = "transition";
     public static final String MARK_CONTROL = "control";
+    public static final String MARK_CONTROL_TYPE = "control_type";
     public static final String MARK_FORM_TOP_BREADCRUMB = "formTopBreadcrumb";
     public static final String MARK_FORM_BOTTOM_BREADCRUMB = "formBottomBreadcrumb";
     public static final String MARK_QUESTION_CONTENT = "questionContent";
@@ -76,6 +77,7 @@ public final class FormsConstants
     public static final String MARK_CONDITION_TITLE = "modify_condition_title";
     public static final String MARK_QUESTION_LIST_RESPONSES = "list_responses";
     public static final String MARK_VALIDATOR = "validator";
+    public static final String MARK_VALIDATOR_MANAGER = "validatorManager";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -99,6 +101,7 @@ public final class FormsConstants
     public static final String PARAMETER_ID_QUESTION = "id_question";
     public static final String PARAMETER_ID_DISPLAY = "id_display";
     public static final String PARAMETER_ID_PARENT = "id_parent";
+    public static final String PARAMETER_ID_TARGET = "id_target";
     public static final String PARAMETER_STEP_VALIDATED = "stepValidated";
     public static final String PARAMETER_GROUP_VALIDATED = "groupValidated";
     public static final String PARAMETER_DISPLAY_ORDER = "displayOrder";
@@ -106,8 +109,9 @@ public final class FormsConstants
     public static final String PARAMETER_ID_CONTROL = "id_control";
     public static final String PARAMETER_VALIDATOR_NAME = "validatorName";
     public static final String PARAMETER_CONTROL_VALUE = "control_value";
+    public static final String PARAMETER_CONTROL_TYPE = "control_type";
     public static final String PARAMETER_REF_LIST_VALUE = "refListValue";
-    public static final String PARAMETER_INDEX_STEP = "index_step";
+    public static final String PARAMETER_ACTION_GO_TO_STEP = "action_doGoToStep";
     public static final String PARAMETER_INFO_KEY = "info_key";
     public static final String PARAMETER_BACK_URL = "back_url";
     public static final String PARAMETER_DISPLAYED_QUESTIONS = "displayed_questions";

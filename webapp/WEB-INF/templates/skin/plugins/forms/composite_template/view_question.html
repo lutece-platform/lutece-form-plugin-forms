@@ -18,12 +18,12 @@
 			var inputValue = getFieldValue(input${control.id}_${question.iterationNumber});
 			if(validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
 			{
-				$('.display_field_${control.idTargetFormDisplay!''}_${question.iterationNumber}').show();
+				$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').show();
 				$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
 			}
 			else
 			{
-				$('.display_field_${control.idTargetFormDisplay!''}_${question.iterationNumber}').hide();
+				$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').hide();
 				$('#${question.id}_${question.iterationNumber}').val('');
 			}
 		});

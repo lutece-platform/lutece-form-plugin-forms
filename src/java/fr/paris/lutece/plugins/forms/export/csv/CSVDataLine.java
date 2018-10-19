@@ -36,11 +36,9 @@ package fr.paris.lutece.plugins.forms.export.csv;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -60,6 +58,8 @@ public class CSVDataLine
     private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
     private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
     private static final String PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT = "forms.export.formResponse.form.date.creation.format";
+
+    private static final String RESPONSE_SEPARATOR = " ";
 
     private final Map<String, String> _mapDataToExport;
 
@@ -90,8 +90,15 @@ public class CSVDataLine
         IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService(
                 formQuestionResponse.getQuestion( ).getEntry( ).getEntryType( ) );
 
-        _mapDataToExport.put( CSVUtil.buildColumnName( formQuestionResponse.getQuestion( ) ),
-                Objects.toString( entryDataService.responseToString( formQuestionResponse ), StringUtils.EMPTY ) );
+        List<String> listResponseValue = entryDataService.responseToStrings( formQuestionResponse );
+        StringBuilder sbReponseValues = new StringBuilder( );
+
+        for ( String strResponseValue : listResponseValue )
+        {
+            sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
+        }
+
+        _mapDataToExport.put( CSVUtil.buildColumnName( formQuestionResponse.getQuestion( ) ), sbReponseValues.toString( ) );
     }
 
     /**

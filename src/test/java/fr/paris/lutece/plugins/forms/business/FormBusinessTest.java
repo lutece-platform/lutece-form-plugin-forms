@@ -51,6 +51,8 @@ public class FormBusinessTest extends LuteceTestCase
     private static final Date STARTDATE2 = java.sql.Date.valueOf( "1970-01-02" );
     private static final Date ENDDATE1 = java.sql.Date.valueOf( "1970-01-05" );
     private static final Date ENDDATE2 = java.sql.Date.valueOf( "1970-01-06" );
+    private static final String BREADCRUMB1 = "forms.horizontalBreadcrumb";
+    private static final String BREADCRUMB2 = "forms.verticalBreadcrumb";
 
     /**
      * test Form
@@ -63,6 +65,7 @@ public class FormBusinessTest extends LuteceTestCase
         form.setDescription( DESCRIPTION1 );
         form.setAvailabilityStartDate( STARTDATE1 );
         form.setAvailabilityEndDate( ENDDATE1 );
+        form.setBreadcrumbName( BREADCRUMB1 );
 
         // Create test
         FormHome.create( form );
@@ -71,18 +74,21 @@ public class FormBusinessTest extends LuteceTestCase
         assertEquals( formStored.getDescription( ), form.getDescription( ) );
         assertEquals( formStored.getAvailabilityStartDate( ).getTime( ), form.getAvailabilityStartDate( ).getTime( ) );
         assertEquals( formStored.getAvailabilityEndDate( ), form.getAvailabilityEndDate( ) );
+        assertEquals( formStored.getBreadcrumbName( ), form.getBreadcrumbName( ) );
 
         // Update test
         form.setTitle( TITLE2 );
         form.setDescription( DESCRIPTION2 );
         form.setAvailabilityStartDate( STARTDATE2 );
         form.setAvailabilityEndDate( ENDDATE2 );
+        form.setBreadcrumbName( BREADCRUMB2 );
         FormHome.update( form );
         formStored = FormHome.findByPrimaryKey( form.getId( ) );
         assertEquals( formStored.getTitle( ), form.getTitle( ) );
         assertEquals( formStored.getDescription( ), form.getDescription( ) );
         assertEquals( formStored.getAvailabilityStartDate( ), form.getAvailabilityStartDate( ) );
         assertEquals( formStored.getAvailabilityEndDate( ), form.getAvailabilityEndDate( ) );
+        assertEquals( formStored.getBreadcrumbName( ), form.getBreadcrumbName( ) );
 
         // List test
         FormHome.getFormList( );

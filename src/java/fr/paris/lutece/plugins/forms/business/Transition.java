@@ -57,8 +57,6 @@ public class Transition implements Serializable
 
     private String _strNextStepTitle;
 
-    private int _nIdControl;
-
     private String _strControlTitle;
 
     private int _nPriority;
@@ -124,27 +122,6 @@ public class Transition implements Serializable
     public void setNextStep( int nNextStep )
     {
         _nNextStep = nNextStep;
-    }
-
-    /**
-     * Returns the IdControl
-     * 
-     * @return The IdControl
-     */
-    public int getIdControl( )
-    {
-        return _nIdControl;
-    }
-
-    /**
-     * Sets the IdControl
-     * 
-     * @param nIdControl
-     *            The IdControl
-     */
-    public void setIdControl( int nIdControl )
-    {
-        _nIdControl = nIdControl;
     }
 
     /**

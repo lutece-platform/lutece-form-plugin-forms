@@ -30,10 +30,7 @@
                                 <tr>
                                     <td class="col-sm-6">${transition.nextStepTitle!''}</td>
                                     <td class="col-sm-1">
-                                    	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyTransitionControl&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_controls.action.modifyControl}' showTitle=false buttonIcon='cog' color='btn-primary' size='sm' />
-                                    	<#if transition.idControl gt 0>
-                                            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_transition=${transition.id}' title='#i18n{forms.manage_controls.action.removeControl}' showTitle=false buttonIcon='trash' color='btn-danger' size='sm' />
-                                        </#if>
+                                    	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION' title='#i18n{forms.manage_controls.action.modifyControl}' showTitle=false buttonIcon='cog' color='btn-primary' size='sm' />
                                     </td>
                                     <td class="col-sm-1">${transition.priority}</td>
                                     <td class="col-sm-4">

@@ -105,7 +105,10 @@ public final class FormDisplayHome
     public static FormDisplay findByPrimaryKey( int nKey )
     {
         FormDisplay formDisplay = _dao.load( nKey, _plugin );
-        initConditionalDisplayForFormDisplay( formDisplay );
+        if ( formDisplay != null )
+        {
+            initConditionalDisplayForFormDisplay( formDisplay );
+        }
         return formDisplay;
     }
 
@@ -169,7 +172,10 @@ public final class FormDisplayHome
     public static FormDisplay getFormDisplayByFormStepAndComposite( int nIdForm, int nIdStep, int nIdComposite )
     {
         FormDisplay formDisplay = _dao.selectFormdisplayByFormStepAndComposite( nIdForm, nIdStep, nIdComposite, _plugin );
-        initConditionalDisplayForFormDisplay( formDisplay );
+        if ( formDisplay != null )
+        {
+            initConditionalDisplayForFormDisplay( formDisplay );
+        }
         return formDisplay;
     }
 
@@ -181,7 +187,12 @@ public final class FormDisplayHome
      */
     public static void initConditionalDisplayForFormDisplay( FormDisplay formDisplay )
     {
-        formDisplay.setDisplayControl( ControlHome.getConditionalDisplayControlByDisplay( formDisplay.getId( ) ) );
+        List<Control> listControl = ControlHome.getControlByControlTargetAndType( formDisplay.getId( ), ControlType.CONDITIONAL );
+
+        if ( !listControl.isEmpty( ) )
+        {
+            formDisplay.setDisplayControl( listControl.get( 0 ) );
+        }
     }
 
 }

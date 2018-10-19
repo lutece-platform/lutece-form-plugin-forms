@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.service;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.StepHome;
@@ -79,10 +80,7 @@ public final class StepService
 
         for ( Transition transition : TransitionHome.getTransitionsListFromStep( nIdStep ) )
         {
-            if ( transition.getIdControl( ) > 0 )
-            {
-                ControlHome.remove( transition.getIdControl( ) );
-            }
+            ControlHome.removeByControlTarget( transition.getId( ), ControlType.TRANSITION );
         }
 
         TransitionHome.removeTransitionByStep( nIdStep );

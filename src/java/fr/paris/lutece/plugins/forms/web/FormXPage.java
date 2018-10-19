@@ -45,6 +45,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormMessage;
@@ -110,7 +111,6 @@ public class FormXPage extends MVCApplication
     private static final long serialVersionUID = -8380962697376893817L;
     // Views
     private static final String VIEW_STEP = "stepView";
-    private static final String VIEW_GET_STEP = "getStep";
     private static final String VIEW_LIST_FORM = "listForm";
 
     // Actions
@@ -118,6 +118,7 @@ public class FormXPage extends MVCApplication
     private static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
     private static final String ACTION_SAVE_STEP = "doSaveStep";
     private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
+    private static final String ACTION_GO_TO_STEP = "doGoToStep";
     private static final String ACTION_ADD_ITERATION = "addIteration";
     private static final String ACTION_REMOVE_ITERATION = "removeIteration";
     private static final String ACTION_FORM_RESPONSE_SUMMARY = "formResponseSummary";
@@ -359,19 +360,30 @@ public class FormXPage extends MVCApplication
      * 
      * @throws SiteMessageException
      *             Exception
-     * @throws FormNotFoundException
-     *             Exception
+    
      */
     @Action( value = ACTION_PREVIOUS_STEP )
-    public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException, FormNotFoundException
+    public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException
     {
         boolean bSessionLost = isSessionLost( );
-        findFormFrom( request );
+        try {
+			findFormFrom( request );
+		} catch (FormNotFoundException e) {
+			return redirectView( request, VIEW_STEP );
+		}
         if ( bSessionLost )
         {
             addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
             return redirectView( request, VIEW_STEP );
         }
+        try
+        {
+            fillResponseManagerWithResponses( request, false );
+        }
+		catch( QuestionValidationException exception )
+		{
+			return redirectView( request, VIEW_STEP );
+		}
         _formResponseManager.popStep( );
 
         _currentStep = _formResponseManager.getCurrentStep( );
@@ -390,10 +402,19 @@ public class FormXPage extends MVCApplication
      * @throws SiteMessageException
      *             Exception
      */
-    @View( value = VIEW_GET_STEP )
-    public XPage getPreviousStep( HttpServletRequest request ) throws SiteMessageException
+    @Action( value = ACTION_GO_TO_STEP )
+    public XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException
     {
-        int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_INDEX_STEP ), INCORRECT_ID );
+        try
+        {
+            fillResponseManagerWithResponses( request, false );
+        }
+        catch( QuestionValidationException e )
+        {
+            // this cannot happen because the validation is not performed
+        }
+
+        int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ACTION_GO_TO_STEP ), INCORRECT_ID );
 
         _currentStep = _formResponseManager.goTo( nIndexStep );
 
@@ -512,6 +533,14 @@ public class FormXPage extends MVCApplication
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
+            return redirectView( request, VIEW_STEP );
+        }
+
+        if ( !_formResponseManager.validateFormResponses( ) )
+        {
+            _currentStep = _formResponseManager.getCurrentStep( );
+            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+
             return redirectView( request, VIEW_STEP );
         }
 
@@ -726,14 +755,16 @@ public class FormXPage extends MVCApplication
 
         for ( Transition transition : listTransition )
         {
-            if ( transition.getIdControl( ) <= 0 )
+            List<Control> listTransitionControl = ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION );
+            boolean controlsValidated = true;
+
+            if ( listTransitionControl.isEmpty( ) )
             {
                 return StepHome.findByPrimaryKey( transition.getNextStep( ) );
             }
-            else
-            {
-                Control transitionControl = ControlHome.findByPrimaryKey( transition.getIdControl( ) );
 
+            for ( Control transitionControl : listTransitionControl )
+            {
                 Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
                 Step stepTarget = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
 
@@ -743,13 +774,20 @@ public class FormXPage extends MVCApplication
                     {
                         IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
 
-                        if ( validator != null && validator.validate( questionResponse, transitionControl ) )
+                        if ( validator != null && !validator.validate( questionResponse, transitionControl ) )
                         {
-                            return StepHome.findByPrimaryKey( transition.getNextStep( ) );
+                            controlsValidated = false;
+                            break;
                         }
                     }
                 }
             }
+
+            if ( controlsValidated )
+            {
+                return StepHome.findByPrimaryKey( transition.getNextStep( ) );
+            }
+
         }
 
         return null;

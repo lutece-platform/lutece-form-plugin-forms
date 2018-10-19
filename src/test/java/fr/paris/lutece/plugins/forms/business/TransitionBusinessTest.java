@@ -41,9 +41,6 @@ import fr.paris.lutece.test.LuteceTestCase;
  */
 public class TransitionBusinessTest extends LuteceTestCase
 {
-
-    private static final int IDCONTROL1 = 1;
-    private static final int IDCONTROL2 = 2;
     private static final int PRIORITY1 = 1;
     private static final int PRIORITY2 = 2;
     private static final String STEP_TITLE1 = "titre1";
@@ -63,7 +60,6 @@ public class TransitionBusinessTest extends LuteceTestCase
         Transition transition = new Transition( );
         transition.setFromStep( step1.getId( ) );
         transition.setNextStep( step1.getId( ) );
-        transition.setIdControl( IDCONTROL1 );
         transition.setPriority( PRIORITY1 );
 
         // Create test
@@ -71,7 +67,6 @@ public class TransitionBusinessTest extends LuteceTestCase
         Transition transitionStored = TransitionHome.findByPrimaryKey( transition.getId( ) );
         assertEquals( transitionStored.getFromStep( ), transition.getFromStep( ) );
         assertEquals( transitionStored.getNextStep( ), transition.getNextStep( ) );
-        assertEquals( transitionStored.getIdControl( ), transition.getIdControl( ) );
         assertEquals( transitionStored.getPriority( ), transition.getPriority( ) );
 
         Step step2 = new Step( );
@@ -81,13 +76,11 @@ public class TransitionBusinessTest extends LuteceTestCase
         // Update test
         transition.setFromStep( step2.getId( ) );
         transition.setNextStep( step2.getId( ) );
-        transition.setIdControl( IDCONTROL2 );
         transition.setPriority( PRIORITY2 );
         TransitionHome.update( transition );
         transitionStored = TransitionHome.findByPrimaryKey( transition.getId( ) );
         assertEquals( transitionStored.getFromStep( ), transition.getFromStep( ) );
         assertEquals( transitionStored.getNextStep( ), transition.getNextStep( ) );
-        assertEquals( transitionStored.getIdControl( ), transition.getIdControl( ) );
         assertEquals( transitionStored.getPriority( ), transition.getPriority( ) );
 
         // List test

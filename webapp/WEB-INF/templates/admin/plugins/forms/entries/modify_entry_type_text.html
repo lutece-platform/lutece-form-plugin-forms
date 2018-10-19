@@ -56,10 +56,6 @@
 					<@formGroup labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.createEntry.labelConfirmFieldTitle}'>
 						<@input type='text' name='confirm_field_title' id='confirm_field_title' value='${entry.confirmFieldTitle!}'  maxlength=255 />
 					</@formGroup>
-					<@formGroup>
-						<#if entry.unique><#assign checkedUnique = true /></#if>
-						<@checkBox labelFor='unique_field' labelKey='#i18n{forms.createEntry.labelUniqueField}' name='unique_field' id='unique_field' value='1' checked=checkedUnique />
-					</@formGroup>
                         <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
                             <@checkBox name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
                         </@formGroup>

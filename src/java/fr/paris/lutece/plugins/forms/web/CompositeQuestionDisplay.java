@@ -47,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -199,7 +200,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                     controlNew.setValue( validator.getJavascriptControlValue( control ) );
                     _model.put( FormsConstants.MARK_CONTROL, controlNew );
 
-                    _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdTargetFormDisplay( ) );
+                    _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
                 }
 
                 HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, _model );
@@ -284,7 +285,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
         if ( displayType == DisplayType.READONLY_BACKOFFICE && _formDisplay != null )
         {
-            Control controlConditionnalDisplay = ControlHome.getConditionalDisplayControlByDisplay( _formDisplay.getId( ) );
+            List<Control> listConditionalControl = ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ), ControlType.CONDITIONAL );
+            Control controlConditionnalDisplay = null;
+
+            if ( !listConditionalControl.isEmpty( ) )
+            {
+                controlConditionnalDisplay = listConditionalControl.get( 0 );
+            }
 
             if ( controlConditionnalDisplay != null )
             {
