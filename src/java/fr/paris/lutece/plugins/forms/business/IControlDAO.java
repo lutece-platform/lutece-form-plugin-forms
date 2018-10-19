@@ -53,7 +53,7 @@ public interface IControlDAO
      *            the Plugin
      */
     void insert( Control control, Plugin plugin );
-    
+
     /**
      * Update the record in the table
      * 
@@ -73,7 +73,7 @@ public interface IControlDAO
      *            the Plugin
      */
     void delete( int nKey, Plugin plugin );
-    
+
     /**
      * Delete a record from the table by the control target
      * 

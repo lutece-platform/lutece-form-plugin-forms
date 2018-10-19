@@ -725,15 +725,15 @@ public class FormXPage extends MVCApplication
         {
             List<Control> listTransitionControl = ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION );
             boolean controlsValidated = true;
-            
-            if( listTransitionControl.isEmpty( ) )
+
+            if ( listTransitionControl.isEmpty( ) )
             {
-            	return StepHome.findByPrimaryKey( transition.getNextStep( ) );
+                return StepHome.findByPrimaryKey( transition.getNextStep( ) );
             }
-            
-            for( Control transitionControl : listTransitionControl )
+
+            for ( Control transitionControl : listTransitionControl )
             {
-            	Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
+                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
                 Step stepTarget = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
 
                 for ( FormQuestionResponse questionResponse : _formResponseManager.findResponsesFor( stepTarget ) )
@@ -744,18 +744,18 @@ public class FormXPage extends MVCApplication
 
                         if ( validator != null && !validator.validate( questionResponse, transitionControl ) )
                         {
-                        	controlsValidated = false;
-                        	break;
+                            controlsValidated = false;
+                            break;
                         }
                     }
                 }
             }
-            
-            if( controlsValidated )
+
+            if ( controlsValidated )
             {
-            	return StepHome.findByPrimaryKey( transition.getNextStep( ) );
+                return StepHome.findByPrimaryKey( transition.getNextStep( ) );
             }
-            
+
         }
 
         return null;

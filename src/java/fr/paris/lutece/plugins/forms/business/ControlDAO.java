@@ -59,8 +59,8 @@ public final class ControlDAO implements IControlDAO
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?, id_question = ?, validator_name = ?, control_type = ?, id_control_target = ? WHERE id_control = ?";
 
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_control FROM forms_control";
-    
-/**
+
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -120,7 +120,7 @@ public final class ControlDAO implements IControlDAO
         daoUtil.executeUpdate( );
         daoUtil.close( );
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -254,7 +254,6 @@ public final class ControlDAO implements IControlDAO
         return listControl;
     }
 
-    
     /**
      * 
      * @param daoUtil

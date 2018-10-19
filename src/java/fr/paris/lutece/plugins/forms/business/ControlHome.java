@@ -94,7 +94,7 @@ public final class ControlHome
     {
         _dao.delete( nKey, _plugin );
     }
-    
+
     /**
      * Remove the control whose control target identifier is specified in parameter
      * 

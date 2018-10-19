@@ -285,13 +285,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
         if ( displayType == DisplayType.READONLY_BACKOFFICE && _formDisplay != null )
         {
-        	List<Control> listConditionalControl = ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ), ControlType.CONDITIONAL );
-        	Control controlConditionnalDisplay = null;
-        	
-        	if( !listConditionalControl.isEmpty( ) )
-        	{
-        		controlConditionnalDisplay = listConditionalControl.get( 0 );
-        	}
+            List<Control> listConditionalControl = ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ), ControlType.CONDITIONAL );
+            Control controlConditionnalDisplay = null;
+
+            if ( !listConditionalControl.isEmpty( ) )
+            {
+                controlConditionnalDisplay = listConditionalControl.get( 0 );
+            }
 
             if ( controlConditionnalDisplay != null )
             {

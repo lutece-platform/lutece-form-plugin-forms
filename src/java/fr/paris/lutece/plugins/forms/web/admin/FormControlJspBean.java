@@ -192,23 +192,23 @@ public class FormControlJspBean extends AbstractJspBean
      */
     private void retrieveParameters( HttpServletRequest request )
     {
-    	int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
         _step = StepHome.findByPrimaryKey( nIdStep );
-        
+
         String strControlType = request.getParameter( FormsConstants.PARAMETER_CONTROL_TYPE );
-    	_controlType = ControlType.valueOf( strControlType );
-    	
+        _controlType = ControlType.valueOf( strControlType );
+
         _nIdTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_TARGET ), FormsConstants.DEFAULT_ID_VALUE );
     }
 
     /**
      * 
      * @param request
-     * 			The http request
+     *            The http request
      */
     private void initControl( HttpServletRequest request )
     {
-    	int nIdControl = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdControl = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL ), FormsConstants.DEFAULT_ID_VALUE );
 
         _control = ControlHome.findByPrimaryKey( nIdControl );
 
@@ -217,10 +217,10 @@ public class FormControlJspBean extends AbstractJspBean
             _control = new Control( );
             _control.setControlType( _controlType.getLabel( ) );
             _control.setIdControlTarget( _nIdTarget );
-            
-            if( _controlType.equals( ControlType.VALIDATION ) )
+
+            if ( _controlType.equals( ControlType.VALIDATION ) )
             {
-            	_control.setIdQuestion( _nIdTarget );
+                _control.setIdQuestion( _nIdTarget );
             }
         }
         else
@@ -229,15 +229,16 @@ public class FormControlJspBean extends AbstractJspBean
             _step = StepHome.findByPrimaryKey( question.getIdStep( ) );
         }
 
-        if( _controlType.equals( ControlType.TRANSITION ) )
+        if ( _controlType.equals( ControlType.TRANSITION ) )
         {
-        	_strControlTemplate = TEMPLATE_MODIFY_TRANSITION_CONTROL;
+            _strControlTemplate = TEMPLATE_MODIFY_TRANSITION_CONTROL;
         }
-        else if( _controlType.equals( ControlType.VALIDATION ) )
-        {
-        	_strControlTemplate = TEMPLATE_MODIFY_QUESTION_CONTROL;
-        }
-        
+        else
+            if ( _controlType.equals( ControlType.VALIDATION ) )
+            {
+                _strControlTemplate = TEMPLATE_MODIFY_QUESTION_CONTROL;
+            }
+
     }
 
     /**
@@ -250,8 +251,8 @@ public class FormControlJspBean extends AbstractJspBean
     @View( VIEW_MODIFY_CONDITION_CONTROL )
     public String getModifyConditionControl( HttpServletRequest request )
     {
-    	_controlType = ControlType.CONDITIONAL;
-    	
+        _controlType = ControlType.CONDITIONAL;
+
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
 
         _step = StepHome.findByPrimaryKey( nIdStep );
@@ -303,10 +304,10 @@ public class FormControlJspBean extends AbstractJspBean
             }
 
         List<Control> listConditionalControl = ControlHome.getControlByControlTargetAndType( nIdCompositeDisplay, _controlType );
-        
-        if( !listConditionalControl.isEmpty( ) )
+
+        if ( !listConditionalControl.isEmpty( ) )
         {
-        	_control = listConditionalControl.get( 0 );
+            _control = listConditionalControl.get( 0 );
         }
 
         if ( _control == null )
@@ -338,21 +339,21 @@ public class FormControlJspBean extends AbstractJspBean
     {
         if ( _step == null )
         {
-        	int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+            int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
 
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
-        
-        if( _controlType != ControlType.CONDITIONAL && _control == null )
+
+        if ( _controlType != ControlType.CONDITIONAL && _control == null )
         {
-        	initControl( request );
+            initControl( request );
         }
-        
+
         if ( _control == null && !retrieveControlFromRequest( request ) )
         {
             return redirectToViewManageForm( request );
         }
-        
+
         Map<String, Object> model = getModel( );
 
         if ( _control != null )
@@ -383,16 +384,16 @@ public class FormControlJspBean extends AbstractJspBean
         {
             idStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         }
-        
+
         boolean bStepChanged = true;
-        
+
         ReferenceList referenceListQuestion = new ReferenceList( );
         for ( Question question : QuestionHome.getQuestionsListByStep( idStep ) )
         {
-        	if( question.getId( ) == _control.getIdQuestion( ) )
-        	{
-        		bStepChanged = false;
-        	}
+            if ( question.getId( ) == _control.getIdQuestion( ) )
+            {
+                bStepChanged = false;
+            }
             referenceListQuestion.addItem( question.getId( ), question.getTitle( ) );
         }
 
@@ -401,12 +402,12 @@ public class FormControlJspBean extends AbstractJspBean
             _control.setValidatorName( strValidatorName );
             _control.setValue( StringUtils.EMPTY );
         }
-        
+
         int nIdQuestion;
-        
-        if( bStepChanged && !referenceListQuestion.isEmpty( ) )
+
+        if ( bStepChanged && !referenceListQuestion.isEmpty( ) )
         {
-        	nIdQuestion = Integer.valueOf( referenceListQuestion.get( 0 ).getCode( ) );
+            nIdQuestion = Integer.valueOf( referenceListQuestion.get( 0 ).getCode( ) );
         }
         else
         {
@@ -446,8 +447,6 @@ public class FormControlJspBean extends AbstractJspBean
             strValidatorTemplate = validator.getDisplayHtml( _control );
         }
 
-        
-
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_CONTROL_TEMPLATE, strValidatorTemplate );
@@ -480,8 +479,8 @@ public class FormControlJspBean extends AbstractJspBean
         }
         else
         {
-        	ControlHome.create( _control );
-        	
+            ControlHome.create( _control );
+
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_CREATED );
         }
 
@@ -650,31 +649,31 @@ public class FormControlJspBean extends AbstractJspBean
     {
         String strTargetJsp = StringUtils.EMPTY;
         int nIdStep = 0;
-        
+
         switch( _controlType )
         {
-	        case CONDITIONAL:
-	        	strTargetJsp = FormsConstants.JSP_MANAGE_QUESTIONS;
-	            if ( _question != null )
-	            {
-	                nIdStep = _question.getIdStep( );
-	            }
-	            else
-	            {
-	                nIdStep = _group.getIdStep( );
-	            }
-	        	break;
-	        case TRANSITION:
-	        	strTargetJsp = FormsConstants.JSP_MANAGE_CONTROLS;
-	        	Transition transition = TransitionHome.findByPrimaryKey( _control.getIdControlTarget( ) );
-	        	nIdStep = transition.getFromStep( );
-	        	break;
-	        case VALIDATION:
-	        	strTargetJsp = FormsConstants.JSP_MANAGE_CONTROLS;
-	            nIdStep = _step.getId( );
-	        	break;
-        	default:
-        		break;
+            case CONDITIONAL:
+                strTargetJsp = FormsConstants.JSP_MANAGE_QUESTIONS;
+                if ( _question != null )
+                {
+                    nIdStep = _question.getIdStep( );
+                }
+                else
+                {
+                    nIdStep = _group.getIdStep( );
+                }
+                break;
+            case TRANSITION:
+                strTargetJsp = FormsConstants.JSP_MANAGE_CONTROLS;
+                Transition transition = TransitionHome.findByPrimaryKey( _control.getIdControlTarget( ) );
+                nIdStep = transition.getFromStep( );
+                break;
+            case VALIDATION:
+                strTargetJsp = FormsConstants.JSP_MANAGE_CONTROLS;
+                nIdStep = _step.getId( );
+                break;
+            default:
+                break;
         }
 
         UrlItem url = new UrlItem( AppPathService.getBaseUrl( request ) + strTargetJsp );
@@ -682,7 +681,7 @@ public class FormControlJspBean extends AbstractJspBean
 
         if ( _nIdTarget > 0 )
         {
-        	url.addParameter( FormsConstants.PARAMETER_CONTROL_TYPE, _controlType.name( ) );
+            url.addParameter( FormsConstants.PARAMETER_CONTROL_TYPE, _controlType.name( ) );
             url.addParameter( FormsConstants.PARAMETER_ID_TARGET, _nIdTarget );
         }
 
@@ -691,7 +690,7 @@ public class FormControlJspBean extends AbstractJspBean
         {
             url.addParameter( FormsConstants.PARAMETER_INFO_KEY, strInfoKey );
         }
-        
+
         clearAttributes( );
 
         return url.getUrl( );
