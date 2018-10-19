@@ -104,6 +104,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_LOAD_BACKUP = "forms.xpage.form.view.loadBackUp";
     protected static final String MESSAGE_LIST_FORMS_PAGETITLE = "forms.xpage.listForms.pagetitle";
     protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
+    private static final String MESSAGE_WARNING_LOST_SESSION = "forms.warning.lost.session";
     /**
      * Generated serial id
      */
@@ -139,6 +140,7 @@ public class FormXPage extends MVCApplication
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+
     // Attributes
     private FormResponseManager _formResponseManager;
     private Step _currentStep;
@@ -358,19 +360,30 @@ public class FormXPage extends MVCApplication
      * 
      * @throws SiteMessageException
      *             Exception
+    
      */
     @Action( value = ACTION_PREVIOUS_STEP )
     public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException
     {
+        boolean bSessionLost = isSessionLost( );
+        try {
+			findFormFrom( request );
+		} catch (FormNotFoundException e) {
+			return redirectView( request, VIEW_STEP );
+		}
+        if ( bSessionLost )
+        {
+            addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+            return redirectView( request, VIEW_STEP );
+        }
         try
         {
             fillResponseManagerWithResponses( request, false );
         }
-        catch( QuestionValidationException e )
-        {
-            // this cannot happen because the validation is not performed
-        }
-
+		catch( QuestionValidationException exception )
+		{
+			return redirectView( request, VIEW_STEP );
+		}
         _formResponseManager.popStep( );
 
         _currentStep = _formResponseManager.getCurrentStep( );
@@ -424,7 +437,13 @@ public class FormXPage extends MVCApplication
     {
         try
         {
+            boolean bSessionLost = isSessionLost( );
             findFormFrom( request );
+            if ( bSessionLost )
+            {
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                return redirectView( request, VIEW_STEP );
+            }
             fillResponseManagerWithResponses( request, true );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -433,6 +452,7 @@ public class FormXPage extends MVCApplication
         }
 
         Map<String, Object> model = buildModelForSummary( request );
+        model.put( FormsConstants.MARK_ID_FORM, request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
 
         return getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, request.getLocale( ), model );
     }
@@ -498,7 +518,13 @@ public class FormXPage extends MVCApplication
 
         try
         {
+            boolean bSessionLost = isSessionLost( );
             form = findFormFrom( request );
+            if ( bSessionLost )
+            {
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                return redirectView( request, VIEW_STEP );
+            }
 
             if ( !form.isDisplaySummary( ) )
             {
@@ -563,7 +589,7 @@ public class FormXPage extends MVCApplication
         {
             int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), INCORRECT_ID );
 
-            if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
+            if ( nIdForm != INCORRECT_ID )
             {
                 form = FormHome.findByPrimaryKey( nIdForm );
 
@@ -701,7 +727,13 @@ public class FormXPage extends MVCApplication
     {
         try
         {
+            boolean bSessionLost = isSessionLost( );
             findFormFrom( request );
+            if ( bSessionLost )
+            {
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                return redirectView( request, VIEW_STEP );
+            }
             fillResponseManagerWithResponses( request, true );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -779,7 +811,13 @@ public class FormXPage extends MVCApplication
 
         try
         {
+            boolean bSessionLost = isSessionLost( );
             form = findFormFrom( request );
+            if ( bSessionLost )
+            {
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                return redirectView( request, VIEW_STEP );
+            }
         }
         catch( FormNotFoundException exception )
         {
@@ -823,7 +861,14 @@ public class FormXPage extends MVCApplication
     {
         try
         {
+            boolean bSessionLost = isSessionLost( );
             findFormFrom( request );
+            if ( bSessionLost )
+            {
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                return redirectView( request, VIEW_STEP );
+            }
+
             fillResponseManagerWithResponses( request, false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -858,7 +903,13 @@ public class FormXPage extends MVCApplication
     {
         try
         {
+            boolean bSessionLost = isSessionLost( );
             findFormFrom( request );
+            if ( bSessionLost )
+            {
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                return redirectView( request, VIEW_STEP );
+            }
             fillResponseManagerWithResponses( request, false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -946,7 +997,7 @@ public class FormXPage extends MVCApplication
         {
             LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
             int nLimitNumberResponse = FormHome.getNumberOfResponseFormByUser( form.getId( ), user.getName( ) );
-            if ( nLimitNumberResponse >= 1 )
+            if ( nLimitNumberResponse >= NumberUtils.INTEGER_ONE )
             {
                 SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM_, SiteMessage.TYPE_ERROR );
             }
@@ -976,5 +1027,15 @@ public class FormXPage extends MVCApplication
         _formResponseManager = null;
         _stepDisplayTree = null;
         _breadcrumb = null;
+    }
+
+    /**
+     * ckeck if the session has expired
+     * 
+     * 
+     */
+    private boolean isSessionLost( )
+    {
+        return ( _currentStep == null && _formResponseManager == null && _stepDisplayTree == null && _breadcrumb == null );
     }
 }
