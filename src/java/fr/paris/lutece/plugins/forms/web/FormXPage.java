@@ -360,17 +360,19 @@ public class FormXPage extends MVCApplication
      * 
      * @throws SiteMessageException
      *             Exception
-    
      */
     @Action( value = ACTION_PREVIOUS_STEP )
     public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException
     {
         boolean bSessionLost = isSessionLost( );
-        try {
-			findFormFrom( request );
-		} catch (FormNotFoundException e) {
-			return redirectView( request, VIEW_STEP );
-		}
+        try
+        {
+            findFormFrom( request );
+        }
+        catch( FormNotFoundException e )
+        {
+            return redirectView( request, VIEW_STEP );
+        }
         if ( bSessionLost )
         {
             addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
@@ -380,10 +382,10 @@ public class FormXPage extends MVCApplication
         {
             fillResponseManagerWithResponses( request, false );
         }
-		catch( QuestionValidationException exception )
-		{
-			return redirectView( request, VIEW_STEP );
-		}
+        catch( QuestionValidationException exception )
+        {
+            return redirectView( request, VIEW_STEP );
+        }
         _formResponseManager.popStep( );
 
         _currentStep = _formResponseManager.getCurrentStep( );
