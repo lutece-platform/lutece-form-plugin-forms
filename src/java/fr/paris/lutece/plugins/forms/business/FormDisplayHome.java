@@ -172,7 +172,10 @@ public final class FormDisplayHome
     public static FormDisplay getFormDisplayByFormStepAndComposite( int nIdForm, int nIdStep, int nIdComposite )
     {
         FormDisplay formDisplay = _dao.selectFormdisplayByFormStepAndComposite( nIdForm, nIdStep, nIdComposite, _plugin );
-        initConditionalDisplayForFormDisplay( formDisplay );
+        if ( formDisplay != null )
+        {
+            initConditionalDisplayForFormDisplay( formDisplay );
+        }
         return formDisplay;
     }
 

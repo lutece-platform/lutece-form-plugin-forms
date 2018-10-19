@@ -98,6 +98,9 @@ public class FormDisplayBusinessTest extends LuteceTestCase
         formDisplayStored = FormDisplayHome.findByPrimaryKey( formDisplay.getId( ) );
         assertNull( formDisplayStored );
 
+        formDisplayStored = FormDisplayHome.getFormDisplayByFormStepAndComposite( 1, 1, 1 );
+        assertNull( formDisplayStored );
+
     }
 
 }
