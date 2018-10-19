@@ -139,7 +139,7 @@ public class FormXPage extends MVCApplication
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
-   
+
     // Attributes
     private FormResponseManager _formResponseManager;
     private Step _currentStep;
@@ -360,19 +360,19 @@ public class FormXPage extends MVCApplication
      * @throws SiteMessageException
      *             Exception
      * @throws FormNotFoundException
-     * 	Exception
+     *             Exception
      */
     @Action( value = ACTION_PREVIOUS_STEP )
     public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException, FormNotFoundException
     {
-    	boolean bSessionLost = isSessionLost( );
-    	findFormFrom( request );
+        boolean bSessionLost = isSessionLost( );
+        findFormFrom( request );
         if ( bSessionLost )
         {
-        	addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+            addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
             return redirectView( request, VIEW_STEP );
         }
-    	_formResponseManager.popStep( );
+        _formResponseManager.popStep( );
 
         _currentStep = _formResponseManager.getCurrentStep( );
 
@@ -417,11 +417,11 @@ public class FormXPage extends MVCApplication
         try
         {
             boolean bSessionLost = isSessionLost( );
-        	findFormFrom( request );
-            if (bSessionLost )
+            findFormFrom( request );
+            if ( bSessionLost )
             {
-            	addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
-            	return redirectView( request, VIEW_STEP );
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                return redirectView( request, VIEW_STEP );
             }
             fillResponseManagerWithResponses( request, true );
         }
@@ -497,12 +497,12 @@ public class FormXPage extends MVCApplication
 
         try
         {
-        	boolean bSessionLost = isSessionLost( );
-        	form = findFormFrom( request );
+            boolean bSessionLost = isSessionLost( );
+            form = findFormFrom( request );
             if ( bSessionLost )
             {
-            	addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
-            	return redirectView( request, VIEW_STEP );
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                return redirectView( request, VIEW_STEP );
             }
 
             if ( !form.isDisplaySummary( ) )
@@ -698,11 +698,11 @@ public class FormXPage extends MVCApplication
     {
         try
         {
-        	boolean bSessionLost = isSessionLost( );
-        	findFormFrom( request );
+            boolean bSessionLost = isSessionLost( );
+            findFormFrom( request );
             if ( bSessionLost )
             {
-            	addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
                 return redirectView( request, VIEW_STEP );
             }
             fillResponseManagerWithResponses( request, true );
@@ -773,12 +773,12 @@ public class FormXPage extends MVCApplication
 
         try
         {
-        	boolean bSessionLost = isSessionLost( );
-        	form = findFormFrom( request );
-            if (bSessionLost )
+            boolean bSessionLost = isSessionLost( );
+            form = findFormFrom( request );
+            if ( bSessionLost )
             {
-            	addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
-            	return redirectView( request, VIEW_STEP );
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                return redirectView( request, VIEW_STEP );
             }
         }
         catch( FormNotFoundException exception )
@@ -823,14 +823,14 @@ public class FormXPage extends MVCApplication
     {
         try
         {
-        	boolean bSessionLost = isSessionLost( );
-        	findFormFrom( request );
+            boolean bSessionLost = isSessionLost( );
+            findFormFrom( request );
             if ( bSessionLost )
-	        {
-            	addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) ); 
-            	return redirectView( request, VIEW_STEP );
+            {
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                return redirectView( request, VIEW_STEP );
             }
-            
+
             fillResponseManagerWithResponses( request, false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -865,8 +865,8 @@ public class FormXPage extends MVCApplication
     {
         try
         {
-        	boolean bSessionLost = isSessionLost( );
-        	findFormFrom( request );
+            boolean bSessionLost = isSessionLost( );
+            findFormFrom( request );
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
@@ -990,6 +990,7 @@ public class FormXPage extends MVCApplication
         _stepDisplayTree = null;
         _breadcrumb = null;
     }
+
     /**
      * ckeck if the session has expired
      * 
@@ -997,6 +998,6 @@ public class FormXPage extends MVCApplication
      */
     private boolean isSessionLost( )
     {
-    	return ( _currentStep == null && _formResponseManager == null && _stepDisplayTree == null &&  _breadcrumb == null );
+        return ( _currentStep == null && _formResponseManager == null && _stepDisplayTree == null && _breadcrumb == null );
     }
 }
