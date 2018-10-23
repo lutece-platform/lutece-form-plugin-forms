@@ -304,6 +304,8 @@ public class FormTransitionJspBean extends AbstractJspBean
         url.addParameter( FormsConstants.PARAMETER_ID_TRANSITION, _transition.getId( ) );
         url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, "modifyTransitionControl" );
         url.addParameter( FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
+        url.addParameter( FormsConstants.PARAMETER_CONTROL_TYPE, ControlType.TRANSITION.toString( ) );
+        url.addParameter( FormsConstants.PARAMETER_ID_TARGET, _transition.getId( ) );
 
         return redirect( request, url.getUrl( ) );
     }
