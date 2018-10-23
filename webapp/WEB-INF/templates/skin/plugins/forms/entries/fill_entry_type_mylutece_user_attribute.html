@@ -16,4 +16,13 @@
 				</#if>
 			</div>
 		</div>
+
+     <#if list_responses??>
+      <#list list_responses as response>
+        <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+          <#assign error = response.entry.error>
+          <div class="alert alert-danger"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
+        </#if>
+      </#list>
+    </#if>
 </#if>
