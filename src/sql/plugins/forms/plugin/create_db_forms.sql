@@ -9,7 +9,7 @@ id_form int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
 description varchar(255) default '',
 creation_date timestamp default CURRENT_TIMESTAMP NOT NULL,
-update_date timestamp default CURRENT_TIMESTAMP NOT NULL,
+update_date timestamp default '1980-01-01 00:00' NOT NULL,
 availability_start_date date default NULL,
 availability_end_date date default NULL,
 max_number_response INT default 0,
@@ -169,7 +169,7 @@ CREATE TABLE IF NOT EXISTS forms_response (
   id_form int default '0' NOT NULL,
   guid varchar(255),
   creation_date timestamp default CURRENT_TIMESTAMP NOT NULL,
-  update_date timestamp default CURRENT_TIMESTAMP NOT NULL,
+  update_date timestamp default '1980-01-01 00:00' NOT NULL,
   from_save SMALLINT default 0,
   PRIMARY KEY (id_response)
 );
