@@ -407,6 +407,23 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_GO_TO_STEP )
     public XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException
     {
+        boolean bSessionLost = isSessionLost( );
+
+        try
+        {
+            findFormFrom( request );
+        }
+        catch( FormNotFoundException e )
+        {
+            return redirectView( request, VIEW_STEP );
+        }
+
+        if ( bSessionLost )
+        {
+            addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+            return redirectView( request, VIEW_STEP );
+        }
+
         try
         {
             fillResponseManagerWithResponses( request, false );
