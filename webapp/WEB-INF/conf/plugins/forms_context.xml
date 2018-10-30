@@ -285,6 +285,7 @@
 	<bean id="forms.formColumn.forms.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnFormsQueryPartFactory"/>
 	<bean id="forms.formColumn.formResponseDateCreation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnFormResponseDateCreationQueryPartFactory"/>
 	<bean id="forms.formColumn.entry.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnEntryQueryPartFactory"/>	
+	<bean id="forms.formColumn.entrygeolocation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnEntryGeolocationQueryPartFactory"/>
 	<bean id="forms.formColumn.workflowState.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnWorkflowStateQueryPartFactory"/>
 	
 	<!-- Columns -->
@@ -314,6 +315,7 @@
 	<bean id="forms.forms.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayFormsFactory"/>
 	<bean id="forms.formResponseDateCreation.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayFormResponseDateCreationFactory"/>
 	<bean id="forms.entry.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayEntryFactory"/>
+	<bean id="forms.entrygeolocation.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayEntryGeolocationFactory"/>
 	<bean id="forms.workflowState.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayWorkflowStateFactory"/>
 	
 	<!-- Panels Display Factories -->
