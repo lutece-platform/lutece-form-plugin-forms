@@ -18,10 +18,7 @@
 				<option value="">#i18n{form.xpage.form.noValue}</option>
 				<#list entry.fields as field>
 					<option  value="${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if>
-						<#if list_responses??>
-							<#if field.defaultValue>
-								selected ="selected"
-							</#if>
+						<#if list_responses?has_content>
 							<#list list_responses as response>
 								<#if response.entry.idEntry == entry.idEntry && response.field??>
 									<#if response.field.idField == field.idField>
