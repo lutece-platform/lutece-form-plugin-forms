@@ -190,8 +190,7 @@ public final class FormListTemplateBuilder
         {
             for ( int index = 0; index < listFormColumnCell.size( ); index++ )
             {
-                // We will increment the index to retrieve the form column display because the first column is at position 1
-                int nColumnDisplayPosition = index + 1;
+                int nColumnDisplayPosition = cellIndexToColumnDisplayPosition( index );
                 IFormColumnDisplay formColumnDisplay = findFormColumnDisplayByPosition( nColumnDisplayPosition, listFormColumnDisplay );
                 if ( formColumnDisplay != null )
                 {
@@ -201,6 +200,19 @@ public final class FormListTemplateBuilder
                 }
             }
         }
+    }
+
+    /**
+     * Convert from columnDisplayPosition to cell index.
+     *
+     * The positions start at index 1 and cells at index 0..
+     * @param nCellIndex the cell index
+     * @return the position of the corresponding ColumnDisplay
+     * @see columnDisplayPositionToCellIndex
+     */
+    private static int cellIndexToColumnDisplayPosition( int nCellIndex )
+    {
+        return nCellIndex + 1;
     }
 
     /**
