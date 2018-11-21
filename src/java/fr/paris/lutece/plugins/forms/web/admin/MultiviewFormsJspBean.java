@@ -172,9 +172,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Add the template of column to the model
         String strSortUrl = String.format( BASE_SORT_URL_PATTERN, _strSelectedPanelTechnicalCode );
         String strRedirectionDetailsBaseUrl = buildRedirectionDetailsBaseUrl( );
-        List<FormResponseItem> listFormResponseItemToDisplay = buildFormResponseItemListToDisplay( _formPanelDisplayActive.getFormResponseItemList( ), getPaginator( ).getPageItems( ) );
-        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, listFormResponseItemToDisplay, getLocale( ),
-                strRedirectionDetailsBaseUrl, strSortUrl );
+        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, _formPanelDisplayActive.getFormResponseItemList( ), getLocale( ),
+                strRedirectionDetailsBaseUrl, strSortUrl, getPaginator( ).getPageItems( ) );
         model.put( MARK_TABLE_TEMPLATE, strTableTemplate );
 
         // Add the list of all form panel
@@ -425,30 +424,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         url.addParameter( FormsConstants.PARAMETER_CURRENT_SELECTED_PANEL, _strSelectedPanelTechnicalCode );
 
         return url.getUrl( );
-    }
-
-    /**
-     * Build the list of FormResponseItem to display for the active FormPanelDisplay based on the number of items of the current paginator
-     * 
-     * @return list of FormResponseItem to display for the active FormPanelDisplay
-     */
-    private List<FormResponseItem> buildFormResponseItemListToDisplay( List<FormResponseItem> listFormResponseItem, List<Integer> listIdFormResponsePaginated )
-    {
-        List<FormResponseItem> listFormResponseItemToDisplay = new ArrayList<>( );
-
-        if ( !CollectionUtils.isEmpty( listIdFormResponsePaginated ) && !CollectionUtils.isEmpty( listFormResponseItem ) )
-        {
-            for ( FormResponseItem formResponseItem : listFormResponseItem )
-            {
-                Integer nIdFormResponse = formResponseItem.getIdFormResponse( );
-                if ( listIdFormResponsePaginated.contains( nIdFormResponse ) )
-                {
-                    listFormResponseItemToDisplay.add( formResponseItem );
-                }
-            }
-        }
-
-        return listFormResponseItemToDisplay;
     }
 
     /**

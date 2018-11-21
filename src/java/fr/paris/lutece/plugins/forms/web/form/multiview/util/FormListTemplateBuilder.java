@@ -85,9 +85,10 @@ public final class FormListTemplateBuilder
      * @return the global template of all FormColumnDisplay objects
      */
     public static String buildTableTemplate( List<IFormColumnDisplay> listFormColumnDisplay, List<FormResponseItem> listFormResponseItem, Locale locale,
-            String strRedirectionDetailsBaseUrl, String strSortUrl )
+            String strRedirectionDetailsBaseUrl, String strSortUrl, List<Integer> listIdFormResponsePaginated )
     {
         String strTableTemplate = StringUtils.EMPTY;
+        List<FormResponseItem> listFormResponseItemPaginated = buildFormResponseItemListToDisplay( listFormResponseItem, listIdFormResponsePaginated );
 
         if ( !CollectionUtils.isEmpty( listFormColumnDisplay ) && !CollectionUtils.isEmpty( listFormResponseItem ) )
         {
@@ -95,13 +96,13 @@ public final class FormListTemplateBuilder
             List<String> listFormColumnHeaderTemplate = buildFormColumnHeaderTemplateList( listFormColumnDisplay, locale, strSortUrl );
 
             // Build the list of all FormColumnLineTemplate
-            List<FormColumnLineTemplate> listFormColumnLineTemplate = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItem, locale );
+            List<FormColumnLineTemplate> listFormColumnLineTemplatePaginated = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItemPaginated, locale );
 
             // Build the model
             Map<String, Object> model = new LinkedHashMap<>( );
             model.put( MARK_FORM_RESPONSE_COLUMN_HEADER_TEMPLATE_LIST, listFormColumnHeaderTemplate );
-            model.put( MARK_FROM_RESPONSE_ITEM_LIST, listFormResponseItem );
-            model.put( MARK_FORM_RESPONSE_LINE_TEMPLATE_LIST, listFormColumnLineTemplate );
+            model.put( MARK_FROM_RESPONSE_ITEM_LIST, listFormResponseItemPaginated );
+            model.put( MARK_FORM_RESPONSE_LINE_TEMPLATE_LIST, listFormColumnLineTemplatePaginated );
             model.put( MARK_FORM_RESPONSE_DETAILS_REDIRECT_BASE_URL, strRedirectionDetailsBaseUrl );
 
             strTableTemplate = AppTemplateService.getTemplate( TEMPLATE_MULTIVIEW_FORM_TABLE, locale, model ).getHtml( );
@@ -229,4 +230,29 @@ public final class FormListTemplateBuilder
 
         return formColumnDisplayResult;
     }
+
+    /**
+     * Build the list of FormResponseItem to display for the active FormPanelDisplay based on the number of items of the current paginator
+     * 
+     * @return list of FormResponseItem to display for the active FormPanelDisplay
+     */
+    private static List<FormResponseItem> buildFormResponseItemListToDisplay( List<FormResponseItem> listFormResponseItem, List<Integer> listIdFormResponsePaginated )
+    {
+        List<FormResponseItem> listFormResponseItemToDisplay = new ArrayList<>( );
+
+        if ( !CollectionUtils.isEmpty( listIdFormResponsePaginated ) && !CollectionUtils.isEmpty( listFormResponseItem ) )
+        {
+            for ( FormResponseItem formResponseItem : listFormResponseItem )
+            {
+                Integer nIdFormResponse = formResponseItem.getIdFormResponse( );
+                if ( listIdFormResponsePaginated.contains( nIdFormResponse ) )
+                {
+                    listFormResponseItemToDisplay.add( formResponseItem );
+                }
+            }
+        }
+
+        return listFormResponseItemToDisplay;
+    }
+
 }
