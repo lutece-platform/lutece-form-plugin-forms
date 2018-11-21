@@ -172,7 +172,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Add the template of column to the model
         String strSortUrl = String.format( BASE_SORT_URL_PATTERN, _strSelectedPanelTechnicalCode );
         String strRedirectionDetailsBaseUrl = buildRedirectionDetailsBaseUrl( );
-        List<FormResponseItem> listFormResponseItemToDisplay = buildFormResponseItemListToDisplay( );
+        List<FormResponseItem> listFormResponseItemToDisplay = buildFormResponseItemListToDisplay( _formPanelDisplayActive.getFormResponseItemList( ), getPaginator( ).getPageItems( ) );
         String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, listFormResponseItemToDisplay, getLocale( ),
                 strRedirectionDetailsBaseUrl, strSortUrl );
         model.put( MARK_TABLE_TEMPLATE, strTableTemplate );
@@ -432,12 +432,10 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * 
      * @return list of FormResponseItem to display for the active FormPanelDisplay
      */
-    private List<FormResponseItem> buildFormResponseItemListToDisplay( )
+    private List<FormResponseItem> buildFormResponseItemListToDisplay( List<FormResponseItem> listFormResponseItem, List<Integer> listIdFormResponsePaginated )
     {
         List<FormResponseItem> listFormResponseItemToDisplay = new ArrayList<>( );
 
-        List<Integer> listIdFormResponsePaginated = getPaginator( ).getPageItems( );
-        List<FormResponseItem> listFormResponseItem = _formPanelDisplayActive.getFormResponseItemList( );
         if ( !CollectionUtils.isEmpty( listIdFormResponsePaginated ) && !CollectionUtils.isEmpty( listFormResponseItem ) )
         {
             for ( FormResponseItem formResponseItem : listFormResponseItem )
