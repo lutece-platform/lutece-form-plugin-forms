@@ -88,21 +88,21 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
         String strEntryY = StringUtils.EMPTY;
         if ( formColumnCell != null )
         {
-            String strEntryAddrName = String.format( "column_%s_addr_value", getFormColumnPosition( ) );
+            String strEntryAddrName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_ADDR, getFormColumnPosition( ) );
             Object objEntryAddr = formColumnCell.getFormColumnCellValueByName( strEntryAddrName );
             if ( objEntryAddr != null )
             {
                 strEntryAddr = String.valueOf( objEntryAddr );
             }
 
-            String strEntryXName = String.format( "column_%s_x_value", getFormColumnPosition( ) );
+            String strEntryXName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_X, getFormColumnPosition( ) );
             Object objEntryX = formColumnCell.getFormColumnCellValueByName( strEntryXName );
             if ( objEntryX != null )
             {
                 strEntryX = String.valueOf( objEntryX );
             }
 
-            String strEntryYName = String.format( "column_%s_y_value", getFormColumnPosition( ) );
+            String strEntryYName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y, getFormColumnPosition( ) );
             Object objEntryY = formColumnCell.getFormColumnCellValueByName( strEntryYName );
             if ( objEntryY != null )
             {

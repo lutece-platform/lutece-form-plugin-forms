@@ -44,6 +44,11 @@ public final class FormEntryNameConstants
     // Column Constants
     public static final String COLUMN_ENTRY_VALUE_PATTERN = "column_%s_value";
 
+    // Geoloc columns Constants
+    public static final String COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_ADDR = "column_%s_addr_value";
+    public static final String COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_X = "column_%s_x_value";
+    public static final String COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y = "column_%s_y_value";
+
     /**
      * Constructor
      */

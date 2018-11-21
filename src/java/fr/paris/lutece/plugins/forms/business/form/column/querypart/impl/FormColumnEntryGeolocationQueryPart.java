@@ -200,11 +200,11 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
         int nFormColumnPosition = getFormColumnPosition( );
         Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
         String strEntryValueColumnName;
-        strEntryValueColumnName = String.format( "column_%s_x_value", nFormColumnPosition );
+        strEntryValueColumnName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_X, nFormColumnPosition );
         mapFormColumnValues.put( strEntryValueColumnName, daoUtil.getString( strEntryValueColumnName ) );
-        strEntryValueColumnName = String.format( "column_%s_y_value", nFormColumnPosition );
+        strEntryValueColumnName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y, nFormColumnPosition );
         mapFormColumnValues.put( strEntryValueColumnName, daoUtil.getString( strEntryValueColumnName ) );
-        strEntryValueColumnName = String.format( "column_%s_addr_value", nFormColumnPosition );
+        strEntryValueColumnName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_ADDR, nFormColumnPosition );
         mapFormColumnValues.put( strEntryValueColumnName, daoUtil.getString( strEntryValueColumnName ) );
 
         return mapFormColumnValues;
