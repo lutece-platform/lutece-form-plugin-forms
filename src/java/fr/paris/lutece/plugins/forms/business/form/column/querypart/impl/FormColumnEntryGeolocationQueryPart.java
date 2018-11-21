@@ -165,7 +165,6 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
         String strJoinQueryPart = String.format( ENTRY_JOIN_QUERY_PART, nFormColumnPosition );
         stringBuilderJoinQuery.append( strJoinQueryPart );
 
-        System.out.println(stringBuilderJoinQuery.toString( ));
         return Arrays.asList( stringBuilderJoinQuery.toString( ) );
     }
 
