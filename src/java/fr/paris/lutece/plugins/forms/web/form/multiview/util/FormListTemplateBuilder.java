@@ -34,18 +34,31 @@
 package fr.paris.lutece.plugins.forms.web.form.multiview.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
+import fr.paris.lutece.plugins.forms.service.IMultiviewMapProvider;
 import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
+import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisplayEntryGeolocation;
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppException;
 
 /**
  * Builder class for the template of FormColumnDisplay and FormFilterDisplay objects
@@ -54,12 +67,26 @@ public final class FormListTemplateBuilder
 {
     // Templates
     private static final String TEMPLATE_MULTIVIEW_FORM_TABLE = "admin/plugins/forms/multiview/includes/include_manage_multiview_forms_table.html";
+    private static final String TEMPLATE_MULTIVIEW_GEOJSON_POPUP = "admin/plugins/forms/multiview/includes/include_manage_multiview_geojson_popup.html";
+
+    // Multiviewmap Provider bean name
+    private static final String BEAN_NAME_MULTIVIEWMAP = "forms.multiviewMap";
 
     // Marks
     private static final String MARK_FROM_RESPONSE_ITEM_LIST = "from_response_item_list";
     private static final String MARK_FORM_RESPONSE_COLUMN_HEADER_TEMPLATE_LIST = "form_response_column_header_template_list";
     private static final String MARK_FORM_RESPONSE_LINE_TEMPLATE_LIST = "form_response_line_template_list";
+    private static final String MARK_FORM_RESPONSE_LINE_TEMPLATE = "form_response_line_template";
     private static final String MARK_FORM_RESPONSE_DETAILS_REDIRECT_BASE_URL = "redirect_details_base_url";
+    private static final String MARK_FROM_RESPONSE_GEOJSON_POINT_LIST = "form_response_geojson_point_list";
+    private static final String MARK_MULTIVIEWMAP = "multiviewmap";
+    private static final String GEOJSON_PROPERTIES = "properties";
+    private static final String GEOJSON_COORDINATES = "coordinates";
+    private static final String GEOJSON_GEOMETRY = "geometry";
+    private static final String PROPERTY_POPUP_CONTENT = "popupContent";
+
+    // To serialize to geojson
+    private static ObjectMapper mapper = new ObjectMapper( );
 
     /**
      * Constructor
@@ -95,11 +122,31 @@ public final class FormListTemplateBuilder
             // Build the list of all from column header template
             List<String> listFormColumnHeaderTemplate = buildFormColumnHeaderTemplateList( listFormColumnDisplay, locale, strSortUrl );
 
-            // Build the list of all FormColumnLineTemplate
-            List<FormColumnLineTemplate> listFormColumnLineTemplatePaginated = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItemPaginated, locale );
-
             // Build the model
             Map<String, Object> model = new LinkedHashMap<>( );
+
+            // Build the list of paginated FormColumnLineTemplate and optionally the geojson points
+            // We optimize by building the full lineTemplate list only when a map is used
+            // (it is used for the popups). If not, we build only the paginated list.
+            Optional<FormColumnDisplayEntryGeolocation> maybeFirstGeolocColumn = findFirstGeolocColumnDisplay( listFormColumnDisplay );
+            Optional<IMultiviewMapProvider> maybeMapProvider = getMapProvider( );
+            List<FormColumnLineTemplate> listFormColumnLineTemplatePaginated;
+            if ( maybeFirstGeolocColumn.isPresent( ) && maybeMapProvider.isPresent( ) )
+            {
+                List<FormColumnLineTemplate> listFormColumnLineTemplate = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItem,
+                        locale );
+                List<String> listGeoJsonPoints = buildGeoJsonPointsList( maybeFirstGeolocColumn.get( ), listFormResponseItem, listFormColumnLineTemplate,
+                        strRedirectionDetailsBaseUrl );
+                model.put( MARK_FROM_RESPONSE_GEOJSON_POINT_LIST, listGeoJsonPoints );
+                model.put( MARK_MULTIVIEWMAP, maybeMapProvider.get( ).getMapTemplate( ) );
+
+                listFormColumnLineTemplatePaginated = buildFormColumnLineTemplateList( listFormColumnLineTemplate, listIdFormResponsePaginated );
+            }
+            else
+            {
+                listFormColumnLineTemplatePaginated = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItemPaginated, locale );
+            }
+
             model.put( MARK_FORM_RESPONSE_COLUMN_HEADER_TEMPLATE_LIST, listFormColumnHeaderTemplate );
             model.put( MARK_FROM_RESPONSE_ITEM_LIST, listFormResponseItemPaginated );
             model.put( MARK_FORM_RESPONSE_LINE_TEMPLATE_LIST, listFormColumnLineTemplatePaginated );
@@ -109,6 +156,71 @@ public final class FormListTemplateBuilder
         }
 
         return strTableTemplate;
+    }
+
+    private static Optional<IMultiviewMapProvider> getMapProvider( )
+    {
+        // getBean( BEAN_NAME ) throws if the bean is not defined, so check before to avoid an exception
+        // Also check if the plugin of the bean is enabled because the getBean doesn't..
+        if ( SpringContextService.getContext( ).containsBean( BEAN_NAME_MULTIVIEWMAP ) )
+        {
+            String strOriginalBeanName = SpringContextService.getContext( ).getAliases( BEAN_NAME_MULTIVIEWMAP ) [0];
+
+            // TODO copypasted from SpringContextService, maybe this need to be public
+            int nPos = strOriginalBeanName.indexOf( "." );
+            String strPrefix = null;
+            if ( nPos > 0 )
+            {
+                strPrefix = strOriginalBeanName.substring( 0, nPos );
+            }
+            Plugin plugin = null;
+            if ( strPrefix != null )
+            {
+                plugin = PluginService.getPlugin( strPrefix );
+            }
+            if ( plugin == null || plugin.isInstalled( ) ) // A bean without a plugin is always enabled (core beans)
+            {
+                return Optional.of( SpringContextService.getBean( BEAN_NAME_MULTIVIEWMAP ) );
+            }
+        }
+        return Optional.empty( );
+    }
+
+    private static List<String> buildGeoJsonPointsList( FormColumnDisplayEntryGeolocation geolocFormColumnDisplay, List<FormResponseItem> listFormResponseItem,
+            List<FormColumnLineTemplate> listFormColumnLineTemplate, String strRedirectionDetailsBaseUrl )
+    {
+        return IntStream.range( 0, listFormResponseItem.size( ) ).mapToObj( i -> buildResponseItemJson( geolocFormColumnDisplay, listFormResponseItem.get( i ),
+                listFormColumnLineTemplate.get( i ), strRedirectionDetailsBaseUrl ) ).collect( Collectors.toList( ) );
+    }
+
+    private static String buildResponseItemJson( FormColumnDisplayEntryGeolocation formColumnDisplayEntryGeolocation, FormResponseItem formResponseItem,
+            FormColumnLineTemplate formColumnlineTemplate, String strRedirectionDetailsBaseUrl )
+    {
+        int nColumnCellPosition = columnDisplayPositionToCellIndex( formColumnDisplayEntryGeolocation.getPosition( ) );
+        FormColumnCell geolocFormColumnCell = formResponseItem.getFormColumnCellValues( ).get( nColumnCellPosition );
+        Map<String, Object> root = new HashMap<>( );
+        Map<String, Object> geometry = new HashMap<>( );
+        root.put( GEOJSON_GEOMETRY, geometry );
+        geometry.put( GEOJSON_COORDINATES, formColumnDisplayEntryGeolocation.buildXYList( geolocFormColumnCell ) );
+        Map<String, Object> properties = new HashMap<>( );
+        properties.put( PROPERTY_POPUP_CONTENT, buildPopupContent( formColumnlineTemplate, strRedirectionDetailsBaseUrl ) );
+        root.put( GEOJSON_PROPERTIES, properties );
+        try
+        {
+            return mapper.writeValueAsString( root );
+        }
+        catch( JsonProcessingException e )
+        {
+            throw new AppException( "Error creating json for formResponseItem idFormResponse=" + formResponseItem.getIdFormResponse( ), e );
+        }
+    }
+
+    private static String buildPopupContent( FormColumnLineTemplate formColumnlineTemplate, String strRedirectionDetailsBaseUrl )
+    {
+        Map<String, Object> model = new HashMap<>( );
+        model.put( MARK_FORM_RESPONSE_DETAILS_REDIRECT_BASE_URL, strRedirectionDetailsBaseUrl );
+        model.put( MARK_FORM_RESPONSE_LINE_TEMPLATE, formColumnlineTemplate );
+        return AppTemplateService.getTemplate( TEMPLATE_MULTIVIEW_GEOJSON_POPUP, null, model ).getHtml( );
     }
 
     /**
@@ -216,6 +328,21 @@ public final class FormListTemplateBuilder
     }
 
     /**
+     * Convert from cell index to columnDisplayPosition.
+     *
+     * The positions start at index 1 and cells at index 0..
+     *
+     * @param nColumnDisplayPosition
+     *            the column position
+     * @return the cell index of the corresponding FormColumnCell
+     * @see cellIndexToColumnDisplayPosition
+     */
+    private static int columnDisplayPositionToCellIndex( int nColumnDisplayPosition )
+    {
+        return nColumnDisplayPosition - 1;
+    }
+
+    /**
      * Find the FormColumnDisplay in the given list with the specified position or null if not found
      * 
      * @param nFormColumnPosition
@@ -267,4 +394,46 @@ public final class FormListTemplateBuilder
         return listFormResponseItemToDisplay;
     }
 
+    /**
+     * Build the list of all FormColumnLineTemplate
+     *
+     * @return list of FormColumnLineTemplate to display for the active FormPanelDisplay
+     */
+    private static List<FormColumnLineTemplate> buildFormColumnLineTemplateList( List<FormColumnLineTemplate> listFormColumnLineTemplate,
+            List<Integer> listIdFormResponsePaginated )
+    {
+        List<FormColumnLineTemplate> listFormColumnLineTemplateToDisplay = new ArrayList<>( );
+
+        if ( !CollectionUtils.isEmpty( listIdFormResponsePaginated ) && !CollectionUtils.isEmpty( listFormColumnLineTemplate ) )
+        {
+            for ( FormColumnLineTemplate formColumnLineTemplate : listFormColumnLineTemplate )
+            {
+                Integer nIdFormResponse = formColumnLineTemplate.getIdFormResponse( );
+                if ( listIdFormResponsePaginated.contains( nIdFormResponse ) )
+                {
+                    listFormColumnLineTemplateToDisplay.add( formColumnLineTemplate );
+                }
+            }
+        }
+
+        return listFormColumnLineTemplateToDisplay;
+    }
+
+    /**
+     * Get the first geoloc column display if it exists.
+     *
+     * Note: this could be replaced with a method to choose the geoloccolumn if we wanted.
+     * Note: this could also be replaced with something to return geojson multipoints.
+     *
+     * @param listFormColumnDisplay
+     *            The list of all form column display to retrieve the header template from
+     * @param strSortUrl
+     *            The url to use for sort a column (can be null)
+     * @return the list of all form column header template
+     */
+    private static Optional<FormColumnDisplayEntryGeolocation> findFirstGeolocColumnDisplay( List<IFormColumnDisplay> listFormColumnDisplay )
+    {
+        return listFormColumnDisplay.stream( ).filter( FormColumnDisplayEntryGeolocation.class::isInstance )
+                .map( FormColumnDisplayEntryGeolocation.class::cast ).findFirst( );
+    }
 }

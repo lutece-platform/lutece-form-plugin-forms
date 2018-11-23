@@ -33,7 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.column.display.impl;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -135,5 +137,22 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
         }
 
         return nFormColumnPosition;
+    }
+
+    /**
+     * Extracts the XY values
+     *
+     * @param formColumnCell
+     *            the FormColumnCell
+     *
+     * @return the XY List
+     */
+    public List<Object> buildXYList( FormColumnCell geolocFormColumnCell )
+    {
+        String strEntryXName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_X, getFormColumnPosition( ) );
+        Object objEntryX = geolocFormColumnCell.getFormColumnCellValueByName( strEntryXName );
+        String strEntryYName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y, getFormColumnPosition( ) );
+        Object objEntryY = geolocFormColumnCell.getFormColumnCellValueByName( strEntryYName );
+        return Arrays.asList( objEntryX, objEntryY );
     }
 }

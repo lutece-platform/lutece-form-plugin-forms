@@ -217,6 +217,9 @@
     			<ref bean="forms.formResponseCreationDate.column"/>
     			<ref bean="forms.firstName.column"/>
     			<ref bean="forms.workflowState.column"/>
+    			<!-- example geoloc column
+    			<ref bean="forms.geoloc.column"/>
+    			-->
     		</list>
     	</constructor-arg>
     </bean>
@@ -250,6 +253,11 @@
 			</list>
 		</constructor-arg>
 	</bean>
+
+	<!-- MultiviewMap -->
+	<!-- Example configuration using module-multiviewmap-leaflet
+	<alias name="forms-multiviewmap.mapProvider" alias="forms.multiviewMap"/>
+	-->
 	
 	<!-- Filters Configurations -->
 	<bean id="forms.forms.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration">
@@ -310,6 +318,18 @@
 			</list>
 		</constructor-arg>
 	</bean>
+
+	<!-- example geoloc column
+	<bean id="forms.geoloc.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation">
+		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="Geoloc"/>
+		<constructor-arg name="nFormColumnPosition" type="int" value="5"/>
+		<constructor-arg name="listEntryTitle">
+			<list value-type="java.lang.String">
+				<value>address</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	-->
 	 
 	<!-- Columns Factories -->
 	<bean id="forms.forms.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayFormsFactory"/>
