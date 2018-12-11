@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.multiview.util;
 
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -201,7 +203,21 @@ public final class FormListTemplateBuilder
         Map<String, Object> root = new HashMap<>( );
         Map<String, Object> geometry = new HashMap<>( );
         root.put( GEOJSON_GEOMETRY, geometry );
-        geometry.put( GEOJSON_COORDINATES, formColumnDisplayEntryGeolocation.buildXYList( geolocFormColumnCell ) );
+        List<Object> listStoredCoordinates = formColumnDisplayEntryGeolocation.buildXYList( geolocFormColumnCell );
+        List<Object> listValidatedCoordinates = listStoredCoordinates
+                .stream( )
+                .map( str -> {
+                    try
+                    {
+                        return mapper.readValue( (String) str, Number.class );
+                    }
+                    catch( IOException e )
+                    {
+                        throw new AppException( "Error reading coordinates for formResponseItem idFormResponse=" + formResponseItem.getIdFormResponse( )
+                                + " : " + str, e );
+                    }
+                } ).collect( Collectors.toList( ) );
+        geometry.put( GEOJSON_COORDINATES, listValidatedCoordinates );
         Map<String, Object> properties = new HashMap<>( );
         properties.put( PROPERTY_POPUP_CONTENT, buildPopupContent( formColumnlineTemplate, strRedirectionDetailsBaseUrl ) );
         root.put( GEOJSON_PROPERTIES, properties );
