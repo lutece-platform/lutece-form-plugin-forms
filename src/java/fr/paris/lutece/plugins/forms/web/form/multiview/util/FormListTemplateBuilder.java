@@ -85,6 +85,9 @@ public final class FormListTemplateBuilder
     private static final String GEOJSON_PROPERTIES = "properties";
     private static final String GEOJSON_COORDINATES = "coordinates";
     private static final String GEOJSON_GEOMETRY = "geometry";
+    private static final String GEOJSON_GEOMETRY_TYPE_POINT = "Point";
+    private static final String GEOJSON_TYPE = "type";
+    private static final String GEOJSON_TYPE_FEATURE = "Feature";
     private static final String PROPERTY_POPUP_CONTENT = "popupContent";
 
     // To serialize to geojson
@@ -202,6 +205,7 @@ public final class FormListTemplateBuilder
         FormColumnCell geolocFormColumnCell = formResponseItem.getFormColumnCellValues( ).get( nColumnCellPosition );
         Map<String, Object> root = new HashMap<>( );
         Map<String, Object> geometry = new HashMap<>( );
+        root.put( GEOJSON_TYPE, GEOJSON_TYPE_FEATURE );
         root.put( GEOJSON_GEOMETRY, geometry );
         List<Object> listStoredCoordinates = formColumnDisplayEntryGeolocation.buildXYList( geolocFormColumnCell );
         List<Object> listValidatedCoordinates = listStoredCoordinates
@@ -218,6 +222,7 @@ public final class FormListTemplateBuilder
                     }
                 } ).collect( Collectors.toList( ) );
         geometry.put( GEOJSON_COORDINATES, listValidatedCoordinates );
+        geometry.put( GEOJSON_TYPE, GEOJSON_GEOMETRY_TYPE_POINT );
         Map<String, Object> properties = new HashMap<>( );
         properties.put( PROPERTY_POPUP_CONTENT, buildPopupContent( formColumnlineTemplate, strRedirectionDetailsBaseUrl ) );
         root.put( GEOJSON_PROPERTIES, properties );
