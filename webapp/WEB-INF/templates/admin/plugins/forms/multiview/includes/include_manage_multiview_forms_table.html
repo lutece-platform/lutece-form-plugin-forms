@@ -26,10 +26,13 @@ ${multiviewmap!''}
     </table>
 </div>
 <#if form_response_geojson_point_list?has_content>
-<script id="geojson_points" type="application/json">[
+<script id="geojson_points" type="application/json">{
+	"type" : "FeatureCollection",
+	"features" : [
 <#list form_response_geojson_point_list as point>${point}<#if point_has_next>,
 </#if>
 </#list>
 ]
+}
 </script>
 </#if>
