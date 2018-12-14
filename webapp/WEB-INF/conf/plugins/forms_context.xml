@@ -255,8 +255,9 @@
 	</bean>
 
 	<!-- MultiviewMap -->
-	<!-- Example configuration using module-multiviewmap-leaflet
-	<alias name="forms-multiviewmap.mapProvider" alias="forms.multiviewMap"/>
+	<!-- Example configuration using module-multiviewmapleaflet or module-multiviewmapgismap
+	<alias name="forms-multiviewmapleaflet.mapProvider" alias="forms.multiviewMap"/>
+	<alias name="forms-multiviewmapgismap.mapProvider" alias="forms.multiviewMap"/>
 	-->
 	
 	<!-- Filters Configurations -->
