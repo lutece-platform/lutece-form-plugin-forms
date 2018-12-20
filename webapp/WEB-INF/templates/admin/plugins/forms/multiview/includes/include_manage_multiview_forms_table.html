@@ -2,7 +2,7 @@
 <script id="geojson_points" type="application/json">{
 	"type" : "FeatureCollection",
 	"features" : [
-<#list form_response_geojson_point_list as point>${point}<#if point_has_next>,
+<#list form_response_geojson_point_list as point>${point?replace("</","<\\/")}<#if point_has_next>,
 </#if>
 </#list>
 ]
