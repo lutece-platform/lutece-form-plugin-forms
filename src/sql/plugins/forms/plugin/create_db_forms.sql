@@ -152,6 +152,7 @@ CREATE TABLE forms_question_entry_response (
   id_entry_response int default '0' NOT NULL,
   PRIMARY KEY (id_question_entry_response)
 );
+CREATE INDEX idx_fqer_id_question_response on forms_question_entry_response ( id_question_response );
 
 DROP TABLE IF EXISTS forms_question_response;
 CREATE TABLE IF NOT EXISTS forms_question_response (
@@ -162,6 +163,7 @@ CREATE TABLE IF NOT EXISTS forms_question_response (
   iteration_number int default '0',
   PRIMARY KEY (id_question_response)
 );
+CREATE INDEX idx_fqr_id_form_response on forms_question_response  ( id_form_response );
 
 DROP TABLE IF EXISTS forms_response;
 CREATE TABLE IF NOT EXISTS forms_response (
