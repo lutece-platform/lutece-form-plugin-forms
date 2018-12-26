@@ -41,6 +41,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -195,21 +196,18 @@ public final class FormListTemplateBuilder
             List<FormColumnLineTemplate> listFormColumnLineTemplate, String strRedirectionDetailsBaseUrl )
     {
         return IntStream.range( 0, listFormResponseItem.size( ) ).mapToObj( i -> buildResponseItemJson( geolocFormColumnDisplay, listFormResponseItem.get( i ),
-                listFormColumnLineTemplate.get( i ), strRedirectionDetailsBaseUrl ) ).collect( Collectors.toList( ) );
+                listFormColumnLineTemplate.get( i ), strRedirectionDetailsBaseUrl ) ).filter( Optional::isPresent ).map( Optional::get ).collect( Collectors.toList( ) );
     }
 
-    private static String buildResponseItemJson( FormColumnDisplayEntryGeolocation formColumnDisplayEntryGeolocation, FormResponseItem formResponseItem,
+    private static Optional<String> buildResponseItemJson( FormColumnDisplayEntryGeolocation formColumnDisplayEntryGeolocation, FormResponseItem formResponseItem,
             FormColumnLineTemplate formColumnlineTemplate, String strRedirectionDetailsBaseUrl )
     {
         int nColumnCellPosition = columnDisplayPositionToCellIndex( formColumnDisplayEntryGeolocation.getPosition( ) );
         FormColumnCell geolocFormColumnCell = formResponseItem.getFormColumnCellValues( ).get( nColumnCellPosition );
-        Map<String, Object> root = new HashMap<>( );
-        Map<String, Object> geometry = new HashMap<>( );
-        root.put( GEOJSON_TYPE, GEOJSON_TYPE_FEATURE );
-        root.put( GEOJSON_GEOMETRY, geometry );
         List<Object> listStoredCoordinates = formColumnDisplayEntryGeolocation.buildXYList( geolocFormColumnCell );
         List<Object> listValidatedCoordinates = listStoredCoordinates
                 .stream( )
+                .filter( Objects::nonNull )
                 .map( str -> {
                     try
                     {
@@ -221,6 +219,14 @@ public final class FormListTemplateBuilder
                                 + " : " + str, e );
                     }
                 } ).collect( Collectors.toList( ) );
+        if ( listValidatedCoordinates.size( ) != 2 )
+        {
+            return Optional.empty( );
+        }
+        Map<String, Object> root = new HashMap<>( );
+        Map<String, Object> geometry = new HashMap<>( );
+        root.put( GEOJSON_TYPE, GEOJSON_TYPE_FEATURE );
+        root.put( GEOJSON_GEOMETRY, geometry );
         geometry.put( GEOJSON_COORDINATES, listValidatedCoordinates );
         geometry.put( GEOJSON_TYPE, GEOJSON_GEOMETRY_TYPE_POINT );
         Map<String, Object> properties = new HashMap<>( );
@@ -228,7 +234,7 @@ public final class FormListTemplateBuilder
         root.put( GEOJSON_PROPERTIES, properties );
         try
         {
-            return mapper.writeValueAsString( root );
+            return Optional.of( mapper.writeValueAsString( root ) );
         }
         catch( JsonProcessingException e )
         {
