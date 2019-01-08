@@ -469,11 +469,19 @@ public class FormXPage extends MVCApplication
         {
             return redirectView( request, VIEW_STEP );
         }
-
+        
+        String idForm= request.getParameter( FormsConstants.PARAMETER_ID_FORM);
+        String strTitleForm = StringUtils.EMPTY;
+        Form form = FormHome.findByPrimaryKey( Integer.parseInt(idForm ));
         Map<String, Object> model = buildModelForSummary( request );
-        model.put( FormsConstants.MARK_ID_FORM, request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
-
-        return getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, request.getLocale( ), model );
+        model.put( FormsConstants.MARK_ID_FORM,  idForm);
+        strTitleForm= form.getTitle();
+        
+        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, request.getLocale( ), model );
+        xPage.setTitle( strTitleForm );
+        xPage.setPathLabel( strTitleForm );
+        
+        return xPage;
     }
 
     /**
