@@ -197,6 +197,28 @@ public class FormService
     }
 
     /**
+     * Removes the specified form's backup
+     * 
+     * @param formResponse
+     *            The form response to remove
+     */
+    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    public void removeFormBackup( FormResponse formResponse )
+    {
+        if ( formResponse.isFromSave( ) )
+        {
+            FormResponseHome.remove( formResponse.getId( ) );
+
+            for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) ) )
+            {
+                FormQuestionResponseHome.remove( formQuestionResponse );
+            }
+
+            FormResponseStepHome.removeByFormResponse( formResponse.getId( ) );
+        }
+    }
+
+    /**
      * Get the full children composite list of the given step
      * 
      * @param nIdStep

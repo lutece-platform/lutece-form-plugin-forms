@@ -117,6 +117,7 @@ public class FormXPage extends MVCApplication
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
     private static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
     private static final String ACTION_SAVE_STEP = "doSaveStep";
+    private static final String ACTION_RESET_BACKUP = "doResetBackup";
     private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
     private static final String ACTION_GO_TO_STEP = "doGoToStep";
     private static final String ACTION_ADD_ITERATION = "addIteration";
@@ -875,6 +876,43 @@ public class FormXPage extends MVCApplication
         formResponse.setGuid( user.getName( ) );
 
         _formService.saveFormForBackup( formResponse );
+
+        return redirectView( request, VIEW_STEP );
+    }
+
+    /**
+     * Removes Backup
+     * 
+     * @param request
+     *            The Http request
+     * @return the XPage
+     * 
+     * @throws SiteMessageException
+     *             Exception
+     * @throws UserNotSignedException
+     *             Exception
+     */
+    @Action( value = ACTION_RESET_BACKUP )
+    public XPage doResetBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
+        Form form = null;
+
+        try
+        {
+            form = findFormFrom( request );
+        }
+        catch( FormNotFoundException exception )
+        {
+            return redirectView( request, VIEW_STEP );
+        }
+
+        checkAuthentication( form, request );
+
+        FormResponse formResponse = _formResponseManager.getFormResponse( );
+
+        _formService.removeFormBackup( formResponse );
+
+        init( form.getId( ) );
 
         return redirectView( request, VIEW_STEP );
     }
