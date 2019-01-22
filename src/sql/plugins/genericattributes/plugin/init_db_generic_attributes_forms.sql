@@ -24,7 +24,7 @@ INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_use
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES
 (111,'Utilisateur MyLutece',0,0,1,'forms.entryTypeMyLuteceUser','user','forms');
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES
-(112,'Numérotation',0,0,0,'forms.entryTypeNumbering','phone','forms');
+(112,'Numérotation',0,0,0,'forms.entryTypeNumbering','hashtag','forms');
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
 (113,'Attribut de l''utilisateur MyLutece',0,0,0,'forms.entryTypeMyLuteceUserattribute','user','forms');
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
