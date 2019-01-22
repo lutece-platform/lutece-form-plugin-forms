@@ -21,26 +21,19 @@
 }
 
 .btn-forms {
-	padding: 15px; 
-	margin-left: 15px;
+	padding:15px; 
+	margin-left:15px;
 }
 
 .box-forms {
 	border-radius:0; 
 	margin-bottom:0; 
-	padding: 0 20px; 
 	box-shadow:none; 
 	border-top:3px solid #d2d6de;
 }
 
-.box-forms .box-body{
-	padding: 0;
-	padding-top: 15px;
-}
-
 .box-forms-borderless {
-	border-top:0;
-	margin-top: 5px;
+	border-top:0
 
 }
 .box-forms-tab-content {
@@ -54,6 +47,9 @@
 	display:inline-block; 
 }
 
+.header-form-response { 
+	min-height: 10em;
+}
 
 .label-form-response-history { 
     padding-top:initial !important;
@@ -238,16 +234,10 @@ table.table-hover tbody tr:hover {
 	text-transform:uppercase;
 }
 
-#filter-forms .well-sm {
-	padding: 4px;
+#filter-forms {
+	font-size:1rem; 
+	color:#000;
 }
-#filter-forms .well-sm .badge{
-	padding: 4px 8px;
-	font-size: 16px;
-	border-radius: 50%;
-	background-color: #3c8dbc;
-}
-
 #filter-forms h3 {
 	color:#fff;
 }
@@ -267,7 +257,6 @@ table.table-hover tbody tr:hover {
 	-moz-appearance:none; 
 	appearance:none; 
 	cursor:pointer;
-	max-width: 360px;
 }
 #filter-forms select::-ms-expand { 
 	display:none;
@@ -309,13 +298,18 @@ table.table-hover tbody tr:hover {
 	text-align: center; 
 	min-height: 520px;
 }
-
 #multiview-no-forms img { 
 	position: absolute; 
 	top: 60%; 
 	left: 60%; 
 	margin-top: -250px; 
 	margin-left: -250px;
+}
+
+/* Multiview Detail view */
+#form-response-details {
+    font-family:'Montserrat-Light','Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif; 
+    padding-top:50px;
 }
 
 #form-response-details legend {
@@ -326,15 +320,46 @@ table.table-hover tbody tr:hover {
 }
 
 #form-response-details .form-group-value-content {
-    margin-left: 20px;
+	margin-left: 20px;
+	margin-bottom: 20px;
+}
+
+#form-response-details  .control-label {
+	padding-top: 7px;
+	margin-bottom: 0;
+	text-align: right;
+}
+
+#form-response-details   .form-group{
+	margin-right: -15px;
+	margin-left: -15px;
+}
+
+#form-response-details  .form-group::before, #form-response-details   .form-group::after {
+    display: table;
+	content: " ";
+	clear: both;
+}
+
+#form-response-details  .form-group:hover{
+
+	color: #1d98f6;
+}
+
+#form-response-details  .form-group label + div{
+	min-height: 34px;
+	padding-top: 7px;
+	padding-bottom: 7px;
+	margin-bottom: 0;
 }
 
 #form-response-details .form-response-details-label {
     margin-bottom: 0;	
 }
 
+
 #info-right {
-	padding:5px 15px;
+	padding:50px 0 0 0;
 }
 
 #info-right .title { 

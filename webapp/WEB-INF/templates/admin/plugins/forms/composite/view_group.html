@@ -1,10 +1,15 @@
-<fieldset  <#if id_display??>class="display_field_${id_display}"</#if>>
-    <legend>
-        ${group.title}
-    </legend>
-    <div class="form-group-value-content">
-		<#list groupContent as childrenHtml>
-			${childrenHtml}
-		</#list>
-    </div>
-</fieldset>
+<#assign indexGroup=-1>
+<#assign indexIteration=0>
+<#list groupContent as childrenHtml>
+    <#assign indexIteration = ( childrenHtml?index / nbBaseChildren )?int />
+    <#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />
+    <#if indexGroup !=  indexIteration && indexGroup !=-1 >
+        </fieldset>
+	</#if>
+    <#if indexGroup !=  indexIteration>
+        <fieldset class="form-group-value-content <#if id_display??> display_field_${id_display} hidden</#if>">
+            <legend class="clearfix"> ${group.title} <span class="badge pull-right">${indexIteration+1}</span></legend>
+            <#assign indexGroup=indexIteration>
+    </#if>
+    ${childrenHtml}
+</#list>	
