@@ -226,7 +226,7 @@
     			<ref bean="forms.forms.column"/>
     			<ref bean="forms.formResponseCreationDate.column"/>
     			<ref bean="forms.firstName.column"/>
-    			<ref bean="forms.workflowState.column"/>
+    			<!--<ref bean="forms.workflowState.column"/>-->
     			<!-- example geoloc column
     			<ref bean="forms.geoloc.column"/>
     			-->
@@ -250,6 +250,7 @@
     <bean id="forms.formFilter.formResponseDateCreation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormResponseDateCreationQueryPartFactory"/>
     <bean id="forms.formFilter.entry.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterEntryQueryPartFactory"/>
     <bean id="forms.formFilter.workflowState.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterWorkflowStateQueryPartFactory"/>
+    <bean id="forms.formFilter.idFormResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterIdFormResponseQueryPartFactory"/>
 	
 	<!-- Panels Configurations -->
 	<bean id="forms.formsPanel.panelConfiguration" class="fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration">
@@ -290,7 +291,7 @@
 		<constructor-arg name="formColumn" type="fr.paris.lutece.plugins.forms.business.form.column.IFormColumn" ref="forms.firstName.column"/>
 	</bean>
         <bean id="forms.searchedText.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration">
-		<constructor-arg name="nPosition" type="int" value="4"/>
+		<constructor-arg name="nPosition" type="int" value="5"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Texte"/>
 	</bean>
 	
@@ -303,6 +304,7 @@
 	<bean id="forms.forms.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormsFactory"/>
 	<bean id="forms.entry.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayEntryFactory"/>
 	<bean id="forms.workflowState.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayWorkflowStateFactory"/>
+	<bean id="forms.searchedText.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplaySearchedTextFactory"/>
 	
 	<!-- Columns QueryPart Factories -->
 	<bean id="forms.formColumn.forms.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnFormsQueryPartFactory"/>

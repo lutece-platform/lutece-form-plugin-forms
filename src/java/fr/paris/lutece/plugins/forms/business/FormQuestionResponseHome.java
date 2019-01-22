@@ -136,10 +136,15 @@ public final class FormQuestionResponseHome
         if ( formQuestionResponse != null )
         {
             Question questionIncomplete = formQuestionResponse.getQuestion( );
-            Question questionSaved = QuestionHome.findByPrimaryKey( questionIncomplete.getId( ) );
-            questionSaved.setIterationNumber( questionIncomplete.getIterationNumber( ) );
-
-            formQuestionResponse.setQuestion( questionSaved );
+            if ( questionIncomplete != null )
+            {
+                Question questionSaved = QuestionHome.findByPrimaryKey( questionIncomplete.getId( ) );
+                if ( questionSaved != null )
+                {
+                    questionSaved.setIterationNumber( questionIncomplete.getIterationNumber( ) );
+                    formQuestionResponse.setQuestion( questionSaved );
+                }
+            }
         }
     }
 
