@@ -31,26 +31,38 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
+package fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterWorkflowStateQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration;
+import fr.paris.lutece.plugins.forms.service.search.IFormSearchService;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.IFormFilterDisplayFactory;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplaySearchedText;
+import javax.inject.Inject;
 
 /**
- * Mock for FormFilterWorkflowStateQueryPart
+ * Implementation of the IFormFilterDisplayFactory for a Factory on a Workflow state filter
  */
-public class FormFilterWorkflowStateQueryPartMock extends FormFilterWorkflowStateQueryPart
+public class FormFilterDisplaySearchedTextFactory implements IFormFilterDisplayFactory
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $id_workflow_state$";
-
+    @Inject
+    private IFormSearchService _formSearchService; 
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
+    public IFormFilterDisplay buildFilterDisplay( FormFilter formFilter )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, true ) );
+        FormFilterDisplaySearchedText formFilterDisplaySearchedText = null;
+
+        if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterFormResponseIdConfiguration )
+        {
+            formFilterDisplaySearchedText = new FormFilterDisplaySearchedText( _formSearchService );
+            formFilterDisplaySearchedText.setFormFilter( formFilter );
+        }
+
+        return formFilterDisplaySearchedText;
     }
 }

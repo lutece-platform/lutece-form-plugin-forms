@@ -31,26 +31,29 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
+package fr.paris.lutece.plugins.forms.service.search;
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterWorkflowStateQueryPart;
-
-/**
- * Mock for FormFilterWorkflowStateQueryPart
- */
-public class FormFilterWorkflowStateQueryPartMock extends FormFilterWorkflowStateQueryPart
+public class FormSearchConfig 
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $id_workflow_state$";
+    private String _strSearchText;
 
     /**
-     * {@inheritDoc}
+     * Get the searched text
+     * @return the searched text
      */
-    @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
+    public String getSearchedText() 
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, true ) );
+        return _strSearchText;
     }
+
+    /**
+     * Set the searched text
+     * @param strSearchText the searched text
+     */
+    public void setSearchedText( String strSearchText ) 
+    {
+        _strSearchText = strSearchText;
+    }
+    
+    
 }

@@ -20,6 +20,7 @@
     <bean id="forms.formResponseStepDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseStepDAO" />
     <bean id="forms.controlDAO" class="fr.paris.lutece.plugins.forms.business.ControlDAO" />
     <bean id="forms.formMessageDAO" class="fr.paris.lutece.plugins.forms.business.FormMessageDAO" />
+    <bean id="forms.indexerActionDAO" class="fr.paris.lutece.plugins.forms.business.form.search.IndexerActionDAO" />
     
     <!-- Export -->
     <bean id="forms.csvExport" class="fr.paris.lutece.plugins.forms.export.csv.CSVExport">
@@ -204,6 +205,15 @@
         <constructor-arg name="formPanelConfiguration" type="fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration" ref="forms.formsPanel.panelConfiguration"/>
     </bean>
     
+    <!-- Forms Search Service -->
+    <bean id="forms.formsSearchService" class="fr.paris.lutece.plugins.forms.service.search.FormSearchService"/>
+    
+    <!-- Lucene Search services implementation -->
+    <bean id="forms.luceneFormsSearchEngine" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchEngine"/>
+    <bean id="forms.luceneFormsSearchIndexer" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchIndexer"/>
+    <bean id="forms.luceneFormsSearchFactory" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchFactory"/>
+    <bean id="forms.luceneFrenchAnalizer" class="fr.paris.lutece.plugins.lucene.service.analyzer.LuteceFrenchAnalyzer"/>
+    
 	<!-- FormList Facade -->
     <bean id="forms.formList.facade" class="fr.paris.lutece.plugins.forms.business.form.list.FormListFacade">
     	<constructor-arg name="formListDAO" type="fr.paris.lutece.plugins.forms.business.form.list.IFormListDAO" ref="forms.formListDAO" />
@@ -278,6 +288,10 @@
 		<constructor-arg name="nPosition" type="int" value="4"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Pr&#233;nom..."/>
 		<constructor-arg name="formColumn" type="fr.paris.lutece.plugins.forms.business.form.column.IFormColumn" ref="forms.firstName.column"/>
+	</bean>
+        <bean id="forms.searchedText.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration">
+		<constructor-arg name="nPosition" type="int" value="4"/>
+		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Texte"/>
 	</bean>
 	
 	<!-- Panels Display Initializer Factories -->

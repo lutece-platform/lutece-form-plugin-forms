@@ -80,7 +80,7 @@ public class FormFilterEntryQueryPart extends AbstractFormFilterQueryPart
             stringBuilderEntryQueryPattern.append( strEntryNamePattern );
         }
 
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( stringBuilderEntryQueryPattern.toString( ), formParameters ) );
+        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( stringBuilderEntryQueryPattern.toString( ), formParameters, true ) );
     }
 
     /**

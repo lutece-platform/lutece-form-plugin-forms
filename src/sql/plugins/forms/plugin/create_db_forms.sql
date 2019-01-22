@@ -184,3 +184,13 @@ CREATE TABLE IF NOT EXISTS forms_response_step (
   order_response int DEFAULT '0' NOT NULL,
   PRIMARY KEY (id)
 );
+
+/*==============================================================*/
+/* Table structure for table forms_indexer_action				*/
+/*==============================================================*/
+CREATE TABLE forms_indexer_action (
+  id_action int AUTO_INCREMENT,
+  id_form_response INT DEFAULT 0 NOT NULL,
+  id_task INT DEFAULT 0 NOT NULL ,
+  PRIMARY KEY (id_action)
+);

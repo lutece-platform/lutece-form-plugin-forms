@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
 
 /**
  * Implementation of the IFormFilterQueryPart for a FormFilterWorkflowState filter
@@ -43,8 +42,7 @@ import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstant
 public class FormFilterWorkflowStateQueryPart extends AbstractFormFilterQueryPart
 {
     // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $"
-            + FormMultiviewWorkflowStateNameConstants.FILTER_ID_WORKFLOW_STATE + "$";
+    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = ?";
 
     /**
      * {@inheritDoc}
@@ -52,6 +50,6 @@ public class FormFilterWorkflowStateQueryPart extends AbstractFormFilterQueryPar
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters ) );
+        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, false ) );
     }
 }

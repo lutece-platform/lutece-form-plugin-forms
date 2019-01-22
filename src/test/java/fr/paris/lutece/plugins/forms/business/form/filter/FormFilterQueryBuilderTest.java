@@ -85,7 +85,7 @@ public class FormFilterQueryBuilderTest extends LuteceTestCase
         FormParameters formFilterItem = new FormParameters( );
         formFilterItem.setFormParametersMap( mapFilterNameValues );
 
-        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem );
+        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem, true );
         assertThat( strFormFilterQuery, is( not( nullValue( ) ) ) );
         assertThat( strFormFilterQuery, is( strFormFilterExpected ) );
 
@@ -108,7 +108,7 @@ public class FormFilterQueryBuilderTest extends LuteceTestCase
         FormParameters formFilterItem = new FormParameters( );
         formFilterItem.setFormParametersMap( mapFilterNameValues );
 
-        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem );
+        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem, true );
         assertThat( strFormFilterQuery, is( not( nullValue( ) ) ) );
         assertThat( strFormFilterQuery, is( strFormFilterExpected ) );
     }
@@ -127,7 +127,7 @@ public class FormFilterQueryBuilderTest extends LuteceTestCase
         FormParameters formFilterItem = new FormParameters( );
         formFilterItem.setFormParametersMap( mapFilterNameValues );
 
-        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem );
+        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem, true );
         assertThat( strFormFilterQuery, is( not( nullValue( ) ) ) );
         assertThat( strFormFilterQuery, is( strFormFilterExpected ) );
     }
@@ -147,7 +147,7 @@ public class FormFilterQueryBuilderTest extends LuteceTestCase
         FormParameters formFilterItem = new FormParameters( );
         formFilterItem.setFormParametersMap( mapFilterNameValues );
 
-        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem );
+        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem, true );
         assertThat( strFormFilterQuery, is( not( nullValue( ) ) ) );
         assertThat( strFormFilterQuery, is( strFormFilterExpected ) );
 
@@ -173,7 +173,7 @@ public class FormFilterQueryBuilderTest extends LuteceTestCase
         FormParameters formFilterItem = new FormParameters( );
         formFilterItem.setFormParametersMap( mapFilterNameValues );
 
-        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem );
+        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem, true );
         assertThat( strFormFilterQuery, is( not( nullValue( ) ) ) );
         assertThat( strFormFilterQuery, is( strFormFilterExpected ) );
     }
@@ -193,7 +193,7 @@ public class FormFilterQueryBuilderTest extends LuteceTestCase
         FormParameters formFilterItem = new FormParameters( );
         formFilterItem.setFormParametersMap( mapFilterNameValues );
 
-        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem );
+        String strFormFilterQuery = FormFilterQueryBuilder.buildFormFilterQuery( strFormFilterQueryPattern, formFilterItem, true );
         assertThat( strFormFilterQuery, is( not( nullValue( ) ) ) );
         assertThat( strFormFilterQuery, is( strFormFilterExpected ) );
     }

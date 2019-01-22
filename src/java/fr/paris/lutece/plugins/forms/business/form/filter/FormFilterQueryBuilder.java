@@ -53,6 +53,7 @@ public final class FormFilterQueryBuilder
     private static final String KEY_NAME_SEPARATOR = "$";
     private static final String DEFAULT_ITEM_VALUE = "-1";
     private static final String PARAMETER_TO_REPLACE_SYMBOL = "?";
+    private static final String REGEX_PARAM = "$.*$";
 
     /**
      * Constructor
@@ -69,9 +70,11 @@ public final class FormFilterQueryBuilder
      *            The pattern to use for building the query of the FormFilter
      * @param formParameters
      *            The FormParameters to retrieve the values from for format the pattern
+     * @param bShouldReplace
+     *            Should replace the parameter by question mark
      * @return the query formatted with all parameter replace by their values or an empty String if a parameter is missing in the FormFilterItem
      */
-    public static String buildFormFilterQuery( String strFormFilterQueryPattern, FormParameters formParameters )
+    public static String buildFormFilterQuery( String strFormFilterQueryPattern, FormParameters formParameters, boolean bShouldReplace )
     {
         String strFormFilterQuery = DEFAULT_QUERY_VALUE;
         List<String> listParameterValuesToUse = new ArrayList<>( );
@@ -86,7 +89,7 @@ public final class FormFilterQueryBuilder
 
                 for ( Entry<String, Object> entryFormParameter : mapFormParameterNameValue.entrySet( ) )
                 {
-                    String strParameterName = entryFormParameter.getKey( );
+                   
                     Object objParameterValue = entryFormParameter.getValue( );
 
                     // If a value is missing we will interrupt the processing for the current filter and
@@ -99,12 +102,15 @@ public final class FormFilterQueryBuilder
                     else
                     {
                         String strParameterValue = String.valueOf( objParameterValue );
-                        listParameterValuesToUse.add( strParameterValue );
-
-                        String strParameterNameBuilt = buildParameterNameToReplace( strParameterName );
-                        strFormFilterQuery = strFormFilterQuery.replaceAll( Pattern.quote( strParameterNameBuilt ), PARAMETER_TO_REPLACE_SYMBOL );
-                    }
+                        listParameterValuesToUse.add( strParameterValue ); 
+                        if ( bShouldReplace )
+                        {
+                            String strParameterName = entryFormParameter.getKey( );
+                            String strParameterNameBuilt = buildParameterNameToReplace( strParameterName );
+                            strFormFilterQuery = strFormFilterQuery.replaceAll( Pattern.quote( strParameterNameBuilt ), PARAMETER_TO_REPLACE_SYMBOL );
+                        }
                 }
+            }
             }
 
             formParameters.setListUsedParametersValue( listParameterValuesToUse );

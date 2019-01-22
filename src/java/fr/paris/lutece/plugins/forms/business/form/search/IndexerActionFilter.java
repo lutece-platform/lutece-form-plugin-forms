@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2017, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,26 +31,45 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
-
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterWorkflowStateQueryPart;
+package fr.paris.lutece.plugins.forms.business.form.search;
 
 /**
- * Mock for FormFilterWorkflowStateQueryPart
+ *
+ * class IndexerActionFilter
+ *
  */
-public class FormFilterWorkflowStateQueryPartMock extends FormFilterWorkflowStateQueryPart
+public class IndexerActionFilter
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $id_workflow_state$";
+    public static final int ALL_INT = -1;
+    private int _nIdTask = ALL_INT;
 
     /**
-     * {@inheritDoc}
+     *
+     * @return the task id insert in the filter
      */
-    @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
+    public int getIdTask( )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, true ) );
+        return _nIdTask;
+    }
+
+    /**
+     * set the task id in the filter
+     * 
+     * @param idTask
+     *            the task id to insert in the filter
+     */
+    public void setIdTask( int idTask )
+    {
+        _nIdTask = idTask;
+    }
+
+    /**
+     *
+     * @return true if the filter contain a task id
+     *
+     */
+    public boolean containsIdTask( )
+    {
+        return ( _nIdTask != ALL_INT );
     }
 }

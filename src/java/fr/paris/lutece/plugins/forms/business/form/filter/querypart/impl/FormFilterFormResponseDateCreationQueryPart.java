@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
 
 /**
  * Implementation of the IFormFilterQueryPart for a FormResponseFilterDateCreation filter
@@ -43,8 +42,7 @@ import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationN
 public class FormFilterFormResponseDateCreationQueryPart extends AbstractFormFilterQueryPart
 {
     // Constants
-    private static final String DATE_CREATION_PERIOD_QUERY_PATTERN = "response.creation_date >= date_add( current_timestamp , INTERVAL -$"
-            + FormMultiviewFormResponseDateCreationNameConstants.FILTER_FORM_RESPONSE_DATE_CREATION + "$ DAY )";
+    private static final String DATE_CREATION_PERIOD_QUERY_PATTERN = "response.creation_date >= date_add( current_timestamp , INTERVAL -? DAY )";
 
     /**
      * {@inheritDoc}
@@ -52,6 +50,6 @@ public class FormFilterFormResponseDateCreationQueryPart extends AbstractFormFil
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( DATE_CREATION_PERIOD_QUERY_PATTERN, formParameters ) );
+        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( DATE_CREATION_PERIOD_QUERY_PATTERN, formParameters, false ) );
     }
 }

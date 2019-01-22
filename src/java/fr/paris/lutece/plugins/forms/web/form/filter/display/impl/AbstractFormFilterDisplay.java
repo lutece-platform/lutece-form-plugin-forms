@@ -68,7 +68,16 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
     private String _strValue = StringUtils.EMPTY;
     private String _strTemplate = StringUtils.EMPTY;
     private FormFilter _formFilter;
-
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getBaseTemplate( )
+    {
+        return FILTER_TEMPLATE_NAME;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -200,7 +209,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
         model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
         model.put( MARK_FILTER_NAME, strParameterName );
 
-        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( FILTER_TEMPLATE_NAME, request.getLocale( ), model );
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
         if ( htmlTemplate != null )
         {
             strTemplateResult = htmlTemplate.getHtml( );

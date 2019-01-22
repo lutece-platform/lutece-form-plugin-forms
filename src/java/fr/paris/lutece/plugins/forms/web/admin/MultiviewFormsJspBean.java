@@ -152,7 +152,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Sort the list of FormResponseItem of the FormPanel with the request information
         sortFormResponseItemList( request, _formPanelDisplayActive.getFormResponseItemList( ) );
-
+        
         // Build the template of each form filter display
         if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
         {
@@ -204,7 +204,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             download( arrByteExportFile, I18nService.getLocalizedString( EXPORT_FILE_NAME, getLocale( ) ), formatExport.getFormatContentType( ) );
         }
     }
-
+    
     /**
      * 
      * @param listFormResponseItemToDisplay

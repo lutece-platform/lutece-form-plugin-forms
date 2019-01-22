@@ -1,0 +1,15 @@
+<div class="forms-filter">
+    <#if searched_text??>
+        <#assign previous_searched_text = searched_text>
+    <#else>
+        <#assign previous_searched_text = ''>
+    </#if>
+    <@fieldInputText i18nLabelKey='forms.multiviewForms.labelFilter.searchText' inputName='searched_text' value=previous_searched_text i18nHelpBlockKey='forms.multiviewForms.labelFilter.searchText.help' />
+    <button class="btn btn-info fa fa-search" id="btn_search"/>
+</div>
+
+<script>
+    $('#btn_search').on('click', function(e) {
+            this.form.submit;
+    });
+</script>

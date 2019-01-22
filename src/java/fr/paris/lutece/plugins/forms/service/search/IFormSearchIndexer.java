@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2017, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,26 +31,44 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
+package fr.paris.lutece.plugins.forms.service.search;
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterWorkflowStateQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.search.SearchIndexer;
+import java.io.IOException;
+import java.util.List;
 
 /**
- * Mock for FormFilterWorkflowStateQueryPart
+ *
+ * IFormSearchIndexer
+ *
  */
-public class FormFilterWorkflowStateQueryPartMock extends FormFilterWorkflowStateQueryPart
+public interface IFormSearchIndexer extends SearchIndexer
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $id_workflow_state$";
+    /**
+     * add to the index writer the document associate to the key specified in parameter
+     * 
+     * @param sbLog
+     *            the buffer logger
+     */
+    void processIncrementalIndexing( StringBuffer sbLog );
 
     /**
-     * {@inheritDoc}
+     * add to the index writer the document associate to the key specified in parameter
+     * 
+     * @param sbLog
+     *            the buffer logger
      */
-    @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
-    {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, true ) );
-    }
+    void processFullIndexing( StringBuffer sbLog );
+
+    /**
+     * add an indexer action
+     * @param nIdFormResponse
+     * @param nIdTask
+     * @param plugin 
+     */
+    public void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin );
+    
 }

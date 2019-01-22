@@ -31,26 +31,48 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
+package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterWorkflowStateQueryPart;
-
-/**
- * Mock for FormFilterWorkflowStateQueryPart
- */
-public class FormFilterWorkflowStateQueryPartMock extends FormFilterWorkflowStateQueryPart
+public class FormFilterFormResponseIdConfiguration implements IFormFilterConfiguration
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $id_workflow_state$";
+     // Variables
+    private final int _nPosition;
+    private final String _strFormFilterLabel;
 
     /**
-     * {@inheritDoc}
+     * Constructor
+     * 
+     * @param nPosition
+     *            The position of the FormFilter
+     * @param strFormFilterLabel
+     *            The label of the FormFilter
+     */
+    public FormFilterFormResponseIdConfiguration( int nPosition, String strFormFilterLabel )
+    {
+        _nPosition = nPosition;
+        _strFormFilterLabel = strFormFilterLabel;
+    }
+
+    /**
+     * Return the position of the FormFilter
+     * 
+     * @return the position of the FormFilter
      */
     @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
+    public int getPosition( )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, true ) );
+        return _nPosition;
     }
+
+    /**
+     * Return the label of the FormFilter
+     * 
+     * @return the label of the FormFilter
+     */
+    @Override
+    public String getFormFilterLabel( )
+    {
+        return _strFormFilterLabel;
+    }
+
 }

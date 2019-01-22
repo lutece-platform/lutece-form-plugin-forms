@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 
 /**
  * Implementation of the IFormFilterQueryPart for a FormFilterForms filter
@@ -43,7 +42,7 @@ import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 public class FormFilterFormsQueryPart extends AbstractFormFilterQueryPart
 {
     // Constants
-    private static final String FORM_QUERY_PATTERN = "form.id_form = $" + FormMultiviewFormsNameConstants.FILTER_ID_FORM + "$";
+    private static final String FORM_QUERY_PATTERN = "form.id_form = ?";
 
     /**
      * {@inheritDoc}
@@ -51,6 +50,6 @@ public class FormFilterFormsQueryPart extends AbstractFormFilterQueryPart
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( FORM_QUERY_PATTERN, formParameters ) );
+        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( FORM_QUERY_PATTERN, formParameters, false ) );
     }
 }

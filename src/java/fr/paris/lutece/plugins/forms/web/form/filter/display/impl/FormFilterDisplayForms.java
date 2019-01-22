@@ -57,13 +57,22 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class FormFilterDisplayForms extends AbstractFormFilterDisplay
 {
     // Templates
-    private static final String FORM_FILTER_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/record_form_filter.html";
+    private static final String FORM_FORMS_FILTER_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/record_form_filter.html";
 
     // Constants
     private static final String FORM_CODE_ATTRIBUTE = "id";
     private static final String FORM_NAME_ATTRIBUTE = "title";
     private static final String DEFAULT_ID_FORM = "-1";
-
+ 
+     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getBaseTemplate( )
+    {
+        return FORM_FORMS_FILTER_TEMPLATE_NAME;
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -108,7 +117,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
         model.put( MARK_FILTER_NAME, FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
         model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM, request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ) );
 
-        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( FORM_FILTER_TEMPLATE_NAME, request.getLocale( ), model );
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
         if ( htmlTemplate != null )
         {
             strTemplateResult = htmlTemplate.getHtml( );

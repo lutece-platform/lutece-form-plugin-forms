@@ -31,26 +31,12 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
+package fr.paris.lutece.plugins.forms.service.search;
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterWorkflowStateQueryPart;
+import java.util.List;
 
-/**
- * Mock for FormFilterWorkflowStateQueryPart
- */
-public class FormFilterWorkflowStateQueryPartMock extends FormFilterWorkflowStateQueryPart
+
+public interface IFormSearchEngine 
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $id_workflow_state$";
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
-    {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, true ) );
-    }
+    List<Integer> getSearchResults( FormSearchConfig formSearchConfig );
 }

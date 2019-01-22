@@ -151,6 +151,8 @@ public final class FormResponseDAO implements IFormResponseDAO
         }
     }
 
+    
+    
     /**
      * {@inheritDoc }
      */
@@ -159,7 +161,12 @@ public final class FormResponseDAO implements IFormResponseDAO
     {
         List<FormResponse> formResponseList = new ArrayList<FormResponse>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-
+        daoUtil.executeQuery( );
+        
+        while ( daoUtil.next( ) )
+        {
+            formResponseList.add( dataToObject( daoUtil ) );
+        }
         daoUtil.close( );
 
         return formResponseList;

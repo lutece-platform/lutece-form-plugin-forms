@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2017, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,26 +31,82 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
-
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterWorkflowStateQueryPart;
+package fr.paris.lutece.plugins.forms.business.form.search;
 
 /**
- * Mock for FormFilterWorkflowStateQueryPart
+ *
+ * IndexerAction
+ *
  */
-public class FormFilterWorkflowStateQueryPartMock extends FormFilterWorkflowStateQueryPart
+public class IndexerAction
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $id_workflow_state$";
+    public static final int TASK_CREATE = 1;
+    public static final int TASK_MODIFY = 2;
+    public static final int TASK_DELETE = 3;
+    private int _nIdAction;
+    private int _nIdTask;
+    private int _nIdFormResponse;
 
     /**
-     * {@inheritDoc}
+     * Get the id of the action
+     * 
+     * @return the action id
      */
-    @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
+    public int getIdAction( )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, true ) );
+        return _nIdAction;
+    }
+
+    /**
+     * set the action id
+     * 
+     * @param idAction
+     *            idAction
+     */
+    public void setIdAction( int idAction )
+    {
+        _nIdAction = idAction;
+    }
+
+    /**
+     * Get the id of the form response
+     * 
+     * @return the record Id
+     */
+    public int getIdFormResponse( )
+    {
+        return _nIdFormResponse;
+    }
+
+    /**
+     * set the recordId
+     * 
+     * @param idRecord
+     *            record if
+     */
+    public void setIdFormResponse( int idFormResponse )
+    {
+        _nIdFormResponse = idFormResponse;
+    }
+
+    /**
+     * get the task id
+     * 
+     * @return the task id
+     */
+    public int getIdTask( )
+    {
+        return _nIdTask;
+    }
+
+    /**
+     * set the task id
+     * 
+     * @param idTask
+     *            the task id
+     */
+    public void setIdTask( int idTask )
+    {
+        _nIdTask = idTask;
     }
 }

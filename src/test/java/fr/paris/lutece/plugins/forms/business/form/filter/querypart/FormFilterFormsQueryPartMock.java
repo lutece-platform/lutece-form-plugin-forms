@@ -51,6 +51,6 @@ public class FormFilterFormsQueryPartMock extends FormFilterFormsQueryPart
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( FORM_FILTER_QUERY, formParameters ) );
+        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( FORM_FILTER_QUERY, formParameters, true ) );
     }
 }
