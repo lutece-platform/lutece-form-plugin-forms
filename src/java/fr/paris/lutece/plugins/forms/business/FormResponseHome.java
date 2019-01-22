@@ -107,9 +107,10 @@ public final class FormResponseHome
 
         return formResponse;
     }
-    
+
     /**
      * Returns all the formResponse objects, completed with the steps
+     * 
      * @return all the formResponse objects completed with the steps
      */
     public static List<FormResponse> selectAllFormResponses( )
@@ -117,7 +118,7 @@ public final class FormResponseHome
         List<FormResponse> listFormResponses = _dao.selectFormResponseList( _plugin );
         for ( FormResponse formResponse : listFormResponses )
         {
-            //TODO IMPROVE PERF : complete multiple form response step instead of one to one
+            // TODO IMPROVE PERF : complete multiple form response step instead of one to one
             completeWithSteps( formResponse );
         }
         return listFormResponses;
@@ -165,5 +166,5 @@ public final class FormResponseHome
         _dao.deleteByForm( nIdForm, _plugin );
 
     }
-    
+
 }

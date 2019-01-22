@@ -152,7 +152,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Sort the list of FormResponseItem of the FormPanel with the request information
         sortFormResponseItemList( request, _formPanelDisplayActive.getFormResponseItemList( ) );
-        
+
         // Build the template of each form filter display
         if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
         {
@@ -172,8 +172,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Add the template of column to the model
         String strSortUrl = String.format( BASE_SORT_URL_PATTERN, _strSelectedPanelTechnicalCode );
         String strRedirectionDetailsBaseUrl = buildRedirectionDetailsBaseUrl( );
-        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, _formPanelDisplayActive.getFormResponseItemList( ), getLocale( ),
-                strRedirectionDetailsBaseUrl, strSortUrl, getPaginator( ).getPageItems( ) );
+        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, _formPanelDisplayActive.getFormResponseItemList( ),
+                getLocale( ), strRedirectionDetailsBaseUrl, strSortUrl, getPaginator( ).getPageItems( ) );
         model.put( MARK_TABLE_TEMPLATE, strTableTemplate );
 
         // Add the list of all form panel
@@ -204,7 +204,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             download( arrByteExportFile, I18nService.getLocalizedString( EXPORT_FILE_NAME, getLocale( ) ), formatExport.getFormatContentType( ) );
         }
     }
-    
+
     /**
      * 
      * @param listFormResponseItemToDisplay

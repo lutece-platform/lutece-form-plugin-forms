@@ -33,27 +33,29 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
-public class FormSearchConfig 
+public class FormSearchConfig
 {
     private String _strSearchText;
 
     /**
      * Get the searched text
+     * 
      * @return the searched text
      */
-    public String getSearchedText() 
+    public String getSearchedText( )
     {
         return _strSearchText;
     }
 
     /**
      * Set the searched text
-     * @param strSearchText the searched text
+     * 
+     * @param strSearchText
+     *            the searched text
      */
-    public void setSearchedText( String strSearchText ) 
+    public void setSearchedText( String strSearchText )
     {
         _strSearchText = strSearchText;
     }
-    
-    
+
 }

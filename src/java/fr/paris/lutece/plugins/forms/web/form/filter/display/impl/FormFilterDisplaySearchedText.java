@@ -56,7 +56,7 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
     private static final String PARAMETER_SEARCHED_TEXT = "searched_text";
     private static final String MARK_SEARCHED_TEXT = "searched_text";
     private static final String PARAMETER_ID_RESPONSE = "id_response_";
-    
+
     // Templates
     private static final String FORM_FILTER_SEARCHED_TEXT_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/searched_text_filter.html";
 
@@ -66,12 +66,12 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
     private String _strValue;
     private FormFilter _formFilter;
     private IFormSearchService _formSearchService;
-    
-    public FormFilterDisplaySearchedText ( IFormSearchService formSearchService )
+
+    public FormFilterDisplaySearchedText( IFormSearchService formSearchService )
     {
         _formSearchService = formSearchService;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -81,7 +81,6 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
         return FORM_FILTER_SEARCHED_TEXT_TEMPLATE_NAME;
     }
 
-    
     /**
      * {@inheritDoc}
      */
@@ -102,10 +101,10 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
         String strSearchedText = request.getParameter( PARAMETER_SEARCHED_TEXT );
         if ( StringUtils.isNotBlank( strSearchedText ) )
         {
-            FormSearchConfig config = new FormSearchConfig();
+            FormSearchConfig config = new FormSearchConfig( );
             config.setSearchedText( strSearchedText );
             List<Integer> listIdsResults = _formSearchService.getSearchResults( config );
-            for ( int i = 0 ; i < listIdsResults.size( ) ; i++ )
+            for ( int i = 0; i < listIdsResults.size( ); i++ )
             {
                 mapFilterNameValues.put( PARAMETER_ID_RESPONSE + String.valueOf( i ), listIdsResults.get( i ) );
             }
@@ -117,7 +116,6 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
 
         setValue( strSearchedText );
 
-
         return mapFilterNameValues;
     }
 
@@ -128,18 +126,18 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
     public void buildTemplate( HttpServletRequest request )
     {
         Map<String, Object> model = new LinkedHashMap<>( );
-        String strSearchedText = request.getParameter( PARAMETER_SEARCHED_TEXT); 
-        model.put( MARK_SEARCHED_TEXT, strSearchedText);
+        String strSearchedText = request.getParameter( PARAMETER_SEARCHED_TEXT );
+        model.put( MARK_SEARCHED_TEXT, strSearchedText );
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
 
-        _strTemplate =  htmlTemplate.getHtml( );
+        _strTemplate = htmlTemplate.getHtml( );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getValue() 
+    public String getValue( )
     {
         return _strValue;
     }
@@ -148,11 +146,11 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public String getTemplate() {
+    public String getTemplate( )
+    {
         return _strTemplate;
     }
 
-    
     /**
      * {@inheritDoc}
      */
@@ -178,7 +176,8 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public void setFormFilter(FormFilter formFilter) {
+    public void setFormFilter( FormFilter formFilter )
+    {
         _formFilter = formFilter;
     }
 
@@ -186,7 +185,7 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public FormFilter getFormFilter() 
+    public FormFilter getFormFilter( )
     {
         return _formFilter;
     }
@@ -195,11 +194,11 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public int getPosition() 
+    public int getPosition( )
     {
         return _nPosition;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -208,11 +207,12 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
     {
         _nPosition = nPosition;
     }
-    
+
     /**
      * Set the value
-     * @param strValue 
-     */    
+     * 
+     * @param strValue
+     */
     @Override
     protected void setValue( String strValue )
     {

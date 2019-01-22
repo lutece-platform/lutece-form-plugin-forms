@@ -89,7 +89,7 @@ public final class FormFilterQueryBuilder
 
                 for ( Entry<String, Object> entryFormParameter : mapFormParameterNameValue.entrySet( ) )
                 {
-                   
+
                     Object objParameterValue = entryFormParameter.getValue( );
 
                     // If a value is missing we will interrupt the processing for the current filter and
@@ -102,15 +102,15 @@ public final class FormFilterQueryBuilder
                     else
                     {
                         String strParameterValue = String.valueOf( objParameterValue );
-                        listParameterValuesToUse.add( strParameterValue ); 
+                        listParameterValuesToUse.add( strParameterValue );
                         if ( bShouldReplace )
                         {
                             String strParameterName = entryFormParameter.getKey( );
                             String strParameterNameBuilt = buildParameterNameToReplace( strParameterName );
                             strFormFilterQuery = strFormFilterQuery.replaceAll( Pattern.quote( strParameterNameBuilt ), PARAMETER_TO_REPLACE_SYMBOL );
                         }
+                    }
                 }
-            }
             }
 
             formParameters.setListUsedParametersValue( listParameterValuesToUse );

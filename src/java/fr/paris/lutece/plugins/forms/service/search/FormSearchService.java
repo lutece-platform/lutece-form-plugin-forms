@@ -41,20 +41,19 @@ import javax.inject.Inject;
  */
 public class FormSearchService implements IFormSearchService
 {
-    public static final String BEAN_NAME = "forms.formSearchService"; 
-    
+    public static final String BEAN_NAME = "forms.formSearchService";
+
     @Inject
     private IFormSearchEngine _formSearchEngine;
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
     public List<Integer> getSearchResults( FormSearchConfig formSearchConfig )
     {
-        //Get the list of form response from the engine
+        // Get the list of form response from the engine
         return _formSearchEngine.getSearchResults( formSearchConfig );
     }
-
 
 }

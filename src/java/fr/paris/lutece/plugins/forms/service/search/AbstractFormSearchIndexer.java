@@ -48,7 +48,7 @@ public abstract class AbstractFormSearchIndexer implements IFormSearchIndexer
 {
     @Inject
     private IFormSearchIndexer _indexer;
-    
+
     /**
      * Process indexing
      * 
@@ -71,7 +71,7 @@ public abstract class AbstractFormSearchIndexer implements IFormSearchIndexer
             sbLogs.append( " - " );
             sbLogs.append( _indexer.getDescription( ) );
             sbLogs.append( "</strong>\r\n" );
-            
+
             if ( bCreate )
             {
                 sbLogs.append( "Full indexing\r\n" );
@@ -82,8 +82,6 @@ public abstract class AbstractFormSearchIndexer implements IFormSearchIndexer
                 sbLogs.append( "Incremental indexing\r\n" );
                 _indexer.processIncrementalIndexing( sbLogs );
             }
-            
-            
 
             Date end = new Date( );
 
@@ -116,15 +114,15 @@ public abstract class AbstractFormSearchIndexer implements IFormSearchIndexer
     @Override
     public void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin )
     {
-        //TODO DO NOT LOAD THE ENTIRE DATA
+        // TODO DO NOT LOAD THE ENTIRE DATA
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
-        if ( formResponse != null  )
+        if ( formResponse != null )
         {
             IndexerAction indexerAction = new IndexerAction( );
             indexerAction.setIdFormResponse( formResponse.getId( ) );
             indexerAction.setIdTask( nIdTask );
             IndexerActionHome.create( indexerAction, plugin );
-            
+
         }
     }
 

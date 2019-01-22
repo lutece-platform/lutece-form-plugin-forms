@@ -46,7 +46,7 @@ public class FormFilterFormResponseIdQueryPart extends AbstractFormFilterQueryPa
     private static final String LIST_RESPONSE_ID_QUERY_PATTERN_END = ")";
     private static final String CONSTANT_COMMA = ",";
     private static final String PARAMETER_QUESTION_MARK = "?";
-    
+
     /**
      * {@inheritDoc}
      */
@@ -55,10 +55,10 @@ public class FormFilterFormResponseIdQueryPart extends AbstractFormFilterQueryPa
     {
         StringBuilder strBuilderFilterQuery = new StringBuilder( );
         strBuilderFilterQuery.append( LIST_RESPONSE_ID_QUERY_PATTERN_BEGIN );
-        for ( int i = 0 ; i < formParameters.getFormParametersMap().size( ); i++ )
+        for ( int i = 0; i < formParameters.getFormParametersMap( ).size( ); i++ )
         {
             strBuilderFilterQuery.append( PARAMETER_QUESTION_MARK );
-            if ( i != formParameters.getFormParametersMap().size( ) - 1 )
+            if ( i != formParameters.getFormParametersMap( ).size( ) - 1 )
             {
                 strBuilderFilterQuery.append( CONSTANT_COMMA );
             }

@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.business.form.search;
 /**
  * This class is use for processing searches in Forms
  */
-public class FormResponseSearchItem 
+public class FormResponseSearchItem
 {
     public static final String FIELD_ID_FORM_RESPONSE = "id_form_response";
     public static final String FIELD_CONTENTS = "contents";

@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
 public class FormFilterFormResponseIdConfiguration implements IFormFilterConfiguration
 {
-     // Variables
+    // Variables
     private final int _nPosition;
     private final String _strFormFilterLabel;
 

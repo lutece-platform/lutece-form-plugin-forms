@@ -65,7 +65,7 @@ public interface IFormFilterDisplay extends IFilterable, IFormListPosition
      * @return the template of the FormFilterDisplay
      */
     String getTemplate( );
-    
+
     /**
      * Return the base template of the FormFilterDisplay, before being filled
      * 

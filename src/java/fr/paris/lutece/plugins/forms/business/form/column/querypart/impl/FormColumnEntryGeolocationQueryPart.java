@@ -57,7 +57,7 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
     private static final String ENTRY_SELECT_QUERY_PART = "column_%1$s.column_%1$s_x_value, column_%1$s.column_%1$s_y_value, column_%1$s.column_%1$s_addr_value";
     private static final String ENTRY_FROM_QUERY_PART = StringUtils.EMPTY;
     private static final String ENTRY_JOIN_SELECT_QUERY_PART = "LEFT JOIN ( SELECT form_response_%1$s.id_response AS id_response_%1$s, gen_response_%1$s_x.response_value AS column_%1$s_x_value"
-        + ", gen_response_%1$s_y.response_value AS column_%1$s_y_value, gen_response_%1$s_addr.response_value AS column_%1$s_addr_value";
+            + ", gen_response_%1$s_y.response_value AS column_%1$s_y_value, gen_response_%1$s_addr.response_value AS column_%1$s_addr_value";
     private static final String ENTRY_JOIN_FROM_QUERY_PART = " FROM forms_response AS form_response_%s ";
     private static final String ENTRY_JOIN_QUESTION_RESPONSE_QUERY_PART = " INNER JOIN forms_question_response AS question_response_%1$s ON form_response_%1$s.id_response = question_response_%1$s.id_form_response";
     private static final String ENTRY_JOIN_QUESTION_QUERY_PART = " INNER JOIN forms_question AS q_forms_question_%1$s ON q_forms_question_%1$s.id_question = question_response_%1$s.id_question ";

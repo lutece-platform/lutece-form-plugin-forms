@@ -63,8 +63,8 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     private static final String FORM_CODE_ATTRIBUTE = "id";
     private static final String FORM_NAME_ATTRIBUTE = "title";
     private static final String DEFAULT_ID_FORM = "-1";
- 
-     /**
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -72,7 +72,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     {
         return FORM_FORMS_FILTER_TEMPLATE_NAME;
     }
-    
+
     /**
      * {@inheritDoc}
      */

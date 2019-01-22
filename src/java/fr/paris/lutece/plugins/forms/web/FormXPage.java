@@ -470,18 +470,18 @@ public class FormXPage extends MVCApplication
         {
             return redirectView( request, VIEW_STEP );
         }
-        
-        String idForm= request.getParameter( FormsConstants.PARAMETER_ID_FORM);
+
+        String idForm = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
         String strTitleForm = StringUtils.EMPTY;
-        Form form = FormHome.findByPrimaryKey( Integer.parseInt(idForm ));
+        Form form = FormHome.findByPrimaryKey( Integer.parseInt( idForm ) );
         Map<String, Object> model = buildModelForSummary( request );
-        model.put( FormsConstants.MARK_ID_FORM,  idForm);
-        strTitleForm= form.getTitle();
-        
+        model.put( FormsConstants.MARK_ID_FORM, idForm );
+        strTitleForm = form.getTitle( );
+
         XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, request.getLocale( ), model );
         xPage.setTitle( strTitleForm );
         xPage.setPathLabel( strTitleForm );
-        
+
         return xPage;
     }
 
@@ -753,11 +753,11 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_SAVE_STEP )
     public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-    	Form form=null;
+        Form form = null;
         try
         {
             boolean bSessionLost = isSessionLost( );
-            form =findFormFrom( request );
+            form = findFormFrom( request );
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
@@ -770,13 +770,13 @@ public class FormXPage extends MVCApplication
             return redirectView( request, VIEW_STEP );
         }
 
-        Step currentStep= getNextStep( );
-        _currentStep = currentStep != null? currentStep: _currentStep;
+        Step currentStep = getNextStep( );
+        _currentStep = currentStep != null ? currentStep : _currentStep;
 
         if ( currentStep == null )
         {
-        	FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
-            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR, getBackUrl(form, formMessage.getEndMessageDisplay( )) );
+            FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR, getBackUrl( form, formMessage.getEndMessageDisplay( ) ) );
         }
         return redirectView( request, VIEW_STEP );
     }

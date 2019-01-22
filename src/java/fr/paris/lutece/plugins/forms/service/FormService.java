@@ -107,7 +107,7 @@ public class FormService
         filterFinalSteps( formResponse );
         saveFormResponse( formResponse );
         saveFormResponseSteps( formResponse );
-        processIncrementalIndexing( formResponse ); 
+        processIncrementalIndexing( formResponse );
         _formWorkflowService.doProcessActionOnFormCreation( form, formResponse );
     }
 
@@ -389,22 +389,23 @@ public class FormService
 
         return formResponseManager;
     }
-    
+
     /**
      * Process incremental indexing for create formResponse
-     * @param formResponse 
+     * 
+     * @param formResponse
      */
     private void processIncrementalIndexing( FormResponse formResponse )
     {
-        //Add an action CREATE for given formResponse
+        // Add an action CREATE for given formResponse
         try
         {
-        _formSearchIndexer.addIndexerAction( formResponse.getId( ), IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
-        _formSearchIndexer.processIncrementalIndexing( null );
+            _formSearchIndexer.addIndexerAction( formResponse.getId( ), IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
+            _formSearchIndexer.processIncrementalIndexing( null );
         }
         catch( Exception e )
         {
-            AppLogService.error( "Unable to index form response with id = " + formResponse.getId( ), e);
+            AppLogService.error( "Unable to index form response with id = " + formResponse.getId( ), e );
         }
     }
 }

@@ -44,9 +44,8 @@ public interface IMultiviewMapProvider
     /**
      * The result will be added to the multiview page.
      *
-     * It should use its data from the "geojson_points" dom element. The text will contain
-     * a javascript array of geojson points. This is a very simple interface, we may need
-     * to replace it with a more general mapping interface.
+     * It should use its data from the "geojson_points" dom element. The text will contain a javascript array of geojson points. This is a very simple
+     * interface, we may need to replace it with a more general mapping interface.
      */
-    String getMapTemplate( ); 
+    String getMapTemplate( );
 }

@@ -138,7 +138,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     public List<IndexerAction> selectList( IndexerActionFilter filter, Plugin plugin )
     {
         List<IndexerAction> indexerActionList = new ArrayList<>( );
-        
+
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT + SQL_FILTER_ID_TASK, plugin );
 
         int nIndex = 1;

@@ -7,11 +7,11 @@ package fr.paris.lutece.plugins.forms.service.search;
 
 import java.util.List;
 
-
 public interface IFormSearchService
 {
     /**
      * Get the search result form response id list
+     * 
      * @param formSearchConfig
      * @return the list of form response id corresponding to given search config
      */

@@ -68,7 +68,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
     private String _strValue = StringUtils.EMPTY;
     private String _strTemplate = StringUtils.EMPTY;
     private FormFilter _formFilter;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -77,7 +77,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
     {
         return FILTER_TEMPLATE_NAME;
     }
-    
+
     /**
      * {@inheritDoc}
      */

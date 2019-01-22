@@ -65,10 +65,11 @@ public interface IFormSearchIndexer extends SearchIndexer
 
     /**
      * add an indexer action
+     * 
      * @param nIdFormResponse
      * @param nIdTask
-     * @param plugin 
+     * @param plugin
      */
     public void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin );
-    
+
 }

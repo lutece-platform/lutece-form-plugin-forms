@@ -35,8 +35,7 @@ package fr.paris.lutece.plugins.forms.service.search;
 
 import java.util.List;
 
-
-public interface IFormSearchEngine 
+public interface IFormSearchEngine
 {
     List<Integer> getSearchResults( FormSearchConfig formSearchConfig );
 }

@@ -47,8 +47,8 @@ import javax.inject.Inject;
 public class FormFilterDisplaySearchedTextFactory implements IFormFilterDisplayFactory
 {
     @Inject
-    private IFormSearchService _formSearchService; 
-    
+    private IFormSearchService _formSearchService;
+
     /**
      * {@inheritDoc}
      */

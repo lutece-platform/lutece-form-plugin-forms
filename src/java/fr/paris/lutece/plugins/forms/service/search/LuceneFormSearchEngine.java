@@ -52,18 +52,17 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 
-
 public class LuceneFormSearchEngine implements IFormSearchEngine
 {
 
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public List<Integer> getSearchResults( FormSearchConfig formSearchConfig ) 
+    public List<Integer> getSearchResults( FormSearchConfig formSearchConfig )
     {
         ArrayList<Integer> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
@@ -90,9 +89,9 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
 
             for ( int i = 0; i < hits.length; i++ )
             {
-                Document document = searcher.doc( hits [i].doc  );
+                Document document = searcher.doc( hits [i].doc );
                 SearchItem si = new SearchItem( document );
-                listResults.add( Integer.parseInt( si.getId() ));
+                listResults.add( Integer.parseInt( si.getId( ) ) );
             }
         }
         catch( Exception e )
@@ -102,5 +101,5 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
 
         return listResults;
     }
-    
+
 }

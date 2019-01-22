@@ -139,8 +139,7 @@ public final class FormListTemplateBuilder
             List<FormColumnLineTemplate> listFormColumnLineTemplatePaginated;
             if ( maybeFirstGeolocColumn.isPresent( ) && maybeMapProvider.isPresent( ) )
             {
-                List<FormColumnLineTemplate> listFormColumnLineTemplate = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItem,
-                        locale );
+                List<FormColumnLineTemplate> listFormColumnLineTemplate = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItem, locale );
                 List<String> listGeoJsonPoints = buildGeoJsonPointsList( maybeFirstGeolocColumn.get( ), listFormResponseItem, listFormColumnLineTemplate,
                         strRedirectionDetailsBaseUrl );
                 model.put( MARK_FROM_RESPONSE_GEOJSON_POINT_LIST, listGeoJsonPoints );
@@ -195,12 +194,15 @@ public final class FormListTemplateBuilder
     private static List<String> buildGeoJsonPointsList( FormColumnDisplayEntryGeolocation geolocFormColumnDisplay, List<FormResponseItem> listFormResponseItem,
             List<FormColumnLineTemplate> listFormColumnLineTemplate, String strRedirectionDetailsBaseUrl )
     {
-        return IntStream.range( 0, listFormResponseItem.size( ) ).mapToObj( i -> buildResponseItemJson( geolocFormColumnDisplay, listFormResponseItem.get( i ),
-                listFormColumnLineTemplate.get( i ), strRedirectionDetailsBaseUrl ) ).filter( Optional::isPresent ).map( Optional::get ).collect( Collectors.toList( ) );
+        return IntStream
+                .range( 0, listFormResponseItem.size( ) )
+                .mapToObj(
+                        i -> buildResponseItemJson( geolocFormColumnDisplay, listFormResponseItem.get( i ), listFormColumnLineTemplate.get( i ),
+                                strRedirectionDetailsBaseUrl ) ).filter( Optional::isPresent ).map( Optional::get ).collect( Collectors.toList( ) );
     }
 
-    private static Optional<String> buildResponseItemJson( FormColumnDisplayEntryGeolocation formColumnDisplayEntryGeolocation, FormResponseItem formResponseItem,
-            FormColumnLineTemplate formColumnlineTemplate, String strRedirectionDetailsBaseUrl )
+    private static Optional<String> buildResponseItemJson( FormColumnDisplayEntryGeolocation formColumnDisplayEntryGeolocation,
+            FormResponseItem formResponseItem, FormColumnLineTemplate formColumnlineTemplate, String strRedirectionDetailsBaseUrl )
     {
         int nColumnCellPosition = columnDisplayPositionToCellIndex( formColumnDisplayEntryGeolocation.getPosition( ) );
         FormColumnCell geolocFormColumnCell = formResponseItem.getFormColumnCellValues( ).get( nColumnCellPosition );
@@ -345,7 +347,9 @@ public final class FormListTemplateBuilder
      * Convert from columnDisplayPosition to cell index.
      *
      * The positions start at index 1 and cells at index 0..
-     * @param nCellIndex the cell index
+     * 
+     * @param nCellIndex
+     *            the cell index
      * @return the position of the corresponding ColumnDisplay
      * @see columnDisplayPositionToCellIndex
      */
@@ -402,7 +406,8 @@ public final class FormListTemplateBuilder
      * 
      * @return list of FormResponseItem to display for the active FormPanelDisplay
      */
-    private static List<FormResponseItem> buildFormResponseItemListToDisplay( List<FormResponseItem> listFormResponseItem, List<Integer> listIdFormResponsePaginated )
+    private static List<FormResponseItem> buildFormResponseItemListToDisplay( List<FormResponseItem> listFormResponseItem,
+            List<Integer> listIdFormResponsePaginated )
     {
         List<FormResponseItem> listFormResponseItemToDisplay = new ArrayList<>( );
 
@@ -449,8 +454,8 @@ public final class FormListTemplateBuilder
     /**
      * Get the first geoloc column display if it exists.
      *
-     * Note: this could be replaced with a method to choose the geoloccolumn if we wanted.
-     * Note: this could also be replaced with something to return geojson multipoints.
+     * Note: this could be replaced with a method to choose the geoloccolumn if we wanted. Note: this could also be replaced with something to return geojson
+     * multipoints.
      *
      * @param listFormColumnDisplay
      *            The list of all form column display to retrieve the header template from

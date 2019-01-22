@@ -63,9 +63,9 @@ public class LuceneFormSearchFactory
 
     // Variables
     @Inject
-    @Named( value="forms.luceneFrenchAnalizer")
+    @Named( value = "forms.luceneFrenchAnalizer" )
     private Analyzer _analyzer;
-    
+
     /**
      * Return the Analyzer to use for the search
      * 
@@ -101,7 +101,7 @@ public class LuceneFormSearchFactory
      */
     public IndexWriter getIndexWriter( MutableBoolean bCreateIndex )
     {
-        try 
+        try
         {
             Directory luceneDirectory = getDirectory( );
 
@@ -122,9 +122,9 @@ public class LuceneFormSearchFactory
             }
             return new IndexWriter( luceneDirectory, conf );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
-            AppLogService.error( "Unable to create a new Lucene Index Writer" , e);
+            AppLogService.error( "Unable to create a new Lucene Index Writer", e );
             return null;
         }
     }
