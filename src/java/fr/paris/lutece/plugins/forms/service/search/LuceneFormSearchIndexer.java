@@ -48,7 +48,6 @@ import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.search.IndexationService;
-import fr.paris.lutece.portal.service.search.SearchItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -68,6 +67,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import org.apache.commons.lang.mutable.MutableBoolean;
+import org.apache.lucene.document.DateTools;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 
@@ -197,24 +197,39 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
 
         Document doc = new Document( );
 
-        FieldType ft = new FieldType( StringField.TYPE_STORED );
-        ft.setOmitNorms( false );
+        FieldType ftStored = new FieldType( StringField.TYPE_STORED );
+        ftStored.setOmitNorms( false );
 
-        FieldType ftNotStored = new FieldType( StringField.TYPE_NOT_STORED );
-        ftNotStored.setOmitNorms( false );
-        ftNotStored.setTokenized( true );
+        FieldType ftNotStoredText = new FieldType( StringField.TYPE_NOT_STORED );
+        ftNotStoredText.setOmitNorms( false );
+        ftNotStoredText.setTokenized( true );
 
-        // Add the uid as a field, so that index can be incrementally maintained.
-        // This field is not stored with question/answer, it is indexed, but it is not
-        // tokenized prior to indexing.
+        FieldType ftNotStoredDate = new FieldType( StringField.TYPE_NOT_STORED );
+        ftNotStoredDate.setOmitNorms( true );
+        ftNotStoredDate.setTokenized( false );
+
         String strUID = Integer.toString( formResponse.getId( ) );
-        doc.add( new Field( SearchItem.FIELD_UID, strUID, TextField.TYPE_STORED ) );
+        doc.add( new Field( FormResponseSearchItem.FIELD_UID, strUID, ftStored ) );
 
         // Content of the values to index
         String strContent = getContentToIndex( formResponse );
         if ( StringUtils.isNotBlank( strContent ) )
         {
-            doc.add( new Field( SearchItem.FIELD_CONTENTS, strContent, TextField.TYPE_NOT_STORED ) );
+            doc.add( new Field( FormResponseSearchItem.FIELD_CONTENTS, strContent, ftNotStoredText ) );
+        }
+        if ( StringUtils.isNotBlank( formResponse.getGuid( ) ) )
+        {
+            doc.add( new Field( FormResponseSearchItem.FIELD_GUID, formResponse.getGuid( ), ftNotStoredText ) );
+        }
+        if ( formResponse.getCreation( ) != null )
+        {
+            doc.add( new Field( FormResponseSearchItem.FIELD_DATE_CREATION, DateTools.timeToString( formResponse.getCreation( ).toInstant( ).toEpochMilli( ),
+                    DateTools.Resolution.DAY ), ftNotStoredDate ) );
+        }
+        if ( formResponse.getUpdate( ) != null )
+        {
+            doc.add( new Field( FormResponseSearchItem.FIELD_DATE_UPDATE, DateTools.timeToString( formResponse.getUpdate( ).toInstant( ).toEpochMilli( ),
+                    DateTools.Resolution.DAY ), ftNotStoredDate ) );
         }
 
         return doc;

@@ -43,13 +43,12 @@ import java.util.Collection;
 import java.util.List;
 import javax.inject.Inject;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TopDocs;
 
 public class LuceneFormSearchEngine implements IFormSearchEngine
@@ -75,10 +74,35 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
             Collection<String> fields = new ArrayList<>( );
             Collection<BooleanClause.Occur> flags = new ArrayList<>( );
 
-            Query queryContent = new TermQuery( new Term( FormResponseSearchItem.FIELD_CONTENTS, formSearchConfig.getSearchedText( ) ) );
+            QueryParser qpContent = new QueryParser( FormResponseSearchItem.FIELD_CONTENTS, IndexationService.getAnalyser( ) );
+            QueryParser qpDateCreation = new QueryParser( FormResponseSearchItem.FIELD_DATE_CREATION, IndexationService.getAnalyser( ) );
+            QueryParser qpDateUpdate = new QueryParser( FormResponseSearchItem.FIELD_DATE_UPDATE, IndexationService.getAnalyser( ) );
+            QueryParser qpGuid = new QueryParser( FormResponseSearchItem.FIELD_GUID, IndexationService.getAnalyser( ) );
+
+            qpContent.setDefaultOperator( QueryParser.Operator.AND );
+            qpDateCreation.setDefaultOperator( QueryParser.Operator.AND );
+            qpDateUpdate.setDefaultOperator( QueryParser.Operator.AND );
+            qpGuid.setDefaultOperator( QueryParser.Operator.AND );
+
+            Query queryContent = qpContent.parse( formSearchConfig.getSearchedText( ) );
+            Query queryDateCreation = qpDateCreation.parse( formSearchConfig.getSearchedText( ) );
+            Query queryDateUpdate = qpDateUpdate.parse( formSearchConfig.getSearchedText( ) );
+            Query queryGuid = qpGuid.parse( formSearchConfig.getSearchedText( ) );
+
             queries.add( queryContent.toString( ) );
+            queries.add( queryDateCreation.toString( ) );
+            queries.add( queryDateUpdate.toString( ) );
+            queries.add( queryGuid.toString( ) );
+
             fields.add( FormResponseSearchItem.FIELD_CONTENTS );
-            flags.add( BooleanClause.Occur.MUST );
+            fields.add( FormResponseSearchItem.FIELD_DATE_CREATION );
+            fields.add( FormResponseSearchItem.FIELD_DATE_UPDATE );
+            fields.add( FormResponseSearchItem.FIELD_GUID );
+
+            flags.add( BooleanClause.Occur.SHOULD );
+            flags.add( BooleanClause.Occur.SHOULD );
+            flags.add( BooleanClause.Occur.SHOULD );
+            flags.add( BooleanClause.Occur.SHOULD );
 
             Query queryMulti = MultiFieldQueryParser.parse( queries.toArray( new String [ queries.size( )] ), fields.toArray( new String [ fields.size( )] ),
                     flags.toArray( new BooleanClause.Occur [ flags.size( )] ), IndexationService.getAnalyser( ) );

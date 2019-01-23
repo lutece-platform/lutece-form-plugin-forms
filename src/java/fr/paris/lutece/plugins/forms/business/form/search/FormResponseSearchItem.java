@@ -33,11 +33,21 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.search;
 
+import fr.paris.lutece.portal.service.search.SearchItem;
+import org.apache.lucene.document.Document;
+
 /**
  * This class is use for processing searches in Forms
  */
-public class FormResponseSearchItem
+public class FormResponseSearchItem extends SearchItem
 {
     public static final String FIELD_ID_FORM_RESPONSE = "id_form_response";
-    public static final String FIELD_CONTENTS = "contents";
+    public static final String FIELD_DATE_CREATION = "date_creation";
+    public static final String FIELD_DATE_UPDATE = "date_update";
+    public static final String FIELD_GUID = "guid";
+
+    public FormResponseSearchItem( Document document )
+    {
+        super( document );
+    }
 }
