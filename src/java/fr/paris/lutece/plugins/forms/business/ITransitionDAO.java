@@ -162,4 +162,15 @@ public interface ITransitionDAO
      */
     void deleteByStep( int nIdStep, Plugin plugin );
 
+    /**
+     * Select the transitions list from given form
+     * 
+     * @param nIdForm
+     *            The Form id
+     * @param plugin
+     *            The plugin
+     * @return the transitions list from given form id
+     */
+    List<Transition> selectTransitionsListFromForm( int nIdForm, Plugin plugin );
+
 }

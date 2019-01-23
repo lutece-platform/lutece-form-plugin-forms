@@ -212,4 +212,16 @@ public final class TransitionHome
 
     }
 
+    /**
+     * Load the data of all the transition objects from the given form and returns them as a list
+     * 
+     * @param nIdForm
+     * 
+     * @return the list which contains the data of all the transition objects for given form
+     */
+    public static List<Transition> getTransitionsListFromForm( int nIdForm )
+    {
+        return _dao.selectTransitionsListFromForm( nIdForm, _plugin );
+    }
+
 }

@@ -170,7 +170,7 @@ public class FormStepJspBean extends AbstractJspBean
         _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
         List<Step> listSteps = StepHome.getStepsListByForm( nIdForm );
-        List<Transition> listTransitions = TransitionHome.getTransitionsList( );
+        List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( nIdForm );
         LocalizedPaginator<Step> paginator = new LocalizedPaginator<Step>( listSteps, _nItemsPerPage, getJspManageSteps( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
 
