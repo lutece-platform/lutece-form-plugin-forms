@@ -52,6 +52,9 @@
 						<@formGroup helpKey='#i18n{forms.createEntry.labelUseRichTextComment}'>
 							<@checkBox labelFor='css_class' labelKey='#i18n{forms.createEntry.labelUseRichText}' name='useRichText' value='true' />
 						</@formGroup>
+                                                <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+                                                    <@checkBox name='is_indexed' id='is_indexed' value='1' checked=true />
+                                                </@formGroup>
 						<@formGroup>
                             <@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
                             <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />

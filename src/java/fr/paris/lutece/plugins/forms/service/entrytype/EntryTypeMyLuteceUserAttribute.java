@@ -133,6 +133,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         entry.setCSSClass( request.getParameter( PARAMETER_CSS_CLASS ) );
         entry.setTitle( request.getParameter( PARAMETER_TITLE ) );
         entry.setHelpMessage( request.getParameter( PARAMETER_HELP_MESSAGE ) );
+        entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
 
         Field fieldAttributeName = null;
         Field fieldIsOnlyDisplayedInBack = null;

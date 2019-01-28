@@ -19,6 +19,9 @@
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
+                                                <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+                                                    <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+                                                </@formGroup>
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.createEntry.buttonSave}' showTitleXs=false size='' />
 							<@button type='button' name='cancel' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' params='onclick="javascript:window.history.back();"' />

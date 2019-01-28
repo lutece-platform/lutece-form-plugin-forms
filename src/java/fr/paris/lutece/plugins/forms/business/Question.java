@@ -69,6 +69,8 @@ public class Question implements Serializable, Cloneable
     private int _nIterationNumber;
 
     private boolean _bIsVisible;
+    
+    private boolean _bIsResponsesIndexed;
 
     /**
      * Returns the Id
@@ -277,5 +279,23 @@ public class Question implements Serializable, Cloneable
         question._bIsVisible = _bIsVisible;
 
         return question;
+    }
+
+    /**
+     * Return the responses index boolean
+     * @return true if the responses of this question are indexed, false otherwise
+     */
+    public boolean isResponsesIndexed() 
+    {
+        return _bIsResponsesIndexed;
+    }
+
+    /**
+     * Set the responses indexed boolean
+     * @param bIsResponsesIndexed  the responses index boolean
+     */
+    public void setResponsesIndexed( boolean bIsResponsesIndexed) 
+    {
+        _bIsResponsesIndexed = bIsResponsesIndexed;
     }
 }

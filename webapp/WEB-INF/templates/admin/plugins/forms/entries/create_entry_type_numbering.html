@@ -21,6 +21,9 @@
 						<@formGroup labelFor='prefix' labelKey='#i18n{forms.createEntry.labelPrefix}' helpKey='#i18n{forms.createEntry.labelPrefixComment}'>
 							<@input type='text' name='prefix' id='prefix' value='' maxlength=255 />
 						</@formGroup>
+                                                <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+                                                    <@checkBox name='is_indexed' id='is_indexed' value='1' checked=true />
+                                                </@formGroup>
 						<@formGroup>
                             <@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
                             <@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.creatyEntry.buttonApply}' showTitleXs=false size='' />

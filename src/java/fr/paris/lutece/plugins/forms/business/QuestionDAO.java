@@ -288,6 +288,7 @@ public final class QuestionDAO implements IQuestionDAO
         question.setIdEntry( daoUtil.getInt( "id_entry" ) );
         question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
         question.setIdStep( daoUtil.getInt( "id_step" ) );
+        question.setResponsesIndexed( question.getEntry().isIndexed( ) );
         question.setStep( getQuestionStep( question.getIdStep( ) ) );
 
         return question;

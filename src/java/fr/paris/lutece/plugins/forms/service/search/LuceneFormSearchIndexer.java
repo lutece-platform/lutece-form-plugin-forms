@@ -255,15 +255,20 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         {
             for ( FormQuestionResponse questionResponse : formResponseStep.getQuestions( ) )
             {
-                Entry entry = questionResponse.getQuestion( ).getEntry( );
-                for ( Response response : questionResponse.getEntryResponse( ) )
+                
+                //Only index the indexable entries
+                if ( questionResponse.getQuestion( ).isResponsesIndexed( ) )
                 {
-
-                    String responseString = EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForExport( entry, null, response, null );
-                    if ( !StringUtils.isEmpty( responseString ) )
+                    Entry entry = questionResponse.getQuestion( ).getEntry( );
+                    for ( Response response : questionResponse.getEntryResponse( ) )
                     {
-                        sb.append( responseString );
-                        sb.append( " " );
+
+                        String responseString = EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForExport( entry, null, response, null );
+                        if ( !StringUtils.isEmpty( responseString ) )
+                        {
+                            sb.append( responseString );
+                            sb.append( " " );
+                        }
                     }
                 }
             }

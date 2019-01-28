@@ -63,6 +63,9 @@
 							<#if entry.fieldInLine><#assign checked = true /></#if>
 							<@checkBox name='useRichText' value='true' checked=checked />
 						</@formGroup>
+                                                        <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+                                                <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+                                            </@formGroup>
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
 
