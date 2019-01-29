@@ -33,11 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
-import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
-import fr.paris.lutece.portal.service.message.SiteMessageException;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.search.SearchIndexer;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -71,5 +69,17 @@ public interface IFormSearchIndexer extends SearchIndexer
      * @param plugin
      */
     public void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin );
+    
+    /**
+     * Delete the index 
+     */
+    public void deleteIndex();
+    
+    /**
+     * Index a form response list
+     * @param sbLog
+     * @param listFormResponse 
+     */
+    public void indexFormResponseList( StringBuffer sbLog, List<FormResponse> listFormResponse );
 
 }

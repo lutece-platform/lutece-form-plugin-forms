@@ -126,4 +126,15 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         return listResults;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<Integer> getSearchResults(String strSearchText) 
+    {
+        FormSearchConfig config = new FormSearchConfig( );
+        config.setSearchedText( strSearchText );
+        return getSearchResults( config );
+    }
+
 }

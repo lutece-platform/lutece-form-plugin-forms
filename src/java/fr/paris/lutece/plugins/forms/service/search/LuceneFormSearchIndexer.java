@@ -337,9 +337,6 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
             listFormResponses.add( FormResponseHome.findByPrimaryKey( nIdFormResponse ) );
         }
         indexFormResponseList( sbLog, listFormResponses );
-
-        endIndexing( );
-
     }
 
     /**
@@ -360,12 +357,15 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         }
 
         indexFormResponseList( sbLog, listFormResponses );
-
-        endIndexing( );
     }
 
-    private void indexFormResponseList( StringBuffer sbLog, List<FormResponse> listFormResponse )
+    @Override
+    public void indexFormResponseList( StringBuffer sbLog, List<FormResponse> listFormResponse )
     {
+        sbLog = ( sbLog == null ? new StringBuffer( ) : sbLog );
+        
+        if ( _indexWriter == null || !_indexWriter.isOpen( ) ) initIndexing( true );
+        
         for ( FormResponse formResponse : listFormResponse )
         {
             Document doc = null;
@@ -393,6 +393,8 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
                 }
             }
         }
+        
+        endIndexing();
     }
 
     /**
@@ -484,5 +486,26 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
     public void indexDocuments( ) throws IOException, InterruptedException, SiteMessageException
     {
         processFullIndexing( null );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteIndex() 
+    {
+        if ( _indexWriter == null || !_indexWriter.isOpen() ) initIndexing( true );
+        try
+        {
+            _indexWriter.deleteAll();
+        }
+        catch ( IOException e )
+        {
+            AppLogService.error( "Unable to delete all docs in index ", e);
+        }
+        finally 
+        {
+            endIndexing();
+        }
     }
 }
