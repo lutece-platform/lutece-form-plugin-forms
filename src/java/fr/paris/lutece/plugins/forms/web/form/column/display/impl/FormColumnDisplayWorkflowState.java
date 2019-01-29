@@ -55,6 +55,8 @@ public class FormColumnDisplayWorkflowState extends AbstractFormColumnDisplay
     // Marks
     private static final String MARK_WORKFLOW_STATE_COLUMN_TITLE = "column_title";
     private static final String MARK_WORKFLOW_STATE_NAME = "workflow_state_name";
+    private static final String MARK_COLUMN_SORT_ATTRIBUTE = "column_sort_attribute";
+    private static final String MARK_SORT_URL = "sort_url";
 
     /**
      * {@inheritDoc}
@@ -64,6 +66,8 @@ public class FormColumnDisplayWorkflowState extends AbstractFormColumnDisplay
     {
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_WORKFLOW_STATE_COLUMN_TITLE, getFormColumnTitle( ) );
+        model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
+        model.put( MARK_COLUMN_SORT_ATTRIBUTE, FormMultiviewWorkflowStateNameConstants.COLUMN_WORKFLOW_STATE_NAME );
 
         String strWorkflowStateHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );
         setFormColumnHeaderTemplate( strWorkflowStateHeaderTemplate );
