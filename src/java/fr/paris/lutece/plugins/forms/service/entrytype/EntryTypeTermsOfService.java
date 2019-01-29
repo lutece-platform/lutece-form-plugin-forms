@@ -147,7 +147,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
         }
 
         String strCSSClass = request.getParameter( PARAMETER_CSS_CLASS );
-        
+
         entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
         entry.setTitle( strTitle );
         entry.setCSSClass( strCSSClass );

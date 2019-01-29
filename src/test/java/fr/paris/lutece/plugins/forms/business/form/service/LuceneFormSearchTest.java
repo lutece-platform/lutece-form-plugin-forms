@@ -55,27 +55,27 @@ import java.util.UUID;
 //@ContextConfiguration(locations={"classpath:/conf/plugins/forms_context.xml"})
 public class LuceneFormSearchTest extends LuteceTestCase
 {
-    private static final Timestamp TIMESTAMP_NOW = Timestamp.valueOf(LocalDateTime.now( ) );
+    private static final Timestamp TIMESTAMP_NOW = Timestamp.valueOf( LocalDateTime.now( ) );
     private static final int DEFAULT_INT = -1;
     private static final UUID DEFAULT_GUID = UUID.randomUUID( );
-    
-    //Step
+
+    // Step
     private static final String DEFAULT_STEP_DESCRIPTION = "default_step_description";
     private static final String DEFAULT_STEP_TITLE = "default_step_title";
-    
-    //Question
+
+    // Question
     private static final String DEFAULT_QUESTION_DESCRIPTION = "default_question_description";
-    
-    //Entry
+
+    // Entry
     private static final int ENTRY_TYPE_TEXT_ID = 106;
     private static final String ENTRY_TYPE_TITLE = "default_entry_type_title";
-    
-    //Entry type
+
+    // Entry type
     private static final String BEAN_NAME_ENTRY_TYPE_TEXT = "forms.entryTypeText";
-    
+
     private IFormSearchIndexer _formFormSearchIndexer;
-    private IFormSearchEngine _formFormSearchEngine;        
-            
+    private IFormSearchEngine _formFormSearchEngine;
+
     /**
      * {@inheritDoc}
      */
@@ -83,8 +83,8 @@ public class LuceneFormSearchTest extends LuteceTestCase
     public void setUp( ) throws Exception
     {
         super.setUp( );
-        _formFormSearchIndexer = SpringContextService.getBean( "forms.luceneFormsSearchIndexer");
-        _formFormSearchEngine = SpringContextService.getBean( "forms.luceneFormsSearchEngine");
+        _formFormSearchIndexer = SpringContextService.getBean( "forms.luceneFormsSearchIndexer" );
+        _formFormSearchEngine = SpringContextService.getBean( "forms.luceneFormsSearchEngine" );
     }
 
     /**
@@ -94,7 +94,7 @@ public class LuceneFormSearchTest extends LuteceTestCase
     {
         processSimpleTest( "test", "test", 1 );
     }
-    
+
     /**
      * Search simple text in sentence
      */
@@ -102,7 +102,7 @@ public class LuceneFormSearchTest extends LuteceTestCase
     {
         processSimpleTest( "test demo", "test", 1 );
     }
-    
+
     /**
      * Search simple text in accentued test
      */
@@ -110,7 +110,7 @@ public class LuceneFormSearchTest extends LuteceTestCase
     {
         processSimpleTest( "tést", "test", 1 );
     }
-    
+
     /**
      * SearchSimple text in Uppercase test
      */
@@ -118,7 +118,7 @@ public class LuceneFormSearchTest extends LuteceTestCase
     {
         processSimpleTest( "TEST", "test", 1 );
     }
-    
+
     /**
      * No match
      */
@@ -126,11 +126,12 @@ public class LuceneFormSearchTest extends LuteceTestCase
     {
         processSimpleTest( "tagada", "test", 0 );
     }
-    
+
     /**
-     * Create a form 
+     * Create a form
+     * 
      * @param strValueText
-     * @return 
+     * @return
      */
     private FormResponse createFormResponse( String strValueText )
     {
@@ -140,55 +141,55 @@ public class LuceneFormSearchTest extends LuteceTestCase
         formResponse.setGuid( DEFAULT_GUID.toString( ) );
         formResponse.setId( DEFAULT_INT );
         formResponse.setUpdate( TIMESTAMP_NOW );
-        
-        EntryType entryTypeText = new EntryType();
+
+        EntryType entryTypeText = new EntryType( );
         entryTypeText.setIdType( ENTRY_TYPE_TEXT_ID );
         entryTypeText.setTitle( ENTRY_TYPE_TITLE );
         entryTypeText.setBeanName( BEAN_NAME_ENTRY_TYPE_TEXT );
-        
-        Entry entry = new Entry( ); 
+
+        Entry entry = new Entry( );
         entry.setIndexed( true );
         entry.setEntryType( entryTypeText );
-        
+
         Question question = new Question( );
         question.setDescription( DEFAULT_QUESTION_DESCRIPTION );
         question.setId( DEFAULT_INT );
         question.setEntry( entry );
-        
-        List<Response> listResponses = new ArrayList<>();
-        Response response = new Response();
+
+        List<Response> listResponses = new ArrayList<>( );
+        Response response = new Response( );
         response.setEntry( entry );
         response.setIdResponse( DEFAULT_INT );
         response.setResponseValue( strValueText );
         listResponses.add( response );
-        
-        List<FormQuestionResponse> listFormQuestionResponse = new ArrayList<>();
-        FormQuestionResponse formQuestionResponse = new FormQuestionResponse();
+
+        List<FormQuestionResponse> listFormQuestionResponse = new ArrayList<>( );
+        FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
         formQuestionResponse.setQuestion( question );
         formQuestionResponse.setEntryResponse( listResponses );
         listFormQuestionResponse.add( formQuestionResponse );
-        
+
         Step step = new Step( );
         step.setDescription( DEFAULT_STEP_DESCRIPTION );
         step.setFinal( true );
         step.setInitial( true );
         step.setIdForm( DEFAULT_INT );
         step.setTitle( DEFAULT_STEP_TITLE );
-        
+
         FormResponseStep formResponseStep = new FormResponseStep( );
         formResponseStep.setStep( step );
         formResponseStep.setFormResponseId( DEFAULT_INT );
         formResponseStep.setOrder( DEFAULT_INT );
         formResponseStep.setId( DEFAULT_INT );
-        formResponseStep.setQuestions(listFormQuestionResponse);
-        List<FormResponseStep> listFormResponseStep = new ArrayList<>();
+        formResponseStep.setQuestions( listFormQuestionResponse );
+        List<FormResponseStep> listFormResponseStep = new ArrayList<>( );
         listFormResponseStep.add( formResponseStep );
-        
+
         formResponse.setSteps( listFormResponseStep );
-        
+
         return formResponse;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -197,24 +198,25 @@ public class LuceneFormSearchTest extends LuteceTestCase
     {
         super.tearDown( );
     }
-    
+
     /**
      * Process a simple test of text searching
+     * 
      * @param strFormTest
-     *          The string in the form response
+     *            The string in the form response
      * @param strSearchedText
-     *          The searched text in the form response
-     * @param nResultAttended 
-     *          The number of attended result
+     *            The searched text in the form response
+     * @param nResultAttended
+     *            The number of attended result
      */
     private void processSimpleTest( String strFormTest, String strSearchedText, int nResultAttended )
     {
-        List<FormResponse> listFormResponse = new ArrayList<>();
+        List<FormResponse> listFormResponse = new ArrayList<>( );
         listFormResponse.add( createFormResponse( strFormTest ) );
-        
-        _formFormSearchIndexer.indexFormResponseList( null, listFormResponse);
 
-        assertTrue(_formFormSearchEngine.getSearchResults( strSearchedText ).size( ) == nResultAttended );
+        _formFormSearchIndexer.indexFormResponseList( null, listFormResponse );
+
+        assertTrue( _formFormSearchEngine.getSearchResults( strSearchedText ).size( ) == nResultAttended );
         _formFormSearchIndexer.deleteIndex( );
     }
 }

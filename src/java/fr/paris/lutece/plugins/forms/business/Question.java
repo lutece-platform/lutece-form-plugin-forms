@@ -281,9 +281,10 @@ public class Question implements Serializable, Cloneable
 
     /**
      * Return the responses index boolean
+     * 
      * @return true if the responses of this question are indexed, false otherwise
      */
-    public boolean isResponsesIndexed() 
+    public boolean isResponsesIndexed( )
     {
         return _entry.isIndexed( );
     }

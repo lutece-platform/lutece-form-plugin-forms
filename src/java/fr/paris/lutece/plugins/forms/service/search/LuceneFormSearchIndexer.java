@@ -255,8 +255,8 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         {
             for ( FormQuestionResponse questionResponse : formResponseStep.getQuestions( ) )
             {
-                
-                //Only index the indexable entries
+
+                // Only index the indexable entries
                 if ( questionResponse.getQuestion( ).isResponsesIndexed( ) )
                 {
                     Entry entry = questionResponse.getQuestion( ).getEntry( );
@@ -363,9 +363,10 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
     public void indexFormResponseList( StringBuffer sbLog, List<FormResponse> listFormResponse )
     {
         sbLog = ( sbLog == null ? new StringBuffer( ) : sbLog );
-        
-        if ( _indexWriter == null || !_indexWriter.isOpen( ) ) initIndexing( true );
-        
+
+        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
+            initIndexing( true );
+
         for ( FormResponse formResponse : listFormResponse )
         {
             Document doc = null;
@@ -393,8 +394,8 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
                 }
             }
         }
-        
-        endIndexing();
+
+        endIndexing( );
     }
 
     /**
@@ -492,20 +493,21 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
      * {@inheritDoc }
      */
     @Override
-    public void deleteIndex() 
+    public void deleteIndex( )
     {
-        if ( _indexWriter == null || !_indexWriter.isOpen() ) initIndexing( true );
+        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
+            initIndexing( true );
         try
         {
-            _indexWriter.deleteAll();
+            _indexWriter.deleteAll( );
         }
-        catch ( IOException e )
+        catch( IOException e )
         {
-            AppLogService.error( "Unable to delete all docs in index ", e);
+            AppLogService.error( "Unable to delete all docs in index ", e );
         }
-        finally 
+        finally
         {
-            endIndexing();
+            endIndexing( );
         }
     }
 }

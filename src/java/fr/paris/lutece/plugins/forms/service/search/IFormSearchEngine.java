@@ -38,5 +38,6 @@ import java.util.List;
 public interface IFormSearchEngine
 {
     List<Integer> getSearchResults( FormSearchConfig formSearchConfig );
+
     List<Integer> getSearchResults( String strSearchText );
 }

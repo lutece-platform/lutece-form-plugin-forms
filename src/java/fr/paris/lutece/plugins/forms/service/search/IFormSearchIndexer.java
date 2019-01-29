@@ -69,16 +69,17 @@ public interface IFormSearchIndexer extends SearchIndexer
      * @param plugin
      */
     public void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin );
-    
+
     /**
-     * Delete the index 
+     * Delete the index
      */
-    public void deleteIndex();
-    
+    public void deleteIndex( );
+
     /**
      * Index a form response list
+     * 
      * @param sbLog
-     * @param listFormResponse 
+     * @param listFormResponse
      */
     public void indexFormResponseList( StringBuffer sbLog, List<FormResponse> listFormResponse );
 
