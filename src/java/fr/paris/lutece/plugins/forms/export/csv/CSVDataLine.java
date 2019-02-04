@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -57,7 +58,6 @@ public class CSVDataLine
 {
     private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
     private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
-    private static final String PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT = "forms.export.formResponse.form.date.creation.format";
 
     private static final String RESPONSE_SEPARATOR = " ";
 
@@ -74,7 +74,7 @@ public class CSVDataLine
         _mapDataToExport = new HashMap<>( );
 
         Locale locale = I18nService.getDefaultLocale( );
-        DateFormat dateFormat = new SimpleDateFormat( AppPropertiesService.getProperty( PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT ), locale );
+        DateFormat dateFormat = new SimpleDateFormat( AppPropertiesService.getProperty( FormsConstants.PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT ), locale );
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
         _mapDataToExport.put( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, locale ), form.getTitle( ) );
         _mapDataToExport.put( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION, locale ), dateFormat.format( formResponse.getCreation( ) ) );
