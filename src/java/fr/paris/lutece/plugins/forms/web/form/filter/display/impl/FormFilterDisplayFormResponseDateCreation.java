@@ -34,15 +34,21 @@
 package fr.paris.lutece.plugins.forms.web.form.filter.display.impl;
 
 import java.util.LinkedHashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.util.html.HtmlTemplate;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Implementation of the IFormFilterDisplay interface for the filter which manage the period of creation of form response
@@ -50,15 +56,15 @@ import fr.paris.lutece.util.ReferenceList;
 public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilterDisplay
 {
     // Constants
-    private static final int LAST_DAY_VALUE = 1;
-    private static final int LAST_WEEK_VALUE = 7;
-    private static final int LAST_MONTH_VALUE = 31;
-    private static final String PARAMETER_SEARCH_OPEN_SINCE = "multiview_search_open_since";
+    private static final String PARAMETER_SEARCH_OPEN_BETWEEN = "multiview_search_open_between";
+    private static final String FROM = "_from";
+    private static final String TO = "_to";
 
-    // Messages keys
-    private static final String LAST_DAY_MESSAGE_KEY = "forms.multiviewForms.labelFilter.searchSinceLastDay";
-    private static final String LAST_WEEK_MESSAGE_KEY = "forms.multiviewForms.labelFilter.searcHSinceLastWeek";
-    private static final String LAST_MONTH_MESSAGE_KEY = "forms.multiviewForms.labelFilter.searchSinceLastMonth";
+    // Templates
+    private static final String FORM_FILTER_CREATION_DATE_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/date_filter.html";
+
+    // Regex
+    private static final String REGEX_DATE_FORMAT = "([0-9]{2}.[0-9]{2}.[0-9]{4}).([0-9]{2}.[0-9]{2}.[0-9]{4})";
 
     /**
      * {@inheritDoc}
@@ -66,7 +72,7 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
     @Override
     public String getParameterName( )
     {
-        return PARAMETER_SEARCH_OPEN_SINCE;
+        return PARAMETER_SEARCH_OPEN_BETWEEN;
     }
 
     /**
@@ -75,11 +81,26 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
     @Override
     public Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request )
     {
-        String strPeriodCreationDate = request.getParameter( PARAMETER_SEARCH_OPEN_SINCE );
+        String strPeriodCreationDate = request.getParameter( PARAMETER_SEARCH_OPEN_BETWEEN );
+        String strPeriodCreationFrom = request.getParameter( PARAMETER_SEARCH_OPEN_BETWEEN + FROM );
+        String strPeriodCreationTo = request.getParameter( PARAMETER_SEARCH_OPEN_BETWEEN + TO );
         setValue( strPeriodCreationDate );
 
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
-        mapFilterNameValues.put( FormMultiviewFormResponseDateCreationNameConstants.FILTER_FORM_RESPONSE_DATE_CREATION, strPeriodCreationDate );
+        if ( !StringUtils.isEmpty( strPeriodCreationFrom ) && !StringUtils.isEmpty( strPeriodCreationTo ) )
+        {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern( AppPropertiesService
+                    .getProperty( FormsConstants.PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT ) );
+
+            LocalDate dateFrom = LocalDate.parse( strPeriodCreationFrom, formatter );
+            LocalDate dateTo = LocalDate.parse( strPeriodCreationTo, formatter );
+
+            DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern( "yyyy-MM-dd" );
+
+            mapFilterNameValues
+                    .put( FormMultiviewFormResponseDateCreationNameConstants.FILTER_FORM_RESPONSE_DATE_CREATION_FROM, dateFrom.format( sqlFormatter ) );
+            mapFilterNameValues.put( FormMultiviewFormResponseDateCreationNameConstants.FILTER_FORM_RESPONSE_DATE_CREATION_TO, dateTo.format( sqlFormatter ) );
+        }
 
         return mapFilterNameValues;
     }
@@ -90,36 +111,61 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
     @Override
     public void buildTemplate( HttpServletRequest request )
     {
-        manageFilterTemplate( request, createReferenceList( request.getLocale( ) ), PARAMETER_SEARCH_OPEN_SINCE );
+        String strTemplateResult = StringUtils.EMPTY;
+
+        Map<String, Object> model = new LinkedHashMap<>( );
+        model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
+
+        addDateRange( model );
+
+        model.put( MARK_FILTER_NAME, PARAMETER_SEARCH_OPEN_BETWEEN );
+
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
+        if ( htmlTemplate != null )
+        {
+            strTemplateResult = htmlTemplate.getHtml( );
+        }
+
+        setTemplate( strTemplateResult );
     }
 
     /**
-     * Build the ReferenceList for the period of the form response creation
-     * 
-     * @param locale
-     *            The locale to use for building the message for the list
-     * @return the ReferenceList for the period of the form response creation
+     * {@inheritDoc}
      */
-    private ReferenceList createReferenceList( Locale locale )
+    @Override
+    public String getBaseTemplate( )
     {
-        ReferenceList referenceList = new ReferenceList( );
+        return FORM_FILTER_CREATION_DATE_TEMPLATE_NAME;
+    }
 
-        // Default value
-        String strDefaultDayItemName = getFormFilterDisplayLabel( );
-        referenceList.addItem( FormsConstants.DEFAULT_FILTER_VALUE, strDefaultDayItemName );
+    /**
+     * Add date range from ... to to the model
+     * 
+     * @param model
+     *            The model
+     */
+    private void addDateRange( Map<String, Object> model )
+    {
+        String strDateRange = getValue( );
 
-        // Last day filter
-        String strLastDayItemName = I18nService.getLocalizedString( LAST_DAY_MESSAGE_KEY, locale );
-        referenceList.addItem( LAST_DAY_VALUE, strLastDayItemName );
+        if ( strDateRange != null )
+        {
+            strDateRange = getValue( ).replaceAll( " ", "" );
+            Matcher m = Pattern.compile( REGEX_DATE_FORMAT ).matcher( strDateRange );
 
-        // Last week filter
-        String strLastWeekItemName = I18nService.getLocalizedString( LAST_WEEK_MESSAGE_KEY, locale );
-        referenceList.addItem( LAST_WEEK_VALUE, strLastWeekItemName );
+            try
+            {
+                m.find( );
+                String strDateFromValue = m.group( 1 );
+                String strDateToValue = m.group( 2 );
 
-        // Last month filter
-        String strLastMonthItemName = I18nService.getLocalizedString( LAST_MONTH_MESSAGE_KEY, locale );
-        referenceList.addItem( LAST_MONTH_VALUE, strLastMonthItemName );
-
-        return referenceList;
+                model.put( MARK_FILTER_LIST_VALUE + FROM, strDateFromValue );
+                model.put( MARK_FILTER_LIST_VALUE + TO, strDateToValue );
+            }
+            catch( Exception e )
+            {
+                AppLogService.error( "Unable to parse date range and extract date_from and date_to in " + strDateRange + ". Please check date formats.", e );
+            }
+        }
     }
 }

@@ -39,7 +39,8 @@ package fr.paris.lutece.plugins.forms.util;
 public final class FormMultiviewFormResponseDateCreationNameConstants
 {
     // Filter Constants
-    public static final String FILTER_FORM_RESPONSE_DATE_CREATION = "period_form_response_creation";
+    public static final String FILTER_FORM_RESPONSE_DATE_CREATION_FROM = "period_form_response_creation_from";
+    public static final String FILTER_FORM_RESPONSE_DATE_CREATION_TO = "period_form_response_creation_to";
 
     // Column Constants
     public static final String COLUMN_FORM_RESPONSE_DATE_CREATION = "response_creation_date";
