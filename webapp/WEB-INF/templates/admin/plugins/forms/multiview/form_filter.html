@@ -1,6 +1,6 @@
 <#if filter_list?has_content>
-	<div class="forms-filter">
-		<label class="select" for="${filter_name}">
+	<div class="form-group">
+		<label for="${filter_name}">
 			<#assign params=''>
 			<#if filter_name != 'search_form'>
 				<#assign params='onchange="this.form.submit()"'>

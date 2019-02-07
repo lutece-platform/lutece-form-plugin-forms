@@ -1,68 +1,9 @@
-<div class="forms-filter">
-    <input type="hidden" name="forms_previous_id_form" value="${forms_previous_id_form!-1}"/>
-    <input type="hidden" id="${filter_name}_from" name="${filter_name}_from" value="${filter_list_value_from!''}"/>
-    <input type="hidden" id="${filter_name}_to" name="${filter_name}_to" value="${filter_list_value_to!''}"/>
+<@formGroup formStyle='inline' class='forms-filter' labelKey='' labelFor=filter_name showLabel=false >
+    <input type="hidden" name="forms_previous_id_form" value="${forms_previous_id_form!-1}">
+    <input type="hidden" id="${filter_name}_from" name="${filter_name}_from" value="${filter_list_value_from!''}">
+    <input type="hidden" id="${filter_name}_to" name="${filter_name}_to" value="${filter_list_value_to!''}">
+    <input type="hidden" id="formsFilter" value="${filter_name!''}">
     <label for="${filter_name}">
-        
-        <input type="text" id="${filter_name}" name="${filter_name}" value="${filter_list_value!''}" />
+        <input type="text" id="${filter_name}" class="form-control" name="${filter_name}" value="${filter_list_value!''}">
     </label>
-</div>
-<script type="text/javascript" src="js/plugins/forms/multiview/moment.min.js"></script>
-<script type="text/javascript" src="js/plugins/forms/multiview/daterangepicker.js"></script>
-<link rel="stylesheet" type="text/css" href="css/admin/plugins/forms/daterangepicker.css"/>
-<script>
-$(function() {
-  $('input[name="${filter_name}"]').daterangepicker(
-  {
-    ranges: {
-        'Aujourd\'hui': [moment(), moment()],
-        'Hier': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        '1 Semaine': [moment().subtract(6, 'days'), moment()],
-        '1 Mois': [moment().subtract(29, 'days'), moment()],
-        '3 Mois': [moment().subtract(90, 'days'), moment()],
-    },
-    opens: 'right',
-    autoUpdateInput: true,
-    locale: {
-        format: 'DD/MM/YYYY',
-        applyLabel: "Appliquer",
-        cancelLabel: "Annuler",
-        fromLabel: "De",
-        toLabel: "au",
-        customRangeLabel: "Personnalisé",
-        weekLabel: "Sem",
-        daysOfWeek: [
-            "Dim",
-            "Lu",
-            "Ma",
-            "Me",
-            "Je",
-            "Ve",
-            "Sa"
-        ],
-        monthNames: [
-            "Janvier",
-            "Fevrier",
-            "Mars",
-            "Avril",
-            "Mai",
-            "Juin",
-            "Juillet",
-            "Août",
-            "Septembre",
-            "Octobre",
-            "Novembre",
-            "Decembre"
-        ],
-    }
-        
-  }, 
-  function(start, end, label) 
-  {
-    $('#${filter_name}_from').val ( start.format('DD/MM/YYYY') );
-    $('#${filter_name}_to').val ( end.format('DD/MM/YYYY') );
-    $('#${filter_name}').val ( start.format('DD/MM/YYYY') + " - " + end.format('DD/MM/YYYY') );
-    $('#searchForm').submit();
-  });
-});
-</script>
+</@formGroup>

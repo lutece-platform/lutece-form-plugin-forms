@@ -1,23 +1,37 @@
-<div class="row">
-	<div class="row box-forms bg-form-multiview-light header-form-response">
-		<form class="form-horizontal" action="jsp/admin/plugins/forms/MultiviewForms.jsp" method="get">
+<div id="form-detail-header" class="box bg-navy">
+	<div class="box-body">
+		<form id="form-response-detail-header" class="form" action="jsp/admin/plugins/forms/MultiviewForms.jsp" method="get">
 			<input name="page" value="form" type="hidden" >
 			<input type="hidden" name="session" value="session">
-				
 			<#assign editModeValue = "ReadOnly">
 			<#assign viewNumberAttValue = "1">
-			
 			<#if list_filter_values?has_content>
 				<#list list_filter_values as filter_values>
 					<input type="hidden" name="${filter_values.code}" value="${filter_values.name}">		
 				</#list>
 			</#if>
-				
-			<div class="col-xs-12 btn-forms">
-				<button class="btn btn-default" type="submit" >
-					<i class="fa fa-arrow-left"></i>&nbsp;#i18n{forms.multiviewForms.formResponseDetails.header.buttonBack}
-				</button>
+			<div class="col-xs-12 col-sm-1">
+				<p class="form-control-static">
+					<button class="btn btn-default btn-sm" type="submit" >
+						<i class="fa fa-arrow-left"></i> #i18n{portal.util.labelBack}
+					</button>
+				</p>	
 			</div>
+			<div class="col-xs-12 col-sm-4">	
+				<p class="form-control-static text-ellipsis">${form.title}<p>	
+				#i18n{forms.multiviewForms.responseDetails.response.number} <span class="badge">${form_response.id}</span>
+				
+			</div>		
+			<div class="col-xs-12 col-sm-7">
+				<p class="form-control-static" style="display: flex; justify-content: space-between">
+					<span class="callout callout-info">
+						<i class="fa fa-calendar"></i> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} <strong>${form_response.creation}</strong> / #i18n{forms.multiviewForms.responseDetails.response.dateModification} <strong>${form_response.update}</strong>
+					</span>
+					<#if resource_actions?exists && resource_actions.workflow_state?exists>
+						<span class="callout callout-info"><i class="fa fa-info-circle"></i>   #i18n{forms.multiviewForms.responseDetails.response.state} : <strong >${resource_actions.workflow_state.name}</strong> </span>
+					</#if>
+				</p>
+			</div>	
 		</form>
 	</div>
 </div>

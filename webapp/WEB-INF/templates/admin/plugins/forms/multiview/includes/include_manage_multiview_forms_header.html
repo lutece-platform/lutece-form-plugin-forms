@@ -1,31 +1,27 @@
-<div class="row bg-form-multiview-light forms">
-	<div id="filter-forms" class="box box-forms bg-form-multiview-light">
-		<div class="box-body">
-			<input type="hidden" name="current_selected_panel" value="${current_selected_panel!''}"/>
-			<div class="row">
-				<div class="col-xs-12 col-sm-8">
-					<#if form_filter_list?has_content>
-						<#list form_filter_list as form_filter>
-							${form_filter.template!''}
-						</#list>
-					</#if>
-				</div>
-				<div class="col-xs-12 col-sm-2">
-					<#if form_panel_list?has_content>
-						<#list form_panel_list as form_panel>
-							${form_panel.template}
-						</#list>
-					</#if>
-				</div>
-				<div class="col-xs-12 col-sm-2">
-					<@btnGroup class='col-sm-offset-5'>
-						<@btnGroup>
-							<@select name='format_export' default_value='' items=format_export_list />
-						</@btnGroup>
-						<@button type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content  showTitle=false buttonIcon='download' />
-					</@btnGroup>
-				</div>
-			</div>
+<input type="hidden" name="current_selected_panel" value="${current_selected_panel!''}">
+<div class="box bg-navy" id="filter-forms" >
+	<div class="box-body">
+		<#if form_filter_list?has_content>
+			<#list form_filter_list as form_filter>
+				${form_filter.template!''}
+			</#list>
+		</#if>
+		<div class="form-group">
+			<label for="format_export" >
+				<@inputGroup>
+					<@select name='format_export' id='format_export' default_value='' items=format_export_list />
+					<@inputGroupItem>
+						<@button  color='btn-info' type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content  showTitle=false buttonIcon='download' />
+					</@inputGroupItem>
+				</@inputGroup>
+			</label>
+		</div>
+		<div class="form-group">
+			<#if form_panel_list?has_content>
+				<#list form_panel_list as form_panel>
+					${form_panel.template}
+				</#list>
+			</#if>
 		</div>
 	</div>
 </div>

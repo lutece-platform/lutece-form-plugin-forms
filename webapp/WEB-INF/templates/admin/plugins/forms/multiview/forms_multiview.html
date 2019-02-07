@@ -1,23 +1,27 @@
-<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' class2='form-inline'>
+<#include "/admin/plugins/forms/commons.html" />
+<@tform class='form-inline' action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' >
 <#include "includes/include_manage_multiview_forms_header.html">
-<div class="row">
-	<div class="tab-content">
-		<div class="box box-forms-tab-content">
-            <#if table_template?has_content>
-                <div id="multi-form-list" class="box-body table-responsive forms">
-				    ${table_template}
-					<p>
-						<@paginationAdmin paginator=paginator combo=1 showcount=0 form=0 />
-					</p>
+<div class="tab-content">
+	<div class="box">
+        <#if table_template?has_content>
+            <div id="multi-form-list" class="box-body">
+    		    ${table_template}
+	    		<p>
+					<@paginationAdmin paginator=paginator combo=1 showcount=0 form=0 />
+				</p>
+            </div>
+        <#else>
+            <div id="multiview-no-forms" class="box-body">
+                <div class="panel">
+                    <div class="panel-body">
+                        <h2 class="text-muted text-center">#i18n{forms.multiviewForms.noFormResponses}</h2>
+                        <img class="img-responsive" src="images/admin/skin/plugins/forms/multiview/no_form_responses.jpg" alt="#i18n{forms.multiviewForms.noFormResponses}" title="">
+                    </div>
                 </div>
-            <#else>
-                <div id="multiview-no-forms">
-                    <h2 class="text-muted">#i18n{forms.multiviewForms.noFormResponses}</h2>
-                    <img class="img-responsive" src="images/admin/skin/plugins/forms/multiview/no_form_responses.jpg" alt="#i18n{forms.multiviewForms.noFormResponses}" title="">
-                </div>
-            </#if>
-        </div>
-        <script src="js/plugins/forms/multiview/forms-multiview.js"></script>
+            </div>
+        </#if>
     </div>
 </div>
 </@tform>
+<script src="js/plugins/forms/multiview/forms-multiview.js"></script>
+<@dateFilterJs  />

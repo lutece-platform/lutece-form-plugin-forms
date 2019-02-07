@@ -1,58 +1,52 @@
 <#include "includes/include_view_form_response_header.html">
-
 <#--
 -- Build the HTML code to display the actions
 -- @param resource_actions the actions to display
 -- @return the HTML code of the actions
 -->
+
 <#macro display_actions resource_actions >
 <#if resource_actions.workflow_action_list?exists>
-    <#list resource_actions.workflow_action_list as action>
-        <a class="btn btn-lg btn-primary btn-block bg-gru-dark" href="jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}">
-            ${action.name}
-        </a>
-    </#list>
+    <h3>Actions</h3>
+    <#if resource_actions.workflow_action_list?has_content>
+        <#list resource_actions.workflow_action_list as action>
+            <p>
+                <a class="btn bg-navy btn-lg btn-block clearfix" href="jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}">
+                    <span class="pull-left button-workflow">
+                        <img src="image?resource_type=workflow_icon_img&id=${action.icon.id}" title="${action.name}" alt="${action.name}" > 
+                    </span>
+                    ${action.name}  
+                </a>
+            </p>
+        </#list>
+    <#else>
+        <div class="alert alert-warning">
+            <i class="fa fa-warning fa-fw"></i>  #i18n{forms.multiviewForms.view_record_history.history_empty}
+        </div>
+    </#if>
 </#if>
-
 </#macro>
 
-<div class="row">
-    <div class="col-xs-12 col-sm-8">
-        <div class="box box-primary box-forms-borderless">
-            <div id="form-response-details" class="box-body">
-                <#if list_multiview_step_display?has_content>
-                    <#list list_multiview_step_display as multiview_step_display>
-                        ${multiview_step_display}
-                    </#list>
-                </#if>
-            </div>
-        </div>
-        <div>${resource_history!}</div>
+<div class="row" id="form-response-details">
+    <div class="col-xs-12 col-sm-9">
+       <#if list_multiview_step_display?has_content>
+            <#list list_multiview_step_display as multiview_step_display>
+                ${multiview_step_display}
+            </#list>
+        </#if>
     </div>
-    
-    <div class="col-xs-12 col-sm-4">
-        <div class="box box-primary box-forms-borderless">
-            <div class="box-header with-border">
-                <div id="info-right">
-                    <p class="title">#i18n{forms.multiviewForms.responseDetails.form.title}</p>
-                    <p class="data">${form.title}</p>
-                    <p class="title">#i18n{forms.multiviewForms.responseDetails.response.number}</p>
-                    <p class="data">${form_response.id}</p>
-                    <p class="title">#i18n{forms.multiviewForms.responseDetails.response.dateCreation}</p>
-                    <p class="data">${form_response.creation}</p>
-                    <p class="title">#i18n{forms.multiviewForms.responseDetails.response.dateModification}</p>
-                    <p class="data">${form_response.update}</p>
-                    <#if resource_actions?exists && resource_actions.workflow_state?exists>
-                    <p class="title">#i18n{forms.multiviewForms.responseDetails.response.state}</p> 
-                    <p class="data">${resource_actions.workflow_state.name}</p>
-                    </#if>
-                </div>
-            </div>
-            <div class="box-body">
-                <div class="">
-                    <@display_actions resource_actions! />
-                </div>
+    <div class="col-xs-12 col-sm-3" id="sticky-container">
+        <div id="info-right" class="panel panel-default">
+           <div class="panel-body">
+                <@display_actions resource_actions! />
+                ${resource_history!}
             </div>
         </div>
     </div>
 </div>
+<script>
+$( function(){
+    /* TO DO */
+    });
+})
+</script>
