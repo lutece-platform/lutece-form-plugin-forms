@@ -219,3 +219,677 @@
   <#return name />
 </#function>
 
+<#macro formEditor >
+<#assign cssFiles="editor.css, page_template_styles.css" />
+<#assign editorLocale="" />
+<#-- We only have the language pack for French (France) installed in webapp/js/editors/tinymce/langs -->
+<#-- Some lutece plugins pass locale.getLanguage() (="fr"), some pass the locale object (toString="fr_FR", or more complicated...) -->
+<#-- Force it here because if it is a wrong value, tinyMCE does not load -->
+<#if locale?? && (2 <= locale?string?length) && (locale?string?substring(0,2) == "fr")>
+	<#assign editorLocale="fr_FR" />
+</#if>
+<script src="${webapp_url!}js/editors/tinymce/tinymce.min.js"></script>
+<script>
+tinyMCE.init({
+	// General options ${editorLocale}
+	forced_root_block : '',
+	selector : "textarea.richtext",
+	theme : "modern",
+	document_base_url : "${webapp_url!}",
+	menubar : false,
+	<#if editorLocale != "">language : '${editorLocale}',</#if>
+	plugins: [ "link image lists charmap hr anchor pagebreak nonbreaking contextmenu paste textcolor" ],
+	// Extended elements
+	extended_valid_elements : "iframe[style|src|width|height|name|align|frameborder|scrolling],script[src|type],i[class]",
+	paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,p,br",
+	content_css: "${cssFiles}",
+	toolbar: "bold italic | forecolor | alignleft aligncenter alignright alignjustify | bullist | link | code",
+	contextmenu: "link image | paste copy cut | forecolor backcolor ",
+	});
+</script>
+</#macro>
+
+<#macro toastr infos warnings errors msg='' msgType='info'>
+<link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
+<script src="js/jquery/plugins/toastr/toastr.min.js"></script>
+<script>
+$( function(){
+<#if warning?has_content>
+	<#list warnings as warning >
+		toastr.warning("${warning.message}");
+	</#list>	
+</#if>
+
+<#if error?has_content>
+	<#list errors as error >
+		toastr.error("${error.message}");
+	</#list>	
+</#if>
+
+<#if infos?has_content>
+	<#list infos as info >
+		toastr.info("${info.message}");
+	</#list>	
+</#if>
+
+<#if msg !=''>
+	<#if msgType='info'>
+		toastr.info("${msg}");
+	</#if>
+	<#if msgType='warning'>
+		toastr.warning("${msg}");
+	</#if>
+	<#if msgType='danger'>
+		toastr.warning("${msg}");
+	</#if>
+</#if>
+});
+</script>
+</#macro>
+
+<#macro formBreadCrumb >
+<ol id="breadforms" class="breadcrumb">
+	<li>
+		<a href="jsp/admin/plugins/forms/ManageForms.jsp" title="Retour Liste des formulaire">
+			<i class="fa fa-home fa-fw"></i>
+		</a>
+	</li>
+	<#nested>
+</ol>
+</#macro>     
+
+<#macro formModal id='pubModal' title=''>
+<div class="modal fade" id="${id}" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+        <iframe id="modalIframe" src=""></iframe>
+    </div>
+    </div>
+</div>
+</#macro>
+
+<#macro headerButton name='view_manageForm' label='portal.admin.message.buttonCancel' validate=true >
+<button class="btn btn-link" name="${name}" type="submit" <#if !validate>formnovalidate</#if>>
+   <i class='fa fa-<#if validate>check text-success<#else>remove text-danger</#if>'></i> #i18n{${label}}
+</button>
+</#macro>
+
+<#macro formsButton okAction='' viewAction=''  >
+<div class="form-group">
+	<div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
+  	<button  class="btn btn-link" id="action_${okAction}" name="action_${okAction}" type="submit">
+    	<i class='fa fa-check text-success'></i> #i18n{portal.admin.message.buttonValidate}
+		</button>
+		<#nested>
+		<#if viewAction !=''>
+			<button class="btn btn-link" name="view_${viewAction}" type="submit" formnovalidate >
+				<i class='fa fa-close text-danger'></i> #i18n{portal.admin.message.buttonCancel}
+			</button>
+		</#if>
+  </div>
+</div>
+</#macro>
+
+<#macro formModel >
+	<@row> 
+		<@columns xs=12 sm=7> 
+				<fieldset>
+						<legend>#i18n{forms.modify_form.labelDescription}</legend>   
+						<@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true rows=2>
+								<@input type='text' name='title' value='${form.title!}' />
+						</@formGroup>
+						<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
+								<@input type='textarea' name='description'>${form.description!}</@input>
+						</@formGroup>
+				</fieldset>
+				<fieldset>
+						<legend>#i18n{forms.create_form.labelDates}</legend>       
+						<@row>
+								<@columns xs=12 sm=6>   
+										<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
+												<@inputGroup>
+														<@input type='text' name='availabilityStartDate' id='availabilityStartDate' value='${form.availabilityStartDate!}' />
+														<@inputGroupItem type='addon'>
+																<@icon style='calendar' />
+														</@inputGroupItem>
+												</@inputGroup>
+										</@formGroup>
+								</@columns>       
+								<@columns xs=12 sm=6>  
+										<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
+												<@inputGroup>
+														<@input type='text' name='availabilityEndDate' id='availabilityEndDate' value='${form.availabilityEndDate!}' />
+														<@inputGroupItem type='addon'>
+																<@icon style='calendar' />
+														</@inputGroupItem>
+												</@inputGroup>
+										</@formGroup>
+								</@columns>            
+						</@row>
+				</fieldset>
+				<fieldset>
+				<legend>#i18n{forms.create_form.display.labelRestrictions}</legend> 
+						<@row>     
+								<@columns xs=12 sm=4>  
+										<@formGroup labelFor='max_number_response' labelKey='#i18n{forms.createForm.labelMaxNumberResponse}' helpKey='#i18n{forms.create_form.labelMaxNumberResponseComment.help}' rows=2>
+												<@input name='maxNumberResponse' id='maxNumberResponse' type='number' value=form.maxNumberResponse?string!'0' />
+										</@formGroup>
+								</@columns>     
+								<@columns xs=12 sm=3>       
+										<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' showLabel=false rows=2>
+												<@checkBox labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' labelFor='authentificationNeeded' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
+										</@formGroup>
+								</@columns>       
+								<@columns xs=12 sm=4>           
+										<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' showLabel=false rows=2>
+										<@checkBox labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) labelFor='oneResponseByUser' />
+										</@formGroup>
+								</@columns> 
+						</@row>          
+				</fieldset>
+				<fieldset>
+						<legend>#i18n{forms.create_form.display.label}</legend>
+						<@columns xs=12 sm=6> 
+								<@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true rows=2>
+										<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
+								</@formGroup>
+						</@columns> 
+				</fieldset>   
+		</@columns>
+		<@columns xs=12 sm=5>  
+		<fieldset>
+				<legend>#i18n{forms.create_form.labelDisplaySummary}</legend>
+						<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
+								<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
+						</@formGroup>
+						<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' showLabel=false rows=2>
+								<@checkBox labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
+						</@formGroup>
+						<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}' showLabel=false  rows=2>
+								<@checkBox labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
+						</@formGroup>
+						<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
+								<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
+						</@formGroup>
+				</fieldset> 
+				<#if workflow_list?has_content && workflow_list?size gt 1>
+						<fieldset>
+								<legend>#i18n{forms.modify_form.workflow.label}</legend>    
+								<@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' rows=2>
+										<@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
+								</@formGroup>
+						</fieldset> 
+				</#if>
+		</@columns>
+</@row>
+</#macro>
+
+<#macro formVisualize>
+<div class="modal fade" id="modalPDF" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg" role="document" style="width:80vw;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h4 class="modal-title">Etapes ${form.title}</h4>
+			</div>
+			<div class="modal-body" style="height:80vh;">
+				<iframe src="" style="position:absolute;left:0; top:0; height:80vh; bottom:0; width:100%; padding:0;"></iframe>
+			</div>
+			<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<link rel="stylesheet" type="text/css" href="js/vis/vis-network.min.css" >
+<script src="js/vis/vis.min.js"></script>
+<script src="js/vis/jspdf.min.js"></script>
+<script>
+	$( function(){
+		$("#renderNetwork").toggle();
+		$(".state-actions").toggle();
+		$(".state").nextAll().hide();
+		if( $('#hierarchical').hasClass('active') ){
+			$('#direction').show();
+		} else {
+			$('#direction').hide();
+		}
+	})
+
+	var base64Img = null;
+	imgToBase64('images/admin/skin/plugins/forms/logo_site.png', function(base64) {
+    	base64Img = base64; 
+	});
+
+	$("#toggleMap").click( function( e ){
+		e.preventDefault();
+		$("#list").fadeToggle();
+		$("#renderNetwork").fadeToggle();
+		$(this).children('i').toggleClass('fa-sitemap').toggleClass('fa-th-list');
+	});
+
+    // create an array with nodes
+	<#assign nStepCount = step_list?size>
+	<#assign nIndex = 1>
+	var nodes = new vis.DataSet([
+    <#list step_list as step>
+		{id: ${step.id}, label: "${step.title} <#if step.initial> - Etape initiale</#if><#if step.final> - Etape finale</#if> ",x:undefined,y:undefined}<#if nIndex &lt; nStepCount>,</#if>
+		<#assign nIndex = nIndex+1>
+	</#list>
+	]);
+
+	/*
+		var nodePosition = getStoredPositions();
+		if( nodePosition != null ){
+			setNodesPosition( nodePosition );
+		}
+	*/
+ 	
+	 // create an array with edges
+ 	var edges = new vis.DataSet([
+	 	<#assign nTransitionCount = transition_list?size >
+		<#assign nIndex = 1>
+		<#assign rndDess = -0.2>
+		<#list transition_list as transition>
+		 	{id: ${(transition.id)!''}, from: ${(transition.fromStep)!''}, to: ${(transition.nextStep)!''}, smooth: {type: 'curvedCW', roundness:0.2} , arrows:'to', label:"${(transition.controlTitle)!''}", title: "Priorité : ${(transition.priority)!''} : ${(transition.fromStepTitle)!''} / ${(transition.nextStepTitle)!''} / ${(transition.controlTitle)!''}", font:{align: 'top'}}<#if nIndex &lt; nTransitionCount>,</#if>
+		</#list>
+	]);
+
+	var locales = {
+		en: {
+			edit: 'Edit',
+			del: 'Delete selected',
+			back: 'Back',
+			addNode: 'Add Node',
+			addEdge: 'Add Edge',
+			editNode: 'Edit Node',
+			editEdge: 'Edit Edge',
+			addDescription: 'Click in an empty space to place a new node.',
+			edgeDescription: 'Click on a node and drag the edge to another node to connect them.',
+			editEdgeDescription: 'Click on the control points and drag them to a node to connect to it.',
+			createEdgeError: 'Cannot link edges to a cluster.',
+			deleteClusterError: 'Clusters cannot be deleted.',
+			editClusterError: 'Clusters cannot be edited.'
+		},
+		fr: {
+			edit: 'Editer',
+			del: 'Supprimer la s\u00E9lection',
+			back: 'Retour',
+			addNode: 'Ajoute un \u00E9tat',
+			addEdge: 'Ajouter une action',
+			editNode: 'Editer l\'\u00E9tat',
+			editEdge: 'Editer l\'action',
+			addDescription: 'Cliquer dans un espace vide pour cr\u00E9er un \u00E9tat.',
+			edgeDescription: 'Cliquer sur un \u00E9tat et atteindre un autre \u00E9tat pour associer une actions.',
+			editEdgeDescription: 'Cliquer sur un \u00E9tat s\u00E9lectionn\u00E9 et atteindre un autre \u00E9tat pour associer une actions.',
+			createEdgeError: 'On ne peut lier une action et un cluster.',
+			deleteClusterError: 'Clusters ne peuvent \u00EAtre d\u00E9truit.',
+			editClusterError: 'Clusters ne peuvent \u00EAtre \u00E9dit\u00E9.'
+		}
+	}
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var options = {
+		autoResize: true,
+		locale: 'fr',
+  		locales: locales,
+  		height: '100%',
+  		width: '100%',
+  		interaction:{ 
+		  hover:true,
+		  navigationButtons: true,
+		},
+		physics: {
+      		enabled: false
+    	},
+		layout: {
+		randomSeed: 1,
+		improvedLayout:true,
+		hierarchical: {
+			enabled:true,
+			levelSeparation: 100,
+			nodeSpacing: 400,
+			treeSpacing: 400,
+			blockShifting: true,
+			edgeMinimization: true,
+			parentCentralization: true,
+			direction: 'UD', // UD, DU, LR, RL
+			sortMethod: 'hubsize' // hubsize, directed
+		}
+		},
+		// TODO : gérer les actions
+		manipulation: {
+			enabled: false,
+			initiallyActive: false,
+			// addNode: function(nodeData,callback) {
+			// 	el = 'jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=' ;
+			// 	window.location.replace( el );
+			// },
+			addEdge: function(edgeData,callback) {
+				el = 'jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=' + edgeData.from + '&id_step_after=' + edgeData.to;
+				window.location.replace( el );
+			},
+			editEdge: function(edgeData,callback) {
+				el = 'jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&' + edgeData.from + '&id_transition=' + edgeData.id;
+				window.location.replace( el );
+			},
+			// deleteNode: function(nodeData,callback) {
+			// 	el = '' +  nodeData.nodes[0];
+			// 	window.location.replace( el );
+			// },
+			deleteEdge: function(edgeData,callback) {
+				el = 'jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveTransition&id_transition=' +  edgeData.id;
+				window.location.replace( el );
+			}
+		},
+		nodes: {
+			shape: 'box',
+			margin: 10,
+			size: 25,
+            font: {
+                size: 12,
+                color: '#000'
+            },
+            borderWidth: 2
+        },
+        edges: {
+            width: 3,
+			scaling: {
+				min: 10,
+				max: 30
+			},
+        },
+	};
+
+    // Initialisation du network!
+    var network = new vis.Network(container, data, options);
+
+    network.on("doubleClick", function (params) {
+        params.event = "[original event]";
+        var elNode = params.nodes[0],  elEdge = params.edges[0], el='';
+		if( elNode !== undefined ){
+			el = 'jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=' + elNode;
+		} else if( elEdge !== undefined ) {
+			el = 'jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=' +  elEdge;
+		}
+		window.location.replace( el );
+    });
+	
+	/* Function pour recréer le network
+	 - h : Paramètre qui défini si le network est de présentation hierachique | valeurs : true ou false
+	 - d : Paramètre qui défini l'orien,tation de la présentation hierachique | valeurs : UD,DU,LR,RL
+	*/
+	function draw( h, d ) {
+        options.layout.hierarchical.enabled=h;
+        options.layout.hierarchical.direction=d;
+        network = new vis.Network(container, data, options);
+    }
+	
+	/* Bouton choix du type de graphique */
+	$("#hierarchical").click( function(){
+		$( this ).toggleClass('active');
+		if( $(this).hasClass('active') ){
+			$("#direction").show();
+			$( this ).html('<i class="fa fa-random"></i> Pr&eacute;sentation libre');
+			draw( true, 'UD' );
+		} else{
+			$("#direction").hide();
+			$( this ).html('<i class="fa fa-sitemap"></i> Pr&eacute;sentation hi&eacute;rarchique');
+			draw( false, 'UD' );
+		}
+	});
+	
+	/* Bouton choix de l'orientation pour une représentation hiérachique */
+	$( "#direction > select" ).change(function() {
+		var di = $(this).val();
+		draw( true, di );
+	});
+
+	// Sauve les positions
+	$("#save_network").click( function(){
+		saveNetwork();
+	});
+
+	// Récupère les positions depuis localStorage
+	$("#get_network").click( function(){
+		var savedNodesPosition = getStoredPositions();
+		setNodesPosition( savedNodesPosition );
+		draw( false, 'UD' );
+	});
+	
+	// Sauve les positions dans localStorage
+	function saveNetwork() {
+		var n = objectToArray( network.getPositions() );
+		var exportValue = JSON.stringify( n, undefined, 2);
+		localStorage.setItem( 'id_step_' , exportValue );
+	}
+
+	/* Récupère le dernière version en localStorage */
+	function getStoredPositions(){
+		var step_data = localStorage.getItem( 'id_step_' );
+		var inputData = JSON.parse( step_data );
+		return inputData;
+	}	
+	
+	/* Enregistre les dernières positions en localStorage */
+	function setNodesPosition( p ){
+		var networkNodes=[];
+		p.forEach( function( elem, index, array ) {
+			nodes.update({id: elem.id, x: elem.x, y: elem.y});
+		});
+	}
+	
+	/* Génération PDF 								*/
+	/* Var pour récupérer objet canvas du network 	*/
+	var imgData='',canvasW=0,canvasH=0;
+	network.on("afterDrawing", function (ctx) {
+		 imgData = ctx.canvas.toDataURL('image/png');
+		 canvasW= ctx.canvas.width/3;
+		 canvasH= ctx.canvas.height/3;
+	});
+	
+	/* Var définition des marges pour le PDF */
+	margins = {	top: 70, bottom: 60, left: 30, width: 550 };
+
+	/* Fonction de génération du PDF */
+	generateDoc = function( view ){
+		var docWkf = new jsPDF({
+			orientation: 'landscape',
+			unit: 'px',
+			format: 'a4'
+		});
+		
+		docWkf.addImage( imgData, 'PNG', 15, 60, canvasW, canvasH);
+		docWkf.addPage('a4','l');
+		// We'll make our own renderer to skip this editor
+		var specialElementHandlers = {
+			'.btn': function(element, renderer){
+				return true;
+			},
+			'th': function(element, renderer){
+				return true;
+			},
+			'.form-inline': function(element, renderer){
+				return true;
+			}
+		};
+		docWkf.setTextColor(100);
+		docWkf.setFontSize(22);
+		docWkf.text(105, 65, 'Liste des Etapes');
+		docWkf.setDrawColor( 23, 93, 146 );
+		docWkf.setLineWidth(1);
+		docWkf.line(15, 70, 600, 65);
+		docWkf.setTextColor(0,0,0);
+	
+		docWkf.setFontSize(18);
+		docWkf.fromHTML($('#list').get(0),  
+		margins.left, // x coord
+		margins.top,
+		{
+			'elementHandlers': specialElementHandlers,
+			width: margins.width
+		}, function(dispose) {
+			headerFooterFormating( docWkf, docWkf.internal.getNumberOfPages());
+		}, 
+		margins);
+		if( view ){
+			$('#modalPDF iframe').attr('src', docWkf.output('datauristring') );
+			$('#modalPDF').modal('show');
+		} else {
+			docWkf.save("steps.pdf");
+		}
+			
+	};
+	
+	// Insère le header et le footer
+	function headerFooterFormating(doc, totalPages)	{
+		for(var i = totalPages; i >= 1; i--) {
+			doc.setPage(i);                            
+			header(doc);
+			footer(doc, i, totalPages);
+			doc.page++;	
+		}
+	};
+
+	// Prépare le header
+	function header(doc) {
+		if ( base64Img ) {
+			doc.addImage( base64Img, 'png', 10, 15 );        
+		}
+		doc.setTextColor(100);
+		doc.setFontSize(22)
+		doc.text(130, 35, 'Forms : les Etapes')
+		doc.setTextColor(150);
+		doc.setFontSize(12)
+		// doc.text(105, 45, 'Etapes')
+		doc.setDrawColor( 23, 93, 146 );
+		doc.setLineWidth(1);
+		doc.line( 3, 70, margins.width + 400 ); // horizontal line
+	};
+	
+	// Prépare le footer
+	function footer(doc, pageNumber, totalPages) {
+		var str = "Page " + pageNumber + " sur " + totalPages
+		doc.setFontSize(10);
+		doc.text(str, margins.left + 10, doc.internal.pageSize.height - 40);
+	};
+
+	// Bouton generation preview PDF
+	$("#previewPDF").click( function () {
+		generateDoc( true );
+	});
+
+	// Bouton generation téléchargement PDF
+	$("#downloadPDF").click( function () {
+	 	generateDoc( false );
+	});
+
+	/* Utils */
+	function objectToArray(obj) {
+		return Object.keys(obj).map(function (key) {
+			obj[key].id = key;
+			return obj[key];
+		});
+	}
+
+	function imgToBase64( url, callback, imgVariable) {
+		if (!window.FileReader) {
+			callback(null);
+			return;
+		}
+		var xhr = new XMLHttpRequest();
+		xhr.responseType = 'blob';
+		xhr.onload = function() {
+			var reader = new FileReader();
+			reader.onloadend = function() {
+				imgVariable = reader.result.replace('text/xml', 'image/jpeg');
+				callback(imgVariable);
+			};
+			reader.readAsDataURL(xhr.response);
+		};
+		xhr.open('GET', url);
+		xhr.send();
+	};
+ </script>
+ </#macro>
+
+<#macro dateFilterJs>
+<link rel="stylesheet" type="text/css" href="css/admin/plugins/forms/daterangepicker.css">
+<script type="text/javascript" src="js/plugins/forms/multiview/moment.min.js"></script>
+<script type="text/javascript" src="js/plugins/forms/multiview/daterangepicker.js"></script>
+<script>
+$(function() {
+	var filter='#' + $('#formsFilter').val(), filter_to=filter+'_to', filter_from=filter+'_form';
+  $(filter).daterangepicker( {
+    ranges: {
+        'Aujourd\'hui': [moment(), moment()],
+        'Hier': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        '1 Semaine': [moment().subtract(6, 'days'), moment()],
+        '1 Mois': [moment().subtract(29, 'days'), moment()],
+        '3 Mois': [moment().subtract(90, 'days'), moment()],
+    },
+	opens: 'right',
+	alwaysShowCalendars: true,
+    autoUpdateInput: true,
+    locale: {
+        format: 'DD/MM/YYYY',
+        applyLabel: "Appliquer",
+        cancelLabel: "Annuler",
+        fromLabel: "De",
+        toLabel: "au",
+        customRangeLabel: "Personnalis&eacute;",
+        weekLabel: "Sem",
+        daysOfWeek: [
+            "Dim",
+            "Lu",
+            "Ma",
+            "Me",
+            "Je",
+            "Ve",
+            "Sa"
+        ],
+        monthNames: [
+            "Janvier",
+            "Fevrier",
+            "Mars",
+            "Avril",
+            "Mai",
+            "Juin",
+            "Juillet",
+            "Août",
+            "Septembre",
+            "Octobre",
+            "Novembre",
+            "Decembre"
+        ],
+    }
+        
+  }, 
+  function(start, end, label) {
+    $(filter_from).val( start.format('DD/MM/YYYY') );
+    $(filter_to).val( end.format('DD/MM/YYYY') );
+    $(filter).val ( start.format('DD/MM/YYYY') + " - " + end.format('DD/MM/YYYY') );
+    $('#searchForm').submit();
+  });
+
+  	$(filter).on('cancel.daterangepicker', function(ev, picker) {
+		//do something, like clearing an input
+		var startD = moment().day(-30);
+		var endD = moment().day(30);
+		$(this).data('daterangepicker').setStartDate(startD);
+		$(this).data('daterangepicker').setEndDate(endD);
+		$(this).val('');
+	  	$(filter_from).val ('');
+  		$(filter_to).val ('');
+	});
+});
+</script>
+</#macro>
