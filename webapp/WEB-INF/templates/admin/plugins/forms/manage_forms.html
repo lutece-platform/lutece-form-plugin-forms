@@ -1,65 +1,113 @@
+<#include "/admin/plugins/forms/commons.html" />
 <@row>
     <@columns>
-        <@box color='primary' collapsed=true>
+        <@box color='primary' collapsed=true params='style="margin-bottom:0;"'>
             <@boxHeader title='#i18n{forms.manageForm.title}' boxTools=true>
                 <#if permission_create_forms>
-                    <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' showTitleXs=false size='' />
+                    <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus  text-success' title='#i18n{forms.manageForm.buttonAdd}' showTitleXs=false color='btn-link' />
                 </#if>
             </@boxHeader>
         </@box>
         <@box color='solid'>
             <@boxBody>
-                <@messages errors=errors />
-                <@messages infos=infos />
-                <@paginationAdmin paginator=paginator combo=1 />
-                <div class="clearfix"></div>
                 <@table>
-                    <tr>
-                        <th class="col-xs-6 col-sm-5 col-md-7">#i18n{forms.manageForm.columnTitle}</th>
-                        <th class="col-xs-1 col-sm-1">#i18n{forms.manageForm.columnPeriodDisponibility}</th>
-                        <th class="col-xs-5 col-sm-6 col-md-4">#i18n{forms.manageForm.columnActions}</th>
+                    <tr hidden>
+                        <th class="col-xs-12 col-sm-7">#i18n{forms.manageForm.columnTitle}</th>
+                        <th class="col-xs-12 col-sm-2">#i18n{forms.manageForm.columnActions}</th>
+                        <th class="hidden-xs col-sm-3">#i18n{forms.manageForm.columnPeriodDisponibility}</th>
                     </tr>
                     <#list form_list as form>
-                        <tr>
-                            <td class="col-sm-6">
-                                <#if form.active>
-                                     <@tag color='success'><@icon style='check' /></@tag>
-                                 <#else>
-                                     <@tag color='danger'><@icon style='close' /></@tag>
-                                 </#if>
-                                &nbsp;${form.title}&nbsp;<a href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" title="#i18n{forms.manageForm.FOLink.label} ${form.title}" target="_blank"><i class="fa fa-globe"></i></a>
-                            </td>
-                            <td class="col-sm-2">
-                                <#setting locale=locale.language>
-                                <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
-                                    #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
-                                <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
-                                    #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
-                                <#elseif form.availabilityStartDate??>
-                                    #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}
-                                <#elseif form.availabilityEndDate??>
-                                    #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate}
-                                <#else>
-                                    &nbsp;
-                                </#if>
-                            </td>
-                            <td class="col-sm-4">
+                        <tr id="form_${form.id}">
+                            <td class="col-xs-12 col-sm-7">
+                                <#assign hasAction=false />
                                 <#if form.actions?exists>
                                     <#list form.actions as action>
-                                            <#if action.permission=='DELETE'>
-	                                              <#assign color='btn-danger' />
-	                                          <#else>
-	                                              <#assign color='btn-primary' />
-	                                          </#if>
-	                                          <@aButton href='${action.url}&id_form=${form.id}' title='${action.description}' showTitle=false buttonIcon=action.iconUrl color=color size='sm' />
+                                        <#if action.permission=='MODIFY'>
+                                            <a href="${action.url}&id_form=${form.id}" title="${form.title}" class="btn btn-link" >
+                                            <#assign hasAction=true />
+                                            <#break>
+	                                    </#if>
                                     </#list>
                                 </#if>
+                                ${form.title} 
+                                <#if hasAction></a></#if>
+                                <div class="visible-xs">
+                                    #i18n{forms.manageForm.columnPeriodDisponibility} : 
+                                    <#setting locale=locale.language>
+                                    <#if form.active>
+                                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
+                                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
+                                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
+                                            #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
+                                        <#elseif form.availabilityStartDate??>
+                                            #i18n{forms.manageForm.columnPeriodDisponibilitySince} ${form.availabilityStartDate} 
+                                        <#elseif form.availabilityEndDate??>
+                                            #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
+                                        </#if>
+                                    <#else>
+                                        <#if form.availabilityStartDate?? && form.availabilityStartDate &gt; .now?date>
+                                            <span class='text-danger'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </span>
+                                        <#else>    
+                                            <@tag color='danger' >Indisponible</@tag>
+                                        </#if> 
+                                    </#if>
+                                </div>
+                            </td>
+                            <td class="col-xs-12 col-sm-3">
+                                <#if form.actions?exists>
+                                    <#list form.actions as action>
+                                        <#assign color='' />
+                                        <#assign params='' />
+                                        <#if action.permission=='DELETE'>
+                                            <#assign color='text-danger' />
+                                        </#if>
+                                        <#if action.permission=='PUBLISH'>
+                                            <#assign params='data-toggle="modal" data-target="#pubModal"' />
+                                        </#if>
+                                        <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' class='${color} ${action.permission?lower_case}' showTitle=false buttonIcon=action.iconUrl color='btn-link' params=params />
+                                    </#list>
+                                </#if>
+                                <a class="btn btn-link" href="jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&forms_id_form=${form.id}" title="#i18n{forms.manageForm.MultiviewLink.label} " target="_blank">
+                                    <i class="fa fa-th-list fa-fw"></i>
+                                </a>
+                                <#if form.active>
+                                    <a class="btn btn-link" href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" title="#i18n{forms.manageForm.FOLink.label} ${form.title}" target="_blank">
+                                        <i class="fa fa-external-link fa-fw"></i>
+                                    </a>
+                                </#if>
+                            </td>
+                            <td class="hidden-xs col-sm-2">
+                                <a class="btn btn-link btn-flat publish" href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}" title="#i18n{forms.action.publish.name}" data-toggle="modal" data-target="#pubModal">
+                                    <#setting locale=locale.language>
+                                    <#if form.active>
+                                        <@icon style='check' class='fa-fw text-success' />&nbsp;
+                                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
+                                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
+                                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
+                                            #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
+                                        <#elseif form.availabilityStartDate??>
+                                            #i18n{forms.manageForm.columnPeriodDisponibilitySince} ${form.availabilityStartDate} 
+                                        <#elseif form.availabilityEndDate??>
+                                            #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
+                                        </#if>
+                                    <#else>
+                                        <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?date>
+                                            <@icon style='clock-o' class='fa-fw text-info' /> <span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </span>
+                                        <#else>    
+                                            <@icon style='close' class='fa-fw text-danger' /> <@tag color='danger' >Indisponible</@tag>
+                                        </#if> 
+                                    </#if>
+                                </a>
                             </td>
                         </tr>
                     </#list>
                 </@table>
-                <@paginationAdmin paginator=paginator />
+                <@paginationAdmin paginator=paginator combo=1 showcount=0 />
             </@boxBody>
         </@box>
     </@columns>
 </@row>
+
+<@toastr infos=infos warnings=warnings errors=errors />
+
+<@formModal id='pubModal' />
