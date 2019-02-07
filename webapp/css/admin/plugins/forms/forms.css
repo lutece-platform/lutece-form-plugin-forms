@@ -12,7 +12,8 @@ body, .wrapper{ height: 100%; overflow: visible; }
 
 #multi-form-list table.table-hover tbody tr:hover { cursor:pointer;}
 #filter-forms select { font-weight:normal; margin: 0; background:#fff; outline:none; display:inline-block; -webkit-appearance:none; -moz-appearance:none; appearance:none; cursor:pointer;}
-#filter-forms select::-ms-expand { display:none;}
+#filter-forms select::-ms-expand { display: none;}
+#filter-forms .form-inline .form-group { vertical-align: top }
 
 #filter-forms .caret{ color:#000; }
 #filter-forms label { position:relative;margin-bottom: 0; }
@@ -45,7 +46,8 @@ body, .wrapper{ height: 100%; overflow: visible; }
 #info-right .title { color:#808179; font-size:110%; margin:0; }
 #info-right .data {	color:#1d98f6; font-size:140%; }
 
-#multi-form-list th{ text-transform: capitalize}
+#multi-form-list th{ text-transform: lowercase;  }
+#multi-form-list th::first-letter{ text-transform: uppercase;  }
 
 /* 
 ********************************
