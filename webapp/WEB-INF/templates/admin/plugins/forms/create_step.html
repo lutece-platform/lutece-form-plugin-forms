@@ -1,32 +1,32 @@
+<#include "/admin/plugins/forms/commons.html" />
 <@box>
-    <@boxHeader title='#i18n{forms.create_step.title}' />
+    <@boxHeader title='#i18n{forms.manageForm.pageTitle}' />
     <@boxBody>
-    <@tform class="form-horizontal" method="post" name="create_step" action="jsp/admin/plugins/forms/ManageSteps.jsp">
-         <@messages errors=errors />
-         <input type="hidden" id="id_form" name="id_form" value="${step.idForm}"/>
-         
-             <@formGroup labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true>
+        <@tform class="form-horizontal" method="post" name="create_step" action="jsp/admin/plugins/forms/ManageSteps.jsp">
+            <input type="hidden" id="id_form" name="id_form" value="${step.idForm}" >
+            <@formGroup labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true>
                  <@input type='text' name='title' value='${step.title!}' />
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}' >
+            </@formGroup>
+            <@formGroup labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}' >
                  <@input type='textarea' name='description'>${step.description!}</@input>
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' >
+            </@formGroup>
+            <@formGroup labelKey='#i18n{forms.create_step.labelInitial}' labelFor='initial' helpKey='#i18n{forms.create_step.labelInitial.help}' >
                 <@checkBox labelFor='initial' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' >
+            </@formGroup>
+            <@formGroup labelKey='#i18n{forms.create_step.labelFinal}' labelFor='final' helpKey='#i18n{forms.create_step.labelFinal.help}' >
                 <@checkBox labelFor='final' name='final' id='final' value='1' checked=(step?has_content && step.final) />
-             </@formGroup>
-            <div class="form-group">
-                <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
-                    <button  class="btn btn-primary" name="action_createStep" type="submit">
-                        <i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
-                    </button>
-                    <button class="btn btn-default" name="view_manageSteps" type="submit" formnovalidate >
-                        <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
-                    </button>
-                </div>
-            </div>
-    </@tform>
+            </@formGroup>
+            <@formsButton okAction='createStep' viewAction='manageSteps' />
+        </@tform>
     </@boxBody>
 </@box>
+
+
+<script>
+$('#pubModal .content-header').hide();
+$('#pubModal #admin-wrapper').css( 'margin', '0' );
+$('#pubModal header').hide();
+$('#pubModal footer').hide();
+</script>
+
+<@toastr infos=infos warnings=warnings errors=errors />

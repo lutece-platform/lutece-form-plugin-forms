@@ -1,69 +1,52 @@
-<#include "/admin/util/editor/editor.html" />
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
 <#include "/admin/plugins/forms/commons.html" />
-<@box>
-    <@boxHeader title='#i18n{forms.modify_form.title} ${form.title!}' />
+
+<@tform class="form" method="post" name="modify_form" action="jsp/admin/plugins/forms/ManageForms.jsp">
+<input type="hidden" id="id_form" name="id_form" value="${form.id}">
+<@formBreadCrumb>
+    <li class="active">${form.title!}</li>
+</@formBreadCrumb>	
+<@box color='primary'>
     <@boxBody>
-        <@tabs>
-            <@formTabs tab="general" />
+        <@tabs color='clearfix'>
+            <@formTabs tab="general" >
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
+                    </li> 
+                    <li>
+                        <@headerButton validate=false /> 
+                    </li> 
+                </ul>
+            </@formTabs>
         </@tabs>
         <@tabContent>
-                <div class="tab-pane active">
-                    <@tform class="form-horizontal" method="post" name="modify_form" action="jsp/admin/plugins/forms/ManageForms.jsp">
-                        <@messages errors=errors />
-                        <input type="hidden" id="id_form" name="id_form" value="${form.id}"/>
-                        
-                            <@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true>
-                                <@input type='text' name='title' value='${form.title!}' />
-                            </@formGroup>
-                            <@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' >
-                                <@input type='textarea' name='description'>${form.description}</@input>
-                            </@formGroup>
-                            <@formGroup labelKey='#i18n{forms.modify_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.modify_form.labelAuthentificationNeeded.help}' >
-				                <@checkBox labelFor='authentificationNeeded' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
-				             </@formGroup>
-				              <@formGroup labelKey='#i18n{forms.create_Form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_Form.labelLimitNumberResponse.help}'>
-								<@checkBox name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) labelFor='oneResponseByUser' />
-							</@formGroup>
-                            <#if workflow_list?has_content>
-                               <@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' helpKey='#i18n{forms.modify_form.workflow.label.help}'>
-                                   <@inputGroup>
-                                       <@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
-                                   </@inputGroup>
-                              </@formGroup>
-                              </#if>
-                             <@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true>
-				                 <@inputGroup>
-				                     <@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
-				                 </@inputGroup>
-				             </@formGroup>
-				             <@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' >
-				                <@checkBox labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
-				             </@formGroup>
-				             <@formGroup labelKey='#i18n{forms.modify_form.labelEndMessageDisplay}' helpKey='#i18n{forms.modify_form.labelEndMessageDisplay.help}' >
-				                <@checkBox labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
-				             </@formGroup>
-				             <@formGroup labelKey='#i18n{forms.modify_form.labelEndMessage}' helpKey='#i18n{forms.modify_form.labelEndMessage.help}' >
-                                <@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
-                            </@formGroup>
-                            <@formGroup labelKey='#i18n{forms.modify_form.labelReturnUrl}' helpKey='#i18n{forms.modify_form.labelReturnUrl.help}'>
-				                 <@input type='text' name='returnUrl' value='${form.returnUrl!}' />
-				             </@formGroup>
-                            <div class="form-group">
-                                <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
-                                    <button  class="btn btn-primary" name="action_modifyForm" type="submit">
-                                        <i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
-                                    </button>
-                                    <button class="btn btn-default" name="view_manageForm" type="submit" formnovalidate >
-                                        <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
-                                    </button>
-                                </div>
-                            </div>  
-                </@tform>
+            <div class="tab-pane active">
+                <@formModel />
             </div>
         </@tabContent>
     </@boxBody>
 </@box>
+</@tform>
 <@getDatePickerBootstrap idField="availabilityStartDate" language=locale />
 <@getDatePickerBootstrap idField="availabilityEndDate" language=locale />
-<@initEditor />
+
+<@formEditor />
+
+<@toastr infos=infos warnings=warnings errors=errors />
+
+<@formModal />
+
+<script>
+$( function(){
+    $('#endMessage').toggle();
+    if ( $('#endMessageDisplay').prop("checked" ) ){
+        $('#endMessage').toggle();  
+    }
+
+    $('#labelEndMessage').change( function(){
+        $('#endMessage').toggle();
+    });
+
+});
+</script>

@@ -1,63 +1,56 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
 <#include "/admin/plugins/forms/commons.html" />
-<@box>
-    <@boxHeader title='#i18n{forms.modify_form.title} ${form.title!}' />
-    <@boxBody>
-        <@tabs>
-            <@formTabs tab="publication" />
-        </@tabs>
-        <@tabContent>
-                <div class="tab-pane active">
-                    <@tform class="form-horizontal" method="post" name="modify_form" action="jsp/admin/plugins/forms/ManageForms.jsp">
-                        <@messages errors=errors />
-                        <input type="hidden" id="id_form" name="id_form" value="${form.id}"/>
 
-                        <#-- problem with populate method because it puts the value of checkbox to false -->
-                        <#if form?has_content && form.displaySummary>
-                          <input type="hidden" id="displaySummary" name="displaySummary" value="1"/>
-                        </#if>
-                         <#if formMessage?has_content && formMessage.endMessageDisplay>
-                          <input type="hidden" id="endMessageDisplay" name="endMessageDisplay" value="1"/>
-                        </#if>
-                         <#if form?has_content && form.oneResponseByUser>
-                          <input type="hidden" id="oneResponseByUser" name="oneResponseByUser" value="1"/>
-                        </#if>
-                         <#if form?has_content && form.authentificationNeeded>
-                          <input type="hidden" id="authentificationNeeded" name="authentificationNeeded" value="1"/>
-                        </#if>
-                            <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' >
-                                <@inputGroup>
-                                    <@input type='text' name='availabilityStartDate' id='availabilityStartDate' value='${form.availabilityStartDate!}' />
-                                    <@inputGroupItem type='addon'>
-                                        <@icon style='calendar' />
-                                    </@inputGroupItem>
-                                </@inputGroup>
-                            </@formGroup>
-                            <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' >
-                                <@inputGroup>
-                                    <@input type='text' name='availabilityEndDate' id='availabilityEndDate' value='${form.availabilityEndDate!}' />
-                                    <@inputGroupItem type='addon'>
-                                        <@icon style='calendar' />
-                                    </@inputGroupItem>
-                                </@inputGroup>
-                            </@formGroup>
-                             <@formGroup labelFor='max_number_response' labelKey='#i18n{forms.createForm.labelMaxNumberResponse}' helpKey='#i18n{forms.createForm.labelMaxNumberResponseComment.help}'>
-								<@input name='maxNumberResponse' id='MaxNumberResponse' type='number' value=form.maxNumberResponse?string!'0' />
-							 </@formGroup>
-                            <div class="form-group">
-                                <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
-                                    <button  class="btn btn-primary" name="action_modifyForm" type="submit">
-                                        <i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
-                                    </button>
-                                    <button class="btn btn-default" name="view_manageForm" type="submit" formnovalidate >
-                                        <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
-                                    </button>
-                                </div>
-                            </div>  
-                </@tform>
-            </div>
-        </@tabContent>
-    </@boxBody>
-</@box>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title" id="pubModalLabel">#i18n{forms.modify_form.title} ${form.title!}</h4>
+</div>
+<div class="modal-body">
+<@tform class="form-horizontal" method="post" name="modify_form" action="jsp/admin/plugins/forms/ManageForms.jsp">
+    <@messages errors=errors />
+    <input type="hidden" id="id_form" name="id_form" value="${form.id}">
+    <#-- problem with populate method because it puts the value of checkbox to false -->
+    <#if form?has_content && form.displaySummary>
+        <input type="hidden" name="displaySummary" value="1">
+    </#if>
+    <#if formMessage?has_content && formMessage.endMessageDisplay>
+        <input type="hidden" name="endMessageDisplay" value="1">
+    </#if>
+    <#if form?has_content && form.oneResponseByUser>
+        <input type="hidden" name="oneResponseByUser" value="1">
+    </#if>
+    <#if form?has_content && form.authentificationNeeded>
+        <input type="hidden" name="authentificationNeeded" value="1">
+    </#if>
+    <input type="hidden" value="form.maxNumberResponse!'0'">
+    <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' >
+        <@inputGroup>
+            <@input type='text' name='availabilityStartDate' id='availabilityStartDate' value='${form.availabilityStartDate!}' />
+            <@inputGroupItem type='addon'>
+                <@icon style='calendar' />
+            </@inputGroupItem>
+        </@inputGroup>
+    </@formGroup>
+    <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' >
+        <@inputGroup>
+            <@input type='text' name='availabilityEndDate' id='availabilityEndDate' value='${form.availabilityEndDate!}' />
+            <@inputGroupItem type='addon'>
+                <@icon style='calendar' />
+            </@inputGroupItem>
+        </@inputGroup>
+    </@formGroup>
+    <@formGroup>
+        <@formsButton okAction='modifyForm' viewAction='manageForm' />
+    </@formGroup>
+</@tform>
+</div>
+
+<script>
+$('#pubModal .content-header').hide();
+$('#pubModal #admin-wrapper').css( 'margin', '0' );
+$('#pubModal header').hide();
+$('#pubModal footer').hide();
+</script>
+
 <@getDatePickerBootstrap idField="availabilityStartDate" language=locale />
 <@getDatePickerBootstrap idField="availabilityEndDate" language=locale />

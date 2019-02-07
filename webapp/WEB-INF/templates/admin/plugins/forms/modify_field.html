@@ -8,8 +8,8 @@
                     <input name="id_question" value="${question.id}" type="hidden" />
                     <input name="id_entry" value="${id_entry}" type="hidden" />
 					<fieldset>
-            <legend class="sr-only">#i18n{forms.modifyField.title} : '${field.parentEntry.title}'</legend>
-            <input name="id_field" value="${field.idField}" type="hidden" />
+            			<legend class="sr-only">#i18n{forms.modifyField.title} : '${field.parentEntry.title}'</legend>
+            			<input name="id_field" value="${field.idField}" type="hidden">
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
 							<@input type='text' name='title' id='title' inputSize=80 value='${field.title}' maxlength=255 />
 						</@formGroup>
@@ -17,11 +17,11 @@
 							<@input type='text' name='value' id='value' inputSize=80 value='${field.value}' />
 						</@formGroup>
 						<@formGroup labelFor='default_value' labelKey='#i18n{forms.createField.labelDefaultValue}'>
-              <#if field.defaultValue>
+              				<#if field.defaultValue>
 								<#assign checked = true />
 							<#else>
 								<#assign checked = false />
-              </#if>
+             				</#if>
 							<@checkBox name='default_value' value='1' checked=checked />
 						</@formGroup>
 						<#if option_no_display_title>
@@ -30,21 +30,21 @@
 								<@checkBox name='no_display_title' value='1' checked=checked />
 							</@formGroup>
 						</#if>
-            <#if field.parentEntry.roleAssociated && role_list?exists >
-						<@formGroup labelFor='role_key' labelKey='#i18n{forms.createField.labelRole}' helpKey='#i18n{forms.createField.labelRoleComment}'>
-							<#if field.roleKey?exists>
-								<#assign default_value = field.roleKey />
-							<#else>
-								<#assign default_value = 'none' />
-							</#if>
-							<@select name='role_key' default_value=default_value items=role_list />
-						</@formGroup>
+            			<#if field.parentEntry.roleAssociated && role_list?exists >
+							<@formGroup labelFor='role_key' labelKey='#i18n{forms.createField.labelRole}' helpKey='#i18n{forms.createField.labelRoleComment}'>
+								<#if field.roleKey?exists>
+									<#assign default_value = field.roleKey />
+								<#else>
+									<#assign default_value = 'none' />
+								</#if>
+								<@select name='role_key' default_value=default_value items=role_list />
+							</@formGroup>
 						</#if>
 						<@formGroup>
-                            <@button type='submit' name='action_modifyField' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false />
-                            <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' showTitleXs=false color='btn-secondary' />
+                            <@button type='submit' name='action_modifyField' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' color='btn-link' showTitleXs=false />
+                            <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' showTitleXs=false color='btn-link' />
 						</@formGroup>
-        </fieldset>
+       				 </fieldset>
 				</@tform>
 			</@boxBody>
 		</@box>

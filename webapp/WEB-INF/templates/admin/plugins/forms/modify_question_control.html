@@ -1,37 +1,49 @@
+<#include "/admin/plugins/forms/commons.html" />
 <@box>
     <@boxHeader title='#i18n{forms.modify_question_control.title}' />
     <@boxBody>
-    <@tform class="form-horizontal" method="post" name="modify_control" action="jsp/admin/plugins/forms/ManageControls.jsp">
+        <@tform class="form-horizontal" method="post" id="modify_control" name="modify_control" action="jsp/admin/plugins/forms/ManageControls.jsp">
          <@messages errors=errors />
-
              <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true>
-                 <@inputGroup>
+                <@inputGroup>
                      <@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
                      <@inputGroupItem>
 	                     <@button type='submit' name="view_modifyControl" value="validateValidator" showTitle=false buttonIcon='check'/>
 	                 </@inputGroupItem>
                  </@inputGroup>
-             </@formGroup>
+            </@formGroup>
 
              ${control_template}
              
-             <@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' >
+            <@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' >
                 <@input type='text' name='errorMessage' value='${control.errorMessage!}' />
-             </@formGroup>
-             
-            <div class="form-group">
-                <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
-                    <button  class="btn btn-primary" name="action_modifyControl" type="submit">
-                        <i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
-                    </button>
-                    <button class="btn btn-default" name="action_cancelAndReturn" type="submit" formnovalidate >
-                        <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
-                    </button>
-                    <#if control.id gt 0>
-                    	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' class='pull-right' color='btn-danger' />
-                	</#if>
-                </div>
-            </div>
-    </@tform>
+            </@formGroup>
+
+            <@formsButton okAction='modifyControl' viewAction=''>
+                <#if control.id gt 0>
+                    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='remove text-danger' class='pull-right' color='btn-link' />
+                </#if>
+            </@formsButton>
+        </@tform>
     </@boxBody>
 </@box>
+
+<script>
+$( function(){
+    var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
+    $('body').css( 'overflow', 'hidden' );
+    $('.content-header').hide();
+    $('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
+    $('header').remove();
+    $('#footer').remove();
+    $('.box-header').remove();
+
+    btnAction.click( function(e){ 
+        formAction.submit( function(){
+            e.preventDefault();
+            formAction.attr('target','_top');
+            _this.unbind('submit').submit();
+        });
+    });
+});
+</script>

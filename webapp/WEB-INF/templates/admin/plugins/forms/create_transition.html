@@ -1,30 +1,24 @@
+
+<#include "/admin/plugins/forms/commons.html" />
 <@box>
-    <@boxHeader title='#i18n{forms.create_transition.title} ${step.title}' />
+    <@boxHeader title='#i18n{forms.create_transition.title}  ' />
     <@boxBody>
     <@tform class="form-horizontal" method="post" name="create_transition" action="jsp/admin/plugins/forms/ManageTransitions.jsp">
-         <@messages errors=errors />
-         <input type="hidden" id="id_step" name="id_step" value="${step.id}"/>
-         <input type="hidden" id="fromStep" name="fromStep" value="${step.id}"/>
-         
-             <@formGroup labelKey='#i18n{forms.create_transition.labelNextStep}' helpKey='#i18n{forms.create_transition.labelNextStep.help}' mandatory=true>
-                 <@inputGroup>
-                     <@select name='nextStep' items=availableSteps default_value='' />
-                 </@inputGroup>
-             </@formGroup>
-             
-            <div class="form-group">
-                <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
-                    <button  class="btn btn-primary" name="action_createTransition" type="submit">
-                        <i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
-                    </button>
-                    <button  class="btn btn-primary" name="action_createTransitionAndControl" type="submit">
-                        <i class='fa fa-check'></i>&nbsp;#i18n{forms.manage_controls.buttonValidateThenControl}
-                    </button>
-                    <button class="btn btn-default" name="view_manageTransition" type="submit" formnovalidate >
-                        <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
-                    </button>
-                </div>
-            </div>
+        <@messages errors=errors />
+        <input type="hidden" id="id_step" name="id_step" value="${step.id}"/>
+        <input type="hidden" id="fromStep" name="fromStep" value="${step.id}"/>
+        <@formGroup labelKey='#i18n{forms.create_transition.labelNextStep}' helpKey='#i18n{forms.create_transition.labelNextStep.help}' mandatory=true>
+            <@inputGroup>
+                <@select name='nextStep' items=availableSteps default_value='' />
+            </@inputGroup>
+        </@formGroup>
+        <@formsButton okAction='createTransition' viewAction='manageTransition' />
     </@tform>
     </@boxBody>
 </@box>
+<script>
+$('#transitionModal .content-header').hide();
+$('#transitionModal #admin-wrapper').css( 'margin', '0' );
+$('#transitionModal header').hide();
+$('#transitionModal footer').hide();
+</script>

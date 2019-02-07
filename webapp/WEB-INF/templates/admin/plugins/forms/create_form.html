@@ -1,81 +1,33 @@
-<#include "/admin/util/editor/editor.html" />
 <#include "/admin/plugins/forms/commons.html" />
+<@tform class="form" method="post" name="create_form" action="jsp/admin/plugins/forms/ManageForms.jsp">
 <@box>
-    <@boxHeader title='#i18n{forms.create_form.title}' />
+    <@boxHeader title='#i18n{forms.create_form.title}' boxTools=true >
+        <@headerButton name='action_createForm' label='forms.create_form.buttonValidate' /> 
+        <@headerButton name='action_createForm' label='portal.admin.message.buttonCancel' validate=false /> 
+    </@boxHeader>
     <@boxBody>
-    <@tform class="form-horizontal" method="post" name="create_form" action="jsp/admin/plugins/forms/ManageForms.jsp">
-         <@messages errors=errors />
-         <input type="hidden" id="id_form" name="id_form" value="${form.id}"/>
-         
-             <@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true>
-                 <@input type='text' name='title' value='${form.title!}' />
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' >
-                 <@input type='textarea' name='description'>${form.description!}</@input>
-             </@formGroup>
-
-             <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' >
-                 <@inputGroup>
-                     <@input type='text' name='availabilityStartDate' id='availabilityStartDate' value='${form.availabilityStartDate!}' />
-                     <@inputGroupItem type='addon'>
-                         <@icon style='calendar' />
-                     </@inputGroupItem>
-                 </@inputGroup>
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' >
-                 <@inputGroup>
-                     <@input type='text' name='availabilityEndDate' id='availabilityEndDate' value='${form.availabilityEndDate!}' />
-                     <@inputGroupItem type='addon'>
-                         <@icon style='calendar' />
-                     </@inputGroupItem>
-                 </@inputGroup>
-             </@formGroup>
-             <@formGroup labelFor='max_number_response' labelKey='#i18n{forms.createForm.labelMaxNumberResponse}' helpKey='#i18n{forms.createForm.labelMaxNumberResponseComment.help}'>
-				<@input name='maxNumberResponse' id='maxNumberResponse' type='number' value=form.maxNumberResponse?string!'0' />
-			</@formGroup>
-             <@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' >
-                <@checkBox labelFor='authentificationNeeded' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.create_Form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_Form.labelLimitNumberResponse.help}' >
-				<@checkBox name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) labelFor='oneResponseByUser' />
-			</@formGroup>
-             <#if workflow_list?has_content>
-	            <@formGroup labelKey='#i18n{forms.create_form.workflow.label}' helpKey='#i18n{forms.create_form.workflow.label.help}'>
-	                <@inputGroup>
-	                    <@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
-	                </@inputGroup>
-	           </@formGroup>
-            </#if>
-            <@formGroup labelKey='#i18n{forms.create_form.labelBreadcrumb}' helpKey='#i18n{forms.create_form.labelBreadcrumb.help}' mandatory=true>
-                 <@inputGroup>
-                     <@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
-                 </@inputGroup>
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' >
-                <@checkBox labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}' >
-                <@checkBox labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' helpKey='#i18n{forms.create_form.labelEndMessage.help}' >
-                 <@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
-             </@formGroup>
-             <@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}'>
-                 <@input type='text' name='returnUrl' value='${form.returnUrl!}' />
-             </@formGroup>
-            <div class="form-group">
-                <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
-                    <button  class="btn btn-primary" name="action_createForm" type="submit">
-                        <i class='fa fa-check'></i>&nbsp;#i18n{portal.admin.message.buttonValidate}
-                    </button>
-                    <button class="btn btn-default" name="view_manageForm" type="submit" formnovalidate >
-                        <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
-                    </button>
-                </div>
-            </div>
-    </@tform>
+        <@formModel /> 
     </@boxBody>
 </@box>
+</@tform>
 <@getDatePickerBootstrap idField="availabilityStartDate" language=locale />
 <@getDatePickerBootstrap idField="availabilityEndDate" language=locale />
-<@initEditor />
+
+<@formEditor /> 
+
+<@toastr infos=infos warnings=warnings errors=errors />
+
+
+<script>
+$( function(){
+    $('#endMessage').toggle();
+    if ( $('#endMessageDisplay').prop("checked" ) ){
+        $('#endMessage').toggle();  
+    }
+
+    $('#labelEndMessage').change( function(){
+        $('#endMessage').toggle();
+    });
+
+});
+</script>
