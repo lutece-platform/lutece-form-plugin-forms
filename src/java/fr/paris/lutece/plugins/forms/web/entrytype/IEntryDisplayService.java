@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import java.util.Locale;
 import java.util.Map;
 
@@ -66,4 +67,12 @@ public interface IEntryDisplayService
      * @return the template Html of the given entry
      */
     String getEntryTemplateDisplay( HttpServletRequest request, Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType );
+
+    /**
+     * Get the column of the entry display service
+     * @param nFormColumnPosition
+     * @param strColumnTitle
+     * @return the column corresponding the the current entryDisplayService
+     */
+    IFormColumn getFormColumn( int nFormColumnPosition, String strColumnTitle );
 }

@@ -78,6 +78,8 @@ public final class FormsConstants
     public static final String MARK_QUESTION_LIST_RESPONSES = "list_responses";
     public static final String MARK_VALIDATOR = "validator";
     public static final String MARK_VALIDATOR_MANAGER = "validatorManager";
+    public static final String MARK_QUESTION_CREATE_TEMPLATE = "question_create_template";
+    public static final String MARK_QUESTION_MODIFY_TEMPLATE = "question_modify_template";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -125,6 +127,9 @@ public final class FormsConstants
     public static final String PARAMETER_SORT_ATTRIBUTE_NAME = "sorted_attribute_name";
     public static final String PARAMETER_SORT_ASC_VALUE = "asc_sort";
     public static final String PARAMETER_ACTION_PREFIX = "action_";
+    public static final String PARAMETER_MULTIVIEW_GLOBAL = "is_visible_multiview_global";
+    public static final String PARAMETER_MULTIVIEW_FORM_SELECTED = "is_visible_multiview_form_selected";
+    public static final String PARAMETER_COLUMN_TITLE = "column_title";
 
     // Jsp
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";

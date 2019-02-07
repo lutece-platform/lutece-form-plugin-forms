@@ -17,3 +17,6 @@ REPLACE INTO `forms_action` VALUES (3, 'forms.action.publish.name', 'forms.actio
 REPLACE INTO `forms_action` VALUES (4, 'forms.action.delete.name', 'forms.action.delete.description', 'jsp/admin/plugins/forms/ManageForms.jsp?view=confirmRemoveForm', 'trash', 'DELETE', 0);
 REPLACE INTO `forms_action` VALUES (100, 'module.forms.documentproducer.actions.extractpdf.name', 'module.forms.documentproducer.actions.extractpdf.description', 'jsp/admin/plugins/forms/modules/documentproducer/ManageConfigProducer.jsp?view=getManageConfigProducer', 'file-pdf-o', 'PDFPROD', 0);
 
+ALTER TABLE forms_question ADD COLUMN is_visible_multiview_global SMALLINT default 0 NOT NULL;
+ALTER TABLE forms_question ADD COLUMN is_visible_multiview_form_selected SMALLINT default 0 NOT NULL;
+ALTER TABLE forms_question ADD COLUMN column_title varchar(255) default '' NOT NULL;

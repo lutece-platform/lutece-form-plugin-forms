@@ -61,6 +61,19 @@ public class FormColumnEntry extends AbstractFormColumn
         setFormColumnTitle( strFormColumnTitle );
         _listEntryTitle = listEntryTitle;
     }
+    
+    /**
+     * Constructor 
+     * 
+     * @param nFormColumnPosition
+     * @param strFormColumnTitle 
+     */
+    public FormColumnEntry( int nFormColumnPosition, String strFormColumnTitle )
+    {
+        super( );
+        setFormColumnPosition( nFormColumnPosition );
+        setFormColumnTitle( strFormColumnTitle );
+    }
 
     /**
      * Return the list of Entry to filter on for the Form Column
@@ -81,5 +94,10 @@ public class FormColumnEntry extends AbstractFormColumn
     public void setListEntryTitle( List<String> listEntryTitle )
     {
         _listEntryTitle = listEntryTitle;
+    }
+
+    public void addEntryTitle(String strEntryTitle) 
+    {
+       _listEntryTitle.add( strEntryTitle );
     }
 }

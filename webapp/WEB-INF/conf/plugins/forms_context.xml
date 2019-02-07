@@ -220,19 +220,7 @@
     </bean>
     
     <!-- Factory -->
-    <bean id="forms.formColumn.factory" class="fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory">
-    	<constructor-arg name="listFormColumn">
-    		<list value-type="fr.paris.lutece.plugins.forms.business.form.column.IFormColumn">
-    			<ref bean="forms.forms.column"/>
-    			<ref bean="forms.formResponseCreationDate.column"/>
-    			<ref bean="forms.firstName.column"/>
-    			<!--<ref bean="forms.workflowState.column"/>-->
-    			<!-- example geoloc column
-    			<ref bean="forms.geoloc.column"/>
-    			-->
-    		</list>
-    	</constructor-arg>
-    </bean>
+    <bean id="forms.formColumn.factory" class="fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory"/>
     
     <!-- FormResponseItemComparator configuration -->
     <bean id="forms.formResponseItem.comparator.configuration.default" class="fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig">
@@ -285,11 +273,11 @@
 		<constructor-arg name="nPosition" type="int" value="3"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Cr&#233;&#233;e depuis..."/>
 	</bean>
-	<bean id="forms.firstName.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration">
+<!--	<bean id="forms.firstName.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration">
 		<constructor-arg name="nPosition" type="int" value="4"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Pr&#233;nom..."/>
 		<constructor-arg name="formColumn" type="fr.paris.lutece.plugins.forms.business.form.column.IFormColumn" ref="forms.firstName.column"/>
-	</bean>
+	</bean>-->
         <bean id="forms.searchedText.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration">
 		<constructor-arg name="nPosition" type="int" value="5"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Texte"/>
@@ -318,35 +306,14 @@
 		<constructor-arg name="nFormColumnPosition" type="int" value="1"/>
 		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="Formulaire"/>
 	</bean>
-	<bean id="forms.workflowState.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState">
+<!--	<bean id="forms.workflowState.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState">
 		<constructor-arg name="nFormColumnPosition" type="int" value="4"/>		
 		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="&#201;tat"/>
-	</bean>
+	</bean>-->
 	<bean id="forms.formResponseCreationDate.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateCreation">
 		<constructor-arg name="nFormColumnPosition" type="int" value="2"/>
 		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="Cr&#201;&#201;e le"/>
 	</bean>
-	<bean id="forms.firstName.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry">
-		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="Pr&#201;nom"/>
-		<constructor-arg name="nFormColumnPosition" type="int" value="3"/>
-		<constructor-arg name="listEntryTitle">
-			<list value-type="java.lang.String">
-				<value>Prénom</value>
-			</list>
-		</constructor-arg>
-	</bean>
-
-	<!-- example geoloc column
-	<bean id="forms.geoloc.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation">
-		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="Geoloc"/>
-		<constructor-arg name="nFormColumnPosition" type="int" value="5"/>
-		<constructor-arg name="listEntryTitle">
-			<list value-type="java.lang.String">
-				<value>address</value>
-			</list>
-		</constructor-arg>
-	</bean>
-	-->
 	 
 	<!-- Columns Factories -->
 	<bean id="forms.forms.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayFormsFactory"/>

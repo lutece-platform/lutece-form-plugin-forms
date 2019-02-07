@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -185,5 +186,11 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
         }
 
         return listResponse;
+    }
+
+    @Override
+    public IFormColumn getFormColumn(int nFormColumnPosition, String strColumnTitle )
+    {
+        return null;
     }
 }

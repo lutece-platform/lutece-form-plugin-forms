@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import java.util.Locale;
 import java.util.Map;
 
@@ -45,6 +47,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import java.util.List;
 
 /**
  * The default display service
@@ -114,5 +117,19 @@ public class EntryTypeDefaultDisplayService implements IEntryDisplayService
         }
 
         return strEntryHtml;
+    }
+
+    
+    /**
+     * Get the form column
+     * @param nFormColumnPosition
+     * @param strColumnTitle
+     * @param listEntryTitle
+     * @return The form column
+     */
+    @Override
+    public IFormColumn getFormColumn( int nFormColumnPosition, String strColumnTitle ) 
+    {
+        return new FormColumnEntry( nFormColumnPosition, strColumnTitle );
     }
 }

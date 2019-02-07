@@ -56,6 +56,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterFactory;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
@@ -73,6 +74,7 @@ import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDisplayFactory;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -268,7 +270,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         List<FormPanel> listFormPanel = new FormPanelFactory( ).buildFormPanelList( );
 
         FormColumnFactory formColumnFactory = SpringContextService.getBean( FormColumnFactory.BEAN_NAME );
-        _listFormColumn = formColumnFactory.buildFormColumnList( );
+        _listFormColumn = formColumnFactory.buildFormColumnList( null );
 
         _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilter );
         _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
@@ -301,6 +303,9 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Retrieve the list of all FormFilter
         List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
+        // Check in filters if the columns list has to be fetch again
+        reloadFormColumnList( listFormFilter );
+        
         for ( IFormPanelDisplay formPanelDisplay : _listFormPanelDisplay )
         {
             // Retrieve the FormPanel from the FormPanelDisplay
@@ -434,5 +439,33 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     protected static String getMultiviewBaseViewUrl( )
     {
         return JSP_FORMS_MULTIVIEW + "?view=" + VIEW_MULTIVIEW_FORMS;
+    }
+    
+    /**
+     * Reload the form column list form the form filter list
+     * @param listFormFilter the form filter list
+     */
+    private void reloadFormColumnList( List<FormFilter> listFormFilter )
+    {
+        FormColumnFactory formColumnFactory = SpringContextService.getBean( FormColumnFactory.BEAN_NAME );
+
+        for ( FormFilter filter : listFormFilter )
+        {
+            if ( filter instanceof FormFilterForms )
+            {
+                Integer nIdForm = ((FormFilterForms) filter).getSelectedIdForm();
+
+                if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
+                {
+                    _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm );
+                }
+                else
+                {
+                    _listFormColumn = formColumnFactory.buildFormColumnList( null );
+                }
+
+                _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
+            }
+        }
     }
 }

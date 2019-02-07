@@ -33,64 +33,32 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
-
 /**
- * Factory used to build a list of FormFilter
+ *  FormFilterForms for filter forms objects
  */
-public class FormFilterFactory
+public class FormFilterForms extends FormFilter
 {
-    // Variables
-    private final List<IFormFilterConfiguration> _listFormFilterConfiguration;
-
-    /**
-     * Constructor
-     */
-    public FormFilterFactory( )
+    public Integer getSelectedIdForm( )
     {
-        _listFormFilterConfiguration = SpringContextService.getBeansOfType( IFormFilterConfiguration.class );
-    }
-
-    /**
-     * Constructor
-     * 
-     * @param listFormFilterConfiguration
-     *            The list of FormFilterConfiguration to use for the Factory
-     */
-    public FormFilterFactory( List<IFormFilterConfiguration> listFormFilterConfiguration )
-    {
-        _listFormFilterConfiguration = listFormFilterConfiguration;
-    }
-
-    /**
-     * Build the list of all FormFilter
-     * 
-     * @return the list of all FormFilter
-     */
-    public List<FormFilter> buildFormFilterList( )
-    {
-        List<FormFilter> listFormFilter = new ArrayList<>( );
-
-        for ( IFormFilterConfiguration formFilterConfiguration : _listFormFilterConfiguration )
+        List<Object> listValues = new ArrayList<>( getFormParameters().getFormParametersMap().values( ) );
+        if ( listValues.size() == 1 )
         {
-            FormFilter formFilter;
-            if ( formFilterConfiguration instanceof FormFilterFormsConfiguration )
+            try
             {
-                formFilter = new FormFilterForms( );
+                String strIdForm = (String)listValues.get(0);
+                Integer nIdForm = new Integer( strIdForm );
+                return nIdForm;
             }
-            else
+            catch ( NumberFormatException e )
             {
-                formFilter = new FormFilter( );
+                AppLogService.error( "Unable to get selected id", e);
             }
-            formFilter.setFormFilterConfiguration( formFilterConfiguration );
-            listFormFilter.add( formFilter );
         }
-
-        return listFormFilter;
+        return FormsConstants.DEFAULT_ID_VALUE;
     }
 }

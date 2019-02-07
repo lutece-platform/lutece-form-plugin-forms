@@ -25,6 +25,7 @@
 					<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelArrayTitle}' helpKey='#i18n{forms.createEntry.labelArrayTitleHelp}' rows=2>
 						<@input type='text' name='comment' id='comment' value='${entry.comment}' maxlength=255 />
 					</@formGroup>
+                                        ${question_modify_template!}
 					<@formGroup rows=2>
 						<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
 						<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' showTitleXs=false size='' />

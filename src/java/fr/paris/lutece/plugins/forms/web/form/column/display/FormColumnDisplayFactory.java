@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.web.form.column.display.factory.FormColumnDisplayFactoryFacade;
 import fr.paris.lutece.plugins.forms.web.form.column.display.factory.IFormColumnDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
+import java.util.Collection;
 
 /**
  * Factory for FormColumnDisplay objects
@@ -56,7 +57,7 @@ public class FormColumnDisplayFactory
      *            The list of IFormColumn to use for build the list of FormColumnDisplay
      * @return the list of all FormColumnDisplay ordered by their position
      */
-    public List<IFormColumnDisplay> createFormColumnDisplayList( List<IFormColumn> listFormColumn )
+    public List<IFormColumnDisplay> createFormColumnDisplayList( Collection<IFormColumn> listFormColumn )
     {
         List<IFormColumnDisplay> listFormColumnDisplay = new ArrayList<>( );
         List<IFormColumnDisplayFactory> listFormColumnDisplayFactory = new FormColumnDisplayFactoryFacade( ).buildFormColumnDisplayFactoryList( );

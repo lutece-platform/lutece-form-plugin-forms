@@ -92,7 +92,7 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
         {
             _formPanel = new FormPanelFactory( ).buildFormPanel( _formPanel.getFormPanelConfiguration( ) );
 
-            List<IFormColumn> listFormResponseColumn = _formColumnFactory.buildFormColumnList( );
+            List<IFormColumn> listFormResponseColumn = _formColumnFactory.buildFormColumnList( null );
 
             // Rebuild all the FormPanelInitializer to reset the previous data
             FormPanelDisplayFactory formPanelDisplayFactory = new FormPanelDisplayFactory( );

@@ -62,6 +62,9 @@ title varchar(255) default '' NOT NULL,
 description LONGTEXT,
 id_entry int default '0',
 id_step int default '0',
+is_visible_multiview_global SMALLINT default 0 NOT NULL,
+is_visible_multiview_form_selected SMALLINT default 0 NOT NULL,
+column_title varchar(255) default '' NOT NULL,
 PRIMARY KEY (id_question)
 );
 

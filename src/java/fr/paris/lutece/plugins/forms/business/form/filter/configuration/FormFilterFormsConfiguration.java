@@ -49,6 +49,7 @@ public class FormFilterFormsConfiguration implements IFormFilterConfiguration
      *            The position of the FormFilter
      * @param strFormFilterLabel
      *            The label of the FormFilter
+     * @param bCanReloadColumn
      */
     public FormFilterFormsConfiguration( int nPosition, String strFormFilterLabel )
     {
@@ -75,5 +76,5 @@ public class FormFilterFormsConfiguration implements IFormFilterConfiguration
     {
         return _strFormFilterLabel;
     }
-
+    
 }

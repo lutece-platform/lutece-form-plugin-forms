@@ -1,0 +1,10 @@
+<@formGroup labelFor='is_visible_multiview_global' labelKey='#i18n{forms.modify_question.labelVisibleMultiviewGlobal}'>
+    <@checkBox name='is_visible_multiview_global' id='is_visible_multiview_global' value='1' checked=question.isVisibleMultiviewGlobal()/>
+</@formGroup>
+<@formGroup labelFor='is_visible_multiview_form_selected' labelKey='#i18n{forms.modify_question.labelVisibleMultiviewFormSelected}'>
+    <@checkBox name='is_visible_multiview_form_selected' id='is_visible_multiview_form_selected' value='1' checked=question.isVisibleMultiviewFormSelected() />
+</@formGroup>
+<@formGroup labelKey='#i18n{forms.modify_question.labelColumnTitle}' helpKey='#i18n{forms.modify_question.labelColumnTitle.help}'>
+    <@input type='text' name='column_title' value='${(question.columnTitle)!}' />
+</@formGroup>
+

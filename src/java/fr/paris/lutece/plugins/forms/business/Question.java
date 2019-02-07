@@ -69,6 +69,12 @@ public class Question implements Serializable, Cloneable
     private int _nIterationNumber;
 
     private boolean _bIsVisible;
+    
+    private boolean _bIsVisibleMultiviewGlobal;
+    
+    private boolean _bIsVisibleMultiviewFormSelected;
+    
+    private String _strColumnTitle;
 
     /**
      * Returns the Id
@@ -289,4 +295,54 @@ public class Question implements Serializable, Cloneable
         return _entry.isIndexed( );
     }
 
+    /**
+     * Get the is visible Multiview Global boolean
+     * @return true if the question need to be see globally, false otherwise
+     */
+    public boolean isVisibleMultiviewGlobal() {
+        return _bIsVisibleMultiviewGlobal;
+    }
+
+    /**
+     * Set the is vibile Multiview Global boolean
+     * @param _bIsVisibleMultiviewGlobal the boolean
+     */
+    public void setVisibleMultiviewGlobal(boolean _bIsVisibleMultiviewGlobal) {
+        this._bIsVisibleMultiviewGlobal = _bIsVisibleMultiviewGlobal;
+    }
+
+    /**
+     * Get the column title boolean
+     * @return the column title
+     */
+    public String getColumnTitle() 
+    {
+        return _strColumnTitle;
+    }
+
+    /**
+     * Set the column title
+     * @param strColumnTitle 
+     */
+    public void setColumnTitle(String strColumnTitle) 
+    {
+        _strColumnTitle = strColumnTitle;
+    }
+
+    /**
+     * Get visible multiview form selected boolean
+     * @return true if the column has to be see only if the form is selected
+     */
+    public boolean isVisibleMultiviewFormSelected() 
+    {
+        return _bIsVisibleMultiviewFormSelected;
+    }
+
+    /**
+     * Set the visible multiview form selected boolean
+     * @param bIsVisibleMultiviewFormSelected 
+     */
+    public void setVisibleMultiviewFormSelected(boolean bIsVisibleMultiviewFormSelected) {
+        _bIsVisibleMultiviewFormSelected = bIsVisibleMultiviewFormSelected;
+    }
 }

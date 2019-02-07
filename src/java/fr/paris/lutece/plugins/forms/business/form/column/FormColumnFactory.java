@@ -33,9 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column;
 
+import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import java.util.List;
 
-import javax.inject.Inject;
 
 /**
  * Factory used to build a list of FormColumn objects
@@ -45,28 +45,22 @@ public class FormColumnFactory
     // Constants
     public static final String BEAN_NAME = "forms.formColumn.factory";
 
-    // Variables
-    private final List<IFormColumn> _listFormColumn;
-
     /**
      * Constructor
      * 
-     * @param listFormColumn
-     *            The list of FormColumn to use for the Factory
      */
-    @Inject
-    public FormColumnFactory( List<IFormColumn> listFormColumn )
+    public FormColumnFactory( )
     {
-        _listFormColumn = listFormColumn;
     }
 
     /**
      * Build the list of all FormColumn
      * 
+     * @param nIdForm
      * @return the list of all FormColumn
      */
-    public List<IFormColumn> buildFormColumnList( )
+    public List<IFormColumn> buildFormColumnList( Integer nIdForm )
     {
-        return _listFormColumn;
+        return MultiviewFormService.getInstance().getFormColumnsList( nIdForm );
     }
 }

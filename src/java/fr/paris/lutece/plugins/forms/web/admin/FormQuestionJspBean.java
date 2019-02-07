@@ -104,6 +104,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String TEMPLATE_CREATE_GROUP = "/admin/plugins/forms/create_group.html";
     private static final String TEMPLATE_MODIFY_GROUP = "/admin/plugins/forms/modify_group.html";
     private static final String TEMPLATE_MOVE_COMPOSITE = "/admin/plugins/forms/move_composite.html";
+    private static final String TEMPLATE_CREATE_QUESTION = "/admin/plugins/forms/create_question.html";
+    private static final String TEMPLATE_MODIFY_QUESTION = "/admin/plugins/forms/modify_question.html";
 
     // Properties
     private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.create_Question.titleComment";
@@ -297,6 +299,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             setPageTitleProperty( PROPERTY_CREATE_QUESTION_TITLE );
         }
+        
+        model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE, AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model).getHtml( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( EntryTypeServiceManager.getEntryTypeService( _entry ).getTemplateCreate( _entry, false ),
                 getLocale( ), model );
@@ -617,6 +621,12 @@ public class FormQuestionJspBean extends AbstractJspBean
         _question.setDescription( _entry.getComment( ) );
         _question.setIdEntry( _entry.getIdEntry( ) );
         _question.setIdStep( nIdStep );
+        _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
+        _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
+        
+        String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
+        columnTitle = (columnTitle == null || columnTitle.isEmpty( ))? _question.getTitle() : columnTitle;
+        _question.setColumnTitle( columnTitle);
         QuestionHome.create( _question );
 
         int nDisplayDepth = FormsDisplayUtils.getDisplayDepthFromParent( nParentGroup );
@@ -712,6 +722,8 @@ public class FormQuestionJspBean extends AbstractJspBean
             setPageTitleProperty( PROPERTY_MODIFY_QUESTION_TITLE );
         }
 
+        model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE, AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model).getHtml( ) );
+        
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -786,6 +798,11 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
 
         String strTitle = _entry.getEntryType( ).getComment( ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
+        _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
+        _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
+        String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
+        columnTitle = (columnTitle == null || columnTitle.isEmpty( ) )? _question.getTitle() : columnTitle;
+        _question.setColumnTitle( columnTitle);
         _question.setTitle( strTitle );
         _question.setDescription( _entry.getComment( ) );
         QuestionHome.update( _question );

@@ -68,6 +68,7 @@
                                         <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
                                             <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
                                         </@formGroup>
+                                        ${question_modify_template!}
 					<@formGroup>
 						<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
 						<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' showTitleXs=false size='' />
