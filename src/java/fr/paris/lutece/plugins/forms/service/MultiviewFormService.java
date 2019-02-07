@@ -127,70 +127,70 @@ public final class MultiviewFormService
         // Variables
         private static final MultiviewFormService _singleton = new MultiviewFormService( );
     }
-    
+
     /**
      * Get the form columns list from spring and multiview conf
+     * 
      * @param nIdForm
      * @return the form columns list
      */
     public List<IFormColumn> getFormColumnsList( Integer nIdForm )
     {
         Map<String, IFormColumn> mapFormColumns = new HashMap<>( );
-        
-        //First get the columns from Spring Context
+
+        // First get the columns from Spring Context
         List<IFormColumn> listSpringFormColumn = SpringContextService.getBeansOfType( IFormColumn.class );
-        mapFormColumns.putAll( listSpringFormColumn
-                .stream()
-                .collect( Collectors.toMap( (column -> column.getFormColumnTitle( ) ) , column -> column) ) );
-        
-        
-        //Then add global columns from config questions
-        List<Question> listQuestions = new ArrayList<>();
-        listQuestions =  ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsList() : QuestionHome.getListQuestionByIdForm( nIdForm );
+        mapFormColumns.putAll( listSpringFormColumn.stream( ).collect( Collectors.toMap( ( column -> column.getFormColumnTitle( ) ), column -> column ) ) );
+
+        // Then add global columns from config questions
+        List<Question> listQuestions = new ArrayList<>( );
+        listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsList( ) : QuestionHome
+                .getListQuestionByIdForm( nIdForm );
 
         addColumnFromConfig( mapFormColumns, listQuestions, true );
-        
+
         if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )
         {
-             //Then add specific columns from config questions
+            // Then add specific columns from config questions
             addColumnFromConfig( mapFormColumns, listQuestions, false );
         }
-       
+
         return new ArrayList<>( mapFormColumns.values( ) );
     }
-    
+
     /**
      * Add the column config based on multiview config question
+     * 
      * @param mapColumns
      * @param listQuestions
-     * @param bGlobal 
+     * @param bGlobal
      */
     private void addColumnFromConfig( Map<String, IFormColumn> mapColumns, List<Question> listQuestions, boolean bGlobal )
     {
-         int nPosition = mapColumns.size();
+        int nPosition = mapColumns.size( );
         for ( Question question : listQuestions )
         {
-            if ( (bGlobal == true) ? question.isVisibleMultiviewGlobal( ) : question.isVisibleMultiviewFormSelected() )
+            if ( ( bGlobal == true ) ? question.isVisibleMultiviewGlobal( ) : question.isVisibleMultiviewFormSelected( ) )
             {
-               
-                if ( !mapColumns.keySet().contains( question.getColumnTitle( ) ) )
+
+                if ( !mapColumns.keySet( ).contains( question.getColumnTitle( ) ) )
                 {
-                        IEntryDisplayService displayService = EntryServiceManager.getInstance().getEntryDisplayService( question.getEntry( ).getEntryType() );
-                        IFormColumn column = displayService.getFormColumn( ++nPosition , question.getColumnTitle( ) );
-                        
-                        if ( column instanceof FormColumnEntry )
-                        {
-                            ( (FormColumnEntry)column).addEntryTitle( question.getTitle( ) );
-                        }
-                        
-                        mapColumns.put( column.getFormColumnTitle(), column );
+                    IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
+                    IFormColumn column = displayService.getFormColumn( ++nPosition, question.getColumnTitle( ) );
+
+                    if ( column instanceof FormColumnEntry )
+                    {
+                        ( (FormColumnEntry) column ).addEntryTitle( question.getTitle( ) );
+                    }
+
+                    mapColumns.put( column.getFormColumnTitle( ), column );
                 }
                 else
                 {
                     IFormColumn column = mapColumns.get( question.getColumnTitle( ) );
                     if ( column instanceof FormColumnEntry )
                     {
-                        ( (FormColumnEntry)column).addEntryTitle( question.getTitle( ) );
+                        ( (FormColumnEntry) column ).addEntryTitle( question.getTitle( ) );
                     }
                 }
             }

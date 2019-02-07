@@ -74,7 +74,7 @@ public final class QuestionDAO implements IQuestionDAO
             daoUtil.setInt( nIndex++, question.getIdEntry( ) );
             daoUtil.setInt( nIndex++, question.getIdStep( ) );
             daoUtil.setBoolean( nIndex++, question.isVisibleMultiviewGlobal( ) );
-            daoUtil.setBoolean( nIndex++, question.isVisibleMultiviewFormSelected() );
+            daoUtil.setBoolean( nIndex++, question.isVisibleMultiviewFormSelected( ) );
             daoUtil.setString( nIndex++, question.getColumnTitle( ) );
 
             daoUtil.executeUpdate( );

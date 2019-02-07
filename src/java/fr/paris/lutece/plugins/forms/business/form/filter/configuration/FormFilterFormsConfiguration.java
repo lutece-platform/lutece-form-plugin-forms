@@ -76,5 +76,5 @@ public class FormFilterFormsConfiguration implements IFormFilterConfiguration
     {
         return _strFormFilterLabel;
     }
-    
+
 }

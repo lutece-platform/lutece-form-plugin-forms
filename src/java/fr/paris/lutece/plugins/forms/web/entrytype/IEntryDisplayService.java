@@ -70,6 +70,7 @@ public interface IEntryDisplayService
 
     /**
      * Get the column of the entry display service
+     * 
      * @param nFormColumnPosition
      * @param strColumnTitle
      * @return the column corresponding the the current entryDisplayService

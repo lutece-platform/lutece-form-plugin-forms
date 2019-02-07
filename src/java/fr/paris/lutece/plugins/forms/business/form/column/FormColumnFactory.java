@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.forms.business.form.column;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import java.util.List;
 
-
 /**
  * Factory used to build a list of FormColumn objects
  */
@@ -61,6 +60,6 @@ public class FormColumnFactory
      */
     public List<IFormColumn> buildFormColumnList( Integer nIdForm )
     {
-        return MultiviewFormService.getInstance().getFormColumnsList( nIdForm );
+        return MultiviewFormService.getInstance( ).getFormColumnsList( nIdForm );
     }
 }

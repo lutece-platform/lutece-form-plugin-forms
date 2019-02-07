@@ -152,15 +152,15 @@ public class EntryTypeMyLuteceUserAttributeDisplayService implements IEntryDispl
         return strEntryHtml;
     }
 
-    
     /**
      * Get the form column
+     * 
      * @param nFormColumnPosition
      * @param strColumnTitle
      * @return The form column
      */
     @Override
-    public IFormColumn getFormColumn( int nFormColumnPosition, String strColumnTitle ) 
+    public IFormColumn getFormColumn( int nFormColumnPosition, String strColumnTitle )
     {
         return new FormColumnEntry( nFormColumnPosition, strColumnTitle );
     }

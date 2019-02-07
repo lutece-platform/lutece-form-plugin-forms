@@ -305,7 +305,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Check in filters if the columns list has to be fetch again
         reloadFormColumnList( listFormFilter );
-        
+
         for ( IFormPanelDisplay formPanelDisplay : _listFormPanelDisplay )
         {
             // Retrieve the FormPanel from the FormPanelDisplay
@@ -440,10 +440,12 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     {
         return JSP_FORMS_MULTIVIEW + "?view=" + VIEW_MULTIVIEW_FORMS;
     }
-    
+
     /**
      * Reload the form column list form the form filter list
-     * @param listFormFilter the form filter list
+     * 
+     * @param listFormFilter
+     *            the form filter list
      */
     private void reloadFormColumnList( List<FormFilter> listFormFilter )
     {
@@ -453,7 +455,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         {
             if ( filter instanceof FormFilterForms )
             {
-                Integer nIdForm = ((FormFilterForms) filter).getSelectedIdForm();
+                Integer nIdForm = ( (FormFilterForms) filter ).getSelectedIdForm( );
 
                 if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
                 {

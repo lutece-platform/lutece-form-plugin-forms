@@ -39,24 +39,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  FormFilterForms for filter forms objects
+ * FormFilterForms for filter forms objects
  */
 public class FormFilterForms extends FormFilter
 {
     public Integer getSelectedIdForm( )
     {
-        List<Object> listValues = new ArrayList<>( getFormParameters().getFormParametersMap().values( ) );
-        if ( listValues.size() == 1 )
+        List<Object> listValues = new ArrayList<>( getFormParameters( ).getFormParametersMap( ).values( ) );
+        if ( listValues.size( ) == 1 )
         {
             try
             {
-                String strIdForm = (String)listValues.get(0);
+                String strIdForm = (String) listValues.get( 0 );
                 Integer nIdForm = new Integer( strIdForm );
                 return nIdForm;
             }
-            catch ( NumberFormatException e )
+            catch( NumberFormatException e )
             {
-                AppLogService.error( "Unable to get selected id", e);
+                AppLogService.error( "Unable to get selected id", e );
             }
         }
         return FormsConstants.DEFAULT_ID_VALUE;

@@ -61,12 +61,12 @@ public class FormColumnEntry extends AbstractFormColumn
         setFormColumnTitle( strFormColumnTitle );
         _listEntryTitle = listEntryTitle;
     }
-    
+
     /**
-     * Constructor 
+     * Constructor
      * 
      * @param nFormColumnPosition
-     * @param strFormColumnTitle 
+     * @param strFormColumnTitle
      */
     public FormColumnEntry( int nFormColumnPosition, String strFormColumnTitle )
     {
@@ -96,8 +96,8 @@ public class FormColumnEntry extends AbstractFormColumn
         _listEntryTitle = listEntryTitle;
     }
 
-    public void addEntryTitle(String strEntryTitle) 
+    public void addEntryTitle( String strEntryTitle )
     {
-       _listEntryTitle.add( strEntryTitle );
+        _listEntryTitle.add( strEntryTitle );
     }
 }

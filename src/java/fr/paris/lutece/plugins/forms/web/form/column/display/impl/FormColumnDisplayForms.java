@@ -57,7 +57,7 @@ public class FormColumnDisplayForms extends AbstractFormColumnDisplay
     private static final String MARK_FORMS_TITLE = "forms_title";
     private static final String MARK_COLUMN_SORT_ATTRIBUTE = "column_sort_attribute";
     private static final String MARK_SORT_URL = "sort_url";
-    
+
     /**
      * {@inheritDoc}
      */
@@ -68,7 +68,7 @@ public class FormColumnDisplayForms extends AbstractFormColumnDisplay
         model.put( MARK_FORMS_COLUMN_TITLE, getFormColumnTitle( ) );
         model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
         model.put( MARK_COLUMN_SORT_ATTRIBUTE, FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE );
-        
+
         String strColumnHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );
         setFormColumnHeaderTemplate( strColumnHeaderTemplate );
 

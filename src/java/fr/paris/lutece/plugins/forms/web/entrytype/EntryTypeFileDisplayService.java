@@ -189,7 +189,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     }
 
     @Override
-    public IFormColumn getFormColumn(int nFormColumnPosition, String strColumnTitle )
+    public IFormColumn getFormColumn( int nFormColumnPosition, String strColumnTitle )
     {
         return null;
     }

@@ -75,5 +75,5 @@ public class FormFilterWorkflowConfiguration implements IFormFilterConfiguration
     {
         return _strFormFilterLabel;
     }
-    
+
 }
