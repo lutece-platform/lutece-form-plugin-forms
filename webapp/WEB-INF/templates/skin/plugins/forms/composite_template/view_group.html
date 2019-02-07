@@ -1,26 +1,55 @@
-<fieldset <#if id_display??>class="display_field_${id_display}" hidden</#if>>
- <legend>
-    ${group.title}
-    <#if isIterable >
-        <button class="btn btn-primary btn-sm" name="action_addIteration" value="${id_group}" type="submit">
-            <span class="glyphicon glyphicon-plus-sign"></span> ${group.iterationAddLabel!}
-        </button>
-    </#if>
- </legend>
- <div class="step-group-value-content">
+<#assign indexGroup=-1>
+<#assign indexIteration=0>
+<div class="row">
+	<div class="col-xs-12 col-sm-12">
+		<hr>			
 	<#list groupContent as childrenHtml>
-		${childrenHtml}
 		<#assign indexIteration = ( childrenHtml?index / nbBaseChildren )?int />
 		<#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />
-		
-		<#if ( ( childrenHtml?index + 1 ) % nbBaseChildren ) == 0 && ( group.iterationMin == 0 || nbTotalIteration > group.iterationMin  ) >
-			<div class="row text-center">
-				<button class="btn btn-danger btn-sm" name="action_removeIteration" value="${group.id}_${indexIteration}" type="submit">
-			    	<i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!}
-				</button>
-			</div>
+		<#if indexGroup !=  indexIteration && indexGroup !=-1 >
+			<hr>
 		</#if>
-	</#list>
-	
- </div>
-</fieldset>
+		<#if indexGroup != indexIteration>
+			<#if group.description!=''>
+				<div class="row">
+					<div class="col-xs-12 col-sm-12">
+						<div class="col-xs-12 hidden-sm hidden-md hidden-lg">
+							<span class="helpBoxButton visible-xs" role="button" id="">?</span>
+							<div class="helpBox xs" style="display:none;">${group.description}</div>
+						</div>
+					</div>
+				</div>
+			</#if>
+			<fieldset class="<#if id_display??> display_field_${id_display} hidden</#if>" style="position:relative;">
+				<legend>${group.title} <#if indexIteration &gt; 0>(${indexIteration+1})</#if>
+				<#if group.description!=''>
+					<div class="helpBox">${group.description}</div>
+				</#if>
+				<#assign indexGroup=indexIteration>
+				<button class="btn btn-danger"  name="action_removeIteration" value="${group.id}_${indexIteration}" type="submit">
+					<i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!}
+				</button>
+				</legend>	
+		</#if>
+					
+				${childrenHtml}
+			</fieldset>
+		</#list>
+	</div>		
+</div>	
+<div class="row">
+	<div class="col-xs-12 col-sm-offset-7 col-sm-5">	
+	<#if isIterable >
+		<div class="add-iteration">
+			<button class="btn btn-primary btn-block" name="action_addIteration" value="${id_group}" type="submit">
+				<span class="fa fa-plus-circle"></span> ${group.iterationAddLabel!}
+			</button>
+		</div>	
+	</#if>
+	</div>
+</div>
+<script>
+$(".helpBoxButton").click(function(){
+	$(".helpBox.xs").slideToggle();
+});
+</script>

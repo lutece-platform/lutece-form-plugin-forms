@@ -1,8 +1,4 @@
-#horizontal-breadcrumb .btn {
-    padding: 0px;
-}
-
-
-#step-content .step-group-value-content {
-    margin-left: 35px;
-}
+#horizontal-breadcrumb .btn { padding: 0; }
+#step-content .step-group-value-content { margin-left: 35px;}
+#current_step fieldset{ position: relative;}
+#current_step fieldset legend .btn-danger{ position: absolute; right: 0 }
