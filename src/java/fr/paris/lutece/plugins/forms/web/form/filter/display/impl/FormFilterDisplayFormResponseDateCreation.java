@@ -94,7 +94,7 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
 
             LocalDate dateFrom = LocalDate.parse( strPeriodCreationFrom, formatter );
             LocalDate dateTo = LocalDate.parse( strPeriodCreationTo, formatter );
-
+            dateTo = dateTo.plusDays( 1 );
             DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern( "yyyy-MM-dd" );
 
             mapFilterNameValues

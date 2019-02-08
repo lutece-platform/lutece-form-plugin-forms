@@ -42,7 +42,7 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder
 public class FormFilterFormResponseDateCreationQueryPart extends AbstractFormFilterQueryPart
 {
     // Constants
-    private static final String DATE_CREATION_PERIOD_QUERY_PATTERN = "response.creation_date BETWEEN ? AND ? ";
+    private static final String DATE_CREATION_PERIOD_QUERY_PATTERN = "response.creation_date >= ? AND response.creation_date < ? ";
 
     /**
      * {@inheritDoc}
