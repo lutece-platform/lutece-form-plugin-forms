@@ -97,6 +97,20 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
             mapFilterNameValues.put( FormMultiviewFormsNameConstants.FILTER_ID_FORM, strIdForm );
             strIdFormValue = strIdForm;
         }
+        else
+        {
+            // Check if there is just one form
+            ReferenceList refListForms = createReferenceList( );
+            if ( refListForms.size( ) == 2 )
+            {
+                strIdForm = refListForms.get( 1 ).getCode( );
+                if ( StringUtils.isNotBlank( strIdForm ) )
+                {
+                    mapFilterNameValues.put( FormMultiviewFormsNameConstants.FILTER_ID_FORM, strIdForm );
+                    strIdFormValue = strIdForm;
+                }
+            }
+        }
 
         setValue( strIdFormValue );
 
@@ -109,21 +123,27 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     @Override
     public void buildTemplate( HttpServletRequest request )
     {
-        String strTemplateResult = StringUtils.EMPTY;
+        ReferenceList refListForms = createReferenceList( );
 
-        Map<String, Object> model = new LinkedHashMap<>( );
-        model.put( MARK_FILTER_LIST, createReferenceList( ) );
-        model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
-        model.put( MARK_FILTER_NAME, FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
-        model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM, request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ) );
-
-        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
-        if ( htmlTemplate != null )
+        if ( refListForms.size( ) > 2 )
         {
-            strTemplateResult = htmlTemplate.getHtml( );
-        }
+            String strTemplateResult = StringUtils.EMPTY;
 
-        setTemplate( strTemplateResult );
+            Map<String, Object> model = new LinkedHashMap<>( );
+            model.put( MARK_FILTER_LIST, refListForms );
+            model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
+            model.put( MARK_FILTER_NAME, FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
+            model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM, request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ) );
+
+            HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
+            if ( htmlTemplate != null )
+            {
+                strTemplateResult = htmlTemplate.getHtml( );
+            }
+
+            setTemplate( strTemplateResult );
+        }
+        setTemplate( StringUtils.EMPTY );
     }
 
     /**
