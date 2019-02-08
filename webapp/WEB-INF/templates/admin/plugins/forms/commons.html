@@ -442,9 +442,9 @@ $( function(){
 	</div>
 </div>
 
-<link rel="stylesheet" type="text/css" href="js/vis/vis-network.min.css" >
-<script src="js/vis/vis.min.js"></script>
-<script src="js/vis/jspdf.min.js"></script>
+<link rel="stylesheet" type="text/css" href="js/plugins/forms/vis/vis-network.min.css" >
+<script src="js/plugins/forms/vis/vis.min.js"></script>
+<script src="js/plugins/forms/vis/jspdf.min.js"></script>
 <script>
 	$( function(){
 		$("#renderNetwork").toggle();
@@ -455,7 +455,7 @@ $( function(){
 		} else {
 			$('#direction').hide();
 		}
-	})
+	});
 
 	var base64Img = null;
 	imgToBase64('images/admin/skin/plugins/forms/logo_site.png', function(base64) {
@@ -466,7 +466,7 @@ $( function(){
 		e.preventDefault();
 		$("#list").fadeToggle();
 		$("#renderNetwork").fadeToggle();
-		$(this).children('i').toggleClass('fa-sitemap').toggleClass('fa-th-list');
+		$(this).children('i').toggleClass('fa-project-diagram').toggleClass('fa-list-alt');
 	});
 
     // create an array with nodes

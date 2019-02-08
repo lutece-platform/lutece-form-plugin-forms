@@ -4,8 +4,10 @@ body{ padding-bottom: 70px; }
 body, .wrapper{ height: 100%; overflow: visible; }
 #admin-wrapper{ margin-bottom: 0 }
 #admin-wrapper .content{ min-height: auto;}
+
+
 /* Editor Override */
-.mce-fullscreen {	z-index: 9000 !important;}
+.mce-fullscreen { z-index: 9000 !important;}
 
 /* MutliView */
 .form-control-static .badge{ vertical-align: top; }
@@ -14,6 +16,7 @@ body, .wrapper{ height: 100%; overflow: visible; }
 #filter-forms select { font-weight:normal; margin: 0; background:#fff; outline:none; display:inline-block; -webkit-appearance:none; -moz-appearance:none; appearance:none; cursor:pointer;}
 #filter-forms select::-ms-expand { display: none;}
 #filter-forms .form-inline .form-group { vertical-align: top }
+#filter-forms .form-group .input-group .btn-info{ border: 1px solid #1d98f6;}
 
 #filter-forms .caret{ color:#000; }
 #filter-forms label { position:relative;margin-bottom: 0; }
