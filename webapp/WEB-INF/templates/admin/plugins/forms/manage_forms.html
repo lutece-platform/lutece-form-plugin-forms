@@ -68,7 +68,7 @@
                                     </#list>
                                 </#if>
                                 <a class="btn btn-link" href="jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&forms_id_form=${form.id}" title="#i18n{forms.manageForm.MultiviewLink.label} " target="_blank">
-                                    <i class="fa fa-th-list fa-fw"></i>
+                                    <i class="fa fa-list-alt fa-fw"></i>
                                 </a>
                                 <#if form.active>
                                     <a class="btn btn-link" href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" title="#i18n{forms.manageForm.FOLink.label} ${form.title}" target="_blank">
@@ -111,3 +111,5 @@
 <@toastr infos=infos warnings=warnings errors=errors />
 
 <@formModal id='pubModal' />
+
+<@scrollTopBtn />

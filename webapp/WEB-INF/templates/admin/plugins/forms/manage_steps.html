@@ -42,7 +42,7 @@
 								</li>
 								<li>
 									<a class="btn btn-link" href="jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&forms_id_form=${form.id}" title="#i18n{forms.manageForm.MultiviewLink.label} " target="_blank">
-										<i class="fa fa-th-list fa-fw"></i>
+										<i class="fa fa-list-alt fa-fw"></i>
 									</a>
 								</li>
 							</#if>
@@ -73,9 +73,9 @@
 										<#if transition_list??>
 											<#list transition_list as transition>
 												<#if transition.fromStep = step.id>
-													<p>
+													<p class="form-control-static">
 														<a href="jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${transition.fromStep}" title="#i18n{forms.modify_transition.title} ${step.title}">
-															${(transition.fromStepTitle)!''} <i class="fa fa-arrow-right"></i> ${(transition.nextStepTitle)!''} - ${(transition.controlTitle)!''} Priorit&eacute; : ${(transition.priority)!''} ${(transition.controlTitle)!''}
+															<i class="fa fa-chevron-right"></i>	${(transition.nextStepTitle)!''} ${(transition.controlTitle)!''} <span class="badge" title="Priorit&eacute;">${(transition.priority)!''}</span>  
 														</a>
 													</p>
 												</#if>	 
@@ -150,3 +150,5 @@
 <@toastr infos=infos warnings=warnings errors=errors msg=msg  />
 
 <@formVisualize />
+
+<@scrollTopBtn />
