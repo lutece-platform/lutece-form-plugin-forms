@@ -1,6 +1,10 @@
-<div id="form-detail-header" class="box bg-navy">
-	<div class="box-body">
-		<form id="form-response-detail-header" class="form" action="jsp/admin/plugins/forms/MultiviewForms.jsp" method="get">
+<div id="form-detail-header" class="box box-primary clearfix">
+<div class="box-header">
+	<h3 class="box-title">
+		${form.title} <i class="fa fa-hashtag" title="#i18n{forms.multiviewForms.responseDetails.response.number}"></i> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}">${form_response.id}</strong>
+	</h3>	
+    <div class="box-tools">
+		<form id="form-response-detail-header" class="form-inline" action="jsp/admin/plugins/forms/MultiviewForms.jsp" method="get">
 			<input name="page" value="form" type="hidden" >
 			<input type="hidden" name="session" value="session">
 			<#assign editModeValue = "ReadOnly">
@@ -10,28 +14,11 @@
 					<input type="hidden" name="${filter_values.code}" value="${filter_values.name}">		
 				</#list>
 			</#if>
-			<div class="col-xs-12 col-sm-1">
-				<p class="form-control-static">
-					<button class="btn btn-default btn-sm" type="submit" >
-						<i class="fa fa-arrow-left"></i> #i18n{portal.util.labelBack}
-					</button>
-				</p>	
-			</div>
-			<div class="col-xs-12 col-sm-4">	
-				<p class="form-control-static text-ellipsis">${form.title}<p>	
-				#i18n{forms.multiviewForms.responseDetails.response.number} <span class="badge">${form_response.id}</span>
-				
-			</div>		
-			<div class="col-xs-12 col-sm-7">
-				<p class="form-control-static" style="display: flex; justify-content: space-between">
-					<span class="callout callout-info">
-						<i class="fa fa-calendar"></i> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} <strong>${form_response.creation}</strong> / #i18n{forms.multiviewForms.responseDetails.response.dateModification} <strong>${form_response.update}</strong>
-					</span>
-					<#if resource_actions?exists && resource_actions.workflow_state?exists>
-						<span class="callout callout-info"><i class="fa fa-info-circle"></i>   #i18n{forms.multiviewForms.responseDetails.response.state} : <strong >${resource_actions.workflow_state.name}</strong> </span>
-					</#if>
-				</p>
-			</div>	
+			<button class="btn btn-default btn-sm pull-right" type="submit" >
+				<i class="fa fa-arrow-left"></i> #i18n{portal.util.labelBack}
+			</button>
 		</form>
-	</div>
+	</div> 
 </div>
+<div class="box-body">
+<!-- Closed in site-forms\WEB-INF\templates\admin\plugins\forms\multiview\includes\include_view_form_response_header.html-->

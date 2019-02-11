@@ -1,7 +1,8 @@
 <#if filter_list?has_content>
+<@formGroup formStyle='inline' class='forms-filter' labelKey='' labelFor=filter_name showLabel=false >
     <input type="hidden" name="forms_previous_id_form" value="${forms_previous_id_form!-1}">
-                <label for="${filter_name}">
-                        <@select name=filter_name id=filter_name default_value='${filter_list_value!-1}' items=filter_list params='onchange="this.form.submit()"'/>
-                </label>
-        </div>
-    </#if>
+    <label class="select-label" for="${filter_name}">
+        <@select name=filter_name id=filter_name default_value='${filter_list_value!-1}' items=filter_list params='onchange="this.form.submit()"'/>
+    </label>
+</@formGroup> 
+</#if>
