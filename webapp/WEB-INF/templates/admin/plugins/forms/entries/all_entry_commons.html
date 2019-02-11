@@ -1,0 +1,188 @@
+<#--- MACRO breadforms --->
+<#macro breadforms title=''>
+<@breadcrumbs id='breadforms' > 
+	<li>
+		<a href="jsp/admin/plugins/forms/ManageForms.jsp" title="Retour"><i class="fa fa-home fa-fw"></i></a>
+	</li>
+	<li>
+		<a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" title="Liste des étapes">${form.title}</a>
+	</li>
+	<li>
+		<a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="Liste des questions">${step.title}</a>
+	</li>
+	<li class="active">
+		${title}
+	</li>
+</@breadcrumbs>
+</#macro>
+
+<#macro confirmField>
+<script type="text/javascript">
+function changeVisilityConfirmFieldTitle(){
+    if( document.getElementById( "confirm_field" ).checked ){
+            document.getElementById( "confirm_field_title_group").style.display = 'block';
+    } else {
+        document.getElementById( "confirm_field_title_group" ).style.display = 'none';
+    }
+} 
+changeVisilityConfirmFieldTitle();
+</script>
+</#macro>
+
+<#--- MACRO formBox --->
+<#macro formBox entry stepid questionid title='' action='jsp/admin/plugins/forms/ManageQuestions.jsp' editable=true display=true rows=2>
+<@box color='primary'>
+    <@boxBody>
+        <@tform action=action>
+            <input name="id_entry" value="${entry.idEntry}" type="hidden">
+            <input name="id_step" value="${stepid}" type="hidden">
+            <input name="id_question" value="${questionid}" type="hidden">
+            <@formGroup rows=rows>
+                <@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false color='btn-link' />
+                <@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false color='btn-link' />
+                <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' size='' showTitleXs=false  showTitleMd=false color='btn-link'/>
+            </@formGroup>
+            <@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}' rows=rows>
+                <@input type='text' name='type' id='type' readonly=true disabled=true value='${entry.entryType.title}' />
+            </@formGroup>
+            <@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true rows=rows>
+                <@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+            </@formGroup>
+            <!-- Specific for the field-->
+            <#nested>
+            <!-- Specific for the field -->
+            <#assign showCklabel=false>
+            <#if rows!=2><#assign showCklabel=true></#if>
+            <@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' showLabel=showCklabel rows=rows>
+                <#if entry.mandatory>
+                    <#assign checked = true>
+                <#else>
+                    <#assign checked = false>
+                </#if>
+                <@checkBox name='mandatory' value='1' checked=checked labelKey='#i18n{forms.createEntry.labelMandatory}' />
+            </@formGroup>
+            <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' showLabel=showCklabel rows=rows>
+                <@checkBox name='only_display_in_back' id='only_display_in_back' value='1' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
+            </@formGroup>
+            <@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}' showLabel=showCklabel rows=rows>
+                <@checkBox name='editable_back' id='editable_back' value='1' labelKey='#i18n{forms.createEntry.labelEditableInBO}' checked=entry.editableBack />
+            </@formGroup>
+            <@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}' rows=rows>
+                <@input type='textarea' name='help_message' id='help_message' rows=rows>${entry.helpMessage}</@input>
+            </@formGroup>
+            <@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}' rows=rows>
+                <@input type='textarea' name='comment' id='comment' rows=rows>${entry.comment}</@input>
+            </@formGroup>
+            <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' rows=rows>
+                <@input type='text' name='css_class' value='${entry.CSSClass!}' maxlength=255 />
+            </@formGroup>
+            <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+                <@checkBox name='is_indexed' id='is_indexed' value='1' checked=true />
+            </@formGroup>
+            ${question_create_template!}
+            <@formGroup rows=rows>
+                <@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false color='btn-link' />
+                <@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false color='btn-link' />
+                <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' size='' showTitleXs=false  showTitleMd=false color='btn-link'/>
+            </@formGroup>
+        </@tform>
+    </@boxBody>
+</@box>
+</#macro>
+
+<#--- MACRO optionBox --->
+<#macro optionBox questionid title='' action='jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true' >
+<@box color='primary'>
+    <@boxHeader title='#i18n{forms.createEntry.manageField.title}' boxTools=true>
+        <@tform class='form-inline pull-right' action='${action}'>
+            <input name="id_question" value="${questionid}" type="hidden">
+            <@button type='submit' buttonIcon='plus' name='view_createField' title='#i18n{forms.createEntry.manageField.buttonInsert}' color='btn-link' />
+        </@tform>
+    </@boxHeader>
+    <@boxBody>
+    <fieldset>
+        <legend class="sr-only">#i18n{forms.createEntry.manageField.title}</legend>
+        <a name="list" id="list"></a>
+        <@table>
+            <tr> 
+                <th>#i18n{forms.createEntry.manageField.rowTitle}</th>
+                <th>#i18n{forms.createEntry.manageField.rowValue}</th>
+                <th><@icon style='question-circle' title='#i18n{forms.createEntry.manageField.rowConditionalQuestion}' /></th>
+                <th>#i18n{forms.createEntry.manageField.rowActions}</th>
+            </tr>
+            <#assign cpt=0>
+            <#list list as field>
+			<#assign cpt=cpt+1>
+			<tr>
+				<td>${field.title}</td>
+				<td>${field.value}</td>
+                <td><#if field.defaultValue><@icon style='check' class='text-success' title='#i18n{forms.createEntry.manageField.rowDefaultValue}' /></#if></td>
+                <#nested>
+				<td>                       
+                    <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' title='#i18n{portal.util.labelModify}' buttonIcon='pencil' showTitle=false color='btn-link' />
+                    <#if cpt!=1>
+                        <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveUp}' buttonIcon='chevron-up' showTitle=false color='btn-link' />
+                    </#if> 
+                    <#if field_has_next>
+                        <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveDown}' buttonIcon='chevron-down' showTitle=false color='btn-link' />
+                    </#if>
+                    <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' buttonIcon='trash' showTitle=false color='btn-link text-danger' />
+                </td>
+			</tr>
+			</#list> 
+        
+        </@table>
+    </fieldset>
+    </@boxBody>
+</@box>
+</#macro>
+
+<#--- MACRO regularExp --->
+<#macro regularExp idField regular_expression_list entry title='#i18n{forms.createEntry.manageRegularExpression.title}' action='jsp/admin/plugins/forms/DoInsertVerification.jsp#list' >
+<@row>
+    <@columns>
+        <@box color='primary'>
+            <@boxHeader title='${itle}' />
+            <@boxBody>
+                <fieldset>
+                <legend class="sr-only">#i18n{forms.createEntry.manageRegularExpression.title}</legend>
+                <@tform action='${action}'>
+                    <input name="id_field" value="${idField}" type="hidden">
+                    <@formGroup labelFor='id_expression' labelKey='#i18n{forms.createEntry.manageRegularExpression.labelInsert}' helpKey='#i18n{forms.createEntry.manageRegularExpression.labelInsertComment}'>
+                        <@inputGroup>
+                            <@select name='id_expression' id='id_expression' items=regular_expression_list default_value='-1' size='sm' />
+                            <@inputGroupItem>
+                                <@button type='submit' title='#i18n{forms.createEntry.manageRegularExpression.buttonInsert}' showTitle=false buttonIcon='plus' />
+                            </@inputGroupItem>
+                        </@inputGroup>
+                    </@formGroup>
+                </@tform>
+                </fieldset>
+                <a name="list" id="list"></a>
+                <@table>
+                    <tr> 
+                        <th>#i18n{forms.createEntry.manageRegularExpression.rowTitle}</th>
+                        <th>#i18n{forms.createEntry.manageRegularExpression.rowInformationMessage}</th>
+                        <th>#i18n{forms.createEntry.manageRegularExpression.rowValidExemple}</th>
+                        <th>#i18n{forms.createEntry.manageField.rowActions}</th>
+                    </tr>
+                    <#list entry.fields as field>
+                        <#list field.regularExpressionList as expression>
+                        <tr>
+                            <td>${expression.title}</td>
+                            <td>${expression.informationMessage}</td>
+                            <td>${expression.validExemple}</td>
+                            <td>
+                                <@aButton href='jsp/admin/plugins/forms/DoRemoveVerification.jsp?id_expression=${expression.idExpression}&id_field=${idField}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' showTitle=false buttonIcon='trash' color='btn-danger' />
+                            </td>
+                        </tr>
+                        </#list>
+                    </#list>
+                </@table>
+            </@boxBody>
+        </@box>
+    </@columns>
+</@row>
+</#macro>
+
+

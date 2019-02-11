@@ -23,19 +23,14 @@
                 </#if>
            </@formGroup>
             <div id="iteration_group">
+                <@formGroup labelKey='#i18n{forms.create_group.labelIterationMin}' helpKey='#i18n{forms.create_group.labelIterationMin.help}'>
+                    <@input type='text'  class='col-xs-12 col-sm-2' name='iterationMin' value='${group.iterationMin!}' />
+                </@formGroup>
+                <@formGroup labelKey='#i18n{forms.create_group.labelIterationMax}' helpKey='#i18n{forms.create_group.labelIterationMax.help}' >
+                    <@input type='text' class='col-xs-12 col-sm-2' name='iterationMax' value='${group.iterationMax!}' />
+                </@formGroup>
                 <@row>
-                    <@columns offsetSm=3 sm=1>
-                        <@formGroup labelKey='#i18n{forms.create_group.labelIterationMin}' helpKey='#i18n{forms.create_group.labelIterationMin.help}' rows=2>
-                            <@input type='text' name='iterationMin' value='${group.iterationMin!}' />
-                        </@formGroup>
-                    </@columns>
-                    <@columns sm=1>
-                        <@formGroup labelKey='#i18n{forms.create_group.labelIterationMax}' helpKey='#i18n{forms.create_group.labelIterationMax.help}' rows=2 >
-                            <@input type='text' name='iterationMax' value='${group.iterationMax!}' />
-                        </@formGroup>
-                    </@columns>
-
-                    <@columns sm=3> 
+                    <@columns offsetSm=3 sm=4> 
                         <@formGroup labelKey='#i18n{forms.create_group.labelIterationAddLabel}' helpKey='#i18n{forms.create_group.labelIterationAddLabel.help}' rows=2 >
                             <@input type='text' name='iterationAddLabel' value='${group.iterationAddLabel!}' />
                         </@formGroup>
