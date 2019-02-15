@@ -1,4 +1,2 @@
-<th data-field="state" class="th-sort-DESC">
-    ${column_title!''}
-    <@sort jsp_url=sort_url attribute=column_sort_attribute />
-</th>
+<#include "/admin/plugins/forms/commons.html" />
+<@headerSort field='state' title=column_title! jsp_url=sort_url attribute=column_sort_attribute />

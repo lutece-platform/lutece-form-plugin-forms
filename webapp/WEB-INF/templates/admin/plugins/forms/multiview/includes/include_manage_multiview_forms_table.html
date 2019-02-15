@@ -1,17 +1,6 @@
-<#if form_response_geojson_point_list?has_content>
-<script id="geojson_points" type="application/json">{
-	"type" : "FeatureCollection",
-	"features" : [
-<#list form_response_geojson_point_list as point>${point?replace("</","<\\/")}<#if point_has_next>,
-</#if>
-</#list>
-]
-}
-</script>
-</#if>
 ${multiviewmap!''}
-<div class="col-xs-12 col-sm-12 table-responsive tab-content">
-    <table class="table table-hover table-striped">
+<div class="table-responsive">
+    <table class="table table-bordered table-hover table-striped">
         <thead>
             <tr>
                 <#if form_response_column_header_template_list?has_content>
@@ -36,3 +25,14 @@ ${multiviewmap!''}
         </tbody>
     </table>
 </div>
+<#if form_response_geojson_point_list?has_content>
+<script id="geojson_points" type="application/json">{
+	"type" : "FeatureCollection",
+	"features" : [
+<#list form_response_geojson_point_list as point>${point?replace("</","<\\/")}<#if point_has_next>,
+</#if>
+</#list>
+]
+}
+</script>
+</#if>
