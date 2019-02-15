@@ -124,10 +124,11 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     public void buildTemplate( HttpServletRequest request )
     {
         ReferenceList refListForms = createReferenceList( );
+        String strTemplateResult = StringUtils.EMPTY;
 
         if ( refListForms.size( ) > 2 )
         {
-            String strTemplateResult = StringUtils.EMPTY;
+            
 
             Map<String, Object> model = new LinkedHashMap<>( );
             model.put( MARK_FILTER_LIST, refListForms );
@@ -143,7 +144,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
 
             setTemplate( strTemplateResult );
         }
-        setTemplate( StringUtils.EMPTY );
+        setTemplate( strTemplateResult );
     }
 
     /**
