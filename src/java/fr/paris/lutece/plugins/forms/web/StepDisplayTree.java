@@ -233,6 +233,10 @@ public class StepDisplayTree
         {
             strTemplate = TEMPLATE_STEP_READONLY_FRONTOFFICE;
         }
+        if ( displayType == DisplayType.EDITION_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_STEP_READONLY_BACKOFFICE;
+        }
 
         return strTemplate;
     }
