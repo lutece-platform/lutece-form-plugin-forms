@@ -49,6 +49,9 @@ import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
+import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
+import fr.paris.lutece.plugins.forms.business.action.GlobalFormsAction;
+import fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionHome;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparator;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig;
@@ -61,6 +64,7 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.column.display.FormColumnDisplayFactory;
@@ -72,14 +76,18 @@ import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListTemplateBui
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.MultiviewFormUtil;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDisplayFactory;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.rbac.RBACResource;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
+import java.util.Locale;
 
 /**
  * Controller which manage the multiview of responses of all Forms
@@ -92,9 +100,11 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
     // Actions
     private static final String ACTION_EXPORT_RESPONSES = "doExportResponses";
+    private static final String ACTION_SAVE_MULTIVIEW_CONFIG = "doSaveMultiviewConfig";
 
     // Templates
     private static final String TEMPLATE_FORMS_MULTIVIEW = "admin/plugins/forms/multiview/forms_multiview.html";
+    private static final String TEMPLATE_FORMS_MULTIVIEW_CONFIG = "admin/plugins/forms/multiview/forms_multiview_config.html";
 
     // Properties
     private static final String PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE = "forms.multiviewForms.pageTitle";
@@ -108,10 +118,12 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
     // Views
     private static final String VIEW_MULTIVIEW_FORMS = "view_multiview_forms";
+    private static final String VIEW_MULTIVIEW_CONFIG = "view_multiview_config";
 
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_FORMAT_EXPORT = "format_export";
+    private static final String PARAMETER_DISPLAY_FORMS_TITLE_COLUMN = "display_forms_title_column";
 
     // Marks
     private static final String MARK_LOCALE = "locale";
@@ -167,6 +179,15 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Build the model
         Map<String, Object> model = getPaginatedListModel( request, Paginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ) );
+        
+        //Get the config multiview action if the current admin user is authorized
+        GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG, FormsPlugin.getPlugin(), request.getLocale( ) );
+        
+        if ( RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION, AdminUserService.getAdminUser( request ) ) )
+        {
+            model.put( FormsConstants.MARK_MULTIVIEW_CONFIG_ACTION, multiviewConfigAction );
+        }
+        
         model.put( MARK_PAGINATOR, getPaginator( ) );
         model.put( MARK_LOCALE, getLocale( ) );
         model.put( MARK_FORM_FILTER_LIST, _listFormFilterDisplay );
@@ -205,6 +226,61 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
             download( arrByteExportFile, I18nService.getLocalizedString( EXPORT_FILE_NAME, getLocale( ) ), formatExport.getFormatContentType( ) );
         }
+    }
+    
+    /**
+     * View the multiview config page
+     * 
+     * @param request
+     *            The HTTP request
+     * @return 
+     *            The multiview config page
+     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     */
+    @View( value = VIEW_MULTIVIEW_CONFIG )
+    public String getMultiviewConfig( HttpServletRequest request ) throws AccessDeniedException
+    {
+        GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG, FormsPlugin.getPlugin(), request.getLocale( ) );
+        if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION, AdminUserService.getAdminUser( request ) ) )
+        {
+            throw new AccessDeniedException( );
+        }
+        
+        
+        MultiviewConfig config = MultiviewConfig.getInstance();
+        
+        Map<String,Object> model = getModel();
+        model.put( FormsConstants.MARK_MULTIVIEW_CONFIG, config );
+        
+        return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW_CONFIG, model );
+    }
+    
+    /**
+     * View the multiview config page
+     * 
+     * @param request
+     *            The HTTP request
+     * @return 
+     *            The multiview config page
+     */
+    @Action( value = ACTION_SAVE_MULTIVIEW_CONFIG )
+    public String doSaveMultiviewConfig( HttpServletRequest request )  throws AccessDeniedException
+    {
+        GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG, FormsPlugin.getPlugin(), request.getLocale( ) );
+        if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION, AdminUserService.getAdminUser( request ) ) )
+        {
+            throw new AccessDeniedException( );
+        }
+        
+        
+        MultiviewConfig config = MultiviewConfig.getInstance();
+        
+        String strDisplayFormColumnTitle = request.getParameter( PARAMETER_DISPLAY_FORMS_TITLE_COLUMN );
+        config.setDisplayFormsTitleColumn( strDisplayFormColumnTitle != null );
+        
+        config.save( );
+        
+        return redirectView( request, VIEW_MULTIVIEW_FORMS );
     }
 
     /**

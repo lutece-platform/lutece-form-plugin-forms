@@ -20,3 +20,22 @@ REPLACE INTO `forms_action` VALUES (100, 'module.forms.documentproducer.actions.
 ALTER TABLE forms_question ADD COLUMN is_visible_multiview_global SMALLINT default 0 NOT NULL;
 ALTER TABLE forms_question ADD COLUMN is_visible_multiview_form_selected SMALLINT default 0 NOT NULL;
 ALTER TABLE forms_question ADD COLUMN column_title varchar(255) default '' NOT NULL;
+
+--
+-- Table structure for table forms_global_action
+--
+DROP TABLE IF EXISTS forms_global_action;
+CREATE TABLE forms_global_action (
+    id_action int default 0 NOT NULL,
+    code varchar(100) default NULL,
+    name_key varchar(100) default NULL,
+    description_key varchar(100) default NULL,
+    action_url varchar(255) default NULL,
+    icon_url varchar(255) default NULL,
+    PRIMARY KEY (id_action)
+);
+
+INSERT INTO forms_global_action (id_action, code, name_key, description_key, action_url, icon_url, action_permission, form_state) VALUES (1,'multiviewconfig','forms.action.multiviewConfig.labelKey','forms.action.multiviewConfig.descriptionKey','jsp/admin/plugins/forms/MultiviewForms.jsp?view=view_multiview_config','edit');
+
+INSERT INTO core_datastore ( entity_key, entity_value ) VALUES
+    ( 'forms.display.form.columnTitle', 'true' );

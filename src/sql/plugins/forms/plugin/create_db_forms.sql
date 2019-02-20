@@ -103,6 +103,20 @@ CREATE TABLE forms_action (
 );
 
 --
+-- Table structure for table forms_global_action
+--
+DROP TABLE IF EXISTS forms_global_action;
+CREATE TABLE forms_global_action (
+    id_action int default 0 NOT NULL,
+    code varchar(100) default NULL,
+    name_key varchar(100) default NULL,
+    description_key varchar(100) default NULL,
+    action_url varchar(255) default NULL,
+    icon_url varchar(255) default NULL,
+    PRIMARY KEY (id_action)
+);
+
+--
 -- Structure for table forms_display
 --
 

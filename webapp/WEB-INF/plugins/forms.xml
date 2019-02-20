@@ -64,6 +64,15 @@
         <javascript-files-scope>portal</javascript-files-scope>
         <javascript-file>forms/terms-of-service.js</javascript-file>
     </javascript-files>
+    
+    <!-- RBAC Resources -->
+    <rbac-resource-types>
+        <rbac-resource-type>
+            <rbac-resource-type-class>
+                fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionIdService
+            </rbac-resource-type-class>
+        </rbac-resource-type>
+    </rbac-resource-types>
 
     <!-- Portlet parameters -->
     <portlets>

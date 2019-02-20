@@ -13,6 +13,7 @@
     <bean id="forms.questionDAO" class="fr.paris.lutece.plugins.forms.business.QuestionDAO" />
     <bean id="forms.groupDAO" class="fr.paris.lutece.plugins.forms.business.GroupDAO" />
     <bean id="forms.formActionDAO"  class="fr.paris.lutece.plugins.forms.business.FormActionDAO" />
+    <bean id="forms.globalFormsActionDAO"  class="fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionDAO" />
     <bean id="forms.formDisplayDAO" class="fr.paris.lutece.plugins.forms.business.FormDisplayDAO" />
     <bean id="forms.formListDAO" class="fr.paris.lutece.plugins.forms.business.form.list.FormListDAO" />
     <bean id="forms.formQuestionResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormQuestionResponseDAO" />
@@ -26,7 +27,7 @@
     <bean id="forms.csvExport" class="fr.paris.lutece.plugins.forms.export.csv.CSVExport">
     	<constructor-arg type="java.lang.String" index="0" value="forms.csvExport" />
     	<constructor-arg type="java.lang.String" index="1" value="forms.export.csv.name" />
-	</bean>
+    </bean>
     
     <!-- Listener services -->
     <bean id="forms.formRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />

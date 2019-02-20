@@ -80,6 +80,8 @@ public final class FormsConstants
     public static final String MARK_VALIDATOR_MANAGER = "validatorManager";
     public static final String MARK_QUESTION_CREATE_TEMPLATE = "question_create_template";
     public static final String MARK_QUESTION_MODIFY_TEMPLATE = "question_modify_template";
+    public static final String MARK_MULTIVIEW_CONFIG = "multiview_config";
+    public static final String MARK_MULTIVIEW_CONFIG_ACTION = "multiviewConfigAction";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -158,7 +160,16 @@ public final class FormsConstants
 
     // Beans
     public static final String BEAN_TRANSACTION_MANAGER = "forms.transactionManager";
+    public static final String BEAN_FORMS_FORM_TITLE_COLUMN = "forms.transactionManager";
+    public static final String BEAN_FORMS_COLUMN_TITLE = "forms.forms.column";
+    public static final String BEAN_FORMS_COLUMN_DATE_CREATION = "forms.formResponseCreationDate.column";
 
+    // Datastore keys
+    public static final String DS_KEY_FORM_TITLE_COLUMN = "forms.display.form.columnTitle";
+
+    // Actions forms
+    public static final String ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG = "multiviewConfig";
+    
     // Other
     public static final String FORM_DEFAULT_END_MESSAGE = "forms.message.form.submitted";
     public static final String SEPARATOR_UNDERSCORE = "_";
