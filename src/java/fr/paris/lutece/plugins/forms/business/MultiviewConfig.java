@@ -36,23 +36,24 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
 
-public class MultiviewConfig 
-{   
+public class MultiviewConfig
+{
     private static MultiviewConfig _instance;
-    
+
     /**
      * Private constructor for singleton pattern
      */
-    private MultiviewConfig()
+    private MultiviewConfig( )
     {
         String strDisplayFormColumnTitle = DatastoreService.getDataValue( FormsConstants.DS_KEY_FORM_TITLE_COLUMN, "false" );
         _bDisplayFormsTitleColumn = Boolean.parseBoolean( strDisplayFormColumnTitle );
     }
-    
+
     boolean _bDisplayFormsTitleColumn;
-    
+
     /**
      * Return the singleton instance of the multiview config
+     * 
      * @return the Multiview config
      */
     public static MultiviewConfig getInstance( )
@@ -66,23 +67,25 @@ public class MultiviewConfig
 
     /**
      * Is display forms title column
+     * 
      * @return the display form title column boolean
      */
-    public boolean isDisplayFormsTitleColumn() 
+    public boolean isDisplayFormsTitleColumn( )
     {
         return _bDisplayFormsTitleColumn;
     }
 
     /**
      * Set the display forms title column boolean
-     * @param bDisplayFormsTitleColumn 
-     *          The display forms title column boolean
+     * 
+     * @param bDisplayFormsTitleColumn
+     *            The display forms title column boolean
      */
-    public void setDisplayFormsTitleColumn(boolean bDisplayFormsTitleColumn) 
+    public void setDisplayFormsTitleColumn( boolean bDisplayFormsTitleColumn )
     {
         _bDisplayFormsTitleColumn = bDisplayFormsTitleColumn;
     }
-    
+
     /**
      * Save the config
      */

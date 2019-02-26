@@ -48,7 +48,6 @@ public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
     private static final String SQL_QUERY_SELECT_ALL_ACTIONS = "SELECT a.code, a.name_key, a.description_key, a.action_url, a.icon_url FROM forms_global_action a ";
     private static final String SQL_QUERY_FILTER_BY_CODE = " WHERE a.code = ? ";
 
-
     /**
      * {@inheritDoc}
      */
@@ -68,7 +67,7 @@ public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
 
         return listActions;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -77,7 +76,7 @@ public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
     {
         GlobalFormsAction globalAction = null;
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS + SQL_QUERY_FILTER_BY_CODE, plugin );
-        daoUtil.setString( 1, strCode);
+        daoUtil.setString( 1, strCode );
         daoUtil.executeQuery( );
 
         if ( daoUtil.next( ) )

@@ -46,13 +46,13 @@ public class GlobalFormsAction implements RBACResource, Localizable
 {
     public static final String RESOURCE_TYPE_CODE = "GLOBAL_FORMS_ACTION";
     public static final String RESOURCE_TYPE_LABEL_KEY = "forms.globalFormsAction.resourceTypeLabelKey";
-    
+
     // Perimissions
     public static final String PERMISSION_PERFORM_ACTION = "PERFORM_GLOBAL_FORMS_ACTION";
     public static final String PERMISSION_PERFORM_ACTION_LABEL_KEY = "forms.permission.label.performGlobalFormsAction";
-    
+
     // Variables declarations
-    
+
     private String _strCode;
     private String _strUrl;
     private String _strNameKey;
@@ -60,20 +60,22 @@ public class GlobalFormsAction implements RBACResource, Localizable
     private String _strIconUrl;
     private Locale _locale;
 
-    
     /**
-    * Returns the Code
-    * @return The Code
-    */ 
-    public String getCode()
+     * Returns the Code
+     * 
+     * @return The Code
+     */
+    public String getCode( )
     {
         return _strCode;
     }
 
-   /**
-    * Sets the Code
-    * @param strCode The Code
-    */ 
+    /**
+     * Sets the Code
+     * 
+     * @param strCode
+     *            The Code
+     */
     public void setCode( String strCode )
     {
         _strCode = strCode;
@@ -191,12 +193,12 @@ public class GlobalFormsAction implements RBACResource, Localizable
     {
         _locale = locale;
     }
-    
-        /**
+
+    /**
      * {@inheritDoc}
      */
     @Override
-    public String getResourceTypeCode() 
+    public String getResourceTypeCode( )
     {
         return RESOURCE_TYPE_CODE;
     }
@@ -205,8 +207,8 @@ public class GlobalFormsAction implements RBACResource, Localizable
      * {@inheritDoc}
      */
     @Override
-    public String getResourceId() 
+    public String getResourceId( )
     {
         return _strCode;
-}
+    }
 }

@@ -275,7 +275,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
         return listFormDisplayTrees;
     }
-    
+
     /**
      * Fill the map which contains the values of all filters with the data of the request
      * 

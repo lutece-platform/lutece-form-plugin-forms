@@ -145,8 +145,8 @@ public final class MultiviewFormService
 
         // Retrive the Spring bean corresponding to the Form creation date column
         IFormColumn columnFormDateCreation = SpringContextService.getBean( FormsConstants.BEAN_FORMS_COLUMN_DATE_CREATION );
-        mapFormColumns.put( columnFormDateCreation.getFormColumnTitle(), columnFormDateCreation );
-        
+        mapFormColumns.put( columnFormDateCreation.getFormColumnTitle( ), columnFormDateCreation );
+
         // Then add global columns from config questions
         List<Question> listQuestions = new ArrayList<>( );
         listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsList( ) : QuestionHome
@@ -162,14 +162,14 @@ public final class MultiviewFormService
 
         // Filter the columns with the multiview config
         filterWithMultiviewConfig( mapFormColumns );
-        
+
         // Set the order of the columns
         int nPosition = 1;
         for ( IFormColumn column : mapFormColumns.values( ) )
         {
             column.setFormColumnPosition( nPosition++ );
         }
-        
+
         return new ArrayList<>( mapFormColumns.values( ) );
     }
 
@@ -211,21 +211,21 @@ public final class MultiviewFormService
             }
         }
     }
-    
+
     /**
      * Filter the columns with the multiview config
      * 
-     * @param mapColumns the map columns
+     * @param mapColumns
+     *            the map columns
      */
-    private void filterWithMultiviewConfig( Map<String,IFormColumn> mapColumns )
+    private void filterWithMultiviewConfig( Map<String, IFormColumn> mapColumns )
     {
-        MultiviewConfig config = MultiviewConfig.getInstance();
-        
-        
+        MultiviewConfig config = MultiviewConfig.getInstance( );
+
         if ( !config.isDisplayFormsTitleColumn( ) )
         {
-            mapColumns.entrySet().removeIf( entry -> entry.getValue() instanceof FormColumnForms );
+            mapColumns.entrySet( ).removeIf( entry -> entry.getValue( ) instanceof FormColumnForms );
         }
-        
+
     }
 }

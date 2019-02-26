@@ -169,7 +169,7 @@ public final class FormsConstants
 
     // Actions forms
     public static final String ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG = "multiviewConfig";
-    
+
     // Other
     public static final String FORM_DEFAULT_END_MESSAGE = "forms.message.form.submitted";
     public static final String SEPARATOR_UNDERSCORE = "_";

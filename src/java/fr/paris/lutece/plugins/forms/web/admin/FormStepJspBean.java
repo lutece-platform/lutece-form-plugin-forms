@@ -147,7 +147,7 @@ public class FormStepJspBean extends AbstractJspBean
      *            The HTTP request
      * @return The page
      * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
-     *            Access denied is user isnt authorized by RBAC
+     *             Access denied is user isnt authorized by RBAC
      */
     @View( value = VIEW_MANAGE_STEPS, defaultView = true )
     public String getManageSteps( HttpServletRequest request ) throws AccessDeniedException
@@ -163,8 +163,8 @@ public class FormStepJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
 
         }
-        
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request);
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request );
 
         Form formParent = FormHome.findByPrimaryKey( nIdForm );
         _step = new Step( );

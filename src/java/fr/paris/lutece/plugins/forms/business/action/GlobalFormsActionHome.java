@@ -55,7 +55,6 @@ public final class GlobalFormsActionHome
     {
     }
 
-
     /**
      * Load the list of all form actions
      * 
@@ -71,7 +70,7 @@ public final class GlobalFormsActionHome
 
         return (List<GlobalFormsAction>) I18nService.localizeCollection( listFormActions, locale );
     }
-    
+
     /**
      * Load the list of all form actions
      * 

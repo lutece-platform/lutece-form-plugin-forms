@@ -174,21 +174,23 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     {
         return redirect( request, getJspManageForm( request ) );
     }
-    
+
     /**
      * Check is user is authorized to access to given permission, on given resource and ressource Type. Throws AccessDeniedException if he isnt
+     * 
      * @param strRessourceType
-     *                  The resource type code
+     *            The resource type code
      * @param strResource
-     *                  The resource
+     *            The resource
      * @param strPermissionName
-     *                  The permission name
+     *            The permission name
      * @param request
-     *                  The HttpServletRequest
-     * @throws AccessDeniedException 
-     *                  An access denied exception
+     *            The HttpServletRequest
+     * @throws AccessDeniedException
+     *             An access denied exception
      */
-    protected void checkUserPermission( String strRessourceType, String strResource, String strPermissionName, HttpServletRequest request ) throws AccessDeniedException
+    protected void checkUserPermission( String strRessourceType, String strResource, String strPermissionName, HttpServletRequest request )
+            throws AccessDeniedException
     {
         if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, AdminUserService.getAdminUser( request ) ) )
         {

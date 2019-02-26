@@ -179,15 +179,17 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Build the model
         Map<String, Object> model = getPaginatedListModel( request, Paginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ) );
-        
-        //Get the config multiview action if the current admin user is authorized
-        GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG, FormsPlugin.getPlugin(), request.getLocale( ) );
-        
-        if ( RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION, AdminUserService.getAdminUser( request ) ) )
+
+        // Get the config multiview action if the current admin user is authorized
+        GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG,
+                FormsPlugin.getPlugin( ), request.getLocale( ) );
+
+        if ( RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
+                AdminUserService.getAdminUser( request ) ) )
         {
             model.put( FormsConstants.MARK_MULTIVIEW_CONFIG_ACTION, multiviewConfigAction );
         }
-        
+
         model.put( MARK_PAGINATOR, getPaginator( ) );
         model.put( MARK_LOCALE, getLocale( ) );
         model.put( MARK_FORM_FILTER_LIST, _listFormFilterDisplay );
@@ -227,59 +229,59 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             download( arrByteExportFile, I18nService.getLocalizedString( EXPORT_FILE_NAME, getLocale( ) ), formatExport.getFormatContentType( ) );
         }
     }
-    
+
     /**
      * View the multiview config page
      * 
      * @param request
      *            The HTTP request
-     * @return 
-     *            The multiview config page
+     * @return The multiview config page
      * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
      */
     @View( value = VIEW_MULTIVIEW_CONFIG )
     public String getMultiviewConfig( HttpServletRequest request ) throws AccessDeniedException
     {
-        GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG, FormsPlugin.getPlugin(), request.getLocale( ) );
-        if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION, AdminUserService.getAdminUser( request ) ) )
+        GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG,
+                FormsPlugin.getPlugin( ), request.getLocale( ) );
+        if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
+                AdminUserService.getAdminUser( request ) ) )
         {
             throw new AccessDeniedException( );
         }
-        
-        
-        MultiviewConfig config = MultiviewConfig.getInstance();
-        
-        Map<String,Object> model = getModel();
+
+        MultiviewConfig config = MultiviewConfig.getInstance( );
+
+        Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_MULTIVIEW_CONFIG, config );
-        
+
         return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW_CONFIG, model );
     }
-    
+
     /**
      * View the multiview config page
      * 
      * @param request
      *            The HTTP request
-     * @return 
-     *            The multiview config page
+     * @return The multiview config page
      */
     @Action( value = ACTION_SAVE_MULTIVIEW_CONFIG )
-    public String doSaveMultiviewConfig( HttpServletRequest request )  throws AccessDeniedException
+    public String doSaveMultiviewConfig( HttpServletRequest request ) throws AccessDeniedException
     {
-        GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG, FormsPlugin.getPlugin(), request.getLocale( ) );
-        if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION, AdminUserService.getAdminUser( request ) ) )
+        GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG,
+                FormsPlugin.getPlugin( ), request.getLocale( ) );
+        if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
+                AdminUserService.getAdminUser( request ) ) )
         {
             throw new AccessDeniedException( );
         }
-        
-        
-        MultiviewConfig config = MultiviewConfig.getInstance();
-        
+
+        MultiviewConfig config = MultiviewConfig.getInstance( );
+
         String strDisplayFormColumnTitle = request.getParameter( PARAMETER_DISPLAY_FORMS_TITLE_COLUMN );
         config.setDisplayFormsTitleColumn( strDisplayFormColumnTitle != null );
-        
+
         config.save( );
-        
+
         return redirectView( request, VIEW_MULTIVIEW_FORMS );
     }
 

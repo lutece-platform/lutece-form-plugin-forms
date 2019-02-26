@@ -85,10 +85,10 @@ public class FormsResourceIdService extends ResourceIdService
 
     /** Permission for view a form response **/
     public static final String PERMISSION_VIEW_FORM_RESPONSE = "VIEW_FORM_RESPONSE";
-    
+
     /** Permission for edit form steps **/
     public static final String PERMISSION_MODIFY_PARAMS = "PARAM";
-    
+
     private static final String PROPERTY_LABEL_RESOURCE_TYPE = "forms.permission.label.resourceType";
     private static final String PROPERTY_LABEL_CREATE = "forms.permission.label.create";
     private static final String PROPERTY_LABEL_TEST = "forms.permission.label.test";
@@ -131,58 +131,44 @@ public class FormsResourceIdService extends ResourceIdService
         permission.setPermissionKey( PERMISSION_MODIFY );
         permission.setPermissionTitleKey( PROPERTY_LABEL_MODIFY );
         resourceType.registerPermission( permission );
-        
+
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_DELETE );
         permission.setPermissionTitleKey( PROPERTY_LABEL_DELETE );
         resourceType.registerPermission( permission );
-        
+
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_VIEW_FORM_RESPONSE );
         permission.setPermissionTitleKey( PROPERTY_LABEL_VIEW_FORM_RESPONSE );
         resourceType.registerPermission( permission );
-        
+
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_MODIFY_PARAMS );
         permission.setPermissionTitleKey( PROPERTY_LABEL_EDIT_PARAMS );
         resourceType.registerPermission( permission );
 
         /*
-        permission = new Permission( );
-        permission.setPermissionKey( PERMISSION_COPY );
-        permission.setPermissionTitleKey( PROPERTY_LABEL_COPY );
-        resourceType.registerPermission( permission );
-
-        permission = new Permission( );
-        permission.setPermissionKey( PERMISSION_TEST );
-        permission.setPermissionTitleKey( PROPERTY_LABEL_TEST );
-        resourceType.registerPermission( permission );
-        
-        permission = new Permission( );
-        permission.setPermissionKey( PERMISSION_CHANGE_STATE );
-        permission.setPermissionTitleKey( PROPERTY_LABEL_CHANGE_STATE );
-        resourceType.registerPermission( permission );
-
-        permission = new Permission( );
-        permission.setPermissionKey( PERMISSION_MANAGE_VALIDATOR );
-        permission.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_VALIDATOR );
-        resourceType.registerPermission( permission );
-
-        permission = new Permission( );
-        permission.setPermissionKey( PERMISSION_VIEW_RESULT );
-        permission.setPermissionTitleKey( PROPERTY_LABEL_VIEW_RESULT );
-        resourceType.registerPermission( permission );
-        
-        permission = new Permission( );
-        permission.setPermissionKey( PERMISSION_MANAGE_FORM_RESPONSE );
-        permission.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_FORM_RESPONSE );
-        resourceType.registerPermission( permission );
-
-        permission = new Permission( );
-        permission.setPermissionKey( PERMISSION_MODIFY_FORM_RESPONSE );
-        permission.setPermissionTitleKey( PROPERTY_LABEL_MODIFY_FORM_RESPONSE );
-        resourceType.registerPermission( permission );
-        */
+         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_COPY ); permission.setPermissionTitleKey( PROPERTY_LABEL_COPY );
+         * resourceType.registerPermission( permission );
+         * 
+         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_TEST ); permission.setPermissionTitleKey( PROPERTY_LABEL_TEST );
+         * resourceType.registerPermission( permission );
+         * 
+         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_CHANGE_STATE ); permission.setPermissionTitleKey( PROPERTY_LABEL_CHANGE_STATE
+         * ); resourceType.registerPermission( permission );
+         * 
+         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_MANAGE_VALIDATOR ); permission.setPermissionTitleKey(
+         * PROPERTY_LABEL_MANAGE_VALIDATOR ); resourceType.registerPermission( permission );
+         * 
+         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_VIEW_RESULT ); permission.setPermissionTitleKey( PROPERTY_LABEL_VIEW_RESULT
+         * ); resourceType.registerPermission( permission );
+         * 
+         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_MANAGE_FORM_RESPONSE ); permission.setPermissionTitleKey(
+         * PROPERTY_LABEL_MANAGE_FORM_RESPONSE ); resourceType.registerPermission( permission );
+         * 
+         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_MODIFY_FORM_RESPONSE ); permission.setPermissionTitleKey(
+         * PROPERTY_LABEL_MODIFY_FORM_RESPONSE ); resourceType.registerPermission( permission );
+         */
 
         ResourceTypeManager.registerResourceType( resourceType );
     }

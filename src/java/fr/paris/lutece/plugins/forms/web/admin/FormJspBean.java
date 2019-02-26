@@ -219,7 +219,7 @@ public class FormJspBean extends AbstractJspBean
      *            The Http request
      * @return the html code of the form form
      * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
-     *            the possible AccessDeniedException
+     *             the possible AccessDeniedException
      */
     @View( VIEW_CREATE_FORM )
     public String getCreateForm( HttpServletRequest request ) throws AccessDeniedException
@@ -284,7 +284,7 @@ public class FormJspBean extends AbstractJspBean
      *            The Http request
      * @return the html code to confirm
      * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
-     *                      Access denied exception if user isn't authorized
+     *             Access denied exception if user isn't authorized
      */
     @View( VIEW_CONFIRM_REMOVE_FORM )
     public String getConfirmRemoveForm( HttpServletRequest request ) throws AccessDeniedException
@@ -300,8 +300,8 @@ public class FormJspBean extends AbstractJspBean
 
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request);
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request );
 
         Form formToBeDeleted = FormHome.findByPrimaryKey( nId );
         String strConfirmRemoveMessage = formToBeDeleted.isActive( ) ? MESSAGE_CONFIRM_REMOVE_ACTIVE_FORM : MESSAGE_CONFIRM_REMOVE_FORM;
@@ -372,7 +372,7 @@ public class FormJspBean extends AbstractJspBean
      *            The Http request
      * @return the jsp URL to display the form to manage forms
      * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
-     *           AccessDeniedException if user isn't authorized to delete the form
+     *             AccessDeniedException if user isn't authorized to delete the form
      */
     @Action( ACTION_REMOVE_FORM )
     public String doRemoveForm( HttpServletRequest request ) throws AccessDeniedException
@@ -388,8 +388,8 @@ public class FormJspBean extends AbstractJspBean
 
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request);
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request );
 
         FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
         formService.removeForm( nId, getUser( ) );
@@ -406,7 +406,7 @@ public class FormJspBean extends AbstractJspBean
      *            The Http request
      * @return The HTML form to update info
      * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
-     *           Access denied exception if the user isn't authorized to view the form config page
+     *             Access denied exception if the user isn't authorized to view the form config page
      */
     @View( VIEW_MODIFY_FORM )
     public String getModifyForm( HttpServletRequest request ) throws AccessDeniedException
@@ -417,8 +417,8 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request);
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -472,7 +472,7 @@ public class FormJspBean extends AbstractJspBean
      *            The Http request
      * @return The HTML form to update info
      * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
-     *           Access denied exception if the user isn't authorized to view the form config page
+     *             Access denied exception if the user isn't authorized to view the form config page
      */
     @View( VIEW_MODIFY_PUBLICATION )
     public String getModifyFormPublication( HttpServletRequest request ) throws AccessDeniedException
@@ -483,8 +483,7 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request);
-        
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -512,7 +511,7 @@ public class FormJspBean extends AbstractJspBean
      *            The Http request
      * @return The Jsp URL of the process result
      * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
-     *            AccessDeniedException if the user isn'y authorized to process the modification of params of a form
+     *             AccessDeniedException if the user isn'y authorized to process the modification of params of a form
      */
     @Action( ACTION_MODIFY_FORM )
     public String doModifyForm( HttpServletRequest request ) throws AccessDeniedException
@@ -528,8 +527,8 @@ public class FormJspBean extends AbstractJspBean
             addError( ERROR_FORM_NOT_UPDATED, getLocale( ) );
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request);
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
 
         _form = FormHome.findByPrimaryKey( nId );
 
@@ -588,5 +587,5 @@ public class FormJspBean extends AbstractJspBean
         return bIsFormValid;
 
     }
-    
+
 }

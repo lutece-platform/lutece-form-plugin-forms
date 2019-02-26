@@ -128,7 +128,6 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
 
         if ( refListForms.size( ) > 2 )
         {
-            
 
             Map<String, Object> model = new LinkedHashMap<>( );
             model.put( MARK_FILTER_LIST, refListForms );

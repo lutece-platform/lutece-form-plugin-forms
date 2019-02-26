@@ -52,14 +52,14 @@ public interface IGlobalFormsActionDAO
      * @return The Collection of actions
      */
     List<GlobalFormsAction> selectAllFormActions( Plugin plugin );
-    
+
     /**
      * Load the global action by its code
      * 
      * @param strCode
-     *              the code
+     *            the code
      * @return the global action corresponding to given code
      */
     GlobalFormsAction selectGlobalFormsActionByCode( String strCode, Plugin plugin, Locale locale );
-    
+
 }

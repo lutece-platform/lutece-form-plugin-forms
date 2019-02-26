@@ -43,11 +43,10 @@ import fr.paris.lutece.util.ReferenceList;
 import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 
-
 public class GlobalFormsActionIdService extends ResourceIdService
 {
-    
-    public GlobalFormsActionIdService()
+
+    public GlobalFormsActionIdService( )
     {
     }
 
@@ -55,15 +54,15 @@ public class GlobalFormsActionIdService extends ResourceIdService
      * {@inheritDoc}
      */
     @Override
-    public void register() 
+    public void register( )
     {
-        ResourceType rt = new ResourceType(  );
-        rt.setResourceIdServiceClass(GlobalFormsActionIdService.class.getName(  ) );
+        ResourceType rt = new ResourceType( );
+        rt.setResourceIdServiceClass( GlobalFormsActionIdService.class.getName( ) );
         rt.setPluginName( FormsPlugin.PLUGIN_NAME );
         rt.setResourceTypeKey( GlobalFormsAction.RESOURCE_TYPE_CODE );
         rt.setResourceTypeLabelKey( GlobalFormsAction.RESOURCE_TYPE_LABEL_KEY );
 
-        Permission p = new Permission(  );
+        Permission p = new Permission( );
         p.setPermissionKey( GlobalFormsAction.PERMISSION_PERFORM_ACTION );
         p.setPermissionTitleKey( GlobalFormsAction.PERMISSION_PERFORM_ACTION_LABEL_KEY );
         rt.registerPermission( p );
@@ -75,18 +74,18 @@ public class GlobalFormsActionIdService extends ResourceIdService
      * {@inheritDoc}
      */
     @Override
-    public ReferenceList getResourceIdList( Locale locale ) 
+    public ReferenceList getResourceIdList( Locale locale )
     {
-        ReferenceList refList = new ReferenceList();
-        
-        GlobalFormsActionHome.selectAllFormActions( FormsPlugin.getPlugin( ), locale).forEach( action -> {
+        ReferenceList refList = new ReferenceList( );
+
+        GlobalFormsActionHome.selectAllFormActions( FormsPlugin.getPlugin( ), locale ).forEach( action -> {
             ReferenceItem item = new ReferenceItem( );
             item.setCode( action.getCode( ) );
             item.setName( action.getName( ) );
-            
+
             refList.add( item );
-        });
-        
+        } );
+
         return refList;
     }
 
@@ -94,10 +93,10 @@ public class GlobalFormsActionIdService extends ResourceIdService
      * {@inheritDoc}
      */
     @Override
-    public String getTitle( String strCode, Locale locale ) 
+    public String getTitle( String strCode, Locale locale )
     {
-        GlobalFormsAction action = GlobalFormsActionHome.selectGlobalFormActionByCode( strCode, FormsPlugin.getPlugin( ), locale ); 
-        return ( action != null ) ? action.getName( ) : StringUtils.EMPTY ;
+        GlobalFormsAction action = GlobalFormsActionHome.selectGlobalFormActionByCode( strCode, FormsPlugin.getPlugin( ), locale );
+        return ( action != null ) ? action.getName( ) : StringUtils.EMPTY;
     }
-    
+
 }
