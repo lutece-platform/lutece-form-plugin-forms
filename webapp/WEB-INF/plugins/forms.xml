@@ -33,7 +33,7 @@
             <feature-id>FORMS_MANAGEMENT</feature-id>
             <feature-title>forms.adminFeature.manageForms.name</feature-title>
             <feature-description>forms.adminFeature.manageForms.description</feature-description>
-            <feature-level>0</feature-level>
+            <feature-level>1</feature-level>
             <feature-url>jsp/admin/plugins/forms/ManageForms.jsp</feature-url>
             <feature-icon-url/>
       </admin-feature>
@@ -70,6 +70,11 @@
         <rbac-resource-type>
             <rbac-resource-type-class>
                 fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionIdService
+            </rbac-resource-type-class>
+        </rbac-resource-type>
+        <rbac-resource-type>
+            <rbac-resource-type-class>
+                fr.paris.lutece.plugins.forms.service.FormsResourceIdService
             </rbac-resource-type-class>
         </rbac-resource-type>
     </rbac-resource-types>

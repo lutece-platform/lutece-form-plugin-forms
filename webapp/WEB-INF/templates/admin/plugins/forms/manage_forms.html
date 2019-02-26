@@ -67,9 +67,6 @@
                                         <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' class='${color} ${action.permission?lower_case}' showTitle=false buttonIcon=action.iconUrl color='btn-link' params=params />
                                     </#list>
                                 </#if>
-                                <a class="btn btn-link" href="jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&forms_id_form=${form.id}" title="#i18n{forms.manageForm.MultiviewLink.label} " target="_blank">
-                                    <i class="fa fa-list-alt fa-fw"></i>
-                                </a>
                                 <#if form.active>
                                     <a class="btn btn-link" href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" title="#i18n{forms.manageForm.FOLink.label} ${form.title}" target="_blank">
                                         <i class="fa fa-external-link fa-fw"></i>

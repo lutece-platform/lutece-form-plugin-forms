@@ -39,6 +39,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
@@ -170,5 +173,26 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected String redirectToViewManageForm( HttpServletRequest request )
     {
         return redirect( request, getJspManageForm( request ) );
+    }
+    
+    /**
+     * Check is user is authorized to access to given permission, on given resource and ressource Type. Throws AccessDeniedException if he isnt
+     * @param strRessourceType
+     *                  The resource type code
+     * @param strResource
+     *                  The resource
+     * @param strPermissionName
+     *                  The permission name
+     * @param request
+     *                  The HttpServletRequest
+     * @throws AccessDeniedException 
+     *                  An access denied exception
+     */
+    protected void checkUserPermission( String strRessourceType, String strResource, String strPermissionName, HttpServletRequest request ) throws AccessDeniedException
+    {
+        if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, AdminUserService.getAdminUser( request ) ) )
+        {
+            throw new AccessDeniedException( );
+        }
     }
 }

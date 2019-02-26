@@ -85,19 +85,23 @@ public class FormsResourceIdService extends ResourceIdService
 
     /** Permission for view a form response **/
     public static final String PERMISSION_VIEW_FORM_RESPONSE = "VIEW_FORM_RESPONSE";
-
-    private static final String PROPERTY_LABEL_RESOURCE_TYPE = "form.permission.label.resourceType";
-    private static final String PROPERTY_LABEL_CREATE = "form.permission.label.create";
-    private static final String PROPERTY_LABEL_TEST = "form.permission.label.test";
-    private static final String PROPERTY_LABEL_DELETE = "form.permission.label.delete";
-    private static final String PROPERTY_LABEL_MODIFY = "form.permission.label.modify";
-    private static final String PROPERTY_LABEL_COPY = "form.permission.label.copy";
-    private static final String PROPERTY_LABEL_VIEW_RESULT = "form.permission.label.viewResult";
-    private static final String PROPERTY_LABEL_CHANGE_STATE = "form.permission.label.changeState";
-    private static final String PROPERTY_LABEL_MANAGE_VALIDATOR = "form.permission.label.manageValidator";
-    private static final String PROPERTY_LABEL_MANAGE_FORM_RESPONSE = "form.permission.label.manageFormResponse";
-    private static final String PROPERTY_LABEL_MODIFY_FORM_RESPONSE = "form.permission.label.modifyFormResponse";
-    private static final String PROPERTY_LABEL_VIEW_FORM_RESPONSE = "form.permission.label.viewFormResponse";
+    
+    /** Permission for edit form steps **/
+    public static final String PERMISSION_MODIFY_PARAMS = "PARAM";
+    
+    private static final String PROPERTY_LABEL_RESOURCE_TYPE = "forms.permission.label.resourceType";
+    private static final String PROPERTY_LABEL_CREATE = "forms.permission.label.create";
+    private static final String PROPERTY_LABEL_TEST = "forms.permission.label.test";
+    private static final String PROPERTY_LABEL_DELETE = "forms.permission.label.delete";
+    private static final String PROPERTY_LABEL_MODIFY = "forms.permission.label.modify";
+    private static final String PROPERTY_LABEL_COPY = "forms.permission.label.copy";
+    private static final String PROPERTY_LABEL_VIEW_RESULT = "forms.permission.label.viewResult";
+    private static final String PROPERTY_LABEL_CHANGE_STATE = "forms.permission.label.changeState";
+    private static final String PROPERTY_LABEL_MANAGE_VALIDATOR = "forms.permission.label.manageValidator";
+    private static final String PROPERTY_LABEL_MANAGE_FORM_RESPONSE = "forms.permission.label.manageFormResponse";
+    private static final String PROPERTY_LABEL_MODIFY_FORM_RESPONSE = "forms.permission.label.modifyFormResponse";
+    private static final String PROPERTY_LABEL_VIEW_FORM_RESPONSE = "forms.permission.label.viewFormResponse";
+    private static final String PROPERTY_LABEL_EDIT_PARAMS = "forms.permission.label.editParams";
 
     /** Creates a new instance of DocumentTypeResourceIdService */
     public FormsResourceIdService( )
@@ -127,7 +131,23 @@ public class FormsResourceIdService extends ResourceIdService
         permission.setPermissionKey( PERMISSION_MODIFY );
         permission.setPermissionTitleKey( PROPERTY_LABEL_MODIFY );
         resourceType.registerPermission( permission );
+        
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_DELETE );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_DELETE );
+        resourceType.registerPermission( permission );
+        
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_VIEW_FORM_RESPONSE );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_VIEW_FORM_RESPONSE );
+        resourceType.registerPermission( permission );
+        
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_MODIFY_PARAMS );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_EDIT_PARAMS );
+        resourceType.registerPermission( permission );
 
+        /*
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_COPY );
         permission.setPermissionTitleKey( PROPERTY_LABEL_COPY );
@@ -137,7 +157,7 @@ public class FormsResourceIdService extends ResourceIdService
         permission.setPermissionKey( PERMISSION_TEST );
         permission.setPermissionTitleKey( PROPERTY_LABEL_TEST );
         resourceType.registerPermission( permission );
-
+        
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_CHANGE_STATE );
         permission.setPermissionTitleKey( PROPERTY_LABEL_CHANGE_STATE );
@@ -152,12 +172,7 @@ public class FormsResourceIdService extends ResourceIdService
         permission.setPermissionKey( PERMISSION_VIEW_RESULT );
         permission.setPermissionTitleKey( PROPERTY_LABEL_VIEW_RESULT );
         resourceType.registerPermission( permission );
-
-        permission = new Permission( );
-        permission.setPermissionKey( PERMISSION_DELETE );
-        permission.setPermissionTitleKey( PROPERTY_LABEL_DELETE );
-        resourceType.registerPermission( permission );
-
+        
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_MANAGE_FORM_RESPONSE );
         permission.setPermissionTitleKey( PROPERTY_LABEL_MANAGE_FORM_RESPONSE );
@@ -167,11 +182,7 @@ public class FormsResourceIdService extends ResourceIdService
         permission.setPermissionKey( PERMISSION_MODIFY_FORM_RESPONSE );
         permission.setPermissionTitleKey( PROPERTY_LABEL_MODIFY_FORM_RESPONSE );
         resourceType.registerPermission( permission );
-
-        permission = new Permission( );
-        permission.setPermissionKey( PERMISSION_VIEW_FORM_RESPONSE );
-        permission.setPermissionTitleKey( PROPERTY_LABEL_VIEW_FORM_RESPONSE );
-        resourceType.registerPermission( permission );
+        */
 
         ResourceTypeManager.registerResourceType( resourceType );
     }

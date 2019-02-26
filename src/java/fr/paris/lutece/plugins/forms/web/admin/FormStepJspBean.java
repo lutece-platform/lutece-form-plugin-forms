@@ -42,7 +42,9 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.StepService;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -144,9 +146,11 @@ public class FormStepJspBean extends AbstractJspBean
      * @param request
      *            The HTTP request
      * @return The page
+     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     *            Access denied is user isnt authorized by RBAC
      */
     @View( value = VIEW_MANAGE_STEPS, defaultView = true )
-    public String getManageSteps( HttpServletRequest request )
+    public String getManageSteps( HttpServletRequest request ) throws AccessDeniedException
     {
         int nIdForm = -1;
         try
@@ -159,6 +163,8 @@ public class FormStepJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
 
         }
+        
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request);
 
         Form formParent = FormHome.findByPrimaryKey( nIdForm );
         _step = new Step( );

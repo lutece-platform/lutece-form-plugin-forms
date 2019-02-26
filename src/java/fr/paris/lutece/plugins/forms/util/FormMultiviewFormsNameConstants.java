@@ -45,7 +45,7 @@ public final class FormMultiviewFormsNameConstants
     public static final String COLUMN_FORM_TITLE = "title";
 
     // Parameters
-    public static final String PARAMETER_ID_FORM = "forms_id_form";
+    public static final String PARAMETER_ID_FORM = "id_form";
     public static final String PARAMETER_PREVIOUS_ID_FORM = "forms_previous_id_form";
 
     /**
