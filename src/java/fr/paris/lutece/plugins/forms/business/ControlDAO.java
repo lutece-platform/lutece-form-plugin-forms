@@ -280,10 +280,10 @@ public final class ControlDAO implements IControlDAO
      * {@inheritDoc }
      */
     @Override
-    public List<Control> selectControlByQuestion(int nIdQuestion, Plugin plugin) 
+    public List<Control> selectControlByQuestion( int nIdQuestion, Plugin plugin )
     {
         List<Control> controlList = new ArrayList<Control>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_QUESTION , plugin );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_QUESTION, plugin );
         daoUtil.setInt( 1, nIdQuestion );
         daoUtil.executeQuery( );
 

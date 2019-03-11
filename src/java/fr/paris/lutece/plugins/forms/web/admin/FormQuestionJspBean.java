@@ -651,7 +651,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         return null;
 
     }
-    
+
     /**
      * Perform the Question creation with its Entry
      * 
@@ -663,7 +663,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     {
         int nIdStep = INTEGER_MINUS_ONE;
         int nIdQuestion = INTEGER_MINUS_ONE;
-        
+
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_TARGET );
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         Question questionToCopy = null;
@@ -673,44 +673,40 @@ public class FormQuestionJspBean extends AbstractJspBean
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
 
-
         if ( ( strIdQuestion != null ) && !strIdQuestion.equals( EMPTY_STRING ) )
         {
             nIdQuestion = Integer.parseInt( strIdQuestion );
         }
 
-        //Get the question to copy and clone it
+        // Get the question to copy and clone it
         try
         {
             _question = QuestionHome.findByPrimaryKey( nIdQuestion );
-            questionToCopy = _question.clone();
+            questionToCopy = _question.clone( );
             questionToCopy.setEntry( _question.getEntry( ) );
         }
-        catch ( CloneNotSupportedException e )
+        catch( CloneNotSupportedException e )
         {
             AppLogService.error( "Unable to clone question with id " + nIdQuestion, e );
         }
-        
-        //Create a duplicated entry
+
+        // Create a duplicated entry
         Entry duplicatedEntry = EntryHome.copy( _question.getEntry( ) );
         duplicatedEntry.setTitle( "Copie de " + duplicatedEntry.getTitle( ) );
         duplicatedEntry.setPosition( duplicatedEntry.getPosition( ) + 1 );
         EntryHome.update( duplicatedEntry );
-        
+
         // Get the question controls
         List<Control> listControlsToDuplicate = ControlHome.getControlByQuestion( _question.getId( ) );
-        
+
         FormDisplay formDisplayToCopy = FormDisplayHome.getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ), _question.getId( ) );
 
-        
         questionToCopy.setEntry( duplicatedEntry );
         questionToCopy.setIdEntry( duplicatedEntry.getIdEntry( ) );
         questionToCopy.setTitle( "Copie de " + questionToCopy.getTitle( ) );
-        
-        QuestionHome.create( questionToCopy );
-        
 
-        
+        QuestionHome.create( questionToCopy );
+
         // Duplicates the controls of the question
         for ( Control control : listControlsToDuplicate )
         {
@@ -718,11 +714,11 @@ public class FormQuestionJspBean extends AbstractJspBean
             control.setIdControlTarget( questionToCopy.getId( ) );
             ControlHome.create( control );
         }
-        
+
         if ( questionToCopy.getId( ) != INTEGER_MINUS_ONE )
         {
             FormDisplay formDisplay = new FormDisplay( );
-            formDisplay.setDisplayOrder( formDisplayToCopy.getDisplayOrder() + 1 );
+            formDisplay.setDisplayOrder( formDisplayToCopy.getDisplayOrder( ) + 1 );
             formDisplay.setFormId( _step.getIdForm( ) );
             formDisplay.setStepId( questionToCopy.getIdStep( ) );
             formDisplay.setParentId( formDisplayToCopy.getParentId( ) );
@@ -731,7 +727,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             formDisplay.setDepth( formDisplayToCopy.getDepth( ) );
             FormDisplayHome.create( formDisplay );
         }
-        
+
         return null;
     }
 
@@ -945,11 +941,12 @@ public class FormQuestionJspBean extends AbstractJspBean
                 _question.getId( ) );
 
     }
-    
+
     /**
      * Action for duplicate a question of the form
+     * 
      * @param request
-     *              The HttpServletRequest the request
+     *            The HttpServletRequest the request
      * @return the manage questions page
      */
     @Action( value = ACTION_DUPLICATE_QUESTION )
