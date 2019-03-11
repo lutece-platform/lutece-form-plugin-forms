@@ -177,4 +177,16 @@ public final class ControlHome
     {
         return _dao.selectControlByQuestionAndType( nIdQuestion, strControlType, _plugin );
     }
+    
+    /**
+     * Loads control list based on its attached question and control type
+     * 
+     * @param nIdQuestion
+     *            the question id
+     * @return the requested Control list
+     */
+    public static List<Control> getControlByQuestion( int nIdQuestion)
+    {
+        return _dao.selectControlByQuestion( nIdQuestion, _plugin );
+    }
 }

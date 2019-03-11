@@ -274,11 +274,6 @@
 		<constructor-arg name="nPosition" type="int" value="3"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Cr&#233;&#233;e depuis..."/>
 	</bean>
-<!--	<bean id="forms.firstName.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration">
-		<constructor-arg name="nPosition" type="int" value="4"/>
-		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Pr&#233;nom..."/>
-		<constructor-arg name="formColumn" type="fr.paris.lutece.plugins.forms.business.form.column.IFormColumn" ref="forms.firstName.column"/>
-	</bean>-->
         <bean id="forms.searchedText.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration">
 		<constructor-arg name="nPosition" type="int" value="5"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Texte"/>

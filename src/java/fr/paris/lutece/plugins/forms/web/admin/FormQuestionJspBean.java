@@ -47,6 +47,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
+import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
@@ -76,6 +78,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -134,6 +137,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String ACTION_MODIFY_GROUP = "modifyGroup";
     private static final String ACTION_MOVE_COMPOSITE = "moveComposite";
     private static final String ACTION_REMOVE_COMPOSITE = "removeComposite";
+    private static final String ACTION_DUPLICATE_QUESTION = "duplicateQuestion";
 
     // Markers
     private static final String MARK_WEBAPP_URL = "webapp_url";
@@ -165,6 +169,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String INFO_GROUP_CREATED = "forms.info.group.created";
     private static final String INFO_MOVE_COMPOSITE_SUCCESSFUL = "forms.info.moveComposite.successful";
     private static final String INFO_DELETE_COMPOSITE_SUCCESSFUL = "forms.info.deleteComposite.successful";
+    private static final String INFO_QUESTION_DUPLICATED = "forms.info.question.duplicated";
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
 
     // Warning messages
@@ -646,6 +651,89 @@ public class FormQuestionJspBean extends AbstractJspBean
         return null;
 
     }
+    
+    /**
+     * Perform the Question creation with its Entry
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL to display error message after performing the action or null if no error occurred
+     */
+    private String processQuestionDuplication( HttpServletRequest request )
+    {
+        int nIdStep = INTEGER_MINUS_ONE;
+        int nIdQuestion = INTEGER_MINUS_ONE;
+        
+        String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_TARGET );
+        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        Question questionToCopy = null;
+
+        if ( ( _step == null ) || nIdStep != _step.getId( ) )
+        {
+            _step = StepHome.findByPrimaryKey( nIdStep );
+        }
+
+
+        if ( ( strIdQuestion != null ) && !strIdQuestion.equals( EMPTY_STRING ) )
+        {
+            nIdQuestion = Integer.parseInt( strIdQuestion );
+        }
+
+        //Get the question to copy and clone it
+        try
+        {
+            _question = QuestionHome.findByPrimaryKey( nIdQuestion );
+            questionToCopy = _question.clone();
+            questionToCopy.setEntry( _question.getEntry( ) );
+        }
+        catch ( CloneNotSupportedException e )
+        {
+            AppLogService.error( "Unable to clone question with id " + nIdQuestion, e );
+        }
+        
+        //Create a duplicated entry
+        Entry duplicatedEntry = EntryHome.copy( _question.getEntry( ) );
+        duplicatedEntry.setTitle( "Copie de " + duplicatedEntry.getTitle( ) );
+        duplicatedEntry.setPosition( duplicatedEntry.getPosition( ) + 1 );
+        EntryHome.update( duplicatedEntry );
+        
+        // Get the question controls
+        List<Control> listControlsToDuplicate = ControlHome.getControlByQuestion( _question.getId( ) );
+        
+        FormDisplay formDisplayToCopy = FormDisplayHome.getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ), _question.getId( ) );
+
+        
+        questionToCopy.setEntry( duplicatedEntry );
+        questionToCopy.setIdEntry( duplicatedEntry.getIdEntry( ) );
+        questionToCopy.setTitle( "Copie de " + questionToCopy.getTitle( ) );
+        
+        QuestionHome.create( questionToCopy );
+        
+
+        
+        // Duplicates the controls of the question
+        for ( Control control : listControlsToDuplicate )
+        {
+            control.setIdQuestion( questionToCopy.getId( ) );
+            control.setIdControlTarget( questionToCopy.getId( ) );
+            ControlHome.create( control );
+        }
+        
+        if ( questionToCopy.getId( ) != INTEGER_MINUS_ONE )
+        {
+            FormDisplay formDisplay = new FormDisplay( );
+            formDisplay.setDisplayOrder( formDisplayToCopy.getDisplayOrder() + 1 );
+            formDisplay.setFormId( _step.getIdForm( ) );
+            formDisplay.setStepId( questionToCopy.getIdStep( ) );
+            formDisplay.setParentId( formDisplayToCopy.getParentId( ) );
+            formDisplay.setCompositeId( questionToCopy.getId( ) );
+            formDisplay.setCompositeType( CompositeDisplayType.QUESTION.getLabel( ) );
+            formDisplay.setDepth( formDisplayToCopy.getDepth( ) );
+            FormDisplayHome.create( formDisplay );
+        }
+        
+        return null;
+    }
 
     /**
      * Gets the Question entry modification page
@@ -856,6 +944,28 @@ public class FormQuestionJspBean extends AbstractJspBean
         return redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
                 _question.getId( ) );
 
+    }
+    
+    /**
+     * Action for duplicate a question of the form
+     * @param request
+     *              The HttpServletRequest the request
+     * @return the manage questions page
+     */
+    @Action( value = ACTION_DUPLICATE_QUESTION )
+    public String doDuplicateQuestion( HttpServletRequest request )
+    {
+        String strReturnUrl = processQuestionDuplication( request );
+
+        if ( strReturnUrl != null )
+        {
+            return redirect( request, strReturnUrl );
+        }
+        else
+        {
+            addInfo( INFO_QUESTION_DUPLICATED, getLocale( ) );
+        }
+        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
     }
 
     /**

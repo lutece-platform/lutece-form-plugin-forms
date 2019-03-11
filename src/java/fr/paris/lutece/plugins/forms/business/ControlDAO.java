@@ -51,6 +51,7 @@ public final class ControlDAO implements IControlDAO
     private static final String SQL_QUERY_SELECTALL = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_control_target FROM forms_control";
 
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_control = ?";
+    private static final String SQL_QUERY_SELECT_BY_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_question = ?";
     private static final String SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE = SQL_QUERY_SELECTALL + " WHERE id_question = ? AND control_type = ?";
     private static final String SQL_QUERY_SELECT_BY_CONTROL_TARGET = SQL_QUERY_SELECTALL + " WHERE id_control_target = ? AND control_type = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, id_question, validator_name, control_type, id_control_target ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
@@ -273,6 +274,26 @@ public final class ControlDAO implements IControlDAO
         control.setIdControlTarget( daoUtil.getInt( "id_control_target" ) );
 
         return control;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<Control> selectControlByQuestion(int nIdQuestion, Plugin plugin) 
+    {
+        List<Control> controlList = new ArrayList<Control>( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_QUESTION , plugin );
+        daoUtil.setInt( 1, nIdQuestion );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            controlList.add( dataToObject( daoUtil ) );
+        }
+
+        daoUtil.close( );
+        return controlList;
     }
 
 }

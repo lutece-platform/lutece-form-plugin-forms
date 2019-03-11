@@ -255,8 +255,6 @@ public class Question implements Serializable, Cloneable
 
     /**
      * {@inheritDoc}
-     * 
-     * @throws CloneNotSupportedException
      */
     @Override
     public Question clone( ) throws CloneNotSupportedException

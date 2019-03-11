@@ -153,4 +153,15 @@ public interface IControlDAO
      */
     List<Control> selectControlByQuestionAndType( int nIdQuestion, String strControlType, Plugin plugin );
 
+    /**
+     * Select control list based on its attached question and control type
+     * 
+     * @param nIdQuestion
+     *            the question id
+     * @param plugin
+     *            the Plugin
+     * @return The control
+     */
+    List<Control> selectControlByQuestion( int nIdQuestion, Plugin plugin );
+
 }

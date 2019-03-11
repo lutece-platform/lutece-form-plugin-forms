@@ -102,6 +102,7 @@
                                                 </#if>
                                                 <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' class='btn-iframe' title='#i18n{forms.manage_questions.action.move}' showTitle=false buttonIcon='arrows-alt' color='btn-link' />
                                                 <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn-iframe'  title='#i18n{forms.manage_questions.action.control}' params=group?then('style="visibility:hidden;"','') showTitle=false buttonIcon='check' color='btn-link' />
+                                                <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=duplicateQuestion&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}' class='btn-into'  title='#i18n{forms.manage_questions.action.copy}' params=group?then('style="visibility:hidden;"','') showTitle=false buttonIcon='copy' color='btn-link' />
                                             </td>
                                             <td class="<#if group>bg-gray</#if>" style="vertical-align: middle"><#if group><i class="fa fa-minus-square-o fa-fw group-toggle"></i></#if></td>
                                         </tr>
