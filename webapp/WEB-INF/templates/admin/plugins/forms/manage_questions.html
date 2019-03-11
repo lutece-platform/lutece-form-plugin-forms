@@ -66,6 +66,8 @@
                                     <#list composite_list as composite>
                                     	<#assign group=composite.type == 'group' />
                                         <tr <#if group>class="group"</#if>>
+                                            <input type="hidden" name="own_display_id_parent"  value="${composite.formDisplay.parentId}" >
+                                            <input type="hidden" name="own_display_id_composite"  value="${composite.formDisplay.id}" >
                                             <td class="col-xs-2 col-sm-1 <#if group>bg-gray</#if>">
                                                 <#assign parentd>parent_${composite.formDisplay.id}</#assign>
                                                 <#if group>
@@ -147,7 +149,8 @@
 <script>
 $( function(){
     $('.group-toggle').click( function(){
-        $(this).parents('.group').nextUntil('.group').toggle();
+        var nIdGroup = $(this).parents('.group').find("input[name='own_display_id_composite']").val();
+        $('input[name="own_display_id_parent"][value="' + nIdGroup + '"]').parents('tr').toggle();
         $(this).toggleClass(' fa-minus-square-o').toggleClass('fa-plus-square-o');
     });
     var isOpen=false;
