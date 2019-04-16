@@ -82,8 +82,8 @@ public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
         if ( daoUtil.next( ) )
         {
             globalAction = dataToObject( daoUtil );
+            globalAction.setLocale( locale );
         }
-        globalAction.setLocale( locale );
 
         daoUtil.close( );
 
