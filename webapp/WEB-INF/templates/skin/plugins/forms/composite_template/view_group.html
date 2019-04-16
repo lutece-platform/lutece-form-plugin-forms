@@ -1,6 +1,5 @@
 <#assign indexGroup=-1>
 <#assign indexIteration=0>
-<#assign nbIterationMin=group.iterationMin>
 <div class="row">
 	<div class="col-xs-12 col-sm-12">
 		<hr>			
@@ -27,11 +26,11 @@
 					<div class="helpBox">${group.description}</div>
 				</#if>
 				<#assign indexGroup=indexIteration>
-                                <#if indexIteration gte nbIterationMin>
-                                    <button class="btn btn-danger"  name="action_removeIteration" value="${group.id}_${indexIteration}" type="submit">
-                                            <i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!}
-                                    </button>
-                                </#if>
+				<#if nbTotalIteration &gt; 1> 
+					<button class="btn btn-danger" name="action_removeIteration" value="${group.id}_${indexIteration}" type="submit">
+						<i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!} 
+					</button>
+				</#if>
 				</legend>	
 		</#if>
 					
