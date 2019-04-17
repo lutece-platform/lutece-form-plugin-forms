@@ -38,6 +38,7 @@ INSERT INTO forms_global_action (id_action, code, name_key, description_key, act
 
 INSERT INTO core_datastore ( entity_key, entity_value ) VALUES
     ( 'forms.display.form.columnTitle', 'true' );
+<<<<<<< HEAD
 
 ALTER TABLE forms_question ADD COLUMN code varchar(100) default '' NOT NULL;
 
@@ -71,3 +72,5 @@ CREATE INDEX idx_frs_id_form_response on forms_response_step  ( id_form_response
 CREATE INDEX idx_frs_id_step on forms_response_step  ( id_step );
 CREATE INDEX idx_frs_id_form_response on forms_indexer_action  ( id_form_response );
 CREATE INDEX idx_frs_id_task on forms_indexer_action  ( id_task );
+INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
+('117', 'Lecture automatique fichier', 0, 0, 0, 'forms.entryTypeAutomaticFileReading', 'file', 'forms');
