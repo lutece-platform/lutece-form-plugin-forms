@@ -92,6 +92,7 @@
 	<bean id="forms.entryTypeMyLuteceUserattribute" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUserAttribute" />
 	<bean id="forms.entryTypeArray" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeArray" />
     <bean id="forms.entryTypeTermsOfService" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService" />
+    <bean id="forms.entryTypeAutomaticFileReading" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading" />
 
 	<!-- DisplayService -->
 	<bean id="forms.entryTypeCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
@@ -138,6 +139,9 @@
 	</bean>
     <bean id="forms.entryTypeTermsOfSerciceDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeTermsOfService" />
+    </bean>
+    <bean id="forms.entryTypeAutomaticFileReadingDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultAutomaticFileReading">
+        <constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
     </bean>
 	
 	<!-- DataService -->
