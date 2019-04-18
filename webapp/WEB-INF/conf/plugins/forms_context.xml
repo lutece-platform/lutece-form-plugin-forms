@@ -140,9 +140,9 @@
     <bean id="forms.entryTypeTermsOfSerciceDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeTermsOfService" />
     </bean>
-    <bean id="forms.entryTypeAutomaticFileReadingDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultAutomaticFileReading">
-        <constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
-    </bean>
+    <bean id="forms.entryTypeAutomaticFileReadingDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileReadingDisplayService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
+	</bean>
 	
 	<!-- DataService -->
 	<bean id="forms.entryTypeCheckBoxDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
@@ -193,6 +193,9 @@
     <bean id="forms.entryTypeTermsOfServiceDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeTermsOfService" />
     </bean>
+    <bean id="forms.entryTypeAutomaticFileReadingDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileReadingDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
+	</bean>
 		
 	<bean id="forms.asynchronousUploadHandler" class="fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler" />
 	
