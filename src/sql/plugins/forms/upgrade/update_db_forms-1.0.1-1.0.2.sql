@@ -41,3 +41,13 @@ INSERT INTO forms_global_action (id_action, code, name_key, description_key, act
 
 INSERT INTO core_datastore ( entity_key, entity_value ) VALUES
     ( 'forms.display.form.columnTitle', 'true' );
+
+ALTER TABLE forms_question ADD COLUMN code varchar(100) default '' NOT NULL;
+
+-- Gen att update for field from 20 to 100
+ALTER TABLE genatt_entry MODIFY COLUMN code varchar(100) default NULL; 
+ALTER TABLE genatt_field MODIFY COLUMN code varchar(100) default NULL; 
+
+-- Init empty question code;
+UPDATE forms_question SET code = CONCAT('question_', id_entry);
+UPDATE genatt_entry SET code = CONCAT('question_', id_entry);
