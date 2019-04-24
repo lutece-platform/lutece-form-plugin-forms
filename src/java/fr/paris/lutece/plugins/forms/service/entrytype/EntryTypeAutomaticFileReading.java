@@ -36,11 +36,16 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.IMapProvider;
+import fr.paris.lutece.plugins.genericattributes.business.ITypeDocumentOcrProvider;
+import fr.paris.lutece.plugins.genericattributes.business.MapProviderManager;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.business.TypeDocumentProviderManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeAutomaticFileReading;
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
 import fr.paris.lutece.util.ReferenceList;
@@ -153,11 +158,14 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
      */
     public ReferenceList getFileTypeRefList( )
     {
-        ReferenceList refList = new ReferenceList( );
+    	ReferenceList refList = new ReferenceList( );
 
-        refList.addItem( FormsConstants.FILE_TYPE_RIB, RIB );
-        //TODO ajouter les autres types quand ils seront validés
-        
+        refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
+
+        for ( ITypeDocumentOcrProvider typeDocumentProvider : TypeDocumentProviderManager.getTypeDocumentProvidersList() )
+        {
+            refList.add( typeDocumentProvider.toRefItem( ) );
+        }
 
         return refList;
     }
