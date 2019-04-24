@@ -50,14 +50,14 @@ import java.util.List;
 public final class QuestionDAO implements IQuestionDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_question, title, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title FROM forms_question";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_question, title, code, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title FROM forms_question";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_question = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question ( title, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question ( title, code, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question WHERE id_question = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_question SET id_question = ?, title = ?, description = ?, id_entry = ?, id_step = ?, is_visible_multiview_global = ?, is_visible_multiview_form_selected = ?, column_title = ? WHERE id_question = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_question SET id_question = ?, title = ?, code = ?, description = ?, id_entry = ?, id_step = ?, is_visible_multiview_global = ?, is_visible_multiview_form_selected = ?, column_title = ? WHERE id_question = ?";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_question FROM forms_question";
     private static final String SQL_QUERY_SELECT_BY_STEP = SQL_QUERY_SELECTALL + " WHERE id_step = ?";
-    private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title, fq.description, fq.id_entry, fq.id_step, fq.is_visible_multiview_global, fq.is_visible_multiview_form_selected , fq.column_title FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
+    private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title, fq.code, fq.description, fq.id_entry, fq.id_step, fq.is_visible_multiview_global, fq.is_visible_multiview_form_selected , fq.column_title FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
 
     /**
      * {@inheritDoc }
@@ -70,6 +70,7 @@ public final class QuestionDAO implements IQuestionDAO
         {
             int nIndex = 1;
             daoUtil.setString( nIndex++, question.getTitle( ) );
+            daoUtil.setString( nIndex++, question.getCode( ) );
             daoUtil.setString( nIndex++, question.getDescription( ) );
             daoUtil.setInt( nIndex++, question.getIdEntry( ) );
             daoUtil.setInt( nIndex++, question.getIdStep( ) );
@@ -132,6 +133,7 @@ public final class QuestionDAO implements IQuestionDAO
 
         daoUtil.setInt( nIndex++, question.getId( ) );
         daoUtil.setString( nIndex++, question.getTitle( ) );
+        daoUtil.setString( nIndex++, question.getCode( ) );
         daoUtil.setString( nIndex++, question.getDescription( ) );
         daoUtil.setInt( nIndex++, question.getIdEntry( ) );
         daoUtil.setInt( nIndex++, question.getIdStep( ) );
@@ -290,6 +292,7 @@ public final class QuestionDAO implements IQuestionDAO
 
         question.setId( daoUtil.getInt( "id_question" ) );
         question.setTitle( daoUtil.getString( "title" ) );
+        question.setCode( daoUtil.getString( "code" ) );
         question.setDescription( daoUtil.getString( "description" ) );
         question.setIdEntry( daoUtil.getInt( "id_entry" ) );
         question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );

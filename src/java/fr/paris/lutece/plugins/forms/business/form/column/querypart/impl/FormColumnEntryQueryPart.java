@@ -62,7 +62,7 @@ public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
     private static final String ENTRY_JOIN_QUESTION_ENTRY_RESPONSE_QUERY_PART = " INNER JOIN forms_question_entry_response AS q_entry_response_%1$s ON q_entry_response_%1$s.id_question_response = question_response_%1$s.id_question_response ";
     private static final String ENTRY_JOIN_ENTRY_RESPONSE_QUERY_PART = " INNER JOIN genatt_response AS gen_response_%1$s ON gen_response_%1$s.id_response = q_entry_response_%1$s.id_entry_response ";
     private static final String ENTRY_JOIN_ENTRY_QUERY_PART = " INNER JOIN genatt_entry AS entry_%1$s ON entry_%1$s.id_entry = gen_response_%1$s.id_entry ";
-    private static final String ENTRY_JOIN_WHERE_QUERY_PART = " WHERE entry_%1$s.title IN ( %2$s ) ";
+    private static final String ENTRY_JOIN_WHERE_QUERY_PART = " WHERE entry_%1$s.code IN ( %2$s ) ";
     private static final String ENTRY_JOIN_QUERY_PART = " AS column_%1$s ON column_%1$s.id_response_%1$s = response.id_response";
 
     /**
@@ -114,19 +114,19 @@ public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
         String strJoinInnerJoinEntryQueryPart = String.format( ENTRY_JOIN_ENTRY_QUERY_PART, nFormColumnPosition );
         stringBuilderJoinQuery.append( strJoinInnerJoinEntryQueryPart );
 
-        StringBuilder stringBuilderListEntryTitle = new StringBuilder( );
+        StringBuilder stringBuilderListEntryCode = new StringBuilder( );
         IFormColumn formColumn = getFormColumn( );
         if ( formColumn instanceof FormColumnEntry )
         {
             FormColumnEntry formColumnEntry = (FormColumnEntry) formColumn;
-            List<String> listEntryTitle = formColumnEntry.getListEntryTitle( );
-            if ( !CollectionUtils.isEmpty( listEntryTitle ) )
+            List<String> listEntryCode = formColumnEntry.getListEntryCode( );
+            if ( !CollectionUtils.isEmpty( listEntryCode ) )
             {
-                buildListEntryTitle( stringBuilderListEntryTitle, listEntryTitle );
+                buildListEntryCode( stringBuilderListEntryCode, listEntryCode );
             }
         }
 
-        String strJoinWhereQueryPart = String.format( ENTRY_JOIN_WHERE_QUERY_PART, nFormColumnPosition, stringBuilderListEntryTitle.toString( ) );
+        String strJoinWhereQueryPart = String.format( ENTRY_JOIN_WHERE_QUERY_PART, nFormColumnPosition, stringBuilderListEntryCode.toString( ) );
         stringBuilderJoinQuery.append( strJoinWhereQueryPart ).append( " ) " );
 
         String strJoinQueryPart = String.format( ENTRY_JOIN_QUERY_PART, nFormColumnPosition );
@@ -136,24 +136,24 @@ public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
     }
 
     /**
-     * Build the list of all entry title from the given list quoting them and separate them by comma and after that append it to the given StringBuilder
+     * Build the list of all entry code from the given list quoting them and separate them by comma and after that append it to the given StringBuilder
      * 
-     * @param stringBuilderListEntryTitle
-     *            The StringBuilder to append the list of all entry title
-     * @param listEntryTitle
-     *            The list of entry title to manage
+     * @param stringBuilderListEntryCode
+     *            The StringBuilder to append the list of all entry code
+     * @param listEntryCode
+     *            The list of entry code to manage
      */
-    private void buildListEntryTitle( StringBuilder stringBuilderListEntryTitle, List<String> listEntryTitle )
+    private void buildListEntryCode( StringBuilder stringBuilderListEntryCode, List<String> listEntryCode )
     {
-        Iterator<String> iteratorListEntryTitle = listEntryTitle.iterator( );
-        while ( iteratorListEntryTitle.hasNext( ) )
+        Iterator<String> iteratorListEntryCode = listEntryCode.iterator( );
+        while ( iteratorListEntryCode.hasNext( ) )
         {
-            String strEntryTitle = iteratorListEntryTitle.next( );
-            stringBuilderListEntryTitle.append( '\'' ).append( strEntryTitle ).append( '\'' );
+            String strEntryCode = iteratorListEntryCode.next( );
+            stringBuilderListEntryCode.append( '\'' ).append( strEntryCode ).append( '\'' );
 
-            if ( iteratorListEntryTitle.hasNext( ) )
+            if ( iteratorListEntryCode.hasNext( ) )
             {
-                stringBuilderListEntryTitle.append( ", " );
+                stringBuilderListEntryCode.append( ", " );
             }
         }
     }

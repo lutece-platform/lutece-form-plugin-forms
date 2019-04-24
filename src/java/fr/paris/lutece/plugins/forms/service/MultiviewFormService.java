@@ -195,7 +195,7 @@ public final class MultiviewFormService
 
                     if ( column instanceof FormColumnEntry )
                     {
-                        ( (FormColumnEntry) column ).addEntryTitle( question.getTitle( ) );
+                        ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
                     }
 
                     mapColumns.put( column.getFormColumnTitle( ), column );
@@ -205,7 +205,7 @@ public final class MultiviewFormService
                     IFormColumn column = mapColumns.get( question.getColumnTitle( ) );
                     if ( column instanceof FormColumnEntry )
                     {
-                        ( (FormColumnEntry) column ).addEntryTitle( question.getTitle( ) );
+                        ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
                     }
                 }
             }

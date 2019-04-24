@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2019, Mairie de Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,55 +31,27 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.impl;
-
-import java.util.ArrayList;
-import java.util.List;
+package fr.paris.lutece.plugins.forms.web.exception;
 
 /**
- * Implementation of the FormColumn for the Geolocation Entry column
+ * Exception when provided code already
  */
-public class FormColumnEntryGeolocation extends AbstractFormColumn
+public class CodeAlreadyExistsException extends Exception
 {
-    // Variables
-    private List<String> _listEntryCode = new ArrayList<>( );
+    private String _strCode;
 
-    /**
-     * Constructor
-     * 
-     * @param nFormColumnPosition
-     *            The position of the FormColumn
-     * @param strFormColumnTitle
-     *            The form column title
-     * @param listEntryCode
-     *            The list of Entry code on which the FormColumn must be filter on
-     */
-    public FormColumnEntryGeolocation( int nFormColumnPosition, String strFormColumnTitle, List<String> listEntryCode )
+    public CodeAlreadyExistsException( String strCode )
     {
-        super( );
-        setFormColumnPosition( nFormColumnPosition );
-        setFormColumnTitle( strFormColumnTitle );
-        _listEntryCode = listEntryCode;
+        _strCode = strCode;
     }
 
     /**
-     * Return the list of Entry to filter on for the Form Column
+     * Get the code
      * 
-     * @return the list of Entry to filter on for the Form Column
+     * @return the code
      */
-    public List<String> getListEntryCode( )
+    public String getCode( )
     {
-        return _listEntryCode;
-    }
-
-    /**
-     * Set the list of Entry to filter on for the Form Column
-     * 
-     * @param listEntryCode
-     *            The list of Entry to filter on for the Form Column
-     */
-    public void setListEntryCode( List<String> listEntryCode )
-    {
-        _listEntryCode = listEntryCode;
+        return _strCode;
     }
 }

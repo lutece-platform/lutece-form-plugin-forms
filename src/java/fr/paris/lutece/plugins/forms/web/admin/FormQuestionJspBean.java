@@ -65,6 +65,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsDisplayUtils;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
+import fr.paris.lutece.plugins.forms.web.exception.CodeAlreadyExistsException;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
@@ -161,6 +162,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String ERROR_STEP_OR_GROUP_NOT_VALIDATED = "forms.error.moveComposite.stepOrGroup.notvalidated";
     private static final String ERROR_OCCURED_MOVING_COMPOSITE = "forms.error.moveComposite.notCompleted";
     private static final String ERROR_ITERATION_NUMBER = "forms.error.group.iterationNumber";
+    private static final String ERROR_QUESTION_CODE_ALREADY_EXISTS = "forms.error.question.codeAlreadyExists";
 
     // Infos messages
     private static final String INFO_QUESTION_CREATED = "forms.info.question.created";
@@ -539,15 +541,23 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_QUESTION )
     public String doCreateQuestion( HttpServletRequest request )
     {
-        String strReturnUrl = processQuestionCreation( request );
+        try
+        {
+            String strReturnUrl = processQuestionCreation( request );
 
-        if ( strReturnUrl != null )
-        {
-            return redirect( request, strReturnUrl );
+            if ( strReturnUrl != null )
+            {
+                return redirect( request, strReturnUrl );
+            }
+            else
+            {
+                addInfo( INFO_QUESTION_CREATED, getLocale( ) );
+            }
         }
-        else
+        catch( CodeAlreadyExistsException e )
         {
-            addInfo( INFO_QUESTION_CREATED, getLocale( ) );
+            AppLogService.error( " Provided code already exists " + e.getCode( ), e );
+            addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
 
@@ -563,11 +573,19 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_QUESTION_AND_MANAGE_ENTRIES )
     public String doCreateQuestionAndManageEntries( HttpServletRequest request )
     {
-        String strReturnUrl = processQuestionCreation( request );
+        try
+        {
+            String strReturnUrl = processQuestionCreation( request );
+            return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ),
+                    FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
 
-        return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ),
-                FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
-
+        }
+        catch( CodeAlreadyExistsException e )
+        {
+            AppLogService.error( " Provided code already exists ", e );
+            addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
+            return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+        }
     }
 
     /**
@@ -577,7 +595,7 @@ public class FormQuestionJspBean extends AbstractJspBean
      *            The HTTP request
      * @return The URL to display error message after performing the action or null if no error occurred
      */
-    private String processQuestionCreation( HttpServletRequest request )
+    private String processQuestionCreation( HttpServletRequest request ) throws CodeAlreadyExistsException
     {
 
         int nIdStep = INTEGER_MINUS_ONE;
@@ -612,6 +630,19 @@ public class FormQuestionJspBean extends AbstractJspBean
         _entry.setResourceType( Form.RESOURCE_TYPE );
         _entry.setIdEntry( EntryHome.create( _entry ) );
 
+        // If the entry code is empty, provide a new one
+        if ( StringUtils.isEmpty( _entry.getCode( ) ) )
+        {
+            _entry.setCode( "question_" + _entry.getIdEntry( ) );
+        }
+
+        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getId( ), _entry.getIdEntry( ) ) )
+        {
+            throw new CodeAlreadyExistsException( _entry.getCode( ) );
+        }
+
+        EntryHome.update( _entry );
+
         if ( _entry.getFields( ) != null )
         {
             for ( Field field : _entry.getFields( ) )
@@ -624,6 +655,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         _question = new Question( );
         String strTitle = _entry.getEntryType( ).getComment( ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
         _question.setTitle( strTitle );
+        _question.setCode( _entry.getCode( ) );
         _question.setDescription( _entry.getComment( ) );
         _question.setIdEntry( _entry.getIdEntry( ) );
         _question.setIdStep( nIdStep );
@@ -693,7 +725,9 @@ public class FormQuestionJspBean extends AbstractJspBean
         // Create a duplicated entry
         Entry duplicatedEntry = EntryHome.copy( _question.getEntry( ) );
         duplicatedEntry.setTitle( "Copie de " + duplicatedEntry.getTitle( ) );
+        duplicatedEntry.setCode( "question_" + duplicatedEntry.getIdEntry( ) );
         duplicatedEntry.setPosition( duplicatedEntry.getPosition( ) + 1 );
+
         EntryHome.update( duplicatedEntry );
 
         // Get the question controls
@@ -704,6 +738,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         questionToCopy.setEntry( duplicatedEntry );
         questionToCopy.setIdEntry( duplicatedEntry.getIdEntry( ) );
         questionToCopy.setTitle( "Copie de " + questionToCopy.getTitle( ) );
+        questionToCopy.setCode( duplicatedEntry.getCode( ) );
 
         QuestionHome.create( questionToCopy );
 
@@ -822,7 +857,7 @@ public class FormQuestionJspBean extends AbstractJspBean
      *            The HTTP request
      * @return The URL to go after performing the action
      */
-    public String processQuestionUpdate( HttpServletRequest request )
+    public String processQuestionUpdate( HttpServletRequest request ) throws CodeAlreadyExistsException
     {
 
         int nIdEntry = INTEGER_MINUS_ONE;
@@ -861,6 +896,11 @@ public class FormQuestionJspBean extends AbstractJspBean
             return strError;
         }
 
+        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getId( ), _entry.getIdEntry( ) ) )
+        {
+            throw new CodeAlreadyExistsException( _entry.getCode( ) );
+        }
+
         EntryHome.update( _entry );
 
         if ( _entry.getFields( ) != null )
@@ -890,6 +930,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         columnTitle = ( columnTitle == null || columnTitle.isEmpty( ) ) ? _question.getTitle( ) : columnTitle;
         _question.setColumnTitle( columnTitle );
         _question.setTitle( strTitle );
+        _question.setCode( _entry.getCode( ) );
         _question.setDescription( _entry.getComment( ) );
         QuestionHome.update( _question );
 
@@ -907,15 +948,23 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_MODIFY_QUESTION )
     public String doModifyQuestion( HttpServletRequest request )
     {
-        String strReturnUrl = processQuestionUpdate( request );
+        try
+        {
+            String strReturnUrl = processQuestionUpdate( request );
 
-        if ( strReturnUrl != null )
-        {
-            return redirect( request, strReturnUrl );
+            if ( strReturnUrl != null )
+            {
+                return redirect( request, strReturnUrl );
+            }
+            else
+            {
+                addInfo( INFO_QUESTION_UPDATED, getLocale( ) );
+            }
         }
-        else
+        catch( CodeAlreadyExistsException e )
         {
-            addInfo( INFO_QUESTION_UPDATED, getLocale( ) );
+            AppLogService.error( " Provided code already exists " + e.getCode( ), e );
+            addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
 
@@ -931,15 +980,22 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_SAVE_QUESTION )
     public String doSaveQuestion( HttpServletRequest request )
     {
-        String strReturnUrl = processQuestionUpdate( request );
-
-        if ( strReturnUrl != null )
+        try
         {
-            return strReturnUrl;
-        }
-        return redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
-                _question.getId( ) );
+            String strReturnUrl = processQuestionUpdate( request );
 
+            if ( strReturnUrl != null )
+            {
+                return strReturnUrl;
+            }
+        }
+        catch( CodeAlreadyExistsException e )
+        {
+            AppLogService.error( " Provided code already exists ", e );
+            addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
+        }
+        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
+                _question.getId( ) );
     }
 
     /**
@@ -1345,6 +1401,29 @@ public class FormQuestionJspBean extends AbstractJspBean
             List<FormDisplay> listDisplayInOriginGroup = FormDisplayHome.getFormDisplayListByParent( nIdOriginStep, nIdOriginParent );
             _formDisplayService.rebuildDisplayPositionSequence( listDisplayInOriginGroup );
         }
+    }
+
+    /**
+     * Check if the question code already exists or not
+     * 
+     * @param strCode
+     *            The question code
+     * @param nIdForm
+     *            The id of the form
+     * @return true if the code already exists; false otherwise
+     */
+    private boolean checkCodeAlreadyExists( String strCode, int nIdForm, int nIdEntry )
+    {
+        List<Question> listQuestionOfForm = QuestionHome.getListQuestionByIdForm( nIdForm );
+
+        for ( Question question : listQuestionOfForm )
+        {
+            if ( question.getCode( ).equals( strCode ) && nIdEntry != question.getIdEntry( ) )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
