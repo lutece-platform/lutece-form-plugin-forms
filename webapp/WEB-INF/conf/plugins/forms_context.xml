@@ -106,7 +106,7 @@
 	<bean id="forms.entryTypeFileDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeFile" />
 	</bean>
-	<bean id="forms.entryTypeGeolocationDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
+	<bean id="forms.entryTypeGeolocationDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeGeolocDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeGeolocation" />
 	</bean>
 	<bean id="forms.entryTypeImageDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">

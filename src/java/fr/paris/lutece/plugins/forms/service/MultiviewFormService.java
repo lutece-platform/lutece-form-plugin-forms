@@ -42,6 +42,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
@@ -53,7 +54,6 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Service dedicated to managing of the multiview of forms
@@ -197,6 +197,10 @@ public final class MultiviewFormService
                     {
                         ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
                     }
+                    if ( column instanceof FormColumnEntryGeolocation )
+                    {
+                        ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
+                    }
 
                     mapColumns.put( column.getFormColumnTitle( ), column );
                 }
@@ -206,6 +210,10 @@ public final class MultiviewFormService
                     if ( column instanceof FormColumnEntry )
                     {
                         ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
+                    }
+                    if ( column instanceof FormColumnEntryGeolocation )
+                    {
+                        ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
                     }
                 }
             }
