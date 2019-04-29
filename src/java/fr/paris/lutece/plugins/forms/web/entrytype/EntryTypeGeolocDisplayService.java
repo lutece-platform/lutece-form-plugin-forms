@@ -34,7 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import java.util.Locale;
 import java.util.Map;
 
@@ -47,12 +47,11 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import java.util.List;
 
 /**
  * The default display service
  */
-public class EntryTypeDefaultDisplayService implements IEntryDisplayService
+public class EntryTypeGeolocDisplayService implements IEntryDisplayService
 {
     private static final String MARK_ENTRY_TYPE_SERVICE = "entryTypeService";
     private String _strEntryServiceName = StringUtils.EMPTY;
@@ -63,7 +62,7 @@ public class EntryTypeDefaultDisplayService implements IEntryDisplayService
      * @param strEntryServiceName
      *            The entry service name
      */
-    public EntryTypeDefaultDisplayService( String strEntryServiceName )
+    public EntryTypeGeolocDisplayService( String strEntryServiceName )
     {
         _strEntryServiceName = strEntryServiceName;
     }
@@ -130,6 +129,6 @@ public class EntryTypeDefaultDisplayService implements IEntryDisplayService
     @Override
     public IFormColumn getFormColumn( int nFormColumnPosition, String strColumnTitle )
     {
-        return new FormColumnEntry( nFormColumnPosition, strColumnTitle );
+        return new FormColumnEntryGeolocation( nFormColumnPosition, strColumnTitle );
     }
 }

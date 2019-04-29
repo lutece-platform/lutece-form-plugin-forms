@@ -71,7 +71,7 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
     private static final String ENTRY_JOIN_QUESTION_ENTRY_RESPONSE_ADDR_QUERY_PART = " INNER JOIN forms_question_entry_response AS q_entry_response_%1$s_addr ON q_entry_response_%1$s_addr.id_question_response = question_response_%1$s.id_question_response ";
     private static final String ENTRY_JOIN_ENTRY_RESPONSE_ADDR_QUERY_PART = " INNER JOIN genatt_response AS gen_response_%1$s_addr ON gen_response_%1$s_addr.id_response = q_entry_response_%1$s_addr.id_entry_response ";
     private static final String ENTRY_JOIN_ENTRY_FIELD_RESPONSE_ADDR_QUERY_PART = " INNER JOIN genatt_field AS gen_field_%1$s_addr ON gen_field_%1$s_addr.id_field = gen_response_%1$s_addr.id_field ";
-    private static final String ENTRY_JOIN_WHERE_QUERY_PART = " WHERE entry_%1$s.code IN ( %2$s ) and gen_field_%1$s_x.code = 'X' and gen_field_%1$s_y.code = 'Y' and gen_field_%1$s_addr.code = 'address' ";
+    private static final String ENTRY_JOIN_WHERE_QUERY_PART = " WHERE entry_%1$s.code IN ( %2$s ) and gen_field_%1$s_x.title = 'X' and gen_field_%1$s_y.title = 'Y' and gen_field_%1$s_addr.title = 'address' ";
     private static final String ENTRY_JOIN_QUERY_PART = " AS column_%1$s ON column_%1$s.id_response_%1$s = response.id_response";
 
     /**

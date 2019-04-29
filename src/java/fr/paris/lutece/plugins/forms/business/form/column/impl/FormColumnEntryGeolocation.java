@@ -61,6 +61,20 @@ public class FormColumnEntryGeolocation extends AbstractFormColumn
         setFormColumnTitle( strFormColumnTitle );
         _listEntryCode = listEntryCode;
     }
+    
+    /**
+     * Constructor
+     * 
+     * @param nFormColumnPosition
+     * @param strFormColumnCode
+     */
+    public FormColumnEntryGeolocation( int nFormColumnPosition, String strFormColumnCode )
+    {
+        super( );
+        setFormColumnPosition( nFormColumnPosition );
+        setFormColumnTitle( strFormColumnCode );
+    }
+
 
     /**
      * Return the list of Entry to filter on for the Form Column
@@ -81,5 +95,15 @@ public class FormColumnEntryGeolocation extends AbstractFormColumn
     public void setListEntryCode( List<String> listEntryCode )
     {
         _listEntryCode = listEntryCode;
+    }
+    
+    /**
+     * Add an entry code to the form column
+     * @param strEntryCode 
+     *              The entry code
+     */
+    public void addEntryCode( String strEntryCode )
+    {
+        _listEntryCode.add( strEntryCode );
     }
 }
