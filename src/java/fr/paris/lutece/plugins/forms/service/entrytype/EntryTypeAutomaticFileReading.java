@@ -33,17 +33,24 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.IMapProvider;
 import fr.paris.lutece.plugins.genericattributes.business.ITypeDocumentOcrProvider;
 import fr.paris.lutece.plugins.genericattributes.business.MapProviderManager;
+import fr.paris.lutece.plugins.genericattributes.business.Mapping;
+import fr.paris.lutece.plugins.genericattributes.business.MappingHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.TypeDocumentProviderManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeAutomaticFileReading;
@@ -64,7 +71,6 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_auto_file_reading.html";
-    private static final String RIB = "RIB";
 
     /**
      * {@inheritDoc}
@@ -168,5 +174,67 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
         }
 
         return refList;
+    }
+    
+    /**
+     * Gets the type document provider.
+     *
+     * @param strKey the str key
+     * @return the type document provider
+     */
+    public ITypeDocumentOcrProvider getTypeDocumentProvider( String strKey ) {
+    	return TypeDocumentProviderManager.getTypeDocumentProvider(strKey);
+    }
+    
+    /**
+     * Gets the list field.
+     *
+     * @param strKey the str key
+     * @return the list field
+     */
+    public ReferenceList getListField( String strKey ) {
+    	ReferenceList refListField = new ReferenceList( );
+        
+    	if(TypeDocumentProviderManager.getTypeDocumentProvider(strKey) != null) {
+    		refListField.addAll(TypeDocumentProviderManager.getTypeDocumentProvider(strKey).getListField());
+    	}
+    	
+    	return refListField;
+    }
+    
+    /**
+     * Gets the steps list by form.
+     *
+     * @param nIdForm the n id form
+     * @return the steps list by form
+     */
+    public ReferenceList getQuestionsByStep( int nIdStep, int nIdQuestion) {
+    	ReferenceList refList = new ReferenceList( );
+    	//TODO filtrer sur les types de champ (ne pas mettre d'image par ex), via un fichier de properties
+        for ( Question question : QuestionHome.getQuestionsListByStep(nIdStep) )
+        {
+        	if(question.getId() != nIdQuestion) {
+        		refList.addItem(question.getId(), question.getTitle());
+        	}
+        }
+        
+        return refList;
+    }
+
+    /**
+     * Gets the list mapping by step.
+     *
+     * @param nIdStep the n id step
+     * @return the list mapping by step
+     */
+    public List<Mapping> getListMappingByStep( int nIdStep ) {
+    	List<Mapping> listMapping = new ArrayList<>();
+
+        for ( Mapping mapping : MappingHome.loadByStepId(nIdStep) )
+        {
+        	listMapping.add(mapping);
+        }
+        
+        return listMapping;
     }
 }
