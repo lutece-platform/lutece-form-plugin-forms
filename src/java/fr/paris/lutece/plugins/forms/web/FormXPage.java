@@ -35,8 +35,10 @@ package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -82,7 +84,9 @@ import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.url.UrlItem;
+
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -800,21 +804,17 @@ public class FormXPage extends MVCApplication
 
             for ( Control transitionControl : listTransitionControl )
             {
-                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
+                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getListIdQuestion().iterator().next( ));
                 Step stepTarget = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
-
-                for ( FormQuestionResponse questionResponse : _formResponseManager.findResponsesFor( stepTarget ) )
+                List<FormQuestionResponse> listQuestionResponse= _formResponseManager.findResponsesFor( stepTarget )
+                		.stream().filter(q -> transitionControl.getListIdQuestion().stream()
+                				.anyMatch( t -> t.equals(q.getQuestion().getId()))).collect(Collectors.toList());;
+               
+                IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
+                if ( validator != null && !validator.validate( listQuestionResponse, transitionControl ) )
                 {
-                    if ( transitionControl.getIdQuestion( ) == questionResponse.getQuestion( ).getId( ) )
-                    {
-                        IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
-
-                        if ( validator != null && !validator.validate( questionResponse, transitionControl ) )
-                        {
-                            controlsValidated = false;
-                            break;
-                        }
-                    }
+                    controlsValidated = false;
+                    break;
                 }
             }
 

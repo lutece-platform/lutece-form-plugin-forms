@@ -60,15 +60,13 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * Validator to verify the pattern of a response
  *
  */
-public class PatternValidator implements IValidator
+public class PatternValidator extends AbstractValidator
 {
     private static final String BEAN_NAME_REGULAR_EXPRESSION = "regularExpressionService";
 
     private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/pattern_template.html";
-    private final String _strValidatorName;
-    private final String _strDisplayName;
-    private List<String> _listAvailableEntryType;
+
     private Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -83,9 +81,7 @@ public class PatternValidator implements IValidator
      */
     public PatternValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
-        _strValidatorName = strValidatorName;
-        _strDisplayName = I18nService.getLocalizedString( strValidatorDisplayName, I18nService.getDefaultLocale( ) );
-        _listAvailableEntryType = listAvailableEntryType;
+    	super( strValidatorName,  strValidatorDisplayName, listAvailableEntryType);
     }
 
     @Override

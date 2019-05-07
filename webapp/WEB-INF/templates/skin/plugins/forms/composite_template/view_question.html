@@ -12,7 +12,7 @@
 			}
 		</#if>
 		
-		var displayControl = ${control.idQuestion} + "_" + ${question.iterationNumber};
+		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber};
 		var input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
 		input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
 			var inputValue = getFieldValue(input${control.id}_${question.iterationNumber});

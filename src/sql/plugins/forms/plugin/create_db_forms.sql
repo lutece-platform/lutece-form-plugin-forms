@@ -152,7 +152,6 @@ CREATE TABLE forms_control (
 id_control int AUTO_INCREMENT,
 value varchar(255),
 error_message varchar(255) default '',
-id_question int NOT NULL,
 validator_name varchar(255) NOT NULL,
 control_type varchar(255) NOT NULL,
 id_control_target int default '0' NOT NULL,
@@ -160,6 +159,21 @@ PRIMARY KEY (id_control)
 );
 CREATE INDEX index_fc_id_question ON forms_control ( id_question );
 CREATE INDEX index_fc_id_control_target ON forms_control ( id_control_target );
+
+DROP TABLE IF EXISTS forms_control_question;
+CREATE TABLE forms_control_question (
+id_control int AUTO_INCREMENT,
+id_question int NOT NULL,
+PRIMARY KEY (id_control, id_question)
+);
+
+DROP TABLE IF EXISTS forms_control_question_mapping;
+CREATE TABLE forms_control_question_mapping (
+id_control int NOT NULL,
+id_question int NOT NULL,
+value varchar(255),
+PRIMARY KEY (id_control, id_question, value)
+);
 
 --
 -- Structure for table forms_message

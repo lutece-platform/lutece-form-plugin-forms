@@ -33,6 +33,9 @@
     <bean id="forms.formRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
     <bean id="forms.questionRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
     
+    <bean id="forms.listQuestionListener"
+		class="fr.paris.lutece.plugins.forms.validation.ListQuestionListener" />
+    
     <!-- Validator -->
     <bean id="forms.patternValidator" class="fr.paris.lutece.plugins.forms.validation.PatternValidator">
     	<constructor-arg type="java.lang.String" index="0" value="forms.patternValidator" />
@@ -62,9 +65,12 @@
 			<list>
 				<value type="java.lang.String">forms.entryTypeText</value>
 				<value type="java.lang.String">forms.entryTypeMyLuteceUserattribute</value>
+			
 			</list>
 		</constructor-arg>
+
 	</bean>
+	
 	
 	<!-- Breadcrumb -->
     <bean id="forms.horizontalBreadcrumb" class="fr.paris.lutece.plugins.forms.web.breadcrumb.HorizontalBreadcrumb">

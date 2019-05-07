@@ -36,9 +36,11 @@ package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -745,7 +747,10 @@ public class FormQuestionJspBean extends AbstractJspBean
         // Duplicates the controls of the question
         for ( Control control : listControlsToDuplicate )
         {
-            control.setIdQuestion( questionToCopy.getId( ) );
+            
+            Set<Integer>  listQuestion= new HashSet<Integer> ();
+        	listQuestion.add(questionToCopy.getId( ));
+            control.setListIdQuestion(listQuestion );
             control.setIdControlTarget( questionToCopy.getId( ) );
             ControlHome.create( control );
         }

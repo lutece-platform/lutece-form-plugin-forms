@@ -31,76 +31,67 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.validation;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.Control;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 /**
- * 
- * Interface which describe the validation process
- *
+ * Manager for Control listeners
  */
-public interface IValidator
+public final class ControlListenerManager
 {
     /**
+     * Private default constructor
+     */
+    private ControlListenerManager( )
+    {
+        // Nothing to do
+    }
+
+    /**
+     * Notify listeners that an validator is about to be removed
      * 
-     * @return the validator bean name
+     * @param Control
+     *            The control that will be removed
      */
-    String getValidatorBeanName( );
-
+    public static void notifyListenersControlRemoval( Control control, HttpServletRequest request )
+    {
+        for ( IControlListener ControlRemovalListener : SpringContextService.getBeansOfType( IControlListener.class ) )
+        {
+            ControlRemovalListener.notifyControlRemoval( control, request );
+        }
+    }
+    
     /**
+     * Notify listeners that an Control is about to be created
      * 
-     * @return the validator display name
+     * @param Control
+     *            The  Control that will be update
      */
-    String getValidatorDisplayName( );
-
+    public static void notifyListenersControlCreated( Control control, HttpServletRequest request )
+    {
+        for ( IControlListener ControlListener : SpringContextService.getBeansOfType( IControlListener.class ) )
+        {
+            ControlListener.notifyControlCreated( control, request);
+        }
+    }
     /**
-     * @param control
-     *            The control to build model
-     * @return the HTML to display
-     */
-    String getDisplayHtml( Control control );
-
-    /**
+     * Notify listeners that an Control is about to be updated
      * 
-     * @return the list of available entrytype for this validator
+     * @param Control
+     *            The Control that will be update
      */
-    List<String> getListAvailableEntryType( );
+    public static void notifyListenersControlUpdated( Control control, HttpServletRequest request )
+    {
+        for ( IControlListener ControlListener : SpringContextService.getBeansOfType( IControlListener.class ) )
+        {
+            ControlListener.notifyControlUpdated( control, request);
+        }
+    }
 
-    /**
-     * @param questionResponse
-     *            The response to control
-     * @param control
-     *            The control to verify
-     * @return boolean that indicate the validation result
-     */
-    boolean validate( FormQuestionResponse questionResponse, Control control );
 
-    /**
-     * @param questionResponse
-     *            The List response to control
-     * @param control
-     *            The control to verify
-     * @return boolean that indicate the validation result
-     */
-    boolean validate( List<FormQuestionResponse> questionResponse, Control control );
-    /**
-     * Only the content of the function should be returned. The parameter names are in FormsConstants, JS_PARAMETER_INPUT_VALUE and JS_PARAMETER_CONTROL_VALUE
-     * 
-     * @return the javascript validation code for Conditional display control
-     * 
-     */
-    String getJavascriptValidation( );
-
-    /**
-     * @param control
-     *            The control
-     * @return the control value needed for javascript
-     */
-    String getJavascriptControlValue( Control control );
-
+   
 }
