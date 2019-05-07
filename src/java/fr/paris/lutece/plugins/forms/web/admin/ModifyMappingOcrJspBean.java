@@ -104,18 +104,18 @@ public class ModifyMappingOcrJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
     	
-        String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION_MAPPING );
+        String strIdQuestionMapping = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION_MAPPING );
         String strIdFieldOcr = request.getParameter( FormsConstants.PARAMETER_ID_FIELD_OCR );
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
         String strTypeDocumentKey= request.getParameter( FormsConstants.PARAMETER_TYPE_DOCUMENT_KEY );
-        int _nIdQuestion = Integer.parseInt( strIdQuestion );
-        int _nIdFieldOcr = Integer.parseInt( strIdFieldOcr );
-        int _nIdStep = Integer.parseInt( strIdStep );
+        int nIdQuestionMapping = Integer.parseInt( strIdQuestionMapping );
+        int nIdFieldOcr = Integer.parseInt( strIdFieldOcr );
+        int nIdStep = Integer.parseInt( strIdStep );
         
         Mapping mapping = new Mapping();
-        mapping.setIdFieldOcr(_nIdFieldOcr);
-        mapping.setIdQuestion(_nIdQuestion);
-        mapping.setIdStep(_nIdStep);
+        mapping.setIdFieldOcr(nIdFieldOcr);
+        mapping.setIdQuestion(nIdQuestionMapping);
+        mapping.setIdStep(nIdStep);
         
         //Set ocr field name
     	ITypeDocumentOcrProvider  typeDocument = TypeDocumentProviderManager.getTypeDocumentProvider(strTypeDocumentKey);
@@ -124,7 +124,7 @@ public class ModifyMappingOcrJspBean extends AbstractJspBean
     	}
     	
     	//Set question field name
-    	Question question = QuestionHome.findByPrimaryKey(_nIdQuestion);
+    	Question question = QuestionHome.findByPrimaryKey(nIdQuestionMapping);
     	if(question != null) {
     		mapping.setQuestionTitle(question.getTitle());
     	}
