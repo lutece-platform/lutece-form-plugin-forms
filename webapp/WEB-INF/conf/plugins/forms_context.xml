@@ -106,7 +106,7 @@
 	<bean id="forms.entryTypeFileDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeFile" />
 	</bean>
-	<bean id="forms.entryTypeGeolocationDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
+	<bean id="forms.entryTypeGeolocationDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeGeolocDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeGeolocation" />
 	</bean>
 	<bean id="forms.entryTypeImageDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">
@@ -238,7 +238,7 @@
     <bean id="forms.formFilter.formResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormsQueryPartFactory"/>
     <bean id="forms.formFilter.formResponseDateCreation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormResponseDateCreationQueryPartFactory"/>
     <bean id="forms.formFilter.entry.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterEntryQueryPartFactory"/>
-    <!--<bean id="forms.formFilter.workflowState.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterWorkflowStateQueryPartFactory"/>-->
+    <bean id="forms.formFilter.workflowState.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterWorkflowStateQueryPartFactory"/>
     <bean id="forms.formFilter.idFormResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterIdFormResponseQueryPartFactory"/>
 	
 	<!-- Panels Configurations -->
@@ -273,10 +273,10 @@
 		<constructor-arg name="nPosition" type="int" value="3"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Texte"/>
 	</bean>
-        <!--	<bean id="forms.workflowState.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterWorkflowConfiguration">
+        <bean id="forms.workflowState.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterWorkflowConfiguration">
 		<constructor-arg name="nPosition" type="int" value="4"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="-"/>
-	</bean>-->
+	</bean>
 	
 	<!-- Panels Display Initializer Factories -->
 	<bean id="forms.formPanelInitializer.panelForms.display.factory" class="fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.factory.impl.FormPanelFormsDisplayInitializerFactory"/>
@@ -286,7 +286,7 @@
 	<bean id="forms.formResponseDateCreation.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormResponseDateCreationFactory"/>
 	<bean id="forms.forms.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormsFactory"/>
 	<bean id="forms.entry.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayEntryFactory"/>
-	<!--<bean id="forms.workflowState.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayWorkflowStateFactory"/>-->
+	<bean id="forms.workflowState.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayWorkflowStateFactory"/>
 	<bean id="forms.searchedText.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplaySearchedTextFactory"/>
 	
 	<!-- Columns QueryPart Factories -->
@@ -294,20 +294,21 @@
 	<bean id="forms.formColumn.formResponseDateCreation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnFormResponseDateCreationQueryPartFactory"/>
 	<bean id="forms.formColumn.entry.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnEntryQueryPartFactory"/>	
 	<bean id="forms.formColumn.entrygeolocation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnEntryGeolocationQueryPartFactory"/>
-	<!--<bean id="forms.formColumn.workflowState.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnWorkflowStateQueryPartFactory"/>-->
+	<bean id="forms.formColumn.workflowState.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.FormColumnWorkflowStateQueryPartFactory"/>
 	
 	<!-- Columns -->
 	<bean id="forms.forms.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms">
 		<constructor-arg name="nFormColumnPosition" type="int" value="1"/>
 		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="Formulaire"/>
 	</bean>
-<!--	<bean id="forms.workflowState.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState">
-		<constructor-arg name="nFormColumnPosition" type="int" value="4"/>		
-		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="&#201;tat"/>
-	</bean>-->
+
 	<bean id="forms.formResponseCreationDate.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateCreation">
 		<constructor-arg name="nFormColumnPosition" type="int" value="2"/>
 		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="Cr&#201;&#201;e le"/>
+	</bean>
+        <bean id="forms.workflowState.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState">
+		<constructor-arg name="nFormColumnPosition" type="int" value="3"/>		
+		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="&#201;tat"/>
 	</bean>
 	 
 	<!-- Columns Factories -->
@@ -315,7 +316,7 @@
 	<bean id="forms.formResponseDateCreation.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayFormResponseDateCreationFactory"/>
 	<bean id="forms.entry.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayEntryFactory"/>
 	<bean id="forms.entrygeolocation.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayEntryGeolocationFactory"/>
-	<!--<bean id="forms.workflowState.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayWorkflowStateFactory"/>-->
+	<bean id="forms.workflowState.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayWorkflowStateFactory"/>
 	
 	<!-- Panels Display Factories -->
 	<bean id="forms.panelForms.panel.display.factory" class="fr.paris.lutece.plugins.forms.web.form.panel.display.factory.impl.FormPanelFormsDisplayFactory"/>

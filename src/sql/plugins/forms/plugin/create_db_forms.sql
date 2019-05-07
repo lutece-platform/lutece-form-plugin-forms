@@ -59,6 +59,7 @@ DROP TABLE IF EXISTS forms_question;
 CREATE TABLE forms_question (
 id_question int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
+code varchar(100) default '' NOT NULL,
 description LONGTEXT,
 id_entry int default '0',
 id_step int default '0',
@@ -67,6 +68,9 @@ is_visible_multiview_form_selected SMALLINT default 0 NOT NULL,
 column_title varchar(255) default '' NOT NULL,
 PRIMARY KEY (id_question)
 );
+CREATE INDEX index_fq_code ON forms_question ( code );
+CREATE INDEX index_fq_id_entry ON forms_question ( id_entry );
+CREATE INDEX index_fq_id_step ON forms_question ( id_step );
 
 --
 -- Structure for table forms_group
@@ -84,6 +88,7 @@ iteration_add_label varchar(255) default '',
 iteration_remove_label varchar(255) default '',
 PRIMARY KEY (id_group)
 );
+CREATE INDEX index_fg_id_step ON forms_question ( id_step );
 
 
 
@@ -115,6 +120,7 @@ CREATE TABLE forms_global_action (
     icon_url varchar(255) default NULL,
     PRIMARY KEY (id_action)
 );
+CREATE INDEX index_fga_code ON forms_global_action ( code );
 
 --
 -- Structure for table forms_display
@@ -132,6 +138,10 @@ composite_type varchar(255) default '',
 display_depth int default '0',
 PRIMARY KEY (id_display)
 );
+CREATE INDEX index_fd_id_form ON forms_display ( id_form );
+CREATE INDEX index_fd_id_step ON forms_display ( id_step );
+CREATE INDEX index_fd_id_composite ON forms_display ( id_composite );
+CREATE INDEX index_fd_id_parent ON forms_display ( id_parent );
 
 --
 -- Structure for table forms_control
@@ -148,6 +158,8 @@ control_type varchar(255) NOT NULL,
 id_control_target int default '0' NOT NULL,
 PRIMARY KEY (id_control)
 );
+CREATE INDEX index_fc_id_question ON forms_control ( id_question );
+CREATE INDEX index_fc_id_control_target ON forms_control ( id_control_target );
 
 --
 -- Structure for table forms_message
@@ -161,6 +173,7 @@ end_message_display SMALLINT,
 end_message varchar(3000) default '',
 PRIMARY KEY (id)
 );
+CREATE INDEX index_fm_id_form ON forms_message ( id_form );
 
 DROP TABLE IF EXISTS forms_question_entry_response;
 CREATE TABLE forms_question_entry_response (
@@ -170,6 +183,7 @@ CREATE TABLE forms_question_entry_response (
   PRIMARY KEY (id_question_entry_response)
 );
 CREATE INDEX idx_fqer_id_question_response on forms_question_entry_response ( id_question_response );
+CREATE INDEX idx_fqer_id_entry_response on forms_question_entry_response ( id_entry_response );
 
 DROP TABLE IF EXISTS forms_question_response;
 CREATE TABLE IF NOT EXISTS forms_question_response (
@@ -181,6 +195,8 @@ CREATE TABLE IF NOT EXISTS forms_question_response (
   PRIMARY KEY (id_question_response)
 );
 CREATE INDEX idx_fqr_id_form_response on forms_question_response  ( id_form_response );
+CREATE INDEX idx_fqr_id_question on forms_question_response  ( id_question );
+CREATE INDEX idx_fqr_id_step on forms_question_response  ( id_step );
 
 DROP TABLE IF EXISTS forms_response;
 CREATE TABLE IF NOT EXISTS forms_response (
@@ -192,6 +208,7 @@ CREATE TABLE IF NOT EXISTS forms_response (
   from_save SMALLINT default 0,
   PRIMARY KEY (id_response)
 );
+CREATE INDEX idx_fr_id_form on forms_response  ( id_form );
 
 DROP TABLE IF EXISTS forms_response_step;
 CREATE TABLE IF NOT EXISTS forms_response_step (
@@ -201,6 +218,8 @@ CREATE TABLE IF NOT EXISTS forms_response_step (
   order_response int DEFAULT '0' NOT NULL,
   PRIMARY KEY (id)
 );
+CREATE INDEX idx_frs_id_form_response on forms_response_step  ( id_form_response );
+CREATE INDEX idx_frs_id_step on forms_response_step  ( id_step );
 
 /*==============================================================*/
 /* Table structure for table forms_indexer_action				*/
@@ -211,3 +230,5 @@ CREATE TABLE forms_indexer_action (
   id_task INT DEFAULT 0 NOT NULL ,
   PRIMARY KEY (id_action)
 );
+CREATE INDEX idx_frs_id_form_response on forms_indexer_action  ( id_form_response );
+CREATE INDEX idx_frs_id_task on forms_indexer_action  ( id_task );

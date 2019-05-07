@@ -42,7 +42,7 @@ import java.util.List;
 public class FormColumnEntryGeolocation extends AbstractFormColumn
 {
     // Variables
-    private List<String> _listEntryTitle = new ArrayList<>( );
+    private List<String> _listEntryCode = new ArrayList<>( );
 
     /**
      * Constructor
@@ -50,36 +50,60 @@ public class FormColumnEntryGeolocation extends AbstractFormColumn
      * @param nFormColumnPosition
      *            The position of the FormColumn
      * @param strFormColumnTitle
-     *            The title of the FormColumn
-     * @param listEntryTitle
-     *            The list of Entry title on which the FormColumn must be filter on
+     *            The form column title
+     * @param listEntryCode
+     *            The list of Entry code on which the FormColumn must be filter on
      */
-    public FormColumnEntryGeolocation( int nFormColumnPosition, String strFormColumnTitle, List<String> listEntryTitle )
+    public FormColumnEntryGeolocation( int nFormColumnPosition, String strFormColumnTitle, List<String> listEntryCode )
     {
         super( );
         setFormColumnPosition( nFormColumnPosition );
         setFormColumnTitle( strFormColumnTitle );
-        _listEntryTitle = listEntryTitle;
+        _listEntryCode = listEntryCode;
     }
+    
+    /**
+     * Constructor
+     * 
+     * @param nFormColumnPosition
+     * @param strFormColumnCode
+     */
+    public FormColumnEntryGeolocation( int nFormColumnPosition, String strFormColumnCode )
+    {
+        super( );
+        setFormColumnPosition( nFormColumnPosition );
+        setFormColumnTitle( strFormColumnCode );
+    }
+
 
     /**
      * Return the list of Entry to filter on for the Form Column
      * 
      * @return the list of Entry to filter on for the Form Column
      */
-    public List<String> getListEntryTitle( )
+    public List<String> getListEntryCode( )
     {
-        return _listEntryTitle;
+        return _listEntryCode;
     }
 
     /**
      * Set the list of Entry to filter on for the Form Column
      * 
-     * @param listEntryTitle
+     * @param listEntryCode
      *            The list of Entry to filter on for the Form Column
      */
-    public void setListEntryTitle( List<String> listEntryTitle )
+    public void setListEntryCode( List<String> listEntryCode )
     {
-        _listEntryTitle = listEntryTitle;
+        _listEntryCode = listEntryCode;
+    }
+    
+    /**
+     * Add an entry code to the form column
+     * @param strEntryCode 
+     *              The entry code
+     */
+    public void addEntryCode( String strEntryCode )
+    {
+        _listEntryCode.add( strEntryCode );
     }
 }

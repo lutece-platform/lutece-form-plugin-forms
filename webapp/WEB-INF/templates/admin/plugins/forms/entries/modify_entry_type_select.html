@@ -23,6 +23,9 @@
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true rows=2>
 							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
 						</@formGroup>
+                                                <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                                                    <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+                                                </@formGroup>
 						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}' rows=2>
 							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
 						</@formGroup>
