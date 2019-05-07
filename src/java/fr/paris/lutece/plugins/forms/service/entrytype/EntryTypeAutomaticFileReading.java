@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.IMapProvider;
 import fr.paris.lutece.plugins.genericattributes.business.ITypeDocumentOcrProvider;
 import fr.paris.lutece.plugins.genericattributes.business.MapProviderManager;
@@ -194,7 +195,6 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
      */
     public ReferenceList getListField( String strKey ) {
     	ReferenceList refListField = new ReferenceList( );
-        
     	if(TypeDocumentProviderManager.getTypeDocumentProvider(strKey) != null) {
     		refListField.addAll(TypeDocumentProviderManager.getTypeDocumentProvider(strKey).getListField());
     	}
@@ -208,12 +208,14 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
      * @param nIdForm the n id form
      * @return the steps list by form
      */
-    public ReferenceList getQuestionsByStep( int nIdStep, int nIdQuestion) {
+    public ReferenceList getQuestionsByStep( int nIdStep, int nIdQuestion, String strKey) {
     	ReferenceList refList = new ReferenceList( );
-    	//TODO filtrer sur les types de champ (ne pas mettre d'image par ex), via un fichier de properties
+    	
+    	List<Integer> listAuthorizedEntryType = TypeDocumentProviderManager.getTypeDocumentProvider(strKey).getAuthorizedEntryType();
         for ( Question question : QuestionHome.getQuestionsListByStep(nIdStep) )
         {
-        	if(question.getId() != nIdQuestion) {
+        	Entry entry = EntryHome.findByPrimaryKey(question.getIdEntry());
+        	if(question.getId() != nIdQuestion && entry != null && listAuthorizedEntryType.contains(entry.getEntryType().getIdType())) {
         		refList.addItem(question.getId(), question.getTitle());
         	}
         }
