@@ -162,7 +162,7 @@ CREATE INDEX index_fc_id_control_target ON forms_control ( id_control_target );
 
 DROP TABLE IF EXISTS forms_control_question;
 CREATE TABLE forms_control_question (
-id_control int AUTO_INCREMENT,
+id_control int NOT NULL,
 id_question int NOT NULL,
 PRIMARY KEY (id_control, id_question)
 );
