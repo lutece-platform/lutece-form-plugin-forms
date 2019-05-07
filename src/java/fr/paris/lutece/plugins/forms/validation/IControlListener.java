@@ -31,76 +31,43 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.validation;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.Control;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+
 
 /**
+ * Interface for listeners that should be notified when Controls are removed or when the date changed. <b>The listener must be a Spring bean.</b>
  * 
- * Interface which describe the validation process
- *
+ * @author Laurent Payen
+ * 
  */
-public interface IValidator
+public interface IControlListener
 {
     /**
+     * Notify the listener that an Control has been removed
      * 
-     * @return the validator bean name
+     * @param Control
+     *            The  Control
      */
-    String getValidatorBeanName( );
-
+    void notifyControlRemoval( Control control, HttpServletRequest request );
+    
     /**
+     * Notify the listener that an Control has been creates
      * 
-     * @return the validator display name
+      * @param Control
+     *            The  Controll
      */
-    String getValidatorDisplayName( );
-
+    void notifyControlCreated( Control control, HttpServletRequest request );
+    
     /**
-     * @param control
-     *            The control to build model
-     * @return the HTML to display
-     */
-    String getDisplayHtml( Control control );
-
-    /**
+     * Notify the listener that an Control has been update
      * 
-     * @return the list of available entrytype for this validator
+      * @param Control
+     *            The  Control
      */
-    List<String> getListAvailableEntryType( );
-
-    /**
-     * @param questionResponse
-     *            The response to control
-     * @param control
-     *            The control to verify
-     * @return boolean that indicate the validation result
-     */
-    boolean validate( FormQuestionResponse questionResponse, Control control );
-
-    /**
-     * @param questionResponse
-     *            The List response to control
-     * @param control
-     *            The control to verify
-     * @return boolean that indicate the validation result
-     */
-    boolean validate( List<FormQuestionResponse> questionResponse, Control control );
-    /**
-     * Only the content of the function should be returned. The parameter names are in FormsConstants, JS_PARAMETER_INPUT_VALUE and JS_PARAMETER_CONTROL_VALUE
-     * 
-     * @return the javascript validation code for Conditional display control
-     * 
-     */
-    String getJavascriptValidation( );
-
-    /**
-     * @param control
-     *            The control
-     * @return the control value needed for javascript
-     */
-    String getJavascriptControlValue( Control control );
-
+    void notifyControlUpdated( Control control, HttpServletRequest request );
+    
 }

@@ -44,19 +44,15 @@ import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseFilter;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
  * 
  * Validator to verify the pattern of a response
  *
  */
-public class UniqueValidator implements IValidator
-{
-    private final String _strValidatorName;
-    private final String _strDisplayName;
-    private final List<String> _listAvailableEntryType;
+public class UniqueValidator extends AbstractValidator
 
+{
     /**
      * Constructor of the PatternValidator
      * 
@@ -69,34 +65,9 @@ public class UniqueValidator implements IValidator
      */
     public UniqueValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
-        _strValidatorName = strValidatorName;
-        _strDisplayName = I18nService.getLocalizedString( strValidatorDisplayName, I18nService.getDefaultLocale( ) );
-        _listAvailableEntryType = listAvailableEntryType;
+        super(strValidatorName, strValidatorDisplayName, listAvailableEntryType);
     }
 
-    @Override
-    public String getValidatorBeanName( )
-    {
-        return _strValidatorName;
-    }
-
-    @Override
-    public String getValidatorDisplayName( )
-    {
-        return _strDisplayName;
-    }
-
-    @Override
-    public String getDisplayHtml( Control control )
-    {
-        return StringUtils.EMPTY;
-    }
-
-    @Override
-    public List<String> getListAvailableEntryType( )
-    {
-        return _listAvailableEntryType;
-    }
 
     @Override
     public boolean validate( FormQuestionResponse formQuestionResponse, Control control )
@@ -127,16 +98,4 @@ public class UniqueValidator implements IValidator
         return true;
     }
 
-    @Override
-    public String getJavascriptValidation( )
-    {
-        return StringUtils.EMPTY;
-
-    }
-
-    @Override
-    public String getJavascriptControlValue( Control control )
-    {
-        return StringUtils.EMPTY;
-    }
 }
