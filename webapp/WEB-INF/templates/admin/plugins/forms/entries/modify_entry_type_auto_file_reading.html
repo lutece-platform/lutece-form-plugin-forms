@@ -100,7 +100,7 @@
 						<@tform action='jsp/admin/plugins/forms/ModifyMappingOcr.jsp'>
 							<@columns md=4 lg=4 xl=4>
 								<!-- Form field -->
-								<@select name='id_question_mapping' id='id_question_mapping' items=entryTypeService.getQuestionsByStep(question.idStep, question.id) />
+								<@select name='id_question_mapping' id='id_question_mapping' items=entryTypeService.getQuestionsByStep(question.idStep, question.id, fileType) />
 							</@columns>
 							<@columns md=3 lg=3 xl=3>
 								<!-- OCR value -->
