@@ -33,7 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -87,6 +90,8 @@ public class ModifyMappingOcrJspBean extends AbstractJspBean
     private static final String EMPTY_STRING = "";
     private Step _step;
     private Question _question;
+    
+    private static final String EXTENSION_APPLICATION_JSON = "application/json";
     
     // Jsp Definition
     private static final String JSP_MODIFY_QUESTION = "jsp/admin/plugins/forms/ManageQuestions.jsp";
@@ -270,6 +275,21 @@ public class ModifyMappingOcrJspBean extends AbstractJspBean
         }
 
         return bSuccess;
+    }
+    
+    public void initFieldMappingOcr( HttpServletRequest request, HttpServletResponse response ) throws IOException
+    {
+        response.setContentType( EXTENSION_APPLICATION_JSON );
+        String strIdEntry = request.getParameter( FormsConstants.PARAMETER_ID_ENTRY );
+    	int nIdEntry = Integer.parseInt( strIdEntry );
+    	
+        try
+        {
+            response.getWriter( ).print( MappingHome.loadQuestionsMappedByEntryId(nIdEntry) );
+        } catch ( IOException e )
+        {
+            AppLogService.error( e.getMessage( ), e );
+        }
     }
 
 }
