@@ -61,3 +61,26 @@
   /*HACK for firefox*/
   $("#listUpload  button[type='submit']").attr("onclick","return false;");
 </script>
+
+<script>
+$(document).ready(function(){
+	jQuery.ajax({
+		url :"jsp/site/plugins/forms/InitFieldMappingOcr.jsp",
+		async:false,
+		data: {id_entry: ${entry.idEntry}},
+		success : function(data) { 
+			if(data != undefined){
+				console.log(data);
+				var domain;
+				data.forEach(function(idQuestion){
+					console.log(idQuestion);
+					$("#step-content [displaycontrol^='"+idQuestion+"_'] :input").prop("disabled", true);
+				});
+			}
+		},
+		error:function (xhr, ajaxOptions, thrownError){
+			alert(thrownError);
+		}   
+	});
+});
+</script>
