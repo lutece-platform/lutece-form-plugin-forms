@@ -157,7 +157,6 @@ control_type varchar(255) NOT NULL,
 id_control_target int default '0' NOT NULL,
 PRIMARY KEY (id_control)
 );
-CREATE INDEX index_fc_id_question ON forms_control ( id_question );
 CREATE INDEX index_fc_id_control_target ON forms_control ( id_control_target );
 
 DROP TABLE IF EXISTS forms_control_question;
@@ -235,9 +234,7 @@ CREATE TABLE IF NOT EXISTS forms_response_step (
 CREATE INDEX idx_frs_id_form_response on forms_response_step  ( id_form_response );
 CREATE INDEX idx_frs_id_step on forms_response_step  ( id_step );
 
-/*==============================================================*/
-/* Table structure for table forms_indexer_action				*/
-/*==============================================================*/
+DROP TABLE IF EXISTS forms_indexer_action;
 CREATE TABLE forms_indexer_action (
   id_action int AUTO_INCREMENT,
   id_form_response INT DEFAULT 0 NOT NULL,
