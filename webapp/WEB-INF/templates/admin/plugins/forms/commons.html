@@ -254,13 +254,13 @@ tinyMCE.init({
 <script src="js/jquery/plugins/toastr/toastr.min.js"></script>
 <script>
 $( function(){
-<#if warning?has_content>
+<#if warnings?has_content>
 	<#list warnings as warning >
 		toastr.warning("${warning.message}");
 	</#list>	
 </#if>
 
-<#if error?has_content>
+<#if errors?has_content>
 	<#list errors as error >
 		toastr.error("${error.message}");
 	</#list>	

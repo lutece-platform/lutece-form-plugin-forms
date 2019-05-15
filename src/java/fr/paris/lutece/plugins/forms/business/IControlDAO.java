@@ -35,6 +35,7 @@
 package fr.paris.lutece.plugins.forms.business;
 
 import java.util.List;
+import java.util.Set;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
@@ -53,7 +54,30 @@ public interface IControlDAO
      *            the Plugin
      */
     void insert( Control control, Plugin plugin );
-
+    /**
+     * Insert a new record in the table.
+     * 
+     * @param nIdcontrol
+     *            id of the Control object to insert
+     * @param nIdQuestion
+     *            the question id
+     * @param plugin
+     *            the Plugin
+     */
+    void insert( int nIdControl, int nIdQuestion,  Plugin plugin );
+    /**
+     * Insert a new record in the table.
+     * 
+     * @param nIdcontrol
+     *            id of the Control object to insert
+     * @param nIdQuestion
+     *            the question id
+     * @param strValue
+     *            the value
+     * @param plugin
+     *            the Plugin
+     */
+    void insert( int nIdControl, int nIdQuestion, String strValue, Plugin plugin );
     /**
      * Update the record in the table
      * 
@@ -73,6 +97,24 @@ public interface IControlDAO
      *            the Plugin
      */
     void delete( int nKey, Plugin plugin );
+    /**
+     * Delete a record from the table
+     * 
+     * @param nKey
+     *            The identifier of the Control to delete
+     * @param plugin
+     *            the Plugin
+     */
+    void deleteControlQuestion( int nControl, Plugin plugin );
+    /**
+     * Delete a record from the table
+     * 
+     * @param nKey
+     *            The identifier of the Control to delete
+     * @param plugin
+     *            the Plugin
+     */
+    void deleteControlQuestionValue( int nControl, Plugin plugin );
 
     /**
      * Delete a record from the table by the control target
@@ -99,6 +141,16 @@ public interface IControlDAO
      * @return The instance of the control
      */
     Control load( int nKey, Plugin plugin );
+    /**
+     * Load the data from the table
+     * 
+     * @param nIdControl
+     *            The identifier of the control
+     * @param plugin
+     *            the Plugin
+     * @return The list of id questions
+     */
+    Set<Integer> loadIdQuestions( int nIdControl, Plugin plugin );
 
     /**
      * Load the data of all the control objects and returns them as a list
@@ -163,5 +215,13 @@ public interface IControlDAO
      * @return The control
      */
     List<Control> selectControlByQuestion( int nIdQuestion, Plugin plugin );
+    /**
+     * Load the data of all the control mapping and returns them as a referenceList
+     * 
+     * @param plugin
+     *            the Plugin
+     * @return The referenceList which contains the data of all the control mapping object
+     */
+    ReferenceList selectMappingControlReferenceList( int nIdControl, Plugin plugin );
 
 }

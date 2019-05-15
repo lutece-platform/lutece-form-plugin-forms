@@ -135,8 +135,8 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
         if ( formColumn instanceof FormColumnEntry )
         {
             FormColumnEntry formColumnEntry = (FormColumnEntry) formColumn;
-            List<String> listEntryTitle = formColumnEntry.getListEntryTitle( );
-            listIEntryToRetrieveValueFrom = getEntryListFromTitle( listEntryTitle );
+            List<String> listEntryCode = formColumnEntry.getListEntryCode( );
+            listIEntryToRetrieveValueFrom = getEntryListFromCode( listEntryCode );
         }
 
         // Build the list of FormFilter to use for the filter from the list of entry to search on
@@ -155,15 +155,15 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
     /**
      * Return the list of entry built from the name of the entry which are stored in configuration of the column
      * 
-     * @param listEntryTitle
-     *            The list of title of entry to retrieve the value from
-     * @return the list of entry built from the given list of entry title
+     * @param listEntryCode
+     *            The list of code of entry to retrieve the value from
+     * @return the list of entry built from the given list of entry code
      */
-    private static List<Entry> getEntryListFromTitle( List<String> listEntryTitle )
+    private static List<Entry> getEntryListFromCode( List<String> listEntryCode )
     {
         List<Entry> listEntry = new ArrayList<>( );
 
-        if ( !CollectionUtils.isEmpty( listEntryTitle ) )
+        if ( !CollectionUtils.isEmpty( listEntryCode ) )
         {
             // Retrieve the list of forms
             List<Form> listForms = FormHome.getFormList( );
@@ -172,7 +172,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
             {
                 for ( Form form : listForms )
                 {
-                    listEntry.addAll( fillEntryListFromTitle( form.getId( ), listEntryTitle ) );
+                    listEntry.addAll( fillEntryListFromCode( form.getId( ), listEntryCode ) );
                 }
             }
         }
@@ -181,15 +181,15 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
     }
 
     /**
-     * Return the list of all the Entry of the specified form which have the same title than the value in the given list.
+     * Return the list of all the Entry of the specified form which have the same code than the value in the given list.
      * 
      * @param nIdForm
      *            The identifier of the form to retrieve the Entry from
-     * @param listEntryTitle
-     *            The list of title of entry to retrieve the value from
-     * @return the list of entry retrieve from the form from the given list of entry title
+     * @param listEntryCode
+     *            The list of code of entry to retrieve the value from
+     * @return the list of entry retrieve from the form from the given list of entry code
      */
-    private static List<Entry> fillEntryListFromTitle( int nIdForm, List<String> listEntryTitle )
+    private static List<Entry> fillEntryListFromCode( int nIdForm, List<String> listEntryCode )
     {
         List<Entry> listEntry = new ArrayList<>( );
 
@@ -201,11 +201,11 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
 
         List<Entry> entryList = EntryHome.getEntryList( entryFilter );
 
-        for ( String strEntryTitleToFind : listEntryTitle )
+        for ( String strEntryCodeToFind : listEntryCode )
         {
             for ( Entry entry : entryList )
             {
-                if ( strEntryTitleToFind.equals( entry.getTitle( ) ) )
+                if ( strEntryCodeToFind.equals( entry.getCode( ) ) )
                 {
                     listEntry.add( entry );
                 }

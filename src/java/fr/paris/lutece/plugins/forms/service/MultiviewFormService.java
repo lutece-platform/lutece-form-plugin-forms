@@ -36,12 +36,14 @@ package fr.paris.lutece.plugins.forms.service;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnComparator;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
@@ -51,9 +53,9 @@ import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Service dedicated to managing of the multiview of forms
@@ -139,14 +141,11 @@ public final class MultiviewFormService
     {
         Map<String, IFormColumn> mapFormColumns = new LinkedHashMap<>( );
 
-        // Retrieve the Spring bean corresponding to the Form Title column
-        IFormColumn columnFormTitle = SpringContextService.getBean( FormsConstants.BEAN_FORMS_COLUMN_TITLE );
-        mapFormColumns.put( columnFormTitle.getFormColumnTitle( ), columnFormTitle );
-
-        // Retrive the Spring bean corresponding to the Form creation date column
-        IFormColumn columnFormDateCreation = SpringContextService.getBean( FormsConstants.BEAN_FORMS_COLUMN_DATE_CREATION );
-        mapFormColumns.put( columnFormDateCreation.getFormColumnTitle( ), columnFormDateCreation );
-
+        // Retrieve all the column Spring beans
+        List<IFormColumn> listFormColumns = SpringContextService.getBeansOfType( IFormColumn.class );
+        Collections.sort( listFormColumns, new FormColumnComparator( ) ); //sort by position
+        listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( ), column ) );
+        
         // Then add global columns from config questions
         List<Question> listQuestions = new ArrayList<>( );
         listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsList( ) : QuestionHome
@@ -195,7 +194,11 @@ public final class MultiviewFormService
 
                     if ( column instanceof FormColumnEntry )
                     {
-                        ( (FormColumnEntry) column ).addEntryTitle( question.getTitle( ) );
+                        ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
+                    }
+                    if ( column instanceof FormColumnEntryGeolocation )
+                    {
+                        ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
                     }
 
                     mapColumns.put( column.getFormColumnTitle( ), column );
@@ -205,7 +208,11 @@ public final class MultiviewFormService
                     IFormColumn column = mapColumns.get( question.getColumnTitle( ) );
                     if ( column instanceof FormColumnEntry )
                     {
-                        ( (FormColumnEntry) column ).addEntryTitle( question.getTitle( ) );
+                        ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
+                    }
+                    if ( column instanceof FormColumnEntryGeolocation )
+                    {
+                        ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
                     }
                 }
             }

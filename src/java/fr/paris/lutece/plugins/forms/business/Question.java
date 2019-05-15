@@ -55,6 +55,10 @@ public class Question implements Serializable, Cloneable
     @Size( max = 255, message = "#i18n{forms.validation.question.Title.size}" )
     private String _strTitle;
 
+    @NotEmpty( message = "#i18n{forms.validation.question.Code.notEmpty}" )
+    @Size( max = 100, message = "#i18n{forms.validation.question.Code.size}" )
+    private String _strCode;
+
     @Size( max = 255, message = "#i18n{forms.validation.question.Description.size}" )
     private String _strDescription;
 
@@ -133,6 +137,27 @@ public class Question implements Serializable, Cloneable
     public void setTitle( String strTitle )
     {
         _strTitle = strTitle;
+    }
+
+    /**
+     * Get the code of the question
+     * 
+     * @return the code of the question
+     */
+    public String getCode( )
+    {
+        return _strCode;
+    }
+
+    /**
+     * Set the code of the question
+     * 
+     * @param strCode
+     *            the code of the question
+     */
+    public void setCode( String strCode )
+    {
+        _strCode = strCode;
     }
 
     /**
@@ -353,4 +378,5 @@ public class Question implements Serializable, Cloneable
     {
         _bIsVisibleMultiviewFormSelected = bIsVisibleMultiviewFormSelected;
     }
+
 }

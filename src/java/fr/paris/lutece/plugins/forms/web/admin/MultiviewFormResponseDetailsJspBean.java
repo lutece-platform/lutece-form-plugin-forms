@@ -131,6 +131,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String MARK_ID_ACTION = "id_action";
     private static final String MARK_TASK_FORM = "tasks_form";
     private static final String MARK_LIST_MULTIVIEW_STEP_DISPLAY = "list_multiview_step_display";
+    private static final String MARK_MAP_MULTIVIEW_STEP_REF_LIST = "map_multiview_step_ref_list";
     private static final String MARK_RESOURCE_ACTIONS = "resource_actions";
     private static final String MARK_RESOURCE_HISTORY = "resource_history";
     private static final String MARK_HISTORY_WORKFLOW_ENABLED = "history_workflow";
@@ -218,9 +219,15 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         // the list of all Step associated to the Form of the given FormResponse when
         // it will be ready
         List<Step> listStep = StepHome.getStepsListByForm( form.getId( ) );
-
+        
+        Map<Integer, Step> mapSteps = new HashMap<>();
+        listStep.stream( ).forEach( 
+            step -> mapSteps.put( step.getId(), step )
+        );
+        
         List<String> listStepDisplayTree = buildFormStepDisplayTreeList( request, listStep, formResponse );
         mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, listStepDisplayTree );
+        mapFormResponseDetailsModel.put( MARK_MAP_MULTIVIEW_STEP_REF_LIST, mapSteps );
 
         int nIdWorkflow = form.getIdWorkflow( );
         WorkflowService workflowService = WorkflowService.getInstance( );
