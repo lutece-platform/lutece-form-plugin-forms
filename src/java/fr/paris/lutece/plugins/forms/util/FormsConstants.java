@@ -92,6 +92,9 @@ public final class FormsConstants
     public static final String PARAMETER_ID_ENTRY = "id_entry";
     public static final String PARAMETER_ID_FIELD = "id_field";
     public static final String PARAMETER_ID_RESPONSE = "id_response";
+    public static final String PARAMETER_ID_FIELD_OCR = "id_field_ocr";
+    public static final String PARAMETER_TYPE_DOCUMENT_KEY = "type_document_key";
+    public static final String PARAMETER_ID_MAPPING = "id_mapping";
 
     public static final String PARAMETER_TARGET_VIEW = "view";
     public static final String COMPOSITE_STEP_TYPE = "step";
@@ -105,6 +108,7 @@ public final class FormsConstants
     public static final String PARAMETER_ID_ENTRY_TYPE = "id_type";
     public static final String PARAMETER_ID_GROUP = "id_group";
     public static final String PARAMETER_ID_QUESTION = "id_question";
+    public static final String PARAMETER_ID_QUESTION_MAPPING = "id_question_mapping";
     public static final String PARAMETER_ID_DISPLAY = "id_display";
     public static final String PARAMETER_ID_PARENT = "id_parent";
     public static final String PARAMETER_ID_TARGET = "id_target";
