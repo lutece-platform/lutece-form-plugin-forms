@@ -19,3 +19,4 @@ PRIMARY KEY (id_control, id_question, value)
 INSERT INTO forms_control_question SELECT id_control, id_question from forms_control;
 
 ALTER TABLE forms_control DROP COLUMN id_question;
+
