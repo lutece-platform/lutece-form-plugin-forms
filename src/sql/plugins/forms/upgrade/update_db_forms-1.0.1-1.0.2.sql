@@ -38,6 +38,9 @@ INSERT INTO forms_global_action (id_action, code, name_key, description_key, act
 
 INSERT INTO core_datastore ( entity_key, entity_value ) VALUES
     ( 'forms.display.form.columnTitle', 'true' );
+    
+INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
+('117', 'Lecture automatique fichier', 0, 0, 0, 'forms.entryTypeAutomaticFileReading', 'file', 'forms');
 
 ALTER TABLE forms_question ADD COLUMN code varchar(100) default '' NOT NULL;
 
