@@ -38,7 +38,6 @@ INSERT INTO forms_global_action (id_action, code, name_key, description_key, act
 
 INSERT INTO core_datastore ( entity_key, entity_value ) VALUES
     ( 'forms.display.form.columnTitle', 'true' );
-<<<<<<< HEAD
 
 ALTER TABLE forms_question ADD COLUMN code varchar(100) default '' NOT NULL;
 
