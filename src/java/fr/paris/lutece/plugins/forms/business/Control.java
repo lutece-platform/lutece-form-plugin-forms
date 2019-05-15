@@ -33,6 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.List;
+import java.util.Set;
+
 import javax.validation.constraints.Min;
 
 import org.hibernate.validator.constraints.NotEmpty;
@@ -50,8 +53,8 @@ public class Control implements Cloneable
 
     private String _strErrorMessage;
 
-    @Min( value = 1, message = "#i18n{forms.validation.control.Question.notEmpty}" )
-    private int _nIdQuestion;
+    //@Min( value = 1, message = "#i18n{forms.validation.control.Question.notEmpty}" )
+    private Set<Integer> _listIdQuestion;
 
     @NotEmpty( message = "#i18n{forms.validation.control.ValidatorName.notEmpty}" )
     private String _strValidatorName;
@@ -113,20 +116,20 @@ public class Control implements Cloneable
     }
 
     /**
-     * @return the _nIdQuestion
+     * @return the _ListIdQuestion
      */
-    public int getIdQuestion( )
+    public Set<Integer> getListIdQuestion( )
     {
-        return _nIdQuestion;
+        return _listIdQuestion;
     }
 
     /**
-     * @param nIdQuestion
-     *            the nIdQuestion to set
+     * @param listIdQuestion
+     *            the listIdQuestion to set
      */
-    public void setIdQuestion( int nIdQuestion )
+    public void setListIdQuestion( Set<Integer> listIdQuestion )
     {
-        this._nIdQuestion = nIdQuestion;
+        this._listIdQuestion = listIdQuestion;
     }
 
     /**
@@ -202,7 +205,7 @@ public class Control implements Cloneable
         }
 
         controlNew.setId( _nId );
-        controlNew.setIdQuestion( _nIdQuestion );
+        controlNew.setListIdQuestion( _listIdQuestion );
         controlNew.setControlType( _strControlType );
         controlNew.setErrorMessage( _strErrorMessage );
         controlNew.setIdControlTarget( _nIdControlTarget );

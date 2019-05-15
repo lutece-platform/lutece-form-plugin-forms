@@ -49,6 +49,7 @@ import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.validation.ControlListenerManager;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -61,14 +62,17 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
+import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -220,12 +224,14 @@ public class FormControlJspBean extends AbstractJspBean
 
             if ( _controlType.equals( ControlType.VALIDATION ) )
             {
-                _control.setIdQuestion( _nIdTarget );
+            	Set<Integer> listQuestion = new HashSet<Integer>();
+            	listQuestion.add(_nIdTarget);
+                _control.setListIdQuestion( listQuestion );
             }
         }
         else
         {
-            Question question = QuestionHome.findByPrimaryKey( _control.getIdQuestion( ) );
+            Question question = QuestionHome.findByPrimaryKey( _control.getListIdQuestion().iterator().next() );
             _step = StepHome.findByPrimaryKey( question.getIdStep( ) );
         }
 
@@ -308,9 +314,13 @@ public class FormControlJspBean extends AbstractJspBean
         if ( !listConditionalControl.isEmpty( ) )
         {
             _control = listConditionalControl.get( 0 );
+        }else 
+        	if (_control != null){
+        	
+        	_control.setListIdQuestion(null);
         }
 
-        if ( _control == null )
+        if ( _control == null || _control.getListIdQuestion() == null || _control.getListIdQuestion().isEmpty())
         {
             _control = new Control( );
             _control.setIdControlTarget( nIdCompositeDisplay );
@@ -318,7 +328,7 @@ public class FormControlJspBean extends AbstractJspBean
         }
         else
         {
-            Question question = QuestionHome.findByPrimaryKey( _control.getIdQuestion( ) );
+            Question question = QuestionHome.findByPrimaryKey( _control.getListIdQuestion().iterator().next( ) );
             _step = StepHome.findByPrimaryKey( question.getIdStep( ) );
         }
 
@@ -379,24 +389,25 @@ public class FormControlJspBean extends AbstractJspBean
     private void buildControlModel( HttpServletRequest request, Map<String, Object> model )
     {
         String strValidatorName = request.getParameter( FormsConstants.PARAMETER_VALIDATOR_NAME );
+        String valSubmit= request.getParameter( FormsConstants.PARAMETER_VIEW_MODIFY_CONTROL);
         int idStep = _step.getId( );
         if ( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) != null )
         {
             idStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         }
 
-        boolean bStepChanged = true;
+        boolean bStepChanged = false;
+        if(valSubmit!=null && valSubmit.equals(FormsConstants.VALIDATE_STEP)){
+        	bStepChanged= true;
+        }
 
         ReferenceList referenceListQuestion = new ReferenceList( );
         for ( Question question : QuestionHome.getQuestionsListByStep( idStep ) )
         {
-            if ( question.getId( ) == _control.getIdQuestion( ) )
-            {
-                bStepChanged = false;
-            }
+
             referenceListQuestion.addItem( question.getId( ), question.getTitle( ) );
         }
-
+        
         if ( StringUtils.isNotEmpty( strValidatorName ) && _control.getValidatorName( ) != strValidatorName )
         {
             _control.setValidatorName( strValidatorName );
@@ -407,36 +418,65 @@ public class FormControlJspBean extends AbstractJspBean
 
         if ( bStepChanged && !referenceListQuestion.isEmpty( ) )
         {
-            nIdQuestion = Integer.valueOf( referenceListQuestion.get( 0 ).getCode( ) );
+        	_control.setListIdQuestion(null);
+            nIdQuestion = FormsConstants.DEFAULT_ID_VALUE;
+        }else if( valSubmit != null && valSubmit.equals(FormsConstants.VALIDATE_VALIDATOR)){
+        	
+            nIdQuestion = FormsConstants.DEFAULT_ID_VALUE;
         }
         else
         {
             nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
         }
 
-        if ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE && _control.getIdQuestion( ) != nIdQuestion )
+    	String removeQuestion= request.getParameter( FormsConstants.VAL_REMOVE_QUESTION );
+    	if(removeQuestion!= null && removeQuestion.equals(FormsConstants.VAL_REMOVE_QUESTION)){
+    		String idQuestionToRemove= request.getParameter( FormsConstants.PARAMETER_ID_QUESTION_TO_REMOVE );
+    		Set<Integer> listIdQuestion= _control.getListIdQuestion();
+    		listIdQuestion.removeIf(p -> p.equals(Integer.parseInt(idQuestionToRemove)));
+    		_control.setListIdQuestion(listIdQuestion);
+    	}
+    	
+        if ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE && ( _control.getListIdQuestion()== null || !_control.getListIdQuestion().stream().anyMatch(p -> p.equals(nIdQuestion))) )
         {
-            _control.setIdQuestion( nIdQuestion );
+        
+        	 Set<Integer> listIdQuestion= (_control.getListIdQuestion()!=null)?_control.getListIdQuestion():new HashSet<Integer>();
+        	 listIdQuestion.add(nIdQuestion);
+            _control.setListIdQuestion(listIdQuestion);
+            
             _control.setValidatorName( StringUtils.EMPTY );
             _control.setValue( StringUtils.EMPTY );
         }
 
-        if ( _control.getIdQuestion( ) != FormsConstants.DEFAULT_ID_VALUE )
+        if ( _control.getListIdQuestion() != null && !_control.getListIdQuestion().isEmpty() )
         {
-            Question question = QuestionHome.findByPrimaryKey( _control.getIdQuestion( ) );
-
-            if ( question != null && question.getEntry( ) != null )
-            {
-                EntryType entryType = question.getEntry( ).getEntryType( );
-                ReferenceList refListAvailableValidator = EntryServiceManager.getInstance( ).getRefListAvailableValidator( entryType );
-
-                model.put( FormsConstants.MARK_AVAILABLE_VALIDATORS, refListAvailableValidator );
-
-                if ( refListAvailableValidator.size( ) >= 1 && StringUtils.EMPTY.equals( _control.getValidatorName( ) ) )
+        	Question q = QuestionHome.findByPrimaryKey( _control.getListIdQuestion().iterator().next() );
+        	EntryType ent = q.getEntry( ).getEntryType( );
+        	 
+        	ReferenceList refListAvailableValidator = EntryServiceManager.getInstance( ).getRefListAvailableValidator( ent );
+        	for(int idQuest:_control.getListIdQuestion()){
+        		Question question = QuestionHome.findByPrimaryKey( idQuest );
+        		if ( question != null && question.getEntry( ) != null )
                 {
-                    _control.setValidatorName( refListAvailableValidator.get( 0 ).getCode( ) );
+        			 EntryType entryType = question.getEntry( ).getEntryType( );
+        			 ReferenceList refListAvailableValidatorTemp= EntryServiceManager.getInstance( ).getRefListAvailableValidator( entryType );
+        			 ReferenceList refListAvailTemp= new ReferenceList();
+        			 for(ReferenceItem refList:refListAvailableValidatorTemp){
+        				 if(refListAvailableValidator.stream().anyMatch(p -> p.getCode().equals(refList.getCode()))){
+        					 refListAvailTemp.add(refList);
+        				 }
+        			 }    
+        			 refListAvailableValidator= refListAvailTemp;
                 }
+        	}
+        	 model.put( FormsConstants.MARK_AVAILABLE_VALIDATORS, refListAvailableValidator );
+
+            if ( refListAvailableValidator.size( ) >= 1 && StringUtils.EMPTY.equals( _control.getValidatorName( ) ) )
+            {
+                _control.setValidatorName( refListAvailableValidator.get( 0 ).getCode( ) );
             }
+
+           
         }
 
         String strValidatorTemplate = StringUtils.EMPTY;
@@ -475,12 +515,13 @@ public class FormControlJspBean extends AbstractJspBean
         if ( _control.getId( ) > 0 )
         {
             ControlHome.update( _control );
+            ControlListenerManager.notifyListenersControlUpdated(_control, request);
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_UPDATED );
         }
         else
         {
             ControlHome.create( _control );
-
+            ControlListenerManager.notifyListenersControlCreated(_control, request);
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_CREATED );
         }
 
@@ -530,7 +571,7 @@ public class FormControlJspBean extends AbstractJspBean
         if ( _control != null )
         {
             ControlHome.remove( _control.getId( ) );
-
+            ControlListenerManager.notifyListenersControlRemoval(_control, request);
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_REMOVED );
         }
         else
@@ -589,25 +630,27 @@ public class FormControlJspBean extends AbstractJspBean
      */
     private boolean populateAndValidateControl( HttpServletRequest request )
     {
-        int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
+        //int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
 
-        if ( nIdQuestion > 0 && StringUtils.isNotEmpty( _control.getValidatorName( ) ) )
+        if ( _control.getListIdQuestion() != null && _control.getListIdQuestion().size() > 0 && StringUtils.isNotEmpty( _control.getValidatorName( ) ) )
         {
-            _control.setIdQuestion( nIdQuestion );
-            Question question = QuestionHome.findByPrimaryKey( _control.getIdQuestion( ) );
-            if ( question.getEntry( ) != null )
-            {
-                List<IValidator> listValidator = EntryServiceManager.getInstance( ).getListAvailableValidator( question.getEntry( ).getEntryType( ) );
-                IValidator controlValidator = EntryServiceManager.getInstance( ).getValidator( _control.getValidatorName( ) );
-
-                if ( !listValidator.contains( controlValidator ) )
-                {
-                    _control.setValidatorName( StringUtils.EMPTY );
-                    _control.setValue( StringUtils.EMPTY );
-                    addError( ERROR_QUESTION_VALIDATOR_MATCH, getLocale( ) );
-                    return false;
-                }
-            }
+        	Set<Integer> listIdQuestion= (_control.getListIdQuestion()!=null)?_control.getListIdQuestion():new HashSet<Integer>();
+        	for(int nIdQuest: listIdQuestion){
+        		Question question = QuestionHome.findByPrimaryKey( nIdQuest );
+	            if ( question.getEntry( ) != null )
+	            {
+	                List<IValidator> listValidator = EntryServiceManager.getInstance( ).getListAvailableValidator( question.getEntry( ).getEntryType( ) );
+	                IValidator controlValidator = EntryServiceManager.getInstance( ).getValidator( _control.getValidatorName( ) );
+	
+	                if ( !listValidator.contains( controlValidator ) )
+	                {
+	                    _control.setValidatorName( StringUtils.EMPTY );
+	                    _control.setValue( StringUtils.EMPTY );
+	                    addError( ERROR_QUESTION_VALIDATOR_MATCH, getLocale( ) );
+	                    return false;
+	                }
+	            }
+        	}
         }
 
         String strValidatorName = request.getParameter( FormsConstants.PARAMETER_VALIDATOR_NAME );

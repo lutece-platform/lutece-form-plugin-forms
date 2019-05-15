@@ -89,7 +89,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         listFormColumn.add( new FormColumnFormsMock( 1, "form" ) );
         listFormColumn.add( new FormColumnFormResponseDateCreationMock( 2, "date creation" ) );
         listFormColumn.add( new FormColumnWorkflowStateMock( 3, "workflow state" ) );
-        _formColumnFactory = new FormColumnFactory( listFormColumn );
+        _formColumnFactory = new FormColumnFactory( );
     }
 
     /**

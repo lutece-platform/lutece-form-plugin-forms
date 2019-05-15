@@ -21,6 +21,9 @@
             <@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
               <@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
             </@formGroup>
+            <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+            </@formGroup>
             <#assign fieldLink = getFieldByCode( entry, "link" ) >
             <@formGroup labelFor='link' labelKey='#i18n{forms.entryType.termsOfService.labelLink}' helpKey='#i18n{forms.entryType.termsOfService.labelLink.help}' mandatory=true>
               <@input type='text' name='link' id='link' value='${fieldLink.value}' maxlength=255 />

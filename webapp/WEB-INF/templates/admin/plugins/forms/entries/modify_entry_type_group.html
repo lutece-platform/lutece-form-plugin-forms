@@ -17,6 +17,9 @@
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' mandatory=true>
 							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
 						</@formGroup>
+                                                <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                                                    <@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
+                                                </@formGroup>
 						<#assign iterationAddingLabel = getFieldValue(entry,"iteration_adding_label")>
 						<#assign nbIteration = getFieldValue(entry,"nb_iterations")>
 						<#assign nbIteration_minimum = getFieldValue(entry,"nb_iterations_minimum")>
