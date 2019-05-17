@@ -40,6 +40,7 @@ package fr.paris.lutece.plugins.forms.web.entrytype;
 public final class DisplayType
 {
     public static final DisplayType EDITION_BACKOFFICE = new DisplayType( Mode.EDITION, false );
+    public static final DisplayType SELECT_BACKOFFICE = new DisplayType( Mode.SELECT, false );
     public static final DisplayType EDITION_FRONTOFFICE = new DisplayType( Mode.EDITION, true );
     public static final DisplayType READONLY_BACKOFFICE = new DisplayType( Mode.READONLY, false );
     public static final DisplayType READONLY_FRONTOFFICE = new DisplayType( Mode.READONLY, true );
@@ -50,7 +51,7 @@ public final class DisplayType
      */
     public enum Mode
     {
-        EDITION, READONLY
+        EDITION, READONLY, SELECT
     };
 
     private final Mode _mode;
