@@ -267,19 +267,21 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         {
             strTemplate = TEMPLATE_GROUP_READONLY_BACKOFFICE;
         }
-
         if ( displayType == DisplayType.READONLY_FRONTOFFICE )
         {
             strTemplate = TEMPLATE_GROUP_READONLY_FRONTOFFICE;
         }
-
         if ( displayType == DisplayType.EDITION_BACKOFFICE )
         {
             strTemplate = TEMPLATE_GROUP_READONLY_BACKOFFICE;
         }
-        if ( displayType == DisplayType.SELECT_BACKOFFICE )
+        if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
         {
         	strTemplate = TEMPLATE_GROUP_READONLY_BACKOFFICE;
+        }
+        if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
+        {
+        	strTemplate = TEMPLATE_GROUP_EDITION_FRONTOFFICE;
         }
         return strTemplate;
     }

@@ -238,11 +238,14 @@ public class StepDisplayTree
         {
             strTemplate = TEMPLATE_STEP_READONLY_BACKOFFICE;
         }
-        if ( displayType == DisplayType.SELECT_BACKOFFICE )
+        if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
         {
         	strTemplate = TEMPLATE_STEP_SELECT_BACKOFFICE;
         }
-
+        if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE  )
+        {
+            strTemplate = TEMPLATE_STEP_EDITION_FRONTOFFICE;
+        }
         return strTemplate;
     }
 
