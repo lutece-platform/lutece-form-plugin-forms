@@ -135,6 +135,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     @Override
     public String getRequestData( Entry entry, HttpServletRequest request, Locale locale )
     {
+    	initCommonRequestData( entry, request );
         String strTitle = request.getParameter( PARAMETER_TITLE );
         String strLinkText = request.getParameter( PARAMETER_LINK );
         String strTermsOfService = request.getParameter( PARAMETER_TOS );

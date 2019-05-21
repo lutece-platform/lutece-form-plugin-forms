@@ -126,6 +126,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     @Override
     public String getRequestData( Entry entry, HttpServletRequest request, Locale locale )
     {
+    	initCommonRequestData( entry, request );
         entry.setTitle( I18nService.getLocalizedString( PROPERTY_ENTRY_TITLE, locale ) );
 
         entry.setComment( StringUtils.EMPTY );
