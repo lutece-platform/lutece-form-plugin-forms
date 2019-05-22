@@ -35,15 +35,21 @@
 package fr.paris.lutece.plugins.forms.validation;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseFilter;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
+import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  * 
@@ -51,8 +57,10 @@ import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
  *
  */
 public class UniqueValidator extends AbstractValidator
-
 {
+	
+	private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/unique_template.html";
+	
     /**
      * Constructor of the PatternValidator
      * 
@@ -67,7 +75,16 @@ public class UniqueValidator extends AbstractValidator
     {
         super(strValidatorName, strValidatorDisplayName, listAvailableEntryType);
     }
+    
+    @Override
+    public String getDisplayHtml( Control control )
+    {
+        Map<String, Object> model = new HashMap<>( );
+        model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
 
+        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
+        return htmlTemplateQuestion.getHtml( );
+    }
 
     @Override
     public boolean validate( FormQuestionResponse formQuestionResponse, Control control )
@@ -75,10 +92,18 @@ public class UniqueValidator extends AbstractValidator
         if ( formQuestionResponse != null && !formQuestionResponse.getEntryResponse( ).isEmpty( ) )
         {
             Response response = formQuestionResponse.getEntryResponse( ).get( 0 );
-
+            
+            boolean multiForm = Boolean.valueOf( control.getValue( ) );
             ResponseFilter filter = new ResponseFilter( );
-            filter.setIdEntry( response.getEntry( ).getIdEntry( ) );
-
+            
+            if ( multiForm )
+            {
+            	filter.setCodeEntry( response.getEntry( ).getCode( ) );
+            }
+            else
+            {
+            	filter.setIdEntry( response.getEntry( ).getIdEntry( ) );
+            }
             Collection<Response> listSubmittedResponses = ResponseHome.getResponseList( filter );
 
             String strValueEntry = response.getResponseValue( );
