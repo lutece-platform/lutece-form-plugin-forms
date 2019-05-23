@@ -88,7 +88,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         String strEntryValue = StringUtils.EMPTY;
         if ( formColumnCell != null )
         {
-            String strEntryValueName = String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getFormColumnPosition( ) );
+            String strEntryValueName = formColumnCell.getFormColumnCellValues().keySet().stream( ).findFirst( ).get( );
             Object objEntryValue = formColumnCell.getFormColumnCellValueByName( strEntryValueName );
             if ( objEntryValue != null )
             {
@@ -102,22 +102,5 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         String strFormColumnEntryTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
 
         return strFormColumnEntryTemplate;
-    }
-
-    /**
-     * Return the position of the FormColumn or {@linkplain NumberUtils.INTEGER_MINUS_ONE} if doesn't exist
-     * 
-     * @return the position of the FormColumn
-     */
-    private int getFormColumnPosition( )
-    {
-        int nFormColumnPosition = NumberUtils.INTEGER_MINUS_ONE;
-        IFormColumn formColumn = getFormColumn( );
-        if ( formColumn != null )
-        {
-            nFormColumnPosition = formColumn.getFormColumnPosition( );
-        }
-
-        return nFormColumnPosition;
     }
 }

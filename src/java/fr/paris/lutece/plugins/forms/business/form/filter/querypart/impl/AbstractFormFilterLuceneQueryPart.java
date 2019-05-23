@@ -31,47 +31,67 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
-
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterLuceneQueryPart;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 
 /**
- * Abstract class for the implementation of the IFormPanelQueryPart
+ * Abstract class for the implementation of IFormFilterQueryPart
  */
-public abstract class AbstractFormPanelInitializerQueryPart implements IFormPanelInitializerLuceneQueryPart
+public abstract class AbstractFormFilterLuceneQueryPart implements IFormFilterLuceneQueryPart
 {
     // Variables
-    private Query _queryFormPanelInitializerSelectQuery;
+    private Query _queryFormFilterQuery;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public abstract void buildFormPanelInitializerQuery( FormParameters formParameters );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Query getFormPanelInitializerSelectQuery( )
+    public void buildFormFilterQuery( FormParameters formParameters )
     {
-        return _queryFormPanelInitializerSelectQuery;
+        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
+        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        {
+            Set<Entry<String,Object> > setFormParameters = formParameters.getFormParametersMap( ).entrySet();
+        
+            for ( Entry<String,Object> formParam : setFormParameters )
+            {
+                Query query = new TermQuery( new Term( formParam.getKey( ), formParam.getValue().toString( ) ) );
+                booleanQueryBuilder.add( query, BooleanClause.Occur.MUST);
+            }
+            setFormFilterQuery( booleanQueryBuilder.build( ) );
+        }
+        else 
+        {
+            setFormFilterQuery( null );
+        }
     }
 
     /**
-     * Set the select query part of the FormPanelInitializer
-     * 
-     * @param queryFormPanelInitializerSelectQuery
-     *            The select query part of the FormPanelInitializer
+     * {@inheritDoc}
      */
-    protected void setFormPanelInitializerSelectQuery( Query queryFormPanelInitializerSelectQuery )
+    @Override
+    public Query getFormFilterQuery( )
     {
-        _queryFormPanelInitializerSelectQuery = queryFormPanelInitializerSelectQuery;
+        return _queryFormFilterQuery;
+    }
+
+    /**
+     * Set the form filter query of the form filter query part
+     * 
+     * @param strFormFilterQuery
+     *            The form filter query to set
+     */
+    public void setFormFilterQuery( Query strFormFilterQuery )
+    {
+        _queryFormFilterQuery = strFormFilterQuery;
     }
 }

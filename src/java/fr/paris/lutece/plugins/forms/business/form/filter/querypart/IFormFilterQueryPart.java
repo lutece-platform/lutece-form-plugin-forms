@@ -47,11 +47,4 @@ public interface IFormFilterQueryPart
      *            The FormParameters to use for building the query
      */
     void buildFormFilterQuery( FormParameters formParameters );
-
-    /**
-     * Return the built query of the FormFilter
-     * 
-     * @return the built query of the form filter
-     */
-    String getFormFilterQuery( );
 }

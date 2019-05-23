@@ -31,33 +31,43 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
-
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import org.apache.lucene.search.MatchAllDocsQuery;
+import java.util.Map;
+import java.util.Set;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 
 /**
- * Implementation of the FormPanelInitializerQueryPart associate to the FormPanelFormsInitializer
+ * Implementation of the IFormFilterQueryPart for an Entry filter
  */
-public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitializerQueryPart
+public class FormFilterFormResponseDateCreationLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    /**
-     * Constructor
-     */
-    public FormPanelFormsInitializerQueryPart( )
-    {
-        super( );
-        setFormPanelInitializerSelectQuery( new MatchAllDocsQuery( ) );
-    }
-
-    /**
+        /**
      * {@inheritDoc}
      */
     @Override
-    public void buildFormPanelInitializerQuery( FormParameters formParameters )
+    public void buildFormFilterQuery( FormParameters formParameters )
     {
-        // There is nothing to do with the FormParameters for this FormPanelInitializer
+        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
+        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        {
+            Set<Map.Entry<String,Object> > setFormParameters = formParameters.getFormParametersMap( ).entrySet();
+        
+            for ( Map.Entry<String,Object> formParam : setFormParameters )
+            {
+                Query query = new TermQuery( new Term( formParam.getKey( ), formParam.getValue().toString( ) ) );
+                booleanQueryBuilder.add( query, BooleanClause.Occur.MUST);
+            }
+            setFormFilterQuery( booleanQueryBuilder.build( ) );
+        }
+        else 
+        {
+            setFormFilterQuery( null );
+        }
     }
-    
 }

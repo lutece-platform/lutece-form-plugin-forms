@@ -31,33 +31,12 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
-
-
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import org.apache.lucene.search.MatchAllDocsQuery;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 /**
- * Implementation of the FormPanelInitializerQueryPart associate to the FormPanelFormsInitializer
+ * Implementation of the IFormFilterQueryPart for an Entry filter
  */
-public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitializerQueryPart
+public class FormFilterIdFormResponseLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    /**
-     * Constructor
-     */
-    public FormPanelFormsInitializerQueryPart( )
-    {
-        super( );
-        setFormPanelInitializerSelectQuery( new MatchAllDocsQuery( ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void buildFormPanelInitializerQuery( FormParameters formParameters )
-    {
-        // There is nothing to do with the FormParameters for this FormPanelInitializer
-    }
-    
+    //Nothing to extends
 }

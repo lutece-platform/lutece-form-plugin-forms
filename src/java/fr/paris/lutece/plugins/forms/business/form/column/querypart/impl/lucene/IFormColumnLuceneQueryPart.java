@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Query;
 
 public interface IFormColumnLuceneQueryPart extends IFormColumnQueryPart
 {   

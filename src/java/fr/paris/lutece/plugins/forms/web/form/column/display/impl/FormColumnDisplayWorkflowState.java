@@ -40,6 +40,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
@@ -84,7 +85,7 @@ public class FormColumnDisplayWorkflowState extends AbstractFormColumnDisplay
         String strWorkflowStateName = StringUtils.EMPTY;
         if ( formColumnCell != null )
         {
-            Object objWorkflowStateName = formColumnCell.getFormColumnCellValueByName( FormMultiviewWorkflowStateNameConstants.COLUMN_WORKFLOW_STATE_NAME );
+            Object objWorkflowStateName = formColumnCell.getFormColumnCellValueByName( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE );
             if ( objWorkflowStateName != null )
             {
                 strWorkflowStateName = String.valueOf( objWorkflowStateName );

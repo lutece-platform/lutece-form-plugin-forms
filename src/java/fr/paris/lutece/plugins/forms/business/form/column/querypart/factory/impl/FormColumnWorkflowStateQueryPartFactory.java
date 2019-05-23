@@ -31,33 +31,33 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl;
 
-
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import org.apache.lucene.search.MatchAllDocsQuery;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene.FormColumnWorkflowStateLuceneQueryPart;
 
 /**
- * Implementation of the FormPanelInitializerQueryPart associate to the FormPanelFormsInitializer
+ * Implementation of the IFormColumnQueryPartFactory interface for a WorkflowState column
  */
-public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitializerQueryPart
+public class FormColumnWorkflowStateQueryPartFactory implements IFormColumnQueryPartFactory
 {
-    /**
-     * Constructor
-     */
-    public FormPanelFormsInitializerQueryPart( )
-    {
-        super( );
-        setFormPanelInitializerSelectQuery( new MatchAllDocsQuery( ) );
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public void buildFormPanelInitializerQuery( FormParameters formParameters )
+    public IFormColumnQueryPart buildFormColumnQueryPart( IFormColumn formColumn )
     {
-        // There is nothing to do with the FormParameters for this FormPanelInitializer
+        IFormColumnQueryPart formColumnWorkflowStateQueryPart = null;
+
+        if ( formColumn instanceof FormColumnWorkflowState )
+        {
+            
+            formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateLuceneQueryPart( );
+        }
+
+        return formColumnWorkflowStateQueryPart;
     }
-    
 }

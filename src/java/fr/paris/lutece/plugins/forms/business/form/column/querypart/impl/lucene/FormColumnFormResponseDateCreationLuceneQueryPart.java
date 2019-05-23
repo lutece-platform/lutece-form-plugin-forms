@@ -31,33 +31,30 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene;
+
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import org.apache.lucene.search.MatchAllDocsQuery;
-
-/**
- * Implementation of the FormPanelInitializerQueryPart associate to the FormPanelFormsInitializer
- */
-public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitializerQueryPart
+public class FormColumnFormResponseDateCreationLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
-    /**
-     * Constructor
-     */
-    public FormPanelFormsInitializerQueryPart( )
-    {
-        super( );
-        setFormPanelInitializerSelectQuery( new MatchAllDocsQuery( ) );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void buildFormPanelInitializerQuery( FormParameters formParameters )
+    protected Map<String, Object> getMapFormColumnValues( Document document ) 
     {
-        // There is nothing to do with the FormParameters for this FormPanelInitializer
+        Map<String,Object> mapFormColumnValues = new HashMap<>();
+        
+        IndexableField fieldDateCreation = document.getField( FormResponseSearchItem.FIELD_DATE_CREATION );
+       
+        if ( fieldDateCreation != null )
+        {
+            mapFormColumnValues.put( fieldDateCreation.name(), fieldDateCreation.stringValue( ) );
+        }
+        
+        return mapFormColumnValues;
+        
     }
-    
 }
