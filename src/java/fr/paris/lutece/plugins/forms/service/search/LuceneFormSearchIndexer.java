@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
@@ -43,11 +45,16 @@ import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
+import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
+import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.content.XPageAppService;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.search.IndexationService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -59,17 +66,25 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
 
 import java.io.IOException;
+import java.math.BigInteger;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
 import org.apache.commons.lang.mutable.MutableBoolean;
 import org.apache.lucene.document.DateTools;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.document.LongPoint;
+import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.document.SortedDocValuesField;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.util.BytesRef;
+import org.jsoup.Jsoup;
 
 /**
  * Forms global indexer
@@ -82,6 +97,8 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
     private static final String INDEXER_VERSION = "1.0.0";
     private static final String PROPERTY_INDEXER_ENABLE = "forms.globalIndexer.enable";
 
+    @Inject
+    private WorkflowService _workflowService;
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
     private IndexWriter _indexWriter;
@@ -172,8 +189,11 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         }
 
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
+        Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
+        State formResponseState = _workflowService.getState( formResponse.getId(), FormResponse.RESOURCE_TYPE, form.getIdWorkflow(), -1);
+        
 
-        Document doc = getDocument( formResponse );
+        Document doc = getDocument( formResponse, form, formResponseState );
         if ( doc != null )
         {
             List<Document> listDocument = new ArrayList<>( 1 );
@@ -192,45 +212,244 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
      *            the formResponse object
      * @return a lucene document filled with the record data
      */
-    public Document getDocument( FormResponse formResponse )
+    public Document getDocument( FormResponse formResponse, Form form, State formResponseState )
     {
 
+
+        // make a new, empty document
         Document doc = new Document( );
 
-        FieldType ftStored = new FieldType( StringField.TYPE_STORED );
-        ftStored.setOmitNorms( false );
+        int nIdFormResponse = formResponse.getId( );
 
-        FieldType ftNotStoredText = new FieldType( StringField.TYPE_NOT_STORED );
-        ftNotStoredText.setOmitNorms( false );
-        ftNotStoredText.setTokenized( true );
+        // --- document identifier
+        doc.add( new StringField( FormResponseSearchItem.FIELD_UID, String.valueOf( nIdFormResponse ), Field.Store.YES ) );
 
-        FieldType ftNotStoredDate = new FieldType( StringField.TYPE_NOT_STORED );
-        ftNotStoredDate.setOmitNorms( true );
-        ftNotStoredDate.setTokenized( false );
+        // --- form response identifier
+        doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
+        doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
 
-        String strUID = Integer.toString( formResponse.getId( ) );
-        doc.add( new Field( FormResponseSearchItem.FIELD_UID, strUID, ftStored ) );
+        // --- field contents
+        doc.add( new TextField( FormResponseSearchItem.FIELD_CONTENTS, manageNullValue( getContentToIndex(formResponse ) ), Field.Store.NO ) );
 
-        // Content of the values to index
-        String strContent = getContentToIndex( formResponse );
-        if ( StringUtils.isNotBlank( strContent ) )
+        // --- form title
+        String strFormTitle = manageNullValue( form.getTitle( ) );
+        doc.add( new StringField( FormResponseSearchItem.FIELD_FORM_TITLE, strFormTitle, Field.Store.YES ) );
+        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_FORM_TITLE, new BytesRef( strFormTitle ) ) );
+
+        // --- id form
+        doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_FORM, form.getId( ) ) );
+        doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_FORM, form.getId( ) ) );
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, form.getId( ) ) );
+
+        // --- form response date create
+        Long longCreationDate = formResponse.getCreation().getTime();
+        doc.add( new LongPoint( FormResponseSearchItem.FIELD_DATE_CREATION, longCreationDate ) );
+        doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_DATE_CREATION, longCreationDate ) );
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_DATE_CREATION, longCreationDate ) );
+
+        // --- form response date closure
+        Long longUpdateDate = formResponse.getUpdate( ).getTime();
+        doc.add( new LongPoint( FormResponseSearchItem.FIELD_DATE_UPDATE, longUpdateDate ) );
+        doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_DATE_UPDATE, longUpdateDate ) );
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_DATE_UPDATE, longUpdateDate ) );
+
+        // --- id form response workflow state
+        int nIdFormResponseWorkflowState = formResponseState.getId( ) ;
+        doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
+        doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
+        
+        // --- form response workflow state title
+        String strFormResponseWorkflowStateTitle = manageNullValue( formResponseState.getName( ) );
+        doc.add( new StringField( FormResponseSearchItem.FIELD_FORM_TITLE, strFormResponseWorkflowStateTitle, Field.Store.YES ) );
+        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_FORM_TITLE, new BytesRef( strFormResponseWorkflowStateTitle ) ) );
+        
+         // --- ticket user Message
+        String userMessage = ticket.getUserMessage( ) == null ? "" : Jsoup.parse( ticket.getUserMessage( ) ).text( );
+        doc.add( new StringField( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, userMessage, Field.Store.YES ) );
+        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_USER_MESSAGE, new BytesRef( userMessage ) ) );
+        
+        // --- ticket user Guid
+        String userGuid = ticket.getGuid()== null ? "" : Jsoup.parse( ticket.getGuid( ) ).text( );
+        doc.add( new StringField( FormResponseSearchItem.FIELD_USER_GUID, userGuid, Field.Store.YES ) );
+        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_USER_MESSAGE, new BytesRef( userGuid ) ) );
+        
+        // --- ticket user Message
+        String userMessage = ticket.getUserMessage( ) == null ? "" : Jsoup.parse( ticket.getUserMessage( ) ).text( );
+        doc.add( new StringField( FormResponseSearchItem.FIELD_USER_MESSAGE, userMessage, Field.Store.YES ) );
+        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_USER_MESSAGE, new BytesRef( userMessage ) ) );
+
+        // --- ticket Facil'familles
+        String strFacilFamille = ticket.getFacilFamilleNumber( ) != null ? ticket.getFacilFamilleNumber( ) : "";
+        doc.add( new StringField( FormResponseSearchItem.FIELD_FACIL_FAMILLE, strFacilFamille, Field.Store.YES ) );
+        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_FACIL_FAMILLE, new BytesRef( strFacilFamille ) ) );
+
+        // --- ticket comment
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_COMMENT, manageNullValue( ticket.getTicketComment( ) ) ) );
+
+        // --- ticket nomenclature
+        String strNomenclature = manageNullValue( ticket.getNomenclature( ) );
+        doc.add( new TextField( FormResponseSearchItem.FIELD_TICKET_NOMENCLATURE, strNomenclature, Field.Store.YES ) );
+        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_TICKET_NOMENCLATURE, new BytesRef( strNomenclature ) ) );
+
+        // --- ticket criticality
+        int nCriticality = ticket.getCriticality( );
+        doc.add( new IntPoint( FormResponseSearchItem.FIELD_CRITICALITY, nCriticality ) );
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_CRITICALITY, nCriticality ) );
+
+        // --- ticket priority
+        int nPriority = ticket.getPriority( );
+        doc.add( new IntPoint( FormResponseSearchItem.FIELD_PRIORITY, nPriority ) );
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_PRIORITY, nPriority ) );
+
+        // --- ticket status
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_STATUS, ticket.getTicketStatus( ) ) );
+
+        // --- ticket category
+        for ( TicketCategory ticketCategory : ticket.getBranch( ) )
         {
-            doc.add( new Field( FormResponseSearchItem.FIELD_CONTENTS, strContent, ftNotStoredText ) );
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_CATEGORY_ID_DEPTHNUMBER + ticketCategory.getDepth( ).getDepthNumber( ), ticketCategory.getId( ) ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_CATEGORY_ID_DEPTHNUMBER + ticketCategory.getDepth( ).getDepthNumber( ), ticketCategory.getId( ) ) );
+            doc.add( new StringField( FormResponseSearchItem.FIELD_CATEGORY_ID_DEPTHNUMBER + ticketCategory.getDepth( ).getDepthNumber( ), Integer.toString( ticketCategory.getId( ) ), Field.Store.YES ) );
+            doc.add( new TextField( FormResponseSearchItem.FIELD_CATEGORY_DEPTHNUMBER + ticketCategory.getDepth( ).getDepthNumber( ), ticketCategory.getLabel( ), Field.Store.YES ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_CATEGORY_DEPTHNUMBER + ticketCategory.getDepth( ).getDepthNumber( ), new BytesRef( ticketCategory.getLabel( ) ) ) );
+            doc.add( new StringField( FormResponseSearchItem.FIELD_CATEGORY_DEPTHNUMBER + ticketCategory.getDepth( ).getDepthNumber( ), manageNullValue( ticketCategory.getLabel( ) ), Field.Store.YES ) );
         }
-        if ( StringUtils.isNotBlank( formResponse.getGuid( ) ) )
+
+        // --- ticket user title
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_USER_TITLE, manageNullValue( ticket.getUserTitle( ) ) ) );
+
+        // --- ticket user firstname
+        String strFirstname = manageNullValue( ticket.getFirstname( ) );
+        doc.add( new TextField( FormResponseSearchItem.FIELD_FIRSTNAME, strFirstname, Field.Store.YES ) );
+        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_FIRSTNAME, new BytesRef( strFirstname ) ) );
+
+        // --- ticket user lastname
+        String strLastName = manageNullValue( ticket.getLastname( ) );
+        doc.add( new TextField( FormResponseSearchItem.FIELD_LASTNAME, strLastName, Field.Store.YES ) );
+        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_LASTNAME, new BytesRef( strLastName ) ) );
+
+        // --- ticket user email
+        String strEmail = manageNullValue( ticket.getEmail( ) );
+        doc.add( new StringField( FormResponseSearchItem.FIELD_EMAIL, strEmail, Field.Store.YES ) );
+        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_EMAIL, new BytesRef( strEmail ) ) );
+
+        // --- ticket phone number
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_MOBILE_PHONE_NUMBER, manageNullValue( ticket.getMobilePhoneNumber( ) ) ) );
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_FIXED_PHONE_NUMBER, manageNullValue( ticket.getFixedPhoneNumber( ) ) ) );
+
+        // --- ticket state
+        if ( ticket.getState( ) != null )
         {
-            doc.add( new Field( FormResponseSearchItem.FIELD_GUID, formResponse.getGuid( ), ftNotStoredText ) );
-        }
-        if ( formResponse.getCreation( ) != null )
+            int nIdState = ticket.getState( ).getId( );
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_STATE_ID, nIdState ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_STATE_ID, TicketSearchUtil.getBytesRef( BigInteger.valueOf( nIdState ) ) ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_STATE_ID, nIdState ) );
+
+            String strState = manageNullValue( ticket.getState( ).getName( ) );
+            doc.add( new TextField( FormResponseSearchItem.FIELD_STATE, strState, Field.Store.YES ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_STATE, new BytesRef( strState ) ) );
+        } else
         {
-            doc.add( new Field( FormResponseSearchItem.FIELD_DATE_CREATION, DateTools.timeToString( formResponse.getCreation( ).toInstant( ).toEpochMilli( ),
-                    DateTools.Resolution.DAY ), ftNotStoredDate ) );
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_STATE_ID, CONSTANT_ID_NULL ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_STATE_ID, TicketSearchUtil.getBytesRef( BigInteger.valueOf( CONSTANT_ID_NULL ) ) ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_STATE_ID, CONSTANT_ID_NULL ) );
+
+            doc.add( new TextField( FormResponseSearchItem.FIELD_STATE, StringUtils.EMPTY, Field.Store.YES ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_STATE, new BytesRef( StringUtils.EMPTY ) ) );
         }
-        if ( formResponse.getUpdate( ) != null )
+
+        // --- ticket channel
+        if ( ticket.getChannel( ) != null )
         {
-            doc.add( new Field( FormResponseSearchItem.FIELD_DATE_UPDATE, DateTools.timeToString( formResponse.getUpdate( ).toInstant( ).toEpochMilli( ),
-                    DateTools.Resolution.DAY ), ftNotStoredDate ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_CHANNEL_ICONFONT, manageNullValue( ticket.getChannel( ).getIconFont( ) ) ) );
+
+            String strChannelLabel = manageNullValue( ticket.getChannel( ).getLabel( ) );
+            doc.add( new TextField( FormResponseSearchItem.FIELD_CHANNEL_LABEL, strChannelLabel, Field.Store.YES ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_CHANNEL_LABEL, new BytesRef( strChannelLabel ) ) );
+        } else
+        {
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_CHANNEL_ICONFONT, StringUtils.EMPTY ) );
+
+            doc.add( new TextField( FormResponseSearchItem.FIELD_CHANNEL_LABEL, StringUtils.EMPTY, Field.Store.YES ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_CHANNEL_LABEL, new BytesRef( StringUtils.EMPTY ) ) );
         }
+
+        // --- ticket assigneeUnit
+        if ( ticket.getAssigneeUnit( ) != null )
+        {
+            int nAssigneeUnitId = ticket.getAssigneeUnit( ).getUnitId( );
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_ASSIGNEE_UNIT_ID, nAssigneeUnitId ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_ASSIGNEE_UNIT_ID, TicketSearchUtil.getBytesRef( BigInteger.valueOf( nAssigneeUnitId ) ) ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ASSIGNEE_UNIT_ID, nAssigneeUnitId ) );
+
+            String strAssigneeUnitName = manageNullValue( ticket.getAssigneeUnit( ).getName( ) );
+            doc.add( new TextField( FormResponseSearchItem.FIELD_ASSIGNEE_UNIT_NAME, strAssigneeUnitName, Field.Store.YES ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_ASSIGNEE_UNIT_NAME, new BytesRef( strAssigneeUnitName ) ) );
+        } else
+        {
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_ASSIGNEE_UNIT_ID, CONSTANT_ID_NULL ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_ASSIGNEE_UNIT_ID, TicketSearchUtil.getBytesRef( BigInteger.valueOf( CONSTANT_ID_NULL ) ) ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ASSIGNEE_UNIT_ID, CONSTANT_ID_NULL ) );
+
+            doc.add( new TextField( FormResponseSearchItem.FIELD_ASSIGNEE_UNIT_NAME, StringUtils.EMPTY, Field.Store.YES ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_ASSIGNEE_UNIT_NAME, new BytesRef( StringUtils.EMPTY ) ) );
+        }
+
+        // --- ticket assigneeUser
+        if ( ticket.getAssigneeUser( ) != null )
+        {
+            int nAdminUserId = ticket.getAssigneeUser( ).getAdminUserId( );
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_ASSIGNEE_USER_ADMIN_ID, nAdminUserId ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ASSIGNEE_USER_ADMIN_ID, nAdminUserId ) );
+
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ASSIGNEE_USER_FIRSTNAME, manageNullValue( ticket.getAssigneeUser( ).getFirstname( ) ) ) );
+
+            String strAssigneeUserLastname = manageNullValue( ticket.getAssigneeUser( ).getLastname( ) );
+            doc.add( new TextField( FormResponseSearchItem.FIELD_ASSIGNEE_USER_LASTNAME, strAssigneeUserLastname, Field.Store.YES ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_ASSIGNEE_USER_LASTNAME, new BytesRef( strAssigneeUserLastname ) ) );
+        } else
+        {
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_ASSIGNEE_USER_ADMIN_ID, CONSTANT_ID_NULL ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ASSIGNEE_USER_ADMIN_ID, CONSTANT_ID_NULL ) );
+
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ASSIGNEE_USER_FIRSTNAME, StringUtils.EMPTY ) );
+
+            doc.add( new TextField( FormResponseSearchItem.FIELD_ASSIGNEE_USER_LASTNAME, StringUtils.EMPTY, Field.Store.YES ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_ASSIGNEE_USER_LASTNAME, new BytesRef( StringUtils.EMPTY ) ) );
+        }
+
+        // --- ticket assignerUnit
+        if ( ticket.getAssignerUnit( ) != null )
+        {
+            int nAssignerUnitId = ticket.getAssignerUnit( ).getUnitId( );
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_ASSIGNER_UNIT_ID, nAssignerUnitId ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_ASSIGNER_UNIT_ID, TicketSearchUtil.getBytesRef( BigInteger.valueOf( nAssignerUnitId ) ) ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ASSIGNER_UNIT_ID, nAssignerUnitId ) );
+        } else
+        {
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_ASSIGNER_UNIT_ID, CONSTANT_ID_NULL ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_ASSIGNER_UNIT_ID, TicketSearchUtil.getBytesRef( BigInteger.valueOf( CONSTANT_ID_NULL ) ) ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ASSIGNER_UNIT_ID, CONSTANT_ID_NULL ) );
+        }
+
+        // --- ticket assignerUser
+        if ( ticket.getAssignerUser( ) != null )
+        {
+            int nAssignerUserId = ticket.getAssignerUser( ).getAdminUserId( );
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_ASSIGNER_USER_ID, nAssignerUserId ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ASSIGNER_USER_ID, nAssignerUserId ) );
+        } else
+        {
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_ASSIGNER_USER_ID, CONSTANT_ID_NULL ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ASSIGNER_USER_ID, CONSTANT_ID_NULL ) );
+        }
+
+        // --- ticket read marker Id
+        int nMarkingId = ticket.getIdTicketMarking( );
+        doc.add( new IntPoint( FormResponseSearchItem.FIELD_TICKET_MARKING_ID, nMarkingId ) );
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_TICKET_MARKING_ID, nMarkingId ) );
 
         return doc;
     }
@@ -509,5 +728,11 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         {
             endIndexing( );
         }
+    }
+    
+    private String manageNullValue( String strValue )
+    {
+        if ( strValue == null ) return StringUtils.EMPTY;
+        return strValue;
     }
 }

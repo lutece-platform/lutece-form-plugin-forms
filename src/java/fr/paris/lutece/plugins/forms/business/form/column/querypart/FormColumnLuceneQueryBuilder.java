@@ -31,49 +31,58 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart;
 
-import java.util.Arrays;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene.IFormColumnLuceneQueryPart;
+import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Named;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.search.BooleanClause;
 
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnFormResponseDateCreationSQLQueryPart;
+import org.apache.lucene.search.BooleanQuery.Builder;
+import org.apache.lucene.search.Query;
+
 
 /**
- * Mock for a FormColumnFormResponseDateCreationQueryPart
+ * Query builder utility class for FormColumn class
  */
-public class FormColumnFormResponseDateCreationQueryPartMock extends FormColumnFormResponseDateCreationSQLQueryPart
+public final class FormColumnLuceneQueryBuilder
 {
-    // Constants
-    private static final String FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART = "response_creation_date";
-    private static final String FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART = StringUtils.EMPTY;
-
     /**
-     * {@inheritDoc}
+     * Constructor
      */
-    @Override
-    public String getFormColumnSelectQuery( )
+    private FormColumnLuceneQueryBuilder( )
     {
-        return FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART;
+
     }
 
     /**
-     * {@inheritDoc}
+     * Return the list of all select query part from the given list of form columns
+     * 
+     * @param listFormColumnQueryPart
+     *            The list of form column query part to retrieve the query parts from
+     * @return the list of all select query parts from the given list of form columns
      */
-    @Override
-    public String getFormColumnFromQuery( )
+    public static Query buildFormColumnsQueryPart( List<IFormColumnLuceneQueryPart> listFormColumnQueryPart )
     {
-        return FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART;
-    }
+        Builder booleanQueryBuilder = new Builder( );
+        if ( !CollectionUtils.isEmpty( listFormColumnQueryPart ) )
+        {
+            for ( IFormColumnLuceneQueryPart formColumnQueryPart : listFormColumnQueryPart )
+            {
+                Query queryFormColumnSelectQueryPart = formColumnQueryPart.getFormColumnSelectQuery();
+                if ( queryFormColumnSelectQueryPart != null )
+                {
+                    booleanQueryBuilder.add( queryFormColumnSelectQueryPart, BooleanClause.Occur.SHOULD );
+                }
+            }
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART );
+        return booleanQueryBuilder.build();
     }
 }

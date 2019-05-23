@@ -31,49 +31,18 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene;
 
-import java.util.Arrays;
-import java.util.List;
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import org.apache.lucene.document.Document;
 
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnFormResponseDateCreationSQLQueryPart;
-
-/**
- * Mock for a FormColumnFormResponseDateCreationQueryPart
- */
-public class FormColumnFormResponseDateCreationQueryPartMock extends FormColumnFormResponseDateCreationSQLQueryPart
-{
-    // Constants
-    private static final String FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART = "response_creation_date";
-    private static final String FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART = StringUtils.EMPTY;
-
+public interface IFormColumnLuceneQueryPart extends IFormColumnQueryPart
+{   
     /**
-     * {@inheritDoc}
+     * Get the content of the column cell from Lucene doc
+     * @param doc the Document
+     * @return the FormColumnCell
      */
-    @Override
-    public String getFormColumnSelectQuery( )
-    {
-        return FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormColumnFromQuery( )
-    {
-        return FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART );
-    }
+    FormColumnCell getFormColumnCell( Document doc );
 }

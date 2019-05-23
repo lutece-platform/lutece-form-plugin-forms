@@ -31,18 +31,18 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.sql;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormsQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnEntrySQLQueryPart;
 
 /**
- * Implementation of the IFormColumnQueryPartFactory interface for a Form column
+ * Implementation of the IFormColumnQueryPartFactory interface for an Entry column
  */
-public class FormColumnFormsQueryPartFactory implements IFormColumnQueryPartFactory
+public class FormColumnEntrySQLQueryPartFactory implements IFormColumnQueryPartFactory
 {
     /**
      * {@inheritDoc}
@@ -50,13 +50,13 @@ public class FormColumnFormsQueryPartFactory implements IFormColumnQueryPartFact
     @Override
     public IFormColumnQueryPart buildFormColumnQueryPart( IFormColumn formColumn )
     {
-        IFormColumnQueryPart formColumnFormsQueryPart = null;
+        IFormColumnQueryPart formColumnEntryQueryPart = null;
 
-        if ( formColumn instanceof FormColumnForms )
+        if ( formColumn instanceof FormColumnEntry )
         {
-            formColumnFormsQueryPart = new FormColumnFormsQueryPart( );
+            formColumnEntryQueryPart = new FormColumnEntrySQLQueryPart( );
         }
 
-        return formColumnFormsQueryPart;
+        return formColumnEntryQueryPart;
     }
 }

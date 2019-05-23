@@ -31,18 +31,18 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.lucene;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene.FormColumnWorkflowStateLuceneQueryPart;
 
 /**
- * Implementation of the IFormColumnQueryPartFactory interface for an Entry column
+ * Implementation of the IFormColumnQueryPartFactory interface for a WorkflowState column
  */
-public class FormColumnEntryQueryPartFactory implements IFormColumnQueryPartFactory
+public class FormColumnWorkflowStateLuceneQueryPartFactory implements IFormColumnQueryPartFactory
 {
     /**
      * {@inheritDoc}
@@ -50,13 +50,14 @@ public class FormColumnEntryQueryPartFactory implements IFormColumnQueryPartFact
     @Override
     public IFormColumnQueryPart buildFormColumnQueryPart( IFormColumn formColumn )
     {
-        IFormColumnQueryPart formColumnEntryQueryPart = null;
+        IFormColumnQueryPart formColumnWorkflowStateQueryPart = null;
 
-        if ( formColumn instanceof FormColumnEntry )
+        if ( formColumn instanceof FormColumnWorkflowState )
         {
-            formColumnEntryQueryPart = new FormColumnEntryQueryPart( );
+            
+            formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateLuceneQueryPart( );
         }
 
-        return formColumnEntryQueryPart;
+        return formColumnWorkflowStateQueryPart;
     }
 }

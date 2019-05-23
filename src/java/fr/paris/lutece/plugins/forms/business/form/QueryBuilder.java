@@ -40,7 +40,7 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.FormColumnQueryBuilder;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.FormColumnSQLQueryBuilder;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryConstants;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
@@ -121,7 +121,7 @@ public final class QueryBuilder
         }
 
         // Use the query part of the column
-        List<String> listFormColumnSelectQueryParts = FormColumnQueryBuilder.buildFormColumnSelectQueryPart( listFormColumnQueryPart );
+        List<String> listFormColumnSelectQueryParts = FormColumnSQLQueryBuilder.buildFormColumnSelectQueryPart( listFormColumnQueryPart );
         if ( !CollectionUtils.isEmpty( listFormColumnSelectQueryParts ) )
         {
             listSelectQueryParts.addAll( listFormColumnSelectQueryParts );
@@ -154,7 +154,7 @@ public final class QueryBuilder
         }
 
         // Use the query parts of the columns
-        List<String> listFormColumnFromQueryParts = FormColumnQueryBuilder.buildFormColumnFromQueryParts( listFormColumnQueryPart );
+        List<String> listFormColumnFromQueryParts = FormColumnSQLQueryBuilder.buildFormColumnFromQueryParts( listFormColumnQueryPart );
         if ( !CollectionUtils.isEmpty( listFormColumnFromQueryParts ) )
         {
             listFromQueryParts.addAll( listFormColumnFromQueryParts );
@@ -187,7 +187,7 @@ public final class QueryBuilder
         // Use the query parts of the columns
         if ( !CollectionUtils.isEmpty( listFormColumnQueryPart ) )
         {
-            FormColumnQueryBuilder.buildFormColumnJoinQueryParts( stringBuilderJoinQueryPart, listFormColumnQueryPart );
+            FormColumnSQLQueryBuilder.buildFormColumnJoinQueryParts( stringBuilderJoinQueryPart, listFormColumnQueryPart );
         }
 
         stringBuilderGlobalQuery.append( stringBuilderJoinQueryPart.toString( ) );

@@ -31,22 +31,27 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql;
 
+import java.sql.Timestamp;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnFormResponseDateCreationSQLQueryPart;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
+import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
- * Mock for a FormColumnFormResponseDateCreationQueryPart
+ * Implementation of the IFormColumnQueryPart interface for a form response date creation column
  */
-public class FormColumnFormResponseDateCreationQueryPartMock extends FormColumnFormResponseDateCreationSQLQueryPart
+public class FormColumnFormResponseDateCreationSQLQueryPart extends AbstractFormColumnSQLQueryPart
 {
     // Constants
-    private static final String FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART = "response_creation_date";
+    private static final String FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART = "response.creation_date AS response_creation_date";
     private static final String FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART = StringUtils.EMPTY;
     private static final String FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART = StringUtils.EMPTY;
 
@@ -75,5 +80,20 @@ public class FormColumnFormResponseDateCreationQueryPartMock extends FormColumnF
     public List<String> getFormColumnJoinQueries( )
     {
         return Arrays.asList( FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Map<String, Object> getMapFormColumnValues( DAOUtil daoUtil )
+    {
+        Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
+        Timestamp timestampFormResponseDateCreation = daoUtil
+                .getTimestamp( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
+        Date dateFormResponseDateCreation = new Date( timestampFormResponseDateCreation.getTime( ) );
+        mapFormColumnValues.put( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION, dateFormResponseDateCreation );
+
+        return mapFormColumnValues;
     }
 }

@@ -46,7 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateCreation;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormResponseDateCreationQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnFormResponseDateCreationSQLQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.mock.DAOUtilMock;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -86,7 +86,7 @@ public class FormColumnFormResponseDateCreationQueryPartTest extends LuteceTestC
                 dateFormResponseDateCreationValueToRetrieve );
 
         IFormColumn formColumn = new FormColumnFormResponseDateCreation( 1, "Form Response Date Creation" );
-        FormColumnFormResponseDateCreationQueryPart formColumnFormResponseDateCreationQueryPart = new FormColumnFormResponseDateCreationQueryPart( );
+        FormColumnFormResponseDateCreationSQLQueryPart formColumnFormResponseDateCreationQueryPart = new FormColumnFormResponseDateCreationSQLQueryPart( );
         formColumnFormResponseDateCreationQueryPart.setFormColumn( formColumn );
 
         FormColumnCell formColumnCell = formColumnFormResponseDateCreationQueryPart.getFormColumnCell( daoUtil );
@@ -111,7 +111,7 @@ public class FormColumnFormResponseDateCreationQueryPartTest extends LuteceTestC
         DAOUtil daoUtil = new DAOUtilMock( StringUtils.EMPTY, "colonne", strFormResponseDateCreationValueToRetrieve );
 
         IFormColumn formColumn = new FormColumnFormResponseDateCreation( 1, "Form Response Date Creation" );
-        FormColumnFormResponseDateCreationQueryPart formColumnFormResponseDateCreationQueryPart = new FormColumnFormResponseDateCreationQueryPart( );
+        FormColumnFormResponseDateCreationSQLQueryPart formColumnFormResponseDateCreationQueryPart = new FormColumnFormResponseDateCreationSQLQueryPart( );
         formColumnFormResponseDateCreationQueryPart.setFormColumn( formColumn );
 
         try
