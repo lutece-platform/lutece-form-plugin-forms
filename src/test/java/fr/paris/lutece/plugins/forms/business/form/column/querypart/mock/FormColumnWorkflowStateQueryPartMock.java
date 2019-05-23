@@ -38,12 +38,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnWorkflowStateQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnWorkflowStateSQLQueryPart;
 
 /**
  * Mock for FormColumnWorkflowStateQueryPart class
  */
-public class FormColumnWorkflowStateQueryPartMock extends FormColumnWorkflowStateQueryPart
+public class FormColumnWorkflowStateQueryPartMock extends FormColumnWorkflowStateSQLQueryPart
 {
     // Constants
     private static final String WORKFLOW_STATE_SELECT_QUERY_PART = "workflow_state_name";

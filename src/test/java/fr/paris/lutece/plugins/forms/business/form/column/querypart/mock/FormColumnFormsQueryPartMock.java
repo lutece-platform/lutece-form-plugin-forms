@@ -38,12 +38,12 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormsQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnFormsSQLQueryPart;
 
 /**
  * Mock of the FormColumnFormsQueryPart class
  */
-public class FormColumnFormsQueryPartMock extends FormColumnFormsQueryPart
+public class FormColumnFormsQueryPartMock extends FormColumnFormsSQLQueryPart
 {
     // Constants
     private static final String FORM_SELECT_QUERY_PART = "id_form, title";

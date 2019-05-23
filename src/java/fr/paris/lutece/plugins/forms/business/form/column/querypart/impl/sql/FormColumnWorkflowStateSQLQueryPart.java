@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -46,7 +46,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
 /**
  * Implementation of the IFormColumnQueryPart interface for a workflow state column
  */
-public class FormColumnWorkflowStateQueryPart extends AbstractFormColumnQueryPart
+public class FormColumnWorkflowStateSQLQueryPart extends AbstractFormColumnSQLQueryPart
 {
     // Constants
     private static final String WORKFLOW_STATE_SELECT_QUERY_PART = "ws_workflow_state.name AS workflow_state_name";

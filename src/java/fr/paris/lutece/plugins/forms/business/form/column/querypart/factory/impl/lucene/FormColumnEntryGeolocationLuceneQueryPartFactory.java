@@ -31,65 +31,32 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.lucene;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
-import fr.paris.lutece.util.sql.DAOUtil;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene.FormColumnEntryGeolocationLuceneQueryPart;
 
 /**
- * Implementation of the IFormColumnQueryPart interface for a form column
+ * Implementation of the IFormColumnQueryPartFactory interface for an EntryGeolocation column
  */
-public class FormColumnFormsQueryPart extends AbstractFormColumnQueryPart
+public class FormColumnEntryGeolocationLuceneQueryPartFactory implements IFormColumnQueryPartFactory
 {
-    // Constants
-    private static final String FORM_SELECT_QUERY_PART = "form.title";
-    private static final String FORM_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_JOIN_QUERY_PART = StringUtils.EMPTY;
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnSelectQuery( )
+    public IFormColumnQueryPart buildFormColumnQueryPart( IFormColumn formColumn )
     {
-        return FORM_SELECT_QUERY_PART;
-    }
+        IFormColumnQueryPart formColumnEntryGeolocationQueryPart = null;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormColumnFromQuery( )
-    {
-        return FORM_FROM_QUERY_PART;
-    }
+        if ( formColumn instanceof FormColumnEntryGeolocation )
+        {
+            formColumnEntryGeolocationQueryPart = new FormColumnEntryGeolocationLuceneQueryPart( );
+        }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_JOIN_QUERY_PART );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Map<String, Object> getMapFormColumnValues( DAOUtil daoUtil )
-    {
-        Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
-        String strFormTitle = daoUtil.getString( FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE );
-        mapFormColumnValues.put( FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE, strFormTitle );
-
-        return mapFormColumnValues;
+        return formColumnEntryGeolocationQueryPart;
     }
 }

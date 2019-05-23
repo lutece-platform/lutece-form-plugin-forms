@@ -48,7 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnEntrySQLQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.mock.DAOUtilMock;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.test.LuteceTestCase;
@@ -86,7 +86,7 @@ public class FormColumnEntryQueryPartTest extends LuteceTestCase
         DAOUtil daoUtil = new DAOUtilMock( StringUtils.EMPTY, "column_1_value", strFormEntryFormFieldValueToRetrieve );
 
         IFormColumn formColumn = new FormColumnEntry( 1, "Entry Form Field", new ArrayList<String>( ) );
-        FormColumnEntryQueryPart formColumnEntryFormFieldQueryPart = new FormColumnEntryQueryPart( );
+        FormColumnEntrySQLQueryPart formColumnEntryFormFieldQueryPart = new FormColumnEntrySQLQueryPart( );
         formColumnEntryFormFieldQueryPart.setFormColumn( formColumn );
 
         FormColumnCell formColumnCell = formColumnEntryFormFieldQueryPart.getFormColumnCell( daoUtil );
@@ -110,7 +110,7 @@ public class FormColumnEntryQueryPartTest extends LuteceTestCase
         DAOUtil daoUtil = new DAOUtilMock( StringUtils.EMPTY, "colonne", strFormEntryFormFieldValueToRetrieve );
 
         IFormColumn formColumn = new FormColumnEntry( 1, "Entry Form Field", new ArrayList<String>( ) );
-        FormColumnEntryQueryPart formColumnEntryFormFieldQueryPart = new FormColumnEntryQueryPart( );
+        FormColumnEntrySQLQueryPart formColumnEntryFormFieldQueryPart = new FormColumnEntrySQLQueryPart( );
         formColumnEntryFormFieldQueryPart.setFormColumn( formColumn );
 
         try
@@ -125,7 +125,7 @@ public class FormColumnEntryQueryPartTest extends LuteceTestCase
     }
 
     /**
-     * Test for the {@link FormColumnEntryQueryPart#getFormColumnJoinQueries()} method with a column which have no Entry title
+     * Test for the {@link FormColumnEntrySQLQueryPart#getFormColumnJoinQueries()} method with a column which have no Entry title
      */
     public void testGetFormColumnJoinQueriesWithoutEntryTitle( )
     {
@@ -138,7 +138,7 @@ public class FormColumnEntryQueryPartTest extends LuteceTestCase
                 + "column_1.id_response_1 = response.id_response";
 
         IFormColumn formColumn = new FormColumnEntry( 1, "Titre", new ArrayList<>( ) );
-        FormColumnEntryQueryPart formColumnEntryQueryPart = new FormColumnEntryQueryPart( );
+        FormColumnEntrySQLQueryPart formColumnEntryQueryPart = new FormColumnEntrySQLQueryPart( );
         formColumnEntryQueryPart.setFormColumn( formColumn );
 
         List<String> listFormColumnJoinQueries = formColumnEntryQueryPart.getFormColumnJoinQueries( );
@@ -150,7 +150,7 @@ public class FormColumnEntryQueryPartTest extends LuteceTestCase
     }
 
     /**
-     * Test for the {@link FormColumnEntryQueryPart#getFormColumnJoinQueries()} method with a column which have no Entry title and no position
+     * Test for the {@link FormColumnEntrySQLQueryPart#getFormColumnJoinQueries()} method with a column which have no Entry title and no position
      */
     public void testGetFormColumnJoinQueriesWithoutEntryTitleAndColumnPosition( )
     {
@@ -162,7 +162,7 @@ public class FormColumnEntryQueryPartTest extends LuteceTestCase
                 + "genatt_entry AS entry_-1 ON entry_-1.id_entry = gen_response_-1.id_entry WHERE entry_-1.title IN ( ) ) AS column_-1 ON "
                 + "column_-1.id_response_-1 = response.id_response";
 
-        FormColumnEntryQueryPart formColumnEntryQueryPart = new FormColumnEntryQueryPart( );
+        FormColumnEntrySQLQueryPart formColumnEntryQueryPart = new FormColumnEntrySQLQueryPart( );
 
         List<String> listFormColumnJoinQueries = formColumnEntryQueryPart.getFormColumnJoinQueries( );
         assertThat( listFormColumnJoinQueries, is( not( nullValue( ) ) ) );
@@ -173,7 +173,7 @@ public class FormColumnEntryQueryPartTest extends LuteceTestCase
     }
 
     /**
-     * Test for the {@link FormColumnEntryQueryPart#getFormColumnJoinQueries()} method
+     * Test for the {@link FormColumnEntrySQLQueryPart#getFormColumnJoinQueries()} method
      */
     public void testGetFormColumnJoinQueries( )
     {
@@ -188,7 +188,7 @@ public class FormColumnEntryQueryPartTest extends LuteceTestCase
         List<String> listEntryTitle = Arrays.asList( "FirstName", "LastName" );
         IFormColumn formColumn = new FormColumnEntry( 5, "Titre", listEntryTitle );
 
-        FormColumnEntryQueryPart formColumnEntryQueryPart = new FormColumnEntryQueryPart( );
+        FormColumnEntrySQLQueryPart formColumnEntryQueryPart = new FormColumnEntrySQLQueryPart( );
         formColumnEntryQueryPart.setFormColumn( formColumn );
 
         List<String> listFormColumnJoinQueries = formColumnEntryQueryPart.getFormColumnJoinQueries( );

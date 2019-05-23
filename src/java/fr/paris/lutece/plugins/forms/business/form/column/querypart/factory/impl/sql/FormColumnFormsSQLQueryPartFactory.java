@@ -31,18 +31,18 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.sql;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateCreation;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormResponseDateCreationQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnFormsSQLQueryPart;
 
 /**
- * Implementation of the IFormColumnQueryPartFactory interface for a FormResponseDateCreation column
+ * Implementation of the IFormColumnQueryPartFactory interface for a Form column
  */
-public class FormColumnFormResponseDateCreationQueryPartFactory implements IFormColumnQueryPartFactory
+public class FormColumnFormsSQLQueryPartFactory implements IFormColumnQueryPartFactory
 {
     /**
      * {@inheritDoc}
@@ -50,13 +50,13 @@ public class FormColumnFormResponseDateCreationQueryPartFactory implements IForm
     @Override
     public IFormColumnQueryPart buildFormColumnQueryPart( IFormColumn formColumn )
     {
-        IFormColumnQueryPart formColumnFormResponseDateCreationQueryPartFactory = null;
+        IFormColumnQueryPart formColumnFormsQueryPart = null;
 
-        if ( formColumn instanceof FormColumnFormResponseDateCreation )
+        if ( formColumn instanceof FormColumnForms )
         {
-            formColumnFormResponseDateCreationQueryPartFactory = new FormColumnFormResponseDateCreationQueryPart( );
+            formColumnFormsQueryPart = new FormColumnFormsSQLQueryPart( );
         }
 
-        return formColumnFormResponseDateCreationQueryPartFactory;
+        return formColumnFormsQueryPart;
     }
 }

@@ -50,7 +50,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnEntrySQLQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.mock.FormColumnFormResponseDateCreationQueryPartMock;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.mock.FormColumnFormsQueryPartMock;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.mock.FormColumnWorkflowStateQueryPartMock;
@@ -281,7 +281,7 @@ public class QueryBuilderTest extends LuteceTestCase
                 + "WHERE entry_3.title IN ( 'Nom', 'Prénom' ) ) AS column_3 ON column_3.id_response_3 = response.id_response";
 
         IFormColumn formColumnEntry = new FormColumnEntry( 3, "Colonne 3", Arrays.asList( "Nom", "Prénom" ) );
-        FormColumnEntryQueryPart formColumnEntryQueryPart = new FormColumnEntryQueryPartMock( 3 );
+        FormColumnEntrySQLQueryPart formColumnEntryQueryPart = new FormColumnEntryQueryPartMock( 3 );
         formColumnEntryQueryPart.setFormColumn( formColumnEntry );
         _listFormColumnQueryPart.add( formColumnEntryQueryPart );
 
@@ -319,17 +319,17 @@ public class QueryBuilderTest extends LuteceTestCase
                 + "column_7.id_response_7 = response.id_response";
 
         IFormColumn formColumnEntryOne = new FormColumnEntry( 3, "Colonne 3", Arrays.asList( "Nom", "Prénom" ) );
-        FormColumnEntryQueryPart formColumnEntryQueryPartOne = new FormColumnEntryQueryPartMock( 3 );
+        FormColumnEntrySQLQueryPart formColumnEntryQueryPartOne = new FormColumnEntryQueryPartMock( 3 );
         formColumnEntryQueryPartOne.setFormColumn( formColumnEntryOne );
         _listFormColumnQueryPart.add( formColumnEntryQueryPartOne );
 
         IFormColumn formColumnEntryTwo = new FormColumnEntry( 5, "Colonne 5", Arrays.asList( "Date de naissance" ) );
-        FormColumnEntryQueryPart formColumnEntryQueryPartTwo = new FormColumnEntryQueryPartMock( 5 );
+        FormColumnEntrySQLQueryPart formColumnEntryQueryPartTwo = new FormColumnEntryQueryPartMock( 5 );
         formColumnEntryQueryPartTwo.setFormColumn( formColumnEntryTwo );
         _listFormColumnQueryPart.add( formColumnEntryQueryPartTwo );
 
         IFormColumn formColumnEntryThree = new FormColumnEntry( 7, "Colonne 7", Arrays.asList( "Adresse", "Téléphone" ) );
-        FormColumnEntryQueryPart formColumnEntryQueryPartThree = new FormColumnEntryQueryPartMock( 7 );
+        FormColumnEntrySQLQueryPart formColumnEntryQueryPartThree = new FormColumnEntryQueryPartMock( 7 );
         formColumnEntryQueryPartThree.setFormColumn( formColumnEntryThree );
         _listFormColumnQueryPart.add( formColumnEntryQueryPartThree );
 
@@ -361,12 +361,12 @@ public class QueryBuilderTest extends LuteceTestCase
                 + "column_5.column_5_value = ? )";
 
         IFormColumn formColumnEntryOne = new FormColumnEntry( 3, "Colonne 3", Arrays.asList( "Nom", "Prénom" ) );
-        FormColumnEntryQueryPart formColumnEntryQueryPartOne = new FormColumnEntryQueryPartMock( 3 );
+        FormColumnEntrySQLQueryPart formColumnEntryQueryPartOne = new FormColumnEntryQueryPartMock( 3 );
         formColumnEntryQueryPartOne.setFormColumn( formColumnEntryOne );
         _listFormColumnQueryPart.add( formColumnEntryQueryPartOne );
 
         IFormColumn formColumnEntryTwo = new FormColumnEntry( 5, "Colonne 5", Arrays.asList( "Date de naissance" ) );
-        FormColumnEntryQueryPart formColumnEntryQueryPartTwo = new FormColumnEntryQueryPartMock( 5 );
+        FormColumnEntrySQLQueryPart formColumnEntryQueryPartTwo = new FormColumnEntryQueryPartMock( 5 );
         formColumnEntryQueryPartTwo.setFormColumn( formColumnEntryTwo );
         _listFormColumnQueryPart.add( formColumnEntryQueryPartTwo );
 

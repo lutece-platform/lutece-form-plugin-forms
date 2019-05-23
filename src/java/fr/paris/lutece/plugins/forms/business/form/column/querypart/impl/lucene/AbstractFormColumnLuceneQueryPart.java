@@ -31,32 +31,64 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene;
 
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnWorkflowStateQueryPart;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.apache.lucene.document.Document;
 
 /**
- * Implementation of the IFormColumnQueryPartFactory interface for a WorkflowState column
+ * Abstract class for FormColumnQueryPart
  */
-public class FormColumnWorkflowStateQueryPartFactory implements IFormColumnQueryPartFactory
+public abstract class AbstractFormColumnLuceneQueryPart implements IFormColumnLuceneQueryPart
 {
+    /**
+     * Get a map of values fetched from Lucene document
+     * @param document
+     * @return a Map of values feteched form Lucene document
+     */
+    protected abstract Map<String, Object> getMapFormColumnValues( Document document );
+    
+    // Variables
+    private IFormColumn _formColumn;
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public IFormColumnQueryPart buildFormColumnQueryPart( IFormColumn formColumn )
+    public void setFormColumn( IFormColumn formColumn )
     {
-        IFormColumnQueryPart formColumnWorkflowStateQueryPart = null;
+        _formColumn = formColumn;
+    }
 
-        if ( formColumn instanceof FormColumnWorkflowState )
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IFormColumn getFormColumn( )
+    {
+        return _formColumn;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FormColumnCell getFormColumnCell( Document document )
+    {
+        Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
+
+        IFormColumn formColumn = getFormColumn( );
+        if ( formColumn != null )
         {
-            formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateQueryPart( );
+            mapFormColumnValues = getMapFormColumnValues( document );
         }
 
-        return formColumnWorkflowStateQueryPart;
+        FormColumnCell formColumnCell = new FormColumnCell( );
+        formColumnCell.setFormColumnCellValues( mapFormColumnValues );
+
+        return formColumnCell;
     }
 }

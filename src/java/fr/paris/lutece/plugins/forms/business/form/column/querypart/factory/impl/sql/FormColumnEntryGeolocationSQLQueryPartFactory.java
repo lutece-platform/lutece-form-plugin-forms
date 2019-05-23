@@ -31,18 +31,18 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl.sql;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryGeolocationQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnEntryGeolocationSQLQueryPart;
 
 /**
  * Implementation of the IFormColumnQueryPartFactory interface for an EntryGeolocation column
  */
-public class FormColumnEntryGeolocationQueryPartFactory implements IFormColumnQueryPartFactory
+public class FormColumnEntryGeolocationSQLQueryPartFactory implements IFormColumnQueryPartFactory
 {
     /**
      * {@inheritDoc}
@@ -54,7 +54,7 @@ public class FormColumnEntryGeolocationQueryPartFactory implements IFormColumnQu
 
         if ( formColumn instanceof FormColumnEntryGeolocation )
         {
-            formColumnEntryGeolocationQueryPart = new FormColumnEntryGeolocationQueryPart( );
+            formColumnEntryGeolocationQueryPart = new FormColumnEntryGeolocationSQLQueryPart( );
         }
 
         return formColumnEntryGeolocationQueryPart;

@@ -33,11 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart;
 
-import java.util.List;
-
-import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
  * Global interface for all form column query part
@@ -45,47 +41,17 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public interface IFormColumnQueryPart
 {
     /**
-     * Return the select query part for the FormColumn
+     * Return the FormColumn of the FormColumnQueryPart
      * 
-     * @return the select query part for the FormColumn
+     * @return the FormColumn of the FormColumnQueryPart
      */
-    String getFormColumnSelectQuery( );
-
-    /**
-     * Return the from query part for the FormColumn
-     * 
-     * @return the from query part for the FormColumn
-     */
-    String getFormColumnFromQuery( );
-
-    /**
-     * Return the list of join queries for the FormColumn
-     * 
-     * @return the list of join queries for the FormColumn
-     */
-    List<String> getFormColumnJoinQueries( );
-
-    /**
+    IFormColumn getFormColumn( );
+    
+     /**
      * Set the form column to the FormColumnQueryPart
      * 
      * @param formColumn
      *            The FormColumn to set to the FormColumnQueryPart
      */
     void setFormColumn( IFormColumn formColumn );
-
-    /**
-     * Return the FormColumn of the FormColumnQueryPart
-     * 
-     * @return the FormColumn of the FormColumnQueryPart
-     */
-    IFormColumn getFormColumn( );
-
-    /**
-     * Return the FormColumnCell of the FormColumnQueryPart
-     * 
-     * @param daoUtil
-     *            The daoUtil to retrieve the values to retrieve to the form column
-     * @return the FormColumnCell which contains all the values of the form column from the given daoUtil
-     */
-    FormColumnCell getFormColumnCell( DAOUtil daoUtil );
 }

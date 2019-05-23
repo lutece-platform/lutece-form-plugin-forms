@@ -31,49 +31,45 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql;
 
-import java.util.Arrays;
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.util.sql.DAOUtil;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnFormResponseDateCreationSQLQueryPart;
-
-/**
- * Mock for a FormColumnFormResponseDateCreationQueryPart
- */
-public class FormColumnFormResponseDateCreationQueryPartMock extends FormColumnFormResponseDateCreationSQLQueryPart
+public interface IFormColumnSQLQueryPart extends IFormColumnQueryPart
 {
-    // Constants
-    private static final String FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART = "response_creation_date";
-    private static final String FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART = StringUtils.EMPTY;
+     /**
+     * Return the select query part for the FormColumn
+     * 
+     * @return the select query part for the FormColumn
+     */
+    String getFormColumnSelectQuery( );
 
     /**
-     * {@inheritDoc}
+     * Return the from query part for the FormColumn
+     * 
+     * @return the from query part for the FormColumn
      */
-    @Override
-    public String getFormColumnSelectQuery( )
-    {
-        return FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART;
-    }
+    String getFormColumnFromQuery( );
 
     /**
-     * {@inheritDoc}
+     * Return the list of join queries for the FormColumn
+     * 
+     * @return the list of join queries for the FormColumn
      */
-    @Override
-    public String getFormColumnFromQuery( )
-    {
-        return FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART;
-    }
-
+    List<String> getFormColumnJoinQueries( );
+    
     /**
-     * {@inheritDoc}
+     * Return the FormColumnCell of the FormColumnQueryPart
+     * 
+     * @param daoUtil
+     *            The daoUtil to retrieve the values to retrieve to the form column
+     * @return the FormColumnCell which contains all the values of the form column from the given daoUtil
      */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART );
-    }
+    FormColumnCell getFormColumnCell( DAOUtil daoUtil );
+
 }

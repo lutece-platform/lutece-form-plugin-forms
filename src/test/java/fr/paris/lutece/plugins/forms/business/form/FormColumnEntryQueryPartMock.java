@@ -42,12 +42,12 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnEntrySQLQueryPart;
 
 /**
  * Mock for a FormColumnEntryQueryPart
  */
-public class FormColumnEntryQueryPartMock extends FormColumnEntryQueryPart
+public class FormColumnEntryQueryPartMock extends FormColumnEntrySQLQueryPart
 {
     // Constants
     private static final String ENTRY_SELECT_QUERY_PART = "column_%1$s.column_%1$s_value";

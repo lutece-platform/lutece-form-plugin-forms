@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart;
 
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.IFormColumnSQLQueryPart;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,12 +45,12 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryConstan
 /**
  * Query builder utility class for FormColumn class
  */
-public final class FormColumnQueryBuilder
+public final class FormColumnSQLQueryBuilder
 {
     /**
      * Constructor
      */
-    private FormColumnQueryBuilder( )
+    private FormColumnSQLQueryBuilder( )
     {
 
     }
@@ -61,13 +62,13 @@ public final class FormColumnQueryBuilder
      *            The list of form column query part to retrieve the query parts from
      * @return the list of all select query parts from the given list of form columns
      */
-    public static List<String> buildFormColumnSelectQueryPart( List<IFormColumnQueryPart> listFormColumnQueryPart )
+    public static List<String> buildFormColumnSelectQueryPart( List<IFormColumnSQLQueryPart> listFormColumnQueryPart )
     {
         List<String> listSelectQueryParts = new ArrayList<>( );
 
         if ( !CollectionUtils.isEmpty( listFormColumnQueryPart ) )
         {
-            for ( IFormColumnQueryPart formColumnQueryPart : listFormColumnQueryPart )
+            for ( IFormColumnSQLQueryPart formColumnQueryPart : listFormColumnQueryPart )
             {
                 String strFormColumnSelectQueryPart = formColumnQueryPart.getFormColumnSelectQuery( );
                 if ( StringUtils.isNotBlank( strFormColumnSelectQueryPart ) )
@@ -87,13 +88,13 @@ public final class FormColumnQueryBuilder
      *            The list of form column query part to retrieve the query parts from
      * @return the list of all from query parts from the given list of form columns
      */
-    public static List<String> buildFormColumnFromQueryParts( List<IFormColumnQueryPart> listFormColumnQueryPart )
+    public static List<String> buildFormColumnFromQueryParts( List<IFormColumnSQLQueryPart> listFormColumnQueryPart )
     {
         List<String> listFormColumnFromQueryParts = new ArrayList<>( );
 
         if ( !CollectionUtils.isEmpty( listFormColumnQueryPart ) )
         {
-            for ( IFormColumnQueryPart formColumnQueryPart : listFormColumnQueryPart )
+            for ( IFormColumnSQLQueryPart formColumnQueryPart : listFormColumnQueryPart )
             {
                 String strFormColumnFromQuery = formColumnQueryPart.getFormColumnFromQuery( );
                 if ( StringUtils.isNotBlank( strFormColumnFromQuery ) )
@@ -114,9 +115,9 @@ public final class FormColumnQueryBuilder
      * @param listFormColumnQueryPart
      *            The list of all form column to retrieve the list of all join queries from
      */
-    public static void buildFormColumnJoinQueryParts( StringBuilder stringBuilderJoinQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart )
+    public static void buildFormColumnJoinQueryParts( StringBuilder stringBuilderJoinQueryPart, List<IFormColumnSQLQueryPart> listFormColumnQueryPart )
     {
-        for ( IFormColumnQueryPart formColumnQueryPart : listFormColumnQueryPart )
+        for ( IFormColumnSQLQueryPart formColumnQueryPart : listFormColumnQueryPart )
         {
             List<String> listFormColumnJoinQueries = formColumnQueryPart.getFormColumnJoinQueries( );
             if ( !CollectionUtils.isEmpty( listFormColumnJoinQueries ) )

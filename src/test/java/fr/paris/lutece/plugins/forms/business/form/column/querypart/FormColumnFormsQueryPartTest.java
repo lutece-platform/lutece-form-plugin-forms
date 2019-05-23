@@ -45,7 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormsQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnFormsSQLQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.mock.DAOUtilMock;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -84,7 +84,7 @@ public class FormColumnFormsQueryPartTest extends LuteceTestCase
         DAOUtil daoUtil = new DAOUtilMock( StringUtils.EMPTY, FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE, strFormsValueToRetrieve );
 
         IFormColumn formColumn = new FormColumnForms( 1, "Form" );
-        FormColumnFormsQueryPart formColumnFormsQueryPart = new FormColumnFormsQueryPart( );
+        FormColumnFormsSQLQueryPart formColumnFormsQueryPart = new FormColumnFormsSQLQueryPart( );
         formColumnFormsQueryPart.setFormColumn( formColumn );
 
         FormColumnCell formColumnCell = formColumnFormsQueryPart.getFormColumnCell( daoUtil );
@@ -108,7 +108,7 @@ public class FormColumnFormsQueryPartTest extends LuteceTestCase
         DAOUtil daoUtil = new DAOUtilMock( StringUtils.EMPTY, "colonne", strFormsValueToRetrieve );
 
         IFormColumn formColumn = new FormColumnForms( 1, "Form" );
-        FormColumnFormsQueryPart formColumnFormsQueryPart = new FormColumnFormsQueryPart( );
+        FormColumnFormsSQLQueryPart formColumnFormsQueryPart = new FormColumnFormsSQLQueryPart( );
         formColumnFormsQueryPart.setFormColumn( formColumn );
 
         try

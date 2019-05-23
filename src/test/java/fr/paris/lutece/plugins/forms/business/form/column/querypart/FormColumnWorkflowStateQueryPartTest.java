@@ -45,7 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnWorkflowStateQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql.FormColumnWorkflowStateSQLQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.mock.DAOUtilMock;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -85,7 +85,7 @@ public class FormColumnWorkflowStateQueryPartTest extends LuteceTestCase
                 strWorkflowStateValueToRetrieve );
 
         IFormColumn formColumn = new FormColumnWorkflowState( 1, "Workflow State" );
-        FormColumnWorkflowStateQueryPart formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateQueryPart( );
+        FormColumnWorkflowStateSQLQueryPart formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateSQLQueryPart( );
         formColumnWorkflowStateQueryPart.setFormColumn( formColumn );
 
         FormColumnCell formColumnCell = formColumnWorkflowStateQueryPart.getFormColumnCell( daoUtil );
@@ -109,7 +109,7 @@ public class FormColumnWorkflowStateQueryPartTest extends LuteceTestCase
         DAOUtil daoUtil = new DAOUtilMock( StringUtils.EMPTY, "colonne", strWorkflowStateValueToRetrieve );
 
         IFormColumn formColumn = new FormColumnWorkflowState( 1, "Workflow State" );
-        FormColumnWorkflowStateQueryPart formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateQueryPart( );
+        FormColumnWorkflowStateSQLQueryPart formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateSQLQueryPart( );
         formColumnWorkflowStateQueryPart.setFormColumn( formColumn );
 
         try

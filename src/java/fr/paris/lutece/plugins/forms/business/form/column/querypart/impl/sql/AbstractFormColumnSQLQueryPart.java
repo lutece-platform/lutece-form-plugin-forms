@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.sql;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,13 +39,12 @@ import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
  * Abstract class for FormColumnQueryPart
  */
-public abstract class AbstractFormColumnQueryPart implements IFormColumnQueryPart
+public abstract class AbstractFormColumnSQLQueryPart implements IFormColumnSQLQueryPart
 {
     // Variables
     private IFormColumn _formColumn;
@@ -61,12 +60,6 @@ public abstract class AbstractFormColumnQueryPart implements IFormColumnQueryPar
      */
     @Override
     public abstract String getFormColumnFromQuery( );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract List<String> getFormColumnJoinQueries( );
 
     /**
      * Build the map of FormColumnValues for the form column of the query part
