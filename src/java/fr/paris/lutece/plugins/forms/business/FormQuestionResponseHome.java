@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -237,5 +238,18 @@ public final class FormQuestionResponseHome
         completeWithQuestions( listFormQuestionResponse );
 
         return listFormQuestionResponse;
+    }
+    
+    /**
+     * Retrieves the form question responses associated to the given Entry Response.
+     * @param response
+     * @param plugin
+     * @return
+     */
+    public static FormQuestionResponse selectFormQuestionResponseByEntryResponse( Response response )
+    {
+    	FormQuestionResponse res = _dao.selectFormQuestionResponseByEntryResponse( response, _plugin );
+    	completeWithQuestion( res );
+    	return res;
     }
 }
