@@ -166,6 +166,19 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
         return formQuestionResponseList;
     }
+    
+    @Override
+    public FormQuestionResponse selectFormQuestionResponseByEntryResponse( Response response, Plugin plugin )
+    {
+    	FormQuestionResponse res = null;
+    	FormQuestionEntryResponse questionEntryResponse = _formQuestionEntryResponseDAO.selectByFormEntryResponse( response, plugin );
+    	
+    	if ( questionEntryResponse != null )
+    	{
+    		res = load( questionEntryResponse._nIdQuestionResponse , plugin );
+    	}
+    	return res;
+    }
 
     /**
      * {@inheritDoc }
@@ -429,6 +442,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         private static final String SQL_QUERY_SELECT_ALL = "SELECT id_question_entry_response, id_question_response, id_entry_response FROM forms_question_entry_response";
         private static final String SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_QUESTION = SQL_QUERY_SELECT_ALL + " WHERE id_question_response = ?";
+        private static final String SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_RESPONSE = SQL_QUERY_SELECT_ALL + " WHERE id_entry_response = ?";
         private static final String SQL_QUERY_INSERT_ENTRY_RESPONSE = "INSERT INTO forms_question_entry_response ( id_question_response, id_entry_response ) VALUES ( ?, ? ) ";
         private static final String SQL_QUERY_DELETE_QUESTION_ENTRY_RESPONSE = "DELETE FROM forms_question_entry_response WHERE id_question_entry_response = ?";
 
@@ -463,6 +477,32 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
             return listFormQuestionEntryResponse;
 
+        }
+        
+        /**
+         * Selects the form question entry responses for the specified entry response
+         * 
+         * @param formQuestionResponse
+         *            the form question response
+         * @param plugin
+         *            the plugin
+         * @return the list of form question entry responses
+         */
+        private FormQuestionEntryResponse selectByFormEntryResponse( Response response, Plugin plugin )
+        {
+        	FormQuestionEntryResponse res = null;
+        	try (DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_RESPONSE, plugin ))
+        	{
+        		daoUtil.setInt( 1, response.getIdResponse( ) );
+        		daoUtil.executeQuery( );
+        		
+        		if ( daoUtil.next( ) )
+        		{
+        			res = dataToObject( daoUtil );
+        		}
+        	}
+        	
+        	return res;
         }
 
         /**
