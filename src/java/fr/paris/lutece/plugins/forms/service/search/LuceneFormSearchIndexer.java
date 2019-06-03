@@ -59,14 +59,12 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
 
 import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
-import org.apache.commons.lang.mutable.MutableBoolean;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -405,7 +403,7 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
      */
     private void initIndexing( boolean bCreate )
     {
-        MutableBoolean boolCreate = new MutableBoolean( bCreate );
+        Boolean boolCreate = new Boolean( bCreate );
         _indexWriter = _luceneFormSearchFactory.getIndexWriter( boolCreate );
     }
 

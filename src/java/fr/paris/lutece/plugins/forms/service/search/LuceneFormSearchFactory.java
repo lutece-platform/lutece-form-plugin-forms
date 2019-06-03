@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
-import fr.paris.lutece.plugins.lucene.service.analyzer.LuteceFrenchAnalyzer;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -48,10 +47,8 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 
 import fr.paris.lutece.portal.service.util.AppPathService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import javax.inject.Inject;
 import javax.inject.Named;
-import org.apache.commons.lang.mutable.MutableBoolean;
 
 /**
  * Factory for the search on Directory
@@ -99,7 +96,7 @@ public class LuceneFormSearchFactory
      * @throws IOException
      *             - if there is a low level IO error
      */
-    public IndexWriter getIndexWriter( MutableBoolean bCreateIndex )
+    public IndexWriter getIndexWriter( Boolean bCreateIndex )
     {
         try
         {
@@ -107,12 +104,12 @@ public class LuceneFormSearchFactory
 
             if ( !DirectoryReader.indexExists( luceneDirectory ) )
             {
-                bCreateIndex.setValue( Boolean.TRUE );
+                bCreateIndex = Boolean.TRUE;
             }
 
             IndexWriterConfig conf = new IndexWriterConfig( getAnalyzer( ) );
 
-            if ( bCreateIndex.isTrue( ) )
+            if ( bCreateIndex )
             {
                 conf.setOpenMode( OpenMode.CREATE );
             }
