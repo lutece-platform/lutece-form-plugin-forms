@@ -245,7 +245,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         List<FormQuestionResponse> formQuestionResponseList = new ArrayList<FormQuestionResponse>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-
+        daoUtil.executeQuery( );
         while ( daoUtil.next( ) )
         {
             formQuestionResponseList.add( dataToObject( daoUtil ) );
