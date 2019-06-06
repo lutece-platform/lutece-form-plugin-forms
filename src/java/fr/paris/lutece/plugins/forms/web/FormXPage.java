@@ -1026,6 +1026,7 @@ public class FormXPage extends MVCApplication
                 formResponse.setGuid( user.getName( ) );
             }
             _formService.saveForm( form, formResponse );
+            _formService.processFormAction( form, formResponse );
         }
     }
 
