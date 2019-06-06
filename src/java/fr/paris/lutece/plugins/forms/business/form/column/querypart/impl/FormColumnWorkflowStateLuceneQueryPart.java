@@ -31,14 +31,34 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl.FormPanelFormResponseInitializerQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
 /**
- * Mock of a FormPanelFormResponseInitializerQueryPart
+ * Implementation of the IFormColumnQueryPartFactory interface for a WorkflowState column
  */
-public class FormPanelFormResponseInitializerQueryPartMock extends FormPanelFormResponseInitializerQueryPart
+public class FormColumnWorkflowStateLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected Map<String, Object> getMapFormColumnValues( Document document ) 
+    {
+        Map<String,Object> mapFormColumnValues = new HashMap<>();
+        
+        IndexableField fieldFormWorkflowState = document.getField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE );
+       
+        if ( fieldFormWorkflowState != null )
+        {
+            mapFormColumnValues.put( fieldFormWorkflowState.name(), fieldFormWorkflowState.stringValue( ) );
+        }
+        
+        return mapFormColumnValues;
+    }
 }

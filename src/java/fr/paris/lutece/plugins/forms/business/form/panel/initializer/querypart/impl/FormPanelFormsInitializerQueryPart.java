@@ -33,29 +33,22 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
 
-import java.util.Arrays;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
+import org.apache.lucene.search.MatchAllDocsQuery;
 
 /**
  * Implementation of the FormPanelInitializerQueryPart associate to the FormPanelFormsInitializer
  */
 public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitializerQueryPart
 {
-    // Constants
-    private static final String FORM_RESPONSE_SELECT_QUERY = "response.id_response";
-    private static final String FORMS_FROM_QUERY = "forms_form AS form";
-    private static final String FORMS_JOIN_QUERY = "INNER JOIN forms_response AS response ON response.id_form = form.id_form AND response.from_save = 0";
-
     /**
      * Constructor
      */
     public FormPanelFormsInitializerQueryPart( )
     {
         super( );
-        setFormPanelInitializerSelectQuery( FORM_RESPONSE_SELECT_QUERY );
-        setFormPanelInitializerFromQuery( FORMS_FROM_QUERY );
-        setFormPanelInitializerJoinQueriesList( Arrays.asList( FORMS_JOIN_QUERY ) );
+        setFormPanelInitializerSelectQuery( new MatchAllDocsQuery( ) );
     }
 
     /**
@@ -66,4 +59,5 @@ public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitial
     {
         // There is nothing to do with the FormParameters for this FormPanelInitializer
     }
+    
 }

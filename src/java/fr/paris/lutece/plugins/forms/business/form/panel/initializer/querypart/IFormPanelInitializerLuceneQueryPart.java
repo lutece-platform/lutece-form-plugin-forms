@@ -31,26 +31,20 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
+package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart;
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterWorkflowStateQueryPart;
+import org.apache.lucene.search.Query;
 
 /**
- * Mock for FormFilterWorkflowStateQueryPart
+ * Interface used for the form filter associated to a FormPanelInitializer
  */
-public class FormFilterWorkflowStateQueryPartMock extends FormFilterWorkflowStateQueryPart
+public interface IFormPanelInitializerLuceneQueryPart extends IFormPanelInitializerQueryPart
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $id_workflow_state$";
-
+    
     /**
-     * {@inheritDoc}
+     * Return the select query part of the FormPanelInitializer
+     * 
+     * @return the select query part of the FormPanelInitializer
      */
-    @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
-    {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, true ) );
-    }
+    Query getFormPanelInitializerSelectQuery( );
 }

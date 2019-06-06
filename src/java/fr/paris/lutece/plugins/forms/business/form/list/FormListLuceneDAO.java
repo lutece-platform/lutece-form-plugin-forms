@@ -37,32 +37,38 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
-import fr.paris.lutece.plugins.forms.business.form.QueryBuilder;
+import fr.paris.lutece.plugins.forms.business.form.LuceneQueryBuilder;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.FormColumnQueryPartFacade;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.IFormColumnLuceneQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.FormFilterQueryPartFacade;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterLuceneQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.FormPanelInitializerQueryPartFacade;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.service.search.IFormSearchLuceneEngine;
 import fr.paris.lutece.util.sql.DAOUtil;
+import javax.inject.Inject;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Query;
 
 /**
  * Implementation of the IFormListDAO interface
  */
-public class FormListDAO implements IFormListDAO
+public class FormListLuceneDAO implements IFormListDAO
 {
-    // Constants
-    private static final String ID_FORM_RESPONSE_COLUMN_NAME = "id_response";
+    @Inject
+    IFormSearchLuceneEngine _formSearchEngine;
 
     /**
      * {@inheritDoc}
@@ -85,61 +91,32 @@ public class FormListDAO implements IFormListDAO
         List<IFormFilterQueryPart> listFormFilterQueryPart = buildFormFilterQueryPartList( listFormFilter, listQueryParametersValues );
 
         // Build the query to execute
-        String strQuery = QueryBuilder.buildQuery( listFormPanelInitializerQueryPart, listFormColumnQueryPart, listFormFilterQueryPart );
+        Query query = LuceneQueryBuilder.buildQuery( listFormPanelInitializerQueryPart, listFormColumnQueryPart, listFormFilterQueryPart );
 
         List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
 
-        if ( StringUtils.isNotBlank( strQuery ) )
+        if ( query != null )
         {
-            DAOUtil daoUtil = new DAOUtil( strQuery );
-            fillDAOUtilParameterValues( daoUtil, listQueryParametersValues );
-            daoUtil.executeQuery( );
-
-            while ( daoUtil.next( ) )
+            
+            for ( Document doc : _formSearchEngine.getSearchResults( query ) )
             {
                 // Create a FormResponseItem for the current result line
-                FormResponseItem formResponseItem = createFormResponseItem( daoUtil );
+                FormResponseItem formResponseItem = createFormResponseItem( doc );
                 listFormResponseItem.add( formResponseItem );
 
                 for ( IFormColumnQueryPart formColumnQueryPart : listFormColumnQueryPart )
                 {
-                    FormColumnCell formColumnCell = formColumnQueryPart.getFormColumnCell( daoUtil );
-                    formResponseItem.addFormColumnCell( formColumnCell );
+                    if ( formColumnQueryPart instanceof IFormColumnLuceneQueryPart )
+                    {
+                        FormColumnCell formColumnCell = ((IFormColumnLuceneQueryPart) formColumnQueryPart).getFormColumnCell( doc );
+                        formResponseItem.addFormColumnCell( formColumnCell );
+                    }
+                    
                 }
             }
-
-            daoUtil.close( );
         }
 
         formPanel.setFormResponseItemList( listFormResponseItem );
-    }
-
-    /**
-     * Fill the values to used to prepare the query of the given DAOUtil
-     * 
-     * @param daoUtil
-     *            The DAOUtil on which the values must be set to prepare the query
-     * @param listQueryParametersPositionValue
-     *            The list of all parameter values to used to fill the given DAOUtil statement
-     */
-    private void fillDAOUtilParameterValues( DAOUtil daoUtil, List<String> listQueryParametersPositionValue )
-    {
-        if ( !CollectionUtils.isEmpty( listQueryParametersPositionValue ) )
-        {
-            int nIndex = 1;
-            for ( String strParameterValue : listQueryParametersPositionValue )
-            {
-                try
-                {
-                    int nParameterValue = Integer.parseInt( strParameterValue );
-                    daoUtil.setInt( nIndex++, nParameterValue );
-                }
-                catch( NumberFormatException exception )
-                {
-                    daoUtil.setString( nIndex++, strParameterValue );
-                }
-            }
-        }
     }
 
     /**
@@ -149,10 +126,12 @@ public class FormListDAO implements IFormListDAO
      *            The daoUtil to retrieve the values of the request from
      * @return the created FormResponseItem
      */
-    private FormResponseItem createFormResponseItem( DAOUtil daoUtil )
+    private FormResponseItem createFormResponseItem( Document document )
     {
         FormResponseItem formResponseItem = new FormResponseItem( );
-        formResponseItem.setIdFormResponse( daoUtil.getInt( ID_FORM_RESPONSE_COLUMN_NAME ) );
+        formResponseItem.setIdFormResponse( 
+            Integer.parseInt( document.getField( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE ).stringValue( ) ) 
+        );
 
         return formResponseItem;
     }
@@ -306,7 +285,7 @@ public class FormListDAO implements IFormListDAO
      */
     private static IFormFilterQueryPart retrieveFormFilterQueryPart( FormFilter formFilter, List<String> listQueryParametersPositionValue )
     {
-        IFormFilterQueryPart formFilterQueryPartResult = null;
+        IFormFilterQueryPart formFilterLuceneQueryPartResult = null;
 
         if ( formFilter != null )
         {
@@ -315,13 +294,13 @@ public class FormListDAO implements IFormListDAO
             {
                 FormParameters formParameters = formFilter.getFormParameters( );
                 formFilterQueryPart.buildFormFilterQuery( formParameters );
-                formFilterQueryPartResult = formFilterQueryPart;
+                formFilterLuceneQueryPartResult = formFilterQueryPart;
 
                 List<String> listUsedParametersValue = formParameters.getListUsedParametersValue( );
                 listQueryParametersPositionValue.addAll( listUsedParametersValue );
             }
         }
 
-        return formFilterQueryPartResult;
+        return formFilterLuceneQueryPartResult;
     }
 }

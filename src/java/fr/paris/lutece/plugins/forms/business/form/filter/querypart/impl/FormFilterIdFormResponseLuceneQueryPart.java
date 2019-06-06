@@ -31,65 +31,50 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
+import fr.paris.lutece.plugins.forms.business.form.FormParameters;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
-import fr.paris.lutece.util.sql.DAOUtil;
+import java.util.Set;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
 
 /**
- * Implementation of the IFormColumnQueryPart interface for a form column
+ * Implementation of the IFormFilterQueryPart for an Entry filter
  */
-public class FormColumnFormsQueryPart extends AbstractFormColumnQueryPart
+public class FormFilterIdFormResponseLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    // Constants
-    private static final String FORM_SELECT_QUERY_PART = "form.title";
-    private static final String FORM_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_JOIN_QUERY_PART = StringUtils.EMPTY;
-
+    private static final int CONSTANT_INTEGER_MINUS_ONE = -1;
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnSelectQuery( )
+    public void buildFormFilterQuery( FormParameters formParameters )
     {
-        return FORM_SELECT_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormColumnFromQuery( )
-    {
-        return FORM_FROM_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_JOIN_QUERY_PART );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Map<String, Object> getMapFormColumnValues( DAOUtil daoUtil )
-    {
-        Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
-        String strFormTitle = daoUtil.getString( FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE );
-        mapFormColumnValues.put( FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE, strFormTitle );
-
-        return mapFormColumnValues;
+        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
+        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        {
+            Set<Map.Entry<String,Object> > setFormParameters = formParameters.getFormParametersMap( ).entrySet();
+        
+            
+            for ( Map.Entry<String,Object> formParam : setFormParameters )
+            {
+                int nIdFormResponse = Integer.parseInt( formParam.getValue().toString( ) );
+                if ( nIdFormResponse != CONSTANT_INTEGER_MINUS_ONE )
+                {
+                    Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse );
+                    booleanQueryBuilder.add( query, BooleanClause.Occur.MUST );
+                }
+            }
+            setFormFilterQuery( booleanQueryBuilder.build( ) );
+        }
+        else 
+        {
+            setFormFilterQuery( null );
+        }
     }
 }

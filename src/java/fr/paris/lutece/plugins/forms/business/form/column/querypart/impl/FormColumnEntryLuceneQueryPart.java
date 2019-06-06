@@ -31,54 +31,54 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.ArrayList;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import java.util.HashMap;
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnWorkflowStateQueryPart;
+import java.util.Map;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
 /**
- * Mock for FormColumnWorkflowStateQueryPart class
+ * Implementation of the IFormColumnQueryPart interface for a form column
  */
-public class FormColumnWorkflowStateQueryPartMock extends FormColumnWorkflowStateQueryPart
+public class FormColumnEntryLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
-    // Constants
-    private static final String WORKFLOW_STATE_SELECT_QUERY_PART = "workflow_state_name";
-    private static final String WORKFLOW_STATE_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String WORKFLOW_STATE_JOIN_WORKFLOW_RESOURCE_QUERY_PART = "LEFT JOIN workflow_resource_workflow AS wf_resource_workflow ON wf_resource_workflow.id_resource = response.id_response";
-    private static final String WORKFLOW_STATE_JOIN_WORKFLOW_STATE_QUERY_PART = "LEFT JOIN workflow_state AS ws_workflow_state ON ws_workflow_state.id_state = wf_resource_workflow.id_state";
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnSelectQuery( )
+    protected Map<String, Object> getMapFormColumnValues( Document document ) 
     {
-        return WORKFLOW_STATE_SELECT_QUERY_PART;
+        Map<String,Object> mapFormColumnValues = new HashMap<>();
+        
+        for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
+        {
+            List<IndexableField> listIndexableField = getEntryCodeFields( strFormColumnEntryCode, document );
+            for ( IndexableField field : listIndexableField )
+            {
+                mapFormColumnValues.put( field.name(), field.stringValue( ) );
+            }
+        }
+       
+        return mapFormColumnValues;
+        
     }
-
+    
     /**
-     * {@inheritDoc}
+     * Get the list of entry codes from the form column
+     * @param column
+     * @return the list of entry codes of the given column
      */
-    @Override
-    public String getFormColumnFromQuery( )
+    private List<String> getListEntryCode( IFormColumn column )
     {
-        return WORKFLOW_STATE_FROM_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        List<String> listFormColumnJoinQueries = new ArrayList<>( );
-        listFormColumnJoinQueries.add( WORKFLOW_STATE_JOIN_WORKFLOW_RESOURCE_QUERY_PART );
-        listFormColumnJoinQueries.add( WORKFLOW_STATE_JOIN_WORKFLOW_STATE_QUERY_PART );
-
-        return listFormColumnJoinQueries;
+        if ( column instanceof FormColumnEntry )
+        {
+            FormColumnEntry formColumnEntry = (FormColumnEntry) column;
+            return formColumnEntry.getListEntryCode();
+        }
+        return null;
     }
 }

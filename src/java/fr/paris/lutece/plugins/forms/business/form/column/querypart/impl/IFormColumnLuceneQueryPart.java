@@ -31,26 +31,18 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterFormsQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import org.apache.lucene.document.Document;
 
-/**
- * Mock for a FormFilterFormsQueryPart
- */
-public class FormFilterFormsQueryPartMock extends FormFilterFormsQueryPart
-{
-    // Constants
-    private static final String FORM_FILTER_QUERY = "form.id_form = $id_form$";
-
+public interface IFormColumnLuceneQueryPart extends IFormColumnQueryPart
+{   
     /**
-     * {@inheritDoc}
+     * Get the content of the column cell from Lucene doc
+     * @param doc the Document
+     * @return the FormColumnCell
      */
-    @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
-    {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( FORM_FILTER_QUERY, formParameters, true ) );
-    }
+    FormColumnCell getFormColumnCell( Document doc );
 }

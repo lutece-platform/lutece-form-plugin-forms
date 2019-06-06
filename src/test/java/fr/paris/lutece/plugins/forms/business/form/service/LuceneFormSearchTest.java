@@ -38,7 +38,6 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
-import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchIndexer;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
@@ -50,6 +49,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import fr.paris.lutece.plugins.forms.service.search.IFormSearchLuceneEngine;
 
 //@RunWith( SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations={"classpath:/conf/plugins/forms_context.xml"})
@@ -74,7 +74,7 @@ public class LuceneFormSearchTest extends LuteceTestCase
     private static final String BEAN_NAME_ENTRY_TYPE_TEXT = "forms.entryTypeText";
 
     private IFormSearchIndexer _formFormSearchIndexer;
-    private IFormSearchEngine _formFormSearchEngine;
+    private IFormSearchLuceneEngine _formFormSearchEngine;
 
     /**
      * {@inheritDoc}

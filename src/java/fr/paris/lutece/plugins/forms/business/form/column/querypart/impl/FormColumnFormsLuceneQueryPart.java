@@ -31,25 +31,32 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
-/**
- * Implementation of the IFormFilterQueryPart for a FormFilterWorkflowState filter
- */
-public class FormFilterWorkflowStateQueryPart extends AbstractFormFilterQueryPart
+public class FormColumnFormsLuceneQueryPart extends AbstractFormColumnLuceneQueryPart 
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = ?";
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
+    protected Map<String, Object> getMapFormColumnValues( Document document ) 
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, false ) );
+        Map<String,Object> mapFormColumnValues = new HashMap<>();
+        
+        IndexableField fieldFormTitle = document.getField( FormResponseSearchItem.FIELD_FORM_TITLE );
+       
+        if ( fieldFormTitle != null )
+        {
+            mapFormColumnValues.put( fieldFormTitle.name(), fieldFormTitle.stringValue( ) );
+        }
+        
+        return mapFormColumnValues;
     }
+    
 }

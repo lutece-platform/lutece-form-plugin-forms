@@ -31,49 +31,54 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.Arrays;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
+import java.util.HashMap;
 import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormResponseDateCreationQueryPart;
+import java.util.Map;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
 /**
- * Mock for a FormColumnFormResponseDateCreationQueryPart
+ * Implementation of the IFormColumnQueryPart interface for a form column
  */
-public class FormColumnFormResponseDateCreationQueryPartMock extends FormColumnFormResponseDateCreationQueryPart
+public class FormColumnEntryGeolocationLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
-    // Constants
-    private static final String FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART = "response_creation_date";
-    private static final String FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART = StringUtils.EMPTY;
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnSelectQuery( )
+    protected Map<String, Object> getMapFormColumnValues( Document document ) 
     {
-        return FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART;
+        Map<String,Object> mapFormColumnValues = new HashMap<>();
+        
+        for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
+        {
+            List<IndexableField> listIndexableField = getEntryCodeFields( strFormColumnEntryCode, document );
+            for ( IndexableField field : listIndexableField )
+            {
+                mapFormColumnValues.put( field.name(), field.stringValue( ) );
+            }
+        }
+       
+        return mapFormColumnValues;
+        
     }
-
+    
     /**
-     * {@inheritDoc}
+     * Get the list of entry codes from the form column
+     * @param column
+     * @return the list of entry codes of the given column
      */
-    @Override
-    public String getFormColumnFromQuery( )
+    private List<String> getListEntryCode( IFormColumn column )
     {
-        return FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART );
+        if ( column instanceof FormColumnEntryGeolocation )
+        {
+            FormColumnEntryGeolocation formColumnEntry = (FormColumnEntryGeolocation) column;
+            return formColumnEntry.getListEntryCode();
+        }
+        return null;
     }
 }

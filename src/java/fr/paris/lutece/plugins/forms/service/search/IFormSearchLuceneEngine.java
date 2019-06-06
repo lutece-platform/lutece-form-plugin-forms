@@ -34,26 +34,29 @@
 package fr.paris.lutece.plugins.forms.service.search;
 
 import java.util.List;
-import javax.inject.Inject;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Query;
 
-/**
- * Form search service
- */
-public class FormSearchService implements IFormSearchService
+public interface IFormSearchLuceneEngine
 {
-    public static final String BEAN_NAME = "forms.formSearchService";
-
-    @Inject
-    private IFormSearchEngine _formSearchEngine;
+    /**
+     * Get the id of the form responses based on a FormSearchConfig obj
+     * @param formSearchConfig
+     * @return the list of form responses id based on given FormSearchConfig obj
+     */
+    List<Integer> getSearchResults( FormSearchConfig formSearchConfig );
 
     /**
-     * {@inheritDoc }
+     * Get the id of the form responses based on a text to search
+     * @param strSearchText the searched text
+     * @return the list of form responses id based on text to search
      */
-    @Override
-    public List<Integer> getSearchResults( FormSearchConfig formSearchConfig )
-    {
-        // Get the list of form response from the engine
-        return _formSearchEngine.getSearchResults( formSearchConfig );
-    }
-
+    List<Integer> getSearchResults( String strSearchText );
+    
+    /**
+     * Get the id of the form responses based on given Lucene query
+     * @param query the Lucene query
+     * @return the list of form responses id based on given Lucene query
+     */
+    List<Document> getSearchResults( Query query );
 }

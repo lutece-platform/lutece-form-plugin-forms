@@ -31,49 +31,33 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.Arrays;
-import java.util.List;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
-import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormsQueryPart;
-
-/**
- * Mock of the FormColumnFormsQueryPart class
- */
-public class FormColumnFormsQueryPartMock extends FormColumnFormsQueryPart
+public class FormColumnFormResponseDateCreationLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
-    // Constants
-    private static final String FORM_SELECT_QUERY_PART = "id_form, title";
-    private static final String FORM_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_JOIN_QUERY_PART = StringUtils.EMPTY;
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnSelectQuery( )
+    protected Map<String, Object> getMapFormColumnValues( Document document ) 
     {
-        return FORM_SELECT_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormColumnFromQuery( )
-    {
-        return FORM_FROM_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_JOIN_QUERY_PART );
+        Map<String,Object> mapFormColumnValues = new HashMap<>();
+        
+        IndexableField fieldDateCreation = document.getField( FormResponseSearchItem.FIELD_DATE_CREATION );
+       
+        if ( fieldDateCreation != null )
+        {
+            mapFormColumnValues.put( fieldDateCreation.name(), fieldDateCreation.stringValue( ) );
+        }
+        
+        return mapFormColumnValues;
+        
     }
 }

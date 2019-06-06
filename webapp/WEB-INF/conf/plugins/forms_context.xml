@@ -15,7 +15,7 @@
     <bean id="forms.formActionDAO"  class="fr.paris.lutece.plugins.forms.business.FormActionDAO" />
     <bean id="forms.globalFormsActionDAO"  class="fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionDAO" />
     <bean id="forms.formDisplayDAO" class="fr.paris.lutece.plugins.forms.business.FormDisplayDAO" />
-    <bean id="forms.formListDAO" class="fr.paris.lutece.plugins.forms.business.form.list.FormListDAO" />
+    <bean id="forms.formListDAO" class="fr.paris.lutece.plugins.forms.business.form.list.FormListLuceneDAO" />
     <bean id="forms.formQuestionResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormQuestionResponseDAO" />
     <bean id="forms.formResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseDAO" />
     <bean id="forms.formResponseStepDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseStepDAO" />
@@ -218,9 +218,6 @@
     <bean id="forms.formsMultiviewAuthorizationService" class="fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService">
         <constructor-arg name="formPanelConfiguration" type="fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration" ref="forms.formsPanel.panelConfiguration"/>
     </bean>
-    
-    <!-- Forms Search Service -->
-    <bean id="forms.formsSearchService" class="fr.paris.lutece.plugins.forms.service.search.FormSearchService"/>
     
     <!-- Lucene Search services implementation -->
     <bean id="forms.luceneFormsSearchEngine" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchEngine"/>

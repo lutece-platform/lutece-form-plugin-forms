@@ -37,7 +37,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormsQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormsLuceneQueryPart;
 
 /**
  * Implementation of the IFormColumnQueryPartFactory interface for a Form column
@@ -54,7 +54,7 @@ public class FormColumnFormsQueryPartFactory implements IFormColumnQueryPartFact
 
         if ( formColumn instanceof FormColumnForms )
         {
-            formColumnFormsQueryPart = new FormColumnFormsQueryPart( );
+            formColumnFormsQueryPart = new FormColumnFormsLuceneQueryPart( );
         }
 
         return formColumnFormsQueryPart;

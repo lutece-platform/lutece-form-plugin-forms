@@ -31,13 +31,46 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service.search;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
-import java.util.List;
+import fr.paris.lutece.plugins.forms.business.form.FormParameters;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.Collection;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 
-public interface IFormSearchEngine
+/**
+ * Implementation of the IFormFilterQueryPart for an Entry filter
+ */
+public class FormFilterFormsLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    List<Integer> getSearchResults( FormSearchConfig formSearchConfig );
+    private static final String INTEGER_MINUS_ONE = "-1";
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void buildFormFilterQuery( FormParameters formParameters )
+    {
+        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        {
+            Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values();
 
-    List<Integer> getSearchResults( String strSearchText );
+            if ( setFormParameters.size() == 1 )
+            {
+                String strIdForm = String.valueOf( setFormParameters.toArray()[0] );
+                if ( !strIdForm.equals( INTEGER_MINUS_ONE ) )
+                {
+                    Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM, Integer.parseInt( strIdForm ) );
+                    setFormFilterQuery( query );
+                }
+            }
+        }
+        else 
+        {
+            setFormFilterQuery( null );
+        }
+    }
 }
