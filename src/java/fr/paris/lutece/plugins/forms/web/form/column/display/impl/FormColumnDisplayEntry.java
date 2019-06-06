@@ -88,7 +88,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         String strEntryValue = StringUtils.EMPTY;
         if ( formColumnCell != null )
         {
-            String strEntryValueName = formColumnCell.getFormColumnCellValues().keySet().stream( ).findFirst( ).get( );
+            String strEntryValueName = formColumnCell.getFormColumnCellValues( ).keySet( ).stream( ).findFirst( ).get( );
             Object objEntryValue = formColumnCell.getFormColumnCellValueByName( strEntryValueName );
             if ( objEntryValue != null )
             {

@@ -93,7 +93,7 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
     private static final String INDEXER_VERSION = "1.0.0";
     private static final String PROPERTY_INDEXER_ENABLE = "forms.globalIndexer.enable";
 
-    @Autowired( required = false)
+    @Autowired( required = false )
     private WorkflowService _workflowService;
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
@@ -189,9 +189,8 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         State formResponseState = null;
         if ( _workflowService != null )
         {
-            formResponseState = _workflowService.getState( formResponse.getId(), FormResponse.RESOURCE_TYPE, form.getIdWorkflow(), -1);
+            formResponseState = _workflowService.getState( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), -1 );
         }
-        
 
         Document doc = getDocument( formResponse, form, formResponseState );
         if ( doc != null )
@@ -215,7 +214,6 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
     public Document getDocument( FormResponse formResponse, Form form, State formResponseState )
     {
 
-
         // make a new, empty document
         Document doc = new Document( );
 
@@ -230,7 +228,7 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
 
         // --- field contents
-        doc.add( new TextField( FormResponseSearchItem.FIELD_CONTENTS, manageNullValue( getContentToIndex(formResponse ) ), Field.Store.NO ) );
+        doc.add( new TextField( FormResponseSearchItem.FIELD_CONTENTS, manageNullValue( getContentToIndex( formResponse ) ), Field.Store.NO ) );
 
         // --- form title
         String strFormTitle = manageNullValue( form.getTitle( ) );
@@ -242,59 +240,56 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_FORM, form.getId( ) ) );
         doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_FORM, form.getId( ) ) );
 
-        
         // --- form response date create
-        Long longCreationDate = formResponse.getCreation().getTime();
+        Long longCreationDate = formResponse.getCreation( ).getTime( );
         doc.add( new LongPoint( FormResponseSearchItem.FIELD_DATE_CREATION, longCreationDate ) );
         doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_DATE_CREATION, longCreationDate ) );
         doc.add( new StoredField( FormResponseSearchItem.FIELD_DATE_CREATION, longCreationDate ) );
 
         // --- form response date closure
-        Long longUpdateDate = formResponse.getUpdate( ).getTime();
+        Long longUpdateDate = formResponse.getUpdate( ).getTime( );
         doc.add( new LongPoint( FormResponseSearchItem.FIELD_DATE_UPDATE, longUpdateDate ) );
         doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_DATE_UPDATE, longUpdateDate ) );
         doc.add( new StoredField( FormResponseSearchItem.FIELD_DATE_UPDATE, longUpdateDate ) );
-        
+
         // --- id form response workflow state
-        int nIdFormResponseWorkflowState = formResponseState.getId( ) ;
+        int nIdFormResponseWorkflowState = formResponseState.getId( );
         doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
         doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
         doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
-        
+
         // --- form response workflow state title
-        
+
         String strFormResponseWorkflowStateTitle = manageNullValue( formResponseState.getName( ) );
         doc.add( new StringField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, strFormResponseWorkflowStateTitle, Field.Store.YES ) );
         doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, new BytesRef( strFormResponseWorkflowStateTitle ) ) );
-        
+
         // TODO BY LEPINEG ? : id Assignee Unit, id Assignee User
         /*
-        int nIdFormResponseAssigneeUnit = formResponse.getIdAssigneeUnit();
-        doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUnit ) );
-        doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUnit ) );
-        doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUnit ) );
-        
-        int nIdFormResponseAssigneeUser = formResponse.getIdAssigneeUser();
-        doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUser ) );
-        doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUser ) );
-        doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUser ) );
-        */
+         * int nIdFormResponseAssigneeUnit = formResponse.getIdAssigneeUnit(); doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT,
+         * nIdFormResponseAssigneeUnit ) ); doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUnit ) );
+         * doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUnit ) );
+         * 
+         * int nIdFormResponseAssigneeUser = formResponse.getIdAssigneeUser(); doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT,
+         * nIdFormResponseAssigneeUser ) ); doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUser ) );
+         * doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUser ) );
+         */
 
         // --- form response entry code / fields
         for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
         {
-            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions() )
+            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
             {
-                String strQuestionCode = formQuestionResponse.getQuestion().getCode( );
-                
+                String strQuestionCode = formQuestionResponse.getQuestion( ).getCode( );
+
                 for ( Response response : formQuestionResponse.getEntryResponse( ) )
                 {
-                    //TODO USE EXPORT MANAGER ? 
-                    fr.paris.lutece.plugins.genericattributes.business.Field responseField = response.getField();
-                    
+                    // TODO USE EXPORT MANAGER ?
+                    fr.paris.lutece.plugins.genericattributes.business.Field responseField = response.getField( );
+
                     StringBuilder fieldNameBuilder = new StringBuilder( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX );
                     fieldNameBuilder.append( strQuestionCode );
-                    
+
                     if ( responseField == null || StringUtils.isEmpty( responseField.getTitle( ) ) )
                     {
                         doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
@@ -305,7 +300,7 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
                         fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ );
                         fieldNameBuilder.append( responseField.getTitle( ) );
                         doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( responseField.getValue( )) ) );
+                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( responseField.getValue( ) ) ) );
                     }
                 }
             }
@@ -448,14 +443,11 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
 
         if ( _indexWriter == null || !_indexWriter.isOpen( ) )
         {
-           initIndexing( true ); 
+            initIndexing( true );
         }
-        
-        Map<Integer,Form> mapForms = FormHome.getFormList( ).stream( )
-                .collect( Collectors.toMap(
-                        form->form.getId(),form->form
-        ) );
-        
+
+        Map<Integer, Form> mapForms = FormHome.getFormList( ).stream( ).collect( Collectors.toMap( form -> form.getId( ), form -> form ) );
+
         for ( FormResponse formResponse : listFormResponse )
         {
             Document doc = null;
@@ -463,7 +455,7 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
             State formResponseState = null;
             if ( _workflowService != null )
             {
-                formResponseState = _workflowService.getState( formResponse.getId(), FormResponse.RESOURCE_TYPE, form.getIdWorkflow(), -1);
+                formResponseState = _workflowService.getState( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), -1 );
             }
             else
             {
@@ -471,7 +463,7 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
                 formResponseState.setId( -1 );
                 formResponseState.setName( StringUtils.EMPTY );
             }
- 
+
             try
             {
                 doc = getDocument( formResponse, form, formResponseState );
@@ -611,15 +603,17 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
             endIndexing( );
         }
     }
-    
+
     /**
      * Manage a given string null value
+     * 
      * @param strValue
      * @return the string if not null, empty string otherwise
      */
     private String manageNullValue( String strValue )
     {
-        if ( strValue == null ) return StringUtils.EMPTY;
+        if ( strValue == null )
+            return StringUtils.EMPTY;
         return strValue;
     }
 }

@@ -47,20 +47,20 @@ import org.apache.lucene.search.TermQuery;
 public class FormFilterFormsLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
     private static final String INTEGER_MINUS_ONE = "-1";
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
-            Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values();
+            Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values( );
 
-            if ( setFormParameters.size() == 1 )
+            if ( setFormParameters.size( ) == 1 )
             {
-                String strIdForm = String.valueOf( setFormParameters.toArray()[0] );
+                String strIdForm = String.valueOf( setFormParameters.toArray( ) [0] );
                 if ( !strIdForm.equals( INTEGER_MINUS_ONE ) )
                 {
                     Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM, Integer.parseInt( strIdForm ) );
@@ -68,7 +68,7 @@ public class FormFilterFormsLuceneQueryPart extends AbstractFormFilterLuceneQuer
                 }
             }
         }
-        else 
+        else
         {
             setFormFilterQuery( null );
         }

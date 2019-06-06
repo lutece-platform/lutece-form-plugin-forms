@@ -38,10 +38,12 @@ import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQ
 import org.apache.lucene.document.Document;
 
 public interface IFormColumnLuceneQueryPart extends IFormColumnQueryPart
-{   
+{
     /**
      * Get the content of the column cell from Lucene doc
-     * @param doc the Document
+     * 
+     * @param doc
+     *            the Document
      * @return the FormColumnCell
      */
     FormColumnCell getFormColumnCell( Document doc );

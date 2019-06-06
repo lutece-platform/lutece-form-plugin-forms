@@ -58,18 +58,18 @@ public abstract class AbstractFormFilterLuceneQueryPart implements IFormFilterLu
     public void buildFormFilterQuery( FormParameters formParameters )
     {
         BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
-        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
-            Set<Entry<String,Object> > setFormParameters = formParameters.getFormParametersMap( ).entrySet();
-        
-            for ( Entry<String,Object> formParam : setFormParameters )
+            Set<Entry<String, Object>> setFormParameters = formParameters.getFormParametersMap( ).entrySet( );
+
+            for ( Entry<String, Object> formParam : setFormParameters )
             {
-                Query query = new TermQuery( new Term( formParam.getKey( ), formParam.getValue().toString( ) ) );
-                booleanQueryBuilder.add( query, BooleanClause.Occur.MUST);
+                Query query = new TermQuery( new Term( formParam.getKey( ), formParam.getValue( ).toString( ) ) );
+                booleanQueryBuilder.add( query, BooleanClause.Occur.MUST );
             }
             setFormFilterQuery( booleanQueryBuilder.build( ) );
         }
-        else 
+        else
         {
             setFormFilterQuery( null );
         }

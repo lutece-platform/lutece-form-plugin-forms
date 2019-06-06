@@ -38,5 +38,5 @@ package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
  */
 public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    //Nothing to extends
+    // Nothing to extends
 }

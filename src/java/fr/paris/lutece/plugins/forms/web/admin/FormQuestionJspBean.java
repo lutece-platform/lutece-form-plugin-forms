@@ -747,10 +747,10 @@ public class FormQuestionJspBean extends AbstractJspBean
         // Duplicates the controls of the question
         for ( Control control : listControlsToDuplicate )
         {
-            
-            Set<Integer>  listQuestion= new HashSet<Integer> ();
-        	listQuestion.add(questionToCopy.getId( ));
-            control.setListIdQuestion(listQuestion );
+
+            Set<Integer> listQuestion = new HashSet<Integer>( );
+            listQuestion.add( questionToCopy.getId( ) );
+            control.setListIdQuestion( listQuestion );
             control.setIdControlTarget( questionToCopy.getId( ) );
             ControlHome.create( control );
         }

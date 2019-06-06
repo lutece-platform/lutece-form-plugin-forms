@@ -50,11 +50,12 @@ public abstract class AbstractFormColumnLuceneQueryPart implements IFormColumnLu
 {
     /**
      * Get a map of values fetched from Lucene document
+     * 
      * @param document
      * @return a Map of values feteched form Lucene document
      */
     protected abstract Map<String, Object> getMapFormColumnValues( Document document );
-    
+
     // Variables
     private IFormColumn _formColumn;
 
@@ -75,7 +76,7 @@ public abstract class AbstractFormColumnLuceneQueryPart implements IFormColumnLu
     {
         return _formColumn;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -95,23 +96,24 @@ public abstract class AbstractFormColumnLuceneQueryPart implements IFormColumnLu
 
         return formColumnCell;
     }
-    
+
     /**
-     * Get the list of Lucene indexable fields based on a document and an entry code prefix. 
+     * Get the list of Lucene indexable fields based on a document and an entry code prefix.
+     * 
      * @param strEntryCode
      * @param document
      * @return The list of Lucene indexable fields based on a document and an entry code prefix
      */
     protected List<IndexableField> getEntryCodeFields( String strEntryCode, Document document )
     {
-        List<IndexableField> listFields = new ArrayList<>();
+        List<IndexableField> listFields = new ArrayList<>( );
         for ( IndexableField field : document.getFields( ) )
         {
             String strFieldSuffixEntryCode = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strEntryCode;
-            
+
             if ( field.name( ).startsWith( strFieldSuffixEntryCode ) )
             {
-                    listFields.add( field );
+                listFields.add( field );
             }
         }
         return listFields;

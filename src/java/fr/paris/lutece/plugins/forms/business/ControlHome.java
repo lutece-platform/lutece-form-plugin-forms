@@ -66,18 +66,19 @@ public final class ControlHome
     public static Control create( Control control )
     {
         _dao.insert( control, _plugin );
-        for(int idQuestion: control.getListIdQuestion( )){
-        	
-        	_dao.insert( control.getId(), idQuestion, _plugin);
+        for ( int idQuestion : control.getListIdQuestion( ) )
+        {
+
+            _dao.insert( control.getId( ), idQuestion, _plugin );
         }
 
         return control;
     }
-    
+
     public static void createMappingControl( int nIdcontrol, int nIdQuestion, String strValue )
     {
-      
-        	_dao.insert( nIdcontrol, nIdQuestion, strValue, _plugin);
+
+        _dao.insert( nIdcontrol, nIdQuestion, strValue, _plugin );
     }
 
     /**
@@ -89,12 +90,13 @@ public final class ControlHome
      */
     public static Control update( Control control )
     {
-    	
+
         _dao.store( control, _plugin );
-        _dao.deleteControlQuestion(control.getId( ), _plugin);
-        for(int nIdQuestion: control.getListIdQuestion()){
-        	
-        	_dao.insert(control.getId( ), nIdQuestion, _plugin);
+        _dao.deleteControlQuestion( control.getId( ), _plugin );
+        for ( int nIdQuestion : control.getListIdQuestion( ) )
+        {
+
+            _dao.insert( control.getId( ), nIdQuestion, _plugin );
         }
         return control;
     }
@@ -107,10 +109,10 @@ public final class ControlHome
      */
     public static void remove( int nKey )
     {
-    	_dao.deleteControlQuestion( nKey, _plugin);
+        _dao.deleteControlQuestion( nKey, _plugin );
         _dao.delete( nKey, _plugin );
     }
-    
+
     /**
      * Remove the control mapping whose identifier control is specified in parameter
      * 
@@ -119,7 +121,7 @@ public final class ControlHome
      */
     public static void removeMappingControl( int nKey )
     {
-    	_dao.deleteControlQuestionValue( nKey, _plugin);
+        _dao.deleteControlQuestionValue( nKey, _plugin );
     }
 
     /**
@@ -132,11 +134,12 @@ public final class ControlHome
      */
     public static void removeByControlTarget( int nIdControlTarget, ControlType controlType )
     {
-    	List<Control>listControl= _dao.selectControlByControlTargetAndType( nIdControlTarget, controlType, _plugin );
-    	for(Control ctrl:listControl){
-    		
-    		_dao.deleteControlQuestion(ctrl.getId( ), _plugin);
-    	}
+        List<Control> listControl = _dao.selectControlByControlTargetAndType( nIdControlTarget, controlType, _plugin );
+        for ( Control ctrl : listControl )
+        {
+
+            _dao.deleteControlQuestion( ctrl.getId( ), _plugin );
+        }
         _dao.deleteByControlTarget( nIdControlTarget, controlType, _plugin );
     }
 
@@ -149,11 +152,12 @@ public final class ControlHome
      */
     public static Control findByPrimaryKey( int nKey )
     {
-    	Control control= _dao.load( nKey, _plugin );
-    	if(control != null){
-    		control.setListIdQuestion(_dao.loadIdQuestions(nKey, _plugin));
-    	}
-    	
+        Control control = _dao.load( nKey, _plugin );
+        if ( control != null )
+        {
+            control.setListIdQuestion( _dao.loadIdQuestions( nKey, _plugin ) );
+        }
+
         return control;
     }
 
@@ -198,9 +202,10 @@ public final class ControlHome
      */
     public static List<Control> getControlByControlTargetAndType( int nIdControlTarget, ControlType controlType )
     {
-    	List<Control> listControl= _dao.selectControlByControlTargetAndType( nIdControlTarget, controlType, _plugin );
-        for(Control ctrl:listControl){
-        	ctrl.setListIdQuestion(_dao.loadIdQuestions(ctrl.getId( ), _plugin));
+        List<Control> listControl = _dao.selectControlByControlTargetAndType( nIdControlTarget, controlType, _plugin );
+        for ( Control ctrl : listControl )
+        {
+            ctrl.setListIdQuestion( _dao.loadIdQuestions( ctrl.getId( ), _plugin ) );
         }
         return listControl;
     }
@@ -216,9 +221,10 @@ public final class ControlHome
      */
     public static List<Control> getControlByQuestionAndType( int nIdQuestion, String strControlType )
     {
-    	List<Control> listControl=  _dao.selectControlByQuestionAndType( nIdQuestion, strControlType, _plugin );
-        for(Control ctrl:listControl){
-        	ctrl.setListIdQuestion(_dao.loadIdQuestions(ctrl.getId( ), _plugin));
+        List<Control> listControl = _dao.selectControlByQuestionAndType( nIdQuestion, strControlType, _plugin );
+        for ( Control ctrl : listControl )
+        {
+            ctrl.setListIdQuestion( _dao.loadIdQuestions( ctrl.getId( ), _plugin ) );
         }
         return listControl;
     }
@@ -232,21 +238,24 @@ public final class ControlHome
      */
     public static List<Control> getControlByQuestion( int nIdQuestion )
     {
-    	List<Control> listControl=  _dao.selectControlByQuestion( nIdQuestion, _plugin );
-        for(Control ctrl:listControl){
-        	ctrl.setListIdQuestion(_dao.loadIdQuestions(ctrl.getId( ), _plugin));
+        List<Control> listControl = _dao.selectControlByQuestion( nIdQuestion, _plugin );
+        for ( Control ctrl : listControl )
+        {
+            ctrl.setListIdQuestion( _dao.loadIdQuestions( ctrl.getId( ), _plugin ) );
         }
         return listControl;
     }
-    
+
     /**
      * Load the data of all the control objects and returns them as a referenceList
-     * @param nIdControl the Control id
+     * 
+     * @param nIdControl
+     *            the Control id
      * @return the referenceList which contains the data of all the control objects
      */
 
     public static ReferenceList getCtrlMappingListByIdControl( int nIdControl )
     {
-        return _dao.selectMappingControlReferenceList(nIdControl, _plugin);
+        return _dao.selectMappingControlReferenceList( nIdControl, _plugin );
     }
 }

@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
 
-
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import org.apache.lucene.search.MatchAllDocsQuery;
 
@@ -59,5 +58,5 @@ public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitial
     {
         // There is nothing to do with the FormParameters for this FormPanelInitializer
     }
-    
+
 }

@@ -65,7 +65,7 @@ public final class FormPanelInitializerQueryBuilder
     {
         List<String> listPanelInitializerSelectQueryParts = new ArrayList<>( );
         BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
-        
+
         if ( !CollectionUtils.isEmpty( listFormPanelInitializerQueryPart ) )
         {
             for ( IFormPanelInitializerLuceneQueryPart formColumnQueryPart : listFormPanelInitializerQueryPart )

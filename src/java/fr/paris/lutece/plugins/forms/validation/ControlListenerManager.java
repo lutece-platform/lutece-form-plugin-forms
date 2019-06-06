@@ -64,20 +64,21 @@ public final class ControlListenerManager
             ControlRemovalListener.notifyControlRemoval( control, request );
         }
     }
-    
+
     /**
      * Notify listeners that an Control is about to be created
      * 
      * @param Control
-     *            The  Control that will be update
+     *            The Control that will be update
      */
     public static void notifyListenersControlCreated( Control control, HttpServletRequest request )
     {
         for ( IControlListener ControlListener : SpringContextService.getBeansOfType( IControlListener.class ) )
         {
-            ControlListener.notifyControlCreated( control, request);
+            ControlListener.notifyControlCreated( control, request );
         }
     }
+
     /**
      * Notify listeners that an Control is about to be updated
      * 
@@ -88,10 +89,8 @@ public final class ControlListenerManager
     {
         for ( IControlListener ControlListener : SpringContextService.getBeansOfType( IControlListener.class ) )
         {
-            ControlListener.notifyControlUpdated( control, request);
+            ControlListener.notifyControlUpdated( control, request );
         }
     }
 
-
-   
 }

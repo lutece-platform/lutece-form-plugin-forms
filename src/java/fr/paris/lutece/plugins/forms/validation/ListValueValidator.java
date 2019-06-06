@@ -61,7 +61,6 @@ public class ListValueValidator extends AbstractValidator
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_value_template.html";
     private static final String TEMPLATE_JAVASCRIPT = "/skin/plugins/forms/validators/list_value_javascript.html";
 
-
     /**
      * Constructor of the PatternValidator
      * 
@@ -74,8 +73,8 @@ public class ListValueValidator extends AbstractValidator
      */
     public ListValueValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
-    	super( strValidatorName,  strValidatorDisplayName, listAvailableEntryType);
-    
+        super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
+
     }
 
     @Override
@@ -95,17 +94,18 @@ public class ListValueValidator extends AbstractValidator
     {
         Map<String, Object> model = new HashMap<String, Object>( );
         ReferenceList refListValue = new ReferenceList( );
-        
-        if(control.getListIdQuestion( )!= null && !control.getListIdQuestion( ).isEmpty()){
-	        Question question = QuestionHome.findByPrimaryKey( control.getListIdQuestion().iterator().next( ) );
-	
-	        if ( question.getEntry( ) != null && question.getEntry( ).getFields( ) != null )
-	        {
-	            for ( Field field : question.getEntry( ).getFields( ) )
-	            {
-	                refListValue.addItem( field.getIdField( ), field.getTitle( ) );
-	            }
-	        }
+
+        if ( control.getListIdQuestion( ) != null && !control.getListIdQuestion( ).isEmpty( ) )
+        {
+            Question question = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) );
+
+            if ( question.getEntry( ) != null && question.getEntry( ).getFields( ) != null )
+            {
+                for ( Field field : question.getEntry( ).getFields( ) )
+                {
+                    refListValue.addItem( field.getIdField( ), field.getTitle( ) );
+                }
+            }
 
         }
         model.put( FormsConstants.PARAMETER_REF_LIST_VALUE, refListValue );

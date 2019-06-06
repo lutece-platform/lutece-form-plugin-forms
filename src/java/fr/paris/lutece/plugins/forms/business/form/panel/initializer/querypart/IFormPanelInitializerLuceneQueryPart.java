@@ -40,7 +40,7 @@ import org.apache.lucene.search.Query;
  */
 public interface IFormPanelInitializerLuceneQueryPart extends IFormPanelInitializerQueryPart
 {
-    
+
     /**
      * Return the select query part of the FormPanelInitializer
      * 

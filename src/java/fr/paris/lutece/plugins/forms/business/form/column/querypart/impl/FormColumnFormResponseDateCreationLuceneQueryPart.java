@@ -39,25 +39,24 @@ import java.util.Map;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 
-
 public class FormColumnFormResponseDateCreationLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, Object> getMapFormColumnValues( Document document ) 
+    protected Map<String, Object> getMapFormColumnValues( Document document )
     {
-        Map<String,Object> mapFormColumnValues = new HashMap<>();
-        
+        Map<String, Object> mapFormColumnValues = new HashMap<>( );
+
         IndexableField fieldDateCreation = document.getField( FormResponseSearchItem.FIELD_DATE_CREATION );
-       
+
         if ( fieldDateCreation != null )
         {
-            mapFormColumnValues.put( fieldDateCreation.name(), fieldDateCreation.stringValue( ) );
+            mapFormColumnValues.put( fieldDateCreation.name( ), fieldDateCreation.stringValue( ) );
         }
-        
+
         return mapFormColumnValues;
-        
+
     }
 }

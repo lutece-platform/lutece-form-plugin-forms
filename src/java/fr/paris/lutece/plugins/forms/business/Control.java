@@ -53,7 +53,7 @@ public class Control implements Cloneable
 
     private String _strErrorMessage;
 
-    //@Min( value = 1, message = "#i18n{forms.validation.control.Question.notEmpty}" )
+    // @Min( value = 1, message = "#i18n{forms.validation.control.Question.notEmpty}" )
     private Set<Integer> _listIdQuestion;
 
     @NotEmpty( message = "#i18n{forms.validation.control.ValidatorName.notEmpty}" )

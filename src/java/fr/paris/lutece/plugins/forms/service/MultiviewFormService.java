@@ -143,9 +143,9 @@ public final class MultiviewFormService
 
         // Retrieve all the column Spring beans
         List<IFormColumn> listFormColumns = SpringContextService.getBeansOfType( IFormColumn.class );
-        Collections.sort( listFormColumns, new FormColumnComparator( ) ); //sort by position
+        Collections.sort( listFormColumns, new FormColumnComparator( ) ); // sort by position
         listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( ), column ) );
-        
+
         // Then add global columns from config questions
         List<Question> listQuestions = new ArrayList<>( );
         listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsList( ) : QuestionHome

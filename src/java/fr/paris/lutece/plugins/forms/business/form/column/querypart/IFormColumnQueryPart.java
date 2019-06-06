@@ -46,8 +46,8 @@ public interface IFormColumnQueryPart
      * @return the FormColumn of the FormColumnQueryPart
      */
     IFormColumn getFormColumn( );
-    
-     /**
+
+    /**
      * Set the form column to the FormColumnQueryPart
      * 
      * @param formColumn

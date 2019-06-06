@@ -41,6 +41,7 @@ public interface IFormSearchLuceneEngine
 {
     /**
      * Get the id of the form responses based on a FormSearchConfig obj
+     * 
      * @param formSearchConfig
      * @return the list of form responses id based on given FormSearchConfig obj
      */
@@ -48,14 +49,18 @@ public interface IFormSearchLuceneEngine
 
     /**
      * Get the id of the form responses based on a text to search
-     * @param strSearchText the searched text
+     * 
+     * @param strSearchText
+     *            the searched text
      * @return the list of form responses id based on text to search
      */
     List<Integer> getSearchResults( String strSearchText );
-    
+
     /**
      * Get the id of the form responses based on given Lucene query
-     * @param query the Lucene query
+     * 
+     * @param query
+     *            the Lucene query
      * @return the list of form responses id based on given Lucene query
      */
     List<Document> getSearchResults( Query query );

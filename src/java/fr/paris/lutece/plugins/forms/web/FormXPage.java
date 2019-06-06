@@ -804,12 +804,13 @@ public class FormXPage extends MVCApplication
 
             for ( Control transitionControl : listTransitionControl )
             {
-                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getListIdQuestion().iterator().next( ));
+                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getListIdQuestion( ).iterator( ).next( ) );
                 Step stepTarget = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
-                List<FormQuestionResponse> listQuestionResponse= _formResponseManager.findResponsesFor( stepTarget )
-                		.stream().filter(q -> transitionControl.getListIdQuestion().stream()
-                				.anyMatch( t -> t.equals(q.getQuestion().getId()))).collect(Collectors.toList());;
-               
+                List<FormQuestionResponse> listQuestionResponse = _formResponseManager.findResponsesFor( stepTarget ).stream( )
+                        .filter( q -> transitionControl.getListIdQuestion( ).stream( ).anyMatch( t -> t.equals( q.getQuestion( ).getId( ) ) ) )
+                        .collect( Collectors.toList( ) );
+                ;
+
                 IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
                 if ( validator != null && !validator.validate( listQuestionResponse, transitionControl ) )
                 {

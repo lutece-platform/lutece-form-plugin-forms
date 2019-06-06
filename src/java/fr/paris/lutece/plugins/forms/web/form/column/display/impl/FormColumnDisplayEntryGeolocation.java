@@ -63,7 +63,7 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
     private static final String MARK_ENTRY_VALUE_COLUMN_POSITION = "entry_column_position";
     private static final String MARK_COLUMN_SORT_ATTRIBUTE = "column_sort_attribute";
     private static final String MARK_SORT_URL = "sort_url";
-    
+
     private static final String MARK_ENTRY_ADDR = "entry_address";
     private static final String MARK_ENTRY_X = "entry_x";
     private static final String MARK_ENTRY_Y = "entry_y";
@@ -79,7 +79,7 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
         model.put( MARK_ENTRY_VALUE_COLUMN_POSITION, getPosition( ) );
         model.put( MARK_COLUMN_SORT_ATTRIBUTE, String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getPosition( ) ) );
         model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
-        
+
         String strColumnHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );
         setFormColumnHeaderTemplate( strColumnHeaderTemplate );
 
@@ -162,12 +162,12 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
         Object objEntryY = geolocFormColumnCell.getFormColumnCellValueByName( strEntryYName );
         return Arrays.asList( objEntryX, objEntryY );
     }
-    
-    private String getFormColumnCellKey( String strField, Map<String,Object> formColumnCellValues )
+
+    private String getFormColumnCellKey( String strField, Map<String, Object> formColumnCellValues )
     {
-        for ( Entry<String,Object> cellValue : formColumnCellValues.entrySet( ) )
+        for ( Entry<String, Object> cellValue : formColumnCellValues.entrySet( ) )
         {
-            if ( cellValue.getKey().endsWith( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ + strField ) )
+            if ( cellValue.getKey( ).endsWith( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ + strField ) )
             {
                 return cellValue.getKey( );
             }

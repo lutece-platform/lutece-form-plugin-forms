@@ -219,12 +219,10 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         // the list of all Step associated to the Form of the given FormResponse when
         // it will be ready
         List<Step> listStep = StepHome.getStepsListByForm( form.getId( ) );
-        
-        Map<Integer, Step> mapSteps = new HashMap<>();
-        listStep.stream( ).forEach( 
-            step -> mapSteps.put( step.getId(), step )
-        );
-        
+
+        Map<Integer, Step> mapSteps = new HashMap<>( );
+        listStep.stream( ).forEach( step -> mapSteps.put( step.getId( ), step ) );
+
         List<String> listStepDisplayTree = buildFormStepDisplayTreeList( request, listStep, formResponse );
         mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, listStepDisplayTree );
         mapFormResponseDetailsModel.put( MARK_MAP_MULTIVIEW_STEP_REF_LIST, mapSteps );

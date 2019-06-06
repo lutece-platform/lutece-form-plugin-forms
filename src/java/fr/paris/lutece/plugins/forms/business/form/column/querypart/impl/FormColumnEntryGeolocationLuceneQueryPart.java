@@ -50,25 +50,26 @@ public class FormColumnEntryGeolocationLuceneQueryPart extends AbstractFormColum
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, Object> getMapFormColumnValues( Document document ) 
+    protected Map<String, Object> getMapFormColumnValues( Document document )
     {
-        Map<String,Object> mapFormColumnValues = new HashMap<>();
-        
+        Map<String, Object> mapFormColumnValues = new HashMap<>( );
+
         for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
         {
             List<IndexableField> listIndexableField = getEntryCodeFields( strFormColumnEntryCode, document );
             for ( IndexableField field : listIndexableField )
             {
-                mapFormColumnValues.put( field.name(), field.stringValue( ) );
+                mapFormColumnValues.put( field.name( ), field.stringValue( ) );
             }
         }
-       
+
         return mapFormColumnValues;
-        
+
     }
-    
+
     /**
      * Get the list of entry codes from the form column
+     * 
      * @param column
      * @return the list of entry codes of the given column
      */
@@ -77,7 +78,7 @@ public class FormColumnEntryGeolocationLuceneQueryPart extends AbstractFormColum
         if ( column instanceof FormColumnEntryGeolocation )
         {
             FormColumnEntryGeolocation formColumnEntry = (FormColumnEntryGeolocation) column;
-            return formColumnEntry.getListEntryCode();
+            return formColumnEntry.getListEntryCode( );
         }
         return null;
     }

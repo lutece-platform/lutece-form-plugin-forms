@@ -81,7 +81,7 @@ public class PatternValidator extends AbstractValidator
      */
     public PatternValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
-    	super( strValidatorName,  strValidatorDisplayName, listAvailableEntryType);
+        super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
     }
 
     @Override

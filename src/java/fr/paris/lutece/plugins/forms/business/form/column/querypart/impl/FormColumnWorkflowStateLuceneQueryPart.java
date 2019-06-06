@@ -48,17 +48,17 @@ public class FormColumnWorkflowStateLuceneQueryPart extends AbstractFormColumnLu
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, Object> getMapFormColumnValues( Document document ) 
+    protected Map<String, Object> getMapFormColumnValues( Document document )
     {
-        Map<String,Object> mapFormColumnValues = new HashMap<>();
-        
+        Map<String, Object> mapFormColumnValues = new HashMap<>( );
+
         IndexableField fieldFormWorkflowState = document.getField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE );
-       
+
         if ( fieldFormWorkflowState != null )
         {
-            mapFormColumnValues.put( fieldFormWorkflowState.name(), fieldFormWorkflowState.stringValue( ) );
+            mapFormColumnValues.put( fieldFormWorkflowState.name( ), fieldFormWorkflowState.stringValue( ) );
         }
-        
+
         return mapFormColumnValues;
     }
 }

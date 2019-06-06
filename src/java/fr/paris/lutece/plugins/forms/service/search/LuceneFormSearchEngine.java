@@ -139,7 +139,7 @@ public class LuceneFormSearchEngine implements IFormSearchLuceneEngine
     }
 
     @Override
-    public List<Document> getSearchResults(Query query) 
+    public List<Document> getSearchResults( Query query )
     {
         List<Document> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
@@ -147,7 +147,7 @@ public class LuceneFormSearchEngine implements IFormSearchLuceneEngine
         try
         {
             searcher = _luceneFormSearchFactory.getIndexSearcher( );
-            
+
             // Get results documents
             TopDocs topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
             ScoreDoc [ ] hits = topDocs.scoreDocs;

@@ -45,20 +45,20 @@ import org.apache.lucene.search.Query;
 public class FormFilterWorkflowStateLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
     private static final String INTEGER_MINUS_ONE = "-1";
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
-            Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values();
+            Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values( );
 
-            if ( setFormParameters.size() == 1 )
+            if ( setFormParameters.size( ) == 1 )
             {
-                String strIdWorkflowState = String.valueOf( setFormParameters.toArray()[0] );
+                String strIdWorkflowState = String.valueOf( setFormParameters.toArray( ) [0] );
                 if ( !strIdWorkflowState.equals( INTEGER_MINUS_ONE ) )
                 {
                     Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, Integer.parseInt( strIdWorkflowState ) );
@@ -66,7 +66,7 @@ public class FormFilterWorkflowStateLuceneQueryPart extends AbstractFormFilterLu
                 }
             }
         }
-        else 
+        else
         {
             setFormFilterQuery( null );
         }

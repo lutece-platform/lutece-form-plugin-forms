@@ -79,7 +79,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private static final String TEMPLATE_QUESTION_EDITION_BACKOFFICE = TEMPLATE_QUESTION_READONLY_BACKOFFICE;
     private static final String TEMPLATE_QUESTION_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_question_read_only.html";
     private static final String TEMPLATE_QUESTION_RESUBMIT_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_question_resubmit.html";
-    
+
     // Marks
     private static final String MARK_QUESTION_ENTRY = "questionEntry";
     private static final String MARK_ENTRY_ITERATION_NUMBER = "entry_iteration_number";
@@ -274,11 +274,11 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
         if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
         {
-        	strTemplate = TEMPLATE_QUESTION_RESUBMIT_BACKOFFICE;
+            strTemplate = TEMPLATE_QUESTION_RESUBMIT_BACKOFFICE;
         }
         if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
         {
-        	strTemplate = TEMPLATE_QUESTION_RESUBMIT_FRONTOFFICE;
+            strTemplate = TEMPLATE_QUESTION_RESUBMIT_FRONTOFFICE;
         }
         return strTemplate;
     }
@@ -319,13 +319,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         {
             _question.setIsVisible( true );
         }
-        
-        if ( displayType == DisplayType.RESUBMIT_BACKOFFICE || displayType == DisplayType.RESUBMIT_FRONTOFFICE)
+
+        if ( displayType == DisplayType.RESUBMIT_BACKOFFICE || displayType == DisplayType.RESUBMIT_FRONTOFFICE )
         {
-        	if ( _question.getEntry( ) != null)
-        	{
-        		_question.setIsVisible( _question.getEntry( ).isShownInCompleteness( ) );
-        	}
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( _question.getEntry( ).isShownInCompleteness( ) );
+            }
         }
     }
 

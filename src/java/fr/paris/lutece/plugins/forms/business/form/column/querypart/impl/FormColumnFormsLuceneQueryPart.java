@@ -39,24 +39,24 @@ import java.util.Map;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 
-public class FormColumnFormsLuceneQueryPart extends AbstractFormColumnLuceneQueryPart 
+public class FormColumnFormsLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, Object> getMapFormColumnValues( Document document ) 
+    protected Map<String, Object> getMapFormColumnValues( Document document )
     {
-        Map<String,Object> mapFormColumnValues = new HashMap<>();
-        
+        Map<String, Object> mapFormColumnValues = new HashMap<>( );
+
         IndexableField fieldFormTitle = document.getField( FormResponseSearchItem.FIELD_FORM_TITLE );
-       
+
         if ( fieldFormTitle != null )
         {
-            mapFormColumnValues.put( fieldFormTitle.name(), fieldFormTitle.stringValue( ) );
+            mapFormColumnValues.put( fieldFormTitle.name( ), fieldFormTitle.stringValue( ) );
         }
-        
+
         return mapFormColumnValues;
     }
-    
+
 }

@@ -97,7 +97,7 @@ public class FormListLuceneDAO implements IFormListDAO
 
         if ( query != null )
         {
-            
+
             for ( Document doc : _formSearchEngine.getSearchResults( query ) )
             {
                 // Create a FormResponseItem for the current result line
@@ -108,10 +108,10 @@ public class FormListLuceneDAO implements IFormListDAO
                 {
                     if ( formColumnQueryPart instanceof IFormColumnLuceneQueryPart )
                     {
-                        FormColumnCell formColumnCell = ((IFormColumnLuceneQueryPart) formColumnQueryPart).getFormColumnCell( doc );
+                        FormColumnCell formColumnCell = ( (IFormColumnLuceneQueryPart) formColumnQueryPart ).getFormColumnCell( doc );
                         formResponseItem.addFormColumnCell( formColumnCell );
                     }
-                    
+
                 }
             }
         }
@@ -129,9 +129,7 @@ public class FormListLuceneDAO implements IFormListDAO
     private FormResponseItem createFormResponseItem( Document document )
     {
         FormResponseItem formResponseItem = new FormResponseItem( );
-        formResponseItem.setIdFormResponse( 
-            Integer.parseInt( document.getField( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE ).stringValue( ) ) 
-        );
+        formResponseItem.setIdFormResponse( Integer.parseInt( document.getField( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE ).stringValue( ) ) );
 
         return formResponseItem;
     }

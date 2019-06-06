@@ -68,15 +68,15 @@ import fr.paris.lutece.util.url.UrlItem;
 @Controller( controllerJsp = "ModifyMappingOcr.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class ModifyMappingOcrJspBean extends AbstractJspBean
 {
-	private static final long serialVersionUID = 8210813454305009601L;
+    private static final long serialVersionUID = 8210813454305009601L;
 
-	/**
+    /**
      * Right to manage forms
      */
     public static final String RIGHT_MANAGE_FORMS = "FORMS_MANAGEMENT";
 
     // message
-    private static final String MESSAGE_CONFIRM_REMOVE_MAPPING= "forms.message.confirmRemoveMapping";
+    private static final String MESSAGE_CONFIRM_REMOVE_MAPPING = "forms.message.confirmRemoveMapping";
 
     // Views
     private static final String VIEW_CONFIRM_REMOVE_MAPPING = "confirmRemoveMapping";
@@ -90,60 +90,64 @@ public class ModifyMappingOcrJspBean extends AbstractJspBean
     private static final String EMPTY_STRING = "";
     private Step _step;
     private Question _question;
-    
+
     private static final String EXTENSION_APPLICATION_JSON = "application/json";
-    
+
     // Jsp Definition
     private static final String JSP_MODIFY_QUESTION = "jsp/admin/plugins/forms/ManageQuestions.jsp";
+
     /**
      * Do create mapping.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return the string
      */
     @Action( ACTION_CREATE_MAPPING )
     public String doCreateMapping( HttpServletRequest request )
     {
-    	if ( !updateStepAndQuestion( request ) )
+        if ( !updateStepAndQuestion( request ) )
         {
             return redirectToViewManageForm( request );
         }
-    	
+
         String strIdQuestionMapping = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION_MAPPING );
         String strIdFieldOcr = request.getParameter( FormsConstants.PARAMETER_ID_FIELD_OCR );
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
-        String strTypeDocumentKey= request.getParameter( FormsConstants.PARAMETER_TYPE_DOCUMENT_KEY );
+        String strTypeDocumentKey = request.getParameter( FormsConstants.PARAMETER_TYPE_DOCUMENT_KEY );
         int nIdQuestionMapping = Integer.parseInt( strIdQuestionMapping );
         int nIdFieldOcr = Integer.parseInt( strIdFieldOcr );
         int nIdStep = Integer.parseInt( strIdStep );
-        
-        Mapping mapping = new Mapping();
-        mapping.setIdFieldOcr(nIdFieldOcr);
-        mapping.setIdQuestion(nIdQuestionMapping);
-        mapping.setIdStep(nIdStep);
-        
-        //Set ocr field name
-    	ITypeDocumentOcrProvider  typeDocument = TypeDocumentProviderManager.getTypeDocumentProvider(strTypeDocumentKey);
-    	if(typeDocument != null && typeDocument.getFieldById(mapping.getIdFieldOcr()) != null) {
-    		mapping.setFieldOcrTitle(typeDocument.getFieldById(mapping.getIdFieldOcr()).getName());
-    	}
-    	
-    	//Set question field name
-    	Question question = QuestionHome.findByPrimaryKey(nIdQuestionMapping);
-    	if(question != null) {
-    		mapping.setQuestionTitle(question.getTitle());
-    	}
-    	
+
+        Mapping mapping = new Mapping( );
+        mapping.setIdFieldOcr( nIdFieldOcr );
+        mapping.setIdQuestion( nIdQuestionMapping );
+        mapping.setIdStep( nIdStep );
+
+        // Set ocr field name
+        ITypeDocumentOcrProvider typeDocument = TypeDocumentProviderManager.getTypeDocumentProvider( strTypeDocumentKey );
+        if ( typeDocument != null && typeDocument.getFieldById( mapping.getIdFieldOcr( ) ) != null )
+        {
+            mapping.setFieldOcrTitle( typeDocument.getFieldById( mapping.getIdFieldOcr( ) ).getName( ) );
+        }
+
+        // Set question field name
+        Question question = QuestionHome.findByPrimaryKey( nIdQuestionMapping );
+        if ( question != null )
+        {
+            mapping.setQuestionTitle( question.getTitle( ) );
+        }
+
         MappingHome.create( mapping );
 
         return redirectToViewModifyQuestion( request, _step.getId( ), _question.getId( ) );
     }
 
-    
     /**
      * Gets the confirm remove mapping.
      *
-     * @param request the request
+     * @param request
+     *            the request
      * @return the confirm remove mapping
      */
     @View( value = VIEW_CONFIRM_REMOVE_MAPPING )
@@ -197,7 +201,7 @@ public class ModifyMappingOcrJspBean extends AbstractJspBean
 
         try
         {
-        	nIdMapping = Integer.parseInt( strIdMapping );
+            nIdMapping = Integer.parseInt( strIdMapping );
         }
         catch( NumberFormatException ne )
         {
@@ -208,12 +212,12 @@ public class ModifyMappingOcrJspBean extends AbstractJspBean
 
         if ( nIdMapping != -1 )
         {
-        	MappingHome.remove(nIdMapping);
+            MappingHome.remove( nIdMapping );
         }
 
         return redirectToViewModifyQuestion( request, _step.getId( ), _question.getId( ) );
     }
-    
+
     /**
      * Return the URL of the JSP manage question
      * 
@@ -235,7 +239,7 @@ public class ModifyMappingOcrJspBean extends AbstractJspBean
 
         return redirect( request, url.getUrl( ) );
     }
-    
+
     /**
      * Update Step and Question session variables using request parameter question id
      * 
@@ -276,17 +280,18 @@ public class ModifyMappingOcrJspBean extends AbstractJspBean
 
         return bSuccess;
     }
-    
+
     public void initFieldMappingOcr( HttpServletRequest request, HttpServletResponse response ) throws IOException
     {
         response.setContentType( EXTENSION_APPLICATION_JSON );
         String strIdEntry = request.getParameter( FormsConstants.PARAMETER_ID_ENTRY );
-    	int nIdEntry = Integer.parseInt( strIdEntry );
-    	
+        int nIdEntry = Integer.parseInt( strIdEntry );
+
         try
         {
-            response.getWriter( ).print( MappingHome.loadQuestionsMappedByEntryId(nIdEntry) );
-        } catch ( IOException e )
+            response.getWriter( ).print( MappingHome.loadQuestionsMappedByEntryId( nIdEntry ) );
+        }
+        catch( IOException e )
         {
             AppLogService.error( e.getMessage( ), e );
         }

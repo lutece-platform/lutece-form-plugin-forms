@@ -54,7 +54,7 @@ public class FormColumnWorkflowStateQueryPartFactory implements IFormColumnQuery
 
         if ( formColumn instanceof FormColumnWorkflowState )
         {
-            
+
             formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateLuceneQueryPart( );
         }
 

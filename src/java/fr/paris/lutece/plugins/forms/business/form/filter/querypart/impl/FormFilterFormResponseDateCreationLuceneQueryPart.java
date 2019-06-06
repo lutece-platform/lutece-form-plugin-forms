@@ -48,38 +48,38 @@ import org.apache.lucene.search.Query;
  */
 public class FormFilterFormResponseDateCreationLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-        /**
+    /**
      * {@inheritDoc}
      */
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
             Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values( );
-            
-            String strDateFrom = String.valueOf( setFormParameters.toArray()[0] );
-            String strDateTo = String.valueOf( setFormParameters.toArray()[1] );
-            
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+            String strDateFrom = String.valueOf( setFormParameters.toArray( ) [0] );
+            String strDateTo = String.valueOf( setFormParameters.toArray( ) [1] );
+
+            SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd" );
             try
             {
-                Date dateFrom = (Date)formatter.parse( strDateFrom );
-                Date dateTo = (Date)formatter.parse( strDateTo );
-                long lFrom = dateFrom.getTime();
-                long lTo = dateTo.getTime();
+                Date dateFrom = (Date) formatter.parse( strDateFrom );
+                Date dateTo = (Date) formatter.parse( strDateTo );
+                long lFrom = dateFrom.getTime( );
+                long lTo = dateTo.getTime( );
                 if ( strDateFrom != null && strDateTo != null )
                 {
                     Query queryCreationDate = LongPoint.newRangeQuery( FormResponseSearchItem.FIELD_DATE_CREATION, lFrom, lTo );
                     setFormFilterQuery( queryCreationDate );
                 }
             }
-            catch ( NumberFormatException | ParseException e )
+            catch( NumberFormatException | ParseException e )
             {
-                AppLogService.error( "Unable to convert given dates to longs", e);
+                AppLogService.error( "Unable to convert given dates to longs", e );
             }
         }
-        else 
+        else
         {
             setFormFilterQuery( null );
         }

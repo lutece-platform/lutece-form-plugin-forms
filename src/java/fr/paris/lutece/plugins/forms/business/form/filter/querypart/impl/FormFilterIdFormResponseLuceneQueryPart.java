@@ -48,7 +48,7 @@ import org.apache.lucene.search.Query;
 public class FormFilterIdFormResponseLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
     private static final int CONSTANT_INTEGER_MINUS_ONE = -1;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -56,14 +56,13 @@ public class FormFilterIdFormResponseLuceneQueryPart extends AbstractFormFilterL
     public void buildFormFilterQuery( FormParameters formParameters )
     {
         BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
-        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
-            Set<Map.Entry<String,Object> > setFormParameters = formParameters.getFormParametersMap( ).entrySet();
-        
-            
-            for ( Map.Entry<String,Object> formParam : setFormParameters )
+            Set<Map.Entry<String, Object>> setFormParameters = formParameters.getFormParametersMap( ).entrySet( );
+
+            for ( Map.Entry<String, Object> formParam : setFormParameters )
             {
-                int nIdFormResponse = Integer.parseInt( formParam.getValue().toString( ) );
+                int nIdFormResponse = Integer.parseInt( formParam.getValue( ).toString( ) );
                 if ( nIdFormResponse != CONSTANT_INTEGER_MINUS_ONE )
                 {
                     Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse );
@@ -72,7 +71,7 @@ public class FormFilterIdFormResponseLuceneQueryPart extends AbstractFormFilterL
             }
             setFormFilterQuery( booleanQueryBuilder.build( ) );
         }
-        else 
+        else
         {
             setFormFilterQuery( null );
         }

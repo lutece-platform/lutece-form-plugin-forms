@@ -69,8 +69,8 @@ public final class LuceneQueryBuilder
      *            The list of FormFilterQueryPart to retrieve the where parts of the query
      * @return the global lucene query build from the FormColmuns and FormFilters
      */
-    public static Query buildQuery( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart,
-            List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart )
+    public static Query buildQuery( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart,
+            List<IFormFilterQueryPart> listFormFilterQueryPart )
     {
         BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
         if ( !CollectionUtils.isEmpty( listFormColumnQueryPart ) )
@@ -79,7 +79,7 @@ public final class LuceneQueryBuilder
             {
                 if ( formFilterQueryPart instanceof IFormFilterLuceneQueryPart )
                 {
-                    Query queryFormFilterQueryPart = ((IFormFilterLuceneQueryPart) formFilterQueryPart).getFormFilterQuery( );
+                    Query queryFormFilterQueryPart = ( (IFormFilterLuceneQueryPart) formFilterQueryPart ).getFormFilterQuery( );
                     if ( queryFormFilterQueryPart != null )
                     {
                         booleanQueryBuilder.add( queryFormFilterQueryPart, BooleanClause.Occur.FILTER );
@@ -90,7 +90,8 @@ public final class LuceneQueryBuilder
             {
                 if ( formPanelInitializerQueryPart instanceof IFormPanelInitializerLuceneQueryPart )
                 {
-                    Query queryFormFilterQueryPart = ((IFormPanelInitializerLuceneQueryPart) formPanelInitializerQueryPart).getFormPanelInitializerSelectQuery();
+                    Query queryFormFilterQueryPart = ( (IFormPanelInitializerLuceneQueryPart) formPanelInitializerQueryPart )
+                            .getFormPanelInitializerSelectQuery( );
                     if ( queryFormFilterQueryPart != null )
                     {
                         booleanQueryBuilder.add( queryFormFilterQueryPart, BooleanClause.Occur.FILTER );
