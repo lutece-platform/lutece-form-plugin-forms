@@ -37,7 +37,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateCreation;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene.FormColumnFormResponseDateCreationLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormResponseDateCreationLuceneQueryPart;
 
 /**
  * Implementation of the IFormColumnQueryPartFactory interface for a FormResponseDateCreation column

@@ -45,7 +45,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.FormColumnQueryPartFacade;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene.IFormColumnLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.IFormColumnLuceneQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.FormFilterQueryPartFacade;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterLuceneQueryPart;

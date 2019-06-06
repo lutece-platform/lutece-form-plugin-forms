@@ -37,7 +37,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene.FormColumnEntryGeolocationLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryGeolocationLuceneQueryPart;
 
 /**
  * Implementation of the IFormColumnQueryPartFactory interface for an EntryGeolocation column

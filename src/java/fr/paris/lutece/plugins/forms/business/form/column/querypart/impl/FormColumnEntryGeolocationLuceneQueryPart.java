@@ -31,36 +31,65 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene.FormColumnWorkflowStateLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 
 /**
- * Implementation of the IFormColumnQueryPartFactory interface for a WorkflowState column
+ * Implementation of the IFormColumnQueryPart interface for a form column
  */
-public class FormColumnWorkflowStateLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
+public class FormColumnEntryGeolocationLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
     @Override
     protected Map<String, Object> getMapFormColumnValues( Document document ) 
     {
         Map<String,Object> mapFormColumnValues = new HashMap<>();
         
-        IndexableField fieldFormWorkflowState = document.getField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE );
-       
-        if ( fieldFormWorkflowState != null )
+        for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
         {
-            mapFormColumnValues.put( fieldFormWorkflowState.name(), fieldFormWorkflowState.stringValue( ) );
+            List<IndexableField> listIndexableField = getEntryCodeFields( strFormColumnEntryCode, document );
+            for ( IndexableField field : listIndexableField )
+            {
+                mapFormColumnValues.put( field.name(), field.stringValue( ) );
+            }
         }
-        
+       
         return mapFormColumnValues;
+        
     }
+    
+    private List<String> getListEntryCode( IFormColumn column )
+    {
+        if ( column instanceof FormColumnEntryGeolocation )
+        {
+            FormColumnEntryGeolocation formColumnEntry = (FormColumnEntryGeolocation) column;
+            return formColumnEntry.getListEntryCode();
+        }
+        return null;
+    }
+    
+    private List<IndexableField> getEntryCodeFields( String strEntryCode, Document document )
+    {
+        List<IndexableField> listFields = new ArrayList<>();
+        for ( IndexableField field : document.getFields( ) )
+        {
+            String strFieldSuffixEntryCode = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strEntryCode;
+            
+            if ( field.name( ).startsWith( strFieldSuffixEntryCode ) )
+            {
+                    listFields.add( field );
+            }
+        }
+        return listFields;
+    }
+
 }

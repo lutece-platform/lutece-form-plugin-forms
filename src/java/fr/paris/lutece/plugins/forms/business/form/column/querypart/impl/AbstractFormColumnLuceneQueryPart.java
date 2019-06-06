@@ -31,19 +31,64 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.search.Query;
 
-public interface IFormColumnLuceneQueryPart extends IFormColumnQueryPart
-{   
+/**
+ * Abstract class for FormColumnQueryPart
+ */
+public abstract class AbstractFormColumnLuceneQueryPart implements IFormColumnLuceneQueryPart
+{
     /**
-     * Get the content of the column cell from Lucene doc
-     * @param doc the Document
-     * @return the FormColumnCell
+     * Get a map of values fetched from Lucene document
+     * @param document
+     * @return a Map of values feteched form Lucene document
      */
-    FormColumnCell getFormColumnCell( Document doc );
+    protected abstract Map<String, Object> getMapFormColumnValues( Document document );
+    
+    // Variables
+    private IFormColumn _formColumn;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setFormColumn( IFormColumn formColumn )
+    {
+        _formColumn = formColumn;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IFormColumn getFormColumn( )
+    {
+        return _formColumn;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public FormColumnCell getFormColumnCell( Document document )
+    {
+        Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
+
+        IFormColumn formColumn = getFormColumn( );
+        if ( formColumn != null )
+        {
+            mapFormColumnValues = getMapFormColumnValues( document );
+        }
+
+        FormColumnCell formColumnCell = new FormColumnCell( );
+        formColumnCell.setFormColumnCellValues( mapFormColumnValues );
+
+        return formColumnCell;
+    }
 }

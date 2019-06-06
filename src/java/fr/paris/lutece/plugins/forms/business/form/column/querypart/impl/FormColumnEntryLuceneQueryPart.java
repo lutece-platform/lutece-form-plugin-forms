@@ -31,8 +31,9 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
+import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
@@ -42,11 +43,12 @@ import java.util.List;
 import java.util.Map;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.search.Query;
 
 /**
  * Implementation of the IFormColumnQueryPart interface for a form column
  */
-public class FormColumnEntryGeolocationLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
+public class FormColumnEntryLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
     @Override
     protected Map<String, Object> getMapFormColumnValues( Document document ) 

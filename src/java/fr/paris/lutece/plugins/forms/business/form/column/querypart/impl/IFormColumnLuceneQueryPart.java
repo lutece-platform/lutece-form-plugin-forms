@@ -31,30 +31,19 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.lucene;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-import java.util.HashMap;
-import java.util.Map;
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.search.Query;
 
-
-public class FormColumnFormResponseDateCreationLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
-{
-    @Override
-    protected Map<String, Object> getMapFormColumnValues( Document document ) 
-    {
-        Map<String,Object> mapFormColumnValues = new HashMap<>();
-        
-        IndexableField fieldDateCreation = document.getField( FormResponseSearchItem.FIELD_DATE_CREATION );
-       
-        if ( fieldDateCreation != null )
-        {
-            mapFormColumnValues.put( fieldDateCreation.name(), fieldDateCreation.stringValue( ) );
-        }
-        
-        return mapFormColumnValues;
-        
-    }
+public interface IFormColumnLuceneQueryPart extends IFormColumnQueryPart
+{   
+    /**
+     * Get the content of the column cell from Lucene doc
+     * @param doc the Document
+     * @return the FormColumnCell
+     */
+    FormColumnCell getFormColumnCell( Document doc );
 }

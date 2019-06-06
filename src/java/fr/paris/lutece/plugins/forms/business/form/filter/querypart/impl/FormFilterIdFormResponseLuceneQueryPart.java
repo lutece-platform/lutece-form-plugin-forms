@@ -33,10 +33,48 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
+import fr.paris.lutece.plugins.forms.business.form.FormParameters;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.Map;
+import java.util.Set;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
+
 /**
  * Implementation of the IFormFilterQueryPart for an Entry filter
  */
 public class FormFilterIdFormResponseLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    //Nothing to extends
+    private static final int CONSTANT_INTEGER_MINUS_ONE = -1;
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void buildFormFilterQuery( FormParameters formParameters )
+    {
+        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
+        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        {
+            Set<Map.Entry<String,Object> > setFormParameters = formParameters.getFormParametersMap( ).entrySet();
+        
+            
+            for ( Map.Entry<String,Object> formParam : setFormParameters )
+            {
+                int nIdFormResponse = Integer.parseInt( formParam.getValue().toString( ) );
+                if ( nIdFormResponse != CONSTANT_INTEGER_MINUS_ONE )
+                {
+                    Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse );
+                    booleanQueryBuilder.add( query, BooleanClause.Occur.MUST );
+                }
+            }
+            setFormFilterQuery( booleanQueryBuilder.build( ) );
+        }
+        else 
+        {
+            setFormFilterQuery( null );
+        }
+    }
 }

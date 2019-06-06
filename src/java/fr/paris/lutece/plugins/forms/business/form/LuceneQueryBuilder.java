@@ -82,7 +82,7 @@ public final class LuceneQueryBuilder
                     Query queryFormFilterQueryPart = ((IFormFilterLuceneQueryPart) formFilterQueryPart).getFormFilterQuery( );
                     if ( queryFormFilterQueryPart != null )
                     {
-                        booleanQueryBuilder.add( queryFormFilterQueryPart, BooleanClause.Occur.MUST );
+                        booleanQueryBuilder.add( queryFormFilterQueryPart, BooleanClause.Occur.FILTER );
                     }
                 }
             }

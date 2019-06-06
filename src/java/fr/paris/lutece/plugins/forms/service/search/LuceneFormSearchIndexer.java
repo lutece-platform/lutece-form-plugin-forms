@@ -240,8 +240,9 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         // --- id form
         doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_FORM, form.getId( ) ) );
         doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_FORM, form.getId( ) ) );
-        doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, form.getId( ) ) );
+        doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_FORM, form.getId( ) ) );
 
+        
         // --- form response date create
         Long longCreationDate = formResponse.getCreation().getTime();
         doc.add( new LongPoint( FormResponseSearchItem.FIELD_DATE_CREATION, longCreationDate ) );
@@ -293,13 +294,17 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
                     
                     StringBuilder fieldNameBuilder = new StringBuilder( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX );
                     fieldNameBuilder.append( strQuestionCode );
-                    doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                    doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
-                    if ( responseField != null && !StringUtils.isEmpty( responseField.getCode( ) ) )
+                    
+                    if ( responseField == null || StringUtils.isEmpty( responseField.getTitle( ) ) )
+                    {
+                        doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
+                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+                    }
+                    else
                     {
                         fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ );
-                        fieldNameBuilder.append( responseField.getCode( ) );
-                        doc.add( new StringField( fieldNameBuilder.toString( ), responseField.getValue( ), Field.Store.YES ) );
+                        fieldNameBuilder.append( responseField.getTitle( ) );
+                        doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
                         doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( responseField.getValue( )) ) );
                     }
                 }
