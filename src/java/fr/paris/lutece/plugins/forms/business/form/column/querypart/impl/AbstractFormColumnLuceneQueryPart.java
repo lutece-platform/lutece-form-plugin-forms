@@ -33,67 +33,62 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
-import fr.paris.lutece.util.sql.DAOUtil;
+import org.apache.lucene.document.Document;
 
 /**
- * Implementation of the IFormColumnQueryPart interface for a form response date creation column
+ * Abstract class for FormColumnQueryPart
  */
-public class FormColumnFormResponseDateCreationQueryPart extends AbstractFormColumnQueryPart
+public abstract class AbstractFormColumnLuceneQueryPart implements IFormColumnLuceneQueryPart
 {
-    // Constants
-    private static final String FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART = "response.creation_date AS response_creation_date";
-    private static final String FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART = StringUtils.EMPTY;
+    /**
+     * Get a map of values fetched from Lucene document
+     * @param document
+     * @return a Map of values feteched form Lucene document
+     */
+    protected abstract Map<String, Object> getMapFormColumnValues( Document document );
+    
+    // Variables
+    private IFormColumn _formColumn;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnSelectQuery( )
+    public void setFormColumn( IFormColumn formColumn )
     {
-        return FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART;
+        _formColumn = formColumn;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnFromQuery( )
+    public IFormColumn getFormColumn( )
     {
-        return FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART;
+        return _formColumn;
     }
-
+    
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Map<String, Object> getMapFormColumnValues( DAOUtil daoUtil )
+    public FormColumnCell getFormColumnCell( Document document )
     {
         Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
-        Timestamp timestampFormResponseDateCreation = daoUtil
-                .getTimestamp( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
-        Date dateFormResponseDateCreation = new Date( timestampFormResponseDateCreation.getTime( ) );
-        mapFormColumnValues.put( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION, dateFormResponseDateCreation );
 
-        return mapFormColumnValues;
+        IFormColumn formColumn = getFormColumn( );
+        if ( formColumn != null )
+        {
+            mapFormColumnValues = getMapFormColumnValues( document );
+        }
+
+        FormColumnCell formColumnCell = new FormColumnCell( );
+        formColumnCell.setFormColumnCellValues( mapFormColumnValues );
+
+        return formColumnCell;
     }
 }

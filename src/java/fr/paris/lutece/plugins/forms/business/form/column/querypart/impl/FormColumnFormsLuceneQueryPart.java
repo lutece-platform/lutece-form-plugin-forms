@@ -31,49 +31,29 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.Arrays;
-import java.util.List;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormResponseDateCreationQueryPart;
-
-/**
- * Mock for a FormColumnFormResponseDateCreationQueryPart
- */
-public class FormColumnFormResponseDateCreationQueryPartMock extends FormColumnFormResponseDateCreationQueryPart
+public class FormColumnFormsLuceneQueryPart extends AbstractFormColumnLuceneQueryPart 
 {
-    // Constants
-    private static final String FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART = "response_creation_date";
-    private static final String FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART = StringUtils.EMPTY;
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String getFormColumnSelectQuery( )
+    protected Map<String, Object> getMapFormColumnValues( Document document ) 
     {
-        return FORM_RESPONSE_DATE_CREATION_SELECT_QUERY_PART;
+        Map<String,Object> mapFormColumnValues = new HashMap<>();
+        
+        IndexableField fieldFormTitle = document.getField( FormResponseSearchItem.FIELD_FORM_TITLE );
+       
+        if ( fieldFormTitle != null )
+        {
+            mapFormColumnValues.put( fieldFormTitle.name(), fieldFormTitle.stringValue( ) );
+        }
+        
+        return mapFormColumnValues;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormColumnFromQuery( )
-    {
-        return FORM_RESPONSE_DATE_CREATION_FROM_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_RESPONSE_DATE_CREATION_JOIN_QUERY_PART );
-    }
+    
 }

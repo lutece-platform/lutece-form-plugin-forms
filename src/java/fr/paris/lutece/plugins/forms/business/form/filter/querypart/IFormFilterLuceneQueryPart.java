@@ -31,25 +31,20 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
+import org.apache.lucene.search.Query;
 
 /**
- * Implementation of the IFormFilterQueryPart for a FormFilterForms filter
+ * Global QueryPart for all form filter type
  */
-public class FormFilterFormsQueryPart extends AbstractFormFilterQueryPart
+public interface IFormFilterLuceneQueryPart extends IFormFilterQueryPart
 {
-    // Constants
-    private static final String FORM_QUERY_PATTERN = "form.id_form = ?";
-
     /**
-     * {@inheritDoc}
+     * Return the built query of the FormFilter
+     * 
+     * @return the built query of the form filter
      */
-    @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
-    {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( FORM_QUERY_PATTERN, formParameters, false ) );
-    }
+    Query getFormFilterQuery( );
+
 }

@@ -34,15 +34,22 @@
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterLuceneQueryPart;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 
 /**
- * Implementation of the IFormFilterQueryPart for a FormResponseFilterDateCreation filter
+ * Abstract class for the implementation of IFormFilterQueryPart
  */
-public class FormFilterFormResponseDateCreationQueryPart extends AbstractFormFilterQueryPart
+public abstract class AbstractFormFilterLuceneQueryPart implements IFormFilterLuceneQueryPart
 {
-    // Constants
-    private static final String DATE_CREATION_PERIOD_QUERY_PATTERN = "response.creation_date >= ? AND response.creation_date < ? ";
+    // Variables
+    private Query _queryFormFilterQuery;
 
     /**
      * {@inheritDoc}
@@ -50,6 +57,41 @@ public class FormFilterFormResponseDateCreationQueryPart extends AbstractFormFil
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( DATE_CREATION_PERIOD_QUERY_PATTERN, formParameters, false ) );
+        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
+        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        {
+            Set<Entry<String,Object> > setFormParameters = formParameters.getFormParametersMap( ).entrySet();
+        
+            for ( Entry<String,Object> formParam : setFormParameters )
+            {
+                Query query = new TermQuery( new Term( formParam.getKey( ), formParam.getValue().toString( ) ) );
+                booleanQueryBuilder.add( query, BooleanClause.Occur.MUST);
+            }
+            setFormFilterQuery( booleanQueryBuilder.build( ) );
+        }
+        else 
+        {
+            setFormFilterQuery( null );
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Query getFormFilterQuery( )
+    {
+        return _queryFormFilterQuery;
+    }
+
+    /**
+     * Set the form filter query of the form filter query part
+     * 
+     * @param strFormFilterQuery
+     *            The form filter query to set
+     */
+    public void setFormFilterQuery( Query strFormFilterQuery )
+    {
+        _queryFormFilterQuery = strFormFilterQuery;
     }
 }

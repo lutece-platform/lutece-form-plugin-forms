@@ -33,23 +33,21 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerLuceneQueryPart;
+import org.apache.lucene.search.Query;
 
 /**
  * Abstract class for the implementation of the IFormPanelQueryPart
  */
-public abstract class AbstractFormPanelInitializerQueryPart implements IFormPanelInitializerQueryPart
+public abstract class AbstractFormPanelInitializerQueryPart implements IFormPanelInitializerLuceneQueryPart
 {
     // Variables
-    private String _strFormPanelInitializerSelectQuery = StringUtils.EMPTY;
-    private String _strFormPanelInitializerFromQuery = StringUtils.EMPTY;
-    private List<String> _listFormPanelInitializerJoinQueries = new ArrayList<>( );
+    private Query _queryFormPanelInitializerSelectQuery;
 
     /**
      * {@inheritDoc}
@@ -61,59 +59,19 @@ public abstract class AbstractFormPanelInitializerQueryPart implements IFormPane
      * {@inheritDoc}
      */
     @Override
-    public String getFormPanelInitializerSelectQuery( )
+    public Query getFormPanelInitializerSelectQuery( )
     {
-        return _strFormPanelInitializerSelectQuery;
+        return _queryFormPanelInitializerSelectQuery;
     }
 
     /**
      * Set the select query part of the FormPanelInitializer
      * 
-     * @param strFormPanelInitializerSelectQuery
+     * @param queryFormPanelInitializerSelectQuery
      *            The select query part of the FormPanelInitializer
      */
-    protected void setFormPanelInitializerSelectQuery( String strFormPanelInitializerSelectQuery )
+    protected void setFormPanelInitializerSelectQuery( Query queryFormPanelInitializerSelectQuery )
     {
-        _strFormPanelInitializerSelectQuery = strFormPanelInitializerSelectQuery;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormPanelInitializerFromQuery( )
-    {
-        return _strFormPanelInitializerFromQuery;
-    }
-
-    /**
-     * Set the From query part of the FormPanelInitializer
-     * 
-     * @param strFormPanelInitializerFromQuery
-     *            The from query part of the FormPanelInitializer to set
-     */
-    protected void setFormPanelInitializerFromQuery( String strFormPanelInitializerFromQuery )
-    {
-        _strFormPanelInitializerFromQuery = strFormPanelInitializerFromQuery;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormPanelInitializerJoinQueries( )
-    {
-        return _listFormPanelInitializerJoinQueries;
-    }
-
-    /**
-     * Set the list of all join query parts of the FormPanelInitializer
-     * 
-     * @param listFormPanelInitializerJoinQueries
-     *            The list of all join query parts of FormPanelInitializer
-     */
-    protected void setFormPanelInitializerJoinQueriesList( List<String> listFormPanelInitializerJoinQueries )
-    {
-        _listFormPanelInitializerJoinQueries = listFormPanelInitializerJoinQueries;
+        _queryFormPanelInitializerSelectQuery = queryFormPanelInitializerSelectQuery;
     }
 }

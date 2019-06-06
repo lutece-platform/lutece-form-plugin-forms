@@ -31,13 +31,12 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service.search;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
-import java.util.List;
-
-public interface IFormSearchEngine
+/**
+ * Implementation of the IFormFilterQueryPart for an Entry filter
+ */
+public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    List<Integer> getSearchResults( FormSearchConfig formSearchConfig );
-
-    List<Integer> getSearchResults( String strSearchText );
+    //Nothing to extends
 }

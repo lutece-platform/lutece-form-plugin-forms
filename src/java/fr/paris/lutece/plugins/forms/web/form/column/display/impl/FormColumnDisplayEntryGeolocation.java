@@ -44,8 +44,10 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import java.util.Map.Entry;
 
 /**
  * Implementation of the IFormColumnDisplay for the EntryGeolocation column
@@ -95,21 +97,21 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
         String strEntryY = StringUtils.EMPTY;
         if ( formColumnCell != null )
         {
-            String strEntryAddrName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_ADDR, getFormColumnPosition( ) );
+            String strEntryAddrName = getFormColumnCellKey( "address", formColumnCell.getFormColumnCellValues( ) );
             Object objEntryAddr = formColumnCell.getFormColumnCellValueByName( strEntryAddrName );
             if ( objEntryAddr != null )
             {
                 strEntryAddr = String.valueOf( objEntryAddr );
             }
 
-            String strEntryXName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_X, getFormColumnPosition( ) );
+            String strEntryXName = getFormColumnCellKey( "X", formColumnCell.getFormColumnCellValues( ) );
             Object objEntryX = formColumnCell.getFormColumnCellValueByName( strEntryXName );
             if ( objEntryX != null )
             {
                 strEntryX = String.valueOf( objEntryX );
             }
 
-            String strEntryYName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y, getFormColumnPosition( ) );
+            String strEntryYName = getFormColumnCellKey( "Y", formColumnCell.getFormColumnCellValues( ) );
             Object objEntryY = formColumnCell.getFormColumnCellValueByName( strEntryYName );
             if ( objEntryY != null )
             {
@@ -159,5 +161,17 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
         String strEntryYName = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y, getFormColumnPosition( ) );
         Object objEntryY = geolocFormColumnCell.getFormColumnCellValueByName( strEntryYName );
         return Arrays.asList( objEntryX, objEntryY );
+    }
+    
+    private String getFormColumnCellKey( String strField, Map<String,Object> formColumnCellValues )
+    {
+        for ( Entry<String,Object> cellValue : formColumnCellValues.entrySet( ) )
+        {
+            if ( cellValue.getKey().endsWith( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ + strField ) )
+            {
+                return cellValue.getKey( );
+            }
+        }
+        return null;
     }
 }

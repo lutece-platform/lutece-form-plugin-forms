@@ -38,6 +38,7 @@ import fr.paris.lutece.portal.service.search.IndexationService;
 import fr.paris.lutece.portal.service.search.LuceneSearchEngine;
 import fr.paris.lutece.portal.service.search.SearchItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -51,7 +52,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 
-public class LuceneFormSearchEngine implements IFormSearchEngine
+public class LuceneFormSearchEngine implements IFormSearchLuceneEngine
 {
 
     @Inject
@@ -135,6 +136,34 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         FormSearchConfig config = new FormSearchConfig( );
         config.setSearchedText( strSearchText );
         return getSearchResults( config );
+    }
+
+    @Override
+    public List<Document> getSearchResults(Query query) 
+    {
+        List<Document> listResults = new ArrayList<>( );
+        IndexSearcher searcher = null;
+
+        try
+        {
+            searcher = _luceneFormSearchFactory.getIndexSearcher( );
+            
+            // Get results documents
+            TopDocs topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
+            ScoreDoc [ ] hits = topDocs.scoreDocs;
+
+            for ( int i = 0; i < hits.length; i++ )
+            {
+                Document document = searcher.doc( hits [i].doc );
+                listResults.add( document );
+            }
+        }
+        catch( IOException e )
+        {
+            AppLogService.error( e.getMessage( ), e );
+        }
+
+        return listResults;
     }
 
 }

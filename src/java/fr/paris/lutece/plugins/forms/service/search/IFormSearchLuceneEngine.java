@@ -31,49 +31,17 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.service.search;
 
-import java.util.Arrays;
 import java.util.List;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Query;
 
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormsQueryPart;
-
-/**
- * Mock of the FormColumnFormsQueryPart class
- */
-public class FormColumnFormsQueryPartMock extends FormColumnFormsQueryPart
+public interface IFormSearchLuceneEngine
 {
-    // Constants
-    private static final String FORM_SELECT_QUERY_PART = "id_form, title";
-    private static final String FORM_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_JOIN_QUERY_PART = StringUtils.EMPTY;
+    List<Integer> getSearchResults( FormSearchConfig formSearchConfig );
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormColumnSelectQuery( )
-    {
-        return FORM_SELECT_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormColumnFromQuery( )
-    {
-        return FORM_FROM_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_JOIN_QUERY_PART );
-    }
+    List<Integer> getSearchResults( String strSearchText );
+    
+    List<Document> getSearchResults( Query query );
 }

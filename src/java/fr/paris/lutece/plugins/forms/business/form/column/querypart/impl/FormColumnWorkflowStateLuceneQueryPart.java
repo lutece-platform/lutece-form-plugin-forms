@@ -31,46 +31,36 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.Arrays;
-import java.util.List;
-
-import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl.FormPanelFormsInitializerQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnWorkflowStateLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
 /**
- * Mock of a FormPanelFormsInitializerQueryPart
+ * Implementation of the IFormColumnQueryPartFactory interface for a WorkflowState column
  */
-public class FormPanelFormsInitializerQueryPartMock extends FormPanelFormsInitializerQueryPart
+public class FormColumnWorkflowStateLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
-    private static final String FORM_PANEL_FORMS_INITIALIZER_SELECT_QUERY = "id_response";
-    private static final String FORM_PANEL_FORMS_INITIALIZER_FROM_QUERY = "forms_form AS form";
-    private static final String FORM_PANEL_FORMS_INITIALIZER_JOIN_QUERY = "INNER JOIN forms_response AS response ON response.id_form = form.id_form";
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String getFormPanelInitializerSelectQuery( )
+    protected Map<String, Object> getMapFormColumnValues( Document document ) 
     {
-        return FORM_PANEL_FORMS_INITIALIZER_SELECT_QUERY;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormPanelInitializerFromQuery( )
-    {
-        return FORM_PANEL_FORMS_INITIALIZER_FROM_QUERY;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormPanelInitializerJoinQueries( )
-    {
-        return Arrays.asList( FORM_PANEL_FORMS_INITIALIZER_JOIN_QUERY );
+        Map<String,Object> mapFormColumnValues = new HashMap<>();
+        
+        IndexableField fieldFormWorkflowState = document.getField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE );
+       
+        if ( fieldFormWorkflowState != null )
+        {
+            mapFormColumnValues.put( fieldFormWorkflowState.name(), fieldFormWorkflowState.stringValue( ) );
+        }
+        
+        return mapFormColumnValues;
     }
 }

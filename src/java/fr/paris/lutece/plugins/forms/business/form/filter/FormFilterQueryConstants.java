@@ -39,18 +39,7 @@ package fr.paris.lutece.plugins.forms.business.form.filter;
 public final class FormFilterQueryConstants
 {
     // Constants
-    public static final String SELECT_KEYWORD = "SELECT ";
-    public static final String FROM_KEYWORD = " FROM ";
-    public static final String WHERE_KEYWORD = " WHERE ";
-    public static final String WHERE_BASE_KEYWORD = " WHERE 1=1 ";
-    public static final String AND_KEYWORD = " AND ";
-    public static final String AND_OPEN_CLAUSE = " ( ";
-    public static final String AND_CLOSE_CLAUSE = " ) ";
-    public static final String SPACE_SEPARATOR = " ";
-    public static final String COMMA_SEPARATOR = ", ";
-    public static final String FORM_RESPONSE_QUERY_BASE_PART = " id_response IN ( ";
-    public static final String FORM_RESPONSE_QUERY_SELECT_DISTINCT_PART = " SELECT DISTINCT id_response ";
-    public static final String FORM_RESPONSE_QUERY_FROM_PART = " FROM form_response_field "; // [FIXME] To check
+    
 
     /**
      * Constructor

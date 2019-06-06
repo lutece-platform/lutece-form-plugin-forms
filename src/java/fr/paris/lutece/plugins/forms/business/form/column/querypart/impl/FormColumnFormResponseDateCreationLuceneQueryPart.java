@@ -31,26 +31,30 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterFormsQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexableField;
 
-/**
- * Mock for a FormFilterFormsQueryPart
- */
-public class FormFilterFormsQueryPartMock extends FormFilterFormsQueryPart
+
+public class FormColumnFormResponseDateCreationLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
 {
-    // Constants
-    private static final String FORM_FILTER_QUERY = "form.id_form = $id_form$";
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public void buildFormFilterQuery( FormParameters formParameters )
+    protected Map<String, Object> getMapFormColumnValues( Document document ) 
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( FORM_FILTER_QUERY, formParameters, true ) );
+        Map<String,Object> mapFormColumnValues = new HashMap<>();
+        
+        IndexableField fieldDateCreation = document.getField( FormResponseSearchItem.FIELD_DATE_CREATION );
+       
+        if ( fieldDateCreation != null )
+        {
+            mapFormColumnValues.put( fieldDateCreation.name(), fieldDateCreation.stringValue( ) );
+        }
+        
+        return mapFormColumnValues;
+        
     }
 }

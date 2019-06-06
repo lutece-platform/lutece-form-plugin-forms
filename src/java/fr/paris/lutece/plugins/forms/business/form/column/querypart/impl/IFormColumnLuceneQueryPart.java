@@ -31,29 +31,19 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service.search;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.List;
-import javax.inject.Inject;
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.search.Query;
 
-/**
- * Form search service
- */
-public class FormSearchService implements IFormSearchService
-{
-    public static final String BEAN_NAME = "forms.formSearchService";
-
-    @Inject
-    private IFormSearchEngine _formSearchEngine;
-
+public interface IFormColumnLuceneQueryPart extends IFormColumnQueryPart
+{   
     /**
-     * {@inheritDoc }
+     * Get the content of the column cell from Lucene doc
+     * @param doc the Document
+     * @return the FormColumnCell
      */
-    @Override
-    public List<Integer> getSearchResults( FormSearchConfig formSearchConfig )
-    {
-        // Get the list of form response from the engine
-        return _formSearchEngine.getSearchResults( formSearchConfig );
-    }
-
+    FormColumnCell getFormColumnCell( Document doc );
 }

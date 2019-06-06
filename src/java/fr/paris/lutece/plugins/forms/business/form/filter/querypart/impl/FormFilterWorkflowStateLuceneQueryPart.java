@@ -34,22 +34,41 @@
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.Collection;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.search.Query;
 
 /**
- * Implementation of the IFormFilterQueryPart for a FormFilterWorkflowState filter
+ * Implementation of the IFormFilterQueryPart for an Entry filter
  */
-public class FormFilterWorkflowStateQueryPart extends AbstractFormFilterQueryPart
+public class FormFilterWorkflowStateLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = ?";
-
+    private static final String INTEGER_MINUS_ONE = "-1";
+    
     /**
      * {@inheritDoc}
      */
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, false ) );
+        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        {
+            Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values();
+
+            if ( setFormParameters.size() == 1 )
+            {
+                String strIdWorkflowState = String.valueOf( setFormParameters.toArray()[0] );
+                if ( !strIdWorkflowState.equals( INTEGER_MINUS_ONE ) )
+                {
+                    Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, Integer.parseInt( strIdWorkflowState ) );
+                    setFormFilterQuery( query );
+                }
+            }
+        }
+        else 
+        {
+            setFormFilterQuery( null );
+        }
     }
 }

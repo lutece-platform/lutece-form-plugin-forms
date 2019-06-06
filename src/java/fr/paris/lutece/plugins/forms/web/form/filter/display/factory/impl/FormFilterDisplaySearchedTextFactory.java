@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration;
-import fr.paris.lutece.plugins.forms.service.search.IFormSearchService;
+import fr.paris.lutece.plugins.forms.service.search.IFormSearchLuceneEngine;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.IFormFilterDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplaySearchedText;
@@ -47,7 +47,7 @@ import javax.inject.Inject;
 public class FormFilterDisplaySearchedTextFactory implements IFormFilterDisplayFactory
 {
     @Inject
-    private IFormSearchService _formSearchService;
+    private IFormSearchLuceneEngine _formSearchEngine;
 
     /**
      * {@inheritDoc}
@@ -59,7 +59,7 @@ public class FormFilterDisplaySearchedTextFactory implements IFormFilterDisplayF
 
         if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterFormResponseIdConfiguration )
         {
-            formFilterDisplaySearchedText = new FormFilterDisplaySearchedText( _formSearchService );
+            formFilterDisplaySearchedText = new FormFilterDisplaySearchedText( _formSearchEngine );
             formFilterDisplaySearchedText.setFormFilter( formFilter );
         }
 

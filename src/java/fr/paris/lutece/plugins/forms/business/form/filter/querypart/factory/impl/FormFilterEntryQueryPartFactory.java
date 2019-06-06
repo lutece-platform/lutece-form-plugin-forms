@@ -37,7 +37,7 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.IFormFilterQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterEntryQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterEntryLuceneQueryPart;
 
 /**
  * Implementation of IFormFilterQueryPartFactory for an Entry filter
@@ -54,7 +54,7 @@ public class FormFilterEntryQueryPartFactory implements IFormFilterQueryPartFact
 
         if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterEntryConfiguration )
         {
-            formFilterEntryQueryPart = new FormFilterEntryQueryPart( );
+            formFilterEntryQueryPart = new FormFilterEntryLuceneQueryPart( );
         }
 
         return formFilterEntryQueryPart;

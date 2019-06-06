@@ -31,14 +31,46 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl.FormPanelFormResponseInitializerQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.FormParameters;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.Collection;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 
 /**
- * Mock of a FormPanelFormResponseInitializerQueryPart
+ * Implementation of the IFormFilterQueryPart for an Entry filter
  */
-public class FormPanelFormResponseInitializerQueryPartMock extends FormPanelFormResponseInitializerQueryPart
+public class FormFilterFormsLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
+    private static final String INTEGER_MINUS_ONE = "-1";
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void buildFormFilterQuery( FormParameters formParameters )
+    {
+        if ( !formParameters.getFormParametersMap( ).isEmpty() )
+        {
+            Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values();
 
+            if ( setFormParameters.size() == 1 )
+            {
+                String strIdForm = String.valueOf( setFormParameters.toArray()[0] );
+                if ( !strIdForm.equals( INTEGER_MINUS_ONE ) )
+                {
+                    Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM, Integer.parseInt( strIdForm ) );
+                    setFormFilterQuery( query );
+                }
+            }
+        }
+        else 
+        {
+            setFormFilterQuery( null );
+        }
+    }
 }
