@@ -70,6 +70,10 @@ public class FormResponseSearchItem extends SearchItem
     private String _strWorkflowStateTitle;
     private Map<String, String> _mapEntryCodeFieldsValue;
 
+    /**
+     * Constructor based on a Lucene Document
+     * @param document the Lucene Document
+     */
     public FormResponseSearchItem( Document document )
     {
         super( document );
@@ -86,116 +90,209 @@ public class FormResponseSearchItem extends SearchItem
         populateMapEntryCodeFieldsValue( document );
     }
 
+    /**
+     * Get the id form response
+     * @return the id form response
+     */
     public int getIdFormResponse( )
     {
         return _nIdFormResponse;
     }
 
-    public void setIdFormResponse( int _nIdFormResponse )
+    /**
+     * Set the id form response
+     * @param nIdFormResponse the id form response 
+     */
+    public void setIdFormResponse( int nIdFormResponse )
     {
-        this._nIdFormResponse = _nIdFormResponse;
+        _nIdFormResponse = nIdFormResponse;
     }
 
+    /**
+     * Get the id of the form
+     * @return the id of the form
+     */
     public int getIdForm( )
     {
         return _nIdForm;
     }
 
-    public void setIdForm( int _nIdForm )
+    /**
+     * Set the id of the form
+     * @param nIdForm the id of the form
+     */
+    public void setIdForm( int nIdForm )
     {
-        this._nIdForm = _nIdForm;
+        _nIdForm = nIdForm;
     }
 
+    /**
+     * Get the form title
+     * @return the form title
+     */
     public String getFormTitle( )
     {
         return _strFormTitle;
     }
 
-    public void setFormTitle( String _strFormTitle )
+    /**
+     * Set the form title
+     * @param strFormTitle the form title 
+     */
+    public void setFormTitle( String strFormTitle )
     {
-        this._strFormTitle = _strFormTitle;
+        _strFormTitle = strFormTitle;
     }
 
+    /**
+     * Get the creation date
+     * @return the creation date of the form 
+     */
     public Timestamp getDateCreation( )
     {
         return _tDateCreation;
     }
 
-    public void setDateCreation( Timestamp _tDateCreation )
+    /**
+     * Set the creation date
+     * @param tDateCreation 
+     */
+    public void setDateCreation( Timestamp tDateCreation )
     {
-        this._tDateCreation = _tDateCreation;
+        _tDateCreation = tDateCreation;
     }
 
+    
+    /**
+     * Get the date update
+     * @return the date update
+     */
     public Timestamp getDateUpdate( )
     {
         return _tDateUpdate;
     }
 
-    public void setDateUpdate( Timestamp _tDateUpdate )
+    /**
+     * Set the date update
+     * @param tDateUpdate the date update
+     */
+    public void setDateUpdate( Timestamp tDateUpdate )
     {
-        this._tDateUpdate = _tDateUpdate;
+        _tDateUpdate = tDateUpdate;
     }
 
+    /**
+     * Get the guid 
+     * @return the guid
+     */
     public String getGuid( )
     {
         return _strGuid;
     }
 
-    public void setGuid( String _strGuid )
+    /**
+     * Set the guid
+     * @param strGuid the guid
+     */
+    public void setGuid( String strGuid )
     {
-        this._strGuid = _strGuid;
+        _strGuid = strGuid;
     }
 
+    /**
+     * Get the id of assignee user
+     * @return the id of assignee user
+     */
     public int getIdAssigneeUser( )
     {
         return _nIdAssigneeUser;
     }
 
-    public void setIdAssigneeUser( int _nIdAssigneeUser )
+    /**
+     * Get the id of assignee user
+     * @param nIdAssigneeUser the id of assignee user
+     */
+    public void setIdAssigneeUser( int nIdAssigneeUser )
     {
-        this._nIdAssigneeUser = _nIdAssigneeUser;
+        _nIdAssigneeUser = nIdAssigneeUser;
     }
 
+    /**
+     * Get the id of assignee unit
+     * @return the id of assignee unit
+     */
     public int getIdAssigneeUnit( )
     {
         return _nIdAssigneeUnit;
     }
 
-    public void setIdAssigneeUnit( int _nIdAssigneeUnit )
+    /**
+     * Set the id of the assignee unit
+     * @param nIdAssigneeUnit the id of the assignee unit
+     */
+    public void setIdAssigneeUnit( int nIdAssigneeUnit )
     {
-        this._nIdAssigneeUnit = _nIdAssigneeUnit;
+        _nIdAssigneeUnit = nIdAssigneeUnit;
     }
 
+    /**
+     * Get the id of the workflow state
+     * @return the id of the workflow state
+     */
     public int getIdWorkflowState( )
     {
         return _nIdWorkflowState;
     }
 
-    public void setIdWorkflowState( int _nIdWorkflowState )
+    /**
+     * Set the id of the workflow state
+     * @param nIdWorkflowState the id of the workflow state
+     */
+    public void setIdWorkflowState( int nIdWorkflowState )
     {
-        this._nIdWorkflowState = _nIdWorkflowState;
+        _nIdWorkflowState = nIdWorkflowState;
     }
 
+    /**
+     * Get the workflow state title
+     * @return the workflow state title
+     */
     public String getWorkflowStateTitle( )
     {
         return _strWorkflowStateTitle;
     }
 
-    public void setWorkflowStateTitle( String _strWorkflowStateTitle )
+    /**
+     * Set the workflow state title
+     * @param strWorkflowStateTitle the workflow state title
+     */
+    public void setWorkflowStateTitle( String strWorkflowStateTitle )
     {
-        this._strWorkflowStateTitle = _strWorkflowStateTitle;
+        _strWorkflowStateTitle = strWorkflowStateTitle;
     }
 
+    /**
+     * Get the map of entry cde fields value
+     * @return the map of entry code fields value
+     */
     public Map<String, String> getMapEntryCodeFieldsValue( )
     {
         return _mapEntryCodeFieldsValue;
     }
 
-    public void setMapEntryCodeFieldsValue( Map<String, String> _mapEntryCodeFieldsValue )
+    /**
+     * Set the map of entry code fields value
+     * @param mapEntryCodeFieldsValue the map of entry code fields value
+     */
+    public void setMapEntryCodeFieldsValue( Map<String, String> mapEntryCodeFieldsValue )
     {
-        this._mapEntryCodeFieldsValue = _mapEntryCodeFieldsValue;
+        _mapEntryCodeFieldsValue = mapEntryCodeFieldsValue;
     }
 
+    /**
+     * Populate the map of entry code fields value with the Lucene document
+     * @param document the Lucene document
+     */
     private void populateMapEntryCodeFieldsValue( Document document )
     {
         Map<String, String> mapEntryCodeFieldsValues = new HashMap<>( );
