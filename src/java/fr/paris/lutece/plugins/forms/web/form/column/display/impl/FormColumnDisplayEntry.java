@@ -86,7 +86,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     public String buildFormColumnCellTemplate( FormColumnCell formColumnCell, Locale locale )
     {
         String strEntryValue = StringUtils.EMPTY;
-        if ( formColumnCell != null )
+        if ( formColumnCell != null && formColumnCell.getFormColumnCellValues( ).size() > 0 )
         {
             String strEntryValueName = formColumnCell.getFormColumnCellValues( ).keySet( ).stream( ).findFirst( ).get( );
             Object objEntryValue = formColumnCell.getFormColumnCellValueByName( strEntryValueName );

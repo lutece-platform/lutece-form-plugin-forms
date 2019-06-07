@@ -46,7 +46,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
-import fr.paris.lutece.plugins.workflowcore.service.workflow.WorkflowService;
+import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.portal.service.content.XPageAppService;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -70,7 +70,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
-import org.apache.commons.lang.mutable.MutableBoolean;
 import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.NumericDocValuesField;
@@ -94,7 +93,7 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
     private static final String PROPERTY_INDEXER_ENABLE = "forms.globalIndexer.enable";
 
     @Autowired( required = false )
-    private WorkflowService _workflowService;
+    private StateService _stateService;
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
     private IndexWriter _indexWriter;
@@ -187,9 +186,9 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
         State formResponseState = null;
-        if ( _workflowService != null )
+        if ( _stateService != null )
         {
-            formResponseState = _workflowService.getState( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), -1 );
+            formResponseState = _stateService.findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
         }
 
         Document doc = getDocument( formResponse, form, formResponseState );
@@ -252,18 +251,20 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_DATE_UPDATE, longUpdateDate ) );
         doc.add( new StoredField( FormResponseSearchItem.FIELD_DATE_UPDATE, longUpdateDate ) );
 
-        // --- id form response workflow state
-        int nIdFormResponseWorkflowState = formResponseState.getId( );
-        doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
-        doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
-        doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
+        if ( formResponseState != null )
+        {
+            // --- id form response workflow state
+            int nIdFormResponseWorkflowState = formResponseState.getId( );
+            doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
+            doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
+            doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, nIdFormResponseWorkflowState ) );
 
-        // --- form response workflow state title
-
-        String strFormResponseWorkflowStateTitle = manageNullValue( formResponseState.getName( ) );
-        doc.add( new StringField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, strFormResponseWorkflowStateTitle, Field.Store.YES ) );
-        doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, new BytesRef( strFormResponseWorkflowStateTitle ) ) );
-
+            // --- form response workflow state title
+            String strFormResponseWorkflowStateTitle = manageNullValue( formResponseState.getName( ) );
+            doc.add( new StringField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, strFormResponseWorkflowStateTitle, Field.Store.YES ) );
+            doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, new BytesRef( strFormResponseWorkflowStateTitle ) ) );
+        }
+        
         // TODO BY LEPINEG ? : id Assignee Unit, id Assignee User
         /*
          * int nIdFormResponseAssigneeUnit = formResponse.getIdAssigneeUnit(); doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT,
@@ -289,18 +290,26 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
 
                     StringBuilder fieldNameBuilder = new StringBuilder( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX );
                     fieldNameBuilder.append( strQuestionCode );
+                    fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_ID_ );
+                    fieldNameBuilder.append( response.getIdResponse( ) );
+                    fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ );
+                    fieldNameBuilder.append( response.getIterationNumber( ) );
 
-                    if ( responseField == null || StringUtils.isEmpty( responseField.getTitle( ) ) )
+                    if ( !StringUtils.isEmpty( response.getResponseValue( ) ) )
                     {
-                        doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
-                    }
-                    else
-                    {
-                        fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ );
-                        fieldNameBuilder.append( responseField.getTitle( ) );
-                        doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( responseField.getValue( ) ) ) );
+                        if ( responseField == null )
+                        {
+                            doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
+                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+                        }
+                        else
+                        {
+                            String getFieldName = getFieldName( responseField, response );
+                            fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ );
+                            fieldNameBuilder.append( getFieldName );
+                            doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
+                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+                        }
                     }
                 }
             }
@@ -453,9 +462,9 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
             Document doc = null;
             Form form = mapForms.get( formResponse.getFormId( ) );
             State formResponseState = null;
-            if ( _workflowService != null )
+            if ( _stateService != null )
             {
-                formResponseState = _workflowService.getState( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), -1 );
+                formResponseState = _stateService.findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
             }
             else
             {
@@ -615,5 +624,22 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         if ( strValue == null )
             return StringUtils.EMPTY;
         return strValue;
+    }
+    
+    /**
+     * Get the field name
+     * @param responseField
+     * @param response
+     * @return the field name
+     */
+    private String getFieldName( fr.paris.lutece.plugins.genericattributes.business.Field responseField, Response response )
+    {
+        if ( !StringUtils.isEmpty( responseField.getCode( ) ) )
+            return responseField.getCode();
+        
+        if ( !StringUtils.isEmpty( responseField.getTitle() ) )
+            return responseField.getTitle( );
+
+        return String.valueOf( response.getIdResponse( ) );
     }
 }
