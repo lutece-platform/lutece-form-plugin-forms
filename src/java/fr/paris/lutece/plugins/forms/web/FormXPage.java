@@ -42,6 +42,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -70,6 +71,10 @@ import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
+import fr.paris.lutece.plugins.genericattributes.business.Mapping;
+import fr.paris.lutece.plugins.genericattributes.business.MappingHome;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.business.TypeDocumentProviderManager;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -82,6 +87,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -121,6 +127,7 @@ public class FormXPage extends MVCApplication
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
     private static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
     private static final String ACTION_SAVE_STEP = "doSaveStep";
+    private static final String ACTION_UPLOAD_FOR_OCR = "doUploadDocumentForOcr";
     private static final String ACTION_RESET_BACKUP = "doResetBackup";
     private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
     private static final String ACTION_GO_TO_STEP = "doGoToStep";
@@ -998,6 +1005,60 @@ public class FormXPage extends MVCApplication
         int nIndexIteration = Integer.valueOf( arrayIterationInfo [1] );
 
         _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
+
+        return redirectView( request, VIEW_STEP );
+    }
+
+    /**
+     * OCR process with uploaded document to fill the form.
+     *
+     * @param request
+     *            the request
+     * @return the XPage
+     */
+    @Action( value = ACTION_UPLOAD_FOR_OCR )
+    public XPage doUploadDocumentForOcr( HttpServletRequest request )
+    {
+        if ( request instanceof MultipartHttpServletRequest )
+        {
+            MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
+            FileItem fileUploaded = multipartRequest.getFileList( FormsConstants.PARAMETER_OCR_DOCUMENT ).get( 0 );
+
+            String strDocumentKey = request.getParameter( FormsConstants.PARAMETER_TYPE_DOCUMENT_KEY );
+
+            // process OCR
+            Map<String, String> mapOcrResult = TypeDocumentProviderManager.getTypeDocumentProvider( strDocumentKey ).processOcr( fileUploaded );
+            if ( mapOcrResult == null )
+            {
+                return redirectView( request, VIEW_STEP );
+            }
+
+            // Set OCR result in form
+            List<FormQuestionResponse> listFormQuestionResponse = _formResponseManager.findResponsesFor( _currentStep );
+            List<Mapping> listMappingConfiguration = MappingHome.loadByStepId( _currentStep.getId( ) );
+            for ( Mapping mapping : listMappingConfiguration )
+            {
+                String strOcrResult = mapOcrResult.get( mapping.getFieldOcrTitle( ) );
+                if ( strOcrResult != null )
+                {
+                    Question question = QuestionHome.findByPrimaryKey( mapping.getIdQuestion( ) );
+                    FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
+                    formQuestionResponse.setQuestion( question );
+
+                    Response response = new Response( );
+                    response.setEntry( question.getEntry( ) );
+                    // set Ocr result
+                    response.setToStringValueResponse( strOcrResult );
+                    List<Response> listResponse = new ArrayList<>( );
+                    listResponse.add( response );
+                    formQuestionResponse.setEntryResponse( listResponse );
+
+                    listFormQuestionResponse.add( formQuestionResponse );
+                }
+            }
+            _formResponseManager.addResponses( listFormQuestionResponse );
+
+        }
 
         return redirectView( request, VIEW_STEP );
     }
