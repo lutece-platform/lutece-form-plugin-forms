@@ -108,6 +108,18 @@ public class FormService
         saveFormResponse( formResponse );
         saveFormResponseSteps( formResponse );
         processIncrementalIndexing( formResponse );
+    }
+
+    /**
+     * Process action on form creation
+     *
+     * @param form
+     *            the workflow form
+     * @param formResponse
+     *            the form response
+     */
+    public void processFormAction( Form form, FormResponse formResponse )
+    {
         _formWorkflowService.doProcessActionOnFormCreation( form, formResponse );
     }
 
