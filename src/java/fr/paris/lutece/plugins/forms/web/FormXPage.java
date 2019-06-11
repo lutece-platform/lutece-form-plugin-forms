@@ -35,10 +35,8 @@ package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -102,6 +100,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_PAGE_TITLE = "forms.xpage.form.view.pageTitle";
     protected static final String MESSAGE_PATH = "forms.xpage.form.view.pagePathLabel";
     protected static final String MESSAGE_ERROR_NO_STEP = "forms.xpage.form.error.noStep";
+    protected static final String MESSAGE_ERROR_CONTROL = "forms.xpage.form.error.control";
     protected static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.xpage.form.error.inactive";
     protected static final String MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM = "forms.xpage.form.error.MaxResponse";
     protected static final String MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM_ = "forms.xpage.form.error.limitNumberResponse";
@@ -774,21 +773,23 @@ public class FormXPage extends MVCApplication
             return redirectView( request, VIEW_STEP );
         }
 
-        Step currentStep = getNextStep( );
-        _currentStep = currentStep != null ? currentStep : _currentStep;
-
+        List<String> errorList = new ArrayList<>( );
+        
+	    Step currentStep = getNextStep( errorList );
+	    _currentStep = currentStep != null ? currentStep : _currentStep;
+        
         if ( currentStep == null )
         {
-            FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
-            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR, getBackUrl( form, formMessage.getEndMessageDisplay( ) ) );
-        }
+        	 FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
+	         SiteMessageService.setMessage( request, MESSAGE_ERROR_CONTROL, new Object[] { errorList.stream( ).collect( Collectors.joining( ) ) }, SiteMessage.TYPE_ERROR, getBackUrl( form, formMessage.getEndMessageDisplay( ) ), null );
+		}
         return redirectView( request, VIEW_STEP );
     }
 
     /**
      * @return The next Step
      */
-    private Step getNextStep( )
+    private Step getNextStep( List<String> errorList )
     {
         List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( _currentStep.getId( ) );
 
@@ -814,8 +815,9 @@ public class FormXPage extends MVCApplication
                 IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
                 if ( validator != null && !validator.validate( listQuestionResponse, transitionControl ) )
                 {
-                    controlsValidated = false;
-                    break;
+                	controlsValidated = false;
+                	errorList.add( transitionControl.getErrorMessage( ) );
+                	break;
                 }
             }
 
