@@ -48,7 +48,12 @@
 	                </@inputGroupItem>
                  </@inputGroup>
             </@formGroup>
-
+			<@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' >
+				<@inputGroup>
+					<@input type='text' name='errorMessage' value='${control.errorMessage!}' />
+				</@inputGroup>
+			</@formGroup>
+			
             ${control_template}
             
             <@formsButton okAction='modifyControl' viewAction='' />
