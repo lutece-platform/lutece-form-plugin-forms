@@ -59,6 +59,7 @@ import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
+import java.util.ArrayList;
 
 import java.util.List;
 import java.util.Locale;
@@ -177,6 +178,9 @@ public class FormStepJspBean extends AbstractJspBean
 
         List<Step> listSteps = StepHome.getStepsListByForm( nIdForm );
         List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( nIdForm );
+        
+        listSteps = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+        
         LocalizedPaginator<Step> paginator = new LocalizedPaginator<Step>( listSteps, _nItemsPerPage, getJspManageSteps( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
 
