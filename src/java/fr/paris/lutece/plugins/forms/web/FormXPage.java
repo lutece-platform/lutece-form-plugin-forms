@@ -35,10 +35,10 @@ package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -91,11 +91,8 @@ import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.url.UrlItem;
 
-import java.util.Locale;
-import java.util.stream.Collectors;
-
 /**
- * 
+ *
  * Controller for form display
  *
  */
@@ -161,7 +158,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * Return the default XPage with the list of all available Form
-     * 
+     *
      * @param request
      *            The HttpServletRequest
      * @return the list of all available forms
@@ -171,6 +168,7 @@ public class FormXPage extends MVCApplication
     @View( value = VIEW_LIST_FORM, defaultView = true )
     public XPage getListFormView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
+        doUploadDocumentForOcr( request );
         Locale locale = request.getLocale( );
         List<Form> listFormsAll = FormHome.getFormList( );
         Map<String, Object> model = getModel( );
@@ -182,7 +180,7 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * 
+     *
      * @param form
      *            the given Form
      * @param request
@@ -206,7 +204,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * check if authentification
-     * 
+     *
      * @param form
      *            Form
      * @param request
@@ -247,11 +245,11 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * 
+     *
      * @param request
      *            The Http request
      * @return the XPage
-     * 
+     *
      * @throws SiteMessageException
      *             Exception
      * @throws UserNotSignedException
@@ -272,7 +270,7 @@ public class FormXPage extends MVCApplication
         String strTitleForm = StringUtils.EMPTY;
         int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
-        if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE && ( _currentStep == null || nIdForm != _currentStep.getIdForm( ) ) )
+        if ( ( nIdForm != FormsConstants.DEFAULT_ID_VALUE ) && ( ( _currentStep == null ) || ( nIdForm != _currentStep.getIdForm( ) ) ) )
         {
             init( nIdForm );
         }
@@ -337,7 +335,7 @@ public class FormXPage extends MVCApplication
                     _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
 
                     Object [ ] args = {
-                        _formResponseManager.getFormResponse( ).getUpdate( ),
+                            _formResponseManager.getFormResponse( ).getUpdate( ),
                     };
 
                     model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, request.getLocale( ) ) );
@@ -349,7 +347,7 @@ public class FormXPage extends MVCApplication
             }
         }
 
-        if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
+        if ( ( _stepDisplayTree == null ) || ( _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) ) )
         {
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
             _formResponseManager.add( _currentStep );
@@ -365,11 +363,11 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * 
+     *
      * @param request
      *            The Http request
      * @return the XPage
-     * 
+     *
      * @throws SiteMessageException
      *             Exception
      */
@@ -408,11 +406,11 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * 
+     *
      * @param request
      *            The Http request
      * @return the XPage
-     * 
+     *
      * @throws SiteMessageException
      *             Exception
      */
@@ -456,7 +454,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * Gives the summary page
-     * 
+     *
      * @param request
      *            The request
      * @return the summary page
@@ -498,7 +496,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * Builds the model for the summary page
-     * 
+     *
      * @param request
      *            the request
      * @return the model
@@ -517,7 +515,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * Builds the HTML for the specified list of steps
-     * 
+     *
      * @param request
      *            The request
      * @param listStep
@@ -540,11 +538,11 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * 
+     *
      * @param request
      *            The Http request
      * @return the XPage
-     * 
+     *
      * @throws SiteMessageException
      *             Exception
      * @throws UserNotSignedException
@@ -595,7 +593,7 @@ public class FormXPage extends MVCApplication
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
         String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed );
 
-        if ( formMessage != null && bIsEndMessageDisplayed )
+        if ( ( formMessage != null ) && bIsEndMessageDisplayed )
         {
             model.put( FormsConstants.MARK_INFO, formMessage.getEndMessage( ) );
         }
@@ -611,7 +609,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * Finds the form from the specified request
-     * 
+     *
      * @param request
      *            the request
      * @return the found form, or {@code null} if not found
@@ -657,7 +655,7 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * 
+     *
      * @param form
      *            The Form
      * @param bIsEndMessageDisplayed
@@ -694,7 +692,7 @@ public class FormXPage extends MVCApplication
      *            The Http request
      * @param bValidateQuestionStep
      *            valid question ton next step
-     * 
+     *
      * @throws QuestionValidationException
      *             if there is at least one question not valid
      */
@@ -712,8 +710,8 @@ public class FormXPage extends MVCApplication
             for ( int i = 0; i < listConditionalQuestionsValues.length; i++ )
             {
                 String [ ] listQuestionId = listConditionalQuestionsValues [i].split( FormsConstants.SEPARATOR_UNDERSCORE );
-                if ( !StringUtils.isEmpty( listQuestionId [0] ) && Integer.parseInt( listQuestionId [0] ) == question.getId( )
-                        && Integer.parseInt( listQuestionId [1] ) == question.getIterationNumber( ) )
+                if ( !StringUtils.isEmpty( listQuestionId [0] ) && ( Integer.parseInt( listQuestionId [0] ) == question.getId( ) )
+                        && ( Integer.parseInt( listQuestionId [1] ) == question.getIterationNumber( ) ) )
                 {
                     question.setIsVisible( true );
                     break;
@@ -751,11 +749,11 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * 
+     *
      * @param request
      *            The Http request
      * @return the XPage
-     * 
+     *
      * @throws SiteMessageException
      *             Exception
      * @throws UserNotSignedException
@@ -819,7 +817,7 @@ public class FormXPage extends MVCApplication
                 ;
 
                 IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
-                if ( validator != null && !validator.validate( listQuestionResponse, transitionControl ) )
+                if ( ( validator != null ) && !validator.validate( listQuestionResponse, transitionControl ) )
                 {
                     controlsValidated = false;
                     break;
@@ -837,11 +835,11 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * 
+     *
      * @param request
      *            The Http request
      * @return the XPage
-     * 
+     *
      * @throws SiteMessageException
      *             Exception
      * @throws UserNotSignedException
@@ -890,11 +888,11 @@ public class FormXPage extends MVCApplication
 
     /**
      * Removes Backup
-     * 
+     *
      * @param request
      *            The Http request
      * @return the XPage
-     * 
+     *
      * @throws SiteMessageException
      *             Exception
      * @throws UserNotSignedException
@@ -927,7 +925,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * Adds an iteration
-     * 
+     *
      * @param request
      *            the request
      * @return the XPage
@@ -969,7 +967,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * Remove an iteration
-     * 
+     *
      * @param request
      *            the request
      * @return the XPage
@@ -1019,11 +1017,19 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_UPLOAD_FOR_OCR )
     public XPage doUploadDocumentForOcr( HttpServletRequest request )
     {
-        if ( request instanceof MultipartHttpServletRequest )
+        if ( ( request instanceof MultipartHttpServletRequest ) && ( FormsAsynchronousUploadHandler.getHandler( ).getUploadAction( request ) != null ) )
         {
+            FormsAsynchronousUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
             MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
-            FileItem fileUploaded = multipartRequest.getFileList( FormsConstants.PARAMETER_OCR_DOCUMENT ).get( 0 );
 
+            String strOcrFieldName = handler.getUploadAction( request ).substring( handler.getUploadSubmitPrefix( ).length( ) );
+            FileItem fileUploaded = multipartRequest.getFileList( strOcrFieldName ).get( 0 );
+            if ( fileUploaded.getSize( ) <= 0 )
+            {
+                return redirectView( request, VIEW_STEP );
+            }
+
+            handler.addFilesUploadedSynchronously( multipartRequest, strOcrFieldName );
             String strDocumentKey = request.getParameter( FormsConstants.PARAMETER_TYPE_DOCUMENT_KEY );
 
             // process OCR
@@ -1065,7 +1071,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * save the response of form
-     * 
+     *
      * @param form
      *            the form
      * @param request
@@ -1093,7 +1099,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * check if form is reached the number max of response
-     * 
+     *
      * @param form
      *            the form
      * @param request
@@ -1115,7 +1121,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * check if user can answer the form again
-     * 
+     *
      * @param form
      *            the form
      * @param request
@@ -1151,7 +1157,7 @@ public class FormXPage extends MVCApplication
 
     /**
      * initialize the object
-     * 
+     *
      * @param nIdForm
      *            id form
      */
@@ -1165,11 +1171,11 @@ public class FormXPage extends MVCApplication
 
     /**
      * ckeck if the session has expired
-     * 
-     * 
+     *
+     *
      */
     private boolean isSessionLost( )
     {
-        return ( _currentStep == null && _formResponseManager == null && _stepDisplayTree == null && _breadcrumb == null );
+        return ( ( _currentStep == null ) && ( _formResponseManager == null ) && ( _stepDisplayTree == null ) && ( _breadcrumb == null ) );
     }
 }
