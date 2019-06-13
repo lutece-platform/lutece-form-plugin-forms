@@ -168,7 +168,6 @@ public class FormXPage extends MVCApplication
     @View( value = VIEW_LIST_FORM, defaultView = true )
     public XPage getListFormView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-        doUploadDocumentForOcr( request );
         Locale locale = request.getLocale( );
         List<Form> listFormsAll = FormHome.getFormList( );
         Map<String, Object> model = getModel( );
