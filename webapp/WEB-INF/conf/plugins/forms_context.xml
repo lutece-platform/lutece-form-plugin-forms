@@ -206,7 +206,7 @@
 	<bean id="forms.asynchronousUploadHandler" class="fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler" />
 	
     <!-- Transaction Manager -->
-    <bean id="forms.transactionManager"  class="fr.paris.lutece.portal.service.database.DAOUtilTransactionManager"
+    <bean id="forms.transactionManager"  class="fr.paris.lutece.portal.service.database.LuteceTransactionManager"
         p:pluginName="forms" />
 
     <bean id="forms.formDisplayService" class="fr.paris.lutece.plugins.forms.service.FormDisplayService" />
