@@ -63,43 +63,37 @@ public final class LuceneQueryBuilder
      * 
      * @param listFormPanelInitializerQueryPart
      *            The list of all FormPanelInitializerQueryPart to use for built the query
-     * @param listFormColumnQueryPart
-     *            The of FormColumnQueryPart to retrieve the select and from parts of the query
      * @param listFormFilterQueryPart
      *            The list of FormFilterQueryPart to retrieve the where parts of the query
      * @return the global lucene query build from the FormColmuns and FormFilters
      */
-    public static Query buildQuery( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart,
+    public static Query buildQuery( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart,
             List<IFormFilterQueryPart> listFormFilterQueryPart )
     {
         BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
-        if ( !CollectionUtils.isEmpty( listFormColumnQueryPart ) )
+        for ( IFormFilterQueryPart formFilterQueryPart : listFormFilterQueryPart )
         {
-            for ( IFormFilterQueryPart formFilterQueryPart : listFormFilterQueryPart )
+            if ( formFilterQueryPart instanceof IFormFilterLuceneQueryPart )
             {
-                if ( formFilterQueryPart instanceof IFormFilterLuceneQueryPart )
+                Query queryFormFilterQueryPart = ( (IFormFilterLuceneQueryPart) formFilterQueryPart ).getFormFilterQuery( );
+                if ( queryFormFilterQueryPart != null )
                 {
-                    Query queryFormFilterQueryPart = ( (IFormFilterLuceneQueryPart) formFilterQueryPart ).getFormFilterQuery( );
-                    if ( queryFormFilterQueryPart != null )
-                    {
-                        booleanQueryBuilder.add( queryFormFilterQueryPart, BooleanClause.Occur.FILTER );
-                    }
-                }
-            }
-            for ( IFormPanelInitializerQueryPart formPanelInitializerQueryPart : listFormPanelInitializerQueryPart )
-            {
-                if ( formPanelInitializerQueryPart instanceof IFormPanelInitializerLuceneQueryPart )
-                {
-                    Query queryFormFilterQueryPart = ( (IFormPanelInitializerLuceneQueryPart) formPanelInitializerQueryPart )
-                            .getFormPanelInitializerSelectQuery( );
-                    if ( queryFormFilterQueryPart != null )
-                    {
-                        booleanQueryBuilder.add( queryFormFilterQueryPart, BooleanClause.Occur.FILTER );
-                    }
+                    booleanQueryBuilder.add( queryFormFilterQueryPart, BooleanClause.Occur.FILTER );
                 }
             }
         }
-
+        for ( IFormPanelInitializerQueryPart formPanelInitializerQueryPart : listFormPanelInitializerQueryPart )
+        {
+            if ( formPanelInitializerQueryPart instanceof IFormPanelInitializerLuceneQueryPart )
+            {
+                Query queryFormFilterQueryPart = ( (IFormPanelInitializerLuceneQueryPart) formPanelInitializerQueryPart )
+                        .getFormPanelInitializerSelectQuery( );
+                if ( queryFormFilterQueryPart != null )
+                {
+                    booleanQueryBuilder.add( queryFormFilterQueryPart, BooleanClause.Occur.FILTER );
+                }
+            }
+        }
         return booleanQueryBuilder.build( );
     }
 

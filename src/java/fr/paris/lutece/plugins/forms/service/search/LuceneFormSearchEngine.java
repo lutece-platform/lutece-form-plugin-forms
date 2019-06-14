@@ -150,7 +150,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
     {
         
         // Build the query to execute
-        Query query = LuceneQueryBuilder.buildQuery( listFormPanelInitializerQueryPart, listFormColumnQueryPart, listFormFilterQueryPart );
+        Query query = LuceneQueryBuilder.buildQuery( listFormPanelInitializerQueryPart, listFormFilterQueryPart );
 
         List<FormResponseSearchItem> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
