@@ -33,32 +33,52 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 
 /**
- * Implementation of the IFormColumnQueryPartFactory interface for a WorkflowState column
+ * Implementation of the IFormColumnQueryPart interface for a form column
  */
-public class FormColumnWorkflowStateLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
+public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQueryPart
 {
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, Object> getMapFormColumnValues( Document document )
+    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
     {
         Map<String, Object> mapFormColumnValues = new HashMap<>( );
 
-        IndexableField fieldFormWorkflowState = document.getField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE );
-
-        if ( fieldFormWorkflowState != null )
+        for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
         {
-            mapFormColumnValues.put( fieldFormWorkflowState.name( ), fieldFormWorkflowState.stringValue( ) );
+            Map<String,String> listFields = getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem );
+            for ( Map.Entry<String,String> field : listFields.entrySet( ) )
+            {
+                mapFormColumnValues.put( field.getKey( ), field.getValue( ) );
+            }
         }
 
         return mapFormColumnValues;
+    }
+
+    /**
+     * Get the list of entry codes from the form column
+     * 
+     * @param column
+     * @return the list of entry codes of the given column
+     */
+    private List<String> getListEntryCode( IFormColumn column )
+    {
+        if ( column instanceof FormColumnEntryGeolocation )
+        {
+            FormColumnEntryGeolocation formColumnEntry = (FormColumnEntryGeolocation) column;
+            return formColumnEntry.getListEntryCode( );
+        }
+        return null;
     }
 }

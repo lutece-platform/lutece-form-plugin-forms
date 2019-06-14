@@ -31,32 +31,39 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
+package fr.paris.lutece.plugins.forms.service.search;
 
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexableField;
+import java.util.List;
 
-public class FormColumnFormResponseDateCreationLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
+public interface IFormSearchEngine
 {
     /**
-     * {@inheritDoc}
+     * Get the id of the form responses based on a FormSearchConfig obj
+     * 
+     * @param formSearchConfig
+     * @return the list of form responses id based on given FormSearchConfig obj
      */
-    @Override
-    protected Map<String, Object> getMapFormColumnValues( Document document )
-    {
-        Map<String, Object> mapFormColumnValues = new HashMap<>( );
+    List<Integer> getSearchResults( FormSearchConfig formSearchConfig );
 
-        IndexableField fieldDateCreation = document.getField( FormResponseSearchItem.FIELD_DATE_CREATION );
+    /**
+     * Get the id of the form responses based on a text to search
+     * 
+     * @param strSearchText
+     *            the searched text
+     * @return the list of form responses id based on text to search
+     */
+    List<Integer> getSearchResults( String strSearchText );
 
-        if ( fieldDateCreation != null )
-        {
-            mapFormColumnValues.put( fieldDateCreation.name( ), fieldDateCreation.stringValue( ) );
-        }
-
-        return mapFormColumnValues;
-
-    }
+    /**
+     * Get the FormResponseSearchItem list based on given FormPanel, FormColumnList and FormFilterList
+     * @param listFormPanelInitializerQueryPart
+     * @param listFormColumnQueryPart
+     * @param listFormFilterQueryPart
+     * @return the list of FormResponseSearchItem
+     */
+    List<FormResponseSearchItem> getSearchResults( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart );
 }

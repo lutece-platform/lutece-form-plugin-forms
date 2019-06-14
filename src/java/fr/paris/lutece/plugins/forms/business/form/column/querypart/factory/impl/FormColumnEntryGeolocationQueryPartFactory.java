@@ -37,7 +37,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryGeolocationLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryGeolocationQueryPart;
 
 /**
  * Implementation of the IFormColumnQueryPartFactory interface for an EntryGeolocation column
@@ -54,7 +54,7 @@ public class FormColumnEntryGeolocationQueryPartFactory implements IFormColumnQu
 
         if ( formColumn instanceof FormColumnEntryGeolocation )
         {
-            formColumnEntryGeolocationQueryPart = new FormColumnEntryGeolocationLuceneQueryPart( );
+            formColumnEntryGeolocationQueryPart = new FormColumnEntryGeolocationQueryPart( );
         }
 
         return formColumnEntryGeolocationQueryPart;

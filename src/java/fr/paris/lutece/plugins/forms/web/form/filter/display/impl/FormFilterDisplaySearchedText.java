@@ -42,10 +42,10 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.service.search.FormSearchConfig;
-import fr.paris.lutece.plugins.forms.service.search.IFormSearchLuceneEngine;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import java.util.List;
+import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
 
 /**
  * Implementation of the IFormFilterDisplay interface for the filter on workflow state
@@ -65,9 +65,9 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
     private String _strTemplate;
     private String _strValue;
     private FormFilter _formFilter;
-    private IFormSearchLuceneEngine _formSearchEngine;
+    private IFormSearchEngine _formSearchEngine;
 
-    public FormFilterDisplaySearchedText( IFormSearchLuceneEngine formSearchEngine )
+    public FormFilterDisplaySearchedText( IFormSearchEngine formSearchEngine )
     {
         _formSearchEngine = formSearchEngine;
     }

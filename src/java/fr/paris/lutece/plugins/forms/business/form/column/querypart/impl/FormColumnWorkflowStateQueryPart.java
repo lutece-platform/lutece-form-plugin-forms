@@ -31,37 +31,33 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service.search;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.List;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.search.Query;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.lucene.index.IndexableField;
 
-public interface IFormSearchLuceneEngine
+/**
+ * Implementation of the IFormColumnQueryPartFactory interface for a WorkflowState column
+ */
+public class FormColumnWorkflowStateQueryPart extends AbstractFormColumnQueryPart
 {
     /**
-     * Get the id of the form responses based on a FormSearchConfig obj
-     * 
-     * @param formSearchConfig
-     * @return the list of form responses id based on given FormSearchConfig obj
+     * {@inheritDoc}
      */
-    List<Integer> getSearchResults( FormSearchConfig formSearchConfig );
+    @Override
+    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
+    {
+        Map<String, Object> mapFormColumnValues = new HashMap<>( );
 
-    /**
-     * Get the id of the form responses based on a text to search
-     * 
-     * @param strSearchText
-     *            the searched text
-     * @return the list of form responses id based on text to search
-     */
-    List<Integer> getSearchResults( String strSearchText );
+        String strWorkflowStateTitle = formResponseSearchItem.getWorkflowStateTitle( );
 
-    /**
-     * Get the id of the form responses based on given Lucene query
-     * 
-     * @param query
-     *            the Lucene query
-     * @return the list of form responses id based on given Lucene query
-     */
-    List<Document> getSearchResults( Query query );
+        if ( strWorkflowStateTitle != null )
+        {
+            mapFormColumnValues.put( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, strWorkflowStateTitle );
+        }
+
+        return mapFormColumnValues;
+    }
 }

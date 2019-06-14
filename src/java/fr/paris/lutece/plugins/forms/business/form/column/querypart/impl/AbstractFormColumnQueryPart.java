@@ -35,26 +35,23 @@ package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexableField;
-
 /**
  * Abstract class for FormColumnQueryPart
  */
-public abstract class AbstractFormColumnLuceneQueryPart implements IFormColumnLuceneQueryPart
+public abstract class AbstractFormColumnQueryPart implements IFormColumnQueryPart
 {
     /**
      * Get a map of values fetched from Lucene document
      * 
-     * @param document
+     * @param formResponseSearchItem
      * @return a Map of values feteched form Lucene document
      */
-    protected abstract Map<String, Object> getMapFormColumnValues( Document document );
+    protected abstract Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem );
 
     // Variables
     private IFormColumn _formColumn;
@@ -81,14 +78,14 @@ public abstract class AbstractFormColumnLuceneQueryPart implements IFormColumnLu
      * {@inheritDoc}
      */
     @Override
-    public FormColumnCell getFormColumnCell( Document document )
+    public FormColumnCell getFormColumnCell( FormResponseSearchItem formResponseSearchItem )
     {
         Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
 
         IFormColumn formColumn = getFormColumn( );
         if ( formColumn != null )
         {
-            mapFormColumnValues = getMapFormColumnValues( document );
+            mapFormColumnValues = getMapFormColumnValues( formResponseSearchItem );
         }
 
         FormColumnCell formColumnCell = new FormColumnCell( );
@@ -104,16 +101,16 @@ public abstract class AbstractFormColumnLuceneQueryPart implements IFormColumnLu
      * @param document
      * @return The list of Lucene indexable fields based on a document and an entry code prefix
      */
-    protected List<IndexableField> getEntryCodeFields( String strEntryCode, Document document )
+    protected Map<String,String> getEntryCodeFields( String strEntryCode, FormResponseSearchItem formResponseSearchItem )
     {
-        List<IndexableField> listFields = new ArrayList<>( );
-        for ( IndexableField field : document.getFields( ) )
+        Map<String,String> listFields = new HashMap<>( );
+        for ( Map.Entry<String,String> entry : formResponseSearchItem.getMapEntryCodeFieldsValue( ).entrySet( ) )
         {
             String strFieldSuffixEntryCode = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strEntryCode;
 
-            if ( field.name( ).startsWith( strFieldSuffixEntryCode ) )
+            if ( entry.getKey( ).startsWith( strFieldSuffixEntryCode ) )
             {
-                listFields.add( field );
+                listFields.put( entry.getKey( ) , entry.getValue( ) );
             }
         }
         return listFields;

@@ -33,7 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart;
 
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 
 /**
  * Global interface for all form column query part
@@ -54,4 +56,13 @@ public interface IFormColumnQueryPart
      *            The FormColumn to set to the FormColumnQueryPart
      */
     void setFormColumn( IFormColumn formColumn );
+    
+    /**
+     * Get the content of the column cell from Lucene doc
+     * 
+     * @param formResponseSearchItem
+     *            the formResponseSearchItem
+     * @return the FormColumnCell
+     */
+    FormColumnCell getFormColumnCell( FormResponseSearchItem formResponseSearchItem );
 }

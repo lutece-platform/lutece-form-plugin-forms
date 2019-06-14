@@ -36,27 +36,25 @@ package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexableField;
 
-public class FormColumnFormsLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
+public class FormColumnFormResponseDateCreationQueryPart extends AbstractFormColumnQueryPart
 {
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, Object> getMapFormColumnValues( Document document )
+    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
     {
         Map<String, Object> mapFormColumnValues = new HashMap<>( );
 
-        IndexableField fieldFormTitle = document.getField( FormResponseSearchItem.FIELD_FORM_TITLE );
+        String creationDate = formResponseSearchItem.getDateCreation( );
 
-        if ( fieldFormTitle != null )
+        if ( creationDate != null )
         {
-            mapFormColumnValues.put( fieldFormTitle.name( ), fieldFormTitle.stringValue( ) );
+            mapFormColumnValues.put( FormResponseSearchItem.FIELD_DATE_CREATION, creationDate );
         }
 
         return mapFormColumnValues;
-    }
 
+    }
 }

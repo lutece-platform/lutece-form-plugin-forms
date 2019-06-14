@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.business.form.search;
 
 import fr.paris.lutece.portal.service.search.SearchItem;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,12 +60,14 @@ public class FormResponseSearchItem extends SearchItem
     public static final String FIELD_RESPONSE_FIELD_SEPARATOR_ = "_field_";
     public static final String FIELD_RESPONSE_FIELD_ITER_ = "_iter_";
     public static final String FIELD_RESPONSE_ID_ = "_response_id_";
+    
+    private static final int INTEGER_MINUS_ONE = -1;
 
     private int _nIdFormResponse;
     private int _nIdForm;
     private String _strFormTitle;
-    private Timestamp _tDateCreation;
-    private Timestamp _tDateUpdate;
+    private String _strDateCreation;
+    private String _strDateUpdate;
     private String _strGuid;
     private int _nIdAssigneeUser;
     private int _nIdAssigneeUnit;
@@ -79,15 +82,16 @@ public class FormResponseSearchItem extends SearchItem
     public FormResponseSearchItem( Document document )
     {
         super( document );
-        _nIdFormResponse = Integer.parseInt( document.get( FIELD_ID_FORM_RESPONSE ) );
-        _nIdForm = Integer.parseInt( document.get( FIELD_ID_FORM ) );
+        
+        _nIdFormResponse = manageNullValue( document.get( FIELD_ID_FORM_RESPONSE ) );
+        _nIdForm = manageNullValue( document.get( FIELD_ID_FORM ) );
         _strFormTitle = document.get( FIELD_FORM_TITLE );
-        _tDateCreation = Timestamp.valueOf( document.get( FIELD_DATE_CREATION ) );
-        _tDateUpdate = Timestamp.valueOf( document.get( FIELD_DATE_UPDATE ) );
+        _strDateCreation = document.get( FIELD_DATE_CREATION );
+        _strDateUpdate = document.get( FIELD_DATE_UPDATE );
         _strGuid = document.get( FIELD_GUID );
-        _nIdAssigneeUser = Integer.parseInt( document.get( FIELD_ID_ASSIGNEE_USER ) );
-        _nIdAssigneeUnit = Integer.parseInt( document.get( FIELD_ID_ASSIGNEE_UNIT ) );
-        _nIdWorkflowState = Integer.parseInt( document.get( FIELD_ID_WORKFLOW_STATE ) );
+        _nIdAssigneeUser = manageNullValue( document.get( FIELD_ID_ASSIGNEE_USER ) );
+        _nIdAssigneeUnit = manageNullValue( document.get( FIELD_ID_ASSIGNEE_UNIT ) );
+        _nIdWorkflowState = manageNullValue( document.get( FIELD_ID_WORKFLOW_STATE ) );
         _strWorkflowStateTitle = document.get( FIELD_TITLE_WORKFLOW_STATE );
         populateMapEntryCodeFieldsValue( document );
     }
@@ -150,18 +154,18 @@ public class FormResponseSearchItem extends SearchItem
      * Get the creation date
      * @return the creation date of the form 
      */
-    public Timestamp getDateCreation( )
+    public String getDateCreation( )
     {
-        return _tDateCreation;
+        return _strDateCreation;
     }
 
     /**
      * Set the creation date
-     * @param tDateCreation 
+     * @param strDateCreation 
      */
-    public void setDateCreation( Timestamp tDateCreation )
+    public void setDateCreation( String strDateCreation )
     {
-        _tDateCreation = tDateCreation;
+        _strDateCreation = strDateCreation;
     }
 
     
@@ -169,18 +173,18 @@ public class FormResponseSearchItem extends SearchItem
      * Get the date update
      * @return the date update
      */
-    public Timestamp getDateUpdate( )
+    public String getDateUpdate( )
     {
-        return _tDateUpdate;
+        return _strDateUpdate;
     }
 
     /**
      * Set the date update
-     * @param tDateUpdate the date update
+     * @param strDateUpdate the date update
      */
-    public void setDateUpdate( Timestamp tDateUpdate )
+    public void setDateUpdate( String strDateUpdate )
     {
-        _tDateUpdate = tDateUpdate;
+        _strDateUpdate = strDateUpdate;
     }
 
     /**
@@ -307,5 +311,22 @@ public class FormResponseSearchItem extends SearchItem
             }
         }
         _mapEntryCodeFieldsValue = mapEntryCodeFieldsValues;
+    }
+    
+    private Integer manageNullValue( String strDocumentValue )
+    {
+        Integer nReturn = INTEGER_MINUS_ONE;
+        if ( strDocumentValue != null )
+        {
+            try
+            {
+                nReturn = Integer.parseInt( strDocumentValue );
+            }
+            catch ( NumberFormatException e )
+            {
+                AppLogService.error( "Unable to convert " + strDocumentValue + " to integer." );
+            }
+        }
+        return nReturn;
     }
 }

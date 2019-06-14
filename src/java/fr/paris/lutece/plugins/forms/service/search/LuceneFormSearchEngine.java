@@ -33,6 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
+import fr.paris.lutece.plugins.forms.business.form.LuceneQueryBuilder;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.portal.service.search.IndexationService;
 import fr.paris.lutece.portal.service.search.LuceneSearchEngine;
@@ -52,7 +56,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 
-public class LuceneFormSearchEngine implements IFormSearchLuceneEngine
+public class LuceneFormSearchEngine implements IFormSearchEngine
 {
 
     @Inject
@@ -138,10 +142,17 @@ public class LuceneFormSearchEngine implements IFormSearchLuceneEngine
         return getSearchResults( config );
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
-    public List<Document> getSearchResults( Query query )
+    public List<FormResponseSearchItem>  getSearchResults(  List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart )
     {
-        List<Document> listResults = new ArrayList<>( );
+        
+        // Build the query to execute
+        Query query = LuceneQueryBuilder.buildQuery( listFormPanelInitializerQueryPart, listFormColumnQueryPart, listFormFilterQueryPart );
+
+        List<FormResponseSearchItem> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
         try
@@ -155,7 +166,7 @@ public class LuceneFormSearchEngine implements IFormSearchLuceneEngine
             for ( int i = 0; i < hits.length; i++ )
             {
                 Document document = searcher.doc( hits [i].doc );
-                listResults.add( document );
+                listResults.add( new FormResponseSearchItem( document ) );
             }
         }
         catch( IOException e )

@@ -33,53 +33,30 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
 
-/**
- * Implementation of the IFormColumnQueryPart interface for a form column
- */
-public class FormColumnEntryGeolocationLuceneQueryPart extends AbstractFormColumnLuceneQueryPart
+public class FormColumnFormsQueryPart extends AbstractFormColumnQueryPart
 {
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, Object> getMapFormColumnValues( Document document )
+    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
     {
         Map<String, Object> mapFormColumnValues = new HashMap<>( );
 
-        for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
+        String strFormTitle = formResponseSearchItem.getFormTitle( );
+
+        if ( strFormTitle != null )
         {
-            List<IndexableField> listIndexableField = getEntryCodeFields( strFormColumnEntryCode, document );
-            for ( IndexableField field : listIndexableField )
-            {
-                mapFormColumnValues.put( field.name( ), field.stringValue( ) );
-            }
+            mapFormColumnValues.put( FormResponseSearchItem.FIELD_FORM_TITLE, strFormTitle );
         }
 
         return mapFormColumnValues;
-
     }
 
-    /**
-     * Get the list of entry codes from the form column
-     * 
-     * @param column
-     * @return the list of entry codes of the given column
-     */
-    private List<String> getListEntryCode( IFormColumn column )
-    {
-        if ( column instanceof FormColumnEntryGeolocation )
-        {
-            FormColumnEntryGeolocation formColumnEntry = (FormColumnEntryGeolocation) column;
-            return formColumnEntry.getListEntryCode( );
-        }
-        return null;
-    }
 }

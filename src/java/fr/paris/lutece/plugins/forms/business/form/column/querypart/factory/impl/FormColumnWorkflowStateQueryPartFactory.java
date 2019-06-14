@@ -37,7 +37,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnWorkflowStateLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnWorkflowStateQueryPart;
 
 /**
  * Implementation of the IFormColumnQueryPartFactory interface for a WorkflowState column
@@ -55,7 +55,7 @@ public class FormColumnWorkflowStateQueryPartFactory implements IFormColumnQuery
         if ( formColumn instanceof FormColumnWorkflowState )
         {
 
-            formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateLuceneQueryPart( );
+            formColumnWorkflowStateQueryPart = new FormColumnWorkflowStateQueryPart( );
         }
 
         return formColumnWorkflowStateQueryPart;

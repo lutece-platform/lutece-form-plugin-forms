@@ -35,11 +35,11 @@ package fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration;
-import fr.paris.lutece.plugins.forms.service.search.IFormSearchLuceneEngine;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.IFormFilterDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplaySearchedText;
 import javax.inject.Inject;
+import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
 
 /**
  * Implementation of the IFormFilterDisplayFactory for a Factory on a Workflow state filter
@@ -47,7 +47,7 @@ import javax.inject.Inject;
 public class FormFilterDisplaySearchedTextFactory implements IFormFilterDisplayFactory
 {
     @Inject
-    private IFormSearchLuceneEngine _formSearchEngine;
+    private IFormSearchEngine _formSearchEngine;
 
     /**
      * {@inheritDoc}

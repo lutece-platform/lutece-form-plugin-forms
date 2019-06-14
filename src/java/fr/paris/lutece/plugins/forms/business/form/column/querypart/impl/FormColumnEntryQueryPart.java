@@ -33,18 +33,51 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
-import org.apache.lucene.document.Document;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public interface IFormColumnLuceneQueryPart extends IFormColumnQueryPart
+/**
+ * Implementation of the IFormColumnQueryPart interface for a form column
+ */
+public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
 {
     /**
-     * Get the content of the column cell from Lucene doc
-     * 
-     * @param doc
-     *            the Document
-     * @return the FormColumnCell
+     * {@inheritDoc}
      */
-    FormColumnCell getFormColumnCell( Document doc );
+    @Override
+    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
+    {
+        Map<String, Object> mapFormColumnValues = new HashMap<>( );
+
+        for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
+        {
+            Map<String,String> listFields = getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem );
+            for ( Map.Entry<String,String> field : listFields.entrySet( ) )
+            {
+                mapFormColumnValues.put( field.getKey( ), field.getValue( ) );
+            }
+        }
+
+        return mapFormColumnValues;
+    }
+
+    /**
+     * Get the list of entry codes from the form column
+     * 
+     * @param column
+     * @return the list of entry codes of the given column
+     */
+    private List<String> getListEntryCode( IFormColumn column )
+    {
+        if ( column instanceof FormColumnEntry )
+        {
+            FormColumnEntry formColumnEntry = (FormColumnEntry) column;
+            return formColumnEntry.getListEntryCode( );
+        }
+        return null;
+    }
 }
