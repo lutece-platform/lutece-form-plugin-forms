@@ -124,6 +124,13 @@ public final class StepService
                     }
                 }
             }
+            for ( Step step : listSteps )
+            {
+                if ( !listIdStepOrderWithTransitions.contains( step.getId( ) ) )
+                {
+                    listStepOrdered.add( step );
+                }
+            }
         }
        
         return listStepOrdered;
