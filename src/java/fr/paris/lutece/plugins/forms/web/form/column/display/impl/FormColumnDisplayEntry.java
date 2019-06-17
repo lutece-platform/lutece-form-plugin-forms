@@ -37,13 +37,12 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of the IFormColumnDisplay for the Entry column
@@ -57,7 +56,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     // Marks
     private static final String MARK_ENTRY_VALUE_COLUMN_TITLE = "column_title";
     private static final String MARK_ENTRY_VALUE_COLUMN_POSITION = "entry_column_position";
-    private static final String MARK_ENTRY_VALUE = "entry_value";
+    private static final String MARK_ENTRY_VALUES = "entry_values";
     private static final String MARK_COLUMN_SORT_ATTRIBUTE = "column_sort_attribute";
     private static final String MARK_SORT_URL = "sort_url";
 
@@ -85,39 +84,26 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     @Override
     public String buildFormColumnCellTemplate( FormColumnCell formColumnCell, Locale locale )
     {
-        String strEntryValue = StringUtils.EMPTY;
-        if ( formColumnCell != null )
+        List<String> listEntryValues = new ArrayList<>();
+        if ( formColumnCell != null && formColumnCell.getFormColumnCellValues( ).size() > 0 )
         {
-            String strEntryValueName = String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getFormColumnPosition( ) );
-            Object objEntryValue = formColumnCell.getFormColumnCellValueByName( strEntryValueName );
-            if ( objEntryValue != null )
-            {
-                strEntryValue = String.valueOf( objEntryValue );
-            }
+            formColumnCell.getFormColumnCellValues( ).keySet( ).forEach(
+                    strEntryKey -> {
+                        Object objEntryValue = formColumnCell.getFormColumnCellValueByName( strEntryKey );
+                        if ( objEntryValue != null )
+                        {
+                            listEntryValues.add( String.valueOf( objEntryValue ) );
+                        }
+                    }
+            );
+            
         }
 
         Map<String, Object> model = new LinkedHashMap<>( );
-        model.put( MARK_ENTRY_VALUE, strEntryValue );
+        model.put( MARK_ENTRY_VALUES, listEntryValues );
 
         String strFormColumnEntryTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
 
         return strFormColumnEntryTemplate;
-    }
-
-    /**
-     * Return the position of the FormColumn or {@linkplain NumberUtils.INTEGER_MINUS_ONE} if doesn't exist
-     * 
-     * @return the position of the FormColumn
-     */
-    private int getFormColumnPosition( )
-    {
-        int nFormColumnPosition = NumberUtils.INTEGER_MINUS_ONE;
-        IFormColumn formColumn = getFormColumn( );
-        if ( formColumn != null )
-        {
-            nFormColumnPosition = formColumn.getFormColumnPosition( );
-        }
-
-        return nFormColumnPosition;
     }
 }

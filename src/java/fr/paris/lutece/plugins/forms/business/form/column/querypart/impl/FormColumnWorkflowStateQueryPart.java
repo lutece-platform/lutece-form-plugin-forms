@@ -33,67 +33,30 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
-import fr.paris.lutece.util.sql.DAOUtil;
+import org.apache.lucene.index.IndexableField;
 
 /**
- * Implementation of the IFormColumnQueryPart interface for a workflow state column
+ * Implementation of the IFormColumnQueryPartFactory interface for a WorkflowState column
  */
 public class FormColumnWorkflowStateQueryPart extends AbstractFormColumnQueryPart
 {
-    // Constants
-    private static final String WORKFLOW_STATE_SELECT_QUERY_PART = "ws_workflow_state.name AS workflow_state_name";
-    private static final String WORKFLOW_STATE_FORM_QUERY_PART = StringUtils.EMPTY;
-    private static final String WORKFLOW_STATE_JOIN_WORKFLOW_RESOURCE_QUERY_PART = "LEFT JOIN workflow_resource_workflow AS wf_resource_workflow ON wf_resource_workflow.id_resource = response.id_response";
-    private static final String WORKFLOW_STATE_JOIN_WORKFLOW_STATE_QUERY_PART = "LEFT JOIN workflow_state AS ws_workflow_state ON ws_workflow_state.id_state = wf_resource_workflow.id_state";
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnSelectQuery( )
+    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
     {
-        return WORKFLOW_STATE_SELECT_QUERY_PART;
-    }
+        Map<String, Object> mapFormColumnValues = new HashMap<>( );
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormColumnFromQuery( )
-    {
-        return WORKFLOW_STATE_FORM_QUERY_PART;
-    }
+        String strWorkflowStateTitle = formResponseSearchItem.getWorkflowStateTitle( );
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        List<String> listFormColumnJoinQueries = new ArrayList<>( );
-        listFormColumnJoinQueries.add( WORKFLOW_STATE_JOIN_WORKFLOW_RESOURCE_QUERY_PART );
-        listFormColumnJoinQueries.add( WORKFLOW_STATE_JOIN_WORKFLOW_STATE_QUERY_PART );
-
-        return listFormColumnJoinQueries;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Map<String, Object> getMapFormColumnValues( DAOUtil daoUtil )
-    {
-        Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
-        String strWorkflowStateName = daoUtil.getString( FormMultiviewWorkflowStateNameConstants.COLUMN_WORKFLOW_STATE_NAME );
-        mapFormColumnValues.put( FormMultiviewWorkflowStateNameConstants.COLUMN_WORKFLOW_STATE_NAME, strWorkflowStateName );
+        if ( strWorkflowStateTitle != null )
+        {
+            mapFormColumnValues.put( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, strWorkflowStateTitle );
+        }
 
         return mapFormColumnValues;
     }

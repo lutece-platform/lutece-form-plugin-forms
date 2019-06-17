@@ -58,9 +58,9 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class UniqueValidator extends AbstractValidator
 {
-	
-	private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/unique_template.html";
-	
+
+    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/unique_template.html";
+
     /**
      * Constructor of the PatternValidator
      * 
@@ -73,9 +73,9 @@ public class UniqueValidator extends AbstractValidator
      */
     public UniqueValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
-        super(strValidatorName, strValidatorDisplayName, listAvailableEntryType);
+        super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
     }
-    
+
     @Override
     public String getDisplayHtml( Control control )
     {
@@ -92,17 +92,17 @@ public class UniqueValidator extends AbstractValidator
         if ( formQuestionResponse != null && !formQuestionResponse.getEntryResponse( ).isEmpty( ) )
         {
             Response response = formQuestionResponse.getEntryResponse( ).get( 0 );
-            
+
             boolean multiForm = Boolean.valueOf( control.getValue( ) );
             ResponseFilter filter = new ResponseFilter( );
-            
+
             if ( multiForm )
             {
-            	filter.setCodeEntry( response.getEntry( ).getCode( ) );
+                filter.setCodeEntry( response.getEntry( ).getCode( ) );
             }
             else
             {
-            	filter.setIdEntry( response.getEntry( ).getIdEntry( ) );
+                filter.setIdEntry( response.getEntry( ).getIdEntry( ) );
             }
             Collection<Response> listSubmittedResponses = ResponseHome.getResponseList( filter );
 

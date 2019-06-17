@@ -33,11 +33,16 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
+import fr.paris.lutece.plugins.forms.business.form.LuceneQueryBuilder;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.portal.service.search.IndexationService;
 import fr.paris.lutece.portal.service.search.LuceneSearchEngine;
 import fr.paris.lutece.portal.service.search.SearchItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -135,6 +140,41 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         FormSearchConfig config = new FormSearchConfig( );
         config.setSearchedText( strSearchText );
         return getSearchResults( config );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FormResponseSearchItem>  getSearchResults(  List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart )
+    {
+        
+        // Build the query to execute
+        Query query = LuceneQueryBuilder.buildQuery( listFormPanelInitializerQueryPart, listFormFilterQueryPart );
+
+        List<FormResponseSearchItem> listResults = new ArrayList<>( );
+        IndexSearcher searcher = null;
+
+        try
+        {
+            searcher = _luceneFormSearchFactory.getIndexSearcher( );
+
+            // Get results documents
+            TopDocs topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
+            ScoreDoc [ ] hits = topDocs.scoreDocs;
+
+            for ( int i = 0; i < hits.length; i++ )
+            {
+                Document document = searcher.doc( hits [i].doc );
+                listResults.add( new FormResponseSearchItem( document ) );
+            }
+        }
+        catch( IOException e )
+        {
+            AppLogService.error( e.getMessage( ), e );
+        }
+
+        return listResults;
     }
 
 }

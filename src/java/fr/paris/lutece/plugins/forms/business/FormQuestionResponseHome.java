@@ -239,17 +239,18 @@ public final class FormQuestionResponseHome
 
         return listFormQuestionResponse;
     }
-    
+
     /**
      * Retrieves the form question responses associated to the given Entry Response.
+     * 
      * @param response
      * @param plugin
      * @return
      */
     public static FormQuestionResponse selectFormQuestionResponseByEntryResponse( Response response )
     {
-    	FormQuestionResponse res = _dao.selectFormQuestionResponseByEntryResponse( response, _plugin );
-    	completeWithQuestion( res );
-    	return res;
+        FormQuestionResponse res = _dao.selectFormQuestionResponseByEntryResponse( response, _plugin );
+        completeWithQuestion( res );
+        return res;
     }
 }

@@ -31,29 +31,20 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service.search;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
 
-import java.util.List;
-import javax.inject.Inject;
+import org.apache.lucene.search.Query;
 
 /**
- * Form search service
+ * Global QueryPart for all form filter type
  */
-public class FormSearchService implements IFormSearchService
+public interface IFormFilterLuceneQueryPart extends IFormFilterQueryPart
 {
-    public static final String BEAN_NAME = "forms.formSearchService";
-
-    @Inject
-    private IFormSearchEngine _formSearchEngine;
-
     /**
-     * {@inheritDoc }
+     * Return the built query of the FormFilter
+     * 
+     * @return the built query of the form filter
      */
-    @Override
-    public List<Integer> getSearchResults( FormSearchConfig formSearchConfig )
-    {
-        // Get the list of form response from the engine
-        return _formSearchEngine.getSearchResults( formSearchConfig );
-    }
+    Query getFormFilterQuery( );
 
 }

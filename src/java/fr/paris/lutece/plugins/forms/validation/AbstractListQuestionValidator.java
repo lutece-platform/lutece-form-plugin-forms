@@ -57,11 +57,10 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public abstract class AbstractListQuestionValidator extends AbstractValidator
 {
-	protected List<String> _listAvailableFieldControl;
+    protected List<String> _listAvailableFieldControl;
 
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_question_template.html";
     private static final String TEMPLATE_JAVASCRIPT = "/skin/plugins/forms/validators/list_question_javascript.html";
-
 
     /**
      * Constructor of the PatternValidator
@@ -73,11 +72,12 @@ public abstract class AbstractListQuestionValidator extends AbstractValidator
      * @param listAvailableEntryType
      *            The list of available entrytype
      */
-    public AbstractListQuestionValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType, List<String> listAvailableFieldControl )
+    public AbstractListQuestionValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType,
+            List<String> listAvailableFieldControl )
     {
-    	super( strValidatorName,  strValidatorDisplayName, listAvailableEntryType);
-    	_listAvailableFieldControl= listAvailableFieldControl;
-    
+        super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
+        _listAvailableFieldControl = listAvailableFieldControl;
+
     }
 
     @Override
@@ -85,23 +85,22 @@ public abstract class AbstractListQuestionValidator extends AbstractValidator
     {
         Map<String, Object> model = new HashMap<String, Object>( );
 
-       
-        
         ReferenceList referenceListQuestion = new ReferenceList( );
-        referenceListQuestion.addItem(-1, StringUtils.EMPTY);
+        referenceListQuestion.addItem( -1, StringUtils.EMPTY );
         ReferenceList refListMapping = new ReferenceList( );
-        
-        if(control.getListIdQuestion() != null){
-            
-        	refListMapping = ControlHome.getCtrlMappingListByIdControl( control.getId( ));
-	        
-            for ( int nIdQuestion : control.getListIdQuestion() )
-	        {
-	        	 Question question = QuestionHome.findByPrimaryKey( nIdQuestion );
-	
-	            referenceListQuestion.addItem( question.getId( ), question.getTitle( ) );
-	        }
-        
+
+        if ( control.getListIdQuestion( ) != null )
+        {
+
+            refListMapping = ControlHome.getCtrlMappingListByIdControl( control.getId( ) );
+
+            for ( int nIdQuestion : control.getListIdQuestion( ) )
+            {
+                Question question = QuestionHome.findByPrimaryKey( nIdQuestion );
+
+                referenceListQuestion.addItem( question.getId( ), question.getTitle( ) );
+            }
+
         }
         model.put( FormsConstants.PARAMETRE_VALIDATOR_LISTQUESTION_NAME, FormsConstants.VALUE_VALIDATOR_LISTEQUESTION_NAME );
         model.put( FormsConstants.PARAMETER_REF_LIST_MAPPING, refListMapping );
@@ -127,8 +126,9 @@ public abstract class AbstractListQuestionValidator extends AbstractValidator
     {
         return control.getValue( );
     }
-    
-    public List<String> getListAvailableFieldControl(){
-    	return _listAvailableFieldControl;
+
+    public List<String> getListAvailableFieldControl( )
+    {
+        return _listAvailableFieldControl;
     }
 }

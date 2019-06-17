@@ -241,9 +241,9 @@ public class StepDisplayTree
         }
         if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
         {
-        	strTemplate = TEMPLATE_STEP_SELECT_BACKOFFICE;
+            strTemplate = TEMPLATE_STEP_SELECT_BACKOFFICE;
         }
-        if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE  )
+        if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
         {
             strTemplate = TEMPLATE_STEP_EDITION_NO_BUTTON_FRONTOFFICE;
         }

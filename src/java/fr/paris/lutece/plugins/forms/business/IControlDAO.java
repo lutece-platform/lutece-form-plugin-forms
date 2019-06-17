@@ -54,6 +54,7 @@ public interface IControlDAO
      *            the Plugin
      */
     void insert( Control control, Plugin plugin );
+
     /**
      * Insert a new record in the table.
      * 
@@ -64,7 +65,8 @@ public interface IControlDAO
      * @param plugin
      *            the Plugin
      */
-    void insert( int nIdControl, int nIdQuestion,  Plugin plugin );
+    void insert( int nIdControl, int nIdQuestion, Plugin plugin );
+
     /**
      * Insert a new record in the table.
      * 
@@ -78,6 +80,7 @@ public interface IControlDAO
      *            the Plugin
      */
     void insert( int nIdControl, int nIdQuestion, String strValue, Plugin plugin );
+
     /**
      * Update the record in the table
      * 
@@ -97,6 +100,7 @@ public interface IControlDAO
      *            the Plugin
      */
     void delete( int nKey, Plugin plugin );
+
     /**
      * Delete a record from the table
      * 
@@ -106,6 +110,7 @@ public interface IControlDAO
      *            the Plugin
      */
     void deleteControlQuestion( int nControl, Plugin plugin );
+
     /**
      * Delete a record from the table
      * 
@@ -141,6 +146,7 @@ public interface IControlDAO
      * @return The instance of the control
      */
     Control load( int nKey, Plugin plugin );
+
     /**
      * Load the data from the table
      * 
@@ -215,6 +221,7 @@ public interface IControlDAO
      * @return The control
      */
     List<Control> selectControlByQuestion( int nIdQuestion, Plugin plugin );
+
     /**
      * Load the data of all the control mapping and returns them as a referenceList
      * 

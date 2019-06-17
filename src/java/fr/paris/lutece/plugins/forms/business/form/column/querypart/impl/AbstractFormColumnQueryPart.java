@@ -33,49 +33,28 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
-import fr.paris.lutece.util.sql.DAOUtil;
-
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 /**
  * Abstract class for FormColumnQueryPart
  */
 public abstract class AbstractFormColumnQueryPart implements IFormColumnQueryPart
 {
+    /**
+     * Get a map of values fetched from Lucene document
+     * 
+     * @param formResponseSearchItem
+     * @return a Map of values feteched form Lucene document
+     */
+    protected abstract Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem );
+
     // Variables
     private IFormColumn _formColumn;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract String getFormColumnSelectQuery( );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract String getFormColumnFromQuery( );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract List<String> getFormColumnJoinQueries( );
-
-    /**
-     * Build the map of FormColumnValues for the form column of the query part
-     * 
-     * @param daoUtil
-     *            The daoUtil to use to retrieve the data of the form column
-     * @return the map of FormColumnValues for the form column of the query part
-     */
-    protected abstract Map<String, Object> getMapFormColumnValues( DAOUtil daoUtil );
 
     /**
      * {@inheritDoc}
@@ -99,19 +78,41 @@ public abstract class AbstractFormColumnQueryPart implements IFormColumnQueryPar
      * {@inheritDoc}
      */
     @Override
-    public FormColumnCell getFormColumnCell( DAOUtil daoUtil )
+    public FormColumnCell getFormColumnCell( FormResponseSearchItem formResponseSearchItem )
     {
         Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
 
         IFormColumn formColumn = getFormColumn( );
         if ( formColumn != null )
         {
-            mapFormColumnValues = getMapFormColumnValues( daoUtil );
+            mapFormColumnValues = getMapFormColumnValues( formResponseSearchItem );
         }
 
         FormColumnCell formColumnCell = new FormColumnCell( );
         formColumnCell.setFormColumnCellValues( mapFormColumnValues );
 
         return formColumnCell;
+    }
+
+    /**
+     * Get the list of Lucene indexable fields based on a document and an entry code prefix.
+     * 
+     * @param strEntryCode
+     * @param document
+     * @return The list of Lucene indexable fields based on a document and an entry code prefix
+     */
+    protected Map<String,String> getEntryCodeFields( String strEntryCode, FormResponseSearchItem formResponseSearchItem )
+    {
+        Map<String,String> listFields = new HashMap<>( );
+        for ( Map.Entry<String,String> entry : formResponseSearchItem.getMapEntryCodeFieldsValue( ).entrySet( ) )
+        {
+            String strFieldSuffixEntryCode = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strEntryCode;
+
+            if ( entry.getKey( ).startsWith( strFieldSuffixEntryCode ) )
+            {
+                listFields.put( entry.getKey( ) , entry.getValue( ) );
+            }
+        }
+        return listFields;
     }
 }

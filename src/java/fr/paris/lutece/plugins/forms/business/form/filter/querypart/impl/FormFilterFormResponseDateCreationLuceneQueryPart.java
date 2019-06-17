@@ -34,36 +34,54 @@
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collection;
+import java.util.Date;
+import org.apache.lucene.document.LongPoint;
+import org.apache.lucene.search.Query;
 
 /**
- * Implementation of the IFormFilterQueryPart for a FormFilterWorkflowState filter
+ * Implementation of the IFormFilterQueryPart for an Entry filter
  */
-public class FormFilterFormResponseIdQueryPart extends AbstractFormFilterQueryPart
+public class FormFilterFormResponseDateCreationLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    // Constants
-    private static final String LIST_RESPONSE_ID_QUERY_PATTERN_BEGIN = "response.id_response IN ( ";
-    private static final String LIST_RESPONSE_ID_QUERY_PATTERN_END = ")";
-    private static final String CONSTANT_COMMA = ",";
-    private static final String PARAMETER_QUESTION_MARK = "?";
-
     /**
      * {@inheritDoc}
      */
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        StringBuilder strBuilderFilterQuery = new StringBuilder( );
-        strBuilderFilterQuery.append( LIST_RESPONSE_ID_QUERY_PATTERN_BEGIN );
-        for ( int i = 0; i < formParameters.getFormParametersMap( ).size( ); i++ )
+        if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
-            strBuilderFilterQuery.append( PARAMETER_QUESTION_MARK );
-            if ( i != formParameters.getFormParametersMap( ).size( ) - 1 )
+            Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values( );
+
+            String strDateFrom = String.valueOf( setFormParameters.toArray( ) [0] );
+            String strDateTo = String.valueOf( setFormParameters.toArray( ) [1] );
+
+            SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd" );
+            try
             {
-                strBuilderFilterQuery.append( CONSTANT_COMMA );
+                Date dateFrom = (Date) formatter.parse( strDateFrom );
+                Date dateTo = (Date) formatter.parse( strDateTo );
+                long lFrom = dateFrom.getTime( );
+                long lTo = dateTo.getTime( );
+                if ( strDateFrom != null && strDateTo != null )
+                {
+                    Query queryCreationDate = LongPoint.newRangeQuery( FormResponseSearchItem.FIELD_DATE_CREATION, lFrom, lTo );
+                    setFormFilterQuery( queryCreationDate );
+                }
+            }
+            catch( NumberFormatException | ParseException e )
+            {
+                AppLogService.error( "Unable to convert given dates to longs", e );
             }
         }
-        strBuilderFilterQuery.append( LIST_RESPONSE_ID_QUERY_PATTERN_END );
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( strBuilderFilterQuery.toString( ), formParameters, false ) );
+        else
+        {
+            setFormFilterQuery( null );
+        }
     }
 }

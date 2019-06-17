@@ -33,11 +33,37 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import java.util.List;
 
 public interface IFormSearchEngine
 {
+    /**
+     * Get the id of the form responses based on a FormSearchConfig obj
+     * 
+     * @param formSearchConfig
+     * @return the list of form responses id based on given FormSearchConfig obj
+     */
     List<Integer> getSearchResults( FormSearchConfig formSearchConfig );
 
+    /**
+     * Get the id of the form responses based on a text to search
+     * 
+     * @param strSearchText
+     *            the searched text
+     * @return the list of form responses id based on text to search
+     */
     List<Integer> getSearchResults( String strSearchText );
+
+    /**
+     * Get the FormResponseSearchItem list based on given FormPanel, FormColumnList and FormFilterList
+     * @param listFormPanelInitializerQueryPart
+     * @param listFormColumnQueryPart
+     * @param listFormFilterQueryPart
+     * @return the list of FormResponseSearchItem
+     */
+    List<FormResponseSearchItem> getSearchResults( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart );
 }

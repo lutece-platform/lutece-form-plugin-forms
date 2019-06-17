@@ -50,25 +50,4 @@ public interface IFormPanelInitializerQueryPart
      *            The FormParameters to use for building the query
      */
     void buildFormPanelInitializerQuery( FormParameters formParameters );
-
-    /**
-     * Return the select query part of the FormPanelInitializer
-     * 
-     * @return the select query part of the FormPanelInitializer
-     */
-    String getFormPanelInitializerSelectQuery( );
-
-    /**
-     * Return the from query part of the FormPanelInitializer
-     * 
-     * @return the from query part of the FormPanelInitializer
-     */
-    String getFormPanelInitializerFromQuery( );
-
-    /**
-     * Return the list of join queries for a FormPanelInitializer
-     * 
-     * @return the list of join queries for a FormPanelInitializer
-     */
-    List<String> getFormPanelInitializerJoinQueries( );
 }

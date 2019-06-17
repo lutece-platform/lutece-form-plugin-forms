@@ -84,7 +84,6 @@ public final class FormsConstants
     public static final String MARK_MULTIVIEW_CONFIG_ACTION = "multiviewConfigAction";
     public static final String VALUE_VALIDATOR_LISTEQUESTION_NAME = "forms_listQuestionValidator";
 
-
     // Parameters
     public static final String PARAMETER_PAGE = "page";
     public static final String PARAMETER_ID_FORM = "id_form";
@@ -164,7 +163,6 @@ public final class FormsConstants
     public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
     public static final int ORDER_NOT_SET = NumberUtils.INTEGER_MINUS_ONE;
     public static final int FILE_TYPE_RIB = 1;
-    
 
     // Markers
     public static final String MARK_AVAILABLE_STEPS = "availableSteps";
@@ -186,7 +184,6 @@ public final class FormsConstants
     public static final String VAL_REMOVE_QUESTION = "removeQuestion";
     public static final String VALIDATE_STEP = "validateStep";
     public static final String VALIDATE_VALIDATOR = "validateValidator";
-
 
     // Other
     public static final String FORM_DEFAULT_END_MESSAGE = "forms.message.form.submitted";

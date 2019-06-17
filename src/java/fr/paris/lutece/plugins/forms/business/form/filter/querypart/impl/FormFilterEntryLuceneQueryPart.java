@@ -31,46 +31,12 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.mock;
-
-import java.util.Arrays;
-import java.util.List;
-
-import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl.FormPanelFormsInitializerQueryPart;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 /**
- * Mock of a FormPanelFormsInitializerQueryPart
+ * Implementation of the IFormFilterQueryPart for an Entry filter
  */
-public class FormPanelFormsInitializerQueryPartMock extends FormPanelFormsInitializerQueryPart
+public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    private static final String FORM_PANEL_FORMS_INITIALIZER_SELECT_QUERY = "id_response";
-    private static final String FORM_PANEL_FORMS_INITIALIZER_FROM_QUERY = "forms_form AS form";
-    private static final String FORM_PANEL_FORMS_INITIALIZER_JOIN_QUERY = "INNER JOIN forms_response AS response ON response.id_form = form.id_form";
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormPanelInitializerSelectQuery( )
-    {
-        return FORM_PANEL_FORMS_INITIALIZER_SELECT_QUERY;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormPanelInitializerFromQuery( )
-    {
-        return FORM_PANEL_FORMS_INITIALIZER_FROM_QUERY;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormPanelInitializerJoinQueries( )
-    {
-        return Arrays.asList( FORM_PANEL_FORMS_INITIALIZER_JOIN_QUERY );
-    }
+    // Nothing to extends
 }

@@ -65,8 +65,8 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFileReading implements IResponseComparator
 {
-	private static final String JSP_DOWNLOAD_FILE = "jsp/admin/plugins/forms/DoDownloadFile.jsp";
-	private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_auto_file_reading.html";
+    private static final String JSP_DOWNLOAD_FILE = "jsp/admin/plugins/forms/DoDownloadFile.jsp";
+    private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_auto_file_reading.html";
@@ -157,7 +157,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
     {
         return CollectionUtils.isNotEmpty( listResponseNew );
     }
-    
+
     /**
      * Builds the {@link ReferenceList} of all available files type
      * 
@@ -165,78 +165,88 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
      */
     public ReferenceList getFileTypeRefList( )
     {
-    	ReferenceList refList = new ReferenceList( );
+        ReferenceList refList = new ReferenceList( );
 
         refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
 
-        for ( ITypeDocumentOcrProvider typeDocumentProvider : TypeDocumentProviderManager.getTypeDocumentProvidersList() )
+        for ( ITypeDocumentOcrProvider typeDocumentProvider : TypeDocumentProviderManager.getTypeDocumentProvidersList( ) )
         {
             refList.add( typeDocumentProvider.toRefItem( ) );
         }
 
         return refList;
     }
-    
+
     /**
      * Gets the type document provider.
      *
-     * @param strKey the str key
+     * @param strKey
+     *            the str key
      * @return the type document provider
      */
-    public ITypeDocumentOcrProvider getTypeDocumentProvider( String strKey ) {
-    	return TypeDocumentProviderManager.getTypeDocumentProvider(strKey);
+    public ITypeDocumentOcrProvider getTypeDocumentProvider( String strKey )
+    {
+        return TypeDocumentProviderManager.getTypeDocumentProvider( strKey );
     }
-    
+
     /**
      * Gets the list field.
      *
-     * @param strKey the str key
+     * @param strKey
+     *            the str key
      * @return the list field
      */
-    public ReferenceList getListField( String strKey ) {
-    	ReferenceList refListField = new ReferenceList( );
-    	if(TypeDocumentProviderManager.getTypeDocumentProvider(strKey) != null) {
-    		refListField.addAll(TypeDocumentProviderManager.getTypeDocumentProvider(strKey).getListField());
-    	}
-    	
-    	return refListField;
+    public ReferenceList getListField( String strKey )
+    {
+        ReferenceList refListField = new ReferenceList( );
+        if ( TypeDocumentProviderManager.getTypeDocumentProvider( strKey ) != null )
+        {
+            refListField.addAll( TypeDocumentProviderManager.getTypeDocumentProvider( strKey ).getListField( ) );
+        }
+
+        return refListField;
     }
-    
+
     /**
      * Gets the steps list by form.
      *
-     * @param nIdForm the n id form
+     * @param nIdForm
+     *            the n id form
      * @return the steps list by form
      */
-    public ReferenceList getQuestionsByStep( int nIdStep, int nIdQuestion, String strKey) {
-    	ReferenceList refList = new ReferenceList( );
-    	
-    	List<Integer> listAuthorizedEntryType = TypeDocumentProviderManager.getTypeDocumentProvider(strKey).getAuthorizedEntryType();
-        for ( Question question : QuestionHome.getQuestionsListByStep(nIdStep) )
+    public ReferenceList getQuestionsByStep( int nIdStep, int nIdQuestion, String strKey )
+    {
+        ReferenceList refList = new ReferenceList( );
+
+        List<Integer> listAuthorizedEntryType = TypeDocumentProviderManager.getTypeDocumentProvider( strKey ).getAuthorizedEntryType( );
+        for ( Question question : QuestionHome.getQuestionsListByStep( nIdStep ) )
         {
-        	Entry entry = EntryHome.findByPrimaryKey(question.getIdEntry());
-        	if(question.getId() != nIdQuestion && entry != null && listAuthorizedEntryType.contains(entry.getEntryType().getIdType())) {
-        		refList.addItem(question.getId(), question.getTitle());
-        	}
+            Entry entry = EntryHome.findByPrimaryKey( question.getIdEntry( ) );
+            if ( question.getId( ) != nIdQuestion && entry != null && listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) ) )
+            {
+                refList.addItem( question.getId( ), question.getTitle( ) );
+            }
         }
-        
+
         return refList;
     }
 
     /**
      * Gets the list mapping by step.
      *
-     * @param nIdStep the n id step
+     * @param nIdStep
+     *            the n id step
      * @return the list mapping by step
      */
-    public List<Mapping> getListMappingByStep( int nIdStep ) {
-    	List<Mapping> listMapping = new ArrayList<>();
+    public List<Mapping> getListMappingByStep( int nIdStep )
+    {
+        List<Mapping> listMapping = new ArrayList<>( );
 
-        for ( Mapping mapping : MappingHome.loadByStepId(nIdStep) )
+        for ( Mapping mapping : MappingHome.loadByStepId( nIdStep ) )
         {
-        	listMapping.add(mapping);
+            listMapping.add( mapping );
         }
-        
+
         return listMapping;
     }
 }

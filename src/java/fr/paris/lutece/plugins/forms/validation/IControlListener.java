@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 
-
 /**
  * Interface for listeners that should be notified when Controls are removed or when the date changed. <b>The listener must be a Spring bean.</b>
  * 
@@ -50,24 +49,24 @@ public interface IControlListener
      * Notify the listener that an Control has been removed
      * 
      * @param Control
-     *            The  Control
+     *            The Control
      */
     void notifyControlRemoval( Control control, HttpServletRequest request );
-    
+
     /**
      * Notify the listener that an Control has been creates
      * 
-      * @param Control
-     *            The  Controll
+     * @param Control
+     *            The Controll
      */
     void notifyControlCreated( Control control, HttpServletRequest request );
-    
+
     /**
      * Notify the listener that an Control has been update
      * 
-      * @param Control
-     *            The  Control
+     * @param Control
+     *            The Control
      */
     void notifyControlUpdated( Control control, HttpServletRequest request );
-    
+
 }

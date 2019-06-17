@@ -31,19 +31,22 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryBuilder;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterWorkflowStateQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import java.util.Collection;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 
 /**
- * Mock for FormFilterWorkflowStateQueryPart
+ * Implementation of the IFormFilterQueryPart for an Entry filter
  */
-public class FormFilterWorkflowStateQueryPartMock extends FormFilterWorkflowStateQueryPart
+public class FormFilterFormsLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    // Constants
-    private static final String WORKFLOW_STATE_QUERY_PATTERN = "ws_workflow_state.id_state = $id_workflow_state$";
+    private static final String INTEGER_MINUS_ONE = "-1";
 
     /**
      * {@inheritDoc}
@@ -51,6 +54,23 @@ public class FormFilterWorkflowStateQueryPartMock extends FormFilterWorkflowStat
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        setFormFilterQuery( FormFilterQueryBuilder.buildFormFilterQuery( WORKFLOW_STATE_QUERY_PATTERN, formParameters, true ) );
+        if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
+        {
+            Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values( );
+
+            if ( setFormParameters.size( ) == 1 )
+            {
+                String strIdForm = String.valueOf( setFormParameters.toArray( ) [0] );
+                if ( !strIdForm.equals( INTEGER_MINUS_ONE ) )
+                {
+                    Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM, Integer.parseInt( strIdForm ) );
+                    setFormFilterQuery( query );
+                }
+            }
+        }
+        else
+        {
+            setFormFilterQuery( null );
+        }
     }
 }

@@ -88,6 +88,7 @@ public interface IValidator
      * @return boolean that indicate the validation result
      */
     boolean validate( List<FormQuestionResponse> questionResponse, Control control );
+
     /**
      * Only the content of the function should be returned. The parameter names are in FormsConstants, JS_PARAMETER_INPUT_VALUE and JS_PARAMETER_CONTROL_VALUE
      * 

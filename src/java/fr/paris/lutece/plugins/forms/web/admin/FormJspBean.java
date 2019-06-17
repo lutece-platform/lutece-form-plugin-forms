@@ -176,7 +176,7 @@ public class FormJspBean extends AbstractJspBean
 
         List<Form> listForms = FormHome.getFormList( );
         listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, adminUser );
-
+        
         Map<String, Object> model = getModel( );
         LocalizedPaginator<Form> paginator = new LocalizedPaginator<Form>( listForms, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );

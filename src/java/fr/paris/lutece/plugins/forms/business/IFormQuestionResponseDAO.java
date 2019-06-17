@@ -145,6 +145,7 @@ public interface IFormQuestionResponseDAO
 
     /**
      * Retrieves the form question responses associated to the given Entry Response.
+     * 
      * @param response
      * @param plugin
      * @return

@@ -166,18 +166,18 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
         return formQuestionResponseList;
     }
-    
+
     @Override
     public FormQuestionResponse selectFormQuestionResponseByEntryResponse( Response response, Plugin plugin )
     {
-    	FormQuestionResponse res = null;
-    	FormQuestionEntryResponse questionEntryResponse = _formQuestionEntryResponseDAO.selectByFormEntryResponse( response, plugin );
-    	
-    	if ( questionEntryResponse != null )
-    	{
-    		res = load( questionEntryResponse._nIdQuestionResponse , plugin );
-    	}
-    	return res;
+        FormQuestionResponse res = null;
+        FormQuestionEntryResponse questionEntryResponse = _formQuestionEntryResponseDAO.selectByFormEntryResponse( response, plugin );
+
+        if ( questionEntryResponse != null )
+        {
+            res = load( questionEntryResponse._nIdQuestionResponse, plugin );
+        }
+        return res;
     }
 
     /**
@@ -245,7 +245,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         List<FormQuestionResponse> formQuestionResponseList = new ArrayList<FormQuestionResponse>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-
+        daoUtil.executeQuery( );
         while ( daoUtil.next( ) )
         {
             formQuestionResponseList.add( dataToObject( daoUtil ) );
@@ -478,7 +478,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             return listFormQuestionEntryResponse;
 
         }
-        
+
         /**
          * Selects the form question entry responses for the specified entry response
          * 
@@ -490,19 +490,19 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
          */
         private FormQuestionEntryResponse selectByFormEntryResponse( Response response, Plugin plugin )
         {
-        	FormQuestionEntryResponse res = null;
-        	try (DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_RESPONSE, plugin ))
-        	{
-        		daoUtil.setInt( 1, response.getIdResponse( ) );
-        		daoUtil.executeQuery( );
-        		
-        		if ( daoUtil.next( ) )
-        		{
-        			res = dataToObject( daoUtil );
-        		}
-        	}
-        	
-        	return res;
+            FormQuestionEntryResponse res = null;
+            try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_RESPONSE, plugin ) )
+            {
+                daoUtil.setInt( 1, response.getIdResponse( ) );
+                daoUtil.executeQuery( );
+
+                if ( daoUtil.next( ) )
+                {
+                    res = dataToObject( daoUtil );
+                }
+            }
+
+            return res;
         }
 
         /**
