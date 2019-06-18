@@ -320,11 +320,19 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             _question.setIsVisible( true );
         }
 
-        if ( displayType == DisplayType.RESUBMIT_BACKOFFICE || displayType == DisplayType.RESUBMIT_FRONTOFFICE )
+        if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
         {
             if ( _question.getEntry( ) != null )
             {
                 _question.setIsVisible( _question.getEntry( ).isShownInCompleteness( ) );
+            }
+        }
+        
+        if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
+        {
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
             }
         }
     }
