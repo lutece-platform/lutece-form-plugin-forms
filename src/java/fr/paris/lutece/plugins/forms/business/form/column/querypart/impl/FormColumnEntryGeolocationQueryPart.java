@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,10 @@ import org.apache.lucene.index.IndexableField;
  */
 public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQueryPart
 {
+    private static final String CONSTANT_FIELD_ADDRESS = "address";
+    private static final String CONSTANT_FIELD_X = "X";
+    private static final String CONSTANT_FIELD_Y = "Y";
+    
     /**
      * {@inheritDoc}
      */
@@ -54,12 +59,27 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
     {
         Map<String, Object> mapFormColumnValues = new HashMap<>( );
 
+        String strAddressValue = String.format(FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_ADDR, getFormColumn().getFormColumnPosition( ) );
+        String strXValue = String.format(FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_X, getFormColumn().getFormColumnPosition( ) );
+        String strYValue = String.format(FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y, getFormColumn().getFormColumnPosition( ) );
+        
         for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
         {
             Map<String,String> listFields = getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem );
             for ( Map.Entry<String,String> field : listFields.entrySet( ) )
             {
-                mapFormColumnValues.put( field.getKey( ), field.getValue( ) );
+                if ( field.getKey().contains( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ + CONSTANT_FIELD_ADDRESS ) )
+                {
+                    mapFormColumnValues.put( strAddressValue, field.getValue( ) );
+                }
+                if ( field.getKey().contains( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ + CONSTANT_FIELD_X ) )
+                {
+                    mapFormColumnValues.put( strXValue, field.getValue( ) );
+                }
+                if ( field.getKey().contains( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ + CONSTANT_FIELD_Y ) )
+                {
+                    mapFormColumnValues.put( strYValue, field.getValue( ) );
+                }
             }
         }
 

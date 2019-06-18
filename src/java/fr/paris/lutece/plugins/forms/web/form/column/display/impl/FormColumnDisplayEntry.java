@@ -39,10 +39,12 @@ import java.util.Map;
 
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * Implementation of the IFormColumnDisplay for the Entry column
@@ -90,13 +92,13 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
             formColumnCell.getFormColumnCellValues( ).keySet( ).forEach(
                     strEntryKey -> {
                         Object objEntryValue = formColumnCell.getFormColumnCellValueByName( strEntryKey );
-                        if ( objEntryValue != null )
-                        {
+            if ( objEntryValue != null )
+            {
                             listEntryValues.add( String.valueOf( objEntryValue ) );
-                        }
-                    }
+            }
+        }
             );
-            
+
         }
 
         Map<String, Object> model = new LinkedHashMap<>( );
@@ -106,4 +108,21 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
 
         return strFormColumnEntryTemplate;
     }
+
+    /**
+     * Return the position of the FormColumn or {@linkplain NumberUtils.INTEGER_MINUS_ONE} if doesn't exist
+     * 
+     * @return the position of the FormColumn
+     */
+    private int getFormColumnPosition( )
+    {
+        int nFormColumnPosition = NumberUtils.INTEGER_MINUS_ONE;
+        IFormColumn formColumn = getFormColumn( );
+        if ( formColumn != null )
+        {
+            nFormColumnPosition = formColumn.getFormColumnPosition( );
+        }
+
+        return nFormColumnPosition;
+}
 }

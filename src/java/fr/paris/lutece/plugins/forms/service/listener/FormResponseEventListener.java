@@ -31,28 +31,44 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.util;
+package fr.paris.lutece.plugins.forms.service.listener;
 
-/**
- * Constants class for the name of FormFilter or FormColumn element names for the Forms
- */
-public final class FormMultiviewFormsNameConstants
+import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
+import fr.paris.lutece.plugins.forms.service.FormsPlugin;
+import fr.paris.lutece.plugins.forms.service.search.IFormSearchIndexer;
+import fr.paris.lutece.portal.business.event.EventRessourceListener;
+import fr.paris.lutece.portal.business.event.ResourceEvent;
+import javax.inject.Inject;
+
+
+public class FormResponseEventListener implements EventRessourceListener
 {
-    // Filter Constants
-    public static final String FILTER_ID_FORM = "id_form";
+    
+    @Inject
+    private IFormSearchIndexer _formSearchIndexer; 
 
-    // Column Constants
-    public static final String COLUMN_FORM_TITLE = "title_workflow_state";
-
-    // Parameters
-    public static final String PARAMETER_ID_FORM = "id_form";
-    public static final String PARAMETER_PREVIOUS_ID_FORM = "forms_previous_id_form";
-
-    /**
-     * Constructor
-     */
-    private FormMultiviewFormsNameConstants( )
+    @Override
+    public String getName() 
     {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void addedResource( ResourceEvent event ) 
+    {
+        int nIdResource = Integer.parseInt( event.getIdResource( ) );
+        _formSearchIndexer.addIndexerAction( nIdResource , IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
 
     }
+
+    @Override
+    public void deletedResource(ResourceEvent event) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updatedResource(ResourceEvent event) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
 }

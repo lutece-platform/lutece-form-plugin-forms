@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +52,7 @@ public class FormColumnFormResponseDateCreationQueryPart extends AbstractFormCol
 
         if ( creationDate != null )
         {
-            mapFormColumnValues.put( FormResponseSearchItem.FIELD_DATE_CREATION, creationDate );
+            mapFormColumnValues.put( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION, creationDate );
         }
 
         return mapFormColumnValues;

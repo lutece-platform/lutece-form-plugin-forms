@@ -34,10 +34,10 @@
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexableField;
 
 public class FormColumnFormsQueryPart extends AbstractFormColumnQueryPart
 {
@@ -53,7 +53,7 @@ public class FormColumnFormsQueryPart extends AbstractFormColumnQueryPart
 
         if ( strFormTitle != null )
         {
-            mapFormColumnValues.put( FormResponseSearchItem.FIELD_FORM_TITLE, strFormTitle );
+            mapFormColumnValues.put( FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE, strFormTitle );
         }
 
         return mapFormColumnValues;

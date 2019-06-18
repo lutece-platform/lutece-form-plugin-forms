@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.lucene.index.IndexableField;
@@ -55,7 +56,7 @@ public class FormColumnWorkflowStateQueryPart extends AbstractFormColumnQueryPar
 
         if ( strWorkflowStateTitle != null )
         {
-            mapFormColumnValues.put( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, strWorkflowStateTitle );
+            mapFormColumnValues.put( FormMultiviewWorkflowStateNameConstants.COLUMN_WORKFLOW_STATE_NAME, strWorkflowStateTitle );
         }
 
         return mapFormColumnValues;
