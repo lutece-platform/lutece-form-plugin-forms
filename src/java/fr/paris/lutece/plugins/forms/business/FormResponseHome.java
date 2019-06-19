@@ -107,6 +107,20 @@ public final class FormResponseHome
 
         return formResponse;
     }
+    
+    /**
+     * Returns an instance of a uncomplete (without steps) formResponse whose identifier is specified in parameter
+     * 
+     * @param nKey
+     *            The formResponse primary key
+     * @return an instance of FormResponse
+     */
+    public static FormResponse findUncompleteByPrimaryKey( int nKey )
+    {
+        FormResponse formResponse = _dao.load( nKey, _plugin );
+        
+        return formResponse;
+    }
 
     /**
      * Returns all the formResponse objects, completed with the steps
@@ -122,6 +136,28 @@ public final class FormResponseHome
             completeWithSteps( formResponse );
         }
         return listFormResponses;
+    }
+    
+    /**
+     * Returns all the formResponse ids
+     * 
+     * @return all the formResponse ids
+     */
+    public static List<Integer> selectAllFormResponsesId( )
+    {
+        return _dao.selectAllFormResponsesId( _plugin );
+    }
+    
+    /**
+     * Returns all the formResponse objects, completed with the steps
+     * 
+     * @param nIdForm
+     *              the id form
+     * @return all the formResponse objects completed with the steps
+     */
+    public static List<FormResponse> selectAllFormResponsesUncompleteByIdForm( int nIdForm )
+    {
+        return _dao.selectFormResponseListUncompleteByIdForm( nIdForm, _plugin );
     }
 
     /**

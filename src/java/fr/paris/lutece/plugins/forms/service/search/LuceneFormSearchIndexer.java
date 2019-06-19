@@ -41,6 +41,8 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
+import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionFilter;
+import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionHome;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -77,14 +79,13 @@ import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.util.BytesRef;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Forms global indexer
  */
-public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
+public class LuceneFormSearchIndexer implements IFormSearchIndexer
 {
     public static final String INDEXER_NAME = "FormsIndexer";
     private static final String INDEXER_DESCRIPTION = "Indexer service for forms";
@@ -92,17 +93,18 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
     private static final String INDEXER_VERSION = "1.0.0";
     private static final String PROPERTY_INDEXER_ENABLE = "forms.globalIndexer.enable";
 
-    @Autowired( required = false )
-    private StateService _stateService;
+
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
     private IndexWriter _indexWriter;
-
+    @Autowired( required = false )
+    private StateService _stateService;
+    
     public LuceneFormSearchIndexer( )
     {
         IndexationService.registerIndexer( this );
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -129,7 +131,7 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
     {
         return INDEXER_VERSION;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -164,12 +166,98 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
     }
 
     /**
+     * Add Indexer Action to perform on a form response
+     * 
+     * @param nIdFormResponse
+     *            the id of the formResponse
+     * @param nIdTask
+     *            the key of the action to do
+     * @param plugin
+     *            the plugin
+     */
+    @Override
+    public void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin )
+    {
+            IndexerAction indexerAction = new IndexerAction( );
+            indexerAction.setIdFormResponse( nIdFormResponse );
+            indexerAction.setIdTask( nIdTask );
+            IndexerActionHome.create( indexerAction, plugin );
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void indexDocuments( ) throws IOException, InterruptedException, SiteMessageException
+    {
+        List<Integer> listFormResponsesId = FormResponseHome.selectAllFormResponsesId( );
+        
+        deleteIndex();
+        for ( Integer nIdFormResponse : listFormResponsesId )
+        {
+            addIndexerAction( nIdFormResponse, IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
+        }
+        processIndexing( );
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void indexDocument(int nIdFormResponse, int nIdTask, Plugin plugin) 
+    {
+        addIndexerAction( nIdFormResponse, nIdTask, plugin );
+        processIndexing();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void processIndexing( )
+    {
+        initIndexing( false );
+
+        Plugin plugin = PluginService.getPlugin( FormsPlugin.PLUGIN_NAME );
+        List<Integer> listIdsToAdd = new ArrayList<>( );
+
+        // Delete all record which must be delete
+        for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_DELETE, plugin ) )
+        {
+            deleteDocument( action.getIdFormResponse( ) );
+            removeIndexerAction( action.getIdAction(), plugin );
+        }
+
+        // Update all record which must be update
+        for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_MODIFY, plugin ) )
+        {
+            deleteDocument( action.getIdFormResponse( ) );
+            listIdsToAdd.add( action.getIdFormResponse( ) );
+            removeIndexerAction( action.getIdAction(), plugin );
+        }
+
+        // Add all form response which must be add
+        for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_CREATE, plugin ) )
+        {
+            listIdsToAdd.add( action.getIdFormResponse( ) );
+            removeIndexerAction( action.getIdAction(), plugin );
+        }
+
+        List<FormResponse> listFormResponses = new ArrayList<>( );
+        for ( Integer nIdFormResponse : listIdsToAdd )
+        {
+            // TODO IMPLEMENT A SQL IN( ..) instead
+            listFormResponses.add( FormResponseHome.findByPrimaryKey( nIdFormResponse ) );
+        }
+        indexFormResponseList( listFormResponses );
+    }
+    
+    /**
      * {@inheritDoc}
      */
     @Override
     public List<Document> getDocuments( String formResponseId ) throws IOException, InterruptedException, SiteMessageException
     {
-
         int nIdFormResponse;
 
         try
@@ -204,13 +292,161 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
     }
 
     /**
+     * {@inheritDoc}
+     */
+    private void indexFormResponseList( List<FormResponse> listFormResponse )
+    {
+        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
+        {
+            initIndexing( true );
+        }
+
+        Map<Integer, Form> mapForms = FormHome.getFormList( ).stream( ).collect( Collectors.toMap( form -> form.getId( ), form -> form ) );
+
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            Document doc = null;
+            Form form = mapForms.get( formResponse.getFormId( ) );
+            State formResponseState = null;
+            if ( _stateService != null )
+            {
+                formResponseState = _stateService.findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
+            }
+            else
+            {
+                formResponseState = new State( );
+                formResponseState.setId( -1 );
+                formResponseState.setName( StringUtils.EMPTY );
+            }
+
+            try
+            {
+                doc = getDocument( formResponse, form, formResponseState );
+            }
+            catch( Exception e )
+            {
+                IndexationService.error( this, e, null );
+            }
+
+            if ( doc != null )
+            {
+                try
+                {
+                    _indexWriter.addDocument( doc );
+                }
+                catch( IOException e )
+                {
+                    AppLogService.error( "Unable to index form response with id " + formResponse.getId( ), e );
+                }
+            }
+        }
+
+        endIndexing( );
+    }
+
+    /**
+     * Init the indexing action
+     * 
+     * @param bCreate
+     */
+    private void initIndexing( boolean bCreate )
+    {
+        Boolean boolCreate = new Boolean( bCreate );
+        _indexWriter = _luceneFormSearchFactory.getIndexWriter( boolCreate );
+    }
+
+    /**
+     * End the indexing action
+     */
+    private void endIndexing( )
+    {
+        if ( _indexWriter != null )
+        {
+            try
+            {
+                _indexWriter.close( );
+            }
+            catch( IOException e )
+            {
+                AppLogService.error( "Unable to close index writer ", e );
+            }
+        }
+    }
+
+    
+
+    /**
+     * {@inheritDoc }
+     */
+    private void deleteIndex( )
+    {
+        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
+            initIndexing( true );
+        try
+        {
+            _indexWriter.deleteAll( );
+        }
+        catch( IOException e )
+        {
+            AppLogService.error( "Unable to delete all docs in index ", e );
+        }
+        finally
+        {
+            endIndexing( );
+        }
+    }
+
+    private void deleteDocument( int nIdFormResponse ) 
+    {
+        try 
+        {
+            _indexWriter.deleteDocuments( IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
+        } catch (IOException e)
+        {
+            AppLogService.error( "Unable to delete document with id " + nIdFormResponse, e);
+        }
+    }
+    
+    /**
+     * Remove a Indexer Action
+     * 
+     * @param nIdAction
+     *            the key of the action to remove
+     * @param plugin
+     *            the plugin
+     */
+    private void removeIndexerAction( int nIdAction, Plugin plugin )
+    {
+        IndexerActionHome.remove( nIdAction, plugin );
+    }
+
+    /**
+     * return a list of IndexerAction by task key
+     * 
+     * @param nIdTask
+     *            the task kety
+     * @param plugin
+     *            the plugin
+     * @return a list of IndexerAction
+     */
+    private List<IndexerAction> getAllIndexerActionByTask( int nIdTask, Plugin plugin )
+    {
+        IndexerActionFilter filter = new IndexerActionFilter( );
+        filter.setIdTask( nIdTask );
+
+        return IndexerActionHome.getList( filter, plugin );
+    }
+    
+    /**
      * Builds a document which will be used by Lucene during the indexing of this record
      * 
      * @param formResponse
      *            the formResponse object
+     * @param form
+     *            the form
      * @return a lucene document filled with the record data
      */
-    public Document getDocument( FormResponse formResponse, Form form, State formResponseState )
+    private Document getDocument( FormResponse formResponse, Form form, State formResponseState )
     {
 
         // make a new, empty document
@@ -317,6 +553,8 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
 
         return doc;
     }
+    
+    
 
     /**
      * Concatenates the value of the specified field in this record
@@ -360,271 +598,7 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
         return sb.toString( );
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void processIncrementalIndexing( StringBuffer sbLog )
-    {
-        sbLog = ( sbLog == null ? new StringBuffer( ) : sbLog );
-        initIndexing( false );
-
-        Plugin plugin = PluginService.getPlugin( FormsPlugin.PLUGIN_NAME );
-        List<Integer> listIdsToAdd = new ArrayList<>( );
-
-        // Delete all record which must be delete
-        for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_DELETE, plugin ) )
-        {
-            sbLogFormResponse( sbLog, action.getIdFormResponse( ), IndexerAction.TASK_DELETE );
-            try
-            {
-                _indexWriter.deleteDocuments( new Term( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, Integer.toString( action.getIdFormResponse( ) ) ) );
-            }
-            catch( IOException e )
-            {
-                AppLogService.error( "Unable to delete docs from Lucene index ", e );
-                sbLogFormException( sbLog, action.getIdFormResponse( ), "Unable to delete from index" );
-            }
-            removeIndexerAction( action.getIdAction( ), plugin );
-        }
-
-        // Update all record which must be update
-        for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_MODIFY, plugin ) )
-        {
-            sbLogFormResponse( sbLog, action.getIdFormResponse( ), IndexerAction.TASK_MODIFY );
-            try
-            {
-                _indexWriter.deleteDocuments( new Term( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, Integer.toString( action.getIdFormResponse( ) ) ) );
-            }
-            catch( IOException e )
-            {
-                AppLogService.error( "Unable to delete docs from Lucene index ", e );
-                sbLogFormException( sbLog, action.getIdFormResponse( ), "Unable to delete from index" );
-            }
-            listIdsToAdd.add( action.getIdFormResponse( ) );
-            removeIndexerAction( action.getIdAction( ), plugin );
-        }
-
-        // Add all form response which must be add
-        for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_CREATE, plugin ) )
-        {
-            sbLogFormResponse( sbLog, action.getIdFormResponse( ), IndexerAction.TASK_CREATE );
-            listIdsToAdd.add( action.getIdFormResponse( ) );
-            removeIndexerAction( action.getIdAction( ), plugin );
-        }
-
-        List<FormResponse> listFormResponses = new ArrayList<>( );
-        for ( Integer nIdFormResponse : listIdsToAdd )
-        {
-            // TODO IMPLEMENT A SQL IN( ..) instead
-            listFormResponses.add( FormResponseHome.findByPrimaryKey( nIdFormResponse ) );
-        }
-        indexFormResponseList( sbLog, listFormResponses );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void processFullIndexing( StringBuffer sbLog )
-    {
-        sbLog = ( sbLog == null ? new StringBuffer( ) : sbLog );
-        initIndexing( true );
-
-        // Get the list of all the forms response of all forms
-        List<FormResponse> listFormResponses = FormResponseHome.selectAllFormResponses( );
-
-        for ( FormResponse formResponse : listFormResponses )
-        {
-            sbLogFormResponse( sbLog, formResponse.getId( ), IndexerAction.TASK_CREATE );
-        }
-
-        indexFormResponseList( sbLog, listFormResponses );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void indexFormResponseList( StringBuffer sbLog, List<FormResponse> listFormResponse )
-    {
-        sbLog = ( sbLog == null ? new StringBuffer( ) : sbLog );
-
-        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
-        {
-            initIndexing( true );
-        }
-
-        Map<Integer, Form> mapForms = FormHome.getFormList( ).stream( ).collect( Collectors.toMap( form -> form.getId( ), form -> form ) );
-
-        for ( FormResponse formResponse : listFormResponse )
-        {
-            Document doc = null;
-            Form form = mapForms.get( formResponse.getFormId( ) );
-            State formResponseState = null;
-            if ( _stateService != null )
-            {
-                formResponseState = _stateService.findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
-            }
-            else
-            {
-                formResponseState = new State( );
-                formResponseState.setId( -1 );
-                formResponseState.setName( StringUtils.EMPTY );
-            }
-
-            try
-            {
-                doc = getDocument( formResponse, form, formResponseState );
-            }
-            catch( Exception e )
-            {
-                String strMessage = "FormResponse ID : " + formResponse.getId( );
-                IndexationService.error( this, e, strMessage );
-            }
-
-            if ( doc != null )
-            {
-                try
-                {
-                    _indexWriter.addDocument( doc );
-                }
-                catch( IOException e )
-                {
-                    AppLogService.error( "Unable to index form response with id " + formResponse.getId( ), e );
-                    sbLogFormException( sbLog, formResponse.getId( ), "Unable to add doc in Lucene index" );
-                }
-            }
-        }
-
-        endIndexing( );
-    }
-
-    /**
-     * Init the indexing action
-     * 
-     * @param bCreate
-     */
-    private void initIndexing( boolean bCreate )
-    {
-        Boolean boolCreate = new Boolean( bCreate );
-        _indexWriter = _luceneFormSearchFactory.getIndexWriter( boolCreate );
-    }
-
-    /**
-     * End the indexing action
-     */
-    private void endIndexing( )
-    {
-        if ( _indexWriter != null )
-        {
-            try
-            {
-                _indexWriter.close( );
-            }
-            catch( IOException e )
-            {
-                AppLogService.error( "Unable to close index writer ", e );
-            }
-        }
-    }
-
-    /**
-     * indexing action performed on the recording
-     * 
-     * @param sbLogs
-     *            the buffer log
-     * @param nIdRecord
-     *            the id of the record
-     * @param nIdDirectory
-     *            the id of the directory
-     * @param nAction
-     *            the indexer action key performed
-     */
-    private void sbLogFormResponse( StringBuffer sbLogs, int nIdFormResponse, int nAction )
-    {
-        sbLogs.append( "Indexing Form response :" );
-
-        switch( nAction )
-        {
-            case IndexerAction.TASK_CREATE:
-                sbLogs.append( "Insert " );
-
-                break;
-
-            case IndexerAction.TASK_MODIFY:
-                sbLogs.append( "Modify " );
-
-                break;
-
-            case IndexerAction.TASK_DELETE:
-                sbLogs.append( "Delete " );
-
-                break;
-
-            default:
-                break;
-        }
-
-        sbLogs.append( "form_response :" );
-        sbLogs.append( "id=" );
-        sbLogs.append( nIdFormResponse );
-        sbLogs.append( "\r\n" );
-    }
-
-    private void sbLogFormException( StringBuffer sbLogs, int nIdFormResponse, String strExceptionMessage )
-    {
-        sbLogs.append( "Exception occured :\r\n" );
-        sbLogs.append( "FormResponse id :\r\n" );
-        sbLogs.append( nIdFormResponse );
-        sbLogs.append( "FormResponse id :\r\n" );
-        sbLogs.append( strExceptionMessage );
-        sbLogs.append( "\r\n" );
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void indexDocuments( ) throws IOException, InterruptedException, SiteMessageException
-    {
-        processFullIndexing( null );
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void deleteIndex( )
-    {
-        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
-            initIndexing( true );
-        try
-        {
-            _indexWriter.deleteAll( );
-        }
-        catch( IOException e )
-        {
-            AppLogService.error( "Unable to delete all docs in index ", e );
-        }
-        finally
-        {
-            endIndexing( );
-        }
-    }
-
-    /**
-     * Manage a given string null value
-     * 
-     * @param strValue
-     * @return the string if not null, empty string otherwise
-     */
-    private String manageNullValue( String strValue )
-    {
-        if ( strValue == null )
-            return StringUtils.EMPTY;
-        return strValue;
-    }
+    
     
     /**
      * Get the field name
@@ -642,4 +616,20 @@ public class LuceneFormSearchIndexer extends AbstractFormSearchIndexer
 
         return String.valueOf( response.getIdResponse( ) );
     }
+    
+    /**
+     * Manage a given string null value
+     * 
+     * @param strValue
+     * @return the string if not null, empty string otherwise
+     */
+    private String manageNullValue( String strValue )
+    {
+        if ( strValue == null )
+            return StringUtils.EMPTY;
+        return strValue;
+    }
+
+    
+
 }

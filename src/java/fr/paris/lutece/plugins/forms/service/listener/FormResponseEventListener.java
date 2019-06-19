@@ -38,37 +38,71 @@ import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchIndexer;
 import fr.paris.lutece.portal.business.event.EventRessourceListener;
 import fr.paris.lutece.portal.business.event.ResourceEvent;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import javax.inject.Inject;
 
 
 public class FormResponseEventListener implements EventRessourceListener
 {
-    
+    private static final String CONSTANT_FORM_RESPONSE_LISTENER_NAME = "formResponseEventListener";
     @Inject
     private IFormSearchIndexer _formSearchIndexer; 
 
     @Override
     public String getName() 
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return CONSTANT_FORM_RESPONSE_LISTENER_NAME;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addedResource( ResourceEvent event ) 
     {
-        int nIdResource = Integer.parseInt( event.getIdResource( ) );
-        _formSearchIndexer.addIndexerAction( nIdResource , IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
-
+        try
+        {
+            int nIdResource = Integer.parseInt( event.getIdResource( ) );
+            _formSearchIndexer.indexDocument( nIdResource, IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
+        }
+        catch ( NumberFormatException e )
+        {
+            AppLogService.error( "Unable to parse given event id ressource to integer " + event.getIdResource(), e );
+        }
+        
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void deletedResource(ResourceEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try
+        {
+            int nIdResource = Integer.parseInt( event.getIdResource( ) );
+            _formSearchIndexer.indexDocument( nIdResource, IndexerAction.TASK_DELETE, FormsPlugin.getPlugin( ) );
+        }
+        catch ( NumberFormatException e )
+        {
+            AppLogService.error( "Unable to parse given event id ressource to integer " + event.getIdResource(), e );
+        }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void updatedResource(ResourceEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void updatedResource(ResourceEvent event) 
+    {
+        try
+        {
+            int nIdResource = Integer.parseInt( event.getIdResource( ) );
+            _formSearchIndexer.indexDocument( nIdResource, IndexerAction.TASK_MODIFY, FormsPlugin.getPlugin( ) );
+        }
+        catch ( NumberFormatException e )
+        {
+            AppLogService.error( "Unable to parse given event id ressource to integer " + event.getIdResource(), e );
+        }
     }
     
 }

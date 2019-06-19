@@ -34,8 +34,10 @@
 package fr.paris.lutece.plugins.forms.service.search;
 
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.search.SearchIndexer;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -47,40 +49,22 @@ public interface IFormSearchIndexer extends SearchIndexer
 {
     /**
      * add to the index writer the document associate to the key specified in parameter
-     * 
-     * @param sbLog
-     *            the buffer logger
      */
-    void processIncrementalIndexing( StringBuffer sbLog );
-
+    void processIndexing( );
+    
     /**
-     * add to the index writer the document associate to the key specified in parameter
-     * 
-     * @param sbLog
-     *            the buffer logger
+     * Directly index one document
+     * @param nIdFormResponse
+     * @param nIdTask 
      */
-    void processFullIndexing( StringBuffer sbLog );
+    void indexDocument( int nIdFormResponse, int nIdTask, Plugin plugin );
 
     /**
      * add an indexer action
      * 
      * @param nIdFormResponse
      * @param nIdTask
-     * @param plugin
      */
-    public void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin );
-
-    /**
-     * Delete the index
-     */
-    public void deleteIndex( );
-
-    /**
-     * Index a form response list
-     * 
-     * @param sbLog
-     * @param listFormResponse
-     */
-    public void indexFormResponseList( StringBuffer sbLog, List<FormResponse> listFormResponse );
-
+    void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin );
+    
 }

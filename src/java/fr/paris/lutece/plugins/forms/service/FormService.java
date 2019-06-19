@@ -72,8 +72,10 @@ import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.business.event.ResourceEvent;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.event.ResourceEventManager;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -107,7 +109,7 @@ public class FormService
         filterFinalSteps( formResponse );
         saveFormResponse( formResponse );
         saveFormResponseSteps( formResponse );
-        processIncrementalIndexing( formResponse );
+        fireFormResponseEventCreation( formResponse );
     }
 
     /**
@@ -121,6 +123,7 @@ public class FormService
     public void processFormAction( Form form, FormResponse formResponse )
     {
         _formWorkflowService.doProcessActionOnFormCreation( form, formResponse );
+        fireFormResponseEventUpdate( formResponse );
     }
 
     /**
@@ -401,23 +404,90 @@ public class FormService
 
         return formResponseManager;
     }
+    
+    // FORM RESPONSE CREATION
+    /**
+     * Fire the create event on given form Response
+     * @param formResponse the form Response
+     */
+    public void fireFormResponseEventCreation( FormResponse formResponse )
+    {
+        ResourceEvent formResponseEvent = new ResourceEvent();
+        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) ) ;
+        formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
+        
+        ResourceEventManager.fireAddedResource( formResponseEvent );
+    }
 
     /**
-     * Process incremental indexing for create formResponse
-     * 
-     * @param formResponse
+     * Fire the create event on all the form responses associated to given form 
+     * @param form The form
      */
-    private void processIncrementalIndexing( FormResponse formResponse )
+    public void fireFormResponseEventCreation( Form form )
     {
-        // Add an action CREATE for given formResponse
-        try
+        List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
+        
+        for ( FormResponse formResponse : listFormResponse )
         {
-            _formSearchIndexer.addIndexerAction( formResponse.getId( ), IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
-            _formSearchIndexer.processIncrementalIndexing( null );
+            fireFormResponseEventCreation( formResponse );
         }
-        catch( Exception e )
+    }
+    
+    // FORM RESPONSE UPDATE
+    /**
+     * Fire the form response event update on given formResponse
+     * @param formResponse the formResponse
+     */
+    public void fireFormResponseEventUpdate( FormResponse formResponse )
+    {
+        ResourceEvent formResponseEvent = new ResourceEvent();
+        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) ) ;
+        formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
+        
+        ResourceEventManager.fireUpdatedResource( formResponseEvent );
+    }
+
+    /**
+     * Fire the update event on all the form responses associated to given form
+     * @param form 
+     *              The form
+     */
+    public void fireFormResponseEventUpdate( Form form )
+    {
+        List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
+        
+        for ( FormResponse formResponse : listFormResponse )
         {
-            AppLogService.error( "Unable to index form response with id = " + formResponse.getId( ), e );
+            fireFormResponseEventUpdate( formResponse );
+        }
+    }
+    
+    // FORM RESPONSE DELETION
+    
+    /**
+     * Fire the form response deletion event
+     * @param formResponse the form response
+     */
+    public void fireFormResponseEventDelete( FormResponse formResponse )
+    {
+        ResourceEvent formResponseEvent = new ResourceEvent();
+        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) ) ;
+        formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
+        
+        ResourceEventManager.fireDeletedResource( formResponseEvent );
+    }
+    
+    /**
+     * Fire the delete event of all the form responses associated to given form
+     * @param form the form
+     */
+    public void fireFormResponseEventDelete( Form form )
+    {
+        List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId() );
+        
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            fireFormResponseEventDelete( formResponse );
         }
     }
 }
