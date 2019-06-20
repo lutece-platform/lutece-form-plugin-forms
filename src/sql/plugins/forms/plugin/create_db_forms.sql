@@ -80,7 +80,7 @@ DROP TABLE IF EXISTS forms_group;
 CREATE TABLE forms_group (
 id_group int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
-description varchar(255) default '',
+description varchar(512) default '',
 id_step int default '0',
 iteration_min int default '1',
 iteration_max int default '1',
