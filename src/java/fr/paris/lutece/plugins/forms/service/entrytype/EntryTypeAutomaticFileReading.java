@@ -33,27 +33,20 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
-import fr.paris.lutece.plugins.forms.business.Step;
-import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
-import fr.paris.lutece.plugins.genericattributes.business.IMapProvider;
-import fr.paris.lutece.plugins.genericattributes.business.ITypeDocumentOcrProvider;
-import fr.paris.lutece.plugins.genericattributes.business.MapProviderManager;
-import fr.paris.lutece.plugins.genericattributes.business.Mapping;
-import fr.paris.lutece.plugins.genericattributes.business.MappingHome;
+import fr.paris.lutece.plugins.genericattributes.business.IOcrProvider;
+import fr.paris.lutece.plugins.genericattributes.business.OcrProviderManager;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.TypeDocumentProviderManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeAutomaticFileReading;
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
 import fr.paris.lutece.util.ReferenceList;
@@ -102,6 +95,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
     @Override
     public String getTemplateModify( Entry entry, boolean bDisplayFront )
     {
+    	
         return TEMPLATE_MODIFY;
     }
 
@@ -169,24 +163,44 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
 
         refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
 
-        for ( ITypeDocumentOcrProvider typeDocumentProvider : TypeDocumentProviderManager.getTypeDocumentProvidersList( ) )
+        for ( IOcrProvider typeDocumentProvider : OcrProviderManager.getOcrProvidersList() )
         {
             refList.add( typeDocumentProvider.toRefItem( ) );
         }
 
         return refList;
     }
+    /**
+     * Get the config html code
+     * @param nIdStep the Id step
+     * @param nIdQuestion the question id
+     * @param nIdEntryQuestion the id entry
+     * @param strOcrKey the ocr provider
+     * @return the config html code
+     */
+    public String getOcrConfigTemplate( int nIdStep, int nIdQuestion, int nIdEntryQuestion,String strOcrKey )
+    {
+    	
+    	IOcrProvider ocrProvider= getOcrProvider( strOcrKey );
+    	
+        ReferenceList refList =  getQuestionsByStep(  nIdStep,  nIdQuestion,  strOcrKey );
+
+       
+        return ocrProvider.getConfigHtmlCode(refList, nIdEntryQuestion, Form.RESOURCE_TYPE);
+    }
+    
+    
 
     /**
-     * Gets the type document provider.
+     * Gets the ocr provider.
      *
      * @param strKey
      *            the str key
      * @return the type document provider
      */
-    public ITypeDocumentOcrProvider getTypeDocumentProvider( String strKey )
+    public IOcrProvider getOcrProvider( String strKey )
     {
-        return TypeDocumentProviderManager.getTypeDocumentProvider( strKey );
+        return OcrProviderManager.getOcrProvider(strKey);
     }
 
     /**
@@ -199,9 +213,9 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
     public ReferenceList getListField( String strKey )
     {
         ReferenceList refListField = new ReferenceList( );
-        if ( TypeDocumentProviderManager.getTypeDocumentProvider( strKey ) != null )
+        if ( OcrProviderManager.getOcrProvider( strKey ) != null )
         {
-            refListField.addAll( TypeDocumentProviderManager.getTypeDocumentProvider( strKey ).getListField( ) );
+            refListField.addAll( OcrProviderManager.getOcrProvider( strKey ).getListField( ) );
         }
 
         return refListField;
@@ -218,11 +232,11 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
     {
         ReferenceList refList = new ReferenceList( );
 
-        List<Integer> listAuthorizedEntryType = TypeDocumentProviderManager.getTypeDocumentProvider( strKey ).getAuthorizedEntryType( );
+       // List<Integer> listAuthorizedEntryType = OcrProviderManager.getOcrProvider( strKey ).getAuthorizedEntryType( );
         for ( Question question : QuestionHome.getQuestionsListByStep( nIdStep ) )
         {
             Entry entry = EntryHome.findByPrimaryKey( question.getIdEntry( ) );
-            if ( question.getId( ) != nIdQuestion && entry != null && listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) ) )
+            if ( question.getId( ) != nIdQuestion && entry != null /*&& listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) )*/ )
             {
                 refList.addItem( question.getId( ), question.getTitle( ) );
             }
@@ -231,22 +245,5 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
         return refList;
     }
 
-    /**
-     * Gets the list mapping by step.
-     *
-     * @param nIdStep
-     *            the n id step
-     * @return the list mapping by step
-     */
-    public List<Mapping> getListMappingByStep( int nIdStep )
-    {
-        List<Mapping> listMapping = new ArrayList<>( );
-
-        for ( Mapping mapping : MappingHome.loadByStepId( nIdStep ) )
-        {
-            listMapping.add( mapping );
-        }
-
-        return listMapping;
-    }
+    
 }

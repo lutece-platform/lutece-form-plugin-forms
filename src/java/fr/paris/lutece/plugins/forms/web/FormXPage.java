@@ -69,10 +69,7 @@ import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
-import fr.paris.lutece.plugins.genericattributes.business.Mapping;
-import fr.paris.lutece.plugins.genericattributes.business.MappingHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.TypeDocumentProviderManager;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -1019,7 +1016,7 @@ public class FormXPage extends MVCApplication
      * @return the XPage
      */
     @Action( value = ACTION_UPLOAD_FOR_OCR )
-    public XPage doUploadDocumentForOcr( HttpServletRequest request )
+  /*  public XPage doUploadDocumentForOcr( HttpServletRequest request )
     {
         if ( ( request instanceof MultipartHttpServletRequest ) && ( FormsAsynchronousUploadHandler.getHandler( ).getUploadAction( request ) != null ) )
         {
@@ -1071,7 +1068,7 @@ public class FormXPage extends MVCApplication
         }
 
         return redirectView( request, VIEW_STEP );
-    }
+    }*/
 
     /**
      * save the response of form
