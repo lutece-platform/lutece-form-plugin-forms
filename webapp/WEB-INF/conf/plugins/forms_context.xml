@@ -216,7 +216,7 @@
     	
     <!-- Forms Multiview Authorization Service -->
     <bean id="forms.formsMultiviewAuthorizationService" class="fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService">
-        <constructor-arg name="formPanelConfiguration" type="fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration" ref="forms.formsPanel.panelConfiguration"/>
+        <constructor-arg name="formPanelConfiguration" ref="forms.formsPanel.panelConfiguration"/>
     </bean>
     
     <!-- Lucene Search services implementation -->
@@ -255,7 +255,7 @@
 	<bean id="forms.formsPanel.panelConfiguration" class="fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration">
 		<constructor-arg name="strTechnicalCode" type="java.lang.String" value="forms"/>
 		<constructor-arg name="nPosition" type="int" value="1"/>
-		<constructor-arg name="strTitle" type="java.lang.String" value="R&#233;ponse(s)"/>
+		<constructor-arg name="strTitle" type="java.lang.String" value="forms.formsPanel.panelConfiguration.title"/>
 		<constructor-arg name="listFormPanelInitializerName">
 			<list>
 				<value type="java.lang.String">fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormsInitializer</value>
