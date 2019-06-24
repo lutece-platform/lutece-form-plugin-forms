@@ -36,9 +36,11 @@ package fr.paris.lutece.plugins.forms.service;
 import java.io.Serializable;
 
 import fr.paris.lutece.plugins.forms.web.file.FormsFileImageService;
+import fr.paris.lutece.portal.service.event.ResourceEventManager;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 /**
  * class FormPlugin
@@ -51,6 +53,9 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
     // Generated serial UID
     private static final long serialVersionUID = 363631628732516426L;
 
+    // Beans
+    private static final String BEAN_FORM_RESPONSE_EVENT_LISTENER = "forms.formResponseEventListener";
+    
     /**
      * {@inheritDoc}
      */
@@ -59,6 +64,7 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
     {
         // ImageResourceManager
         FormsFileImageService.getInstance( ).register( );
+        ResourceEventManager.register( SpringContextService.getBean( BEAN_FORM_RESPONSE_EVENT_LISTENER ) );
     }
 
     /**

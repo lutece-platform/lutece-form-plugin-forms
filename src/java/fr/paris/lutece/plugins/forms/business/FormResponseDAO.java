@@ -51,6 +51,8 @@ public final class FormResponseDAO implements IFormResponseDAO
 {
     // Constants
     private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response";
+    private static final String SQL_QUERY_SELECT_ID = "SELECT id_response FROM forms_response";
+    private static final String SQL_QUERY_SELECTALL_BY_ID_FORM = SQL_QUERY_SELECTALL + " WHERE id_form = ? ";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save ) VALUES ( ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id_response = ? ";
@@ -169,6 +171,46 @@ public final class FormResponseDAO implements IFormResponseDAO
 
         return formResponseList;
     }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<Integer> selectAllFormResponsesId( Plugin plugin ) 
+    {
+        List<Integer> formResponseIdList = new ArrayList<>( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ID, plugin );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            formResponseIdList.add( daoUtil.getInt( 1 ) );
+        }
+        daoUtil.close( );
+
+        return formResponseIdList;
+    }
+
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FormResponse> selectFormResponseListUncompleteByIdForm( int nIdForm, Plugin plugin )
+    {
+        List<FormResponse> formResponseList = new ArrayList<>( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_ID_FORM, plugin );
+        daoUtil.setInt( 1 , nIdForm );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            formResponseList.add( dataToObject( daoUtil ) );
+        }
+        daoUtil.close( );
+
+        return formResponseList;
+    }
 
     /**
      * {@inheritDoc }
@@ -237,5 +279,4 @@ public final class FormResponseDAO implements IFormResponseDAO
 
         return formResponse;
     }
-
 }

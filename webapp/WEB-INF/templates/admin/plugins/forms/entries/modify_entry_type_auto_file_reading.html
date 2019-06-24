@@ -74,55 +74,12 @@
 				</@boxBody>
 			</@box>
 		</@columns>
-		
-		<@columns md=9 lg=9 xl=9>
-			<@box color='primary'>
-				<@boxHeader title='#i18n{forms.createEntry.fileType.mapping.title}' boxTools=true>
-				</@boxHeader>
-				
-				<@boxBody>
-					<!-- List of mapping -->
-					<table class="table">
-						<thead>
-							<tr>
-								<th>#i18n{forms.createEntry.fileType.form.question}</th>
-								<th>#i18n{forms.createEntry.fileType.response.WS}</th>
-								<th></th>
-							</tr>
-						</thead>
-						<#list entryTypeService.getListMappingByStep(step.id) as mapping>
-							<tr>
-							    <td class="col-md-6">${mapping.questionTitle}</td>
-							    <td class="col-md-3">${mapping.fieldOcrTitle}</td>
-							    <td class="col-md-3">
-							    	<@aButton href='jsp/admin/plugins/forms/ModifyMappingOcr.jsp?view=confirmRemoveMapping&id_mapping=${mapping.idMapping}&id_question=${question.id}' title='#i18n{forms.createEntry.manageField.titleDelete}' buttonIcon='trash' showTitle=false color='btn-danger' />
-						    	</td>
-							</tr>
-						 </#list>
-					</table>
-					<hr>
-					<!-- Add mapping -->
-					<@row>
-						<@tform action='jsp/admin/plugins/forms/ModifyMappingOcr.jsp'>
-							<@columns md=4 lg=4 xl=4>
-								<!-- Form field -->
-								<@select name='id_question_mapping' id='id_question_mapping' items=entryTypeService.getQuestionsByStep(question.idStep, question.id, fileType) />
-							</@columns>
-							<@columns md=3 lg=3 xl=3>
-								<!-- OCR value -->
-								<@select name='id_field_ocr' id='id_field_ocr' items=entryTypeService.getListField(fileType) />
-							</@columns>
-							<input name="id_step" value="${step.id}" type="hidden" />
-							<input name="id_question" value="${question.id}" type="hidden" />
-							<input name="type_document_key" value="${fileType}" type="hidden" />
-							<@columns md=3 lg=3 xl=3>
-								<@button type='submit' name='action_createMapping' title='#i18n{forms.createEntry.fileType.add.mapping}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false />
-							</@columns>
-						</@tform>
-					</@row>	
-				</@boxBody>
-			</@box>
-		</@columns>
+			<!-- -----------------------OCR CONFIG MAPPING----------------------- -->
+
+		<#assign ocr_mapping_template= entryTypeService.getOcrConfigTemplate( step.id , question.id, entry.idEntry, fileType)>
+
+		${ocr_mapping_template!}
+			<!-- ---------------------------------------------- -->
 	</fieldset>
 </@row>
 <@initEditor />

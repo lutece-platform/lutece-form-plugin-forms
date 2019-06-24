@@ -52,7 +52,7 @@ public class Group implements Serializable
     @Size( max = 255, message = "#i18n{forms.validation.group.Title.size}" )
     private String _strTitle;
 
-    @Size( max = 255, message = "#i18n{forms.validation.group.Description.size}" )
+    @Size( max = 512, message = "#i18n{forms.validation.group.Description.size}" )
     private String _strDescription;
 
     private int _nIdStep;

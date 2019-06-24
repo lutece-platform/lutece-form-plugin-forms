@@ -153,6 +153,9 @@ public class FormJspBean extends AbstractJspBean
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
+    
+    // Other
+    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
     /**
      * Build the Manage View
@@ -549,6 +552,7 @@ public class FormJspBean extends AbstractJspBean
         }
 
         FormHome.update( _form );
+        _formService.fireFormResponseEventUpdate( _form );
 
         if ( _formMessage.getId( ) == 0 )
         {

@@ -85,7 +85,7 @@ public class FormColumnDisplayWorkflowState extends AbstractFormColumnDisplay
         String strWorkflowStateName = StringUtils.EMPTY;
         if ( formColumnCell != null )
         {
-            Object objWorkflowStateName = formColumnCell.getFormColumnCellValueByName( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE );
+            Object objWorkflowStateName = formColumnCell.getFormColumnCellValueByName( FormMultiviewWorkflowStateNameConstants.COLUMN_WORKFLOW_STATE_NAME );
             if ( objWorkflowStateName != null )
             {
                 strWorkflowStateName = String.valueOf( objWorkflowStateName );
@@ -98,5 +98,5 @@ public class FormColumnDisplayWorkflowState extends AbstractFormColumnDisplay
         String strWorkflowStateTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
 
         return strWorkflowStateTemplate;
-    }
+}
 }

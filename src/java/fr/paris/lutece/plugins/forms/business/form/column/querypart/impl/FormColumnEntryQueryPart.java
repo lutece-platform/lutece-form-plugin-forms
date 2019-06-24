@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
             Map<String,String> listFields = getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem );
             for ( Map.Entry<String,String> field : listFields.entrySet( ) )
             {
-                mapFormColumnValues.put( field.getKey( ), field.getValue( ) );
+                mapFormColumnValues.put( String.format(FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getFormColumn().getFormColumnPosition( ) ), field.getValue( ) );
             }
         }
 

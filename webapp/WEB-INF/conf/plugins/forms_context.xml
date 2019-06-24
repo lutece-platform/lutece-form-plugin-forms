@@ -32,7 +32,7 @@
     <!-- Listener services -->
     <bean id="forms.formRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
     <bean id="forms.questionRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
-    
+    <bean id="forms.formResponseEventListener" class="fr.paris.lutece.plugins.forms.service.listener.FormResponseEventListener" />
     <bean id="forms.listQuestionListener"
 		class="fr.paris.lutece.plugins.forms.validation.ListQuestionListener" />
     

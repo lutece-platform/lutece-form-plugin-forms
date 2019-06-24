@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,11 +45,16 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.IOcrProvider;
+import fr.paris.lutece.plugins.genericattributes.business.OcrProviderManager;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeAutomaticFileReading;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUploadAutomaticFileReading;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.business.file.File;
@@ -62,7 +68,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 public class EntryTypeFileReadingDisplayService implements IEntryDisplayService
 {
     private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
-
+    private static final String MARK_OCR_CODE_TEMPLATE = "ocr_code_template";
     private static final String LIST_RESPONSES = "list_responses";
 
     private String _strEntryServiceName = StringUtils.EMPTY;
@@ -91,11 +97,20 @@ public class EntryTypeFileReadingDisplayService implements IEntryDisplayService
      */
     private Map<String, Object> setModel( Entry entry, IEntryTypeService service, Map<String, Object> model )
     {
+    	List<Field> listField= entry.getFields();
+    	if(listField!= null &&listField.size() > 0){
+    	     List<Field> list= listField.stream().filter(p -> (p.getTitle()!= null && p.getTitle().equals(AbstractEntryTypeUploadAutomaticFileReading.CONSTANT_FILE_TYPE))).collect( Collectors.toList() );
+    	     IOcrProvider ocrProvider= OcrProviderManager.getOcrProvider( list.get(0).getValue() );
+    	     model.put( MARK_OCR_CODE_TEMPLATE, ocrProvider.getHtmlCode(entry.getIdEntry( ), Form.RESOURCE_TYPE) );  
+    	}
         model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
+      
         model.put( MARK_UPLOAD_HANDLER, ( (AbstractEntryTypeAutomaticFileReading) service ).getAsynchronousUploadHandler( ) );
 
         return model;
     }
+    
+    
 
     @Override
     public String getDisplayServiceName( )

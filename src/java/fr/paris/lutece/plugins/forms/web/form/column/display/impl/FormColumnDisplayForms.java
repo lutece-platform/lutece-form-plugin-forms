@@ -40,7 +40,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
@@ -85,7 +84,7 @@ public class FormColumnDisplayForms extends AbstractFormColumnDisplay
         String strFormsTitle = StringUtils.EMPTY;
         if ( formColumnCell != null )
         {
-            Object objFormsTitle = formColumnCell.getFormColumnCellValueByName( FormResponseSearchItem.FIELD_FORM_TITLE );
+            Object objFormsTitle = formColumnCell.getFormColumnCellValueByName( FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE );
             if ( objFormsTitle != null )
             {
                 strFormsTitle = String.valueOf( objFormsTitle );

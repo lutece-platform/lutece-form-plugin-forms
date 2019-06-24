@@ -147,8 +147,7 @@ public final class MultiviewFormService
         listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( ), column ) );
 
         // Then add global columns from config questions
-        List<Question> listQuestions = new ArrayList<>( );
-        listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsList( ) : QuestionHome
+        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsList( ) : QuestionHome
                 .getListQuestionByIdForm( nIdForm );
 
         addColumnFromConfig( mapFormColumns, listQuestions, true );

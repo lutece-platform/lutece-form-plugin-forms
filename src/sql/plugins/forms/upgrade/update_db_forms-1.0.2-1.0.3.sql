@@ -20,3 +20,4 @@ INSERT INTO forms_control_question SELECT id_control, id_question from forms_con
 
 ALTER TABLE forms_control DROP COLUMN id_question;
 
+ALTER TABLE forms_group MODIFY description VARCHAR(512);
