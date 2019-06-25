@@ -72,12 +72,15 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     private static final String TEMPLATE_GROUP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group.html";
     private static final String TEMPLATE_GROUP_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group_read_only.html";
     private static final String TEMPLATE_GROUP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_group.html";
+    private static final String TEMPLATE_GROUP_RESUBMIT_BACKOFFICE = "/admin/plugins/forms/composite/view_group_resubmit.html";
+    private static final String TEMPLATE_GROUP_RESUBMIT_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group_resubmit.html";
 
     // Marks
     private static final String MARK_GROUP = "group";
     private static final String MARK_GROUP_CONTENT = "groupContent";
     private static final String MARK_IS_ITERABLE = "isIterable";
     private static final String MARK_NB_BASE_CHILDREN = "nbBaseChildren";
+    private static final String MARK_VISIBLE = "visible";
 
     // Properties
     private static final String PROPERTY_COMPOSITE_GROUP_ICON = "forms.composite.group.icon";
@@ -231,6 +234,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
             listChildrenHtml.add( child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType ) );
         }
 
+        _model.put( MARK_VISIBLE, isVisible( ) );
         _model.put( MARK_GROUP, _group );
         _model.put( MARK_GROUP_CONTENT, listChildrenHtml );
         _model.put( FormsConstants.PARAMETER_ID_GROUP, _formDisplay.getId( ) );
@@ -277,11 +281,11 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         }
         if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
         {
-            strTemplate = TEMPLATE_GROUP_READONLY_BACKOFFICE;
+            strTemplate = TEMPLATE_GROUP_RESUBMIT_BACKOFFICE;
         }
         if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
         {
-            strTemplate = TEMPLATE_GROUP_READONLY_BACKOFFICE;
+            strTemplate = TEMPLATE_GROUP_RESUBMIT_FRONTOFFICE;
         }
         return strTemplate;
     }
@@ -506,5 +510,17 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     public void addModel( Map<String, Object> model )
     {
         _model.putAll( model );
+    }
+    
+    @Override
+    public boolean isVisible() {
+    	for (ICompositeDisplay child : _listChildren)
+    	{
+    		if ( child.isVisible( ) )
+    		{
+    			return true;
+    		}
+    	}
+    	return false;
     }
 }
