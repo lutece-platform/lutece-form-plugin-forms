@@ -442,4 +442,12 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         _model.putAll( model );
     }
 
+    @Override
+    public boolean isVisible() {
+    	if ( _question == null )
+    	{
+    		return false;
+    	}
+    	return _question.isVisible( );
+    }
 }
