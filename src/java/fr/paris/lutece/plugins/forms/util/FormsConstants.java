@@ -68,6 +68,7 @@ public final class FormsConstants
     public static final String MARK_DISPLAY_ORDER = "displayOrder";
     public static final String MARK_TRANSITION = "transition";
     public static final String MARK_CONTROL = "control";
+    public static final String MARK_OTHER_STEP_VALIDATION = "other_step_validation";
     public static final String MARK_CONTROL_TYPE = "control_type";
     public static final String MARK_FORM_TOP_BREADCRUMB = "formTopBreadcrumb";
     public static final String MARK_FORM_BOTTOM_BREADCRUMB = "formBottomBreadcrumb";
