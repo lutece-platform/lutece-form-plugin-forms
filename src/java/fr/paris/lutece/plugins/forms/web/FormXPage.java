@@ -358,7 +358,7 @@ public class FormXPage extends MVCApplication
         Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
         _stepDisplayTree.addModel( modelForStep );
 
-        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( _currentStep ), request.getLocale( ),
+        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), request.getLocale( ),
                 DisplayType.EDITION_FRONTOFFICE ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
