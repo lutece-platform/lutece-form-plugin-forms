@@ -123,7 +123,7 @@ public class FormXPage extends MVCApplication
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
     private static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
     private static final String ACTION_SAVE_STEP = "doSaveStep";
-	private static final String ACTION_UPLOAD_FOR_OCR = "doUploadDocumentForOcr";
+	private static final String ACTION_UPLOAD = "doSynchronousUploadDocument";
     private static final String ACTION_RESET_BACKUP = "doResetBackup";
     private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
     private static final String ACTION_GO_TO_STEP = "doGoToStep";
@@ -1009,66 +1009,37 @@ public class FormXPage extends MVCApplication
     }
 	
 	/**
-     * OCR process with uploaded document to fill the form.
+     * Synchronous upload process to fill the form.
      *
      * @param request
      *            the request
      * @return the XPage
+     * @throws SiteMessageException
+     *             if there is an error during the iteration
+     * @throws UserNotSignedException
+     *             if the user is not signed in
      */
-    @Action( value = ACTION_UPLOAD_FOR_OCR )
-  /*  public XPage doUploadDocumentForOcr( HttpServletRequest request )
+    @Action( value = ACTION_UPLOAD )
+   public XPage doSynchronousUploadDocument( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-        if ( ( request instanceof MultipartHttpServletRequest ) && ( FormsAsynchronousUploadHandler.getHandler( ).getUploadAction( request ) != null ) )
-        {
-            FormsAsynchronousUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
-            MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
+        Form form = null;
 
-            String strOcrFieldName = handler.getUploadAction( request ).substring( handler.getUploadSubmitPrefix( ).length( ) );
-            FileItem fileUploaded = multipartRequest.getFileList( strOcrFieldName ).get( 0 );
-            if ( fileUploaded.getSize( ) <= 0 )
-            {
+        try {
+            boolean bSessionLost = isSessionLost( );
+            form = findFormFrom( request );
+            if ( bSessionLost ) {
+                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale() );
                 return redirectView( request, VIEW_STEP );
             }
 
-            handler.addFilesUploadedSynchronously( multipartRequest, strOcrFieldName );
-            String strDocumentKey = request.getParameter( FormsConstants.PARAMETER_TYPE_DOCUMENT_KEY );
+            fillResponseManagerWithResponses( request, false );
 
-            // process OCR
-            Map<String, String> mapOcrResult = TypeDocumentProviderManager.getTypeDocumentProvider( strDocumentKey ).processOcr( fileUploaded );
-            if ( mapOcrResult == null )
-            {
-                return redirectView( request, VIEW_STEP );
-            }
-
-            // Set OCR result in form
-            List<FormQuestionResponse> listFormQuestionResponse = _formResponseManager.findResponsesFor( _currentStep );
-            List<Mapping> listMappingConfiguration = MappingHome.loadByStepId( _currentStep.getId( ) );
-            for ( Mapping mapping : listMappingConfiguration )
-            {
-                String strOcrResult = mapOcrResult.get( mapping.getFieldOcrTitle( ) );
-                if ( strOcrResult != null )
-                {
-                    Question question = QuestionHome.findByPrimaryKey( mapping.getIdQuestion( ) );
-                    FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
-                    formQuestionResponse.setQuestion( question );
-
-                    Response response = new Response( );
-                    response.setEntry( question.getEntry( ) );
-                    // set Ocr result
-                    response.setToStringValueResponse( strOcrResult );
-                    List<Response> listResponse = new ArrayList<>( );
-                    listResponse.add( response );
-                    formQuestionResponse.setEntryResponse( listResponse );
-
-                    listFormQuestionResponse.add( formQuestionResponse );
-                }
-            }
-            _formResponseManager.addResponses( listFormQuestionResponse );
-
+        } catch (FormNotFoundException | QuestionValidationException exception) {
+            return redirectView( request, VIEW_STEP );
         }
 
         return redirectView( request, VIEW_STEP );
-    }*/
+    }
 
     /**
      * save the response of form

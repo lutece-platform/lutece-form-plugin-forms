@@ -61,7 +61,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
  */
 public class EntryTypeFileDisplayService implements IEntryDisplayService
 {
-    private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
+    protected static final String MARK_UPLOAD_HANDLER = "uploadHandler";
 
     private static final String LIST_RESPONSES = "list_responses";
 

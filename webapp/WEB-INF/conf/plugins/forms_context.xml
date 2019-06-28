@@ -199,7 +199,7 @@
     <bean id="forms.entryTypeTermsOfServiceDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeTermsOfService" />
     </bean>
-    <bean id="forms.entryTypeAutomaticFileReadingDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileReadingDataService">
+    <bean id="forms.entryTypeAutomaticFileReadingDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
 	</bean>
 		
