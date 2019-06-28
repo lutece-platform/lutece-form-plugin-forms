@@ -207,7 +207,7 @@ public class EntryTypeDefaultDataService implements IEntryDataService
 
         for ( Response response : formQuestionResponse.getEntryResponse( ) )
         {
-            String strResponseValue = EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForRecap( entry, null, response,
+            String strResponseValue = EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForExport( entry, null, response,
                     I18nService.getDefaultLocale( ) );
 
             if ( strResponseValue != null )
