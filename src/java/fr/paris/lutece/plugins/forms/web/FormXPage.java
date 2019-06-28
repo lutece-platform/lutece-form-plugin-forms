@@ -785,7 +785,7 @@ public class FormXPage extends MVCApplication
         if ( currentStep == null )
         {
         	 FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
-	         SiteMessageService.setMessage( request, MESSAGE_ERROR_CONTROL, new Object[] { errorList.stream( ).collect( Collectors.joining( ) ) }, SiteMessage.TYPE_ERROR, getBackUrl( form, formMessage.getEndMessageDisplay( ) ), null );
+	         SiteMessageService.setMessage( request, MESSAGE_ERROR_CONTROL, new Object[] { errorList.stream( ).collect( Collectors.joining( ) ) }, null, null, null, SiteMessage.TYPE_ERROR, null, getBackUrl( form, formMessage.getEndMessageDisplay( ) ) );
 		}
         return redirectView( request, VIEW_STEP );
     }
