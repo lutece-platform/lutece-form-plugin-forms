@@ -16,7 +16,7 @@
 				</#list>
 			</#if>
 			<input type="file" name="${fieldName}" class="form-control-file">
-            <button class="btn btn-primary btn-sm" name="action_doUploadDocumentForOcr" type="submit">#i18n{forms.entryType.autoFileReading.label.process.ocr}</button>
+            <button class="btn btn-primary btn-sm" name="action_doSynchronousUploadDocument" type="submit">#i18n{forms.entryType.autoFileReading.label.process.ocr}</button>
 			<#assign fileType = getFieldValue( entry, "file_type" )>
 			<input type="hidden" name="type_document_key" value="${fileType}">
 			<input type="hidden" name="${uploadHandler.uploadSubmitPrefix}${fieldName}" value="${uploadHandler.uploadSubmitPrefix}${fieldName}">
@@ -55,7 +55,7 @@
 		<#assign listFiles = ''>
 	</#if>
 	
-	
+	<@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles submitBtnName='action_doSynchronousUploadDocument' noJs=true />
 </#if>
 
 <!-------------------------OCR template----------------------- -->

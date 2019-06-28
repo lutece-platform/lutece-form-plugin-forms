@@ -16,7 +16,7 @@
 					</#if>
 				</#list>
 			</#if>
-			<@addFileInput fieldName=fieldName handler=uploadHandler cssClass=cssClass multiple=true />
+			<@addFileInput fieldName=fieldName handler=uploadHandler cssClass=cssClass submitBtnName='action_doSynchronousUploadDocument' multiple=true />
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="help-block">${entry.helpMessage}</span>
 			</#if>
@@ -51,6 +51,5 @@
 	<#if !listFiles??>
 		<#assign listFiles = ''>
 	</#if>
-	
-	<@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles />
+	<@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles submitBtnName='action_doSynchronousUploadDocument' />
 </#if>
