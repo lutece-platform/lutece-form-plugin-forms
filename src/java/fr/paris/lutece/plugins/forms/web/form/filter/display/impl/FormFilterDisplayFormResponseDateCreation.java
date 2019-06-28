@@ -39,10 +39,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -59,6 +57,7 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
     private static final String PARAMETER_SEARCH_OPEN_BETWEEN = "multiview_search_open_between";
     private static final String FROM = "_from";
     private static final String TO = "_to";
+    private static final String FILTER_DATE_FORMAT = "dd/MM/yyyy";
 
     // Templates
     private static final String FORM_FILTER_CREATION_DATE_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/date_filter.html";
@@ -89,8 +88,7 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
         if ( !StringUtils.isEmpty( strPeriodCreationFrom ) && !StringUtils.isEmpty( strPeriodCreationTo ) )
         {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern( AppPropertiesService
-                    .getProperty( FormsConstants.PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT ) );
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
 
             LocalDate dateFrom = LocalDate.parse( strPeriodCreationFrom, formatter );
             LocalDate dateTo = LocalDate.parse( strPeriodCreationTo, formatter );
