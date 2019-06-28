@@ -63,13 +63,14 @@ import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -1022,11 +1023,9 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_UPLOAD )
    public XPage doSynchronousUploadDocument( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-        Form form = null;
 
         try {
             boolean bSessionLost = isSessionLost( );
-            form = findFormFrom( request );
             if ( bSessionLost ) {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale() );
                 return redirectView( request, VIEW_STEP );
@@ -1034,13 +1033,23 @@ public class FormXPage extends MVCApplication
 
             fillResponseManagerWithResponses( request, false );
 
-        } catch (FormNotFoundException | QuestionValidationException exception) {
+        } catch ( QuestionValidationException exception) {
             return redirectView( request, VIEW_STEP );
         }
-
+      
+        
+        List<Question> listQuestionStep = _stepDisplayTree.getQuestions( );         
+        List<FormQuestionResponse> listFormQuestionResponse = _formResponseManager.findResponsesFor( _currentStep );
+        // if the entry type is Automatic file Reading, we fill the form responses question with ocr values readed 
+        if( EntryTypeAutomaticFileReading.fill(listQuestionStep, listFormQuestionResponse,  request )){
+        	
+        	_formResponseManager.addResponses( listFormQuestionResponse );
+        }
+         
         return redirectView( request, VIEW_STEP );
     }
 
+        
     /**
      * save the response of form
      * 

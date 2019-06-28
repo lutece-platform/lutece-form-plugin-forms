@@ -140,7 +140,7 @@ public class EntryTypeDefaultDataService implements IEntryDataService
         }
         else
         {
-            formQuestionResponse.setError( error );
+            formQuestionResponse.setError( null );
         }
 
         return formQuestionResponse;
