@@ -35,12 +35,17 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import org.apache.commons.fileupload.FileItem;
+
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
@@ -51,8 +56,10 @@ import fr.paris.lutece.plugins.genericattributes.business.IOcrProvider;
 import fr.paris.lutece.plugins.genericattributes.business.OcrProviderManager;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
 import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -69,6 +76,8 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_auto_file_reading.html";
+    
+    private static final String ENTRY_TYPE_AUT_READING_FILE = "forms.entryTypeAutomaticFileReading";
 
     /**
      * {@inheritDoc}
@@ -235,7 +244,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     	
     	IOcrProvider ocrProvider= getOcrProvider( strOcrKey );
     	
-        ReferenceList refList =  getQuestionsByStep(  nIdStep,  nIdQuestion,  strOcrKey );
+        ReferenceList refList =  getEntryByStep(  nIdStep,  nIdQuestion,  strOcrKey );
 
        
         return ocrProvider.getConfigHtmlCode(refList, nIdEntryQuestion, Form.RESOURCE_TYPE);
@@ -280,78 +289,68 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
      *            the n id form
      * @return the steps list by form
      */
-    public ReferenceList getQuestionsByStep( int nIdStep, int nIdQuestion, String strKey )
+    public ReferenceList getEntryByStep( int nIdStep, int nIdQuestion, String strKey )
     {
         ReferenceList refList = new ReferenceList( );
 
        // List<Integer> listAuthorizedEntryType = OcrProviderManager.getOcrProvider( strKey ).getAuthorizedEntryType( );
         for ( Question question : QuestionHome.getQuestionsListByStep( nIdStep ) )
         {
-            Entry entry = EntryHome.findByPrimaryKey( question.getIdEntry( ) );
-            if ( question.getId( ) != nIdQuestion && entry != null /*&& listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) )*/ )
+            if ( question.getId( ) != nIdQuestion /*&& listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) )*/ )
             {
-                refList.addItem( question.getId( ), question.getTitle( ) );
+                refList.addItem( question.getIdEntry() , question.getTitle( ) );
             }
         }
 
         return refList;
     }
-    
-    
-   /* public List<FormQuestionResponse> fillResponseManagerWithResponses(List<FormQuestionResponse> listFormQuestionResponse, FormQuestionResponse formQuestionResponse, HttpServletRequest request ){
+   /**
+    * Fill form question response with ocr values readed
+    * @param listQuestionStep the questuin list
+    * @param listFormsQuestionResponse the form response list 
+    * @param request the HttpServletRequest request
+    */
+    public static boolean fill( List<Question> listQuestionStep, List<FormQuestionResponse> listFormsQuestionResponse, HttpServletRequest request ){
+		
     	
-    	Entry entry = EntryHome.findByPrimaryKey( formQuestionResponse.getQuestion().getIdEntry() );
-    	List<Field> listField= entry.getFields();
-    	 IOcrProvider ocrProvider= null;
-    	if(listField!= null &&listField.size() > 0){
-    		
-    	     List<Field> list= listField.stream().filter(p -> (p.getTitle()!= null && p.getTitle().equals(AbstractEntryTypeFile.CONSTANT_FILE_TYPE))).collect( Collectors.toList() );
-    	     ocrProvider= OcrProviderManager.getOcrProvider( list.get(0).getValue() );
-    	
+    	FormsAsynchronousUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
+        String strAttributeName = handler.getUploadAction( request ).substring( handler.getUploadSubmitPrefix( ).length( ) );
+        String strIdEntry = strAttributeName.split(IEntryTypeService.PREFIX_ATTRIBUTE)[1].trim();  
+        Integer nIdEntry = Integer.parseInt(strIdEntry);
+        Question quest= listQuestionStep.stream().filter(mapper -> mapper.getIdEntry() == nIdEntry).collect(Collectors.toList()).get(0);
+  
+    	MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
+    	FileItem fileUploaded = multipartRequest.getFileList( strAttributeName ).get( 0 );
+
+    	Entry entry= quest.getEntry();
+        
+        if( entry.getEntryType().getBeanName().equals(ENTRY_TYPE_AUT_READING_FILE)  && handler.hasAddFileFlag( request, strAttributeName ) && fileUploaded != null && !StringUtils.isEmpty(fileUploaded.getName()) ){ 
+        	
+        	Field fieldFileType = GenericAttributesUtils.findFieldByTitleInTheList( CONSTANT_FILE_TYPE, entry.getFields( ) );
+			IOcrProvider ocrProvider= OcrProviderManager.getOcrProvider(fieldFileType.getValue( ) );
+			List<Response> listResponse= ocrProvider.process(fileUploaded, nIdEntry, Form.RESOURCE_TYPE);
+	
+		
+			if( listResponse!= null && listResponse.size() > 0){
+				
+			    for ( FormQuestionResponse response : listFormsQuestionResponse )
+		        {
+				 List<Response> listResponseForQuestion = listResponse.stream().filter(p -> p.getEntry().getIdEntry() == response.getQuestion().getIdEntry( )).collect((Collectors.toList())); 
+				 if(listResponseForQuestion != null && listResponseForQuestion.size() > 0){
+					 response.setEntryResponse(listResponseForQuestion);
+				 }
+		        }
+			}else{
+				
+				return false;
+			}
     	}else{
     		
-    		return listFormQuestionResponse;
+    		return false;
     	}
-    	// process OCR
-        Map<String, String> mapOcrResult = ocrProvider.process( this.getAsynchronousUploadHandler().getListUploadedFiles("filedName", request.getSession( )).get(0) );
-         if ( mapOcrResult == null )
-         {
-        	 return listFormQuestionResponse;
-         }
-    	
-    	
-         for ( FormQuestionResponse response : listFormQuestionResponse )
-         {
-        	 
-        	 String strKey= String.valueOf( response.getQuestion().getId());
-        	 String strValue= mapOcrResult.get(strKey);
-         }	 
-   /*     	 if( strValue != null ){
-        		// response.getEntryResponse()entry.get
-        	 }
-        	 
-        	 
-             String strOcrResult = mapOcrResult.get( mapping.getFieldOcrTitle( ) );
-             if ( strOcrResult != null )
-             {
-                 Question question = QuestionHome.findByPrimaryKey( mapping.getIdQuestion( ) );
-                 FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
-                 formQuestionResponse.setQuestion( question );
-
-                 Response response = new Response( );
-                 response.setEntry( question.getEntry( ) );
-                 // set Ocr result
-                 response.setToStringValueResponse( strOcrResult );
-                 List<Response> listResponse = new ArrayList<>( );
-                 listResponse.add( response );
-                 formQuestionResponse.setEntryResponse( listResponse );
-
-                 listFormQuestionResponse.add( formQuestionResponse );
-             }
-         }
-         
-         return listFormQuestionResponse;
-    }*/
-
+        
+        return true;
+     }
+	
     
 }

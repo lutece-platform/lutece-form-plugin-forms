@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.IOcrProvider;
 import fr.paris.lutece.plugins.genericattributes.business.OcrProviderManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUpload;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 
@@ -82,7 +83,7 @@ public class EntryTypeFileReadingDisplayService extends EntryTypeFileDisplayServ
     {
     	List<Field> listField= entry.getFields();
     	if(listField!= null &&listField.size() > 0){
-    	     List<Field> list= listField.stream().filter(p -> (p.getTitle()!= null && p.getTitle().equals(AbstractEntryTypeUpload.CONSTANT_FILE_TYPE))).collect( Collectors.toList() );
+    	     List<Field> list= listField.stream().filter(p -> (p.getTitle()!= null && p.getTitle().equals(AbstractEntryTypeFile.CONSTANT_FILE_TYPE))).collect( Collectors.toList() );
     	     IOcrProvider ocrProvider= OcrProviderManager.getOcrProvider( list.get(0).getValue() );
     	     model.put( MARK_OCR_CODE_TEMPLATE, ocrProvider.getHtmlCode(entry.getIdEntry( ), Form.RESOURCE_TYPE) );  
     	}
