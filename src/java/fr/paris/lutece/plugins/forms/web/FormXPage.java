@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -70,6 +71,8 @@ import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
+import fr.paris.lutece.plugins.forms.web.http.SynchronousHttpServletRequestWrapper;
+import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
@@ -1024,26 +1027,63 @@ public class FormXPage extends MVCApplication
    public XPage doSynchronousUploadDocument( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
 
+    	 boolean bSessionLost = isSessionLost( );
+         if ( bSessionLost ) {
+             addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale() );
+             return redirectView( request, VIEW_STEP );
+         }
+        
+        String error= null;
+        String strFlagAsynchrounous= request.getParameter("action_" + ACTION_UPLOAD);
+        Boolean isUpload= strFlagAsynchrounous.startsWith(FormsAsynchronousUploadHandler.getUploadFormsSubmitPrefix());
+        Map<String, String[]> extraParams = new TreeMap<String, String[]>();
+        extraParams.put(strFlagAsynchrounous, new String[]{strFlagAsynchrounous});
+        HttpServletRequest wrappedRequest = new SynchronousHttpServletRequestWrapper((MultipartHttpServletRequest) request, extraParams);
+       
+        FormsAsynchronousUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
+        String strAttributeName = handler.getUploadAction( wrappedRequest ).substring( handler.getUploadSubmitPrefix( ).length( ) );
+        
+        if(isUpload){
+            
+	        MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
+	    	List<FileItem> fileUploaded = multipartRequest.getFileList( strAttributeName );
+	        error = handler.canUploadFiles(wrappedRequest, strAttributeName, fileUploaded, request.getLocale( ));
+        }
+        		
         try {
-            boolean bSessionLost = isSessionLost( );
-            if ( bSessionLost ) {
-                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale() );
-                return redirectView( request, VIEW_STEP );
-            }
-
-            fillResponseManagerWithResponses( request, false );
+           
+            fillResponseManagerWithResponses( wrappedRequest, false );
 
         } catch ( QuestionValidationException exception) {
             return redirectView( request, VIEW_STEP );
         }
       
-        
-        List<Question> listQuestionStep = _stepDisplayTree.getQuestions( );         
-        List<FormQuestionResponse> listFormQuestionResponse = _formResponseManager.findResponsesFor( _currentStep );
-        // if the entry type is Automatic file Reading, we fill the form responses question with ocr values readed 
-        if( EntryTypeAutomaticFileReading.fill(listQuestionStep, listFormQuestionResponse,  request )){
+        if(isUpload ){
         	
-        	_formResponseManager.addResponses( listFormQuestionResponse );
+            List<Question> listQuestionStep = _stepDisplayTree.getQuestions( );         
+	        List<FormQuestionResponse> listFormQuestionResponse = _formResponseManager.findResponsesFor( _currentStep );
+	        String strIdEntry = strAttributeName.split(IEntryTypeService.PREFIX_ATTRIBUTE)[1].trim(); 
+	        
+            if(error != null){
+        		
+        		for ( FormQuestionResponse response : listFormQuestionResponse )
+    	        {
+        			if(response.getQuestion().getIdEntry() == Integer.parseInt(strIdEntry)){
+        				
+        				GenericAttributeError genAttError = new GenericAttributeError( );
+        		    	genAttError.setErrorMessage( error );
+                     	response.setError(genAttError);
+        			}
+        			
+    	        }
+        		_formResponseManager.addResponses( listFormQuestionResponse );
+        	}
+	      
+	        // if the entry type is Automatic file Reading, we fill the form responses question with ocr values readed 
+            else if( EntryTypeAutomaticFileReading.fill(listQuestionStep, listFormQuestionResponse,  wrappedRequest )){
+	        	
+	        	_formResponseManager.addResponses( listFormQuestionResponse );
+	        }
         }
          
         return redirectView( request, VIEW_STEP );

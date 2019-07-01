@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-
 import org.apache.commons.fileupload.FileItem;
 
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -50,8 +49,8 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.IOcrProvider;
 import fr.paris.lutece.plugins.genericattributes.business.OcrProviderManager;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -311,8 +310,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     * @param request the HttpServletRequest request
     */
     public static boolean fill( List<Question> listQuestionStep, List<FormQuestionResponse> listFormsQuestionResponse, HttpServletRequest request ){
-		
-    	
+			
     	FormsAsynchronousUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
         String strAttributeName = handler.getUploadAction( request ).substring( handler.getUploadSubmitPrefix( ).length( ) );
         String strIdEntry = strAttributeName.split(IEntryTypeService.PREFIX_ATTRIBUTE)[1].trim();  
@@ -321,16 +319,13 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
   
     	MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
     	FileItem fileUploaded = multipartRequest.getFileList( strAttributeName ).get( 0 );
-
     	Entry entry= quest.getEntry();
-        
+    	   	
         if( entry.getEntryType().getBeanName().equals(ENTRY_TYPE_AUT_READING_FILE)  && handler.hasAddFileFlag( request, strAttributeName ) && fileUploaded != null && !StringUtils.isEmpty(fileUploaded.getName()) ){ 
         	
         	Field fieldFileType = GenericAttributesUtils.findFieldByTitleInTheList( CONSTANT_FILE_TYPE, entry.getFields( ) );
 			IOcrProvider ocrProvider= OcrProviderManager.getOcrProvider(fieldFileType.getValue( ) );
-			List<Response> listResponse= ocrProvider.process(fileUploaded, nIdEntry, Form.RESOURCE_TYPE);
-	
-		
+			List<Response> listResponse= ocrProvider.process(fileUploaded, nIdEntry, Form.RESOURCE_TYPE);		
 			if( listResponse!= null && listResponse.size() > 0){
 				
 			    for ( FormQuestionResponse response : listFormsQuestionResponse )
