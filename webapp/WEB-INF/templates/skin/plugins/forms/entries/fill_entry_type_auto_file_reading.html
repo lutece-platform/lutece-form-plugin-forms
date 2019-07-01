@@ -16,8 +16,7 @@
 				</#list>
 			</#if>
 			<input type="file" name="${fieldName}" class="form-control-file">
-            <button class="btn btn-primary btn-sm" name="action_doSynchronousUploadDocument" type="submit">#i18n{forms.entryType.autoFileReading.label.process.ocr}</button>
-			<input type="hidden" name="${uploadHandler.uploadSubmitPrefix}${fieldName}" value="${uploadHandler.uploadSubmitPrefix}${fieldName}">
+            <button class="btn btn-primary btn-sm" name="action_doSynchronousUploadDocument" value="${uploadHandler.uploadSubmitPrefix}${fieldName}" type="submit">#i18n{forms.entryType.autoFileReading.label.process.ocr}</button>
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="help-block">${entry.helpMessage}</span>
 			</#if>
