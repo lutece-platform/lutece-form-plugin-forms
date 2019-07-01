@@ -49,6 +49,7 @@ import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -243,6 +244,20 @@ public class FormResponseManager
             listFormQuestionResponse = findFormResponseStepFor( step ).getQuestions( );
         }
 
+        return listFormQuestionResponse;
+    }
+
+
+    /**
+     * Finds all responses
+     *
+     * @return the found responses
+     */
+    public List<FormQuestionResponse> findAllResponses(  )
+    {
+        List<FormQuestionResponse> listFormQuestionResponse =   _formResponse.getSteps().stream()
+                .flatMap( step -> step.getQuestions().stream())
+                .collect(Collectors.toList());
         return listFormQuestionResponse;
     }
 
