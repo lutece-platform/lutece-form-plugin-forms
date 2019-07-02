@@ -638,7 +638,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             _entry.setCode( "question_" + _entry.getIdEntry( ) );
         }
 
-        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getId( ), _entry.getIdEntry( ) ) )
+        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getIdForm( ), _entry.getIdEntry( ) ) )
         {
             throw new CodeAlreadyExistsException( _entry.getCode( ) );
         }
@@ -901,7 +901,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             return strError;
         }
 
-        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getId( ), _entry.getIdEntry( ) ) )
+        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getIdForm( ), _entry.getIdEntry( ) ) )
         {
             throw new CodeAlreadyExistsException( _entry.getCode( ) );
         }

@@ -33,22 +33,32 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.fileupload.FileItem;
 
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.IOcrProvider;
 import fr.paris.lutece.plugins.genericattributes.business.OcrProviderManager;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeAutomaticFileReading;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
+import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -56,7 +66,7 @@ import fr.paris.lutece.util.url.UrlItem;
  * This class is a service for the entry type Automatic File Reading
  *
  */
-public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFileReading implements IResponseComparator
+public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile implements IResponseComparator
 {
     private static final String JSP_DOWNLOAD_FILE = "jsp/admin/plugins/forms/DoDownloadFile.jsp";
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_auto_file_reading.html";
@@ -65,6 +75,8 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_auto_file_reading.html";
+    
+    private static final String ENTRY_TYPE_AUT_READING_FILE = "forms.entryTypeAutomaticFileReading";
 
     /**
      * {@inheritDoc}
@@ -151,6 +163,54 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
     {
         return CollectionUtils.isNotEmpty( listResponseNew );
     }
+    
+    /**
+     * Set the list of fields
+     * 
+     * @param entry
+     *            The entry
+     * @param request
+     *            the HTTP request
+     */
+    @Override
+    protected void setFields( Entry entry, HttpServletRequest request )
+    {
+    	List<Field> listFields = new ArrayList<>( );
+        listFields.add( buildDefaultField( entry, request ) );
+        listFields.add( buildFieldFileMaxSize( entry, request ) );
+        listFields.add( buildFieldFileType( entry, request ) );
+        listFields.add( buildExportBinaryField( entry, request ) );
+
+        entry.setFields( listFields );
+    }
+    
+    /**
+     * Build the field for file max size
+     * 
+     * @param entry
+     *            The entry
+     * @param request
+     *            the HTTP request
+     * @return the field
+     */
+    private Field buildFieldFileType( Entry entry, HttpServletRequest request )
+    {
+        String strOcrProvider = request.getParameter( PARAMETER_FILE_TYPE );
+        
+        Field fieldFileType = GenericAttributesUtils.findFieldByTitleInTheList( CONSTANT_FILE_TYPE, entry.getFields( ) );
+
+        if ( fieldFileType == null )
+        {
+        	fieldFileType = new Field( );
+        }
+        
+        fieldFileType.setTitle( CONSTANT_FILE_TYPE );
+        fieldFileType.setValue(strOcrProvider);
+
+        fieldFileType.setParentEntry( entry );
+
+        return fieldFileType;
+    }
 
     /**
      * Builds the {@link ReferenceList} of all available files type
@@ -161,7 +221,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
     {
         ReferenceList refList = new ReferenceList( );
 
-        refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
+        //refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
 
         for ( IOcrProvider typeDocumentProvider : OcrProviderManager.getOcrProvidersList() )
         {
@@ -183,7 +243,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
     	
     	IOcrProvider ocrProvider= getOcrProvider( strOcrKey );
     	
-        ReferenceList refList =  getQuestionsByStep(  nIdStep,  nIdQuestion,  strOcrKey );
+        ReferenceList refList =  getEntryByStep(  nIdStep,  nIdQuestion,  strOcrKey );
 
        
         return ocrProvider.getConfigHtmlCode(refList, nIdEntryQuestion, Form.RESOURCE_TYPE);
@@ -228,22 +288,64 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeAutomaticFil
      *            the n id form
      * @return the steps list by form
      */
-    public ReferenceList getQuestionsByStep( int nIdStep, int nIdQuestion, String strKey )
+    public ReferenceList getEntryByStep( int nIdStep, int nIdQuestion, String strKey )
     {
         ReferenceList refList = new ReferenceList( );
 
        // List<Integer> listAuthorizedEntryType = OcrProviderManager.getOcrProvider( strKey ).getAuthorizedEntryType( );
         for ( Question question : QuestionHome.getQuestionsListByStep( nIdStep ) )
         {
-            Entry entry = EntryHome.findByPrimaryKey( question.getIdEntry( ) );
-            if ( question.getId( ) != nIdQuestion && entry != null /*&& listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) )*/ )
+            if ( question.getId( ) != nIdQuestion /*&& listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) )*/ )
             {
-                refList.addItem( question.getId( ), question.getTitle( ) );
+                refList.addItem( question.getIdEntry() , question.getTitle( ) );
             }
         }
 
         return refList;
     }
-
+   /**
+    * Fill form question response with ocr values readed
+    * @param listQuestionStep the questuin list
+    * @param listFormsQuestionResponse the form response list 
+    * @param request the HttpServletRequest request
+    */
+    public static boolean fill( List<Question> listQuestionStep, List<FormQuestionResponse> listFormsQuestionResponse, HttpServletRequest request ){
+			
+    	FormsAsynchronousUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
+        String strAttributeName = handler.getUploadAction( request ).substring( handler.getUploadSubmitPrefix( ).length( ) );
+        String strIdEntry = strAttributeName.split(IEntryTypeService.PREFIX_ATTRIBUTE)[1].trim();  
+        Integer nIdEntry = Integer.parseInt(strIdEntry);
+        Question quest= listQuestionStep.stream().filter(mapper -> mapper.getIdEntry() == nIdEntry).collect(Collectors.toList()).get(0);
+  
+    	MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
+    	FileItem fileUploaded = multipartRequest.getFileList( strAttributeName ).get( 0 );
+    	Entry entry= quest.getEntry();
+    	   	
+        if( entry.getEntryType().getBeanName().equals(ENTRY_TYPE_AUT_READING_FILE)  && handler.hasAddFileFlag( request, strAttributeName ) && fileUploaded != null && !StringUtils.isEmpty(fileUploaded.getName()) ){ 
+        	
+        	Field fieldFileType = GenericAttributesUtils.findFieldByTitleInTheList( CONSTANT_FILE_TYPE, entry.getFields( ) );
+			IOcrProvider ocrProvider= OcrProviderManager.getOcrProvider(fieldFileType.getValue( ) );
+			List<Response> listResponse= ocrProvider.process(fileUploaded, nIdEntry, Form.RESOURCE_TYPE);		
+			if( listResponse!= null && listResponse.size() > 0){
+				
+			    for ( FormQuestionResponse response : listFormsQuestionResponse )
+		        {
+				 List<Response> listResponseForQuestion = listResponse.stream().filter(p -> p.getEntry().getIdEntry() == response.getQuestion().getIdEntry( )).collect((Collectors.toList())); 
+				 if(listResponseForQuestion != null && listResponseForQuestion.size() > 0){
+					 response.setEntryResponse(listResponseForQuestion);
+				 }
+		        }
+			}else{
+				
+				return false;
+			}
+    	}else{
+    		
+    		return false;
+    	}
+        
+        return true;
+     }
+	
     
 }

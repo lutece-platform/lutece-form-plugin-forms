@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -203,6 +204,15 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                     _model.put( FormsConstants.MARK_CONTROL, controlNew );
 
                     _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
+
+                    int question_control_step = QuestionHome.findByPrimaryKey(control.getListIdQuestion().stream().findFirst().get()).getIdStep();
+                    if(question_control_step != _question.getIdStep()) {
+                       List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream()
+                               .filter(questionReponse -> control.getListIdQuestion().contains(questionReponse.getQuestion().getId()))
+                               .collect(Collectors.toList());
+                        _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, validator.validate(listFormQuestionReponseToCheck, control) );
+
+                    }
                 }
 
                 HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, _model );
@@ -442,4 +452,12 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         _model.putAll( model );
     }
 
+    @Override
+    public boolean isVisible() {
+    	if ( _question == null )
+    	{
+    		return false;
+    	}
+    	return _question.isVisible( );
+    }
 }

@@ -151,7 +151,7 @@ DROP TABLE IF EXISTS forms_control;
 CREATE TABLE forms_control (
 id_control int AUTO_INCREMENT,
 value varchar(255),
-error_message varchar(255) default '',
+error_message varchar(512) default '',
 validator_name varchar(255) NOT NULL,
 control_type varchar(255) NOT NULL,
 id_control_target int default '0' NOT NULL,

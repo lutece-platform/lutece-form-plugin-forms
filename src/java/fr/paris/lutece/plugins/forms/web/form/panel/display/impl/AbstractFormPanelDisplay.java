@@ -48,6 +48,7 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
 /**
@@ -212,7 +213,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay, IFo
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_PANEL_ACTIVE, _bActive );
         model.put( MARK_PANEL_TECHNICAL_CODE, strTechnicalCode );
-        model.put( MARK_PANEL_TITLE, strTitle );
+        model.put( MARK_PANEL_TITLE, I18nService.getLocalizedString( strTitle, locale ) );
         model.put( MARK_PANEL_FORM_RESPONSE_NUMBER, getFormResponseNumber( ) );
 
         String strFormPanelDisplayTemplate = AppTemplateService.getTemplate( TEMPLATE_MULTIVIEW_FORM_PANEL, locale, model ).getHtml( );
