@@ -51,8 +51,7 @@
 	<#if !listFiles??>
 		<#assign listFiles = ''>
 	</#if>
-	
-	<@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles submitBtnName='action_doSynchronousUploadDocument' noJs=true />
+	<@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles />
 </#if>
 
 <!-------------------------OCR template----------------------- -->
