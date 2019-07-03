@@ -17,6 +17,7 @@
 		</script>
 	<#else>
 		<script>
+		$(function() {
 			<#assign validNames = [] />
 			<#if !validNames?seq_contains(validator.validatorBeanName)>
 				<#assign validNames = validNames + [validator.validatorBeanName] />
@@ -30,8 +31,7 @@
 			var input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
 			input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
 				var inputValue = getFieldValue(input${control.id}_${question.iterationNumber});
-				if(validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
-				{
+				if(input${control.id}_${question.iterationNumber}.is(":visible") && validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))				{
 					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').show();
 					$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
 				}
@@ -42,6 +42,7 @@
 				}
 			});
 			input${control.id}_${question.iterationNumber}.change();
+		});
 		</script>
 	</#if>
 <#else>
