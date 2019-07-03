@@ -73,6 +73,7 @@ import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.http.SynchronousHttpServletRequestWrapper;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
@@ -1066,13 +1067,19 @@ public class FormXPage extends MVCApplication
 	        
             if(error != null){
         		
-        		for ( FormQuestionResponse response : listFormQuestionResponse )
+        		for ( FormQuestionResponse formResponse : listFormQuestionResponse )
     	        {
-        			if(response.getQuestion().getIdEntry() == Integer.parseInt(strIdEntry)){
+        			if(formResponse.getQuestion().getIdEntry() == Integer.parseInt(strIdEntry)){
         				
+        				List<Response> listResponse= formResponse.getEntryResponse();
+        				 Response response = new Response( );
+                         response.setEntry( formResponse.getQuestion().getEntry() );                         
         				GenericAttributeError genAttError = new GenericAttributeError( );
         		    	genAttError.setErrorMessage( error );
-                     	response.setError(genAttError);
+        		    	listResponse.add( response );
+        		    	formResponse.setError(genAttError);                     	
+                     	
+                     	formResponse.setEntryResponse(listResponse);
         			}
         			
     	        }
