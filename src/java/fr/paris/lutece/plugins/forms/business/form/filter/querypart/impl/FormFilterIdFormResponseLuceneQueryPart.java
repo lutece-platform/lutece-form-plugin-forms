@@ -66,7 +66,7 @@ public class FormFilterIdFormResponseLuceneQueryPart extends AbstractFormFilterL
                 if ( nIdFormResponse != CONSTANT_INTEGER_MINUS_ONE )
                 {
                     Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse );
-                    booleanQueryBuilder.add( query, BooleanClause.Occur.MUST );
+                    booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
                 }
             }
             setFormFilterQuery( booleanQueryBuilder.build( ) );
