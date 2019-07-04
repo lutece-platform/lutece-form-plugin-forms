@@ -325,7 +325,17 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
         	
         	Field fieldFileType = GenericAttributesUtils.findFieldByTitleInTheList( CONSTANT_FILE_TYPE, entry.getFields( ) );
 			IOcrProvider ocrProvider= OcrProviderManager.getOcrProvider(fieldFileType.getValue( ) );
-			List<Response> listResponse= ocrProvider.process(fileUploaded, nIdEntry, Form.RESOURCE_TYPE);		
+			List<Response> listResponse= null;
+			try {
+				
+				listResponse = ocrProvider.process(fileUploaded, nIdEntry, Form.RESOURCE_TYPE);
+			
+			} catch (Exception e) {
+				
+				setCallOcrError( entry,listFormsQuestionResponse,  e.getMessage( ));
+				
+				return true;
+			}	
 			if( listResponse!= null && listResponse.size() > 0){
 				
 			    for ( FormQuestionResponse response : listFormsQuestionResponse )
@@ -346,6 +356,30 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
         
         return true;
      }
-	
+	/**
+	 * Set Call Ocr Error Message
+	 * @param entry
+	 * @param listFormsQuestionResponse
+	 * @param strErrorMeassge
+	 */
+    private static void setCallOcrError(Entry entry, List<FormQuestionResponse> listFormsQuestionResponse, String strErrorMeassge){
+    	
+    	for ( FormQuestionResponse formResponse : listFormsQuestionResponse )
+        {
+			if(formResponse.getQuestion().getIdEntry() == entry.getIdEntry() ){
+				
+				List<Response> listResponse= formResponse.getEntryResponse();
+				 Response response = new Response( );
+                 response.setEntry( formResponse.getQuestion().getEntry() );                         
+				GenericAttributeError genAttError = new GenericAttributeError( );
+		    	genAttError.setErrorMessage( strErrorMeassge );
+		    	listResponse.add( response );
+		    	formResponse.setError(genAttError);                     	
+             	
+             	formResponse.setEntryResponse(listResponse);
+             	break;
+			}
+	}		
+    }
     
 }

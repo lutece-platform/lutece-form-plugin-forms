@@ -1080,6 +1080,7 @@ public class FormXPage extends MVCApplication
         		    	formResponse.setError(genAttError);                     	
                      	
                      	formResponse.setEntryResponse(listResponse);
+                     	break;
         			}
         			
     	        }
