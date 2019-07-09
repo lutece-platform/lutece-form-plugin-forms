@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service.listener;
 
+import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchIndexer;
@@ -49,7 +50,7 @@ public class FormResponseEventListener implements EventRessourceListener
     private IFormSearchIndexer _formSearchIndexer; 
 
     @Override
-    public String getName() 
+    public String getName( ) 
     {
         return CONSTANT_FORM_RESPONSE_LISTENER_NAME;
     }
@@ -60,44 +61,37 @@ public class FormResponseEventListener implements EventRessourceListener
     @Override
     public void addedResource( ResourceEvent event ) 
     {
-        try
-        {
-            int nIdResource = Integer.parseInt( event.getIdResource( ) );
-            _formSearchIndexer.indexDocument( nIdResource, IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
-        }
-        catch ( NumberFormatException e )
-        {
-            AppLogService.error( "Unable to parse given event id ressource to integer " + event.getIdResource(), e );
-        }
-        
+    	indexResource( event, IndexerAction.TASK_CREATE );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void deletedResource(ResourceEvent event) {
-        try
-        {
-            int nIdResource = Integer.parseInt( event.getIdResource( ) );
-            _formSearchIndexer.indexDocument( nIdResource, IndexerAction.TASK_DELETE, FormsPlugin.getPlugin( ) );
-        }
-        catch ( NumberFormatException e )
-        {
-            AppLogService.error( "Unable to parse given event id ressource to integer " + event.getIdResource(), e );
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void updatedResource(ResourceEvent event) 
+    public void deletedResource( ResourceEvent event )
     {
+    	indexResource( event, IndexerAction.TASK_DELETE );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void updatedResource( ResourceEvent event ) 
+    {
+    	indexResource( event, IndexerAction.TASK_MODIFY );
+    }
+    
+    private void indexResource( ResourceEvent event, int nIdTask)
+    {
+    	if ( !checkResourceType( event ) )
+    	{
+    		return ;
+    	}
         try
         {
             int nIdResource = Integer.parseInt( event.getIdResource( ) );
-            _formSearchIndexer.indexDocument( nIdResource, IndexerAction.TASK_MODIFY, FormsPlugin.getPlugin( ) );
+            _formSearchIndexer.indexDocument( nIdResource, nIdTask, FormsPlugin.getPlugin( ) );
         }
         catch ( NumberFormatException e )
         {
@@ -105,4 +99,8 @@ public class FormResponseEventListener implements EventRessourceListener
         }
     }
     
+    private boolean checkResourceType( ResourceEvent event )
+    {
+    	return FormResponse.RESOURCE_TYPE.equals( event.getTypeResource( ) );
+    }
 }
