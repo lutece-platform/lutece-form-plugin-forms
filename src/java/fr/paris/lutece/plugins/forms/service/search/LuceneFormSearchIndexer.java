@@ -247,7 +247,11 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         for ( Integer nIdFormResponse : listIdsToAdd )
         {
             // TODO IMPLEMENT A SQL IN( ..) instead
-            listFormResponses.add( FormResponseHome.findByPrimaryKey( nIdFormResponse ) );
+        	FormResponse response = FormResponseHome.findByPrimaryKey( nIdFormResponse );
+        	if ( !response.isFromSave( ) )
+        	{
+        		listFormResponses.add( response );
+        	}
         }
         indexFormResponseList( listFormResponses );
     }
@@ -448,7 +452,6 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      */
     private Document getDocument( FormResponse formResponse, Form form, State formResponseState )
     {
-
         // make a new, empty document
         Document doc = new Document( );
 
