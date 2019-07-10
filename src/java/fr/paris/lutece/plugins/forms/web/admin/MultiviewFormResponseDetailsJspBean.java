@@ -457,8 +457,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
                 // Update Form response modification date
                 FormResponseHome.update( formResponse );
-                
-                _formService.fireFormResponseEventUpdate( formResponse );
             }
             else
             {
