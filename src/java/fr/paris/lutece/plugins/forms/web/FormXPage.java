@@ -266,7 +266,7 @@ public class FormXPage extends MVCApplication
         {
             if ( paramInit.equals( PARAMETER_INIT ) )
             {
-                init( );
+                init( request );
             }
         }
         Map<String, Object> model = getModel( );
@@ -590,7 +590,7 @@ public class FormXPage extends MVCApplication
 
         model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
 
-        init( );
+        init( request );
 
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
@@ -1177,12 +1177,13 @@ public class FormXPage extends MVCApplication
     /**
      * initialize the object.
      */
-    private void init( )
+    private void init( HttpServletRequest request )
     {
         _formResponseManager = null;
         _currentStep = null;
         _stepDisplayTree = null;
         _breadcrumb = null;
+        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
     }
 
     /**
