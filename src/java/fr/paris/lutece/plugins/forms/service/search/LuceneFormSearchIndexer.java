@@ -79,6 +79,7 @@ import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -92,7 +93,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private static final String FORMS = "forms";
     private static final String INDEXER_VERSION = "1.0.0";
     private static final String PROPERTY_INDEXER_ENABLE = "forms.globalIndexer.enable";
-
+    private static final int TAILLE_LOT = AppPropertiesService.getPropertyInt( "forms.index.writer.commit.size", 100 );
 
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
@@ -220,18 +221,19 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
         Plugin plugin = PluginService.getPlugin( FormsPlugin.PLUGIN_NAME );
         List<Integer> listIdsToAdd = new ArrayList<>( );
+        List<Integer> listIdsToDelete = new ArrayList<>( );
 
         // Delete all record which must be delete
         for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_DELETE, plugin ) )
         {
-            deleteDocument( action.getIdFormResponse( ) );
+        	listIdsToDelete.add( action.getIdFormResponse( ) );
             removeIndexerAction( action.getIdAction(), plugin );
         }
 
         // Update all record which must be update
         for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_MODIFY, plugin ) )
         {
-            deleteDocument( action.getIdFormResponse( ) );
+        	listIdsToDelete.add( action.getIdFormResponse( ) );
             listIdsToAdd.add( action.getIdFormResponse( ) );
             removeIndexerAction( action.getIdAction(), plugin );
         }
@@ -242,7 +244,19 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             listIdsToAdd.add( action.getIdFormResponse( ) );
             removeIndexerAction( action.getIdAction(), plugin );
         }
-
+        
+        
+        List<Query> queryList = new ArrayList<>( TAILLE_LOT );
+        for ( Integer nIdFormResponse : listIdsToDelete )
+        {
+        	queryList.add( IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
+        	if ( queryList.size( ) == TAILLE_LOT )
+        	{
+        		deleteDocument( queryList );
+        	}
+        }
+        deleteDocument( queryList );
+        
         List<FormResponse> listFormResponses = new ArrayList<>( );
         for ( Integer nIdFormResponse : listIdsToAdd )
         {
@@ -306,7 +320,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         }
 
         Map<Integer, Form> mapForms = FormHome.getFormList( ).stream( ).collect( Collectors.toMap( form -> form.getId( ), form -> form ) );
-
+        List<Document> documentList = new ArrayList<>( TAILLE_LOT );
         for ( FormResponse formResponse : listFormResponse )
         {
             Document doc = null;
@@ -334,18 +348,28 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
             if ( doc != null )
             {
-                try
-                {
-                    _indexWriter.addDocument( doc );
-                }
-                catch( IOException e )
-                {
-                    AppLogService.error( "Unable to index form response with id " + formResponse.getId( ), e );
-                }
+            	documentList.add( doc );
+            	if ( documentList.size( ) == TAILLE_LOT )
+            	{
+            		addDocuments( documentList );
+            	}
             }
         }
-
+        addDocuments( documentList );
         endIndexing( );
+    }
+    
+    private void addDocuments( List<Document> documentList )
+    {
+    	try
+        {
+            _indexWriter.addDocuments( documentList );
+        }
+        catch( IOException e )
+        {
+            AppLogService.error( "Unable to index form response", e );
+        }
+    	documentList.clear();
     }
 
     /**
@@ -400,16 +424,18 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         }
     }
 
-    private void deleteDocument( int nIdFormResponse ) 
+    private void deleteDocument( List<Query> luceneQueryList ) 
     {
         try 
         {
-            _indexWriter.deleteDocuments( IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
+            _indexWriter.deleteDocuments( luceneQueryList.toArray( new Query[luceneQueryList.size( )] ) );
         } catch (IOException e)
         {
-            AppLogService.error( "Unable to delete document with id " + nIdFormResponse, e);
+            AppLogService.error( "Unable to delete document ", e);
         }
+        luceneQueryList.clear( );
     }
+    
     
     /**
      * Remove a Indexer Action
