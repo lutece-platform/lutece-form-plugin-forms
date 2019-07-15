@@ -166,7 +166,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
 
-        boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( nIdFormResponse ),
+        boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( formResponse.getFormId( ) ),
                 FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, getUser( ) );
         boolean bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( request, nIdFormResponse );
 
