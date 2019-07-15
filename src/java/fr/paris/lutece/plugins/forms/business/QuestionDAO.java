@@ -43,6 +43,7 @@ import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class provides Data Access methods for Question objects
@@ -58,7 +59,8 @@ public final class QuestionDAO implements IQuestionDAO
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_question FROM forms_question";
     private static final String SQL_QUERY_SELECT_BY_STEP = SQL_QUERY_SELECTALL + " WHERE id_step = ?";
     private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title, fq.code, fq.description, fq.id_entry, fq.id_step, fq.is_visible_multiview_global, fq.is_visible_multiview_form_selected , fq.column_title FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
-
+    private static final String SQL_QUERY_SELECT_IN = SQL_QUERY_SELECTALL + " WHERE id_question IN ( ";
+    
     /**
      * {@inheritDoc }
      */
@@ -301,6 +303,55 @@ public final class QuestionDAO implements IQuestionDAO
         question.setVisibleMultiviewFormSelected( daoUtil.getBoolean( "is_visible_multiview_form_selected" ) );
         question.setColumnTitle( daoUtil.getString( "column_title" ) );
         question.setStep( getQuestionStep( question.getIdStep( ) ) );
+
+        return question;
+    }
+    
+    @Override
+    public List<Question> loadMultiple( List<Integer> keyList, Plugin plugin )
+    {
+    	List<Question> list = new ArrayList<>( );
+    	String query = SQL_QUERY_SELECT_IN + keyList.stream( ).distinct( ).map( i -> "?" ).collect( Collectors.joining( "," ) ) + " )";
+    	
+    	try ( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
+    	{
+    		for ( int i = 0; i < keyList.size( ); i++ )
+    		{
+    			daoUtil.setInt( i + 1 , keyList.get( i ) );
+    		}
+    		daoUtil.executeQuery( );
+    		
+    		while ( daoUtil.next( ) )
+    		{
+    			list.add( dataToObjectWithoutStepEntry( daoUtil ) );
+    		}
+    	}
+    	return list;
+    }
+    
+    /**
+     * 
+     * @param daoUtil
+     *            The daoutil
+     * @return The populated Question object
+     */
+    private Question dataToObjectWithoutStepEntry( DAOUtil daoUtil )
+    {
+        Question question = new Question( );
+
+        question.setId( daoUtil.getInt( "id_question" ) );
+        question.setTitle( daoUtil.getString( "title" ) );
+        question.setCode( daoUtil.getString( "code" ) );
+        question.setDescription( daoUtil.getString( "description" ) );
+        question.setIdEntry( daoUtil.getInt( "id_entry" ) );
+        question.setIdStep( daoUtil.getInt( "id_step" ) );
+        question.setVisibleMultiviewGlobal( daoUtil.getBoolean( "is_visible_multiview_global" ) );
+        question.setVisibleMultiviewFormSelected( daoUtil.getBoolean( "is_visible_multiview_form_selected" ) );
+        question.setColumnTitle( daoUtil.getString( "column_title" ) );
+        
+        Step step = new Step( );
+        step.setId(question.getIdStep( )  );
+        question.setStep( step );
 
         return question;
     }

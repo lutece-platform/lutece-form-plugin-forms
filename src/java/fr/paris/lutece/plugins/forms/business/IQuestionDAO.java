@@ -86,6 +86,17 @@ public interface IQuestionDAO
      * @return The instance of the question
      */
     Question load( int nKey, Plugin plugin );
+    
+    /**
+     * Load the data from the table
+     * 
+     * @param keyList
+     *            The identifiers of the questions
+     * @param plugin
+     *            the Plugin
+     * @return The list of questions
+     */
+    List<Question> loadMultiple( List<Integer> keyList, Plugin plugin );
 
     /**
      * Load the data of all the question objects and returns them as a list

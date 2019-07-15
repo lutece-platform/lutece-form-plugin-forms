@@ -112,6 +112,18 @@ public final class QuestionHome
     {
         return _dao.load( nKey, _plugin );
     }
+    
+    /**
+     * Returns an instance of a question whose identifier is specified in parameter
+     * 
+     * @param keyList
+     *            The questions primary keys
+     * @return a list of Questions
+     */
+    public static List<Question> findByPrimaryKeyList( List<Integer> keyList )
+    {
+        return _dao.loadMultiple( keyList, _plugin );
+    }
 
     /**
      * Load the data of all the question objects and returns them as a list

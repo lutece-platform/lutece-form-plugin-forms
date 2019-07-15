@@ -253,18 +253,24 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         	if ( queryList.size( ) == TAILLE_LOT )
         	{
         		deleteDocument( queryList );
+        		queryList.clear() ;
         	}
         }
         deleteDocument( queryList );
         
-        List<FormResponse> listFormResponses = new ArrayList<>( );
+        List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
         for ( Integer nIdFormResponse : listIdsToAdd )
         {
             // TODO IMPLEMENT A SQL IN( ..) instead
-        	FormResponse response = FormResponseHome.findByPrimaryKey( nIdFormResponse );
-        	if ( !response.isFromSave( ) )
+        	FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
+        	if ( response != null )
         	{
         		listFormResponses.add( response );
+        	}
+        	if ( listFormResponses.size( ) == TAILLE_LOT )
+        	{
+        		indexFormResponseList( listFormResponses );
+        		listFormResponses.clear( );
         	}
         }
         indexFormResponseList( listFormResponses );
@@ -320,7 +326,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         }
 
         Map<Integer, Form> mapForms = FormHome.getFormList( ).stream( ).collect( Collectors.toMap( form -> form.getId( ), form -> form ) );
-        List<Document> documentList = new ArrayList<>( TAILLE_LOT );
+        List<Document> documentList = new ArrayList<>( );
         for ( FormResponse formResponse : listFormResponse )
         {
             Document doc = null;
@@ -349,10 +355,6 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             if ( doc != null )
             {
             	documentList.add( doc );
-            	if ( documentList.size( ) == TAILLE_LOT )
-            	{
-            		addDocuments( documentList );
-            	}
             }
         }
         addDocuments( documentList );
@@ -433,7 +435,6 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         {
             AppLogService.error( "Unable to delete document ", e);
         }
-        luceneQueryList.clear( );
     }
     
     

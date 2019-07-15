@@ -33,10 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import java.util.List;
 
 /**
  * This class provides instances management methods (create, find, ...) for FormResponseHome objects
@@ -109,6 +113,51 @@ public final class FormResponseHome
     }
     
     /**
+     * Returns an instance of a formResponse whose identifier is specified in parameter
+     * 
+     * @param nKey
+     *            The formResponse primary key
+     * @return an instance of FormResponse
+     */
+    public static FormResponse findByPrimaryKeyForIndex( int nKey )
+    {
+    	// FormResponse
+        FormResponse formResponse = _dao.load( nKey, _plugin );
+        if ( formResponse.isFromSave( ) )
+        {
+        	return null;
+        }
+        
+        // FormResponseStep
+        List<FormResponseStep> formResponseStepList = FormResponseStepHome.findStepsByFormResponsePartial( formResponse.getId( ) );
+        formResponse.setSteps( formResponseStepList );
+        
+        // FormQuestionResponse
+        List<FormQuestionResponse> formQuestionResponseList = FormQuestionResponseHome.selectFormQuestionResponseListByListFormResponseStep( formResponseStepList );
+        
+        // Questions
+        List<Question> questionList = QuestionHome.findByPrimaryKeyList( formQuestionResponseList.stream( ).map( FormQuestionResponse::getQuestion ).map( Question::getId ).distinct( ).collect( Collectors.toList( ) ) );
+        List<Entry> entryList = EntryHome.findByPrimaryKeyList( questionList.stream( ).map(Question::getIdEntry ).distinct( ).collect( Collectors.toList( ) ) );
+        for ( Question question : questionList )
+        {
+        	question.setEntry( entryList.stream( ).filter( entry -> entry.getIdEntry( ) == question.getIdEntry( ) ).findFirst( ).orElse( null ) );
+        }
+        
+        // Populate FormQuestionResponse
+        for ( FormQuestionResponse fqr : formQuestionResponseList)
+        {
+        	fqr.setQuestion( questionList.stream( ).filter( q -> q.getId( ) == fqr.getQuestion( ).getId( ) ).findFirst( ).orElse( null ) );
+        }
+        
+        // Populate FormResponseStep
+        for ( FormResponseStep formQuestionStep: formResponseStepList )
+        {
+        	formQuestionStep.setQuestions( formQuestionResponseList.stream( ).filter( fqr -> formQuestionStep.getStep( ).getId( ) == fqr.getIdStep( ) ).collect( Collectors.toList( ) ) );
+        }
+        return formResponse;
+    }
+    
+    /**
      * Returns an instance of a uncomplete (without steps) formResponse whose identifier is specified in parameter
      * 
      * @param nKey
@@ -173,7 +222,7 @@ public final class FormResponseHome
             formResponse.setSteps( FormResponseStepHome.findStepsByFormResponse( formResponse.getId( ) ) );
         }
     }
-
+    
     /**
      * Load the data of all the formResponse objects and returns them as a list
      * 

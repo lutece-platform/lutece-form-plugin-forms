@@ -33,11 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.List;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-
-import java.util.List;
 
 /**
  * This class provides instances management methods (create, find, ...) for FormResponseStep objects
@@ -225,5 +225,17 @@ public final class FormResponseStepHome
 
         return listFormResponseStep;
     }
-
+    
+    /**
+     * Load the order step id list by FormResponse id <br />
+     * Doesn't load Steps and FormQuestionResponses
+     * 
+     * @param nIdFormResponse
+     *            The form Identifier
+     * @return the list which contains the data of all the formResponseStep objects
+     */
+    public static List<FormResponseStep> findStepsByFormResponsePartial( int nIdFormResponse )
+    {
+        return _dao.selectFormResponseStepsByFormResponse( nIdFormResponse, _plugin );
+    }
 }
