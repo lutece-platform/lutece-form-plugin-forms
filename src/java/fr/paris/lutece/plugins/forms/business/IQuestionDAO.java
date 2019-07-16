@@ -96,6 +96,15 @@ public interface IQuestionDAO
      */
     List<Question> selectQuestionsList( Plugin plugin );
 
+        /**
+     * Load the data of all the question objects and returns them as a list
+     * 
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the uncomplete data of all the question objects
+     */
+    List<Question> selectQuestionsListUncomplete( Plugin plugin );
+
     /**
      * Load the data of all the question objects by step and returns them as a list
      * 
@@ -117,6 +126,17 @@ public interface IQuestionDAO
      * @return The list which contains the data of all the question objects by given form id
      */
     List<Question> selectQuestionsListByFormId( int nIdForm, Plugin plugin );
+
+/**
+     * Load the data of all the question objects by form id and returns them as a list
+     * 
+     * @param nIdForm
+     *            The id of the form
+     * @param plugin
+     *            The plugin
+     * @return The list which contains the data of all the question objects by given form id
+     */
+    List<Question> selectQuestionsListByFormIdUncomplete( int nIdForm, Plugin plugin );
 
     /**
      * Load the id of all the question objects and returns them as a list

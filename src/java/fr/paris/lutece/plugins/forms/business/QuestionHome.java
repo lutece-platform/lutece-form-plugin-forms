@@ -126,6 +126,16 @@ public final class QuestionHome
     /**
      * Load the data of all the question objects and returns them as a list
      * 
+     * @return the list which contains the data of all the question objects
+     */
+    public static List<Question> getQuestionsListUncomplete( )
+    {
+        return _dao.selectQuestionsListUncomplete( _plugin );
+    }
+
+    /**
+     * Load the data of all the question objects and returns them as a list
+     * 
      * @param nIdStep
      *            The step primary key
      * @return the list which contains the data of all the question objects
@@ -145,6 +155,18 @@ public final class QuestionHome
     public static List<Question> getListQuestionByIdForm( int nIdForm )
     {
         return _dao.selectQuestionsListByFormId( nIdForm, _plugin );
+    }
+
+    /**
+     * Load the data of all the question objects for given form id and returns them as a list
+     * 
+     * @param nIdForm
+     *            The id of the form
+     * @return the list of all the question objects for the given form id
+     */
+    public static List<Question> getListQuestionByIdFormUncomplete( int nIdForm )
+    {
+        return _dao.selectQuestionsListByFormIdUncomplete( nIdForm, _plugin );
     }
 
     /**

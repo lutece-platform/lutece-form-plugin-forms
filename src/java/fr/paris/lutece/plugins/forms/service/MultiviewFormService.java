@@ -156,8 +156,8 @@ public final class MultiviewFormService
         listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( ), column ) );
 
         // Then add global columns from config questions
-        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsList( ) : QuestionHome
-                .getListQuestionByIdForm( nIdForm );
+        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( ) : QuestionHome
+                .getListQuestionByIdFormUncomplete( nIdForm );
 
         addColumnFromConfig( mapFormColumns, listQuestions, true );
 
@@ -208,8 +208,8 @@ public final class MultiviewFormService
 
 
         //Then add the global question-based for Filters
-        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsList( ) : QuestionHome
-                .getListQuestionByIdForm( nIdForm );
+        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( ) : QuestionHome
+                .getListQuestionByIdFormUncomplete( nIdForm );
 
         addFilterFromConfig( mapFormFilter, listQuestions, true );
 
@@ -236,6 +236,7 @@ public final class MultiviewFormService
         {
             if ( ( bGlobal == true ) ? question.isVisibleMultiviewGlobal( ) : question.isVisibleMultiviewFormSelected( ) )
             {
+                question = QuestionHome.findByPrimaryKey( question.getId( ) );
 
                 if ( !mapColumns.keySet( ).contains( question.getColumnTitle( ) ) )
                 {
@@ -283,6 +284,7 @@ public final class MultiviewFormService
         {
             if ( ( bGlobal == true ) ? question.isFiltrableMultiviewGlobal( ) : question.isFiltrableMultiviewFormSelected( ) )
             {
+                question = QuestionHome.findByPrimaryKey( question.getId( ) );
 
                 if ( !mapFilters.keySet( ).contains( question.getCode( ) ) )
                 {
