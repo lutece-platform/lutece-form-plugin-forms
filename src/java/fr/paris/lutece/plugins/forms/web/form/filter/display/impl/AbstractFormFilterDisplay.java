@@ -57,6 +57,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
 
     // Marks
     protected static final String MARK_FILTER_LIST = "filter_list";
+    protected static final String MARK_FILTER_CONFIG = "filter_config";
     protected static final String MARK_FILTER_NAME = "filter_name";
     protected static final String MARK_FILTER_LIST_VALUE = "filter_list_value";
 
@@ -208,6 +209,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
         model.put( MARK_FILTER_LIST, referenceList );
         model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
         model.put( MARK_FILTER_NAME, strParameterName );
+        model.put( MARK_FILTER_CONFIG, getFormFilter().getFormFilterConfiguration() );
 
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
         if ( htmlTemplate != null )

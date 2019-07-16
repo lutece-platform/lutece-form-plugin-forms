@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.service;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnComparator;
 import java.util.List;
 
@@ -46,14 +47,22 @@ import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterFactory;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDateDisplayService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -172,6 +181,48 @@ public final class MultiviewFormService
     }
 
     /**
+     * Get the form columns list from spring and multiview conf
+     * 
+     * @param nIdForm
+     * @return the form columns list
+     */
+    public List<FormFilter> getFormFiltersList( Integer nIdForm )
+    {
+        Map<String,FormFilter> mapFormFilter = new HashMap<>( );
+
+        //First add the XML-based filters
+        for ( IFormFilterConfiguration formFilterConfiguration : SpringContextService.getBeansOfType( IFormFilterConfiguration.class ) )
+        {
+            FormFilter formFilter;
+            if ( formFilterConfiguration instanceof FormFilterFormsConfiguration )
+            {
+                formFilter = new FormFilterForms( );
+            }
+            else
+            {
+                formFilter = new FormFilter( );
+            }
+            formFilter.setFormFilterConfiguration( formFilterConfiguration );
+            mapFormFilter.put( formFilter.getFormFilterConfiguration( ).getFormFilterName(), formFilter );
+        }
+
+
+        //Then add the global question-based for Filters
+        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsList( ) : QuestionHome
+                .getListQuestionByIdForm( nIdForm );
+
+        addFilterFromConfig( mapFormFilter, listQuestions, true );
+
+        if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )
+        {
+            // Then add specific columns from config questions
+            addFilterFromConfig( mapFormFilter, listQuestions, false );
+        }
+ 
+         return new ArrayList<>( mapFormFilter.values( ) );
+    }
+
+    /**
      * Add the column config based on multiview config question
      * 
      * @param mapColumns
@@ -213,6 +264,38 @@ public final class MultiviewFormService
                     {
                         ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
                     }
+                }
+            }
+        }
+    }
+
+    /**
+     * Add the filter based on multiview config question
+     * 
+     * @param mapColumns
+     * @param listQuestions
+     * @param bGlobal
+     */
+    private void addFilterFromConfig( Map<String, FormFilter> mapFilters, List<Question> listQuestions, boolean bGlobal )
+    {
+        int nPosition = mapFilters.size( );
+        for ( Question question : listQuestions )
+        {
+            if ( ( bGlobal == true ) ? question.isFiltrableMultiviewGlobal( ) : question.isFiltrableMultiviewFormSelected( ) )
+            {
+
+                if ( !mapFilters.keySet( ).contains( question.getCode( ) ) )
+                {
+                    IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
+
+                    if ( displayService instanceof EntryTypeDateDisplayService )
+                    {
+                        FormFilter formFilter = new FormFilter();
+                        IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++, question.getTitle( ), 
+                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0" );
+                        
+                        formFilter.setFormFilterConfiguration( formFilterConfiguration );
+                        mapFilters.put( question.getCode( ), formFilter );}
                 }
             }
         }

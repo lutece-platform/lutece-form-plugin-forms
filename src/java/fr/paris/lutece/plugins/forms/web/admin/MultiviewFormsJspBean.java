@@ -162,7 +162,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         }
 
         // Build the Column for the Panel and save their values for the active panel
-        buildFormPanelDisplayWithData( );
+        buildFormPanelDisplayWithData( request );
 
         // Sort the list of FormResponseItem of the FormPanel with the request information
         sortFormResponseItemList( request, _formPanelDisplayActive.getFormResponseItemList( ) );
@@ -344,7 +344,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     private void initFormRelatedLists( HttpServletRequest request )
     {
-        List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( );
+        List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( null );
+        
         List<FormPanel> listFormPanel = new FormPanelFactory( ).buildFormPanelList( );
 
         FormColumnFactory formColumnFactory = SpringContextService.getBean( FormColumnFactory.BEAN_NAME );
@@ -376,13 +377,14 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     /**
      * Build all the form panels by building their template and retrieve the data of their columns for the given list of filter and the specified text to search
      */
-    private void buildFormPanelDisplayWithData( )
+    private void buildFormPanelDisplayWithData(  HttpServletRequest request )
     {
         // Retrieve the list of all FormFilter
         List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
         // Check in filters if the columns list has to be fetch again
         reloadFormColumnList( listFormFilter );
+        listFormFilter = reloadFormFilterList( listFormFilter, request );
 
         for ( IFormPanelDisplay formPanelDisplay : _listFormPanelDisplay )
         {
@@ -547,5 +549,29 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                 _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
             }
         }
+    }
+
+    private List<FormFilter> reloadFormFilterList( List<FormFilter> listFormFilter, HttpServletRequest request )
+    {
+        for ( FormFilter filter : listFormFilter )
+        {
+            if ( filter instanceof FormFilterForms )
+            {
+                Integer nIdForm = ( (FormFilterForms) filter ).getSelectedIdForm( );
+                List<FormFilter> listFormFilterReloaded = new ArrayList<>();
+                if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
+                {
+                    listFormFilterReloaded = new FormFilterFactory().buildFormFilterList( nIdForm );
+                }
+                else
+                {
+                    listFormFilterReloaded = new FormFilterFactory().buildFormFilterList( null );
+                }
+
+                _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilterReloaded );
+                return listFormFilterReloaded;
+            }
+        }
+        return listFormFilter;
     }
 }

@@ -33,12 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter;
 
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration;
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 
 /**
  * Factory used to build a list of FormFilter
@@ -46,14 +44,13 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 public class FormFilterFactory
 {
     // Variables
-    private final List<IFormFilterConfiguration> _listFormFilterConfiguration;
+    private List<IFormFilterConfiguration> _listFormFilterConfiguration;
 
     /**
      * Constructor
      */
     public FormFilterFactory( )
     {
-        _listFormFilterConfiguration = SpringContextService.getBeansOfType( IFormFilterConfiguration.class );
     }
 
     /**
@@ -72,25 +69,9 @@ public class FormFilterFactory
      * 
      * @return the list of all FormFilter
      */
-    public List<FormFilter> buildFormFilterList( )
+    public List<FormFilter> buildFormFilterList( Integer nIdForm )
     {
-        List<FormFilter> listFormFilter = new ArrayList<>( );
-
-        for ( IFormFilterConfiguration formFilterConfiguration : _listFormFilterConfiguration )
-        {
-            FormFilter formFilter;
-            if ( formFilterConfiguration instanceof FormFilterFormsConfiguration )
-            {
-                formFilter = new FormFilterForms( );
-            }
-            else
-            {
-                formFilter = new FormFilter( );
-            }
-            formFilter.setFormFilterConfiguration( formFilterConfiguration );
-            listFormFilter.add( formFilter );
-        }
-
-        return listFormFilter;
+        return MultiviewFormService.getInstance( ).getFormFiltersList( nIdForm );
+        
     }
 }

@@ -31,32 +31,33 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl;
+package fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateCreationConfiguration;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.IFormFilterQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterFormResponseDateCreationLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateConfiguration;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.IFormFilterDisplayFactory;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayFormResponseDate;
 
 /**
- * Implementation of IFormFilterQueryPartFactory for an FormResponseDateCreation filter
+ * Implementation of the IFormFilterDisplayFactory for a Factory on a FormResponseDateCreation filter
  */
-public class FormFilterFormResponseDateCreationQueryPartFactory implements IFormFilterQueryPartFactory
+public class FormFilterDisplayFormResponseDateFactory implements IFormFilterDisplayFactory
 {
     /**
      * {@inheritDoc}
      */
     @Override
-    public IFormFilterQueryPart buildFormFilterQueryPart( FormFilter formFilter )
+    public IFormFilterDisplay buildFilterDisplay( FormFilter formFilter )
     {
-        IFormFilterQueryPart formFilterFormResponseDateCreationQueryPart = null;
+        FormFilterDisplayFormResponseDate formFilterDisplayFormResponseDateCreation = null;
 
-        if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterDateCreationConfiguration )
+        if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterDateConfiguration )
         {
-            formFilterFormResponseDateCreationQueryPart = new FormFilterFormResponseDateCreationLuceneQueryPart( );
+            formFilterDisplayFormResponseDateCreation = new FormFilterDisplayFormResponseDate( );
+            formFilterDisplayFormResponseDateCreation.setFormFilter( formFilter );
         }
 
-        return formFilterFormResponseDateCreationQueryPart;
+        return formFilterDisplayFormResponseDateCreation;
     }
 }

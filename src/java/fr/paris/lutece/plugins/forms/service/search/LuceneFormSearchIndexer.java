@@ -44,9 +44,11 @@ import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionFilter;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionHome;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.portal.service.content.XPageAppService;
@@ -66,8 +68,11 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StringField;
 
 import java.io.IOException;
-
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -92,6 +97,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private static final String FORMS = "forms";
     private static final String INDEXER_VERSION = "1.0.0";
     private static final String PROPERTY_INDEXER_ENABLE = "forms.globalIndexer.enable";
+    private static final String FILTER_DATE_FORMAT = "dd/MM/yyyy";
 
 
     @Inject
@@ -521,7 +527,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
             {
                 String strQuestionCode = formQuestionResponse.getQuestion( ).getCode( );
-
+                Entry entry = formQuestionResponse.getQuestion().getEntry();
+                IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
                 for ( Response response : formQuestionResponse.getEntryResponse( ) )
                 {
                     // TODO USE EXPORT MANAGER ?
@@ -529,26 +536,26 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
                     StringBuilder fieldNameBuilder = new StringBuilder( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX );
                     fieldNameBuilder.append( strQuestionCode );
-                    fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_ID_ );
-                    fieldNameBuilder.append( response.getIdResponse( ) );
                     fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ );
                     fieldNameBuilder.append( response.getIterationNumber( ) );
 
                     if ( !StringUtils.isEmpty( response.getResponseValue( ) ) )
                     {
-                        if ( responseField == null )
-                        {
-                            doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
-                        }
-                        else
+                        if ( responseField != null )
                         {
                             String getFieldName = getFieldName( responseField, response );
                             fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ );
                             fieldNameBuilder.append( getFieldName );
-                            doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
                         }
+                        if ( entryTypeService instanceof EntryTypeDate )
+                        {
+                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
+                            LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
+                            Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay());
+                            doc.add( new LongPoint( fieldNameBuilder.toString( ), timestamp.getTime( ) ) );
+                        }
+                        doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
+                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
                     }
                 }
             }

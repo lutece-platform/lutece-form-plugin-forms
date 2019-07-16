@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,7 +45,7 @@ import org.apache.lucene.search.Query;
 /**
  * Implementation of the IFormFilterQueryPart for an Entry filter
  */
-public class FormFilterFormResponseDateCreationLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
+public class FormFilterFormResponseDateLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
     /**
      * {@inheritDoc}
@@ -57,6 +56,13 @@ public class FormFilterFormResponseDateCreationLuceneQueryPart extends AbstractF
         if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
             Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values( );
+            Collection<String> setFormParametersKeys = formParameters.getFormParametersMap( ).keySet( );
+
+            String strEntryTitle = String.valueOf( setFormParametersKeys.toArray( ) [0] );
+
+            //Remove _from from the EntryTitle
+            String strFieldTitle = strEntryTitle.replace( "_from", "");
+
 
             String strDateFrom = String.valueOf( setFormParameters.toArray( ) [0] );
             String strDateTo = String.valueOf( setFormParameters.toArray( ) [1] );
@@ -70,8 +76,8 @@ public class FormFilterFormResponseDateCreationLuceneQueryPart extends AbstractF
                 long lTo = dateTo.getTime( );
                 if ( strDateFrom != null && strDateTo != null )
                 {
-                    Query queryCreationDate = LongPoint.newRangeQuery( FormResponseSearchItem.FIELD_DATE_CREATION, lFrom, lTo );
-                    setFormFilterQuery( queryCreationDate );
+                    Query queryDate = LongPoint.newRangeQuery( strFieldTitle, lFrom, lTo );
+                    setFormFilterQuery( queryDate );
                 }
             }
             catch( NumberFormatException | ParseException e )

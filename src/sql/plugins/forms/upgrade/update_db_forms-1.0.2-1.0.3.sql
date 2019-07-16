@@ -23,3 +23,7 @@ ALTER TABLE forms_control DROP COLUMN id_question;
 ALTER TABLE forms_group MODIFY description VARCHAR(512);
 
 ALTER TABLE forms_control MODIFY error_message varchar(512);
+
+
+ALTER TABLE forms_question ADD COLUMN is_filterable_multiview_global SMALLINT default 0 NOT NULL;
+ALTER TABLE forms_question ADD COLUMN is_filterable_multiview_form_selected SMALLINT default 0 NOT NULL;

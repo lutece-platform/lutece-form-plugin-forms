@@ -66,6 +66,8 @@ id_step int default '0',
 is_visible_multiview_global SMALLINT default 0 NOT NULL,
 is_visible_multiview_form_selected SMALLINT default 0 NOT NULL,
 column_title varchar(255) default '' NOT NULL,
+is_filterable_multiview_global SMALLINT default 0 NOT NULL,
+is_filterable_multiview_form_selected SMALLINT default 0 NOT NULL,
 PRIMARY KEY (id_question)
 );
 CREATE INDEX index_fq_code ON forms_question ( code );

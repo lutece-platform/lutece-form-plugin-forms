@@ -7,4 +7,9 @@
 <@formGroup labelKey='#i18n{forms.modify_question.labelColumnTitle}' helpKey='#i18n{forms.modify_question.labelColumnTitle.help}'>
     <@input type='text' name='column_title' value='${(question.columnTitle)!}' />
 </@formGroup>
-
+<@formGroup labelKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal}' helpKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal.help}'>
+    <@checkBox name='is_filterable_multiview_global' id='is_filterable_multiview_global' value='1'  checked=question.isFiltrableMultiviewGlobal() />
+</@formGroup>
+<@formGroup labelKey='#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}' helpKey='#i18n{forms.modify_question.labelFilterableFormSelected.help}'>
+    <@checkBox name='is_filterable_multiview_form_selected' id='is_filterable_multiview_form_selected' value='1' checked=question.isFiltrableMultiviewFormSelected() />
+</@formGroup>

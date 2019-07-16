@@ -54,8 +54,6 @@ import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
-import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
-import fr.paris.lutece.plugins.forms.service.search.IFormSearchIndexer;
 import fr.paris.lutece.plugins.forms.service.workflow.IFormWorkflowService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
@@ -78,7 +76,6 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.event.ResourceEventManager;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 
 /**
@@ -90,8 +87,6 @@ public class FormService
 
     @Inject
     private IFormWorkflowService _formWorkflowService;
-    @Inject
-    private IFormSearchIndexer _formSearchIndexer;
 
     /**
      * Saves the specified form

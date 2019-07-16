@@ -246,7 +246,7 @@
     
     <!-- Filters QueryParts Factories -->    
     <bean id="forms.formFilter.formResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormsQueryPartFactory"/>
-    <bean id="forms.formFilter.formResponseDateCreation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormResponseDateCreationQueryPartFactory"/>
+    <bean id="forms.formFilter.formResponseDateCreation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormResponseDateQueryPartFactory"/>
     <bean id="forms.formFilter.entry.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterEntryQueryPartFactory"/>
     <bean id="forms.formFilter.workflowState.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterWorkflowStateQueryPartFactory"/>
     <bean id="forms.formFilter.idFormResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterIdFormResponseQueryPartFactory"/>
@@ -274,18 +274,22 @@
 	<bean id="forms.forms.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration">
 		<constructor-arg name="nPosition" type="int" value="1"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="-"/>
+		<constructor-arg name="strFormFilterName" type="java.lang.String" value="forms_title"/>
 	</bean>
-	<bean id="forms.formResponseDateCreation.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateCreationConfiguration">
+	<bean id="forms.formResponseDateCreation.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateConfiguration">
 		<constructor-arg name="nPosition" type="int" value="2"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Cr&#233;&#233;e depuis..."/>
+		<constructor-arg name="strFormFilterName" type="java.lang.String" value="date_creation"/>
 	</bean>
         <bean id="forms.searchedText.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration">
 		<constructor-arg name="nPosition" type="int" value="3"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Texte"/>
+		<constructor-arg name="strFormFilterName" type="java.lang.String" value="search_text"/>
 	</bean>
         <bean id="forms.workflowState.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterWorkflowConfiguration">
 		<constructor-arg name="nPosition" type="int" value="4"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="-"/>
+		<constructor-arg name="strFormFilterName" type="java.lang.String" value="workflow_state"/>
 	</bean>
 	
 	<!-- Panels Display Initializer Factories -->
@@ -293,7 +297,7 @@
 	<bean id="forms.formPanelInitializer.panelFormResponse.display.factory" class="fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.factory.impl.FormPanelFormResponseDisplayInitializerFactory"/>
 	
 	<!-- Filters Factories -->
-	<bean id="forms.formResponseDateCreation.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormResponseDateCreationFactory"/>
+	<bean id="forms.formResponseDateCreation.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormResponseDateFactory"/>
 	<bean id="forms.forms.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormsFactory"/>
 	<bean id="forms.entry.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayEntryFactory"/>
 	<bean id="forms.workflowState.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayWorkflowStateFactory"/>

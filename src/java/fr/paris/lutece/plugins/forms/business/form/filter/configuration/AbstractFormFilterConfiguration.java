@@ -31,33 +31,61 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl;
-
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateCreationConfiguration;
-import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
-import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.IFormFilterDisplayFactory;
-import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayFormResponseDateCreation;
+package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
 /**
- * Implementation of the IFormFilterDisplayFactory for a Factory on a FormResponseDateCreation filter
+ * Configuration for a FormFilter object
  */
-public class FormFilterDisplayFormResponseDateCreationFactory implements IFormFilterDisplayFactory
+public class AbstractFormFilterConfiguration implements IFormFilterConfiguration
 {
+    // Variables
+    private final int _nPosition;
+    private final String _strFormFilterLabel;
+    private final String _strFormFilterName;
+
+    /**
+     * Constructor
+     * 
+     * @param nPosition
+     *            The position of the FormFilter
+     * @param strFormFilterLabel
+     *            The label of the FormFilter
+     */
+    public AbstractFormFilterConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName )
+    {
+        _nPosition = nPosition;
+        _strFormFilterLabel = strFormFilterLabel;
+        _strFormFilterName = strFormFilterName;
+    }
+
+    /**
+     * Return the position of the FormFilter
+     * 
+     * @return the position of the FormFilter
+     */
+    public int getPosition( )
+    {
+        return _nPosition;
+    }
+
+    /**
+     * Return the label of the FormFilter
+     * 
+     * @return the label of the FormFilter
+     */
+    public String getFormFilterLabel( )
+    {
+        return _strFormFilterLabel;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
-    public IFormFilterDisplay buildFilterDisplay( FormFilter formFilter )
+    public String getFormFilterName() 
     {
-        FormFilterDisplayFormResponseDateCreation formFilterDisplayFormResponseDateCreation = null;
-
-        if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterDateCreationConfiguration )
-        {
-            formFilterDisplayFormResponseDateCreation = new FormFilterDisplayFormResponseDateCreation( );
-            formFilterDisplayFormResponseDateCreation.setFormFilter( formFilter );
-        }
-
-        return formFilterDisplayFormResponseDateCreation;
+        return _strFormFilterName;
     }
+
+    
 }

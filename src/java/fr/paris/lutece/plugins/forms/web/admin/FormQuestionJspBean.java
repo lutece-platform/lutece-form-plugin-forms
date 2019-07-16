@@ -663,6 +663,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         _question.setIdStep( nIdStep );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
         _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
+        _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
+        _question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED ) != null );
 
         String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
         columnTitle = ( columnTitle == null || columnTitle.isEmpty( ) ) ? _question.getTitle( ) : columnTitle;
@@ -931,6 +933,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         String strTitle = _entry.getEntryType( ).getComment( ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
         _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
+        _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
+        _question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED ) != null );
         String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
         columnTitle = ( columnTitle == null || columnTitle.isEmpty( ) ) ? _question.getTitle( ) : columnTitle;
         _question.setColumnTitle( columnTitle );

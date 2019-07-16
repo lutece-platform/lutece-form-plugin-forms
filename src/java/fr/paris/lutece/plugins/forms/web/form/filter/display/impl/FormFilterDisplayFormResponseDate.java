@@ -38,7 +38,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -51,16 +50,15 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Implementation of the IFormFilterDisplay interface for the filter which manage the period of creation of form response
  */
-public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilterDisplay
+public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
 {
     // Constants
-    private static final String PARAMETER_SEARCH_OPEN_BETWEEN = "multiview_search_open_between";
     private static final String FROM = "_from";
     private static final String TO = "_to";
     private static final String FILTER_DATE_FORMAT = "dd/MM/yyyy";
 
     // Templates
-    private static final String FORM_FILTER_CREATION_DATE_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/date_filter.html";
+    private static final String FORM_FILTER_DATE_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/date_filter.html";
 
     // Regex
     private static final String REGEX_DATE_FORMAT = "([0-9]{2}.[0-9]{2}.[0-9]{4}).([0-9]{2}.[0-9]{2}.[0-9]{4})";
@@ -71,7 +69,7 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
     @Override
     public String getParameterName( )
     {
-        return PARAMETER_SEARCH_OPEN_BETWEEN;
+        return getFormFilter().getFormFilterConfiguration().getFormFilterName();
     }
 
     /**
@@ -80,24 +78,24 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
     @Override
     public Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request )
     {
-        String strPeriodCreationDate = request.getParameter( PARAMETER_SEARCH_OPEN_BETWEEN );
-        String strPeriodCreationFrom = request.getParameter( PARAMETER_SEARCH_OPEN_BETWEEN + FROM );
-        String strPeriodCreationTo = request.getParameter( PARAMETER_SEARCH_OPEN_BETWEEN + TO );
-        setValue( strPeriodCreationDate );
+        String strPeriodDate = request.getParameter( getFormFilter().getFormFilterConfiguration().getFormFilterName() );
+        String strPeriodFrom = request.getParameter( getFormFilter().getFormFilterConfiguration().getFormFilterName() + FROM );
+        String strPeriodTo = request.getParameter( getFormFilter().getFormFilterConfiguration().getFormFilterName() + TO );
+        setValue( strPeriodDate );
 
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
-        if ( !StringUtils.isEmpty( strPeriodCreationFrom ) && !StringUtils.isEmpty( strPeriodCreationTo ) )
+        if ( !StringUtils.isEmpty( strPeriodFrom ) && !StringUtils.isEmpty( strPeriodTo ) )
         {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
 
-            LocalDate dateFrom = LocalDate.parse( strPeriodCreationFrom, formatter );
-            LocalDate dateTo = LocalDate.parse( strPeriodCreationTo, formatter );
+            LocalDate dateFrom = LocalDate.parse( strPeriodFrom, formatter );
+            LocalDate dateTo = LocalDate.parse( strPeriodTo, formatter );
             dateTo = dateTo.plusDays( 1 );
             DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern( "yyyy-MM-dd" );
 
             mapFilterNameValues
-                    .put( FormMultiviewFormResponseDateCreationNameConstants.FILTER_FORM_RESPONSE_DATE_CREATION_FROM, dateFrom.format( sqlFormatter ) );
-            mapFilterNameValues.put( FormMultiviewFormResponseDateCreationNameConstants.FILTER_FORM_RESPONSE_DATE_CREATION_TO, dateTo.format( sqlFormatter ) );
+                    .put( getFormFilter().getFormFilterConfiguration().getFormFilterName() + FROM, dateFrom.format( sqlFormatter ) );
+            mapFilterNameValues.put( getFormFilter().getFormFilterConfiguration().getFormFilterName() + TO, dateTo.format( sqlFormatter ) );
         }
 
         return mapFilterNameValues;
@@ -116,8 +114,7 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
 
         addDateRange( model );
 
-        model.put( MARK_FILTER_NAME, PARAMETER_SEARCH_OPEN_BETWEEN );
-
+        model.put( MARK_FILTER_CONFIG, getFormFilter().getFormFilterConfiguration() );
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
         if ( htmlTemplate != null )
         {
@@ -133,7 +130,7 @@ public class FormFilterDisplayFormResponseDateCreation extends AbstractFormFilte
     @Override
     public String getBaseTemplate( )
     {
-        return FORM_FILTER_CREATION_DATE_TEMPLATE_NAME;
+        return FORM_FILTER_DATE_TEMPLATE_NAME;
     }
 
     /**

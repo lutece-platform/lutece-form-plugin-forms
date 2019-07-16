@@ -33,10 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business.form;
 
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterLuceneQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerLuceneQueryPart;

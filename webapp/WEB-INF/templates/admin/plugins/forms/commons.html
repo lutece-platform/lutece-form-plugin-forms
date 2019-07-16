@@ -827,59 +827,61 @@ $( function(){
 <script type="text/javascript" src="js/plugins/forms/multiview/daterangepicker.js"></script>
 <script>
 $(function() {
-	var filter='#' + $('#formsFilter').val(), filter_to=filter+'_to', filter_from=filter+'_from';
-  	$(filter).daterangepicker( {
-    ranges: {
-        "#i18n{forms.multiviewForms.dateRangePicker.today}": [moment(), moment()],
-        "#i18n{forms.multiviewForms.dateRangePicker.yesterday}": [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        "#i18n{forms.multiviewForms.dateRangePicker.week}": [moment().subtract(6, 'days'), moment()],
-        "#i18n{forms.multiviewForms.dateRangePicker.month}": [moment().subtract(29, 'days'), moment()],
-        "#i18n{forms.multiviewForms.dateRangePicker.months}": [moment().subtract(90, 'days'), moment()],
-    },
-	opens: 'right',
-	alwaysShowCalendars: true,
-    autoUpdateInput: false,
-    locale: {
-        format: '#i18n{forms.multiviewForms.dateRangePicker.format}',
-        applyLabel: "#i18n{forms.multiviewForms.dateRangePicker.applyLabel}",
-        cancelLabel: "#i18n{forms.multiviewForms.dateRangePicker.cancelLabel}",
-        fromLabel: "#i18n{forms.multiviewForms.dateRangePicker.fromLabel}",
-        toLabel: "#i18n{forms.multiviewForms.dateRangePicker.toLabel}",
-        customRangeLabel: "#i18n{forms.multiviewForms.dateRangePicker.customRangeLabel}",
-        weekLabel: "#i18n{forms.multiviewForms.dateRangePicker.weekLabel}",
-        daysOfWeek: [
-            "#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSun}",
-            "#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekMon}",
-            "#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekTue}",
-            "#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekWen}",
-            "#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekThu}",
-            "#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekFri}",
-            "#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSat}"
-        ],
-        monthNames: [
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames1}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames2}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames3}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames4}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames5}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
-            "#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"
-        ],
-    }
-  }, 
-  function(start, end, label) {
-    $(filter_from).val( start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
-    $(filter_to).val( end.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
-    $(filter).val ( start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') + " - " + end.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
-    $('#searchForm').submit();
-  });
-
-  	$(filter).on('cancel.daterangepicker', function(ev, picker) {
+	$('.formsFilterDate').each( function( index )
+	{
+		var filter='#' + $( this ).val(), filter_to=filter+'_to', filter_from=filter+'_from';
+		$(filter).daterangepicker( {
+		ranges: {
+		"#i18n{forms.multiviewForms.dateRangePicker.today}": [moment(), moment()],
+		"#i18n{forms.multiviewForms.dateRangePicker.yesterday}": [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+		"#i18n{forms.multiviewForms.dateRangePicker.week}": [moment().subtract(6, 'days'), moment()],
+		"#i18n{forms.multiviewForms.dateRangePicker.month}": [moment().subtract(29, 'days'), moment()],
+		"#i18n{forms.multiviewForms.dateRangePicker.months}": [moment().subtract(90, 'days'), moment()],
+		},
+		opens: 'right',
+		alwaysShowCalendars: true,
+		autoUpdateInput: false,
+		locale: {
+		format: '#i18n{forms.multiviewForms.dateRangePicker.format}',
+		applyLabel: "#i18n{forms.multiviewForms.dateRangePicker.applyLabel}",
+		cancelLabel: "#i18n{forms.multiviewForms.dateRangePicker.cancelLabel}",
+		fromLabel: "#i18n{forms.multiviewForms.dateRangePicker.fromLabel}",
+		toLabel: "#i18n{forms.multiviewForms.dateRangePicker.toLabel}",
+		customRangeLabel: "#i18n{forms.multiviewForms.dateRangePicker.customRangeLabel}",
+		weekLabel: "#i18n{forms.multiviewForms.dateRangePicker.weekLabel}",
+		daysOfWeek: [
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSun}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekMon}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekTue}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekWen}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekThu}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekFri}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSat}"
+		],
+		monthNames: [
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames1}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames2}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames3}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames4}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames5}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"
+		],
+		}
+		}, 
+		function(start, end, label) {
+		$(filter_from).val( start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
+		$(filter_to).val( end.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
+		$(filter).val ( start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') + " - " + end.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
+		$('#searchForm').submit();
+		});
+  		
+		$(filter).on('cancel.daterangepicker', function(ev, picker) {
 		//do something, like clearing an input
 		var startD = moment().day(-30);
 		var endD = moment().day(30);
@@ -888,6 +890,8 @@ $(function() {
 		$(this).val('');
 	  	$(filter_from).val ('');
   		$(filter_to).val ('');
+
+		});
 	});
 });
 </script>

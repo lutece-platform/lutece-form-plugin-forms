@@ -31,18 +31,32 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
+package fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl;
+
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.IFormFilterQueryPartFactory;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterFormResponseDateLuceneQueryPart;
 
 /**
- * Configuration for a FormFilter object
+ * Implementation of IFormFilterQueryPartFactory for an FormResponseDateCreation filter
  */
-public class FormFilterFormsConfiguration extends AbstractFormFilterConfiguration
+public class FormFilterFormResponseDateQueryPartFactory implements IFormFilterQueryPartFactory
 {
-
-    public FormFilterFormsConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName ) 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IFormFilterQueryPart buildFormFilterQueryPart( FormFilter formFilter )
     {
-        super(nPosition, strFormFilterLabel, strFormFilterName);
-    }
-    
+        IFormFilterQueryPart formFilterFormResponseDateCreationQueryPart = null;
 
+        if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterDateConfiguration )
+        {
+            formFilterFormResponseDateCreationQueryPart = new FormFilterFormResponseDateLuceneQueryPart( );
+        }
+
+        return formFilterFormResponseDateCreationQueryPart;
+    }
 }

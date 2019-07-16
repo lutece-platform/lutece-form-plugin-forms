@@ -86,47 +86,7 @@ public class LuceneFormSearchTest extends LuteceTestCase
         _formFormSearchIndexer = SpringContextService.getBean( "forms.luceneFormsSearchIndexer" );
         _formFormSearchEngine = SpringContextService.getBean( "forms.luceneFormsSearchEngine" );
     }
-
-    /**
-     * Search simple text
-     */
-    public void testSearchSimpleText( )
-    {
-        processSimpleTest( "test", "test", 1 );
-    }
-
-    /**
-     * Search simple text in sentence
-     */
-    public void testSearchSimpleTextInSentence( )
-    {
-        processSimpleTest( "test demo", "test", 1 );
-    }
-
-    /**
-     * Search simple text in accentued test
-     */
-    public void testSearchSimpleTextWithAccent( )
-    {
-        processSimpleTest( "tést", "test", 1 );
-    }
-
-    /**
-     * SearchSimple text in Uppercase test
-     */
-    public void testSearchSimpleTextUppercase( )
-    {
-        processSimpleTest( "TEST", "test", 1 );
-    }
-
-    /**
-     * No match
-     */
-    public void testSearchNoMatch( )
-    {
-        processSimpleTest( "tagada", "test", 0 );
-    }
-
+    
     /**
      * Create a form
      * 
@@ -197,26 +157,5 @@ public class LuceneFormSearchTest extends LuteceTestCase
     public void tearDown( ) throws Exception
     {
         super.tearDown( );
-    }
-
-    /**
-     * Process a simple test of text searching
-     * 
-     * @param strFormTest
-     *            The string in the form response
-     * @param strSearchedText
-     *            The searched text in the form response
-     * @param nResultAttended
-     *            The number of attended result
-     */
-    private void processSimpleTest( String strFormTest, String strSearchedText, int nResultAttended )
-    {
-        List<FormResponse> listFormResponse = new ArrayList<>( );
-        listFormResponse.add( createFormResponse( strFormTest ) );
-
-        _formFormSearchIndexer.indexFormResponseList( null, listFormResponse );
-
-        assertTrue( _formFormSearchEngine.getSearchResults( strSearchedText ).size( ) == nResultAttended );
-        _formFormSearchIndexer.deleteIndex( );
     }
 }
