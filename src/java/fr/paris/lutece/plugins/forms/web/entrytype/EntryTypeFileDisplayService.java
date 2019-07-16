@@ -89,7 +89,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
      *            The upload model
      * @return the completed model
      */
-    private Map<String, Object> setModel( Entry entry, IEntryTypeService service, Map<String, Object> model )
+    public Map<String, Object> setModel( Entry entry, IEntryTypeService service, Map<String, Object> model )
     {
         model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
         model.put( MARK_UPLOAD_HANDLER, ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ) );

@@ -79,7 +79,7 @@ public class EntryTypeFileReadingDisplayService extends EntryTypeFileDisplayServ
      *            The upload model
      * @return the completed model
      */
-    protected Map<String, Object> setModel( Entry entry, IEntryTypeService service, Map<String, Object> model )
+    public Map<String, Object> setModel( Entry entry, IEntryTypeService service, Map<String, Object> model )
     {
     	List<Field> listField= entry.getFields();
     	if(listField!= null &&listField.size() > 0){
