@@ -98,7 +98,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private static final String FORMS = "forms";
     private static final String INDEXER_VERSION = "1.0.0";
     private static final String PROPERTY_INDEXER_ENABLE = "forms.globalIndexer.enable";
-    private static final String FILTER_DATE_FORMAT = "dd/MM/yyyy";
+    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy");
     private static final int TAILLE_LOT = AppPropertiesService.getPropertyInt( "forms.index.writer.commit.size", 100 );
 
     @Inject
@@ -577,9 +577,16 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                         if ( entryTypeService instanceof EntryTypeDate )
                         {
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
+                            try
+                            {
                             LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
                             Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay());
                             doc.add( new LongPoint( fieldNameBuilder.toString( ), timestamp.getTime( ) ) );
+                            }
+                            catch ( Exception e )
+                            {
+                                AppLogService.error( "Unable to parse " + response.getResponseValue() + " with date formatter " + FILTER_DATE_FORMAT, e );
+                            }
                         }
                         doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
                         doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
