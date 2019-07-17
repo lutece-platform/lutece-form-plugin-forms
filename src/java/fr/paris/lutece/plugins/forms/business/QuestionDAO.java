@@ -59,7 +59,7 @@ public final class QuestionDAO implements IQuestionDAO
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_question FROM forms_question";
     private static final String SQL_QUERY_SELECT_BY_STEP = SQL_QUERY_SELECT_ALL + " WHERE id_step = ?";
     private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title, fq.code, fq.description, fq.id_entry, fq.id_step, fq.is_visible_multiview_global, fq.is_visible_multiview_form_selected , fq.column_title, fq.is_filterable_multiview_global, fq.is_filterable_multiview_form_selected FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
-private static final String SQL_QUERY_SELECT_IN = SQL_QUERY_SELECT_ALL + " WHERE id_question_response IN ( ";
+    private static final String SQL_QUERY_SELECT_IN = SQL_QUERY_SELECT_ALL + " WHERE id_question IN ( ";
     /**
      * {@inheritDoc }
      */
