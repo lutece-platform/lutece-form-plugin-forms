@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.export.csv;
 
 import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 
 /**
  * This class provides utilitary methods for CSV export
@@ -43,6 +44,7 @@ public final class CSVUtil
 {
     private static final String ITERATION_PREFIX = " (";
     private static final String ITERATION_SUFFIX = ")";
+    private static final char DOUBLE_QUOTE = '\"';
 
     /**
      * Constructor
@@ -70,5 +72,24 @@ public final class CSVUtil
         }
 
         return strColumnName;
+    }
+
+    /**
+     * Make the specified value safe for the CSV export
+     *
+     * @param strValue
+     *            the value
+     * @return the safe value
+     */
+    static String safeString( String strValue )
+    {
+        String strSafeString = strValue;
+
+        if ( strSafeString.contains( FormsConstants.SEPARATOR_SEMICOLON ) )
+        {
+            strSafeString = new StringBuilder( DOUBLE_QUOTE ).append( strSafeString ).append( DOUBLE_QUOTE ).toString( );
+        }
+
+        return strSafeString;
     }
 }

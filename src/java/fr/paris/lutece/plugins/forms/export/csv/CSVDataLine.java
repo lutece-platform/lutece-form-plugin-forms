@@ -40,10 +40,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
@@ -56,12 +59,10 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
  */
 public class CSVDataLine
 {
-    private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
-    private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
-
     private static final String RESPONSE_SEPARATOR = " ";
 
-    private final Map<String, String> _mapDataToExport;
+    private final Map<Pair<Integer, Integer>, String> _mapDataToExport;
+    private final String _commonDataToExport;
 
     /**
      * Constructor
@@ -76,8 +77,10 @@ public class CSVDataLine
         Locale locale = I18nService.getDefaultLocale( );
         DateFormat dateFormat = new SimpleDateFormat( AppPropertiesService.getProperty( FormsConstants.PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT ), locale );
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
-        _mapDataToExport.put( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, locale ), form.getTitle( ) );
-        _mapDataToExport.put( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION, locale ), dateFormat.format( formResponse.getCreation( ) ) );
+        StringBuilder commonData = new StringBuilder( );
+        commonData.append( CSVUtil.safeString( form.getTitle( ) ) ).append( FormsConstants.SEPARATOR_SEMICOLON );
+        commonData.append( CSVUtil.safeString( dateFormat.format( formResponse.getCreation( ) ) ) ).append( FormsConstants.SEPARATOR_SEMICOLON );
+        _commonDataToExport = commonData.toString( );
     }
 
     /**
@@ -87,8 +90,9 @@ public class CSVDataLine
      */
     public void addData( FormQuestionResponse formQuestionResponse )
     {
+        Question question = formQuestionResponse.getQuestion( );
         IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService(
-                formQuestionResponse.getQuestion( ).getEntry( ).getEntryType( ) );
+                question.getEntry( ).getEntryType( ) );
 
         List<String> listResponseValue = entryDataService.responseToStrings( formQuestionResponse );
         StringBuilder sbReponseValues = new StringBuilder( );
@@ -98,7 +102,8 @@ public class CSVDataLine
             sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
         }
 
-        _mapDataToExport.put( CSVUtil.buildColumnName( formQuestionResponse.getQuestion( ) ), sbReponseValues.toString( ) );
+        _mapDataToExport.put( Pair.of( question.getId( ), question.getIterationNumber( ) ),
+				sbReponseValues.toString( ) );
     }
 
     /**
@@ -106,9 +111,14 @@ public class CSVDataLine
      *            The column name
      * @return the _mapDataToExport
      */
-    public String getDataToExport( String strColumnName )
+    public String getDataToExport( Question question )
     {
-        return _mapDataToExport.get( strColumnName );
+        return _mapDataToExport.get( Pair.of( question.getId( ), question.getIterationNumber( ) ) );
+    }
+
+    public String getCommonDataToExport( )
+    {
+        return _commonDataToExport;
     }
 
 }
