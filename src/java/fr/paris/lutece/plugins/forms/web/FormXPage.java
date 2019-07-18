@@ -765,11 +765,10 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_SAVE_STEP )
     public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-        Form form = null;
         try
         {
             boolean bSessionLost = isSessionLost( );
-            form = findFormFrom( request );
+            findFormFrom( request );
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
@@ -789,8 +788,7 @@ public class FormXPage extends MVCApplication
         
         if ( currentStep == null )
         {
-        	 FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
-	         SiteMessageService.setMessage( request, MESSAGE_ERROR_CONTROL, new Object[] { errorList.stream( ).collect( Collectors.joining( ) ) }, null, null, null, SiteMessage.TYPE_ERROR, null, getBackUrl( form, formMessage.getEndMessageDisplay( ) ) );
+        	 SiteMessageService.setMessage( request, MESSAGE_ERROR_CONTROL, new Object[] { errorList.stream( ).collect( Collectors.joining( ) ) }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( VIEW_STEP ) );
 		}
         return redirectView( request, VIEW_STEP );
     }
