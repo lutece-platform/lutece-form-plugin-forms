@@ -124,7 +124,7 @@ public final class FormsConstants
     public static final String PARAMETER_REF_LIST_VALUE = "refListValue";
     public static final String PARAMETER_REF_LIST_FIELD = "refListField";
     public static final String PARAMETER_REF_LIST_MAPPING = "refListMapping";
-
+    
     public static final String PARAMETER_ACTION_GO_TO_STEP = "action_doGoToStep";
     public static final String PARAMETER_INFO_KEY = "info_key";
     public static final String PARAMETER_BACK_URL = "back_url";

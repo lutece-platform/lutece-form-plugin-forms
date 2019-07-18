@@ -142,6 +142,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private transient List<IFormPanelDisplay> _listFormPanelDisplay;
     private transient IFormPanelDisplay _formPanelDisplayActive;
     private transient FormResponseItemComparatorConfig _formResponseItemComparatorConfig;
+    private transient String _strFormSelectedValue = StringUtils.EMPTY;
 
     /**
      * Return the view with the responses of all the forms
@@ -384,7 +385,10 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Check in filters if the columns list has to be fetch again
         reloadFormColumnList( listFormFilter );
-        listFormFilter = reloadFormFilterList( listFormFilter, request );
+        if ( formSelectedAsChanged( request ) )
+        {
+            reloadFormFilterList( listFormFilter, request );
+        }
 
         for ( IFormPanelDisplay formPanelDisplay : _listFormPanelDisplay )
         {
@@ -551,7 +555,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         }
     }
 
-    private List<FormFilter> reloadFormFilterList( List<FormFilter> listFormFilter, HttpServletRequest request )
+    private void reloadFormFilterList( List<FormFilter> listFormFilter, HttpServletRequest request )
     {
         for ( FormFilter filter : listFormFilter )
         {
@@ -559,19 +563,29 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             {
                 Integer nIdForm = ( (FormFilterForms) filter ).getSelectedIdForm( );
                 List<FormFilter> listFormFilterReloaded = new ArrayList<>();
-                if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
-                {
-                    listFormFilterReloaded = new FormFilterFactory().buildFormFilterList( nIdForm );
-                }
-                else
-                {
-                    listFormFilterReloaded = new FormFilterFactory().buildFormFilterList( null );
-                }
-
+                listFormFilterReloaded = (nIdForm != FormsConstants.DEFAULT_ID_VALUE)  ? 
+                        new FormFilterFactory().buildFormFilterList( nIdForm ) :
+                        new FormFilterFactory().buildFormFilterList( null );
+                
+                
                 _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilterReloaded );
-                return listFormFilterReloaded;
             }
         }
-        return listFormFilter;
+    }
+    
+    /**
+     * Return true if the form selection has changed, false otherwise
+     * @param request
+     * @return true if the form selection has changed, false otherwise
+     */
+    private boolean formSelectedAsChanged( HttpServletRequest request )
+    {
+        String strFormSelectedNewValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
+        if ( strFormSelectedNewValue != null )
+        {
+            _strFormSelectedValue = strFormSelectedNewValue;
+            return !strFormSelectedNewValue.equals( _strFormSelectedValue ) ;
+        }
+        return false;
     }
 }
