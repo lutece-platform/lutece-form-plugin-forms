@@ -53,6 +53,7 @@ public final class QuestionDAO implements IQuestionDAO
     // Constants
     private static final String SQL_QUERY_SELECT_ALL = "SELECT id_question, title, code, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title, is_filterable_multiview_global, is_filterable_multiview_form_selected FROM forms_question";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECT_ALL + " WHERE id_question = ?";
+    private static final String SQL_QUERY_SELECT_BY_CODE = SQL_QUERY_SELECT_ALL + " WHERE code = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question ( title, code, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title, is_filterable_multiview_global, is_filterable_multiview_form_selected ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question WHERE id_question = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_question SET id_question = ?, title = ?, code = ?, description = ?, id_entry = ?, id_step = ?, is_visible_multiview_global = ?, is_visible_multiview_form_selected = ?, column_title = ?, is_filterable_multiview_global = ?, is_filterable_multiview_form_selected = ? WHERE id_question = ?";
@@ -101,6 +102,26 @@ public final class QuestionDAO implements IQuestionDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
         daoUtil.setInt( 1, nKey );
+        daoUtil.executeQuery( );
+        Question question = null;
+
+        if ( daoUtil.next( ) )
+        {
+            question = dataToObject( daoUtil );
+        }
+
+        daoUtil.close( );
+        return question;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Question loadByCode( String strCode, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_CODE, plugin );
+        daoUtil.setString( 1, strCode );
         daoUtil.executeQuery( );
         Question question = null;
 

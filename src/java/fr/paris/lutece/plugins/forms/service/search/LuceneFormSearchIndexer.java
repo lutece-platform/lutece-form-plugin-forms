@@ -652,6 +652,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      */
     private String getFieldName( fr.paris.lutece.plugins.genericattributes.business.Field responseField, Response response )
     {
+        if ( responseField.getIdField( ) >0 )
+            return String.valueOf( responseField.getIdField( ) );
         if ( !StringUtils.isEmpty( responseField.getCode( ) ) )
             return responseField.getCode();
         

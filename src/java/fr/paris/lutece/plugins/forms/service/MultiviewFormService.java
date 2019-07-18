@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.forms.service;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnComparator;
 import java.util.List;
 
@@ -47,9 +46,9 @@ import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterFactory;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
@@ -57,6 +56,7 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDateDisplayService;
+import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -186,7 +186,7 @@ public final class MultiviewFormService
      * @param nIdForm
      * @return the form columns list
      */
-    public List<FormFilter> getFormFiltersList( Integer nIdForm )
+    public List<FormFilter> getFormFiltersList( Integer nIdForm, List<IFormColumn> listFormColumn )
     {
         Map<String,FormFilter> mapFormFilter = new HashMap<>( );
 
@@ -211,12 +211,12 @@ public final class MultiviewFormService
         List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( ) : QuestionHome
                 .getListQuestionByIdFormUncomplete( nIdForm );
 
-        addFilterFromConfig( mapFormFilter, listQuestions, true );
+        addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, true );
 
         if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )
         {
             // Then add specific columns from config questions
-            addFilterFromConfig( mapFormFilter, listQuestions, false );
+            addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, false );
         }
  
          return new ArrayList<>( mapFormFilter.values( ) );
@@ -277,7 +277,7 @@ public final class MultiviewFormService
      * @param listQuestions
      * @param bGlobal
      */
-    private void addFilterFromConfig( Map<String, FormFilter> mapFilters, List<Question> listQuestions, boolean bGlobal )
+    private void addFilterFromConfig( Map<String, FormFilter> mapFilters, List<Question> listQuestions, List<IFormColumn> listFormColumns, boolean bGlobal )
     {
         int nPosition = mapFilters.size( );
         for ( Question question : listQuestions )
@@ -297,7 +297,28 @@ public final class MultiviewFormService
                         FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0" );
                         
                         formFilter.setFormFilterConfiguration( formFilterConfiguration );
-                        mapFilters.put( question.getCode( ), formFilter );}
+                        mapFilters.put( question.getCode( ), formFilter );
+                    }
+                    if ( displayService instanceof EntryTypeDefaultDisplayService  )
+                    {
+                        FormFilter formFilter = new FormFilter();
+                        
+                        for ( IFormColumn column : listFormColumns )
+                        {
+                            if ( column.getFormColumnTitle().equals( question.getColumnTitle( ) ) )
+                            {
+                                if ( column instanceof FormColumnEntry)
+                                {
+                                    IFormFilterConfiguration formFilterConfiguration = new FormFilterEntryConfiguration( nPosition++, question.getTitle( ), 
+                                    FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ), column  );
+
+                                    formFilter.setFormFilterConfiguration( formFilterConfiguration );
+                                    mapFilters.put( question.getCode( ), formFilter );
+                                }
+                            }
+                        }
+                        
+                    }
                 }
             }
         }

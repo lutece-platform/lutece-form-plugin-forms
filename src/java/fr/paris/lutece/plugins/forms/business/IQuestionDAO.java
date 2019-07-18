@@ -90,6 +90,17 @@ public interface IQuestionDAO
     /**
      * Load the data from the table
      * 
+     * @param strCode
+     *            The code of the question
+     * @param plugin
+     *            the Plugin
+     * @return The instance of the question
+     */
+    Question loadByCode( String strCode, Plugin plugin );
+    
+    /**
+     * Load the data from the table
+     * 
      * @param keyList
      *            The identifiers of the questions
      * @param plugin

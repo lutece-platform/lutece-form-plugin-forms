@@ -116,6 +116,18 @@ public final class QuestionHome
     /**
      * Returns an instance of a question whose identifier is specified in parameter
      * 
+     * @param strCode
+     *            The question code
+     * @return an instance of Question
+     */
+    public static Question findByCode( String strCode )
+    {
+        return _dao.loadByCode( strCode, _plugin );
+    }
+    
+    /**
+     * Returns an instance of a question whose identifier is specified in parameter
+     * 
      * @param keyList
      *            The questions primary keys
      * @return a list of Questions

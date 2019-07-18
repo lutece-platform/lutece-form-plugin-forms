@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter;
 
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
@@ -69,9 +70,9 @@ public class FormFilterFactory
      * 
      * @return the list of all FormFilter
      */
-    public List<FormFilter> buildFormFilterList( Integer nIdForm )
+    public List<FormFilter> buildFormFilterList( Integer nIdForm, List<IFormColumn> listFormColumns )
     {
-        return MultiviewFormService.getInstance( ).getFormFiltersList( nIdForm );
+        return MultiviewFormService.getInstance( ).getFormFiltersList( nIdForm, listFormColumns );
         
     }
 }

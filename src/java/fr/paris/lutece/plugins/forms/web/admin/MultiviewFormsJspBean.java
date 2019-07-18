@@ -345,12 +345,13 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     private void initFormRelatedLists( HttpServletRequest request )
     {
-        List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( null );
+        
         
         List<FormPanel> listFormPanel = new FormPanelFactory( ).buildFormPanelList( );
 
         FormColumnFactory formColumnFactory = SpringContextService.getBean( FormColumnFactory.BEAN_NAME );
         _listFormColumn = formColumnFactory.buildFormColumnList( null );
+        List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn );
 
         _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilter );
         _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
@@ -564,8 +565,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                 Integer nIdForm = ( (FormFilterForms) filter ).getSelectedIdForm( );
                 List<FormFilter> listFormFilterReloaded = new ArrayList<>();
                 listFormFilterReloaded = (nIdForm != FormsConstants.DEFAULT_ID_VALUE)  ? 
-                        new FormFilterFactory().buildFormFilterList( nIdForm ) :
-                        new FormFilterFactory().buildFormFilterList( null );
+                        new FormFilterFactory().buildFormFilterList( nIdForm, _listFormColumn ) :
+                        new FormFilterFactory().buildFormFilterList( null, _listFormColumn );
                 
                 
                 _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilterReloaded );
