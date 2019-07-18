@@ -35,12 +35,16 @@ package fr.paris.lutece.plugins.forms.business.form.panel.configuration;
 
 import java.util.List;
 
+import fr.paris.lutece.portal.service.rbac.RBACResource;
+
 /**
  * Configuration for a FormPanel
  */
-public interface IFormPanelConfiguration
+public interface IFormPanelConfiguration extends RBACResource
 {
 
+	public static final String RESOURCE_TYPE = "FORM_PANEL_CONF";
+	
     /**
      * Return the technical code of the FormPanel
      * 
@@ -68,4 +72,16 @@ public interface IFormPanelConfiguration
      * @return the list of FormPanelInitializer class name of the FormPanelConfiguration
      */
     List<String> getListFormPanelInitializerName( );
+    
+    @Override
+    default String getResourceTypeCode( )
+    {
+    	return RESOURCE_TYPE;
+    }
+    
+    @Override
+    default String getResourceId( )
+    {
+    	return getTechnicalCode( );
+    }
 }

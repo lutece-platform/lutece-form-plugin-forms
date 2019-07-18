@@ -64,6 +64,7 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
+import fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -87,7 +88,6 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
-import java.util.Locale;
 
 /**
  * Controller which manage the multiview of responses of all Forms
@@ -143,6 +143,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private transient IFormPanelDisplay _formPanelDisplayActive;
     private transient FormResponseItemComparatorConfig _formResponseItemComparatorConfig;
     private transient String _strFormSelectedValue = StringUtils.EMPTY;
+    private transient List<IFormPanelDisplay> _listAuthorizedFormPanelDisplay;
 
     /**
      * Return the view with the responses of all the forms
@@ -161,12 +162,18 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             initFormRelatedLists( request );
             manageSelectedPanel( );
         }
+        _listAuthorizedFormPanelDisplay = _listFormPanelDisplay.stream( )
+    			.filter( fpd -> RBACService.isAuthorized( fpd.getFormPanel( ).getFormPanelConfiguration( ), FormPanelConfigIdService.PERMISSION_VIEW, AdminUserService.getAdminUser( request ) ) )
+    			.collect( Collectors.toList( ) );
 
         // Build the Column for the Panel and save their values for the active panel
         buildFormPanelDisplayWithData( request );
 
         // Sort the list of FormResponseItem of the FormPanel with the request information
-        sortFormResponseItemList( request, _formPanelDisplayActive.getFormResponseItemList( ) );
+        if ( _formPanelDisplayActive != null )
+        {
+        	sortFormResponseItemList( request, _formPanelDisplayActive.getFormResponseItemList( ) );
+        }
 
         // Build the template of each form filter display
         if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
@@ -198,12 +205,16 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Add the template of column to the model
         String strSortUrl = String.format( BASE_SORT_URL_PATTERN, _strSelectedPanelTechnicalCode );
         String strRedirectionDetailsBaseUrl = buildRedirectionDetailsBaseUrl( );
-        String strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, _formPanelDisplayActive.getFormResponseItemList( ),
-                getLocale( ), strRedirectionDetailsBaseUrl, strSortUrl, getPaginator( ).getPageItems( ) );
+        String strTableTemplate = "";
+        if (_formPanelDisplayActive != null )
+        {
+        	strTableTemplate = FormListTemplateBuilder.buildTableTemplate( _listFormColumnDisplay, _formPanelDisplayActive.getFormResponseItemList( ),
+                    getLocale( ), strRedirectionDetailsBaseUrl, strSortUrl, getPaginator( ).getPageItems( ) );
+        }
         model.put( MARK_TABLE_TEMPLATE, strTableTemplate );
 
         // Add the list of all form panel
-        model.put( MARK_FORM_PANEL_LIST, _listFormPanelDisplay );
+        model.put( MARK_FORM_PANEL_LIST, _listAuthorizedFormPanelDisplay );
         model.put( MARK_CURRENT_SELECTED_PANEL, _strSelectedPanelTechnicalCode );
         model.put( MARK_LIST_FORMAT_EXPORT, ExportServiceManager.getInstance( ).getRefListFormatExport( ) );
 
@@ -364,7 +375,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     private void manageSelectedPanel( )
     {
-        IFormPanelDisplay formPanelDisplay = MultiviewFormService.getInstance( ).findActiveFormPanel( _listFormPanelDisplay );
+        IFormPanelDisplay formPanelDisplay = MultiviewFormService.getInstance( ).findActiveFormPanel( _listAuthorizedFormPanelDisplay );
         if ( formPanelDisplay != null )
         {
             String strSelectedPanelTechnicalCode = formPanelDisplay.getTechnicalCode( );
@@ -391,7 +402,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             reloadFormFilterList( listFormFilter, request );
         }
 
-        for ( IFormPanelDisplay formPanelDisplay : _listFormPanelDisplay )
+        for ( IFormPanelDisplay formPanelDisplay : _listAuthorizedFormPanelDisplay )
         {
             // Retrieve the FormPanel from the FormPanelDisplay
             FormPanel formPanel = formPanelDisplay.getFormPanel( );
