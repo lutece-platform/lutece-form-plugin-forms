@@ -77,6 +77,11 @@
                 fr.paris.lutece.plugins.forms.service.FormsResourceIdService
             </rbac-resource-type-class>
         </rbac-resource-type>
+        <rbac-resource-type>
+            <rbac-resource-type-class>
+				fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService 
+            </rbac-resource-type-class>
+        </rbac-resource-type>
     </rbac-resource-types>
 
     <!-- Portlet parameters -->

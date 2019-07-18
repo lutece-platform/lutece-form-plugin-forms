@@ -229,7 +229,7 @@ public class FormPanelDisplayFactory
             }
         }
 
-        if ( !bActivePanelPresent )
+        if ( CollectionUtils.isNotEmpty( listFormPanelDisplay ) && !bActivePanelPresent )
         {
             listFormPanelDisplay.get( INDEX_LIST_PANEL_FIRST_POSITION ).setActive( ACTIVE_LIST_PANEL );
         }
