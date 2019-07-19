@@ -593,6 +593,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private boolean formSelectedAsChanged( HttpServletRequest request )
     {
         String strFormSelectedNewValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
+        _strFormSelectedValue = strFormSelectedNewValue;
         if ( strFormSelectedNewValue != null )
         {
             _strFormSelectedValue = strFormSelectedNewValue;
