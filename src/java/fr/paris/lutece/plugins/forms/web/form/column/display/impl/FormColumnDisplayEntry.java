@@ -37,12 +37,16 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
-
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -61,6 +65,8 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     private static final String MARK_ENTRY_VALUES = "entry_values";
     private static final String MARK_COLUMN_SORT_ATTRIBUTE = "column_sort_attribute";
     private static final String MARK_SORT_URL = "sort_url";
+
+    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy");
 
     /**
      * {@inheritDoc}
@@ -92,10 +98,20 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
             formColumnCell.getFormColumnCellValues( ).keySet( ).forEach(
                     strEntryKey -> {
                         Object objEntryValue = formColumnCell.getFormColumnCellValueByName( strEntryKey );
-            if ( objEntryValue != null )
-            {
-                            listEntryValues.add( String.valueOf( objEntryValue ) );
-            }
+                        if ( objEntryValue != null )
+                        {
+                            if ( objEntryValue instanceof Date )
+                            {
+                                DateFormat dateFormat = new SimpleDateFormat( FILTER_DATE_FORMAT );  
+                                String strDate = dateFormat.format( objEntryValue) ;  
+                                listEntryValues.add( String.valueOf( strDate ) );
+                            }
+                            else
+                            {
+                                listEntryValues.add( String.valueOf( objEntryValue ) );
+                            }
+                             
+                        }
         }
             );
 

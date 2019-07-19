@@ -37,15 +37,27 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+
+import java.security.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.lucene.document.LongPoint;
 
 /**
  * Implementation of the IFormColumnQueryPart interface for a form column
  */
 public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
 {
+    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy");
+
     /**
      * {@inheritDoc}
      */
@@ -59,7 +71,21 @@ public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
             Map<String,String> listFields = getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem );
             for ( Map.Entry<String,String> field : listFields.entrySet( ) )
             {
-                mapFormColumnValues.put( String.format(FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getFormColumn().getFormColumnPosition( ) ), field.getValue( ) );
+                Object value = field.getValue();
+
+                //Try to parse the value as a date
+                SimpleDateFormat formatter = new SimpleDateFormat( FILTER_DATE_FORMAT );
+                try
+                {
+                    Date date = (Date) formatter.parse( value.toString( ) );
+                    value = date;
+                }
+                catch ( Exception e )
+                {
+                }
+                
+
+                mapFormColumnValues.put( String.format(FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getFormColumn().getFormColumnPosition( ) ), value );
             }
         }
 
