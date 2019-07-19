@@ -362,8 +362,18 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         FormColumnFactory formColumnFactory = SpringContextService.getBean( FormColumnFactory.BEAN_NAME );
         _listFormColumn = formColumnFactory.buildFormColumnList( null );
-        List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn );
 
+        Integer nIdForm = null;
+        try
+        {
+            nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+        }
+        catch ( NumberFormatException e )
+        {
+            //Nothing to do
+        }
+
+        List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( nIdForm, _listFormColumn );
         _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilter );
         _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
         _listFormPanelDisplay = new FormPanelDisplayFactory( ).createFormPanelDisplayList( request, listFormPanel );
@@ -399,6 +409,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         reloadFormColumnList( listFormFilter );
         if ( formSelectedAsChanged( request ) )
         {
+            _strFormSelectedValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
             reloadFormFilterList( listFormFilter, request );
         }
 
@@ -419,6 +430,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             // Build the template of the form list panel
             formPanelDisplay.buildTemplate( getLocale( ) );
         }
+        
     }
 
     /**
@@ -596,7 +608,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         _strFormSelectedValue = strFormSelectedNewValue;
         if ( strFormSelectedNewValue != null )
         {
-            _strFormSelectedValue = strFormSelectedNewValue;
             return !strFormSelectedNewValue.equals( _strFormSelectedValue ) ;
         }
         return false;
