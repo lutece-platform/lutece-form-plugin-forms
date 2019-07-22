@@ -47,6 +47,17 @@
 			</list>
 		</constructor-arg>
 	</bean>
+	<bean id="forms.patternFileTypeValidator" class="fr.paris.lutece.plugins.forms.validation.PatternFileTypeValidator">
+    	<constructor-arg type="java.lang.String" index="0" value="forms.patternFileTypeValidator" />
+    	<constructor-arg type="java.lang.String" index="1" value="forms.validator.pattern.file.type.name" />
+		<constructor-arg index="2" >
+			<list>
+				<value type="java.lang.String">forms.entryTypeFile</value>
+				<value type="java.lang.String">forms.entryTypeImage</value>
+				<value type="java.lang.String">forms.entryTypeAutomaticFileReading</value>
+			</list>
+		</constructor-arg>
+	</bean>
 	<bean id="forms.listValueValidator" class="fr.paris.lutece.plugins.forms.validation.ListValueValidator">
 		<constructor-arg  type="java.lang.String" index="0" value="forms.listValueValidator" />
 		<constructor-arg type="java.lang.String" index="1" value="forms.validator.listValue.name" />

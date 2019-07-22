@@ -37,13 +37,14 @@ package fr.paris.lutece.plugins.forms.validation;
 import java.util.List;
 
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.business.file.File;
 
 /**
  * 
  * Validator to verify the pattern of a response
  *
  */
-public class PatternValidator extends AbstractPatternValidator
+public class PatternFileTypeValidator extends AbstractPatternValidator
 {
 
     /**
@@ -56,7 +57,7 @@ public class PatternValidator extends AbstractPatternValidator
      * @param listAvailableEntryType
      *            The list of available entrytype
      */
-    public PatternValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
+    public PatternFileTypeValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
         super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
     }
@@ -64,6 +65,11 @@ public class PatternValidator extends AbstractPatternValidator
     @Override
     protected String getValueToValidate( Response response )
     {
-    	return response.getResponseValue( );
+    	File file = response.getFile( );
+    	if ( file != null )
+    	{
+    		return file.getMimeType( );
+    	}
+    	return null;
     }
 }
