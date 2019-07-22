@@ -48,7 +48,12 @@
 						<!-- File type -->
 						<#assign fileType = getFieldValue( entry, "file_type" )>
 						<@formGroup labelFor='file_type' labelKey='#i18n{forms.createEntry.fileType}' mandatory=true>
-							<@select name='file_type' id='file_type' items=entryTypeService.fileTypeRefList default_value=fileType />
+							<#list entryTypeService.fileTypeRefList as file>
+								<#if fileType="${file.code}">
+									<@input type='text' name='file_type' id='file_type' value='${file.code}' maxlength=255 readonly=true class='hidden'/>
+									<@input type='text' name='readonly_file_type' id='readonly_file_type' value='${file.name}' maxlength=255 readonly=true/>
+								</#if>
+							</#list>
 						</@formGroup>
 						<@formGroup labelFor='export_binary' labelKey='#i18n{forms.createEntry.labelExportBinary}'>
 							<@checkBox labelKey='#i18n{forms.createEntry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
