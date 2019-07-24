@@ -233,7 +233,7 @@
     <!-- Lucene Search services implementation -->
     <bean id="forms.luceneFormsSearchEngine" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchEngine"/>
     <bean id="forms.luceneFormsSearchIndexer" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchIndexer"/>
-    <bean id="forms.luceneFormsSearchFactory" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchFactory"/>
+    <bean id="forms.luceneFormsSearchFactory" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchFactory" scope="singleton"/>
     <bean id="forms.luceneFrenchAnalizer" class="fr.paris.lutece.plugins.lucene.service.analyzer.LuteceFrenchAnalyzer"/>
     
 	<!-- FormList Facade -->

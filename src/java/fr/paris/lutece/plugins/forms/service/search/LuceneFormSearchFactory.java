@@ -67,6 +67,8 @@ public class LuceneFormSearchFactory
     @Named( value = "forms.luceneFrenchAnalizer" )
     private Analyzer _analyzer;
 
+    private IndexWriter _indexWriter;
+
     /**
      * Return the Analyzer to use for the search
      * 
@@ -102,32 +104,37 @@ public class LuceneFormSearchFactory
      */
     public IndexWriter getIndexWriter( Boolean bCreateIndex )
     {
-        try
+        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
         {
-            Directory luceneDirectory = getDirectory( );
-
-            if ( !DirectoryReader.indexExists( luceneDirectory ) )
+            try
             {
-                bCreateIndex = Boolean.TRUE;
+                Directory luceneDirectory = getDirectory( );
+    
+                if ( !DirectoryReader.indexExists( luceneDirectory ) )
+                {
+                    bCreateIndex = Boolean.TRUE;
+                }
+    
+                IndexWriterConfig conf = new IndexWriterConfig( getAnalyzer( ) );
+    
+                if ( bCreateIndex )
+                {
+                    conf.setOpenMode( OpenMode.CREATE );
+                }
+                else
+                {
+                    conf.setOpenMode( OpenMode.APPEND );
+                }
+                _indexWriter = new IndexWriter( luceneDirectory, conf );
             }
-
-            IndexWriterConfig conf = new IndexWriterConfig( getAnalyzer( ) );
-
-            if ( bCreateIndex )
+            catch( IOException e )
             {
-                conf.setOpenMode( OpenMode.CREATE );
+                AppLogService.error( "Unable to create a new Lucene Index Writer", e );
+                return null;
             }
-            else
-            {
-                conf.setOpenMode( OpenMode.APPEND );
-            }
-            return new IndexWriter( luceneDirectory, conf );
         }
-        catch( IOException e )
-        {
-            AppLogService.error( "Unable to create a new Lucene Index Writer", e );
-            return null;
-        }
+        return _indexWriter;
+        
     }
 
     /**

@@ -400,7 +400,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         {
             try
             {
-                _indexWriter.close( );
+                _indexWriter.commit( );
             }
             catch( IOException e )
             {
