@@ -70,6 +70,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 {
     // Templates
     private static final String TEMPLATE_GROUP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group.html";
+    private static final String TEMPLATE_GROUP_EDITION_BACKOFFICE = "/admin/plugins/forms/composite/view_group_edition.html";
     private static final String TEMPLATE_GROUP_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group_read_only.html";
     private static final String TEMPLATE_GROUP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_group.html";
     private static final String TEMPLATE_GROUP_RESUBMIT_BACKOFFICE = "/admin/plugins/forms/composite/view_group_resubmit.html";
@@ -277,7 +278,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         }
         if ( displayType == DisplayType.EDITION_BACKOFFICE )
         {
-            strTemplate = TEMPLATE_GROUP_READONLY_BACKOFFICE;
+            strTemplate = TEMPLATE_GROUP_EDITION_BACKOFFICE;
         }
         if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
         {
