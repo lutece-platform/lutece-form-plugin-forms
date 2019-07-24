@@ -327,7 +327,10 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
         if ( displayType == DisplayType.EDITION_BACKOFFICE )
         {
-            _question.setIsVisible( true );
+        	 if ( _question.getEntry( ) != null )
+             {
+        		 _question.setIsVisible( _question.getEntry( ).isEditableBack( ) );
+             }
         }
 
         if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
