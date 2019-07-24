@@ -87,6 +87,7 @@ public abstract class AbstractPatternValidator extends AbstractValidator {
             		return service.isMatches( toValidate, regularExpression );
             	}
             }
+            return !questionResponse.getQuestion( ).getEntry( ).isMandatory( );
         }
         return false;
     }
