@@ -37,6 +37,9 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,22 +66,29 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
         String strXValue = String.format(FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_X, getFormColumn().getFormColumnPosition( ) );
         String strYValue = String.format(FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y, getFormColumn().getFormColumnPosition( ) );
         
+        
         for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
         {
             Map<String,String> listFields = getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem );
             for ( Map.Entry<String,String> field : listFields.entrySet( ) )
             {
-                if ( field.getKey().contains( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ + CONSTANT_FIELD_ADDRESS ) )
+                String[] splits = field.getKey().split("_");
+                String strIdField = splits[splits.length-1];
+                int nIdField = Integer.parseInt( strIdField );
+                Field fieldGenatt = FieldHome.findByPrimaryKey( nIdField );
+                switch ( fieldGenatt.getValue( ) )
                 {
+                    case CONSTANT_FIELD_ADDRESS:
                     mapFormColumnValues.put( strAddressValue, field.getValue( ) );
-                }
-                if ( field.getKey().contains( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ + CONSTANT_FIELD_X ) )
-                {
+                    break;
+
+                    case CONSTANT_FIELD_X:
                     mapFormColumnValues.put( strXValue, field.getValue( ) );
-                }
-                if ( field.getKey().contains( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ + CONSTANT_FIELD_Y ) )
-                {
+                    break;
+
+                    case CONSTANT_FIELD_Y:
                     mapFormColumnValues.put( strYValue, field.getValue( ) );
+                    break;
                 }
             }
         }
