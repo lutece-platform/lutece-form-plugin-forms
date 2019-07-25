@@ -111,6 +111,8 @@ public final class QuestionDAO implements IQuestionDAO
         }
 
         daoUtil.close( );
+        question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+        
         return question;
     }
     
@@ -131,6 +133,9 @@ public final class QuestionDAO implements IQuestionDAO
         }
 
         daoUtil.close( );
+        question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+        daoUtil.free();
+        
         return question;
     }
 
@@ -188,6 +193,12 @@ public final class QuestionDAO implements IQuestionDAO
         }
 
         daoUtil.close( );
+        
+        for(Question quest:questionList ){
+        	
+            quest.setEntry( getQuestionEntry( quest.getIdEntry( ) ) );
+
+        }
         return questionList;
     }
 
@@ -208,6 +219,11 @@ public final class QuestionDAO implements IQuestionDAO
         }
 
         daoUtil.close( );
+       for(Question quest:questionList ){
+        	
+            quest.setEntry( getQuestionEntry( quest.getIdEntry( ) ) );
+
+        }
         return questionList;
     }
 
@@ -241,7 +257,7 @@ public final class QuestionDAO implements IQuestionDAO
         {
             questionList.add( dataToObjectWithoutStepEntry( daoUtil ) );
         }
-
+        
         daoUtil.close( );
         return questionList;
     }
@@ -277,7 +293,11 @@ public final class QuestionDAO implements IQuestionDAO
         {
             questionList.add( dataToObject( daoUtil ) );
         }
+        for(Question quest:questionList ){
+        	
+            quest.setEntry( getQuestionEntry( quest.getIdEntry( ) ) );
 
+        }
         daoUtil.close( );
         return questionList;
     }
@@ -294,7 +314,7 @@ public final class QuestionDAO implements IQuestionDAO
         {
             questionList.add( dataToObjectWithoutStepEntry( daoUtil ) );
         }
-
+        
         daoUtil.close( );
         return questionList;
     }
@@ -354,7 +374,7 @@ public final class QuestionDAO implements IQuestionDAO
         question.setCode( daoUtil.getString( "code" ) );
         question.setDescription( daoUtil.getString( "description" ) );
         question.setIdEntry( daoUtil.getInt( "id_entry" ) );
-        question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+       // question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
         question.setIdStep( daoUtil.getInt( "id_step" ) );
         question.setVisibleMultiviewGlobal( daoUtil.getBoolean( "is_visible_multiview_global" ) );
         question.setVisibleMultiviewFormSelected( daoUtil.getBoolean( "is_visible_multiview_form_selected" ) );
@@ -384,6 +404,7 @@ public final class QuestionDAO implements IQuestionDAO
     		{
     			list.add( dataToObjectWithoutStepEntry( daoUtil ) );
     		}
+    		daoUtil.close( );
     	}
     	return list;
     }
