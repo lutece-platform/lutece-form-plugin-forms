@@ -47,6 +47,7 @@ $( function(){
     btnAction.click( function(e){ 
         formAction.submit( function(){
             e.preventDefault();
+            formAction.attr('target','_top');
             formAction.submit();
         });
     });

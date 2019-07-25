@@ -723,7 +723,7 @@ public class FormControlJspBean extends AbstractJspBean
                 nIdStep = transition.getFromStep( );
                 break;
             case VALIDATION:
-                strTargetJsp = FormsConstants.JSP_MANAGE_CONTROLS;
+                strTargetJsp = FormsConstants.JSP_MANAGE_QUESTIONS;
                 nIdStep = _step.getId( );
                 break;
             default:
