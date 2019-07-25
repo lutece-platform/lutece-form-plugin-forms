@@ -361,7 +361,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         List<FormPanel> listFormPanel = new FormPanelFactory( ).buildFormPanelList( );
 
         FormColumnFactory formColumnFactory = SpringContextService.getBean( FormColumnFactory.BEAN_NAME );
-        _listFormColumn = formColumnFactory.buildFormColumnList( null );
 
         Integer nIdForm = null;
         try
@@ -373,6 +372,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             //Nothing to do
         }
 
+        _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm );
         List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( nIdForm, _listFormColumn );
         _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilter );
         _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
@@ -605,11 +605,13 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private boolean formSelectedAsChanged( HttpServletRequest request )
     {
         String strFormSelectedNewValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
-        _strFormSelectedValue = strFormSelectedNewValue;
+        boolean bIdFormHasChanged = false;
         if ( strFormSelectedNewValue != null )
         {
-            return !strFormSelectedNewValue.equals( _strFormSelectedValue ) ;
+            bIdFormHasChanged = !strFormSelectedNewValue.equals( _strFormSelectedValue ) ;
+            _strFormSelectedValue = strFormSelectedNewValue;
         }
-        return false;
+
+        return bIdFormHasChanged;
     }
 }
