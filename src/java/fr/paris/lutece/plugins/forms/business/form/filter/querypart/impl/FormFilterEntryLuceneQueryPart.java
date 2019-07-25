@@ -70,7 +70,8 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
             boolean bEmptyQuery = true;
             for ( Map.Entry<String, Object> formParam : setFormParameters )
             {
-                if ( !formParam.getValue().toString().equals( FormsConstants.DEFAULT_ID_VALUE ) )
+                
+                if ( !formParam.getValue().toString().equals( String.valueOf( FormsConstants.DEFAULT_ID_VALUE ) ) )
                 {
                     bEmptyQuery = false;
                     String strQuestionCode = formParam.getKey( );
