@@ -44,6 +44,7 @@
 			<list>
 				<value type="java.lang.String">forms.entryTypeText</value>
 				<value type="java.lang.String">forms.entryTypeTextArea</value>
+				<value type="java.lang.String">forms.entryTypeGeolocation</value>
 			</list>
 		</constructor-arg>
 	</bean>
