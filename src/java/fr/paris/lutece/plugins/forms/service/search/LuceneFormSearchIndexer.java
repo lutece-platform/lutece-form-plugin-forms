@@ -581,15 +581,21 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                             {
                             LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
                             Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay());
-                            doc.add( new LongPoint( fieldNameBuilder.toString( ), timestamp.getTime( ) ) );
-                            }
+                            doc.add( new LongPoint( fieldNameBuilder.toString( )+ FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
+                            doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, String.valueOf( timestamp.getTime( ) ), Field.Store.YES ) );
+                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, new BytesRef( String.valueOf( timestamp.getTime( ) ) ) ) );
+                        }
                             catch ( Exception e )
                             {
                                 AppLogService.error( "Unable to parse " + response.getResponseValue() + " with date formatter " + FILTER_DATE_FORMAT, e );
                             }
                         }
-                        doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+                        else
+                        {
+                            doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
+                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+                        }
+                        
                     }
                 }
             }

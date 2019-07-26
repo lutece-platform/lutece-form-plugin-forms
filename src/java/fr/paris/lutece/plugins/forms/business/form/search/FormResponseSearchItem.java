@@ -60,6 +60,7 @@ public class FormResponseSearchItem extends SearchItem
     public static final String FIELD_RESPONSE_FIELD_SEPARATOR_ = "_field_";
     public static final String FIELD_RESPONSE_FIELD_ITER_ = "_iter_";
     public static final String FIELD_RESPONSE_ID_ = "_response_id_";
+    public static final String FIELD_DATE_SUFFIX = "_date";
     
     private static final int INTEGER_MINUS_ONE = -1;
 

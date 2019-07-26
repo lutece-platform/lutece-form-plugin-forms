@@ -39,6 +39,7 @@ import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -47,6 +48,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -95,16 +97,29 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         List<String> listEntryValues = new ArrayList<>();
         if ( formColumnCell != null && formColumnCell.getFormColumnCellValues( ).size() > 0 )
         {
-            formColumnCell.getFormColumnCellValues( ).keySet( ).forEach(
-                    strEntryKey -> {
-                        Object objEntryValue = formColumnCell.getFormColumnCellValueByName( strEntryKey );
+            formColumnCell.getFormColumnCellValues( ).entrySet().forEach(
+                    entry -> {
+                        Object objEntryValue = entry.getValue( );
+                        String objEntryKey = entry.getKey( );
                         if ( objEntryValue != null )
                         {
-                            if ( objEntryValue instanceof Date )
+                            if ( objEntryKey.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
                             {
-                                DateFormat dateFormat = new SimpleDateFormat( FILTER_DATE_FORMAT );  
-                                String strDate = dateFormat.format( objEntryValue) ;  
-                                listEntryValues.add( String.valueOf( strDate ) );
+                                String stringToConvert = String.valueOf( objEntryValue );
+                                try
+                                {
+                                    Long convertedLong = Long.parseLong( stringToConvert );
+                                    Date date = new Date( convertedLong );
+                                    DateFormat dateFormat = new SimpleDateFormat( FILTER_DATE_FORMAT );  
+                                    String strDate = dateFormat.format( date ) ;  
+
+                                    listEntryValues.add( strDate );
+                                }
+                                catch ( Exception e )
+                                {
+                                    listEntryValues.add( stringToConvert );
+                                }
+                                
                             }
                             else
                             {
@@ -112,9 +127,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
                             }
                              
                         }
-        }
-            );
-
+                    });
         }
 
         Map<String, Object> model = new LinkedHashMap<>( );
