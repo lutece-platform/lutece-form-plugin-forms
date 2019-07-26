@@ -143,7 +143,7 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
     {
         String strDateRange = getValue( );
 
-        if ( strDateRange != null )
+        if ( StringUtils.isNotEmpty( strDateRange ) )
         {
             strDateRange = getValue( ).replaceAll( " ", "" );
             Matcher m = Pattern.compile( REGEX_DATE_FORMAT ).matcher( strDateRange );
