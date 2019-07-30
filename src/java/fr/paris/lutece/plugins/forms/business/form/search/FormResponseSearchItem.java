@@ -33,13 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.search;
 
-import fr.paris.lutece.portal.service.search.SearchItem;
-import fr.paris.lutece.portal.service.util.AppLogService;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
+
+import fr.paris.lutece.portal.service.search.SearchItem;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * This class is use for processing searches in Forms
@@ -61,6 +62,7 @@ public class FormResponseSearchItem extends SearchItem
     public static final String FIELD_RESPONSE_FIELD_ITER_ = "_iter_";
     public static final String FIELD_RESPONSE_ID_ = "_response_id_";
     public static final String FIELD_DATE_SUFFIX = "_date";
+    public static final String FIELD_INT_SUFFIX = "_int";
     
     private static final int INTEGER_MINUS_ONE = -1;
 
