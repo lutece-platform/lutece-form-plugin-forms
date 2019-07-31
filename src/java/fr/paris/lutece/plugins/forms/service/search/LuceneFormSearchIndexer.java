@@ -72,6 +72,7 @@ import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionHome;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
+import fr.paris.lutece.plugins.forms.util.LuceneUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
@@ -550,13 +551,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                     // TODO USE EXPORT MANAGER ?
                     fr.paris.lutece.plugins.genericattributes.business.Field responseField = response.getField( );
 
-                    StringBuilder fieldNameBuilder = new StringBuilder( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX );
-                    fieldNameBuilder.append( strQuestionCode );
-                    fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ );
-                    fieldNameBuilder.append( response.getIterationNumber( ) );
-
                     if ( !StringUtils.isEmpty( response.getResponseValue( ) ) )
                     {
+                    	 StringBuilder fieldNameBuilder = new StringBuilder( LuceneUtils.createLuceneEntryKey( strQuestionCode, response.getIterationNumber( ) ) );
+                    	 
                         if ( responseField != null )
                         {
                             String getFieldName = getFieldName( responseField, response );
