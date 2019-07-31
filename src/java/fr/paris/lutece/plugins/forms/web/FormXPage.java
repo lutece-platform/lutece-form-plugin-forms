@@ -116,6 +116,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_LIST_FORMS_PAGETITLE = "forms.xpage.listForms.pagetitle";
     protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
     private static final String MESSAGE_WARNING_LOST_SESSION = "forms.warning.lost.session";
+    private static final String MESSAGE_ERROR_STEP_NOT_FINAL ="forms.error.step.isnot.final";
     /**
      * Generated serial id
      */
@@ -575,17 +576,22 @@ public class FormXPage extends MVCApplication
         {
             return redirectView( request, VIEW_STEP );
         }
-
+        
+        _currentStep = _formResponseManager.getCurrentStep( );
         if ( !_formResponseManager.validateFormResponses( ) )
         {
-            _currentStep = _formResponseManager.getCurrentStep( );
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-
             return redirectView( request, VIEW_STEP );
+        }
+        if( !_currentStep.isFinal( )){
+        	
+        	_stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+        	addError( MESSAGE_ERROR_STEP_NOT_FINAL, request.getLocale( ) );
+        	return redirectView( request, VIEW_STEP );
         }
 
         saveFormResponse( form, request );
-        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
+        //FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
         Map<String, Object> model = getModel( );
 
         model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
@@ -1207,4 +1213,5 @@ public class FormXPage extends MVCApplication
     {
         return ( _currentStep == null && _formResponseManager == null && _stepDisplayTree == null && _breadcrumb == null );
     }
+    
 }
