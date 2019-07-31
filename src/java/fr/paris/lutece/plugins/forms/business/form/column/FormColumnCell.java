@@ -76,11 +76,22 @@ public class FormColumnCell
      */
     public Object getFormColumnCellValueByName( String strCellName )
     {
+    	if ( _mapFormColumnCellValues == null )
+    	{
+    		return null;
+    	}
+    	String key = _mapFormColumnCellValues.keySet( )
+	    	.stream( )
+	    	.filter( k -> k.contains( strCellName ) )
+	    	.sorted( )
+	    	.findFirst( )
+	    	.orElse( null );
+    	
         Object objFormColumnCell = null;
 
-        if ( StringUtils.isNotBlank( strCellName ) && _mapFormColumnCellValues != null && _mapFormColumnCellValues.containsKey( strCellName ) )
+        if ( StringUtils.isNotBlank( key ) )
         {
-            objFormColumnCell = _mapFormColumnCellValues.get( strCellName );
+            objFormColumnCell = _mapFormColumnCellValues.get( key );
         }
 
         return objFormColumnCell;

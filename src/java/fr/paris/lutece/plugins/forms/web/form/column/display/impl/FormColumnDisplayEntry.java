@@ -41,11 +41,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -68,6 +70,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     private static final String MARK_SORT_URL = "sort_url";
 
     private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy");
+    private final DateFormat _dateFormat = new SimpleDateFormat( FILTER_DATE_FORMAT );
 
     /**
      * {@inheritDoc}
@@ -79,8 +82,14 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_TITLE, getFormColumnTitle( ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_POSITION, getPosition( ) );
-        model.put( MARK_COLUMN_SORT_ATTRIBUTE, String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getPosition( ) ) );
-
+        
+        String columSort = String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getPosition( ) );
+        if ( getFormColumn( ) instanceof FormColumnEntry )
+        {
+        	columSort = ( ( FormColumnEntry ) getFormColumn( ) ).getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
+        }
+        model.put( MARK_COLUMN_SORT_ATTRIBUTE, columSort );
+        
         String strColumnHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );
         setFormColumnHeaderTemplate( strColumnHeaderTemplate );
 
@@ -109,8 +118,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
                                 {
                                     Long convertedLong = Long.parseLong( stringToConvert );
                                     Date date = new Date( convertedLong );
-                                    DateFormat dateFormat = new SimpleDateFormat( FILTER_DATE_FORMAT );  
-                                    String strDate = dateFormat.format( date ) ;  
+                                    String strDate = _dateFormat.format( date ) ;  
 
                                     listEntryValues.add( strDate );
                                 }
