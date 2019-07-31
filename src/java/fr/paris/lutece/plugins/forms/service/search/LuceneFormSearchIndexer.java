@@ -33,6 +33,32 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.document.LongPoint;
+import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.document.SortedDocValuesField;
+import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.util.BytesRef;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -45,6 +71,8 @@ import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionFilter;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionHome;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
+import fr.paris.lutece.plugins.forms.util.LuceneUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
@@ -60,33 +88,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
-
-import org.apache.commons.lang.StringUtils;
-
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StringField;
-
-import java.io.IOException;
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import javax.inject.Inject;
-import org.apache.lucene.document.IntPoint;
-import org.apache.lucene.document.LongPoint;
-import org.apache.lucene.document.NumericDocValuesField;
-import org.apache.lucene.document.SortedDocValuesField;
-import org.apache.lucene.document.StoredField;
-import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.util.BytesRef;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Forms global indexer
@@ -537,17 +538,6 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, new BytesRef( strFormResponseWorkflowStateTitle ) ) );
         }
         
-        // TODO BY LEPINEG ? : id Assignee Unit, id Assignee User
-        /*
-         * int nIdFormResponseAssigneeUnit = formResponse.getIdAssigneeUnit(); doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT,
-         * nIdFormResponseAssigneeUnit ) ); doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUnit ) );
-         * doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUnit ) );
-         * 
-         * int nIdFormResponseAssigneeUser = formResponse.getIdAssigneeUser(); doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT,
-         * nIdFormResponseAssigneeUser ) ); doc.add( new NumericDocValuesField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUser ) );
-         * doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_ASSIGNEE_UNIT, nIdFormResponseAssigneeUser ) );
-         */
-
         // --- form response entry code / fields
         for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
         {
@@ -561,13 +551,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                     // TODO USE EXPORT MANAGER ?
                     fr.paris.lutece.plugins.genericattributes.business.Field responseField = response.getField( );
 
-                    StringBuilder fieldNameBuilder = new StringBuilder( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX );
-                    fieldNameBuilder.append( strQuestionCode );
-                    fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ );
-                    fieldNameBuilder.append( response.getIterationNumber( ) );
-
                     if ( !StringUtils.isEmpty( response.getResponseValue( ) ) )
                     {
+                    	 StringBuilder fieldNameBuilder = new StringBuilder( LuceneUtils.createLuceneEntryKey( strQuestionCode, response.getIterationNumber( ) ) );
+                    	 
                         if ( responseField != null )
                         {
                             String getFieldName = getFieldName( responseField, response );
@@ -579,17 +566,36 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                             DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
                             try
                             {
-                            LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
-                            Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay());
-                            doc.add( new LongPoint( fieldNameBuilder.toString( ), timestamp.getTime( ) ) );
-                            }
+	                            LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
+	                            Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay());
+	                            doc.add( new LongPoint( fieldNameBuilder.toString( )+ FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
+	                            doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, String.valueOf( timestamp.getTime( ) ), Field.Store.YES ) );
+	                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, new BytesRef( String.valueOf( timestamp.getTime( ) ) ) ) );
+	                        }
                             catch ( Exception e )
                             {
                                 AppLogService.error( "Unable to parse " + response.getResponseValue() + " with date formatter " + FILTER_DATE_FORMAT, e );
                             }
                         }
-                        doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+                        else if ( entryTypeService instanceof EntryTypeNumbering )
+                        {
+                        	try
+                        	{
+                        		Integer value = Integer.valueOf( response.getResponseValue( ) );
+                        		doc.add( new IntPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
+                        		doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, String.valueOf( value ), Field.Store.YES ) );
+                        		doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, new BytesRef( String.valueOf( value ) ) ) );
+                        	}
+                        	catch (NumberFormatException e) {
+                        		AppLogService.error( "Unable to parse " + response.getResponseValue() + " to integer ", e );
+							}
+                        }
+                        else
+                        {
+                            doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
+                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+                        }
+                        
                     }
                 }
             }

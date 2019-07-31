@@ -146,29 +146,19 @@ public class FormColumnCellComparator implements Comparator<FormColumnCell>, Ser
     {
         int nComparisonResult = NumberUtils.INTEGER_ZERO;
 
-        if ( objectOne instanceof Date && objectTwo instanceof Date )
+        String strObjectOneRepresentation = String.valueOf( objectOne );
+        String strObjectTwoRepresentation = String.valueOf( objectTwo );
+        
+        if ( NumberUtils.isNumber( strObjectOneRepresentation ) && NumberUtils.isNumber( strObjectTwoRepresentation ) )
         {
-            Date dateOne = (Date) objectOne;
-            Date dateTwo = (Date) objectTwo;
-
-            nComparisonResult = dateOne.compareTo( dateTwo );
+            BigDecimal numOne = NumberUtils.createBigDecimal( strObjectOneRepresentation );
+            BigDecimal numTwo = NumberUtils.createBigDecimal( strObjectTwoRepresentation );
+            
+            nComparisonResult = numOne.compareTo( numTwo );
         }
         else
         {
-            String strObjectOneRepresentation = String.valueOf( objectOne );
-            String strObjectTwoRepresentation = String.valueOf( objectTwo );
-            
-            if ( NumberUtils.isNumber( strObjectOneRepresentation ) && NumberUtils.isNumber( strObjectTwoRepresentation ) )
-            {
-            	BigDecimal numOne = NumberUtils.createBigDecimal( strObjectOneRepresentation );
-            	BigDecimal numTwo = NumberUtils.createBigDecimal( strObjectTwoRepresentation );
-            	
-            	nComparisonResult = numOne.compareTo( numTwo );
-            }
-            else
-            {
-            	nComparisonResult = strObjectOneRepresentation.compareTo( strObjectTwoRepresentation );
-            }
+            nComparisonResult = strObjectOneRepresentation.compareTo( strObjectTwoRepresentation );
         }
 
         return nComparisonResult;

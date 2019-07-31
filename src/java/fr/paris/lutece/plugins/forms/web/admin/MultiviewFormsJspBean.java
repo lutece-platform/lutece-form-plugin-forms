@@ -62,6 +62,7 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterFactory;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService;

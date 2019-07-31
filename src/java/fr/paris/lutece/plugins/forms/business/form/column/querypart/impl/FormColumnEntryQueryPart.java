@@ -56,8 +56,6 @@ import org.apache.lucene.document.LongPoint;
  */
 public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
 {
-    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy");
-
     /**
      * {@inheritDoc}
      */
@@ -68,25 +66,7 @@ public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
 
         for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
         {
-            Map<String,String> listFields = getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem );
-            for ( Map.Entry<String,String> field : listFields.entrySet( ) )
-            {
-                Object value = field.getValue();
-
-                //Try to parse the value as a date
-                SimpleDateFormat formatter = new SimpleDateFormat( FILTER_DATE_FORMAT );
-                try
-                {
-                    Date date = (Date) formatter.parse( value.toString( ) );
-                    value = date;
-                }
-                catch ( Exception e )
-                {
-                }
-                
-
-                mapFormColumnValues.put( String.format(FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getFormColumn().getFormColumnPosition( ) ), value );
-            }
+            mapFormColumnValues.putAll( getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem ) );
         }
 
         return mapFormColumnValues;

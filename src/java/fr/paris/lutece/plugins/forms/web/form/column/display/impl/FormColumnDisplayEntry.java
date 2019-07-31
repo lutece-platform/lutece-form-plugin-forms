@@ -33,22 +33,25 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.column.display.impl;
 
-import java.util.LinkedHashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.math.NumberUtils;
+
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
  * Implementation of the IFormColumnDisplay for the Entry column
@@ -67,6 +70,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     private static final String MARK_SORT_URL = "sort_url";
 
     private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy");
+    private final DateFormat _dateFormat = new SimpleDateFormat( FILTER_DATE_FORMAT );
 
     /**
      * {@inheritDoc}
@@ -78,8 +82,14 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_TITLE, getFormColumnTitle( ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_POSITION, getPosition( ) );
-        model.put( MARK_COLUMN_SORT_ATTRIBUTE, String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getPosition( ) ) );
-
+        
+        String columSort = String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getPosition( ) );
+        if ( getFormColumn( ) instanceof FormColumnEntry )
+        {
+        	columSort = ( ( FormColumnEntry ) getFormColumn( ) ).getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
+        }
+        model.put( MARK_COLUMN_SORT_ATTRIBUTE, columSort );
+        
         String strColumnHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );
         setFormColumnHeaderTemplate( strColumnHeaderTemplate );
 
@@ -95,16 +105,28 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         List<String> listEntryValues = new ArrayList<>();
         if ( formColumnCell != null && formColumnCell.getFormColumnCellValues( ).size() > 0 )
         {
-            formColumnCell.getFormColumnCellValues( ).keySet( ).forEach(
-                    strEntryKey -> {
-                        Object objEntryValue = formColumnCell.getFormColumnCellValueByName( strEntryKey );
+            formColumnCell.getFormColumnCellValues( ).entrySet().forEach(
+                    entry -> {
+                        Object objEntryValue = entry.getValue( );
+                        String objEntryKey = entry.getKey( );
                         if ( objEntryValue != null )
                         {
-                            if ( objEntryValue instanceof Date )
+                            if ( objEntryKey.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
                             {
-                                DateFormat dateFormat = new SimpleDateFormat( FILTER_DATE_FORMAT );  
-                                String strDate = dateFormat.format( objEntryValue) ;  
-                                listEntryValues.add( String.valueOf( strDate ) );
+                                String stringToConvert = String.valueOf( objEntryValue );
+                                try
+                                {
+                                    Long convertedLong = Long.parseLong( stringToConvert );
+                                    Date date = new Date( convertedLong );
+                                    String strDate = _dateFormat.format( date ) ;  
+
+                                    listEntryValues.add( strDate );
+                                }
+                                catch ( Exception e )
+                                {
+                                    listEntryValues.add( stringToConvert );
+                                }
+                                
                             }
                             else
                             {
@@ -112,9 +134,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
                             }
                              
                         }
-        }
-            );
-
+                    });
         }
 
         Map<String, Object> model = new LinkedHashMap<>( );
