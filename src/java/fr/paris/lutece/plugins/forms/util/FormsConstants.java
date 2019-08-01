@@ -34,6 +34,7 @@
 
 package fr.paris.lutece.plugins.forms.util;
 
+import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import org.apache.commons.lang3.math.NumberUtils;
 
 /**
@@ -165,7 +166,8 @@ public final class FormsConstants
     public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
     public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
     public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
-    public static final int ORDER_NOT_SET = NumberUtils.INTEGER_MINUS_ONE;
+    //public static final int ORDER_NOT_SET = NumberUtils.INTEGER_MINUS_ONE;
+    public static final int ORDER_NOT_SET = Integer.parseInt(DatastoreService.getDataValue("forms.formResponseStep.orderNotSet", NumberUtils.INTEGER_MINUS_ONE.toString()));
     public static final int FILE_TYPE_RIB = 1;
 
     // Markers
