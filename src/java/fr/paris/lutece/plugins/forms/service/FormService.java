@@ -76,7 +76,9 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.event.ResourceEventManager;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
+import fr.paris.lutece.util.sql.TransactionManager;
 
 /**
  * This is the service class related to the form
@@ -96,14 +98,24 @@ public class FormService
      * @param formResponse
      *            the form response to save
      */
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
     public void saveForm( Form form, FormResponse formResponse )
     {
-        formResponse.setFromSave( Boolean.FALSE );
+    	 TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
 
-        filterFinalSteps( formResponse );
-        saveFormResponse( formResponse );
-        saveFormResponseSteps( formResponse );
+	     try
+	     {
+	        formResponse.setFromSave( Boolean.FALSE );
+	
+	        filterFinalSteps( formResponse );
+	        saveFormResponse( formResponse );
+	        saveFormResponseSteps( formResponse );
+	        TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+	         }
+	         catch( Exception e )
+         {
+             TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+             throw new AppException( e.getMessage( ), e );
+         }
         fireFormResponseEventCreation( formResponse );
     }
 

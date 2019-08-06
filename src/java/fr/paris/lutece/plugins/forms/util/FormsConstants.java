@@ -177,7 +177,6 @@ public final class FormsConstants
 
     // Beans
     public static final String BEAN_TRANSACTION_MANAGER = "forms.transactionManager";
-    public static final String BEAN_FORMS_FORM_TITLE_COLUMN = "forms.transactionManager";
     public static final String BEAN_FORMS_COLUMN_TITLE = "forms.forms.column";
     public static final String BEAN_FORMS_COLUMN_DATE_CREATION = "forms.formResponseCreationDate.column";
 
