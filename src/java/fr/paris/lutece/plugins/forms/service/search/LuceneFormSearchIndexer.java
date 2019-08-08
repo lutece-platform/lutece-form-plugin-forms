@@ -38,8 +38,11 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -101,6 +104,9 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private static final String PROPERTY_INDEXER_ENABLE = "forms.globalIndexer.enable";
     private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy");
     private static final int TAILLE_LOT = AppPropertiesService.getPropertyInt( "forms.index.writer.commit.size", 100 );
+
+    private static volatile AtomicBoolean  _bIndexIsRunning = new AtomicBoolean(false);
+    private static volatile AtomicBoolean _bIndexToLunch = new AtomicBoolean(false);
 
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
@@ -196,7 +202,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      * {@inheritDoc }
      */
     @Override
-    public void indexDocuments( ) throws IOException, InterruptedException, SiteMessageException
+    public synchronized void indexDocuments( ) throws IOException, InterruptedException, SiteMessageException
     {
         List<Integer> listFormResponsesId = FormResponseHome.selectAllFormResponsesId( );
         
@@ -205,29 +211,46 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         {
             addIndexerAction( nIdFormResponse, IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
         }
-        processIndexing( );
+        _bIndexToLunch.set(true);
+        if(_bIndexIsRunning.compareAndSet(false, true)) {
+            new Thread(() -> {
+                while(_bIndexToLunch.compareAndSet(true, false)){
+                    processIndexing();
+                }
+                _bIndexIsRunning.set(false);
+            }).start();
+        }
+
     }
     
     /**
      * {@inheritDoc }
      */
     @Override
-    public void indexDocument(int nIdFormResponse, int nIdTask, Plugin plugin) 
+    public void indexDocument(int nIdFormResponse, int nIdTask, Plugin plugin)
     {
         addIndexerAction( nIdFormResponse, nIdTask, plugin );
-        processIndexing();
+        _bIndexToLunch.set(true);
+        if(_bIndexIsRunning.compareAndSet(false, true)) {
+            new Thread(() -> {
+                while(_bIndexToLunch.compareAndSet(true, false)){
+                    processIndexing();
+                }
+                _bIndexIsRunning.set(false);
+            }).start();
+        }
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void processIndexing( )
+    public synchronized void processIndexing( )
     {
         initIndexing( false );
 
         Plugin plugin = PluginService.getPlugin( FormsPlugin.PLUGIN_NAME );
-        List<Integer> listIdsToAdd = new ArrayList<>( );
+        Set<Integer> listIdsToAdd = new HashSet<>( );
         List<Integer> listIdsToDelete = new ArrayList<>( );
 
         // Delete all record which must be delete
@@ -240,7 +263,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         // Update all record which must be update
         for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_MODIFY, plugin ) )
         {
-        	listIdsToDelete.add( action.getIdFormResponse( ) );
+            listIdsToDelete.add( action.getIdFormResponse( ) );
             listIdsToAdd.add( action.getIdFormResponse( ) );
             removeIndexerAction( action.getIdAction(), plugin );
         }
