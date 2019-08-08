@@ -1116,8 +1116,14 @@ public class FormXPage extends MVCApplication
      */
     private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-        synchronized( FormXPage.class )
-        {
+    	/*The deletion of the synchronized block is due to the accumulation of http threads on the server when scaling up. 
+    	 The current implementation does not guarantee the following two checks in case of competitor access: 
+    	 -checkNumberMaxResponseForm (form, request);
+    	 -checkIfUserResponseForm (form, request);
+    	 This implementation to review and modify.
+    	*/
+        /*synchronized( FormXPage.class )
+        {*/
             checkNumberMaxResponseForm( form, request );
             checkIfUserResponseForm( form, request );
             FormResponse formResponse = _formResponseManager.getFormResponse( );
@@ -1128,7 +1134,7 @@ public class FormXPage extends MVCApplication
             }
             _formService.saveForm( form, formResponse );
             _formService.processFormAction( form, formResponse );
-        }
+        //}
     }
 
     /**
