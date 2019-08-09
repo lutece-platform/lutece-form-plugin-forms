@@ -241,18 +241,20 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         addIndexerAction( nIdFormResponse, nIdTask, plugin );
         _bIndexToLunch.set(true);
         if(_bIndexIsRunning.compareAndSet(false, true)) {
-        	try {
 	            new Thread(() -> {
+	            
+	            try {
 	                while(_bIndexToLunch.compareAndSet(true, false)){
 	                    processIndexing();
 	                }
+	            }catch (Exception e) {
+	        			AppLogService.error(e.getMessage() , e);
+	                    Thread.currentThread().interrupt();
+	            } finally {
+	                	_bIndexIsRunning.set(false);  
+	            }
+	            	
 	            }).start();
-        	}catch (Exception e) {
-    			AppLogService.error(e.getMessage() , e);
-                Thread.currentThread().interrupt();
-            } finally {
-            	_bIndexIsRunning.set(false);  
-            }
         }
     }
 
