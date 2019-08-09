@@ -105,8 +105,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy");
     private static final int TAILLE_LOT = AppPropertiesService.getPropertyInt( "forms.index.writer.commit.size", 100 );
 
-    private static volatile AtomicBoolean  _bIndexIsRunning = new AtomicBoolean(false);
-    private static volatile AtomicBoolean _bIndexToLunch = new AtomicBoolean(false);
+    private static  AtomicBoolean  _bIndexIsRunning = new AtomicBoolean(false);
+    private static  AtomicBoolean _bIndexToLunch = new AtomicBoolean(false);
 
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
@@ -219,7 +219,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                     processIndexing();
                 }
             	}catch (Exception e) {
-                    Thread.currentThread().interrupt();
+        			AppLogService.error(e.getMessage() , e);
+                    Thread.currentThread().interrupt();                    
                 } finally {
                 	_bIndexIsRunning.set(false);  
                 }
@@ -247,6 +248,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 	                }
 	            }).start();
         	}catch (Exception e) {
+    			AppLogService.error(e.getMessage() , e);
                 Thread.currentThread().interrupt();
             } finally {
             	_bIndexIsRunning.set(false);  
@@ -264,7 +266,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
         Plugin plugin = PluginService.getPlugin( FormsPlugin.PLUGIN_NAME );
         Set<Integer> listIdsToAdd = new HashSet<>( );
-        List<Integer> listIdsToDelete = new ArrayList<>( );
+        Set<Integer> listIdsToDelete = new HashSet<>( );
 
         // Delete all record which must be delete
         for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_DELETE, plugin ) )

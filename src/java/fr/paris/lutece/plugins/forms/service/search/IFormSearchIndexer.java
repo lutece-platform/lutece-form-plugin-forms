@@ -33,12 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.portal.service.message.SiteMessageException;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.search.SearchIndexer;
-import java.io.IOException;
-import java.util.List;
+
 
 /**
  *
