@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.list;
 
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig;
 import java.util.Comparator;
 import java.util.List;
 
@@ -74,11 +75,16 @@ public class FormListFacade
      *            The list of all FormColumn to use to be populated
      * @param listFormFilter
      *            The list of FormFilter to use for retrieving the data of the columns to populate
+     * @param nStartIndex
+     *            The start index of doc
+     * @param nPageSize
+     *            The number of docs to load for pagination purpose
+     * @param comparatorConfig
      */
-    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,  int nStartIndex, int nPageSize, FormResponseItemComparatorConfig comparatorConfig )
     {
         listFormColumn.sort( Comparator.comparing( IFormColumn::getFormColumnPosition ) );
 
-        _formListDAO.populateFormColumns( formPanel, listFormColumn, listFormFilter );
+        _formListDAO.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, comparatorConfig );
     }
 }

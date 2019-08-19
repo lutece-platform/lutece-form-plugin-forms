@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.list;
 
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
@@ -56,6 +57,12 @@ public interface IFormListDAO
      *            The list of FormColumn to populate
      * @param listFormFilter
      *            The list of FormFilter used for filtering the data to retrieve
+     * @param  nStartIndex
+     *            The start index of doc that all will become FormResponseItem
+     * @param  nPageSize
+     *            The number of doc to load for pagination purpose
+     * @param comparatorConfig
+     *            The comparator config
      */
-    void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter );
+    void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,  int nStartIndex, int nPageSize, FormResponseItemComparatorConfig comparatorConfig );
 }

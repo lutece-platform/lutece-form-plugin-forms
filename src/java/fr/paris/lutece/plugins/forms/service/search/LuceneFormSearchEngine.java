@@ -33,9 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig;
 import fr.paris.lutece.plugins.forms.business.form.LuceneQueryBuilder;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.portal.service.search.IndexationService;
@@ -54,6 +56,8 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
 
 public class LuceneFormSearchEngine implements IFormSearchEngine
@@ -146,24 +150,38 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
      * {@inheritDoc }
      */
     @Override
-    public List<FormResponseSearchItem>  getSearchResults(  List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart )
+    public List<FormResponseSearchItem>  getSearchResults(  List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart , FormResponseItemComparatorConfig comparatorConfig , int nStartIndex, int nPageSize, FormPanel formPanel )
     {
+     
+        
         
         // Build the query to execute
         Query query = LuceneQueryBuilder.buildQuery( listFormPanelInitializerQueryPart, listFormFilterQueryPart );
 
+        // Build the sort
+        Sort sort = buildLuceneSort( comparatorConfig );
+        
         List<FormResponseSearchItem> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
         try
         {
             searcher = _luceneFormSearchFactory.getIndexSearcher( );
-
+            TopDocs topDocs = null;
             // Get results documents
-            TopDocs topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
+            if ( sort != null )
+            {
+                topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES, sort );
+            }
+            else
+            {
+                 topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
+            }
             ScoreDoc [ ] hits = topDocs.scoreDocs;
-
-            for ( int i = 0; i < hits.length; i++ )
+            
+            int nMaxIndex = Math.min( nStartIndex + nPageSize, hits.length );
+            formPanel.setTotalFormResponseItemCount( hits.length );
+            for ( int i = nStartIndex; i < nMaxIndex; i++ )
             {
                 Document document = searcher.doc( hits [i].doc );
                 listResults.add( new FormResponseSearchItem( document ) );
@@ -175,6 +193,15 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         }
 
         return listResults;
+    }
+    
+    private Sort buildLuceneSort( FormResponseItemComparatorConfig comparatorConfig )
+    {
+        if ( comparatorConfig.getSortAttributeName() != null )
+        {
+            return new Sort( new SortField( comparatorConfig.getSortAttributeName( ), SortField.Type.STRING, comparatorConfig.isAscSort( ) ) );
+        }
+        return null;
     }
 
 }

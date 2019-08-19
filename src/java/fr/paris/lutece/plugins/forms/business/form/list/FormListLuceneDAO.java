@@ -40,6 +40,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.FormColumnQueryPartFacade;
@@ -68,7 +69,7 @@ public class FormListLuceneDAO implements IFormListDAO
      * {@inheritDoc}
      */
     @Override
-    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,  int nStartIndex, int nPageSize, FormResponseItemComparatorConfig comparatorConfig )
     {
         // To retrieve the values to display on the table we must have a FormPanel and a list of FormColumn
         if ( formPanel == null || CollectionUtils.isEmpty( listFormColumn ) )
@@ -83,11 +84,10 @@ public class FormListLuceneDAO implements IFormListDAO
         List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart = buildFormPanelInitializerQueryPartList( formPanel, listQueryParametersValues );
         List<IFormColumnQueryPart> listFormColumnQueryPart = buildformColumnQueryPartList( listFormColumn );
         List<IFormFilterQueryPart> listFormFilterQueryPart = buildFormFilterQueryPartList( listFormFilter, listQueryParametersValues );
-
+        
         List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
 
-
-        for ( FormResponseSearchItem formResponseSearchItem : _formSearchEngine.getSearchResults( listFormPanelInitializerQueryPart, listFormColumnQueryPart, listFormFilterQueryPart ) )
+        for ( FormResponseSearchItem formResponseSearchItem : _formSearchEngine.getSearchResults( listFormPanelInitializerQueryPart, listFormColumnQueryPart, listFormFilterQueryPart, comparatorConfig, nStartIndex, nPageSize, formPanel ) )
         {
             // Create a FormResponseItem sppfor the current result line
             FormResponseItem formResponseItem = createFormResponseItem( formResponseSearchItem );
@@ -103,7 +103,6 @@ public class FormListLuceneDAO implements IFormListDAO
 
             }
         }
-
         formPanel.setFormResponseItemList( listFormResponseItem );
     }
 

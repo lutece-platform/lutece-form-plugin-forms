@@ -33,8 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import java.util.List;
@@ -63,7 +65,11 @@ public interface IFormSearchEngine
      * @param listFormPanelInitializerQueryPart
      * @param listFormColumnQueryPart
      * @param listFormFilterQueryPart
+     * @param nStartIndex
+     * @param nPageSize
+     * @param formPanel
+     * @param comparatorConfig
      * @return the list of FormResponseSearchItem
      */
-    List<FormResponseSearchItem> getSearchResults( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart );
+    List<FormResponseSearchItem> getSearchResults( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart, FormResponseItemComparatorConfig comparatorConfig, int nStartIndex, int nPageSize, FormPanel formPanel );
 }

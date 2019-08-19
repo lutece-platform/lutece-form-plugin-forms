@@ -55,6 +55,7 @@ public class FormPanel
     private IFormPanelConfiguration _formPanelConfiguration;
     private List<FormResponseItem> _listFormResponse = new ArrayList<>( );
     private List<IFormPanelInitializer> _listFormPanelInitializer = new ArrayList<>( );
+    private int _nTotalFormResponseItemCount;
 
     /**
      * Return the FormPanelConfiguration of the FormPanel. This configuration contains all informations of the FormPanel.
@@ -153,5 +154,25 @@ public class FormPanel
     {
         _listFormPanelInitializer = listFormPanelInitializer;
     }
+
+    /**
+     * Get the total form response item count
+     * @return the total form response item count
+     */
+    public int getTotalFormResponseItemCount() 
+    {
+        return _nTotalFormResponseItemCount;
+    }
+
+    /**
+     * Set the total form response imte count
+     * @param nTotalFormResponseItemCount 
+     */
+    public void setTotalFormResponseItemCount( int nTotalFormResponseItemCount ) 
+    {
+        _nTotalFormResponseItemCount = nTotalFormResponseItemCount;
+    }
+    
+    
 
 }

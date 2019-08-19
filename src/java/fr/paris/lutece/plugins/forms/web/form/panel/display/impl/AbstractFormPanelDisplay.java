@@ -105,12 +105,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay, IFo
 
         if ( _formPanel != null )
         {
-            List<FormResponseItem> listFormResponseItem = _formPanel.getFormResponseItemList( );
-
-            if ( !CollectionUtils.isEmpty( listFormResponseItem ) )
-            {
-                nFormResponseNumber = listFormResponseItem.size( );
-            }
+            nFormResponseNumber = _formPanel.getTotalFormResponseItemCount( );
         }
 
         return nFormResponseNumber;

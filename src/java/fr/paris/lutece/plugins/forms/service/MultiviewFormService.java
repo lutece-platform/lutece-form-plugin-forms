@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.service;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnComparator;
 import java.util.List;
 
@@ -98,11 +99,16 @@ public final class MultiviewFormService
      *            The list of all FormColumn to use to be populated
      * @param listFormFilter
      *            The list of FormFilter to use for retrieving the data of the columns to populate
+     * @param nStartIndex
+     *            The start index of doc to load
+     * @param nPageSize
+     *            The size of page of docs to load
+     * @param comparatorConfig
      */
-    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,  int nStartIndex, int nPageSize, FormResponseItemComparatorConfig comparatorConfig )
     {
         FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
-        formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter );
+        formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter,  nStartIndex, nPageSize, comparatorConfig );
     }
 
     /**

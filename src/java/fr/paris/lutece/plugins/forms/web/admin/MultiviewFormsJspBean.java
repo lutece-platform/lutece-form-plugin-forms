@@ -62,7 +62,6 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterFactory;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService;
@@ -87,6 +86,7 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -134,7 +134,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String MARK_FORM_FILTER_LIST = "form_filter_list";
     private static final String MARK_TABLE_TEMPLATE = "table_template";
     private static final String MARK_LIST_FORMAT_EXPORT = "format_export_list";
-
+    
     // Session variables
     private String _strSelectedPanelTechnicalCode = StringUtils.EMPTY;
     private transient List<IFormColumn> _listFormColumn;
@@ -168,13 +168,15 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     			.collect( Collectors.toList( ) );
 
         // Build the Column for the Panel and save their values for the active panel
-        buildFormPanelDisplayWithData( request );
-
-        // Sort the list of FormResponseItem of the FormPanel with the request information
-        if ( _formPanelDisplayActive != null )
-        {
-        	sortFormResponseItemList( request, _formPanelDisplayActive.getFormResponseItemList( ) );
-        }
+        LocalizedDelegatePaginator<Integer> paginator = getPaginator();
+        int nPageSize = paginator != null ? getPaginator().getItemsPerPage() : 50;
+        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        int nCurrentPageIndex = Integer.parseInt( _strCurrentPageIndex );
+        int nIndexStart = paginator != null ? ( nCurrentPageIndex - 1) * nPageSize : 0;
+       
+        FormResponseItemComparatorConfig comparatorConfig = buildFormResponseItemComparatorConfiguration( request ); 
+        
+        buildFormPanelDisplayWithData( request, nIndexStart, nPageSize, comparatorConfig );
 
         // Build the template of each form filter display
         if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
@@ -187,7 +189,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         List<Integer> listIdFormResponse = MultiviewFormUtil.getListIdFormResponseOfFormPanel( _formPanelDisplayActive );
 
         // Build the model
-        Map<String, Object> model = getPaginatedListModel( request, Paginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ) );
+        Map<String, Object> model = getPaginatedListModel( request, Paginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ), _formPanelDisplayActive.getFormPanel( ).getTotalFormResponseItemCount( ) );
 
         // Get the config multiview action if the current admin user is authorized
         GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG,
@@ -401,7 +403,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     /**
      * Build all the form panels by building their template and retrieve the data of their columns for the given list of filter and the specified text to search
      */
-    private void buildFormPanelDisplayWithData(  HttpServletRequest request )
+    private void buildFormPanelDisplayWithData(  HttpServletRequest request, int nIndexStart, int nPageSize, FormResponseItemComparatorConfig comparatorConfig )
     {
         // Retrieve the list of all FormFilter
         List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
@@ -420,7 +422,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             FormPanel formPanel = formPanelDisplay.getFormPanel( );
 
             // Populate the FormColumns from the information of the list of FormResponseItem of the given FormPanel
-            MultiviewFormService.getInstance( ).populateFormColumns( formPanel, _listFormColumn, listFormFilter );
+            MultiviewFormService.getInstance( ).populateFormColumns( formPanel, _listFormColumn, listFormFilter, nIndexStart, nPageSize, comparatorConfig );
 
             // Associate for each FormColumnDisplay its FormColumnValues if the panel is active
             if ( formPanelDisplay.isActive( ) )
@@ -462,7 +464,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @param request
      *            The request to retrieve the values for the sort from
      */
-    private void buildFormResponseItemComparatorConfiguration( HttpServletRequest request )
+    private FormResponseItemComparatorConfig buildFormResponseItemComparatorConfiguration( HttpServletRequest request )
     {
         String strColumnToSortPosition = request.getParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION );
         int nColumnToSortPosition = NumberUtils.toInt( strColumnToSortPosition, NumberUtils.INTEGER_MINUS_ONE );
@@ -472,7 +474,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         String strAscSort = request.getParameter( FormsConstants.PARAMETER_SORT_ASC_VALUE );
         boolean bAscSort = Boolean.parseBoolean( strAscSort );
 
-        _formResponseItemComparatorConfig = new FormResponseItemComparatorConfig( nColumnToSortPosition, strSortKey, bAscSort );
+        return new FormResponseItemComparatorConfig( nColumnToSortPosition, strSortKey, bAscSort );
     }
 
     /**
