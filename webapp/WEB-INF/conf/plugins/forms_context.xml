@@ -245,13 +245,6 @@
     <!-- Factory -->
     <bean id="forms.formColumn.factory" class="fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory"/>
     
-    <!-- FormResponseItemComparator configuration -->
-    <bean id="forms.formResponseItem.comparator.configuration.default" class="fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig">
-    	<constructor-arg name="nColumnToSortPosition" type="int" value="2"/>
-    	<constructor-arg name="strSortAttributeName" type="java.lang.String" value="response_creation_date"/>
-    	<constructor-arg name="bAscSort" type="boolean" value="false"/>
-    </bean>
-    
     <!-- Panels Initializer QueryParts Factories -->
     <bean id="forms.formPanelInitializer.panelForms.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.factory.impl.FormPanelFormsInitializerQueryPartFactory"/>
     <bean id="forms.formPanelInitializer.panelFormResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.factory.impl.FormPanelFormResponseInitializerQueryPartFactory"/>

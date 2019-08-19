@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.column.display.impl;
 
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,7 +51,12 @@ import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
@@ -86,9 +93,24 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         String columSort = String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getPosition( ) );
         if ( getFormColumn( ) instanceof FormColumnEntry )
         {
-        	columSort = ( ( FormColumnEntry ) getFormColumn( ) ).getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
+                FormColumnEntry column =  ( ( FormColumnEntry ) getFormColumn( ) );
+        	columSort = column.getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
+                String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0";
+
+                String strEntryCode = column.getListEntryCode().get( 0 );
+                Question question = QuestionHome.findByCode( strEntryCode );
+                Entry entry = question.getEntry();
+                IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
+                if ( entryTypeService instanceof EntryTypeNumbering )
+                {
+                    strAttributeSort += FormResponseSearchItem.FIELD_INT_SUFFIX;
+                }
+                if ( entryTypeService instanceof EntryTypeDate )
+                {
+                    strAttributeSort += FormResponseSearchItem.FIELD_DATE_SUFFIX;
+                }
+                model.put( MARK_COLUMN_SORT_ATTRIBUTE, strAttributeSort );
         }
-        model.put( MARK_COLUMN_SORT_ATTRIBUTE, columSort );
         
         String strColumnHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );
         setFormColumnHeaderTemplate( strColumnHeaderTemplate );

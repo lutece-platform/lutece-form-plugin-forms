@@ -45,6 +45,7 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
+import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
@@ -60,7 +61,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     private static final long serialVersionUID = 3421909824044642013L;
 
     // Properties
-    private static final String PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE = "forms.itemsPerPage";
+    protected static final String PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE = "forms.itemsPerPage";
 
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";
@@ -70,10 +71,18 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
 
     // Variables
-    private String _strCurrentPageIndex;
-    private int _nItemsPerPage;
-    private LocalizedPaginator<Integer> _paginator;
+    protected String _strCurrentPageIndex;
+    protected int _nItemsPerPage;
+    protected LocalizedDelegatePaginator<Integer> _paginator;
+    
+    protected void initiatePaginatorProperties( HttpServletRequest request )
+    {
+        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        int nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE, 50 );
+        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, nDefaultItemsPerPage );
 
+    }
+    
     /**
      * Return a model that contains the list and paginator information
      * 
@@ -87,14 +96,12 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      *            The url to used for the pagination
      * @return the model populated with informations of the paginator
      */
-    protected Map<String, Object> getPaginatedListModel( HttpServletRequest request, String strBookmark, List<Integer> list, String strUrl )
+    protected Map<String, Object> getPaginatedListModel( HttpServletRequest request, String strBookmark, List<Integer> list, String strUrl, int nbTotalItems )
     {
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-        int nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE, 50 );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, nDefaultItemsPerPage );
 
         // Paginator
-        _paginator = new LocalizedPaginator<Integer>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale( ) );
+        _paginator = new LocalizedDelegatePaginator<Integer>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems, getLocale( ) );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
@@ -117,7 +124,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      * 
      * @return the paginator
      */
-    protected LocalizedPaginator<Integer> getPaginator( )
+    protected LocalizedDelegatePaginator<Integer> getPaginator( )
     {
         return _paginator;
     }
@@ -196,5 +203,27 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         {
             throw new AccessDeniedException( );
         }
+    }
+    
+    /**
+     * Return the current page index as int
+     * @return the current page index
+     */
+    private int getCurrentPageIndex( )
+    {
+        if ( _strCurrentPageIndex != null )
+        {
+            return Integer.parseInt( _strCurrentPageIndex );
+        }
+        return 1;
+    }
+    
+    /**
+     * Get the index start
+     * @return the started index
+     */
+    protected int getIndexStart( )
+    {
+        return ( getCurrentPageIndex( ) - 1) * _nItemsPerPage;
     }
 }

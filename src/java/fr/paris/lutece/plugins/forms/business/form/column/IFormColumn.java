@@ -66,5 +66,5 @@ public interface IFormColumn
      * @param strFormColumnTitle
      *            The title to set to the FormColumn which will be displayed on the table
      */
-    void setFormColumnTitle( String strFormColumnTitle );
+    void setFormColumnTitle( String strFormColumnTitle );  
 }

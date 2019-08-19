@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.business.form;
 /**
  * Configuration class for compare FormResponseItem
  */
-public class FormResponseItemComparatorConfig
+public class FormResponseItemSortConfig
 {
     // Variables
     private final int _nColumnToSortPosition;
@@ -53,7 +53,7 @@ public class FormResponseItemComparatorConfig
      * @param bAscSort
      *            The boolean which tell if the sort must be ascendant or descendant
      */
-    public FormResponseItemComparatorConfig( int nColumnToSortPosition, String strSortAttributeName, boolean bAscSort )
+    public FormResponseItemSortConfig( int nColumnToSortPosition, String strSortAttributeName, boolean bAscSort )
     {
         _nColumnToSortPosition = nColumnToSortPosition;
         _bAscSort = bAscSort;

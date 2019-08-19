@@ -98,7 +98,7 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
             FormPanelDisplayFactory formPanelDisplayFactory = new FormPanelDisplayFactory( );
             formPanelDisplayFactory.buildFormPanelDisplayInitializer( request, _formPanel );
 
-            _formListFacade.populateFormColumns( _formPanel, listFormResponseColumn, new ArrayList<>( ) );
+            _formListFacade.populateFormColumns( _formPanel, listFormResponseColumn, new ArrayList<>( ), -1, -1, null );
             List<FormResponseItem> listFormResponseItem = _formPanel.getFormResponseItemList( );
 
             if ( !CollectionUtils.isEmpty( listFormResponseItem ) )

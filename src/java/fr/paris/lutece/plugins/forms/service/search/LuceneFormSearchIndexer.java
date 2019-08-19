@@ -202,27 +202,47 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      * {@inheritDoc }
      */
     @Override
-    public synchronized void indexDocuments( ) throws IOException, InterruptedException, SiteMessageException
+   public synchronized void indexDocuments( ) throws IOException, InterruptedException, SiteMessageException
     {
         List<Integer> listFormResponsesId = FormResponseHome.selectAllFormResponsesId( );
         
         deleteIndex();
-        for ( Integer nIdFormResponse : listFormResponsesId )
+       /* for ( Integer nIdFormResponse : listFormResponsesId )
         {
             addIndexerAction( nIdFormResponse, IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
-        }
+        }*/
         _bIndexToLunch.set(true);
         if(_bIndexIsRunning.compareAndSet(false, true)) {
             new Thread(() -> {
-            	try {
-                while(_bIndexToLunch.compareAndSet(true, false)){
-                    processIndexing();
-                }
-            	}catch (Exception e) {
-        			AppLogService.error(e.getMessage() , e);
+                try {
+               // while(_bIndexToLunch.compareAndSet(true, false)){
+                
+                    List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
+                    for ( Integer nIdFormResponse : listFormResponsesId )
+                    {
+                        // TODO IMPLEMENT A SQL IN( ..) instead
+                        FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
+                        if ( response != null )
+                        {
+                            listFormResponses.add( response );
+                        }
+                        if ( listFormResponses.size( ) == TAILLE_LOT )
+                        {
+                            indexFormResponseList( listFormResponses );
+                            listFormResponses.clear( );
+                        }
+                    }
+                    indexFormResponseList( listFormResponses );
+                    //Indexation increment
+                    while(_bIndexToLunch.compareAndSet(true, false)){
+                         processIndexing();
+                    
+                        }
+                }catch (Exception e) {
+                    AppLogService.error(e.getMessage() , e);
                     Thread.currentThread().interrupt();                    
                 } finally {
-                	_bIndexIsRunning.set(false);  
+                    _bIndexIsRunning.set(false);  
                 }
                
                 
@@ -314,7 +334,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         	{
         		listFormResponses.add( response );
         	}
-        	if ( listFormResponses.size( ) == TAILLE_LOT )
+            	if ( listFormResponses.size( ) == TAILLE_LOT )
         	{
         		indexFormResponseList( listFormResponses );
         		listFormResponses.clear( );
@@ -623,8 +643,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                         	{
                         		Integer value = Integer.valueOf( response.getResponseValue( ) );
                         		doc.add( new IntPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
-                        		doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, String.valueOf( value ), Field.Store.YES ) );
-                        		doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, new BytesRef( String.valueOf( value ) ) ) );
+                        		doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
+                        		doc.add( new StoredField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
                         	}
                         	catch (NumberFormatException e) {
                         		AppLogService.error( "Unable to parse " + response.getResponseValue() + " to integer ", e );

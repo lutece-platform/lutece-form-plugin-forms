@@ -42,7 +42,7 @@ public final class FormMultiviewFormsNameConstants
     public static final String FILTER_ID_FORM = "id_form";
 
     // Column Constants
-    public static final String COLUMN_FORM_TITLE = "title_workflow_state";
+    public static final String COLUMN_FORM_TITLE = "form_title";
 
     // Parameters
     public static final String PARAMETER_ID_FORM = "id_form";
