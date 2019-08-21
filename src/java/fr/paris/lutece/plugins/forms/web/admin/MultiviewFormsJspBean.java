@@ -373,7 +373,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( nIdForm, _listFormColumn );
         _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilter );
         _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
-        _listFormPanelDisplay = new FormPanelDisplayFactory( ).createFormPanelDisplayList( request, listFormPanel );
+        _listFormPanelDisplay = new FormPanelDisplayFactory( ).createFormPanelDisplayList( request, listFormPanel, _formPanelDisplayActive );
         _formResponseItemComparatorConfig = new FormResponseItemSortConfig( -1, null, true );
     }
 
