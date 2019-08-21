@@ -193,11 +193,23 @@ public class StepDisplayTree
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
         StringBuilder strBuilder = new StringBuilder( );
+        
+        boolean isStepVisible = false;
 
         for ( ICompositeDisplay child : _listChildren )
         {
             child.addModel( _model );
             strBuilder.append( child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType ) );
+            
+            if ( child.isVisible( ) )
+            {
+            	isStepVisible = true;	
+            }
+        }
+        
+        if ( !isStepVisible )
+        {
+        	return "";
         }
 
         _model.put( FormsConstants.MARK_FORM, _form );
