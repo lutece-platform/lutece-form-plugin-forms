@@ -284,7 +284,7 @@
 	<bean id="forms.formResponseDateCreation.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateConfiguration">
 		<constructor-arg name="nPosition" type="int" value="2"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Cr&#233;&#233;e depuis..."/>
-		<constructor-arg name="strFormFilterName" type="java.lang.String" value="date_creation"/>
+		<constructor-arg name="strFormFilterName" type="java.lang.String" value="response_creation_date"/>
 	</bean>
         <bean id="forms.searchedText.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration">
 		<constructor-arg name="nPosition" type="int" value="3"/>
