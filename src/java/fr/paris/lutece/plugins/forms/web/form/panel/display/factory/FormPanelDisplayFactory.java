@@ -80,6 +80,7 @@ public class FormPanelDisplayFactory
         if ( !CollectionUtils.isEmpty( listFormPanelDisplayFactory ) )
         {
             IFormPanelDisplay formPanelDisplay = null;
+            boolean bIsFirst = true;
             for ( FormPanel formPanel : listFormPanel )
             {
                 for ( IFormPanelDisplayFactory formPanelDisplayFactory : listFormPanelDisplayFactory )
@@ -87,8 +88,8 @@ public class FormPanelDisplayFactory
                     formPanelDisplay = formPanelDisplayFactory.buildFormPanelDisplay( formPanel );
                     if ( formPanelDisplay != null )
                     {
-                        configureFormPanelDisplay( request, formPanelDisplay, activeFormPanelDisplay );
-
+                        configureFormPanelDisplay( request, formPanelDisplay, activeFormPanelDisplay, bIsFirst );
+                        bIsFirst = false;
                         listFormPanelDisplay.add( formPanelDisplay );
                         break;
                     }
@@ -113,9 +114,9 @@ public class FormPanelDisplayFactory
      * @param formPanelDisplay
      *            The formPanelInitializer to configure with the information from the request
      */
-    private void configureFormPanelDisplay( HttpServletRequest request, IFormPanelDisplay formPanelDisplay, IFormPanelDisplay activeFormPanelDisplay )
+    private void configureFormPanelDisplay( HttpServletRequest request, IFormPanelDisplay formPanelDisplay, IFormPanelDisplay activeFormPanelDisplay, boolean bIsFirst )
     {
-        boolean bIsSelectedPanel = isSelectedPanel( request, formPanelDisplay.getTechnicalCode( ), activeFormPanelDisplay );
+        boolean bIsSelectedPanel = isSelectedPanel( request, formPanelDisplay.getTechnicalCode( ), activeFormPanelDisplay, bIsFirst );
         formPanelDisplay.setActive( bIsSelectedPanel );
 
         buildFormPanelDisplayInitializer( request, formPanelDisplay.getFormPanel( ) );
@@ -130,7 +131,7 @@ public class FormPanelDisplayFactory
      *            The name of the panel to analyze
      * @return true if the panel of the given name is the panel to analyze false otherwise
      */
-    private boolean isSelectedPanel( HttpServletRequest request, String strPanelTechnicalCode,  IFormPanelDisplay activeFormPanelDisplay )
+    private boolean isSelectedPanel( HttpServletRequest request, String strPanelTechnicalCode,  IFormPanelDisplay activeFormPanelDisplay, boolean bIsFirst )
     {
         boolean bIsSelectedPanel = Boolean.FALSE;
 
@@ -149,10 +150,17 @@ public class FormPanelDisplayFactory
             }
             else
             {
-                String strPreviousFormPanelSelected = request.getParameter( FormsConstants.PARAMETER_CURRENT_SELECTED_PANEL );
-                if ( StringUtils.isNotBlank( strPreviousFormPanelSelected ) )
+                if ( request.getParameter( FormsConstants.PARAMETER_CURRENT_SELECTED_PANEL ) != null )
                 {
-                    bIsSelectedPanel = strPanelTechnicalCode.equals( strPreviousFormPanelSelected );
+                    String strPreviousFormPanelSelected = request.getParameter( FormsConstants.PARAMETER_CURRENT_SELECTED_PANEL );
+                    if ( StringUtils.isNotBlank( strPreviousFormPanelSelected ) )
+                    {
+                        bIsSelectedPanel = strPanelTechnicalCode.equals( strPreviousFormPanelSelected );
+                    }
+                }
+                else if ( bIsFirst )
+                {
+                    bIsSelectedPanel = true;
                 }
             }
         }
