@@ -290,6 +290,14 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         {
             strTemplate = TEMPLATE_QUESTION_RESUBMIT_FRONTOFFICE;
         }
+        if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_RESUBMIT_BACKOFFICE;
+        }
+        if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_RESUBMIT_FRONTOFFICE;
+        }
         return strTemplate;
     }
 
@@ -337,11 +345,26 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         {
             if ( _question.getEntry( ) != null )
             {
-                _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ));
+                _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
             }
         }
         
         if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
+        {
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( true );
+            }
+        }
+        if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
+        {
+            if ( _question.getEntry( ) != null )
+            {
+            	_question.setIsVisible( true );
+            }
+        }
+        
+        if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
         {
             if ( _question.getEntry( ) != null )
             {
