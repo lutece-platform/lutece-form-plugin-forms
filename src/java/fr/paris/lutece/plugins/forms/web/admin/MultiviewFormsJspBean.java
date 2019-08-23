@@ -231,10 +231,19 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * 
      * @param request
      *            The HTTP request
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_EXPORT_RESPONSES )
-    public void doExportResponses( HttpServletRequest request )
+    public void doExportResponses( HttpServletRequest request ) throws AccessDeniedException
     {
+    	GlobalFormsAction multiviewExportAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_EXPORT_RESPONSES,
+                FormsPlugin.getPlugin( ), request.getLocale( ) );
+         if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
+                 AdminUserService.getAdminUser( request ) ) )
+         {
+             throw new AccessDeniedException( "Unauthorized" );
+         }
+         
         IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
 
         List<FormResponseItem> listFormResponseItemToDisplay = _formPanelDisplayActive.getFormResponseItemList( );
