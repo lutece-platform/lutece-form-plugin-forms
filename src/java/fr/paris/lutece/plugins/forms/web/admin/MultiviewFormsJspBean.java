@@ -134,7 +134,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String MARK_FORM_FILTER_LIST = "form_filter_list";
     private static final String MARK_TABLE_TEMPLATE = "table_template";
     private static final String MARK_LIST_FORMAT_EXPORT = "format_export_list";
-    
     // Session variables
     private String _strSelectedPanelTechnicalCode = StringUtils.EMPTY;
     private transient List<IFormColumn> _listFormColumn;
@@ -194,11 +193,20 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         {
             model.put( FormsConstants.MARK_MULTIVIEW_CONFIG_ACTION, multiviewConfigAction );
         }
-
+        
+        GlobalFormsAction multiviewExportAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_EXPORT_RESPONSES,
+                FormsPlugin.getPlugin( ), request.getLocale( ) );
+        
+        if ( RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
+                AdminUserService.getAdminUser( request ) ) )
+        {
+            model.put( FormsConstants.MARK_MULTIVIEW_EXPORT_ACTION, multiviewExportAction );
+        }
+        
         model.put( MARK_PAGINATOR, getPaginator( ) );
         model.put( MARK_LOCALE, getLocale( ) );
         model.put( MARK_FORM_FILTER_LIST, _listFormFilterDisplay );
-
+        
         // Add the template of column to the model
         String strSortUrl = String.format( BASE_SORT_URL_PATTERN, _strSelectedPanelTechnicalCode );
         String strRedirectionDetailsBaseUrl = buildRedirectionDetailsBaseUrl( );
@@ -223,10 +231,19 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * 
      * @param request
      *            The HTTP request
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_EXPORT_RESPONSES )
-    public void doExportResponses( HttpServletRequest request )
+    public void doExportResponses( HttpServletRequest request ) throws AccessDeniedException
     {
+    	GlobalFormsAction multiviewExportAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_EXPORT_RESPONSES,
+                FormsPlugin.getPlugin( ), request.getLocale( ) );
+         if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
+                 AdminUserService.getAdminUser( request ) ) )
+         {
+             throw new AccessDeniedException( "Unauthorized" );
+         }
+         
         IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
 
         List<FormResponseItem> listFormResponseItemToDisplay = _formPanelDisplayActive.getFormResponseItemList( );

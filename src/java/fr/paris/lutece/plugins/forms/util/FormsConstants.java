@@ -84,6 +84,7 @@ public final class FormsConstants
     public static final String MARK_QUESTION_MODIFY_TEMPLATE = "question_modify_template";
     public static final String MARK_MULTIVIEW_CONFIG = "multiview_config";
     public static final String MARK_MULTIVIEW_CONFIG_ACTION = "multiviewConfigAction";
+    public static final String MARK_MULTIVIEW_EXPORT_ACTION = "multiviewExportAction";
     public static final String VALUE_VALIDATOR_LISTEQUESTION_NAME = "forms_listQuestionValidator";
 
     // Parameters
@@ -185,6 +186,7 @@ public final class FormsConstants
 
     // Actions forms
     public static final String ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG = "multiviewConfig";
+    public static final String ACTION_FORMS_EXPORT_RESPONSES = "multiviewExport";
     public static final String VAL_REMOVE_QUESTION = "removeQuestion";
     public static final String VALIDATE_STEP = "validateStep";
     public static final String VALIDATE_VALIDATOR = "validateValidator";

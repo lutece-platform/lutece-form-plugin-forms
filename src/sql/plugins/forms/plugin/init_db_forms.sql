@@ -16,3 +16,4 @@ REPLACE INTO forms_global_action (id_action, code, name_key, description_key, ac
 --
 REPLACE INTO core_datastore ( entity_key, entity_value ) VALUES( 'forms.display.form.columnTitle', 'true' );
 
+REPLACE INTO forms_global_action (id_action, code, name_key, description_key, action_url, icon_url ) VALUES (2,'multiviewExport','forms.action.multiviewExport.labelKey','forms.action.multiviewExport.descriptionKey','jsp/admin/plugins/forms/MultiviewForms.jsp','edit');
