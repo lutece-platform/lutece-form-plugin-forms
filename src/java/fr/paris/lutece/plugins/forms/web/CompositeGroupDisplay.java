@@ -284,7 +284,15 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         {
             strTemplate = TEMPLATE_GROUP_RESUBMIT_BACKOFFICE;
         }
+        if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_GROUP_RESUBMIT_BACKOFFICE;
+        }
         if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_GROUP_RESUBMIT_FRONTOFFICE;
+        }
+        if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
         {
             strTemplate = TEMPLATE_GROUP_RESUBMIT_FRONTOFFICE;
         }
@@ -523,5 +531,26 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     		}
     	}
     	return false;
+    }
+    
+    @Override
+    public ICompositeDisplay filter( List<Integer> listQuestionIds ) {
+    	List<ICompositeDisplay> listChildrenFiltered = new ArrayList<>( );
+    	
+    	for (ICompositeDisplay child : _listChildren)
+    	{
+    		ICompositeDisplay newChild = child.filter( listQuestionIds );
+    		if ( newChild != null )
+    		{
+    			listChildrenFiltered.add( newChild );
+    		}
+    	}
+    	if ( listChildrenFiltered.isEmpty( ) )
+    	{
+    		return null;
+    	}
+    	_listChildren.clear( );
+    	_listChildren.addAll( listChildrenFiltered );
+    	return this;
     }
 }

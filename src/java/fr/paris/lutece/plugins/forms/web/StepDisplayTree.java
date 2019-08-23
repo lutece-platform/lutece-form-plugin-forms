@@ -117,7 +117,40 @@ public class StepDisplayTree
 
         initStepTree( nIdStep );
     }
+    
+    /**
+     * Constructor
+     * 
+     * @param nIdStep
+     *            the step identifier
+     * @param formResponse
+     *            the form response containing the responses
+     * @param listQuestionId questions to display
+     */
+    public StepDisplayTree( int nIdStep, FormResponse formResponse, List<Integer> listQuestionId )
+    {
+        _formResponse = formResponse;
 
+        initStepTree( nIdStep );
+        
+        List<ICompositeDisplay> listChildrenFiltered = new ArrayList<>( );
+        for ( ICompositeDisplay child : _listChildren )
+        {
+        	ICompositeDisplay newChild = child.filter( listQuestionId );
+        	if ( newChild != null )
+        	{
+        		listChildrenFiltered.add( newChild );
+        	}
+        }
+        _listChildren.clear( );
+        _listDisplayControls.clear( );
+        for ( ICompositeDisplay child : listChildrenFiltered )
+        {
+        	 _listChildren.add( child );
+        	_listDisplayControls.addAll( child.getAllDisplayControls( ) );
+        }
+    }
+    
     /**
      * Initialize the composite tree
      * 
@@ -193,11 +226,23 @@ public class StepDisplayTree
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
         StringBuilder strBuilder = new StringBuilder( );
+        
+        boolean isStepVisible = false;
 
         for ( ICompositeDisplay child : _listChildren )
         {
             child.addModel( _model );
             strBuilder.append( child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType ) );
+            
+            if ( child.isVisible( ) )
+            {
+            	isStepVisible = true;	
+            }
+        }
+        
+        if ( !isStepVisible )
+        {
+        	return "";
         }
 
         _model.put( FormsConstants.MARK_FORM, _form );
@@ -244,6 +289,14 @@ public class StepDisplayTree
             strTemplate = TEMPLATE_STEP_SELECT_BACKOFFICE;
         }
         if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_STEP_EDITION_NO_BUTTON_FRONTOFFICE;
+        }
+        if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_STEP_SELECT_BACKOFFICE;
+        }
+        if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
         {
             strTemplate = TEMPLATE_STEP_EDITION_NO_BUTTON_FRONTOFFICE;
         }

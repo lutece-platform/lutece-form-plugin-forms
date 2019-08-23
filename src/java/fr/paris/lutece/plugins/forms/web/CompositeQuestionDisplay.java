@@ -290,6 +290,14 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         {
             strTemplate = TEMPLATE_QUESTION_RESUBMIT_FRONTOFFICE;
         }
+        if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_RESUBMIT_BACKOFFICE;
+        }
+        if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_RESUBMIT_FRONTOFFICE;
+        }
         return strTemplate;
     }
 
@@ -329,7 +337,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         {
         	 if ( _question.getEntry( ) != null )
              {
-        		 _question.setIsVisible( _question.getEntry( ).isEditableBack( ) );
+        		 _question.setIsVisible( true );
              }
         }
 
@@ -337,7 +345,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         {
             if ( _question.getEntry( ) != null )
             {
-                _question.setIsVisible( _question.getEntry( ).isShownInCompleteness( ) );
+                _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
             }
         }
         
@@ -345,7 +353,22 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         {
             if ( _question.getEntry( ) != null )
             {
-                _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
+                _question.setIsVisible( true );
+            }
+        }
+        if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
+        {
+            if ( _question.getEntry( ) != null )
+            {
+            	_question.setIsVisible( true );
+            }
+        }
+        
+        if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
+        {
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( true );
             }
         }
     }
@@ -462,5 +485,15 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     		return false;
     	}
     	return _question.isVisible( );
+    }
+    
+    @Override
+    public ICompositeDisplay filter( List<Integer> listQuestionIds )
+    {
+    	if ( listQuestionIds.contains( _question.getId( ) ) )
+    	{
+    		return this;
+    	}
+    	return null;
     }
 }

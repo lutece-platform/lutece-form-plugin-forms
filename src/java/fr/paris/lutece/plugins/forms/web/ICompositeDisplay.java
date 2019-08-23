@@ -148,4 +148,6 @@ public interface ICompositeDisplay
      * @return
      */
     boolean isVisible( );
+    
+    ICompositeDisplay filter( List<Integer> listQuestionIds );
 }
