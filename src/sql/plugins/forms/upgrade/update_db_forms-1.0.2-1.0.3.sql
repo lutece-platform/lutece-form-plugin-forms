@@ -27,3 +27,6 @@ ALTER TABLE forms_control MODIFY error_message varchar(512);
 
 ALTER TABLE forms_question ADD COLUMN is_filterable_multiview_global SMALLINT default 0 NOT NULL;
 ALTER TABLE forms_question ADD COLUMN is_filterable_multiview_form_selected SMALLINT default 0 NOT NULL;
+
+REPLACE INTO forms_global_action (id_action, code, name_key, description_key, action_url, icon_url ) VALUES (2,'multiviewExport','forms.action.multiviewExport.labelKey','forms.action.multiviewExport.descriptionKey','jsp/admin/plugins/forms/MultiviewForms.jsp','edit');
+
