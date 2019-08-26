@@ -627,7 +627,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                             try
                             {
 	                            LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
-	                            Timestamp timestamp = Timestamp.valueOf(localDate.atStartOfDay());
+	                            Timestamp timestamp = Timestamp.valueOf( localDate.atTime( 12, 30 ) );
 	                            doc.add( new LongPoint( fieldNameBuilder.toString( )+ FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
 	                            doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, String.valueOf( timestamp.getTime( ) ), Field.Store.YES ) );
 	                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, new BytesRef( String.valueOf( timestamp.getTime( ) ) ) ) );

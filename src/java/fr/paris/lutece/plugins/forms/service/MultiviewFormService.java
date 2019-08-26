@@ -300,7 +300,7 @@ public final class MultiviewFormService
                     {
                         FormFilter formFilter = new FormFilter();
                         IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++, question.getTitle( ), 
-                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0" );
+                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0" + FormResponseSearchItem.FIELD_DATE_SUFFIX );
                         
                         formFilter.setFormFilterConfiguration( formFilterConfiguration );
                         mapFilters.put( question.getCode( ), formFilter );
