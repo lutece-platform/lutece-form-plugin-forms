@@ -395,6 +395,13 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilter );
         _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
         _listFormPanelDisplay = new FormPanelDisplayFactory( ).createFormPanelDisplayList( request, listFormPanel, _formPanelDisplayActive );
+        for ( IFormPanelDisplay formPanelDisplay : _listFormPanelDisplay )
+        {
+            if ( formPanelDisplay.isActive( ) )
+            {
+                _formPanelDisplayActive = formPanelDisplay;
+            }
+        }
         _formResponseItemComparatorConfig = new FormResponseItemSortConfig( -1, null, true );
     }
 
