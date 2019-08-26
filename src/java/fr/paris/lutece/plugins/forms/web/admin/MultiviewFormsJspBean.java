@@ -182,6 +182,10 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         List<Integer> listIdFormResponse = MultiviewFormUtil.getListIdFormResponseOfFormPanel( _formPanelDisplayActive );
 
         // Build the model
+        if ( _formPanelDisplayActive == null && CollectionUtils.isNotEmpty( _listAuthorizedFormPanelDisplay ))
+        {
+        	_formPanelDisplayActive = _listAuthorizedFormPanelDisplay.get( 0 );
+        }
         Map<String, Object> model = getPaginatedListModel( request, Paginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ), _formPanelDisplayActive.getFormPanel( ).getTotalFormResponseItemCount( ) );
 
         // Get the config multiview action if the current admin user is authorized
