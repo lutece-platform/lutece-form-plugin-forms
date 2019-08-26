@@ -332,6 +332,14 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _question.setIsVisible( true );
             }
         }
+        
+        if ( displayType == DisplayType.EDITION_FRONTOFFICE )
+        {
+        	 if ( _question.getEntry( ) != null )
+             {
+        		 _question.setIsVisible( true );
+             }
+        }
 
         if ( displayType == DisplayType.EDITION_BACKOFFICE )
         {
