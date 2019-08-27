@@ -43,16 +43,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.GenAttFileItem;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUpload;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.file.FileHome;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
@@ -107,13 +111,11 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     public String getEntryTemplateDisplay( HttpServletRequest request, Entry entry, Locale locale, Map<String, Object> model, DisplayType displayType )
     {
         String strEntryHtml = StringUtils.EMPTY;
-        IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
 
         switch( displayType.getMode( ) )
         {
             case EDITION:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale,
-                        setModel( entry, service, model ) ).getHtml( );
+                strEntryHtml = getTemplateEdition( request, entry, displayType, locale, model );
                 break;
             case READONLY:
                 strEntryHtml = getEntryResponseValueTemplateDisplay( entry, displayType, locale, model );
@@ -122,6 +124,40 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
         }
 
         return strEntryHtml;
+    }
+
+    /**
+     * Return the template with response file(s) in user session.
+     * 
+     * @param entry
+     *            The Entry to edit
+     * @param displayType
+     *            the DisplayType
+     * @param locale
+     *            The Locale to use to build the model
+     * @param model
+     *            The model to populate
+     * @return the template of the given Entry with its Response file(s) in user session.
+     */
+    private String getTemplateEdition( HttpServletRequest request, Entry entry, DisplayType displayType, Locale locale, Map<String, Object> model )
+    {
+        IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
+        List<Response> listResponse = retrieveResponseListFromModel( model );
+        for ( Response response : listResponse )
+        {
+            if ( ( response.getFile( ) != null ) && ( response.getFile( ).getIdFile( ) > 0 ) )
+            {
+                File file = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
+                PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( file.getPhysicalFile( ).getIdPhysicalFile( ) );
+                FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
+                ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem,
+                        "nIt" + response.getIterationNumber() + "_" + IEntryTypeService.PREFIX_ATTRIBUTE
+                                + Integer.toString(response.getEntry().getIdEntry()),
+                        request);
+            }
+        }
+        return AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, service, model ) )
+                .getHtml( );
     }
 
     /**
