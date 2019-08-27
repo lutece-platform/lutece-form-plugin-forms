@@ -35,27 +35,31 @@
 package fr.paris.lutece.plugins.forms.validation;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseFilter;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  * 
  * Validator to verify the pattern of a response
  *
  */
-public class UniqueValidator implements IValidator
+public class UniqueValidator extends AbstractValidator
 {
-    private final String _strValidatorName;
-    private final String _strDisplayName;
-    private final List<String> _listAvailableEntryType;
+
+    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/unique_template.html";
 
     /**
      * Constructor of the PatternValidator
@@ -69,33 +73,17 @@ public class UniqueValidator implements IValidator
      */
     public UniqueValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
-        _strValidatorName = strValidatorName;
-        _strDisplayName = I18nService.getLocalizedString( strValidatorDisplayName, I18nService.getDefaultLocale( ) );
-        _listAvailableEntryType = listAvailableEntryType;
-    }
-
-    @Override
-    public String getValidatorBeanName( )
-    {
-        return _strValidatorName;
-    }
-
-    @Override
-    public String getValidatorDisplayName( )
-    {
-        return _strDisplayName;
+        super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
     }
 
     @Override
     public String getDisplayHtml( Control control )
     {
-        return StringUtils.EMPTY;
-    }
+        Map<String, Object> model = new HashMap<>( );
+        model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
 
-    @Override
-    public List<String> getListAvailableEntryType( )
-    {
-        return _listAvailableEntryType;
+        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
+        return htmlTemplateQuestion.getHtml( );
     }
 
     @Override
@@ -105,9 +93,17 @@ public class UniqueValidator implements IValidator
         {
             Response response = formQuestionResponse.getEntryResponse( ).get( 0 );
 
+            boolean multiForm = Boolean.valueOf( control.getValue( ) );
             ResponseFilter filter = new ResponseFilter( );
-            filter.setIdEntry( response.getEntry( ).getIdEntry( ) );
 
+            if ( multiForm )
+            {
+                filter.setCodeEntry( response.getEntry( ).getCode( ) );
+            }
+            else
+            {
+                filter.setIdEntry( response.getEntry( ).getIdEntry( ) );
+            }
             Collection<Response> listSubmittedResponses = ResponseHome.getResponseList( filter );
 
             String strValueEntry = response.getResponseValue( );
@@ -127,16 +123,4 @@ public class UniqueValidator implements IValidator
         return true;
     }
 
-    @Override
-    public String getJavascriptValidation( )
-    {
-        return StringUtils.EMPTY;
-
-    }
-
-    @Override
-    public String getJavascriptControlValue( Control control )
-    {
-        return StringUtils.EMPTY;
-    }
 }

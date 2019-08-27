@@ -36,45 +36,13 @@ package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 /**
  * Configuration for a FormFilter object
  */
-public class FormFilterFormsConfiguration implements IFormFilterConfiguration
+public class FormFilterFormsConfiguration extends AbstractFormFilterConfiguration
 {
-    // Variables
-    private final int _nPosition;
-    private final String _strFormFilterLabel;
 
-    /**
-     * Constructor
-     * 
-     * @param nPosition
-     *            The position of the FormFilter
-     * @param strFormFilterLabel
-     *            The label of the FormFilter
-     * @param bCanReloadColumn
-     */
-    public FormFilterFormsConfiguration( int nPosition, String strFormFilterLabel )
+    public FormFilterFormsConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName ) 
     {
-        _nPosition = nPosition;
-        _strFormFilterLabel = strFormFilterLabel;
+        super(nPosition, strFormFilterLabel, strFormFilterName);
     }
-
-    /**
-     * Return the position of the FormFilter
-     * 
-     * @return the position of the FormFilter
-     */
-    public int getPosition( )
-    {
-        return _nPosition;
-    }
-
-    /**
-     * Return the label of the FormFilter
-     * 
-     * @return the label of the FormFilter
-     */
-    public String getFormFilterLabel( )
-    {
-        return _strFormFilterLabel;
-    }
+    
 
 }

@@ -86,6 +86,28 @@ public interface IQuestionDAO
      * @return The instance of the question
      */
     Question load( int nKey, Plugin plugin );
+    
+    /**
+     * Load the data from the table
+     * 
+     * @param strCode
+     *            The code of the question
+     * @param plugin
+     *            the Plugin
+     * @return The instance of the question
+     */
+    Question loadByCode( String strCode, Plugin plugin );
+    
+    /**
+     * Load the data from the table
+     * 
+     * @param keyList
+     *            The identifiers of the questions
+     * @param plugin
+     *            the Plugin
+     * @return The list of questions
+     */
+    List<Question> loadMultiple( List<Integer> keyList, Plugin plugin );
 
     /**
      * Load the data of all the question objects and returns them as a list
@@ -95,6 +117,15 @@ public interface IQuestionDAO
      * @return The list which contains the data of all the question objects
      */
     List<Question> selectQuestionsList( Plugin plugin );
+
+        /**
+     * Load the data of all the question objects and returns them as a list
+     * 
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the uncomplete data of all the question objects
+     */
+    List<Question> selectQuestionsListUncomplete( Plugin plugin );
 
     /**
      * Load the data of all the question objects by step and returns them as a list
@@ -117,6 +148,17 @@ public interface IQuestionDAO
      * @return The list which contains the data of all the question objects by given form id
      */
     List<Question> selectQuestionsListByFormId( int nIdForm, Plugin plugin );
+
+/**
+     * Load the data of all the question objects by form id and returns them as a list
+     * 
+     * @param nIdForm
+     *            The id of the form
+     * @param plugin
+     *            The plugin
+     * @return The list which contains the data of all the question objects by given form id
+     */
+    List<Question> selectQuestionsListByFormIdUncomplete( int nIdForm, Plugin plugin );
 
     /**
      * Load the id of all the question objects and returns them as a list

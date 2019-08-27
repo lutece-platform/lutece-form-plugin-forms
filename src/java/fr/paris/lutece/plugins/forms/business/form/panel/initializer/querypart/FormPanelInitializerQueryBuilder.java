@@ -37,9 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterQueryConstants;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
 
 /**
  * Query builder utility class for FormFilterPanel
@@ -61,76 +61,23 @@ public final class FormPanelInitializerQueryBuilder
      *            The list of FormPanelInitializerQueryPart to use
      * @return the list of all select query part of the given list of IFormPanelInitializerQueryPart
      */
-    public static List<String> buildFormPanelInitializerSelectQueryParts( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart )
+    public static List<String> buildFormPanelInitializerSelectQueryParts( List<IFormPanelInitializerLuceneQueryPart> listFormPanelInitializerQueryPart )
     {
         List<String> listPanelInitializerSelectQueryParts = new ArrayList<>( );
+        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
 
         if ( !CollectionUtils.isEmpty( listFormPanelInitializerQueryPart ) )
         {
-            for ( IFormPanelInitializerQueryPart formPanelInitializerQueryPart : listFormPanelInitializerQueryPart )
+            for ( IFormPanelInitializerLuceneQueryPart formColumnQueryPart : listFormPanelInitializerQueryPart )
             {
-                String strFormPanelInitializerSelectQueryPart = formPanelInitializerQueryPart.getFormPanelInitializerSelectQuery( );
-                if ( StringUtils.isNotBlank( strFormPanelInitializerSelectQueryPart ) )
+                Query queryFormColumnSelectQueryPart = formColumnQueryPart.getFormPanelInitializerSelectQuery( );
+                if ( queryFormColumnSelectQueryPart != null )
                 {
-                    listPanelInitializerSelectQueryParts.add( strFormPanelInitializerSelectQueryPart );
+                    booleanQueryBuilder.add( queryFormColumnSelectQueryPart, BooleanClause.Occur.MUST );
                 }
             }
         }
 
         return listPanelInitializerSelectQueryParts;
-    }
-
-    /**
-     * Build the from query part of the FormPanelInitializer
-     * 
-     * @param listFormPanelInitializerQueryPart
-     *            The list of FormPanelInitializerQueryPart to use
-     * @return the list of all from query part of the given list of IFormPanelInitializerQueryPart
-     */
-    public static List<String> buildFormPanelInitializerFromQueryParts( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart )
-    {
-        List<String> listPanelInitializerFromQueryParts = new ArrayList<>( );
-
-        if ( !CollectionUtils.isEmpty( listFormPanelInitializerQueryPart ) )
-        {
-            for ( IFormPanelInitializerQueryPart formPanelInitializerQueryPart : listFormPanelInitializerQueryPart )
-            {
-                String strFormPanelInitializerFromQueryPart = formPanelInitializerQueryPart.getFormPanelInitializerFromQuery( );
-                if ( StringUtils.isNotBlank( strFormPanelInitializerFromQueryPart ) )
-                {
-                    listPanelInitializerFromQueryParts.add( strFormPanelInitializerFromQueryPart );
-                }
-            }
-        }
-
-        return listPanelInitializerFromQueryParts;
-    }
-
-    /**
-     * Populate the given string builder with all the join queries from the given FormPanelInitializer list
-     * 
-     * @param stringBuilderJoinQueryPart
-     *            The string builder to populate with all join queries parts of the FormPanelInitializer
-     * @param listFormPanelInitializerQueryPart
-     *            The list of all FormPanelInitializerQueryPart to retrieve the list of join query parts from
-     */
-    public static void buildFormPanelInitializerJoinQueryParts( StringBuilder stringBuilderJoinQueryPart,
-            List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart )
-    {
-        for ( IFormPanelInitializerQueryPart formPanelInitializerQueryPart : listFormPanelInitializerQueryPart )
-        {
-            List<String> listFormPanelInitializerJoinQueries = formPanelInitializerQueryPart.getFormPanelInitializerJoinQueries( );
-            if ( !CollectionUtils.isEmpty( listFormPanelInitializerJoinQueries ) )
-            {
-                for ( String strFormPanelInitializerJoinQuery : listFormPanelInitializerJoinQueries )
-                {
-                    if ( StringUtils.isNotBlank( strFormPanelInitializerJoinQuery ) )
-                    {
-                        stringBuilderJoinQueryPart.append( strFormPanelInitializerJoinQuery );
-                        stringBuilderJoinQueryPart.append( FormFilterQueryConstants.SPACE_SEPARATOR );
-                    }
-                }
-            }
-        }
     }
 }

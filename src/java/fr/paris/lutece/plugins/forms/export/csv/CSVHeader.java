@@ -35,9 +35,9 @@ package fr.paris.lutece.plugins.forms.export.csv;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
  * This class represents a CSV header
@@ -45,25 +45,14 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class CSVHeader
 {
-    private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
-    private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
-
-    private final List<String> _listFormResponseColumn;
-    private final List<String> _listQuestionColumn;
-
-    private final List<String> _listColumnToExport;
+    private final List<Question> _listQuestionColumn;
 
     /**
      * Constructor
      */
     public CSVHeader( )
     {
-        _listFormResponseColumn = new ArrayList<>( );
         _listQuestionColumn = new ArrayList<>( );
-        _listColumnToExport = new ArrayList<>( );
-
-        _listFormResponseColumn.add( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) );
-        _listFormResponseColumn.add( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION, I18nService.getDefaultLocale( ) ) );
     }
 
     /**
@@ -72,31 +61,41 @@ public class CSVHeader
      * @param question
      *            the question to add
      */
-    public void addHeader( Question question )
-    {
-        String strColumnName = CSVUtil.buildColumnName( question );
-
-        if ( !_listQuestionColumn.contains( strColumnName ) )
-        {
-            _listQuestionColumn.add( strColumnName );
-        }
-    }
-
-    /**
-     * Build the final list of column to export (with iteration number)
-     */
-    public void buildColumnToExport( )
-    {
-        _listColumnToExport.clear( );
-        _listColumnToExport.addAll( _listFormResponseColumn );
-        _listColumnToExport.addAll( _listQuestionColumn );
-    }
+	public void addHeader( Question question )
+	{
+		ListIterator<Question> listIterator = _listQuestionColumn.listIterator( );
+		boolean foundQuestionWithSameId = false;
+		while ( listIterator.hasNext( ) )
+		{
+			Question aQuestion = listIterator.next( );
+			if ( aQuestion.getId( ) == question.getId( ) )
+			{
+				if ( aQuestion.getIterationNumber( ) == question.getIterationNumber( ) )
+				{
+					return;
+				}
+				if ( aQuestion.getIterationNumber( ) > question.getIterationNumber( ) )
+				{
+					listIterator.previous( );
+					listIterator.add( question );
+					return;
+				}
+				foundQuestionWithSameId = true;
+			} else if ( foundQuestionWithSameId )
+			{
+				listIterator.previous( );
+				listIterator.add( question );
+				return;
+			}
+		}
+		_listQuestionColumn.add( question );
+	}
 
     /**
      * @return the _listFinalColumnToExport
      */
-    public List<String> getColumnToExport( )
+    public List<Question> getColumnToExport( )
     {
-        return _listColumnToExport;
+        return _listQuestionColumn;
     }
 }

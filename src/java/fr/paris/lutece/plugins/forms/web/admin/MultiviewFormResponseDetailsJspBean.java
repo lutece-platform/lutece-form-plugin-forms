@@ -59,13 +59,14 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.IFormsMultiviewAuthorizationService;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
@@ -131,6 +132,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String MARK_ID_ACTION = "id_action";
     private static final String MARK_TASK_FORM = "tasks_form";
     private static final String MARK_LIST_MULTIVIEW_STEP_DISPLAY = "list_multiview_step_display";
+    private static final String MARK_MAP_MULTIVIEW_STEP_REF_LIST = "map_multiview_step_ref_list";
     private static final String MARK_RESOURCE_ACTIONS = "resource_actions";
     private static final String MARK_RESOURCE_HISTORY = "resource_history";
     private static final String MARK_HISTORY_WORKFLOW_ENABLED = "history_workflow";
@@ -141,6 +143,9 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
     private static final String MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE = "forms.multiviewForms.pageTitle";
 
+    // Other
+    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    
     // Variables
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
     private final transient IFormsMultiviewAuthorizationService _formsMultiviewAuthorizationService = SpringContextService
@@ -161,7 +166,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
 
-        boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( nIdFormResponse ),
+        boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( formResponse.getFormId( ) ),
                 FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, getUser( ) );
         boolean bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( request, nIdFormResponse );
 
@@ -213,14 +218,33 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         mapFormResponseDetailsModel.put( MARK_FORM_RESPONSE, formResponse );
         mapFormResponseDetailsModel.put( MARK_FORM, form );
 
-        // [TODO] - Retrieve the list of Step which correspond to the selected path
-        // of the user who is associated to the given FormResponse rather than retrieve
-        // the list of all Step associated to the Form of the given FormResponse when
-        // it will be ready
-        List<Step> listStep = StepHome.getStepsListByForm( form.getId( ) );
+        List<Step> listSteps = new ArrayList<>();
+        Map<Integer, Step> mapSteps = new HashMap<>( );
+        List<Integer> listStepsOfForm = StepHome.getIdStepsListByForm( form.getId( ) );
+        List<FormResponseStep> listFormResponseStep = formResponse.getSteps( );
+        List<Integer> listStepsOrdered = new ArrayList<>( );
 
-        List<String> listStepDisplayTree = buildFormStepDisplayTreeList( request, listStep, formResponse );
+        for ( FormResponseStep formResponseStep : listFormResponseStep )
+        {
+            listStepsOrdered.add( formResponseStep.getStep( ).getId( ) );
+        }
+        
+        //Add the steps that are editable but not in the actuel form response flow
+        for ( Integer idStepForm : listStepsOfForm )
+        {
+            if ( !listStepsOrdered.contains( idStepForm ) && TransitionHome.getTransitionsListFromStep( idStepForm ).isEmpty( ) )
+            {
+                listStepsOrdered.add( idStepForm );
+            }
+        }
+
+        listStepsOrdered.stream().forEach( nIdStep -> listSteps.add( StepHome.findByPrimaryKey( nIdStep ) ) );
+
+        List<String> listStepDisplayTree = buildFormStepDisplayTreeList( request, listSteps, formResponse );
+        listSteps.stream( ).forEach( step -> mapSteps.put( step.getId( ), step ) );
+
         mapFormResponseDetailsModel.put( MARK_LIST_MULTIVIEW_STEP_DISPLAY, listStepDisplayTree );
+        mapFormResponseDetailsModel.put( MARK_MAP_MULTIVIEW_STEP_REF_LIST, mapSteps );
 
         int nIdWorkflow = form.getIdWorkflow( );
         WorkflowService workflowService = WorkflowService.getInstance( );

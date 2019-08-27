@@ -33,46 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
-public class FormFilterFormResponseIdConfiguration implements IFormFilterConfiguration
+public class FormFilterFormResponseIdConfiguration extends AbstractFormFilterConfiguration
 {
-    // Variables
-    private final int _nPosition;
-    private final String _strFormFilterLabel;
 
-    /**
-     * Constructor
-     * 
-     * @param nPosition
-     *            The position of the FormFilter
-     * @param strFormFilterLabel
-     *            The label of the FormFilter
-     */
-    public FormFilterFormResponseIdConfiguration( int nPosition, String strFormFilterLabel )
+    public FormFilterFormResponseIdConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName ) 
     {
-        _nPosition = nPosition;
-        _strFormFilterLabel = strFormFilterLabel;
+        super( nPosition, strFormFilterLabel, strFormFilterName );
     }
-
-    /**
-     * Return the position of the FormFilter
-     * 
-     * @return the position of the FormFilter
-     */
-    @Override
-    public int getPosition( )
-    {
-        return _nPosition;
-    }
-
-    /**
-     * Return the label of the FormFilter
-     * 
-     * @return the label of the FormFilter
-     */
-    @Override
-    public String getFormFilterLabel( )
-    {
-        return _strFormFilterLabel;
-    }
-
 }

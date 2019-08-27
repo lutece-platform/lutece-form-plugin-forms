@@ -827,60 +827,61 @@ $( function(){
 <script type="text/javascript" src="js/plugins/forms/multiview/daterangepicker.js"></script>
 <script>
 $(function() {
-	var filter='#' + $('#formsFilter').val(), filter_to=filter+'_to', filter_from=filter+'_from';
-  $(filter).daterangepicker( {
-    ranges: {
-        'Aujourd\'hui': [moment(), moment()],
-        'Hier': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        '1 Semaine': [moment().subtract(6, 'days'), moment()],
-        '1 Mois': [moment().subtract(29, 'days'), moment()],
-        '3 Mois': [moment().subtract(90, 'days'), moment()],
-    },
-	opens: 'right',
-	alwaysShowCalendars: true,
-    autoUpdateInput: true,
-    locale: {
-        format: 'DD/MM/YYYY',
-        applyLabel: "Appliquer",
-        cancelLabel: "Annuler",
-        fromLabel: "De",
-        toLabel: "au",
-        customRangeLabel: "Personnalis&eacute;",
-        weekLabel: "Sem",
-        daysOfWeek: [
-            "Dim",
-            "Lu",
-            "Ma",
-            "Me",
-            "Je",
-            "Ve",
-            "Sa"
-        ],
-        monthNames: [
-            "Janvier",
-            "Fevrier",
-            "Mars",
-            "Avril",
-            "Mai",
-            "Juin",
-            "Juillet",
-            "Août",
-            "Septembre",
-            "Octobre",
-            "Novembre",
-            "Decembre"
-        ],
-    }
-        
-  }, 
-  function(start, end, label) {
-    $(filter_from).val( start.format('DD/MM/YYYY') );
-    $(filter_to).val( end.format('DD/MM/YYYY') );
-    $(filter).val ( start.format('DD/MM/YYYY') + " - " + end.format('DD/MM/YYYY') );
-    $('#searchForm').submit();
-  });
-
-  	$(filter).on('cancel.daterangepicker', function(ev, picker) {
+	$('.formsFilterDate').each( function( index )
+	{
+		var filter='#' + $( this ).val(), filter_to=filter+'_to', filter_from=filter+'_from';
+		$(filter).daterangepicker( {
+		ranges: {
+		"#i18n{forms.multiviewForms.dateRangePicker.today}": [moment(), moment()],
+		"#i18n{forms.multiviewForms.dateRangePicker.yesterday}": [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+		"#i18n{forms.multiviewForms.dateRangePicker.week}": [moment().subtract(6, 'days'), moment()],
+		"#i18n{forms.multiviewForms.dateRangePicker.month}": [moment().subtract(29, 'days'), moment()],
+		"#i18n{forms.multiviewForms.dateRangePicker.months}": [moment().subtract(90, 'days'), moment()],
+		},
+		opens: 'right',
+		alwaysShowCalendars: true,
+		autoUpdateInput: false,
+		locale: {
+		format: '#i18n{forms.multiviewForms.dateRangePicker.format}',
+		applyLabel: "#i18n{forms.multiviewForms.dateRangePicker.applyLabel}",
+		cancelLabel: "#i18n{forms.multiviewForms.dateRangePicker.cancelLabel}",
+		fromLabel: "#i18n{forms.multiviewForms.dateRangePicker.fromLabel}",
+		toLabel: "#i18n{forms.multiviewForms.dateRangePicker.toLabel}",
+		customRangeLabel: "#i18n{forms.multiviewForms.dateRangePicker.customRangeLabel}",
+		weekLabel: "#i18n{forms.multiviewForms.dateRangePicker.weekLabel}",
+		daysOfWeek: [
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSun}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekMon}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekTue}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekWen}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekThu}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekFri}",
+		"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSat}"
+		],
+		monthNames: [
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames1}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames2}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames3}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames4}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames5}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"
+		],
+		}
+		}, 
+		function(start, end, label) {
+		$(filter_from).val( start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
+		$(filter_to).val( end.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
+		$(filter).val ( start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') + " - " + end.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
+		$('#searchForm').submit();
+		});
+  		
+		$(filter).on('cancel.daterangepicker', function(ev, picker) {
 		//do something, like clearing an input
 		var startD = moment().day(-30);
 		var endD = moment().day(30);
@@ -889,6 +890,8 @@ $(function() {
 		$(this).val('');
 	  	$(filter_from).val ('');
   		$(filter_to).val ('');
+
+		});
 	});
 });
 </script>
@@ -930,6 +933,20 @@ $( function(){
 		</a>
 	</div>
 </th>
+</#macro>
+
+<#-- INPUT TEXT/TEXTAREA/SEARCH/PASSWORD/EMAIL/FILE -->
+<#-- type : text/textarea/password/email/file/number. Default is text -->
+<#-- size: input-xs/input-sm/input-lg -->
+<#-- incoming Bootstrap 4 size: form-control-sm/form-control-lg or empty for the normal size -->
+<#-- pattern: [A-F][0-9]{5} -->
+<#macro input name type='text' value='' class='' size='' inputSize=0 maxlength=0 placeHolder='' rows=4 cols=40 richtext=false tabIndex='' id='' mandatory=mandatory disabled=false readonly=false pattern='' params='' title='' min=0 max=0>
+	<#if type='textarea'>
+		<textarea name="${name}" class="form-control<#if size!=''> input-${size}</#if><#if class!=''> ${class}</#if><#if richtext> richtext</#if>" rows="${rows}" cols="${cols}"<#if tabIndex!=''> tabindex="${tabIndex}"</#if><#if placeHolder!=''> placeholder="${placeHolder}"</#if><#if title!=''> title="${title}"</#if><#if disabled> disabled</#if><#if readonly> readonly</#if><#if id!=''> id="${id}"</#if><#if params!=''> ${params}</#if><#if pattern!=''>pattern=${pattern}</#if><#if mandatory && !richtext> required</#if><#if labelFor!='' && helpKey!=''> aria-describedby="${labelFor}_help"</#if>><#nested>${value}</textarea>
+	<#elseif type='text' || type='search' || type='password' || type='email' || type='file' || type='number'>
+	<input class="form-control<#if size!=''> input-${size}</#if><#if class!=''> ${class}</#if> " name="${name}" type="${type}" value="${value}"<#if tabIndex!=''> tabindex="${tabIndex}"</#if><#if placeHolder!=''> placeholder="${placeHolder}"</#if><#if title!=''> title="${title}"</#if><#if maxlength &gt; 0> maxlength="${maxlength}"</#if><#if inputSize!=0> size="${inputSize}"</#if><#if disabled> disabled</#if><#if readonly> readonly</#if><#if id!=''> id="${id}"</#if><#if params!=''> ${params}</#if><#if pattern!=''>pattern=${pattern}</#if><#if min!=0> min="${min}"</#if><#if max!=0> max="${max}"</#if><#if mandatory> required</#if><#if labelFor!='' && helpKey!=''> aria-describedby="${labelFor}_help"</#if> />
+	<#else><@icon style='warning' />Type not supported
+	</#if>
 </#macro>
 
 <#macro jsHeaderSort>

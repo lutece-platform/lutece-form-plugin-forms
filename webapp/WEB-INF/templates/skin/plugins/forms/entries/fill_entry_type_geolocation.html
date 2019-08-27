@@ -53,11 +53,11 @@
     </#if>
 
     <#if entry.mapProvider?has_content>
-        <#if entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
+        <#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
             <#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter >
         </#if>
         
-        <#if entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).addressParam?? >
+        <#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).addressParam?? >
             <#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam >
         </#if>
         <#include entry.mapProvider.htmlCode />

@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -75,8 +76,10 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     // Templates
     private static final String TEMPLATE_QUESTION_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_question.html";
     private static final String TEMPLATE_QUESTION_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_question.html";
+    private static final String TEMPLATE_QUESTION_RESUBMIT_BACKOFFICE = "/admin/plugins/forms/composite/select_question.html";
     private static final String TEMPLATE_QUESTION_EDITION_BACKOFFICE = TEMPLATE_QUESTION_READONLY_BACKOFFICE;
     private static final String TEMPLATE_QUESTION_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_question_read_only.html";
+    private static final String TEMPLATE_QUESTION_RESUBMIT_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_question_resubmit.html";
 
     // Marks
     private static final String MARK_QUESTION_ENTRY = "questionEntry";
@@ -201,6 +204,15 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                     _model.put( FormsConstants.MARK_CONTROL, controlNew );
 
                     _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
+
+                    int question_control_step = QuestionHome.findByPrimaryKey(control.getListIdQuestion().stream().findFirst().get()).getIdStep();
+                    if(question_control_step != _question.getIdStep()) {
+                       List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream()
+                               .filter(questionReponse -> control.getListIdQuestion().contains(questionReponse.getQuestion().getId()))
+                               .collect(Collectors.toList());
+                        _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, validator.validate(listFormQuestionReponseToCheck, control) );
+
+                    }
                 }
 
                 HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, _model );
@@ -270,7 +282,22 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         {
             strTemplate = TEMPLATE_QUESTION_READONLY_FRONTOFFICE;
         }
-
+        if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_RESUBMIT_BACKOFFICE;
+        }
+        if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_RESUBMIT_FRONTOFFICE;
+        }
+        if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_RESUBMIT_BACKOFFICE;
+        }
+        if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
+        {
+            strTemplate = TEMPLATE_QUESTION_RESUBMIT_FRONTOFFICE;
+        }
         return strTemplate;
     }
 
@@ -305,10 +332,52 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _question.setIsVisible( true );
             }
         }
+        
+        if ( displayType == DisplayType.EDITION_FRONTOFFICE )
+        {
+        	 if ( _question.getEntry( ) != null )
+             {
+        		 _question.setIsVisible( true );
+             }
+        }
 
         if ( displayType == DisplayType.EDITION_BACKOFFICE )
         {
-            _question.setIsVisible( true );
+        	 if ( _question.getEntry( ) != null )
+             {
+        		 _question.setIsVisible( true );
+             }
+        }
+
+        if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
+        {
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
+            }
+        }
+        
+        if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
+        {
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( true );
+            }
+        }
+        if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
+        {
+            if ( _question.getEntry( ) != null )
+            {
+            	_question.setIsVisible( true );
+            }
+        }
+        
+        if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
+        {
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( true );
+            }
         }
     }
 
@@ -417,4 +486,22 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         _model.putAll( model );
     }
 
+    @Override
+    public boolean isVisible() {
+    	if ( _question == null )
+    	{
+    		return false;
+    	}
+    	return _question.isVisible( );
+    }
+    
+    @Override
+    public ICompositeDisplay filter( List<Integer> listQuestionIds )
+    {
+    	if ( listQuestionIds.contains( _question.getId( ) ) )
+    	{
+    		return this;
+    	}
+    	return null;
+    }
 }

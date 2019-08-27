@@ -112,6 +112,30 @@ public final class QuestionHome
     {
         return _dao.load( nKey, _plugin );
     }
+    
+    /**
+     * Returns an instance of a question whose identifier is specified in parameter
+     * 
+     * @param strCode
+     *            The question code
+     * @return an instance of Question
+     */
+    public static Question findByCode( String strCode )
+    {
+        return _dao.loadByCode( strCode, _plugin );
+    }
+    
+    /**
+     * Returns an instance of a question whose identifier is specified in parameter
+     * 
+     * @param keyList
+     *            The questions primary keys
+     * @return a list of Questions
+     */
+    public static List<Question> findByPrimaryKeyList( List<Integer> keyList )
+    {
+        return _dao.loadMultiple( keyList, _plugin );
+    }
 
     /**
      * Load the data of all the question objects and returns them as a list
@@ -121,6 +145,16 @@ public final class QuestionHome
     public static List<Question> getQuestionsList( )
     {
         return _dao.selectQuestionsList( _plugin );
+    }
+
+    /**
+     * Load the data of all the question objects and returns them as a list
+     * 
+     * @return the list which contains the data of all the question objects
+     */
+    public static List<Question> getQuestionsListUncomplete( )
+    {
+        return _dao.selectQuestionsListUncomplete( _plugin );
     }
 
     /**
@@ -145,6 +179,18 @@ public final class QuestionHome
     public static List<Question> getListQuestionByIdForm( int nIdForm )
     {
         return _dao.selectQuestionsListByFormId( nIdForm, _plugin );
+    }
+
+    /**
+     * Load the data of all the question objects for given form id and returns them as a list
+     * 
+     * @param nIdForm
+     *            The id of the form
+     * @return the list of all the question objects for the given form id
+     */
+    public static List<Question> getListQuestionByIdFormUncomplete( int nIdForm )
+    {
+        return _dao.selectQuestionsListByFormIdUncomplete( nIdForm, _plugin );
     }
 
     /**

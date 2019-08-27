@@ -93,7 +93,7 @@
                                                     <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn-iframe'  title='#i18n{forms.manage_questions.action.control}' params=group?then('style="visibility:hidden;"','') showTitle=false buttonIcon='check' color='btn-link' />
                                                 </div>
                                             </td>                               
-                                            <td class="hidden-xs col-sm-1 <#if group>bg-gray</#if>" style="vertical-align: middle"><#if composite.formDisplay.displayControl??><@icon style='check' /></#if></td>                                    
+                                            <td class="hidden-xs col-sm-1 <#if group>bg-gray</#if>" style="vertical-align: middle"><#if composite.formDisplay.displayControl??><@icon style='question' /></#if><#if composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content><@icon style='check' /></#if></td>
                                             <td class="hidden-xs col-sm-4 <#if group>bg-gray</#if>">
                                                 <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' showTitle=false buttonIcon='trash' color='btn-link' class='text-danger' /> 
                                                 <#if group>

@@ -69,9 +69,10 @@ public class FormPanelDisplayFactory
      *            The HttpServletRequest to retrieve the information from
      * @param listFormPanel
      *            The list of all IFormPanel used for building IFormFilterDisplay
+     * @param activeFormPanelDisplay
      * @return the list of all FormPanelDisplay ordered by their position
      */
-    public List<IFormPanelDisplay> createFormPanelDisplayList( HttpServletRequest request, List<FormPanel> listFormPanel )
+    public List<IFormPanelDisplay> createFormPanelDisplayList( HttpServletRequest request, List<FormPanel> listFormPanel, IFormPanelDisplay activeFormPanelDisplay )
     {
         List<IFormPanelDisplay> listFormPanelDisplay = new ArrayList<>( );
         List<IFormPanelDisplayFactory> listFormPanelDisplayFactory = new FormPanelDisplayFactoryFacade( ).buildFormPanelDisplayFactoryList( );
@@ -79,6 +80,7 @@ public class FormPanelDisplayFactory
         if ( !CollectionUtils.isEmpty( listFormPanelDisplayFactory ) )
         {
             IFormPanelDisplay formPanelDisplay = null;
+            boolean bIsFirst = true;
             for ( FormPanel formPanel : listFormPanel )
             {
                 for ( IFormPanelDisplayFactory formPanelDisplayFactory : listFormPanelDisplayFactory )
@@ -86,8 +88,8 @@ public class FormPanelDisplayFactory
                     formPanelDisplay = formPanelDisplayFactory.buildFormPanelDisplay( formPanel );
                     if ( formPanelDisplay != null )
                     {
-                        configureFormPanelDisplay( request, formPanelDisplay );
-
+                        configureFormPanelDisplay( request, formPanelDisplay, activeFormPanelDisplay, bIsFirst );
+                        bIsFirst = false;
                         listFormPanelDisplay.add( formPanelDisplay );
                         break;
                     }
@@ -112,9 +114,9 @@ public class FormPanelDisplayFactory
      * @param formPanelDisplay
      *            The formPanelInitializer to configure with the information from the request
      */
-    private void configureFormPanelDisplay( HttpServletRequest request, IFormPanelDisplay formPanelDisplay )
+    private void configureFormPanelDisplay( HttpServletRequest request, IFormPanelDisplay formPanelDisplay, IFormPanelDisplay activeFormPanelDisplay, boolean bIsFirst )
     {
-        boolean bIsSelectedPanel = isSelectedPanel( request, formPanelDisplay.getTechnicalCode( ) );
+        boolean bIsSelectedPanel = isSelectedPanel( request, formPanelDisplay.getTechnicalCode( ), activeFormPanelDisplay, bIsFirst );
         formPanelDisplay.setActive( bIsSelectedPanel );
 
         buildFormPanelDisplayInitializer( request, formPanelDisplay.getFormPanel( ) );
@@ -129,7 +131,7 @@ public class FormPanelDisplayFactory
      *            The name of the panel to analyze
      * @return true if the panel of the given name is the panel to analyze false otherwise
      */
-    private boolean isSelectedPanel( HttpServletRequest request, String strPanelTechnicalCode )
+    private boolean isSelectedPanel( HttpServletRequest request, String strPanelTechnicalCode,  IFormPanelDisplay activeFormPanelDisplay, boolean bIsFirst )
     {
         boolean bIsSelectedPanel = Boolean.FALSE;
 
@@ -141,11 +143,25 @@ public class FormPanelDisplayFactory
         }
         else
         {
-            // If there is no selected panel we will see if there was a previous selected one
-            String strPreviousFormPanelSelected = request.getParameter( FormsConstants.PARAMETER_CURRENT_SELECTED_PANEL );
-            if ( StringUtils.isNotBlank( strPreviousFormPanelSelected ) )
+            // If the previous selected panel cannot be found in the request, we look into the session-based formPanelDisplay
+            if ( activeFormPanelDisplay != null )
             {
-                bIsSelectedPanel = strPanelTechnicalCode.equals( strPreviousFormPanelSelected );
+                bIsSelectedPanel = strPanelTechnicalCode.equals( activeFormPanelDisplay.getTechnicalCode( ) );
+            }
+            else
+            {
+                if ( request.getParameter( FormsConstants.PARAMETER_CURRENT_SELECTED_PANEL ) != null )
+                {
+                    String strPreviousFormPanelSelected = request.getParameter( FormsConstants.PARAMETER_CURRENT_SELECTED_PANEL );
+                    if ( StringUtils.isNotBlank( strPreviousFormPanelSelected ) )
+                    {
+                        bIsSelectedPanel = strPanelTechnicalCode.equals( strPreviousFormPanelSelected );
+                    }
+                }
+                else if ( bIsFirst )
+                {
+                    bIsSelectedPanel = true;
+                }
             }
         }
 
@@ -229,7 +245,7 @@ public class FormPanelDisplayFactory
             }
         }
 
-        if ( !bActivePanelPresent )
+        if ( CollectionUtils.isNotEmpty( listFormPanelDisplay ) && !bActivePanelPresent )
         {
             listFormPanelDisplay.get( INDEX_LIST_PANEL_FIRST_POSITION ).setActive( ACTIVE_LIST_PANEL );
         }

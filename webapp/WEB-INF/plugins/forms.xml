@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?><plug-in>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><plug-in>
     <name>forms</name>
     <class>fr.paris.lutece.plugins.forms.service.FormsPlugin</class>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <documentation/>
     <installation/>
     <changes/>
@@ -75,6 +75,11 @@
         <rbac-resource-type>
             <rbac-resource-type-class>
                 fr.paris.lutece.plugins.forms.service.FormsResourceIdService
+            </rbac-resource-type-class>
+        </rbac-resource-type>
+        <rbac-resource-type>
+            <rbac-resource-type-class>
+				fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService 
             </rbac-resource-type-class>
         </rbac-resource-type>
     </rbac-resource-types>

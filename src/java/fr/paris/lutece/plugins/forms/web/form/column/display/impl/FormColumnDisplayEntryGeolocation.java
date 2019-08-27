@@ -44,8 +44,10 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import java.util.Map.Entry;
 
 /**
  * Implementation of the IFormColumnDisplay for the EntryGeolocation column
@@ -75,7 +77,8 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_ENTRY_VALUE_COLUMN_TITLE, getFormColumnTitle( ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_POSITION, getPosition( ) );
-        model.put( MARK_COLUMN_SORT_ATTRIBUTE, String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getPosition( ) ) );
+
+        model.put( MARK_COLUMN_SORT_ATTRIBUTE, String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_ADDR, getPosition( ) ) );
         model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
         
         String strColumnHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );
@@ -160,4 +163,5 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
         Object objEntryY = geolocFormColumnCell.getFormColumnCellValueByName( strEntryYName );
         return Arrays.asList( objEntryX, objEntryY );
     }
+    
 }

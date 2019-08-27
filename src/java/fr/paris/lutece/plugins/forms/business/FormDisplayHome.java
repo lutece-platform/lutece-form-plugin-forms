@@ -187,11 +187,19 @@ public final class FormDisplayHome
      */
     public static void initConditionalDisplayForFormDisplay( FormDisplay formDisplay )
     {
-        List<Control> listControl = ControlHome.getControlByControlTargetAndType( formDisplay.getId( ), ControlType.CONDITIONAL );
+        List<Control> listDisplayControl = ControlHome.getControlByControlTargetAndType( formDisplay.getId( ), ControlType.CONDITIONAL );
 
-        if ( !listControl.isEmpty( ) )
+        if ( !listDisplayControl.isEmpty( ) )
         {
-            formDisplay.setDisplayControl( listControl.get( 0 ) );
+            formDisplay.setDisplayControl( listDisplayControl.get( 0 ) );
+        }
+        
+        
+        List<Control> listValidationControl = ControlHome.getControlByQuestionAndType( formDisplay.getCompositeId( ), ControlType.VALIDATION.getLabel( ) );
+
+        if ( !listValidationControl.isEmpty( ) )
+        {
+            formDisplay.setValidationControlList( listValidationControl );
         }
     }
 

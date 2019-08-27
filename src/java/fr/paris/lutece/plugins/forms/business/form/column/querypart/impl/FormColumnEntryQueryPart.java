@@ -33,159 +33,60 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+
+import java.security.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
-import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
-import fr.paris.lutece.util.sql.DAOUtil;
+import org.apache.lucene.document.LongPoint;
 
 /**
- * Implementation of the IFormColumnQueryPart interface for an Entry column
+ * Implementation of the IFormColumnQueryPart interface for a form column
  */
 public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
 {
-    // Constants
-    private static final String ENTRY_SELECT_QUERY_PART = "column_%1$s.column_%1$s_value";
-    private static final String ENTRY_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String ENTRY_JOIN_SELECT_QUERY_PART = "LEFT JOIN ( SELECT form_response_%1$s.id_response AS id_response_%1$s, gen_response_%1$s.response_value AS column_%1$s_value ";
-    private static final String ENTRY_JOIN_FROM_QUERY_PART = " FROM forms_response AS form_response_%s ";
-    private static final String ENTRY_JOIN_QUESTION_RESPONSE_QUERY_PART = " INNER JOIN forms_question_response AS question_response_%1$s ON form_response_%1$s.id_response = question_response_%1$s.id_form_response";
-    private static final String ENTRY_JOIN_QUESTION_ENTRY_RESPONSE_QUERY_PART = " INNER JOIN forms_question_entry_response AS q_entry_response_%1$s ON q_entry_response_%1$s.id_question_response = question_response_%1$s.id_question_response ";
-    private static final String ENTRY_JOIN_ENTRY_RESPONSE_QUERY_PART = " INNER JOIN genatt_response AS gen_response_%1$s ON gen_response_%1$s.id_response = q_entry_response_%1$s.id_entry_response ";
-    private static final String ENTRY_JOIN_ENTRY_QUERY_PART = " INNER JOIN genatt_entry AS entry_%1$s ON entry_%1$s.id_entry = gen_response_%1$s.id_entry ";
-    private static final String ENTRY_JOIN_WHERE_QUERY_PART = " WHERE entry_%1$s.code IN ( %2$s ) ";
-    private static final String ENTRY_JOIN_QUERY_PART = " AS column_%1$s ON column_%1$s.id_response_%1$s = response.id_response";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnSelectQuery( )
+    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
     {
-        int nFormColumnPosition = getFormColumnPosition( );
-        String strFormColumnSelectQuery = String.format( ENTRY_SELECT_QUERY_PART, nFormColumnPosition );
+        Map<String, Object> mapFormColumnValues = new HashMap<>( );
 
-        return strFormColumnSelectQuery;
-    }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormColumnFromQuery( )
-    {
-        return ENTRY_FROM_QUERY_PART;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        int nFormColumnPosition = getFormColumnPosition( );
-
-        StringBuilder stringBuilderJoinQuery = new StringBuilder( );
-
-        String strJoinSelectQueryPart = String.format( ENTRY_JOIN_SELECT_QUERY_PART, nFormColumnPosition );
-        stringBuilderJoinQuery.append( strJoinSelectQueryPart );
-
-        String strJoinFromQueryPart = String.format( ENTRY_JOIN_FROM_QUERY_PART, nFormColumnPosition );
-        stringBuilderJoinQuery.append( strJoinFromQueryPart );
-
-        String strJoinInnerJoinQuestionResponseQueryPart = String.format( ENTRY_JOIN_QUESTION_RESPONSE_QUERY_PART, nFormColumnPosition );
-        stringBuilderJoinQuery.append( strJoinInnerJoinQuestionResponseQueryPart );
-
-        String strJoinInnerJoinQuestionentryResponseQueryPart = String.format( ENTRY_JOIN_QUESTION_ENTRY_RESPONSE_QUERY_PART, nFormColumnPosition );
-        stringBuilderJoinQuery.append( strJoinInnerJoinQuestionentryResponseQueryPart );
-
-        String strJoinInnerJoinEntryResponseQueryPart = String.format( ENTRY_JOIN_ENTRY_RESPONSE_QUERY_PART, nFormColumnPosition );
-        stringBuilderJoinQuery.append( strJoinInnerJoinEntryResponseQueryPart );
-
-        String strJoinInnerJoinEntryQueryPart = String.format( ENTRY_JOIN_ENTRY_QUERY_PART, nFormColumnPosition );
-        stringBuilderJoinQuery.append( strJoinInnerJoinEntryQueryPart );
-
-        StringBuilder stringBuilderListEntryCode = new StringBuilder( );
-        IFormColumn formColumn = getFormColumn( );
-        if ( formColumn instanceof FormColumnEntry )
+        for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
         {
-            FormColumnEntry formColumnEntry = (FormColumnEntry) formColumn;
-            List<String> listEntryCode = formColumnEntry.getListEntryCode( );
-            if ( !CollectionUtils.isEmpty( listEntryCode ) )
-            {
-                buildListEntryCode( stringBuilderListEntryCode, listEntryCode );
-            }
+            mapFormColumnValues.putAll( getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem ) );
         }
-
-        String strJoinWhereQueryPart = String.format( ENTRY_JOIN_WHERE_QUERY_PART, nFormColumnPosition, stringBuilderListEntryCode.toString( ) );
-        stringBuilderJoinQuery.append( strJoinWhereQueryPart ).append( " ) " );
-
-        String strJoinQueryPart = String.format( ENTRY_JOIN_QUERY_PART, nFormColumnPosition );
-        stringBuilderJoinQuery.append( strJoinQueryPart );
-
-        return Arrays.asList( stringBuilderJoinQuery.toString( ) );
-    }
-
-    /**
-     * Build the list of all entry code from the given list quoting them and separate them by comma and after that append it to the given StringBuilder
-     * 
-     * @param stringBuilderListEntryCode
-     *            The StringBuilder to append the list of all entry code
-     * @param listEntryCode
-     *            The list of entry code to manage
-     */
-    private void buildListEntryCode( StringBuilder stringBuilderListEntryCode, List<String> listEntryCode )
-    {
-        Iterator<String> iteratorListEntryCode = listEntryCode.iterator( );
-        while ( iteratorListEntryCode.hasNext( ) )
-        {
-            String strEntryCode = iteratorListEntryCode.next( );
-            stringBuilderListEntryCode.append( '\'' ).append( strEntryCode ).append( '\'' );
-
-            if ( iteratorListEntryCode.hasNext( ) )
-            {
-                stringBuilderListEntryCode.append( ", " );
-            }
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Map<String, Object> getMapFormColumnValues( DAOUtil daoUtil )
-    {
-        int nFormColumnPosition = getFormColumnPosition( );
-        Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
-        String strEntryValueColumnName = String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, nFormColumnPosition );
-        mapFormColumnValues.put( strEntryValueColumnName, daoUtil.getString( strEntryValueColumnName ) );
 
         return mapFormColumnValues;
     }
 
     /**
-     * Return the position of the FormColumn or {@linkplain NumberUtils.INTEGER_MINUS_ONE} if doesn't exist
+     * Get the list of entry codes from the form column
      * 
-     * @return the position of the FormColumn
+     * @param column
+     * @return the list of entry codes of the given column
      */
-    private int getFormColumnPosition( )
+    private List<String> getListEntryCode( IFormColumn column )
     {
-        int nFormColumnPosition = NumberUtils.INTEGER_MINUS_ONE;
-        IFormColumn formColumn = getFormColumn( );
-        if ( formColumn != null )
+        if ( column instanceof FormColumnEntry )
         {
-            nFormColumnPosition = formColumn.getFormColumnPosition( );
+            FormColumnEntry formColumnEntry = (FormColumnEntry) column;
+            return formColumnEntry.getListEntryCode( );
         }
-
-        return nFormColumnPosition;
+        return null;
     }
 }

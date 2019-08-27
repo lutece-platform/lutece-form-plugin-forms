@@ -33,11 +33,12 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.List;
+
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-
-import java.util.List;
 
 /**
  * This class provides instances management methods (create, find, ...) for FormDisplay objects
@@ -191,7 +192,23 @@ public final class FormQuestionResponseHome
 
         return listFormQuestionResponse;
     }
-
+    
+    /**
+     * Load the data of all the formQuestionResponse objects and returns them as a list
+     * 
+     * @param listFormResponseStep
+     *            The list of FormResponse
+     * @param nIdStep
+     *            The identifier of the Step
+     * @return the list which contains the data of all the formQuestionResponse objects
+     */
+    public static List<FormQuestionResponse> selectFormQuestionResponseListByListFormResponseStep( List<FormResponseStep> listFormResponseStep )
+    {
+    	List<FormQuestionResponse> list = _dao.selectFormQuestionResponseListByListFormResponseStep( listFormResponseStep, _plugin );
+    	_dao.completeListWithEntryResponses( list, _plugin );
+       return list;
+    }
+    
     /**
      * Load the data of all the formQuestionResponse objects for saving and returns them as a list
      * 
@@ -237,5 +254,19 @@ public final class FormQuestionResponseHome
         completeWithQuestions( listFormQuestionResponse );
 
         return listFormQuestionResponse;
+    }
+
+    /**
+     * Retrieves the form question responses associated to the given Entry Response.
+     * 
+     * @param response
+     * @param plugin
+     * @return
+     */
+    public static FormQuestionResponse selectFormQuestionResponseByEntryResponse( Response response )
+    {
+        FormQuestionResponse res = _dao.selectFormQuestionResponseByEntryResponse( response, _plugin );
+        completeWithQuestion( res );
+        return res;
     }
 }

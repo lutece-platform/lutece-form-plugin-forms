@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.business.form.column;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Comparator;
 import java.util.Date;
 
@@ -145,18 +146,18 @@ public class FormColumnCellComparator implements Comparator<FormColumnCell>, Ser
     {
         int nComparisonResult = NumberUtils.INTEGER_ZERO;
 
-        if ( objectOne instanceof Date && objectTwo instanceof Date )
+        String strObjectOneRepresentation = String.valueOf( objectOne );
+        String strObjectTwoRepresentation = String.valueOf( objectTwo );
+        
+        if ( NumberUtils.isNumber( strObjectOneRepresentation ) && NumberUtils.isNumber( strObjectTwoRepresentation ) )
         {
-            Date dateOne = (Date) objectOne;
-            Date dateTwo = (Date) objectTwo;
-
-            nComparisonResult = dateOne.compareTo( dateTwo );
+            BigDecimal numOne = NumberUtils.createBigDecimal( strObjectOneRepresentation );
+            BigDecimal numTwo = NumberUtils.createBigDecimal( strObjectTwoRepresentation );
+            
+            nComparisonResult = numOne.compareTo( numTwo );
         }
         else
         {
-            String strObjectOneRepresentation = String.valueOf( objectOne );
-            String strObjectTwoRepresentation = String.valueOf( objectTwo );
-
             nComparisonResult = strObjectOneRepresentation.compareTo( strObjectTwoRepresentation );
         }
 

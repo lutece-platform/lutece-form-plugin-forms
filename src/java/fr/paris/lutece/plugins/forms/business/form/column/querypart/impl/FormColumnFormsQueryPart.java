@@ -33,63 +33,30 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
-import fr.paris.lutece.util.sql.DAOUtil;
-
-/**
- * Implementation of the IFormColumnQueryPart interface for a form column
- */
 public class FormColumnFormsQueryPart extends AbstractFormColumnQueryPart
 {
-    // Constants
-    private static final String FORM_SELECT_QUERY_PART = "form.title";
-    private static final String FORM_FROM_QUERY_PART = StringUtils.EMPTY;
-    private static final String FORM_JOIN_QUERY_PART = StringUtils.EMPTY;
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnSelectQuery( )
+    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
     {
-        return FORM_SELECT_QUERY_PART;
-    }
+        Map<String, Object> mapFormColumnValues = new HashMap<>( );
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getFormColumnFromQuery( )
-    {
-        return FORM_FROM_QUERY_PART;
-    }
+        String strFormTitle = formResponseSearchItem.getFormTitle( );
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getFormColumnJoinQueries( )
-    {
-        return Arrays.asList( FORM_JOIN_QUERY_PART );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected Map<String, Object> getMapFormColumnValues( DAOUtil daoUtil )
-    {
-        Map<String, Object> mapFormColumnValues = new LinkedHashMap<>( );
-        String strFormTitle = daoUtil.getString( FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE );
-        mapFormColumnValues.put( FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE, strFormTitle );
+        if ( strFormTitle != null )
+        {
+            mapFormColumnValues.put( FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE, strFormTitle );
+        }
 
         return mapFormColumnValues;
     }
+
 }

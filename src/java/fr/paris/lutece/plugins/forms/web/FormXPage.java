@@ -37,9 +37,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -62,12 +64,17 @@ import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
+import fr.paris.lutece.plugins.forms.web.http.SynchronousHttpServletRequestWrapper;
+import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -80,9 +87,12 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.url.UrlItem;
+
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -98,6 +108,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_PAGE_TITLE = "forms.xpage.form.view.pageTitle";
     protected static final String MESSAGE_PATH = "forms.xpage.form.view.pagePathLabel";
     protected static final String MESSAGE_ERROR_NO_STEP = "forms.xpage.form.error.noStep";
+    protected static final String MESSAGE_ERROR_CONTROL = "forms.xpage.form.error.control";
     protected static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.xpage.form.error.inactive";
     protected static final String MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM = "forms.xpage.form.error.MaxResponse";
     protected static final String MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM_ = "forms.xpage.form.error.limitNumberResponse";
@@ -105,6 +116,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_LIST_FORMS_PAGETITLE = "forms.xpage.listForms.pagetitle";
     protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
     private static final String MESSAGE_WARNING_LOST_SESSION = "forms.warning.lost.session";
+    private static final String MESSAGE_ERROR_STEP_NOT_FINAL ="forms.error.step.isnot.final";
     /**
      * Generated serial id
      */
@@ -117,6 +129,7 @@ public class FormXPage extends MVCApplication
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
     private static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
     private static final String ACTION_SAVE_STEP = "doSaveStep";
+	private static final String ACTION_UPLOAD = "doSynchronousUploadDocument";
     private static final String ACTION_RESET_BACKUP = "doResetBackup";
     private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
     private static final String ACTION_GO_TO_STEP = "doGoToStep";
@@ -254,7 +267,7 @@ public class FormXPage extends MVCApplication
         {
             if ( paramInit.equals( PARAMETER_INIT ) )
             {
-                init( );
+                init( request );
             }
         }
         Map<String, Object> model = getModel( );
@@ -347,7 +360,7 @@ public class FormXPage extends MVCApplication
         Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
         _stepDisplayTree.addModel( modelForStep );
 
-        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( _currentStep ), request.getLocale( ),
+        model.put( STEP_HTML_MARKER, _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), request.getLocale( ),
                 DisplayType.EDITION_FRONTOFFICE ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
@@ -563,22 +576,27 @@ public class FormXPage extends MVCApplication
         {
             return redirectView( request, VIEW_STEP );
         }
-
+        
+        _currentStep = _formResponseManager.getCurrentStep( );
         if ( !_formResponseManager.validateFormResponses( ) )
         {
-            _currentStep = _formResponseManager.getCurrentStep( );
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-
             return redirectView( request, VIEW_STEP );
+        }
+        if( !_currentStep.isFinal( )){
+        	
+        	_stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+        	addError( MESSAGE_ERROR_STEP_NOT_FINAL, request.getLocale( ) );
+        	return redirectView( request, VIEW_STEP );
         }
 
         saveFormResponse( form, request );
-        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
+        //FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
         Map<String, Object> model = getModel( );
 
         model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
 
-        init( );
+        init( request );
 
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
@@ -753,11 +771,10 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_SAVE_STEP )
     public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-        Form form = null;
         try
         {
             boolean bSessionLost = isSessionLost( );
-            form = findFormFrom( request );
+            findFormFrom( request );
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
@@ -770,21 +787,22 @@ public class FormXPage extends MVCApplication
             return redirectView( request, VIEW_STEP );
         }
 
-        Step currentStep = getNextStep( );
-        _currentStep = currentStep != null ? currentStep : _currentStep;
-
+        List<String> errorList = new ArrayList<>( );
+        
+	    Step currentStep = getNextStep( errorList );
+	    _currentStep = currentStep != null ? currentStep : _currentStep;
+        
         if ( currentStep == null )
         {
-            FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
-            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR, getBackUrl( form, formMessage.getEndMessageDisplay( ) ) );
-        }
+        	 SiteMessageService.setMessage( request, MESSAGE_ERROR_CONTROL, new Object[] { errorList.stream( ).collect( Collectors.joining( ) ) }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( VIEW_STEP ) );
+		}
         return redirectView( request, VIEW_STEP );
     }
 
     /**
      * @return The next Step
      */
-    private Step getNextStep( )
+    private Step getNextStep( List<String> errorList )
     {
         List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( _currentStep.getId( ) );
 
@@ -800,21 +818,19 @@ public class FormXPage extends MVCApplication
 
             for ( Control transitionControl : listTransitionControl )
             {
-                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getIdQuestion( ) );
+                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getListIdQuestion( ).iterator( ).next( ) );
                 Step stepTarget = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
+                List<FormQuestionResponse> listQuestionResponse = _formResponseManager.findResponsesFor( stepTarget ).stream( )
+                        .filter( q -> transitionControl.getListIdQuestion( ).stream( ).anyMatch( t -> t.equals( q.getQuestion( ).getId( ) ) ) )
+                        .collect( Collectors.toList( ) );
+                ;
 
-                for ( FormQuestionResponse questionResponse : _formResponseManager.findResponsesFor( stepTarget ) )
+                IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
+                if ( validator != null && !validator.validate( listQuestionResponse, transitionControl ) )
                 {
-                    if ( transitionControl.getIdQuestion( ) == questionResponse.getQuestion( ).getId( ) )
-                    {
-                        IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
-
-                        if ( validator != null && !validator.validate( questionResponse, transitionControl ) )
-                        {
-                            controlsValidated = false;
-                            break;
-                        }
-                    }
+                	controlsValidated = false;
+                	errorList.add( transitionControl.getErrorMessage( ) );
+                	break;
                 }
             }
 
@@ -1000,7 +1016,92 @@ public class FormXPage extends MVCApplication
 
         return redirectView( request, VIEW_STEP );
     }
+	
+	/**
+     * Synchronous upload process to fill the form.
+     *
+     * @param request
+     *            the request
+     * @return the XPage
+     * @throws SiteMessageException
+     *             if there is an error during the iteration
+     * @throws UserNotSignedException
+     *             if the user is not signed in
+     */
+    @Action( value = ACTION_UPLOAD )
+   public XPage doSynchronousUploadDocument( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
 
+    	 boolean bSessionLost = isSessionLost( );
+         if ( bSessionLost ) {
+             addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale() );
+             return redirectView( request, VIEW_STEP );
+         }
+        
+        String error= null;
+        String strFlagAsynchrounous= request.getParameter("action_" + ACTION_UPLOAD);
+        Boolean isUpload= strFlagAsynchrounous.startsWith(FormsAsynchronousUploadHandler.getUploadFormsSubmitPrefix());
+        Map<String, String[]> extraParams = new TreeMap<String, String[]>();
+        extraParams.put(strFlagAsynchrounous, new String[]{strFlagAsynchrounous});
+        HttpServletRequest wrappedRequest = new SynchronousHttpServletRequestWrapper((MultipartHttpServletRequest) request, extraParams);
+       
+        FormsAsynchronousUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
+        String strAttributeName = handler.getUploadAction( wrappedRequest ).substring( handler.getUploadSubmitPrefix( ).length( ) );
+        
+        if(isUpload){
+            
+	        MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
+	    	List<FileItem> fileUploaded = multipartRequest.getFileList( strAttributeName );
+	        error = handler.canUploadFiles(wrappedRequest, strAttributeName, fileUploaded, request.getLocale( ));
+        }
+        		
+        try {
+           
+            fillResponseManagerWithResponses( wrappedRequest, false );
+
+        } catch ( QuestionValidationException exception) {
+            return redirectView( request, VIEW_STEP );
+        }
+      
+        if(isUpload ){
+        	
+            List<Question> listQuestionStep = _stepDisplayTree.getQuestions( );         
+	        List<FormQuestionResponse> listFormQuestionResponse = _formResponseManager.findResponsesFor( _currentStep );
+	        String strIdEntry = strAttributeName.split(IEntryTypeService.PREFIX_ATTRIBUTE)[1].trim(); 
+	        
+            if(error != null){
+        		
+        		for ( FormQuestionResponse formResponse : listFormQuestionResponse )
+    	        {
+        			if(formResponse.getQuestion().getIdEntry() == Integer.parseInt(strIdEntry)){
+        				
+        				List<Response> listResponse= formResponse.getEntryResponse();
+        				 Response response = new Response( );
+                         response.setEntry( formResponse.getQuestion().getEntry() );                         
+        				GenericAttributeError genAttError = new GenericAttributeError( );
+        		    	genAttError.setErrorMessage( error );
+        		    	listResponse.add( response );
+        		    	formResponse.setError(genAttError);                     	
+                     	
+                     	formResponse.setEntryResponse(listResponse);
+                     	break;
+        			}
+        			
+    	        }
+        		_formResponseManager.addResponses( listFormQuestionResponse );
+        	}
+	      
+	        // if the entry type is Automatic file Reading, we fill the form responses question with ocr values readed 
+            else if( EntryTypeAutomaticFileReading.fill(listQuestionStep, listFormQuestionResponse,  wrappedRequest )){
+	        	
+	        	_formResponseManager.addResponses( listFormQuestionResponse );
+	        }
+        }
+         
+        return redirectView( request, VIEW_STEP );
+    }
+
+        
     /**
      * save the response of form
      * 
@@ -1015,8 +1116,14 @@ public class FormXPage extends MVCApplication
      */
     private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
-        synchronized( FormXPage.class )
-        {
+    	/*The deletion of the synchronized block is due to the accumulation of http threads on the server when scaling up. 
+    	 The current implementation does not guarantee the following two checks in case of competitor access: 
+    	 -checkNumberMaxResponseForm (form, request);
+    	 -checkIfUserResponseForm (form, request);
+    	 This implementation to review and modify.
+    	*/
+        /*synchronized( FormXPage.class )
+        {*/
             checkNumberMaxResponseForm( form, request );
             checkIfUserResponseForm( form, request );
             FormResponse formResponse = _formResponseManager.getFormResponse( );
@@ -1026,7 +1133,8 @@ public class FormXPage extends MVCApplication
                 formResponse.setGuid( user.getName( ) );
             }
             _formService.saveForm( form, formResponse );
-        }
+            _formService.processFormAction( form, formResponse );
+        //}
     }
 
     /**
@@ -1079,12 +1187,13 @@ public class FormXPage extends MVCApplication
     /**
      * initialize the object.
      */
-    private void init( )
+    private void init( HttpServletRequest request )
     {
         _formResponseManager = null;
         _currentStep = null;
         _stepDisplayTree = null;
         _breadcrumb = null;
+        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
     }
 
     /**
@@ -1110,4 +1219,5 @@ public class FormXPage extends MVCApplication
     {
         return ( _currentStep == null && _formResponseManager == null && _stepDisplayTree == null && _breadcrumb == null );
     }
+    
 }

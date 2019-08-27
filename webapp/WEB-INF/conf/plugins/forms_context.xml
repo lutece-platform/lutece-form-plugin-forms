@@ -15,7 +15,7 @@
     <bean id="forms.formActionDAO"  class="fr.paris.lutece.plugins.forms.business.FormActionDAO" />
     <bean id="forms.globalFormsActionDAO"  class="fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionDAO" />
     <bean id="forms.formDisplayDAO" class="fr.paris.lutece.plugins.forms.business.FormDisplayDAO" />
-    <bean id="forms.formListDAO" class="fr.paris.lutece.plugins.forms.business.form.list.FormListDAO" />
+    <bean id="forms.formListDAO" class="fr.paris.lutece.plugins.forms.business.form.list.FormListLuceneDAO" />
     <bean id="forms.formQuestionResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormQuestionResponseDAO" />
     <bean id="forms.formResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseDAO" />
     <bean id="forms.formResponseStepDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseStepDAO" />
@@ -32,6 +32,9 @@
     <!-- Listener services -->
     <bean id="forms.formRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
     <bean id="forms.questionRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
+    <bean id="forms.formResponseEventListener" class="fr.paris.lutece.plugins.forms.service.listener.FormResponseEventListener" />
+    <bean id="forms.listQuestionListener"
+		class="fr.paris.lutece.plugins.forms.validation.ListQuestionListener" />
     
     <!-- Validator -->
     <bean id="forms.patternValidator" class="fr.paris.lutece.plugins.forms.validation.PatternValidator">
@@ -41,6 +44,18 @@
 			<list>
 				<value type="java.lang.String">forms.entryTypeText</value>
 				<value type="java.lang.String">forms.entryTypeTextArea</value>
+				<value type="java.lang.String">forms.entryTypeGeolocation</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="forms.patternFileTypeValidator" class="fr.paris.lutece.plugins.forms.validation.PatternFileTypeValidator">
+    	<constructor-arg type="java.lang.String" index="0" value="forms.patternFileTypeValidator" />
+    	<constructor-arg type="java.lang.String" index="1" value="forms.validator.pattern.file.type.name" />
+		<constructor-arg index="2" >
+			<list>
+				<value type="java.lang.String">forms.entryTypeFile</value>
+				<value type="java.lang.String">forms.entryTypeImage</value>
+				<value type="java.lang.String">forms.entryTypeAutomaticFileReading</value>
 			</list>
 		</constructor-arg>
 	</bean>
@@ -62,9 +77,12 @@
 			<list>
 				<value type="java.lang.String">forms.entryTypeText</value>
 				<value type="java.lang.String">forms.entryTypeMyLuteceUserattribute</value>
+			
 			</list>
 		</constructor-arg>
+
 	</bean>
+	
 	
 	<!-- Breadcrumb -->
     <bean id="forms.horizontalBreadcrumb" class="fr.paris.lutece.plugins.forms.web.breadcrumb.HorizontalBreadcrumb">
@@ -92,6 +110,7 @@
 	<bean id="forms.entryTypeMyLuteceUserattribute" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUserAttribute" />
 	<bean id="forms.entryTypeArray" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeArray" />
     <bean id="forms.entryTypeTermsOfService" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService" />
+    <bean id="forms.entryTypeAutomaticFileReading" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading" />
 
 	<!-- DisplayService -->
 	<bean id="forms.entryTypeCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
@@ -139,6 +158,9 @@
     <bean id="forms.entryTypeTermsOfSerciceDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeTermsOfService" />
     </bean>
+    <bean id="forms.entryTypeAutomaticFileReadingDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileReadingDisplayService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
+	</bean>
 	
 	<!-- DataService -->
 	<bean id="forms.entryTypeCheckBoxDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
@@ -189,11 +211,14 @@
     <bean id="forms.entryTypeTermsOfServiceDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeTermsOfService" />
     </bean>
+    <bean id="forms.entryTypeAutomaticFileReadingDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
+	</bean>
 		
 	<bean id="forms.asynchronousUploadHandler" class="fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler" />
 	
     <!-- Transaction Manager -->
-    <bean id="forms.transactionManager"  class="fr.paris.lutece.portal.service.database.DAOUtilTransactionManager"
+    <bean id="forms.transactionManager"  class="fr.paris.lutece.portal.service.database.LuteceTransactionManager"
         p:pluginName="forms" />
 
     <bean id="forms.formDisplayService" class="fr.paris.lutece.plugins.forms.service.FormDisplayService" />
@@ -203,16 +228,13 @@
     	
     <!-- Forms Multiview Authorization Service -->
     <bean id="forms.formsMultiviewAuthorizationService" class="fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService">
-        <constructor-arg name="formPanelConfiguration" type="fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration" ref="forms.formsPanel.panelConfiguration"/>
+        <constructor-arg name="formPanelConfiguration" ref="forms.formsPanel.panelConfiguration"/>
     </bean>
-    
-    <!-- Forms Search Service -->
-    <bean id="forms.formsSearchService" class="fr.paris.lutece.plugins.forms.service.search.FormSearchService"/>
     
     <!-- Lucene Search services implementation -->
     <bean id="forms.luceneFormsSearchEngine" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchEngine"/>
     <bean id="forms.luceneFormsSearchIndexer" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchIndexer"/>
-    <bean id="forms.luceneFormsSearchFactory" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchFactory"/>
+    <bean id="forms.luceneFormsSearchFactory" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchFactory" scope="singleton"/>
     <bean id="forms.luceneFrenchAnalizer" class="fr.paris.lutece.plugins.lucene.service.analyzer.LuteceFrenchAnalyzer"/>
     
 	<!-- FormList Facade -->
@@ -223,20 +245,13 @@
     <!-- Factory -->
     <bean id="forms.formColumn.factory" class="fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory"/>
     
-    <!-- FormResponseItemComparator configuration -->
-    <bean id="forms.formResponseItem.comparator.configuration.default" class="fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparatorConfig">
-    	<constructor-arg name="nColumnToSortPosition" type="int" value="2"/>
-    	<constructor-arg name="strSortAttributeName" type="java.lang.String" value="response_creation_date"/>
-    	<constructor-arg name="bAscSort" type="boolean" value="false"/>
-    </bean>
-    
     <!-- Panels Initializer QueryParts Factories -->
     <bean id="forms.formPanelInitializer.panelForms.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.factory.impl.FormPanelFormsInitializerQueryPartFactory"/>
     <bean id="forms.formPanelInitializer.panelFormResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.factory.impl.FormPanelFormResponseInitializerQueryPartFactory"/>
     
     <!-- Filters QueryParts Factories -->    
     <bean id="forms.formFilter.formResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormsQueryPartFactory"/>
-    <bean id="forms.formFilter.formResponseDateCreation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormResponseDateCreationQueryPartFactory"/>
+    <bean id="forms.formFilter.formResponseDateCreation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormResponseDateQueryPartFactory"/>
     <bean id="forms.formFilter.entry.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterEntryQueryPartFactory"/>
     <bean id="forms.formFilter.workflowState.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterWorkflowStateQueryPartFactory"/>
     <bean id="forms.formFilter.idFormResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterIdFormResponseQueryPartFactory"/>
@@ -245,7 +260,7 @@
 	<bean id="forms.formsPanel.panelConfiguration" class="fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration">
 		<constructor-arg name="strTechnicalCode" type="java.lang.String" value="forms"/>
 		<constructor-arg name="nPosition" type="int" value="1"/>
-		<constructor-arg name="strTitle" type="java.lang.String" value="R&#233;ponse(s)"/>
+		<constructor-arg name="strTitle" type="java.lang.String" value="forms.formsPanel.panelConfiguration.title"/>
 		<constructor-arg name="listFormPanelInitializerName">
 			<list>
 				<value type="java.lang.String">fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormsInitializer</value>
@@ -264,18 +279,22 @@
 	<bean id="forms.forms.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration">
 		<constructor-arg name="nPosition" type="int" value="1"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="-"/>
+		<constructor-arg name="strFormFilterName" type="java.lang.String" value="forms_title"/>
 	</bean>
-	<bean id="forms.formResponseDateCreation.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateCreationConfiguration">
+	<bean id="forms.formResponseDateCreation.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateConfiguration">
 		<constructor-arg name="nPosition" type="int" value="2"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Cr&#233;&#233;e depuis..."/>
+		<constructor-arg name="strFormFilterName" type="java.lang.String" value="response_creation_date"/>
 	</bean>
         <bean id="forms.searchedText.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration">
 		<constructor-arg name="nPosition" type="int" value="3"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Texte"/>
+		<constructor-arg name="strFormFilterName" type="java.lang.String" value="search_text"/>
 	</bean>
         <bean id="forms.workflowState.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterWorkflowConfiguration">
 		<constructor-arg name="nPosition" type="int" value="4"/>
 		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="-"/>
+		<constructor-arg name="strFormFilterName" type="java.lang.String" value="workflow_state"/>
 	</bean>
 	
 	<!-- Panels Display Initializer Factories -->
@@ -283,7 +302,7 @@
 	<bean id="forms.formPanelInitializer.panelFormResponse.display.factory" class="fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.factory.impl.FormPanelFormResponseDisplayInitializerFactory"/>
 	
 	<!-- Filters Factories -->
-	<bean id="forms.formResponseDateCreation.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormResponseDateCreationFactory"/>
+	<bean id="forms.formResponseDateCreation.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormResponseDateFactory"/>
 	<bean id="forms.forms.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormsFactory"/>
 	<bean id="forms.entry.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayEntryFactory"/>
 	<bean id="forms.workflowState.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayWorkflowStateFactory"/>

@@ -66,6 +66,8 @@ id_step int default '0',
 is_visible_multiview_global SMALLINT default 0 NOT NULL,
 is_visible_multiview_form_selected SMALLINT default 0 NOT NULL,
 column_title varchar(255) default '' NOT NULL,
+is_filterable_multiview_global SMALLINT default 0 NOT NULL,
+is_filterable_multiview_form_selected SMALLINT default 0 NOT NULL,
 PRIMARY KEY (id_question)
 );
 CREATE INDEX index_fq_code ON forms_question ( code );
@@ -80,7 +82,7 @@ DROP TABLE IF EXISTS forms_group;
 CREATE TABLE forms_group (
 id_group int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
-description varchar(255) default '',
+description varchar(512) default '',
 id_step int default '0',
 iteration_min int default '1',
 iteration_max int default '1',
@@ -151,15 +153,29 @@ DROP TABLE IF EXISTS forms_control;
 CREATE TABLE forms_control (
 id_control int AUTO_INCREMENT,
 value varchar(255),
-error_message varchar(255) default '',
-id_question int NOT NULL,
+error_message varchar(512) default '',
 validator_name varchar(255) NOT NULL,
 control_type varchar(255) NOT NULL,
 id_control_target int default '0' NOT NULL,
 PRIMARY KEY (id_control)
 );
-CREATE INDEX index_fc_id_question ON forms_control ( id_question );
+
 CREATE INDEX index_fc_id_control_target ON forms_control ( id_control_target );
+
+DROP TABLE IF EXISTS forms_control_question;
+CREATE TABLE forms_control_question (
+id_control int NOT NULL,
+id_question int NOT NULL,
+PRIMARY KEY (id_control, id_question)
+);
+
+DROP TABLE IF EXISTS forms_control_question_mapping;
+CREATE TABLE forms_control_question_mapping (
+id_control int NOT NULL,
+id_question int NOT NULL,
+value varchar(255),
+PRIMARY KEY (id_control, id_question, value)
+);
 
 --
 -- Structure for table forms_message
@@ -221,9 +237,7 @@ CREATE TABLE IF NOT EXISTS forms_response_step (
 CREATE INDEX idx_frs_id_form_response on forms_response_step  ( id_form_response );
 CREATE INDEX idx_frs_id_step on forms_response_step  ( id_step );
 
-/*==============================================================*/
-/* Table structure for table forms_indexer_action				*/
-/*==============================================================*/
+DROP TABLE IF EXISTS forms_indexer_action;
 CREATE TABLE forms_indexer_action (
   id_action int AUTO_INCREMENT,
   id_form_response INT DEFAULT 0 NOT NULL,

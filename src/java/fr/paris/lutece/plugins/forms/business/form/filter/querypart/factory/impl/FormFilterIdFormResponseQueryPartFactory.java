@@ -37,7 +37,7 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.IFormFilterQueryPartFactory;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterFormResponseIdQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterIdFormResponseLuceneQueryPart;
 
 /**
  * Implementation of IFormFilterQueryPartFactory for a WorkflowState filter
@@ -54,7 +54,7 @@ public class FormFilterIdFormResponseQueryPartFactory implements IFormFilterQuer
 
         if ( formFilter.getFormFilterConfiguration( ) instanceof FormFilterFormResponseIdConfiguration )
         {
-            formFilterFormResponseIdQueryPart = new FormFilterFormResponseIdQueryPart( );
+            formFilterFormResponseIdQueryPart = new FormFilterIdFormResponseLuceneQueryPart( );
         }
 
         return formFilterFormResponseIdQueryPart;

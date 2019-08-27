@@ -143,4 +143,11 @@ public interface ICompositeDisplay
      */
     void addModel( Map<String, Object> model );
 
+    /**
+     * is the composite display visible.
+     * @return
+     */
+    boolean isVisible( );
+    
+    ICompositeDisplay filter( List<Integer> listQuestionIds );
 }

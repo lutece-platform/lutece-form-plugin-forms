@@ -42,10 +42,10 @@ import org.apache.commons.lang.StringUtils;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.service.search.FormSearchConfig;
-import fr.paris.lutece.plugins.forms.service.search.IFormSearchService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import java.util.List;
+import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
 
 /**
  * Implementation of the IFormFilterDisplay interface for the filter on workflow state
@@ -65,11 +65,11 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
     private String _strTemplate;
     private String _strValue;
     private FormFilter _formFilter;
-    private IFormSearchService _formSearchService;
+    private IFormSearchEngine _formSearchEngine;
 
-    public FormFilterDisplaySearchedText( IFormSearchService formSearchService )
+    public FormFilterDisplaySearchedText( IFormSearchEngine formSearchEngine )
     {
-        _formSearchService = formSearchService;
+        _formSearchEngine = formSearchEngine;
     }
 
     /**
@@ -103,7 +103,7 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
         {
             FormSearchConfig config = new FormSearchConfig( );
             config.setSearchedText( strSearchedText );
-            List<Integer> listIdsResults = _formSearchService.getSearchResults( config );
+            List<Integer> listIdsResults = _formSearchEngine.getSearchResults( config );
             for ( int i = 0; i < listIdsResults.size( ); i++ )
             {
                 mapFilterNameValues.put( PARAMETER_ID_RESPONSE + String.valueOf( i ), listIdsResults.get( i ) );
@@ -128,6 +128,7 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
         Map<String, Object> model = new LinkedHashMap<>( );
         String strSearchedText = request.getParameter( PARAMETER_SEARCHED_TEXT );
         model.put( MARK_SEARCHED_TEXT, strSearchedText );
+        model.put( MARK_FILTER_CONFIG, getFormFilter().getFormFilterConfiguration() );
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
 
         _strTemplate = htmlTemplate.getHtml( );

@@ -52,6 +52,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -95,14 +96,15 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
         String strEntryParameterValue = request.getParameter( strParameterName );
         if ( StringUtils.isNotBlank( strEntryParameterValue ) )
         {
-            int nFormColumnPosition = NumberUtils.INTEGER_MINUS_ONE;
             IFormColumn formColumn = retrieveFormColumn( );
+            String strEntryValueColumnName = StringUtils.EMPTY;
             if ( formColumn != null )
             {
-                nFormColumnPosition = formColumn.getFormColumnPosition( );
+                FormColumnEntry formColumnEntry = (FormColumnEntry) formColumn;
+                    List<String> listEntryCode = formColumnEntry.getListEntryCode( );
+                    strEntryValueColumnName = listEntryCode.get( 0 );
             }
-
-            String strEntryValueColumnName = FormEntryNameConstants.FILTER_ENTRY_BASE_NAME_PATTERN + nFormColumnPosition;
+            
             mapFilterNameValues.put( strEntryValueColumnName, strEntryParameterValue );
             strEntryValue = strEntryParameterValue;
         }

@@ -36,7 +36,9 @@ package fr.paris.lutece.plugins.forms.business;
 
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
@@ -48,18 +50,29 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class ControlDAO implements IControlDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_control, value, error_message, id_question, validator_name, control_type, id_control_target FROM forms_control";
+    private static final String SQL_QUERY_SELECTALL = "SELECT fc.id_control, fc.value, fc.error_message, fc.validator_name, fc.control_type, fc.id_control_target FROM forms_control fc ";
+    private static final String SQL_QUERY_CONTROLQUESTIONS_SELECTALL = "SELECT fc.id_control, fc.value, fc.error_message, fc.validator_name, fc.control_type, fc.id_control_target FROM forms_control fc join forms_control_question fcq on(fcq.id_control = fc.id_control) ";
 
-    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_control = ?";
-    private static final String SQL_QUERY_SELECT_BY_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_question = ?";
-    private static final String SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE = SQL_QUERY_SELECTALL + " WHERE id_question = ? AND control_type = ?";
-    private static final String SQL_QUERY_SELECT_BY_CONTROL_TARGET = SQL_QUERY_SELECTALL + " WHERE id_control_target = ? AND control_type = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, id_question, validator_name, control_type, id_control_target ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE fc.id_control = ?";
+    private static final String SQL_QUERY_SELECT_BY_QUESTION = SQL_QUERY_CONTROLQUESTIONS_SELECTALL + "WHERE fcq.id_question = ?";
+    private static final String SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE = SQL_QUERY_CONTROLQUESTIONS_SELECTALL
+            + " WHERE fcq.id_question = ? AND fc.control_type = ?";
+    private static final String SQL_QUERY_SELECT_BY_CONTROL_TARGET = SQL_QUERY_SELECTALL + " WHERE fc.id_control_target = ? AND fc.control_type = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, validator_name, control_type, id_control_target ) VALUES ( ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT__CONTROL_QUESTION = "INSERT INTO forms_control_question ( id_control, id_question ) VALUES ( ?, ? ) ";
+    private static final String SQL_QUERY_INSERT__CONTROL_QUESTION_VALUE = "INSERT INTO forms_control_question_mapping ( id_control, id_question, value ) VALUES ( ?, ?, ? ) ";
+
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_control WHERE id_control = ? ";
+    private static final String SQL_QUERY_DELETE_CONTROL_QUESTION = "DELETE FROM forms_control_question WHERE id_control = ? ";
+    private static final String SQL_QUERY_DELETE_CONTROL_QUESTION_VALUE = "DELETE FROM forms_control_question_mapping WHERE id_control = ? ";
+
     private static final String SQL_QUERY_DELETE_BY_CONTROL_TARGET = "DELETE FROM forms_control WHERE id_control_target = ? AND control_type = ?";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?, id_question = ?, validator_name = ?, control_type = ?, id_control_target = ? WHERE id_control = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?,  validator_name = ?, control_type = ?, id_control_target = ? WHERE id_control = ?";
 
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_control FROM forms_control";
+
+    private static final String SQL_QUERY_CONTROL_QUESTION_SELECTALL = "SELECT fcq.id_question FROM forms_control_question fcq where fcq.id_control= ? ";
+    private static final String SQL_QUERY_CONTROL_MAPPING_BY_IDCONTROL = "SELECT id_question, value FROM forms_control_question_mapping  where id_control= ? ";
 
     /**
      * {@inheritDoc }
@@ -73,7 +86,6 @@ public final class ControlDAO implements IControlDAO
             int nIndex = 1;
             daoUtil.setString( nIndex++, control.getValue( ) );
             daoUtil.setString( nIndex++, control.getErrorMessage( ) );
-            daoUtil.setInt( nIndex++, control.getIdQuestion( ) );
             daoUtil.setString( nIndex++, control.getValidatorName( ) );
             daoUtil.setString( nIndex++, control.getControlType( ) );
             daoUtil.setInt( nIndex++, control.getIdControlTarget( ) );
@@ -88,6 +100,41 @@ public final class ControlDAO implements IControlDAO
         {
             daoUtil.close( );
         }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void insert( int nIdControl, int nIdQuestion, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT__CONTROL_QUESTION, plugin );
+
+        int nIndex = 1;
+        daoUtil.setInt( nIndex++, nIdControl );
+        daoUtil.setInt( nIndex++, nIdQuestion );
+
+        daoUtil.executeUpdate( );
+        daoUtil.close( );
+
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void insert( int nIdControl, int nIdQuestion, String strValue, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT__CONTROL_QUESTION_VALUE, plugin );
+
+        int nIndex = 1;
+        daoUtil.setInt( nIndex++, nIdControl );
+        daoUtil.setInt( nIndex++, nIdQuestion );
+        daoUtil.setString( nIndex++, strValue );
+
+        daoUtil.executeUpdate( );
+        daoUtil.close( );
+
     }
 
     /**
@@ -114,10 +161,54 @@ public final class ControlDAO implements IControlDAO
      * {@inheritDoc }
      */
     @Override
+    public Set<Integer> loadIdQuestions( int nIdControl, Plugin plugin )
+    {
+        Set<Integer> listQuestion = new HashSet<Integer>( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_CONTROL_QUESTION_SELECTALL, plugin );
+        daoUtil.setInt( 1, nIdControl );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            listQuestion.add( daoUtil.getInt( "id_question" ) );
+        }
+
+        daoUtil.close( );
+        return listQuestion;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void delete( int nKey, Plugin plugin )
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
         daoUtil.setInt( 1, nKey );
+        daoUtil.executeUpdate( );
+        daoUtil.close( );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteControlQuestion( int nControl, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONTROL_QUESTION, plugin );
+        daoUtil.setInt( 1, nControl );
+        daoUtil.executeUpdate( );
+        daoUtil.close( );
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void deleteControlQuestionValue( int nControl, Plugin plugin )
+    {
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_CONTROL_QUESTION_VALUE, plugin );
+        daoUtil.setInt( 1, nControl );
         daoUtil.executeUpdate( );
         daoUtil.close( );
     }
@@ -147,7 +238,6 @@ public final class ControlDAO implements IControlDAO
         daoUtil.setInt( nIndex++, control.getId( ) );
         daoUtil.setString( nIndex++, control.getValue( ) );
         daoUtil.setString( nIndex++, control.getErrorMessage( ) );
-        daoUtil.setInt( nIndex++, control.getIdQuestion( ) );
         daoUtil.setString( nIndex++, control.getValidatorName( ) );
         daoUtil.setString( nIndex++, control.getControlType( ) );
         daoUtil.setInt( nIndex++, control.getIdControlTarget( ) );
@@ -268,7 +358,6 @@ public final class ControlDAO implements IControlDAO
         control.setId( daoUtil.getInt( "id_control" ) );
         control.setValue( daoUtil.getString( "value" ) );
         control.setErrorMessage( daoUtil.getString( "error_message" ) );
-        control.setIdQuestion( daoUtil.getInt( "id_question" ) );
         control.setValidatorName( daoUtil.getString( "validator_name" ) );
         control.setControlType( daoUtil.getString( "control_type" ) );
         control.setIdControlTarget( daoUtil.getInt( "id_control_target" ) );
@@ -296,4 +385,23 @@ public final class ControlDAO implements IControlDAO
         return controlList;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public ReferenceList selectMappingControlReferenceList( int nIdControl, Plugin plugin )
+    {
+        ReferenceList controlList = new ReferenceList( );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_CONTROL_MAPPING_BY_IDCONTROL, plugin );
+        daoUtil.setInt( 1, nIdControl );
+        daoUtil.executeQuery( );
+
+        while ( daoUtil.next( ) )
+        {
+            controlList.addItem( daoUtil.getInt( "id_question" ), daoUtil.getString( "value" ) );
+        }
+
+        daoUtil.close( );
+        return controlList;
+    }
 }

@@ -93,6 +93,24 @@ public interface IFormResponseDAO
      * @return The list which contains the data of all the FormResponse objects
      */
     List<FormResponse> selectFormResponseList( Plugin plugin );
+    
+    /**
+     * Load the primary keys of all the FormResponse objects and returns them as a list
+     * @param plugin
+     * @return the list of the primary keys of all the form responses
+     */
+    List<Integer>  selectAllFormResponsesId( Plugin plugin );
+    
+    /**
+     * Load the data of all the FormResponse objects and returns them as a list
+     * 
+     * @param nIdForm
+     *              the id of the form
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the FormResponse objects
+     */
+    List<FormResponse> selectFormResponseListUncompleteByIdForm( int nIdForm, Plugin plugin );
 
     /**
      * Load the data of all the FormResponse objects and returns them as a list

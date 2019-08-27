@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form;
+package src.test.java.fr.paris.lutece.plugins.forms.business.form;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -56,7 +56,7 @@ public class FormResponseItemComparatorTest extends LuteceTestCase
     private static final int INFERIOR_COMPARISON_RESULT = NumberUtils.INTEGER_MINUS_ONE;
 
     // Variables
-    private static final FormResponseItemComparatorConfig _defaultFormResponseItemComparatorConfig = new FormResponseItemComparatorConfig(
+    private static final FormResponseItemSortConfig _defaultFormResponseItemComparatorConfig = new FormResponseItemSortConfig(
             DEFAULT_COLUMN_POSITION_TO_SORT, DEFAULT_SORT_ATTRIBUTE_NAME, ASCENDANT_SORT );
 
     /**
@@ -123,7 +123,7 @@ public class FormResponseItemComparatorTest extends LuteceTestCase
         FormResponseItem formResponseItemTwo = new FormResponseItem( );
         formResponseItemTwo.addFormColumnCell( formColumnCellTwo );
 
-        FormResponseItemComparatorConfig formResponseItemComparatorConfig = new FormResponseItemComparatorConfig( DEFAULT_COLUMN_POSITION_TO_SORT,
+        FormResponseItemSortConfig formResponseItemComparatorConfig = new FormResponseItemSortConfig( DEFAULT_COLUMN_POSITION_TO_SORT,
                 DEFAULT_SORT_ATTRIBUTE_NAME, DESCENDANT_SORT );
         FormResponseItemComparator comparator = new FormResponseItemComparator( formResponseItemComparatorConfig, _defaultFormResponseItemComparatorConfig );
 
@@ -163,7 +163,7 @@ public class FormResponseItemComparatorTest extends LuteceTestCase
         FormResponseItem formResponseItemTwo = new FormResponseItem( );
         formResponseItemTwo.addFormColumnCell( null );
 
-        FormResponseItemComparatorConfig formResponseItemComparatorConfig = new FormResponseItemComparatorConfig( DEFAULT_COLUMN_POSITION_TO_SORT,
+        FormResponseItemSortConfig formResponseItemComparatorConfig = new FormResponseItemSortConfig( DEFAULT_COLUMN_POSITION_TO_SORT,
                 DEFAULT_SORT_ATTRIBUTE_NAME, DESCENDANT_SORT );
         FormResponseItemComparator comparator = new FormResponseItemComparator( formResponseItemComparatorConfig, _defaultFormResponseItemComparatorConfig );
 

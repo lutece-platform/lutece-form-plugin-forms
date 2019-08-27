@@ -34,6 +34,7 @@
 
 package fr.paris.lutece.plugins.forms.util;
 
+import fr.paris.lutece.portal.service.datastore.DatastoreService;
 import org.apache.commons.lang3.math.NumberUtils;
 
 /**
@@ -68,6 +69,7 @@ public final class FormsConstants
     public static final String MARK_DISPLAY_ORDER = "displayOrder";
     public static final String MARK_TRANSITION = "transition";
     public static final String MARK_CONTROL = "control";
+    public static final String MARK_OTHER_STEP_VALIDATION = "other_step_validation";
     public static final String MARK_CONTROL_TYPE = "control_type";
     public static final String MARK_FORM_TOP_BREADCRUMB = "formTopBreadcrumb";
     public static final String MARK_FORM_BOTTOM_BREADCRUMB = "formBottomBreadcrumb";
@@ -82,6 +84,8 @@ public final class FormsConstants
     public static final String MARK_QUESTION_MODIFY_TEMPLATE = "question_modify_template";
     public static final String MARK_MULTIVIEW_CONFIG = "multiview_config";
     public static final String MARK_MULTIVIEW_CONFIG_ACTION = "multiviewConfigAction";
+    public static final String MARK_MULTIVIEW_EXPORT_ACTION = "multiviewExportAction";
+    public static final String VALUE_VALIDATOR_LISTEQUESTION_NAME = "forms_listQuestionValidator";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -90,6 +94,10 @@ public final class FormsConstants
     public static final String PARAMETER_ID_ENTRY = "id_entry";
     public static final String PARAMETER_ID_FIELD = "id_field";
     public static final String PARAMETER_ID_RESPONSE = "id_response";
+    public static final String PARAMETER_ID_FIELD_OCR = "id_field_ocr";
+	public static final String PARAMETER_OCR_DOCUMENT = "ocr_document";
+    public static final String PARAMETER_TYPE_DOCUMENT_KEY = "type_document_key";
+    public static final String PARAMETER_ID_MAPPING = "id_mapping";
 
     public static final String PARAMETER_TARGET_VIEW = "view";
     public static final String COMPOSITE_STEP_TYPE = "step";
@@ -103,6 +111,7 @@ public final class FormsConstants
     public static final String PARAMETER_ID_ENTRY_TYPE = "id_type";
     public static final String PARAMETER_ID_GROUP = "id_group";
     public static final String PARAMETER_ID_QUESTION = "id_question";
+    public static final String PARAMETER_ID_QUESTION_MAPPING = "id_question_mapping";
     public static final String PARAMETER_ID_DISPLAY = "id_display";
     public static final String PARAMETER_ID_PARENT = "id_parent";
     public static final String PARAMETER_ID_TARGET = "id_target";
@@ -115,11 +124,15 @@ public final class FormsConstants
     public static final String PARAMETER_CONTROL_VALUE = "control_value";
     public static final String PARAMETER_CONTROL_TYPE = "control_type";
     public static final String PARAMETER_REF_LIST_VALUE = "refListValue";
+    public static final String PARAMETER_REF_LIST_FIELD = "refListField";
+    public static final String PARAMETER_REF_LIST_MAPPING = "refListMapping";
+    
     public static final String PARAMETER_ACTION_GO_TO_STEP = "action_doGoToStep";
     public static final String PARAMETER_INFO_KEY = "info_key";
     public static final String PARAMETER_BACK_URL = "back_url";
     public static final String PARAMETER_DISPLAYED_QUESTIONS = "displayed_questions";
     public static final String PARAMETER_INIT = "init";
+    public static final String PARAMETER_ID_QUESTION_TO_REMOVE = "id_rm_question";
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
@@ -131,7 +144,11 @@ public final class FormsConstants
     public static final String PARAMETER_ACTION_PREFIX = "action_";
     public static final String PARAMETER_MULTIVIEW_GLOBAL = "is_visible_multiview_global";
     public static final String PARAMETER_MULTIVIEW_FORM_SELECTED = "is_visible_multiview_form_selected";
+    public static final String PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL = "is_filterable_multiview_global";
+    public static final String PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED = "is_filterable_multiview_form_selected";
     public static final String PARAMETER_COLUMN_TITLE = "column_title";
+    public static final String PARAMETER_VIEW_MODIFY_CONTROL = "view_modifyControl";
+    public static final String PARAMETRE_VALIDATOR_LISTQUESTION_NAME = "forms_listQuestionValidator";
 
     // Jsp
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
@@ -150,7 +167,8 @@ public final class FormsConstants
     public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
     public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
     public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
-    public static final int ORDER_NOT_SET = NumberUtils.INTEGER_MINUS_ONE;
+    public static final int ORDER_NOT_SET = Integer.parseInt(DatastoreService.getDataValue("forms.formResponseStep.orderNotSet", NumberUtils.INTEGER_MINUS_ONE.toString()));
+    public static final int FILE_TYPE_RIB = 1;
 
     // Markers
     public static final String MARK_AVAILABLE_STEPS = "availableSteps";
@@ -160,7 +178,6 @@ public final class FormsConstants
 
     // Beans
     public static final String BEAN_TRANSACTION_MANAGER = "forms.transactionManager";
-    public static final String BEAN_FORMS_FORM_TITLE_COLUMN = "forms.transactionManager";
     public static final String BEAN_FORMS_COLUMN_TITLE = "forms.forms.column";
     public static final String BEAN_FORMS_COLUMN_DATE_CREATION = "forms.formResponseCreationDate.column";
 
@@ -169,6 +186,10 @@ public final class FormsConstants
 
     // Actions forms
     public static final String ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG = "multiviewConfig";
+    public static final String ACTION_FORMS_EXPORT_RESPONSES = "multiviewExport";
+    public static final String VAL_REMOVE_QUESTION = "removeQuestion";
+    public static final String VALIDATE_STEP = "validateStep";
+    public static final String VALIDATE_VALIDATOR = "validateValidator";
 
     // Other
     public static final String FORM_DEFAULT_END_MESSAGE = "forms.message.form.submitted";

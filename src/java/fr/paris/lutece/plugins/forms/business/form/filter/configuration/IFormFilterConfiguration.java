@@ -53,4 +53,11 @@ public interface IFormFilterConfiguration
      */
     String getFormFilterLabel( );
 
+    /**
+     * Get the name of the FormFilter
+     * 
+     * @return the name of the FormFilter
+     */
+    String getFormFilterName( );
+
 }

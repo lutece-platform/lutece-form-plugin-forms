@@ -35,17 +35,16 @@ package fr.paris.lutece.plugins.forms.business.form.column;
 
 import java.util.Comparator;
 
-
-public class FormColumnComparator implements Comparator<IFormColumn> 
+public class FormColumnComparator implements Comparator<IFormColumn>
 {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int compare( IFormColumn formColumn1, IFormColumn formColumn2) 
+    public int compare( IFormColumn formColumn1, IFormColumn formColumn2 )
     {
-        return formColumn1.getFormColumnPosition() - formColumn2.getFormColumnPosition();
+        return formColumn1.getFormColumnPosition( ) - formColumn2.getFormColumnPosition( );
     }
-    
+
 }

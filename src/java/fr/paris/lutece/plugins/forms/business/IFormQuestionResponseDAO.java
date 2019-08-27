@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import java.util.List;
 
@@ -106,6 +107,19 @@ public interface IFormQuestionResponseDAO
      * @return The list which contains the data of all the FormQuestionResponse objects
      */
     List<FormQuestionResponse> selectFormQuestionResponseListByStepAndFormResponse( int nIdFormResponse, int nIdStep, Plugin plugin );
+    
+    /**
+     * Load the data of all the FormQuestionResponse objects and returns them as a list
+     * 
+     * @param nIdFormResponse
+     *            The identifier of the FormResponse
+     * @param nIdStep
+     *            The identifier of the Step
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the FormQuestionResponse objects
+     */
+    List<FormQuestionResponse> selectFormQuestionResponseListByListFormResponseStep( List<FormResponseStep> listFormResponseStep, Plugin plugin );
 
     /**
      * Load the data of all the FormQuestionResponse objects for saving and returns them as a list
@@ -142,4 +156,19 @@ public interface IFormQuestionResponseDAO
      */
     List<FormQuestionResponse> selectFormQuestionResponseByResponseForQuestion( int nIdFormResponse, int nIdQuestion, Plugin plugin );
 
+    /**
+     * Retrieves the form question responses associated to the given Entry Response.
+     * 
+     * @param response
+     * @param plugin
+     * @return
+     */
+    FormQuestionResponse selectFormQuestionResponseByEntryResponse( Response response, Plugin plugin );
+    
+    /**
+     * Populates the FormQuestionResponse of the list with their Response values.
+     * @param formQuestionResponsesList
+     * @param plugin
+     */
+    void completeListWithEntryResponses( List<FormQuestionResponse> formQuestionResponsesList, Plugin plugin );
 }

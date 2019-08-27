@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,11 +46,17 @@ import org.apache.commons.lang3.math.NumberUtils;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDisplayFactory;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Implementation of the IFormsMultiviewAuthorizationService interface
@@ -97,8 +104,11 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
             // Rebuild all the FormPanelInitializer to reset the previous data
             FormPanelDisplayFactory formPanelDisplayFactory = new FormPanelDisplayFactory( );
             formPanelDisplayFactory.buildFormPanelDisplayInitializer( request, _formPanel );
-
-            _formListFacade.populateFormColumns( _formPanel, listFormResponseColumn, new ArrayList<>( ) );
+            
+            List<FormFilter> listFormFilters = new ArrayList<>();
+            listFormFilters.add( buildFormResponseIdFilter( nIdFormResponse) );
+            
+            _formListFacade.populateFormColumns( _formPanel, listFormResponseColumn, listFormFilters, 0, 1, null );
             List<FormResponseItem> listFormResponseItem = _formPanel.getFormResponseItemList( );
 
             if ( !CollectionUtils.isEmpty( listFormResponseItem ) )
@@ -110,4 +120,26 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
 
         return bIsUserAuthorizedOnFormResponse;
     }
+    
+    /**
+     * Build a form response id filter from an id response
+     * @param nIdFormResponse
+     *                  The form response id
+     * @return the FormFilter
+     */
+    private FormFilter buildFormResponseIdFilter( int nIdFormResponse )
+    {
+        FormFilter formFilterId = new FormFilter( );
+        FormFilterFormResponseIdConfiguration config = new FormFilterFormResponseIdConfiguration( 1, StringUtils.EMPTY, StringUtils.EMPTY );
+        FormParameters formParam = new FormParameters( );
+        
+        Map<String,Object> mapFormParam = new HashMap<>();
+        mapFormParam.put( FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
+        
+        formParam.setFormParametersMap( mapFormParam );
+        formFilterId.setFormFilterConfiguration( config );
+        formFilterId.setFormParameters( formParam );
+
+        return formFilterId;
+}
 }

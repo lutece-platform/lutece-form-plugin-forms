@@ -61,7 +61,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
  */
 public class EntryTypeFileDisplayService implements IEntryDisplayService
 {
-    private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
+    protected static final String MARK_UPLOAD_HANDLER = "uploadHandler";
 
     private static final String LIST_RESPONSES = "list_responses";
 
@@ -89,7 +89,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
      *            The upload model
      * @return the completed model
      */
-    private Map<String, Object> setModel( Entry entry, IEntryTypeService service, Map<String, Object> model )
+    public Map<String, Object> setModel( Entry entry, IEntryTypeService service, Map<String, Object> model )
     {
         model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
         model.put( MARK_UPLOAD_HANDLER, ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ) );

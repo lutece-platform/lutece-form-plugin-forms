@@ -36,9 +36,11 @@ package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -636,7 +638,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             _entry.setCode( "question_" + _entry.getIdEntry( ) );
         }
 
-        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getId( ), _entry.getIdEntry( ) ) )
+        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getIdForm( ), _entry.getIdEntry( ) ) )
         {
             throw new CodeAlreadyExistsException( _entry.getCode( ) );
         }
@@ -661,6 +663,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         _question.setIdStep( nIdStep );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
         _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
+        _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
+        _question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED ) != null );
 
         String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
         columnTitle = ( columnTitle == null || columnTitle.isEmpty( ) ) ? _question.getTitle( ) : columnTitle;
@@ -745,7 +749,10 @@ public class FormQuestionJspBean extends AbstractJspBean
         // Duplicates the controls of the question
         for ( Control control : listControlsToDuplicate )
         {
-            control.setIdQuestion( questionToCopy.getId( ) );
+
+            Set<Integer> listQuestion = new HashSet<Integer>( );
+            listQuestion.add( questionToCopy.getId( ) );
+            control.setListIdQuestion( listQuestion );
             control.setIdControlTarget( questionToCopy.getId( ) );
             ControlHome.create( control );
         }
@@ -896,7 +903,8 @@ public class FormQuestionJspBean extends AbstractJspBean
             return strError;
         }
 
-        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getId( ), _entry.getIdEntry( ) ) )
+
+        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getIdForm( ), _entry.getIdEntry( ) ) )
         {
             throw new CodeAlreadyExistsException( _entry.getCode( ) );
         }
@@ -926,6 +934,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         String strTitle = _entry.getEntryType( ).getComment( ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
         _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
+        _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
+        _question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED ) != null );
         String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
         columnTitle = ( columnTitle == null || columnTitle.isEmpty( ) ) ? _question.getTitle( ) : columnTitle;
         _question.setColumnTitle( columnTitle );

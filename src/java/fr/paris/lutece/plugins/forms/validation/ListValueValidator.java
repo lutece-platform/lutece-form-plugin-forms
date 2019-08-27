@@ -55,14 +55,11 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * Validator to verify the exact value of a response
  *
  */
-public class ListValueValidator implements IValidator
+public class ListValueValidator extends AbstractValidator
 {
 
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_value_template.html";
     private static final String TEMPLATE_JAVASCRIPT = "/skin/plugins/forms/validators/list_value_javascript.html";
-    private final String _strValidatorName;
-    private final String _strDisplayName;
-    private final List<String> _listAvailableEntryType;
 
     /**
      * Constructor of the PatternValidator
@@ -76,9 +73,8 @@ public class ListValueValidator implements IValidator
      */
     public ListValueValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
-        _strValidatorName = strValidatorName;
-        _strDisplayName = I18nService.getLocalizedString( strValidatorDisplayName, I18nService.getDefaultLocale( ) );
-        _listAvailableEntryType = listAvailableEntryType;
+        super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
+
     }
 
     @Override
@@ -97,19 +93,21 @@ public class ListValueValidator implements IValidator
     public String getDisplayHtml( Control control )
     {
         Map<String, Object> model = new HashMap<String, Object>( );
-
-        Question question = QuestionHome.findByPrimaryKey( control.getIdQuestion( ) );
-
         ReferenceList refListValue = new ReferenceList( );
 
-        if ( question.getEntry( ) != null && question.getEntry( ).getFields( ) != null )
+        if ( control.getListIdQuestion( ) != null && !control.getListIdQuestion( ).isEmpty( ) )
         {
-            for ( Field field : question.getEntry( ).getFields( ) )
-            {
-                refListValue.addItem( field.getIdField( ), field.getTitle( ) );
-            }
-        }
+            Question question = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) );
 
+            if ( question.getEntry( ) != null && question.getEntry( ).getFields( ) != null )
+            {
+                for ( Field field : question.getEntry( ).getFields( ) )
+                {
+                    refListValue.addItem( field.getIdField( ), field.getTitle( ) );
+                }
+            }
+
+        }
         model.put( FormsConstants.PARAMETER_REF_LIST_VALUE, refListValue );
         model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
 

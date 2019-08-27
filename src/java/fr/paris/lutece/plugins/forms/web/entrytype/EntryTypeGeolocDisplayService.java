@@ -131,4 +131,5 @@ public class EntryTypeGeolocDisplayService implements IEntryDisplayService
     {
         return new FormColumnEntryGeolocation( nFormColumnPosition, strColumnTitle );
     }
+
 }

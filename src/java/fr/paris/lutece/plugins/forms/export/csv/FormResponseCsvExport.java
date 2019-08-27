@@ -42,7 +42,9 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
+import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
  * 
@@ -53,7 +55,8 @@ public class FormResponseCsvExport
 {
     private static final String SEPARATOR = FormsConstants.SEPARATOR_SEMICOLON;
     private static final String END_OF_LINE = FormsConstants.END_OF_LINE;
-    private static final String DOUBLE_QUOTE = "\"";
+    private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
+    private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
 
     private final CSVHeader _csvHeader = new CSVHeader( );
 
@@ -94,37 +97,24 @@ public class FormResponseCsvExport
     /**
      * Build the CSV string for column line
      */
-    private void buildCsvColumnToExport( )
-    {
-        StringBuilder sbCsvColumn = new StringBuilder( );
-        _csvHeader.buildColumnToExport( );
+	private void buildCsvColumnToExport( )
+	{
+		StringBuilder sbCsvColumn = new StringBuilder( );
 
-        for ( String strColumnName : _csvHeader.getColumnToExport( ) )
-        {
-            sbCsvColumn.append( safeString( strColumnName ) ).append( SEPARATOR );
-        }
+		sbCsvColumn.append( CSVUtil.safeString(
+				I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) ) );
+		sbCsvColumn.append( SEPARATOR );
+		sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION,
+				I18nService.getDefaultLocale( ) ) ) );
+		sbCsvColumn.append( SEPARATOR );
 
-        _strCsvColumnToExport = sbCsvColumn.append( END_OF_LINE ).toString( );
-    }
+		for ( Question question : _csvHeader.getColumnToExport( ) )
+		{
+			sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question ) ) ).append( SEPARATOR );
+		}
 
-    /**
-     * Make the specified value safe for the CSV export
-     * 
-     * @param strValue
-     *            the value
-     * @return the safe value
-     */
-    private String safeString( String strValue )
-    {
-        String strSafeString = strValue;
-
-        if ( strSafeString.contains( SEPARATOR ) )
-        {
-            strSafeString = new StringBuilder( DOUBLE_QUOTE ).append( strSafeString ).append( DOUBLE_QUOTE ).toString( );
-        }
-
-        return strSafeString;
-    }
+		_strCsvColumnToExport = sbCsvColumn.append( END_OF_LINE ).toString( );
+	}
 
     /**
      * Build the CSV string for all data lines
@@ -136,10 +126,11 @@ public class FormResponseCsvExport
         for ( CSVDataLine csvDataLine : _listDataToExport )
         {
             StringBuilder sbRecordContent = new StringBuilder( );
+            sbRecordContent.append( csvDataLine.getCommonDataToExport( ) );
 
-            for ( String strColumnName : _csvHeader.getColumnToExport( ) )
+            for ( Question question : _csvHeader.getColumnToExport( ) )
             {
-                sbRecordContent.append( safeString( Objects.toString( csvDataLine.getDataToExport( strColumnName ), StringUtils.EMPTY ) ) ).append( SEPARATOR );
+                sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append( SEPARATOR );
             }
 
             sbCsvData.append( sbRecordContent.toString( ) ).append( END_OF_LINE );
