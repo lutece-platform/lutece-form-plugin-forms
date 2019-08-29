@@ -3,9 +3,9 @@
 <#assign editModeValue = "">
 <#assign viewNumberValue = "1">
 <#if entry.fields??>
-        <#assign addressField = getFieldValue( entry, "address" )>
-        <#assign viewNumberValue = getFieldValue( entry, "viewNumber" )>
-        <#assign editModeValue = getFieldValue( entry, "editMode" )>
+        <#assign addressField = getFieldValueByCode( entry, "address" )>
+        <#assign viewNumberValue = getFieldValueByCode entry, "viewNumber" )>
+        <#assign editModeValue = getFieldValueByCode entry, "editMode" )>
 </#if>
 
 <#assign addressValue = "" />
@@ -18,11 +18,11 @@
     <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="form${entry.idEntry}_address" id="attribute${entry.idEntry}">${entry.title}<#if entry.mandatory>    *</#if></label>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
     <#if list_responses?? && list_responses?has_content>
-        <#assign addressValue = getResponseContainingTheFieldWithTitle(list_responses, "address").toStringValueResponse />
-        <#assign idAddressValue = getResponseContainingTheFieldWithTitle(list_responses, "idAddress").toStringValueResponse />
-        <#assign xValue = getResponseContainingTheFieldWithTitle(list_responses, "X").toStringValueResponse />
-        <#assign yValue = getResponseContainingTheFieldWithTitle(list_responses, "Y").toStringValueResponse />
-        <#assign geometryValue = getResponseContainingTheFieldWithTitle(list_responses, "geometry").toStringValueResponse />
+        <#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse />
+        <#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse />
+        <#assign xValue = getResponseContainingTheFieldWithCode(list_responses, "X").toStringValueResponse />
+        <#assign yValue = getResponseContainingTheFieldWithCode(list_responses, "Y").toStringValueResponse />
+        <#assign geometryValue = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse />
         <#if getError( list_responses, entry )?? >
           <#assign error = getError( list_responses, entry ) >
         </#if> 

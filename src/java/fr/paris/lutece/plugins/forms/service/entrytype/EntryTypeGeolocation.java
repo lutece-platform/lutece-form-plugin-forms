@@ -140,7 +140,7 @@ public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation implement
 
         for ( Response responseReference : listResponseReference )
         {
-            if ( responseReference.getField( ).getTitle( ).equals( responseNew.getField( ).getTitle( ) ) )
+            if ( responseReference.getField( ).getCode( ).equals( responseNew.getField( ).getCode( ) ) )
             {
                 response = responseReference;
                 break;

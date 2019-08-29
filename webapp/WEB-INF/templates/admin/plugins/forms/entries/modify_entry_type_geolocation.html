@@ -41,7 +41,7 @@
                         </@formGroup>
                         <!-- champs mode d’édition (suggestPOI, ligne, polygone)  -->
                         <@formGroup labelFor='edit_mode' labelKey='#i18n{forms.createEntry.editMode}'>
-                            <#assign editModeValue = getFieldValue( entry, "editMode" )>
+                            <#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
                             <#if editModeValue?has_content>
                                 <@select name='edit_mode' items=entryTypeService.editModeRefList default_value=editModeValue />
                             <#else>
@@ -50,7 +50,7 @@
                         </@formGroup>
                         <!-- view number  -->
                         <@formGroup labelFor='view_number' labelKey='#i18n{forms.createEntry.viewNumber}'>
-                            <#assign viewNumberValue = getFieldValue( entry, "viewNumber" )>
+                            <#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
                             <@input type='text' name='view_number' id='view_number' value=viewNumberValue maxlength=255 />
                         </@formGroup>
                         <@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
