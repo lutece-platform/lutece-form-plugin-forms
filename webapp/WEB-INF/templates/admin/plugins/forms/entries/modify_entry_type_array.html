@@ -32,8 +32,8 @@
 					<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelArrayTitle}' helpKey='#i18n{forms.createEntry.labelArrayTitleHelp}' rows=2>
 						<@input type='text' name='comment' id='comment' value='${entry.comment}' maxlength=255 />
 					</@formGroup>
-					<@formGroup labelFor='is_shown_in_completeness' labelKey='#i18n{forms.createEntry.labelResponsesCompleteness}' helpKey='#i18n{forms.createEntry.labelResponsesCompletenessComment}'>
-                    	<@checkBox name='is_shown_in_completeness' id='is_shown_in_completeness' value='1' checked=entry.shownInCompleteness />
+					<@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+                    	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
                     </@formGroup>
                                         ${question_modify_template!}
 					<@formGroup rows=2>
