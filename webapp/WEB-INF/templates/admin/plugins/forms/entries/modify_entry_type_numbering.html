@@ -23,10 +23,7 @@
                                                     <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
                                                 </@formGroup>
 						<#if entry.fields?? && entry.fields?has_content>
-							<#assign prefix = "">
-							<#if entry.fields[0].title??>
-									<#assign prefix = entry.fields[0].title>
-							</#if>
+							<#assign prefix = getFieldValueByCode( entry, 'prefix') >
 							<@formGroup labelFor='prefix' labelKey='#i18n{forms.createEntry.labelPrefix}' helpKey='#i18n{forms.createEntry.labelPrefixComment}'>
 								<@input type='text' name='prefix' value=prefix maxlength=255 />
 							</@formGroup>
