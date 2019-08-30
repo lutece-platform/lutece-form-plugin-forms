@@ -132,7 +132,7 @@ public class TermsOfServiceXPage extends MVCApplication
             SiteMessageService.setMessage( request, MESSAGE_ERROR_TERMS_OF_SERVICE_NOT_FOUND, SiteMessage.TYPE_STOP );
         }
 
-        Field fieldTermsOfService = FormsEntryUtils.findFieldByCode( entry, EntryTypeTermsOfService.FIELD_TOS_CODE );
+        Field fieldTermsOfService = entry.getFieldByCode( EntryTypeTermsOfService.FIELD_TOS_CODE );
 
         if ( fieldTermsOfService == null )
         {

@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,7 +42,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
@@ -152,10 +150,9 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
         entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
         entry.setTitle( strTitle );
         entry.setCSSClass( strCSSClass );
-        setValue( entry, FIELD_LINK_CODE, strLinkText );
-        setValue( entry, FIELD_TOS_CODE, strTermsOfService );
-        setValue( entry, FIELD_AGREEMENT_CODE, Boolean.FALSE.toString( ) );
-
+        createOrUpdateField( entry, FIELD_LINK_CODE, null, strLinkText );
+        createOrUpdateField( entry, FIELD_TOS_CODE, null, strTermsOfService );
+        createOrUpdateField( entry, FIELD_AGREEMENT_CODE, null, Boolean.FALSE.toString( ) );
         return null;
     }
 
@@ -208,38 +205,6 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
         };
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
-    }
-
-    /**
-     * Sets the specified value with the specified code in the specified entry
-     * 
-     * @param entry
-     *            the entry
-     * @param strCode
-     *            the code
-     * @param strValue
-     *            the value
-     */
-    private void setValue( Entry entry, String strCode, String strValue )
-    {
-        List<Field> listField = entry.getFields( );
-
-        if ( listField == null )
-        {
-            listField = new ArrayList<Field>( );
-            entry.setFields( listField );
-        }
-
-        Field field = FormsEntryUtils.findFieldByCode( entry, strCode );
-
-        if ( field == null )
-        {
-            field = new Field( );
-            listField.add( field );
-        }
-
-        field.setCode( strCode );
-        field.setValue( strValue );
     }
 
     /**
@@ -335,7 +300,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
      */
     private Response createResponseForAcceptedTermsOfService( Entry entry, HttpServletRequest request )
     {
-        Field fieldAcceptedTermsOfService = FormsEntryUtils.findFieldByCode( entry, FIELD_TOS_CODE );
+        Field fieldAcceptedTermsOfService = entry.getFieldByCode( FIELD_TOS_CODE );
 
         Response response = createResponse( entry, request );
         response.setResponseValue( fieldAcceptedTermsOfService.getValue( ) );
