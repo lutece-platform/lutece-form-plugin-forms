@@ -90,37 +90,39 @@
 							</tr>
 							<#assign cpt=0>
 							 <#list list as field>
-							<#assign cpt=cpt+1>
-							<tr>
-								<td>${field.title}</td>
-								<td>
-									<#if field.defaultValue>
-										<@tag color='success'><@icon style='check' title='#i18n{forms.createEntry.manageField.rowDefaultValue}' /></@tag>
-									</#if>&nbsp;${field.value}
-								</td>
-								<td>
-									<#if field.conditionalQuestions?exists>
-										<#list field.conditionalQuestions as entry>
-											<#if entry.entryType.comment>
-												${entry.comment}
-											<#else>
-												${entry.title}
-											</#if>
-											<br>
-										</#list>
-									</#if>     	
-								</td>
-								<td>
-									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' title='#i18n{portal.util.labelModify}' buttonIcon='edit' showTitle=false />
-									<#if cpt!=1>
-									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveUp}' buttonIcon='chevron-up' showTitle=false />
-									</#if> 
-									<#if field_has_next>
-									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveDown}' buttonIcon='chevron-down' showTitle=false />
-									</#if>
-									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' buttonIcon='trash' showTitle=false color='btn-danger' />
-								 </td>
-								</tr>
+							 <#if field.code == 'answer_choice'>
+								<#assign cpt=cpt+1>
+								<tr>
+									<td>${field.title}</td>
+									<td>
+										<#if field.defaultValue>
+											<@tag color='success'><@icon style='check' title='#i18n{forms.createEntry.manageField.rowDefaultValue}' /></@tag>
+										</#if>&nbsp;${field.value}
+									</td>
+									<td>
+										<#if field.conditionalQuestions?exists>
+											<#list field.conditionalQuestions as entry>
+												<#if entry.entryType.comment>
+													${entry.comment}
+												<#else>
+													${entry.title}
+												</#if>
+												<br>
+											</#list>
+										</#if>     	
+									</td>
+									<td>
+										<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' title='#i18n{portal.util.labelModify}' buttonIcon='edit' showTitle=false />
+										<#if cpt!=1>
+										<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveUp}' buttonIcon='chevron-up' showTitle=false />
+										</#if> 
+										<#if field_has_next>
+										<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveDown}' buttonIcon='chevron-down' showTitle=false />
+										</#if>
+										<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' buttonIcon='trash' showTitle=false color='btn-danger' />
+									 </td>
+									</tr>
+								</#if>
 							</#list> 
 						</@table>
 					</fieldset>
