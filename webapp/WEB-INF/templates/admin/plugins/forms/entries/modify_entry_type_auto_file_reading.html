@@ -34,19 +34,15 @@
 							<@checkBox name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
 						</@formGroup>
 						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-							<#list entry.fields as field>
-								<#if !field.title??>
-								<@input type='text' name='width' id='width' value='${field.width}' />
-								<#assign id_field=field.idField>
-								<#break>
-								</#if> 
-							</#list>
+							<#assign field=getFieldByCode(entry, "file_config")>
+							<@input type='text' name='width' id='width' value='${field.width}' />
+							<#assign id_field=field.idField>
 						</@formGroup>
 						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.createEntry.labelFileMaxSize}' mandatory=true>
 							<@input type='text' name='file_max_size' id='file_max_size' value=getFileMaxSize(entry) />
 						</@formGroup>
 						<!-- File type -->
-						<#assign fileType = getFieldValue( entry, "file_type" )>
+						<#assign fileType = getFieldValueByCode( entry, "file_type" )>
 						<@formGroup labelFor='file_type' labelKey='#i18n{forms.createEntry.fileType}' mandatory=true>
 							<#list entryTypeService.fileTypeRefList as file>
 								<#if fileType="${file.code}">

@@ -33,15 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -57,7 +56,6 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
-import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.url.UrlItem;
@@ -173,45 +171,15 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
      *            the HTTP request
      */
     @Override
-    protected void setFields( Entry entry, HttpServletRequest request )
+    protected void createOrUpdateFileFields( Entry entry, HttpServletRequest request )
     {
-    	List<Field> listFields = new ArrayList<>( );
-        listFields.add( buildDefaultField( entry, request ) );
-        listFields.add( buildFieldFileMaxSize( entry, request ) );
-        listFields.add( buildFieldFileType( entry, request ) );
-        listFields.add( buildExportBinaryField( entry, request ) );
-
-        entry.setFields( listFields );
+    	super.createOrUpdateFileFields( entry, request );
+    	
+    	String strOcrProvider = request.getParameter( PARAMETER_FILE_TYPE );
+    	
+    	createOrUpdateField( entry, FIELD_FILE_TYPE, null, strOcrProvider );
     }
     
-    /**
-     * Build the field for file max size
-     * 
-     * @param entry
-     *            The entry
-     * @param request
-     *            the HTTP request
-     * @return the field
-     */
-    private Field buildFieldFileType( Entry entry, HttpServletRequest request )
-    {
-        String strOcrProvider = request.getParameter( PARAMETER_FILE_TYPE );
-        
-        Field fieldFileType = GenericAttributesUtils.findFieldByTitleInTheList( CONSTANT_FILE_TYPE, entry.getFields( ) );
-
-        if ( fieldFileType == null )
-        {
-        	fieldFileType = new Field( );
-        }
-        
-        fieldFileType.setTitle( CONSTANT_FILE_TYPE );
-        fieldFileType.setValue(strOcrProvider);
-
-        fieldFileType.setParentEntry( entry );
-
-        return fieldFileType;
-    }
-
     /**
      * Builds the {@link ReferenceList} of all available files type
      * 
@@ -323,7 +291,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     	   	
         if( entry.getEntryType().getBeanName().equals(ENTRY_TYPE_AUT_READING_FILE)  && handler.hasAddFileFlag( request, strAttributeName ) && fileUploaded != null && !StringUtils.isEmpty(fileUploaded.getName()) ){ 
         	
-        	Field fieldFileType = GenericAttributesUtils.findFieldByTitleInTheList( CONSTANT_FILE_TYPE, entry.getFields( ) );
+        	Field fieldFileType = entry.getFieldByCode( FIELD_FILE_TYPE );
 			IOcrProvider ocrProvider= OcrProviderManager.getOcrProvider(fieldFileType.getValue( ) );
 			List<Response> listResponse= null;
 			try {

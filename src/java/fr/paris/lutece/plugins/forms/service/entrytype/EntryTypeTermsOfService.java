@@ -174,7 +174,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     {
         if ( StringUtils.isBlank( strTitle ) )
         {
-            return FIELD_TITLE;
+            return ERROR_FIELD_TITLE;
         }
 
         if ( StringUtils.isBlank( strLinkText ) )
