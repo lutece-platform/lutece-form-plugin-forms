@@ -24,10 +24,10 @@
                                             <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
                                         </@formGroup>
 					<@formGroup labelFor='num_row' labelKey='#i18n{forms.createEntry.labelNumberRows}' mandatory=true rows=2>
-						<@input type='text' name='num_row' id='num_row' value='${entry.numberRow}' maxlength=255 />
+						<@input type='text' name='num_row' id='num_row' value='${entry.numberRow}' maxlength=255 readonly=true />
 					</@formGroup>
 					<@formGroup labelFor='num_column' labelKey='#i18n{forms.createEntry.labelNumberColumns}' mandatory=true rows=2>
-						<@input type='text' name='num_column' id='num_column' value='${entry.numberColumn}' maxlength=255 />
+						<@input type='text' name='num_column' id='num_column' value='${entry.numberColumn}' maxlength=255 readonly=true />
 					</@formGroup>
 					<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelArrayTitle}' helpKey='#i18n{forms.createEntry.labelArrayTitleHelp}' rows=2>
 						<@input type='text' name='comment' id='comment' value='${entry.comment}' maxlength=255 />
