@@ -4,7 +4,6 @@
 
 <@breadforms title=entry.entryType.title />
 
-<#assign fieldIsOnlyDisplayedInBack = getFieldByCode( entry, "only_display_in_back" ) >
 <#assign fieldMyLuteceAttributeName = getFieldByCode( entry, "attribute_name" ) >
 
 <@row>
@@ -37,7 +36,7 @@
 							<@checkBox name='mandatory' id='mandatory' value='true' checked=entry.mandatory />
 						</@formGroup>
                         <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
-                            <@checkBox name='only_display_in_back' id='only_display_in_back' value='true' checked=fieldIsOnlyDisplayedInBack.value=='1' />
+                            <@checkBox name='only_display_in_back' id='only_display_in_back' value='true' checked=entry.onlyDisplayInBack />
                         </@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
