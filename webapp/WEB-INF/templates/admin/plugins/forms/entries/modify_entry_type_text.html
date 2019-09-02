@@ -10,6 +10,7 @@
 		<fieldset>
 		<legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"</legend>
 		<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+			<#assign config=getFieldByCode( entry, "text_config")>
 			<input name="id_entry" value="${entry.idEntry}" type="hidden" />
 			<input name="id_step" value="${step.id}" type="hidden" />
 			<input name="id_question" value="${question.id}" type="hidden" />
@@ -29,8 +30,7 @@
 				<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
 			</@formGroup>
 			<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
-				<#assign field=getFieldByCode( entry, "text_config")>
-				<@input type='text' name='value' id='value' value='${field.value}' />
+				<@input type='text' name='value' id='value' value='${config.value}' />
 			</@formGroup>
 			<@formGroup>
 				<#if entry.mandatory><#assign checked = true /></#if>
@@ -40,14 +40,12 @@
 				<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
 			</@formGroup>
 			<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-				<#assign field=getFieldByCode( entry, "text_config")>
-				<@input type='text' name='width' id='width' value='${field.width}' />
-				<#assign id_field=field.idField> 
+				<@input type='text' name='width' id='width' value='${config.width}' />
+				<#assign id_field=config.idField> 
 			</@formGroup>
 			<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
-				<#assign field=getFieldByCode( entry, "text_config")>
-				<#if field.maxSizeEnter!=-1>
-					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='${field.maxSizeEnter}' />
+				<#if config.maxSizeEnter!=-1>
+					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='${config.maxSizeEnter}' />
 				<#else>
 					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='' />
 				</#if>

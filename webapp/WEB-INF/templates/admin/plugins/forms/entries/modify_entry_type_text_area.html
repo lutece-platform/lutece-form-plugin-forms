@@ -9,6 +9,7 @@
 	<@boxBody>
 		<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
 			<fieldset>
+				<#assign config=getFieldByCode( entry, "text_config")>
 				<legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : '${form.title}'</legend>
 				<input name="id_entry" value="${entry.idEntry}" type="hidden">
 				<input name="id_step" value="${step.id}" type="hidden">
@@ -29,24 +30,21 @@
 					<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
 				</@formGroup>
 				<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
-					<@input type='textarea' name='value' id='value' rows=10><#list entry.fields as field>${field.value}</#list></@input>
+					<@input type='textarea' name='value' id='value' rows=10>${config.value}</@input>
 				</@formGroup>
 				<@formGroup>
 					<#if entry.mandatory><#assign checked = true /></#if>
 					<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=checked />
 				</@formGroup>
 				<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-					<#assign field=getFieldByCode( entry, "text_config")>
-					<@input type='text' name='width' id='width' value='${field.width}' />
+					<@input type='text' name='width' id='width' value='${config.width}' />
 				</@formGroup>
 				<@formGroup labelFor='height' labelKey='#i18n{forms.createEntry.labelHeight}' mandatory=true>
-					<#assign field=getFieldByCode( entry, "text_config")>
-					<@input type='text' name='height' id='height' inputSize=5 value='${field.height}' />
+					<@input type='text' name='height' id='height' inputSize=5 value='${config.height}' />
 				</@formGroup>
 				<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
-					<#assign field=getFieldByCode( entry, "text_config")>
-					<#if field.maxSizeEnter!=-1>
-						<#assign value='${field.maxSizeEnter}' />
+					<#if config.maxSizeEnter!=-1>
+						<#assign value='${config.maxSizeEnter}' />
 					<#else>
 						<#assign value='' />
 					</#if>
