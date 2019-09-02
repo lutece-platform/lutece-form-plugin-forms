@@ -68,6 +68,9 @@
                         <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
 	                    	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
 	                    </@formGroup>
+	                    <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
                         ${question_modify_template!}
                         <@formGroup>
                             <@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false />
