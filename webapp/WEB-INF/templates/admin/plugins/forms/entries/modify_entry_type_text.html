@@ -29,9 +29,8 @@
 				<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
 			</@formGroup>
 			<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
-				<#list entry.fields as field>
-					<@input type='text' name='value' id='value' value='${field.value}' />
-				</#list>
+				<#assign field=getFieldByCode( entry, "text_config")>
+				<@input type='text' name='value' id='value' value='${field.value}' />
 			</@formGroup>
 			<@formGroup>
 				<#if entry.mandatory><#assign checked = true /></#if>
@@ -41,19 +40,17 @@
 				<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
 			</@formGroup>
 			<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-				<#list entry.fields as field>
-					<@input type='text' name='width' id='width' value='${field.width}' />
-					<#assign id_field=field.idField> 
-				</#list>
+				<#assign field=getFieldByCode( entry, "text_config")>
+				<@input type='text' name='width' id='width' value='${field.width}' />
+				<#assign id_field=field.idField> 
 			</@formGroup>
 			<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
-				<#list entry.fields as field>
-					<#if field.maxSizeEnter!=-1>
-						<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='${field.maxSizeEnter}' />
-					<#else>
-						<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='' />
-					</#if>
-				</#list>	
+				<#assign field=getFieldByCode( entry, "text_config")>
+				<#if field.maxSizeEnter!=-1>
+					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='${field.maxSizeEnter}' />
+				<#else>
+					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='' />
+				</#if>
 			</@formGroup>
 			<@formGroup >
 				<#if entry.confirmField><#assign checkedValue = true /><#else><#assign checkedValue = false /></#if>

@@ -5,32 +5,31 @@
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
 			<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-				<#list entry.fields as field>
-						<input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field.width &gt; 0>style="width:${field.width}px;"</#if>
-						<#if list_responses?has_content>
-							<#list list_responses as response>
-							<#if response.entry.idEntry == entry.idEntry>
-								<#if response.toStringValueResponse??>
-									value="${response.toStringValueResponse}"
-								</#if>
-								<#if response.entry.error??>
-									class="error"
-								</#if>
-								</#if>
-							</#list>
-						<#else>
-							<#if field.value?exists>
-								value="${field.value}" 
-							<#else>
-								 value="" 
+				<#assign field=getFieldByCode( entry, "text_config")>
+					<input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field.width &gt; 0>style="width:${field.width}px;"</#if>
+					<#if list_responses?has_content>
+						<#list list_responses as response>
+						<#if response.entry.idEntry == entry.idEntry>
+							<#if response.toStringValueResponse??>
+								value="${response.toStringValueResponse}"
 							</#if>
+							<#if response.entry.error??>
+								class="error"
+							</#if>
+							</#if>
+						</#list>
+					<#else>
+						<#if field.value?exists>
+							value="${field.value}" 
+						<#else>
+							 value="" 
 						</#if>
-						<#if field.maxSizeEnter!=-1>
-							maxlength="${field.maxSizeEnter}"
-						</#if>
-					class="${entry.CSSClass!} "	/>
+					</#if>
+					<#if field.maxSizeEnter!=-1>
+						maxlength="${field.maxSizeEnter}"
+					</#if>
+				class="${entry.CSSClass!} "	/>
 					
-				</#list>
 				<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 					<span class="help-block">${entry.helpMessage}</span>
 				</#if>
