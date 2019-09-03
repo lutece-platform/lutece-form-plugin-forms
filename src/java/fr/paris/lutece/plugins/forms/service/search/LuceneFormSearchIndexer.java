@@ -599,6 +599,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         }
         
         // --- form response entry code / fields
+        Set<String> setFieldNameBuilderUsed=new HashSet<>( );
         for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
         {
             for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
@@ -606,6 +607,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                 String strQuestionCode = formQuestionResponse.getQuestion( ).getCode( );
                 Entry entry = formQuestionResponse.getQuestion().getEntry();
                 IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
+                
+                
                 for ( Response response : formQuestionResponse.getEntryResponse( ) )
                 {
                     // TODO USE EXPORT MANAGER ?
@@ -621,40 +624,51 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                             fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ );
                             fieldNameBuilder.append( getFieldName );
                         }
-                        if ( entryTypeService instanceof EntryTypeDate )
+                        
+                        if(!setFieldNameBuilderUsed.contains( fieldNameBuilder.toString( ) ))
                         {
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
-                            try
+                            setFieldNameBuilderUsed.add( fieldNameBuilder.toString( )  );
+                            if ( entryTypeService instanceof EntryTypeDate )
                             {
-	                            LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
-	                            Timestamp timestamp = Timestamp.valueOf( localDate.atTime( 12, 30 ) );
-	                            doc.add( new LongPoint( fieldNameBuilder.toString( )+ FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
-	                            doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, String.valueOf( timestamp.getTime( ) ), Field.Store.YES ) );
-	                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, new BytesRef( String.valueOf( timestamp.getTime( ) ) ) ) );
-	                        }
-                            catch ( Exception e )
-                            {
-                                AppLogService.error( "Unable to parse " + response.getResponseValue() + " with date formatter " + FILTER_DATE_FORMAT, e );
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
+                                try
+                                {
+    	                            LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
+    	                            Timestamp timestamp = Timestamp.valueOf( localDate.atTime( 12, 30 ) );
+    	                            doc.add( new LongPoint( fieldNameBuilder.toString( )+ FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
+    	                            doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, String.valueOf( timestamp.getTime( ) ), Field.Store.YES ) );
+    	                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, new BytesRef( String.valueOf( timestamp.getTime( ) ) ) ) );
+    	                        }
+                                catch ( Exception e )
+                                {
+                                    AppLogService.error( "Unable to parse " + response.getResponseValue() + " with date formatter " + FILTER_DATE_FORMAT, e );
+                                }
                             }
-                        }
-                        else if ( entryTypeService instanceof EntryTypeNumbering )
-                        {
-                        	try
-                        	{
-                        		Integer value = Integer.valueOf( response.getResponseValue( ) );
-                        		doc.add( new IntPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
-                        		doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
-                        		doc.add( new StoredField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
-                        	}
-                        	catch (NumberFormatException e) {
-                        		AppLogService.error( "Unable to parse " + response.getResponseValue() + " to integer ", e );
-							}
+                            else if ( entryTypeService instanceof EntryTypeNumbering )
+                            {
+                            	try
+                            	{
+                            		Integer value = Integer.valueOf( response.getResponseValue( ) );
+                            		doc.add( new IntPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
+                            		doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
+                            		doc.add( new StoredField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
+                            	}
+                            	catch (NumberFormatException e) {
+                            		AppLogService.error( "Unable to parse " + response.getResponseValue() + " to integer ", e );
+    							}
+                            }
+                            else
+                            {
+                                doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
+                                doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+                            }
+                             
                         }
                         else
                         {
-                            doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
-                        }
+                            AppLogService.error( " FieldNameBuilder "+  fieldNameBuilder.toString( )+"  already used for formResponse.getId( )  "+formResponse.getId( )+"  formQuestionResponse.getId( )  " + formQuestionResponse.getId( ) +" response.getIdResponse( ) " + response.getIdResponse( ) +" formResponseStep" +formResponseStep.getId( ));
+                            
+                         }
                         
                     }
                 }
