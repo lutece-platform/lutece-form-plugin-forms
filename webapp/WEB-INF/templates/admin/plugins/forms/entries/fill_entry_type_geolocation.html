@@ -4,8 +4,8 @@
 <#assign viewNumberValue = "1">
 <#if entry.fields??>
         <#assign addressField = getFieldValueByCode( entry, "address" )>
-        <#assign viewNumberValue = getFieldValueByCode entry, "viewNumber" )>
-        <#assign editModeValue = getFieldValueByCode entry, "editMode" )>
+        <#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
+        <#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
 </#if>
 
 <#assign addressValue = "" />
