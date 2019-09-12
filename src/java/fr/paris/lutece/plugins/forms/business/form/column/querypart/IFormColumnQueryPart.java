@@ -56,7 +56,7 @@ public interface IFormColumnQueryPart
      *            The FormColumn to set to the FormColumnQueryPart
      */
     void setFormColumn( IFormColumn formColumn );
-    
+
     /**
      * Get the content of the column cell from Lucene doc
      * 

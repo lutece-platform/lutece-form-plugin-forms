@@ -55,7 +55,7 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
 
     // Beans
     private static final String BEAN_FORM_RESPONSE_EVENT_LISTENER = "forms.formResponseEventListener";
-    
+
     /**
      * {@inheritDoc}
      */

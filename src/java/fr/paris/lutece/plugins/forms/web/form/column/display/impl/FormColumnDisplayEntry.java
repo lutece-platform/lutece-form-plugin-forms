@@ -76,7 +76,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     private static final String MARK_COLUMN_SORT_ATTRIBUTE = "column_sort_attribute";
     private static final String MARK_SORT_URL = "sort_url";
 
-    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy");
+    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy" );
     private final DateFormat _dateFormat = new SimpleDateFormat( FILTER_DATE_FORMAT );
 
     /**
@@ -89,29 +89,29 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_TITLE, getFormColumnTitle( ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_POSITION, getPosition( ) );
-        
+
         String columSort = String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getPosition( ) );
         if ( getFormColumn( ) instanceof FormColumnEntry )
         {
-                FormColumnEntry column =  ( ( FormColumnEntry ) getFormColumn( ) );
-        	columSort = column.getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
-                String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0";
+            FormColumnEntry column = ( (FormColumnEntry) getFormColumn( ) );
+            columSort = column.getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
+            String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0";
 
-                String strEntryCode = column.getListEntryCode().get( 0 );
-                Question question = QuestionHome.findByCode( strEntryCode );
-                Entry entry = question.getEntry();
-                IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
-                if ( entryTypeService instanceof EntryTypeNumbering )
-                {
-                    strAttributeSort += FormResponseSearchItem.FIELD_INT_SUFFIX;
-                }
-                if ( entryTypeService instanceof EntryTypeDate )
-                {
-                    strAttributeSort += FormResponseSearchItem.FIELD_DATE_SUFFIX;
-                }
-                model.put( MARK_COLUMN_SORT_ATTRIBUTE, strAttributeSort );
+            String strEntryCode = column.getListEntryCode( ).get( 0 );
+            Question question = QuestionHome.findByCode( strEntryCode );
+            Entry entry = question.getEntry( );
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
+            if ( entryTypeService instanceof EntryTypeNumbering )
+            {
+                strAttributeSort += FormResponseSearchItem.FIELD_INT_SUFFIX;
+            }
+            if ( entryTypeService instanceof EntryTypeDate )
+            {
+                strAttributeSort += FormResponseSearchItem.FIELD_DATE_SUFFIX;
+            }
+            model.put( MARK_COLUMN_SORT_ATTRIBUTE, strAttributeSort );
         }
-        
+
         String strColumnHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );
         setFormColumnHeaderTemplate( strColumnHeaderTemplate );
 
@@ -124,39 +124,38 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     @Override
     public String buildFormColumnCellTemplate( FormColumnCell formColumnCell, Locale locale )
     {
-        List<String> listEntryValues = new ArrayList<>();
-        if ( formColumnCell != null && formColumnCell.getFormColumnCellValues( ).size() > 0 )
+        List<String> listEntryValues = new ArrayList<>( );
+        if ( formColumnCell != null && formColumnCell.getFormColumnCellValues( ).size( ) > 0 )
         {
-            formColumnCell.getFormColumnCellValues( ).entrySet().forEach(
-                    entry -> {
-                        Object objEntryValue = entry.getValue( );
-                        String objEntryKey = entry.getKey( );
-                        if ( objEntryValue != null )
+            formColumnCell.getFormColumnCellValues( ).entrySet( ).forEach( entry -> {
+                Object objEntryValue = entry.getValue( );
+                String objEntryKey = entry.getKey( );
+                if ( objEntryValue != null )
+                {
+                    if ( objEntryKey.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
+                    {
+                        String stringToConvert = String.valueOf( objEntryValue );
+                        try
                         {
-                            if ( objEntryKey.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
-                            {
-                                String stringToConvert = String.valueOf( objEntryValue );
-                                try
-                                {
-                                    Long convertedLong = Long.parseLong( stringToConvert );
-                                    Date date = new Date( convertedLong );
-                                    String strDate = _dateFormat.format( date ) ;  
+                            Long convertedLong = Long.parseLong( stringToConvert );
+                            Date date = new Date( convertedLong );
+                            String strDate = _dateFormat.format( date );
 
-                                    listEntryValues.add( strDate );
-                                }
-                                catch ( Exception e )
-                                {
-                                    listEntryValues.add( stringToConvert );
-                                }
-                                
-                            }
-                            else
-                            {
-                                listEntryValues.add( String.valueOf( objEntryValue ) );
-                            }
-                             
+                            listEntryValues.add( strDate );
                         }
-                    });
+                        catch( Exception e )
+                        {
+                            listEntryValues.add( stringToConvert );
+                        }
+
+                    }
+                    else
+                    {
+                        listEntryValues.add( String.valueOf( objEntryValue ) );
+                    }
+
+                }
+            } );
         }
 
         Map<String, Object> model = new LinkedHashMap<>( );
@@ -182,5 +181,5 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         }
 
         return nFormColumnPosition;
-}
+    }
 }

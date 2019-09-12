@@ -145,7 +145,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
-    
+
     // Variables
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
     private final transient IFormsMultiviewAuthorizationService _formsMultiviewAuthorizationService = SpringContextService
@@ -218,7 +218,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         mapFormResponseDetailsModel.put( MARK_FORM_RESPONSE, formResponse );
         mapFormResponseDetailsModel.put( MARK_FORM, form );
 
-        List<Step> listSteps = new ArrayList<>();
+        List<Step> listSteps = new ArrayList<>( );
         Map<Integer, Step> mapSteps = new HashMap<>( );
         List<Integer> listStepsOfForm = StepHome.getIdStepsListByForm( form.getId( ) );
         List<FormResponseStep> listFormResponseStep = formResponse.getSteps( );
@@ -228,8 +228,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         {
             listStepsOrdered.add( formResponseStep.getStep( ).getId( ) );
         }
-        
-        //Add the steps that are editable but not in the actuel form response flow
+
+        // Add the steps that are editable but not in the actuel form response flow
         for ( Integer idStepForm : listStepsOfForm )
         {
             if ( !listStepsOrdered.contains( idStepForm ) && TransitionHome.getTransitionsListFromStep( idStepForm ).isEmpty( ) )
@@ -238,7 +238,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             }
         }
 
-        listStepsOrdered.stream().forEach( nIdStep -> listSteps.add( StepHome.findByPrimaryKey( nIdStep ) ) );
+        listStepsOrdered.stream( ).forEach( nIdStep -> listSteps.add( StepHome.findByPrimaryKey( nIdStep ) ) );
 
         List<String> listStepDisplayTree = buildFormStepDisplayTreeList( request, listSteps, formResponse );
         listSteps.stream( ).forEach( step -> mapSteps.put( step.getId( ), step ) );

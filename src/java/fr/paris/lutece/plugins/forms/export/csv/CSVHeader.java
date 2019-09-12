@@ -61,35 +61,37 @@ public class CSVHeader
      * @param question
      *            the question to add
      */
-	public void addHeader( Question question )
-	{
-		ListIterator<Question> listIterator = _listQuestionColumn.listIterator( );
-		boolean foundQuestionWithSameId = false;
-		while ( listIterator.hasNext( ) )
-		{
-			Question aQuestion = listIterator.next( );
-			if ( aQuestion.getId( ) == question.getId( ) )
-			{
-				if ( aQuestion.getIterationNumber( ) == question.getIterationNumber( ) )
-				{
-					return;
-				}
-				if ( aQuestion.getIterationNumber( ) > question.getIterationNumber( ) )
-				{
-					listIterator.previous( );
-					listIterator.add( question );
-					return;
-				}
-				foundQuestionWithSameId = true;
-			} else if ( foundQuestionWithSameId )
-			{
-				listIterator.previous( );
-				listIterator.add( question );
-				return;
-			}
-		}
-		_listQuestionColumn.add( question );
-	}
+    public void addHeader( Question question )
+    {
+        ListIterator<Question> listIterator = _listQuestionColumn.listIterator( );
+        boolean foundQuestionWithSameId = false;
+        while ( listIterator.hasNext( ) )
+        {
+            Question aQuestion = listIterator.next( );
+            if ( aQuestion.getId( ) == question.getId( ) )
+            {
+                if ( aQuestion.getIterationNumber( ) == question.getIterationNumber( ) )
+                {
+                    return;
+                }
+                if ( aQuestion.getIterationNumber( ) > question.getIterationNumber( ) )
+                {
+                    listIterator.previous( );
+                    listIterator.add( question );
+                    return;
+                }
+                foundQuestionWithSameId = true;
+            }
+            else
+                if ( foundQuestionWithSameId )
+                {
+                    listIterator.previous( );
+                    listIterator.add( question );
+                    return;
+                }
+        }
+        _listQuestionColumn.add( question );
+    }
 
     /**
      * @return the _listFinalColumnToExport

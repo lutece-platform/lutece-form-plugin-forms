@@ -171,12 +171,12 @@ public final class FormResponseDAO implements IFormResponseDAO
 
         return formResponseList;
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public List<Integer> selectAllFormResponsesId( Plugin plugin ) 
+    public List<Integer> selectAllFormResponsesId( Plugin plugin )
     {
         List<Integer> formResponseIdList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ID, plugin );
@@ -191,7 +191,6 @@ public final class FormResponseDAO implements IFormResponseDAO
         return formResponseIdList;
     }
 
-    
     /**
      * {@inheritDoc }
      */
@@ -200,7 +199,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     {
         List<FormResponse> formResponseList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_ID_FORM, plugin );
-        daoUtil.setInt( 1 , nIdForm );
+        daoUtil.setInt( 1, nIdForm );
         daoUtil.executeQuery( );
 
         while ( daoUtil.next( ) )

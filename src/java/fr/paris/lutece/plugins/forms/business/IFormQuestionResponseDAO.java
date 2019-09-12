@@ -107,7 +107,7 @@ public interface IFormQuestionResponseDAO
      * @return The list which contains the data of all the FormQuestionResponse objects
      */
     List<FormQuestionResponse> selectFormQuestionResponseListByStepAndFormResponse( int nIdFormResponse, int nIdStep, Plugin plugin );
-    
+
     /**
      * Load the data of all the FormQuestionResponse objects and returns them as a list
      * 
@@ -164,9 +164,10 @@ public interface IFormQuestionResponseDAO
      * @return
      */
     FormQuestionResponse selectFormQuestionResponseByEntryResponse( Response response, Plugin plugin );
-    
+
     /**
      * Populates the FormQuestionResponse of the list with their Response values.
+     * 
      * @param formQuestionResponsesList
      * @param plugin
      */

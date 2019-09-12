@@ -56,8 +56,8 @@ public class FormResponseItemComparatorTest extends LuteceTestCase
     private static final int INFERIOR_COMPARISON_RESULT = NumberUtils.INTEGER_MINUS_ONE;
 
     // Variables
-    private static final FormResponseItemSortConfig _defaultFormResponseItemComparatorConfig = new FormResponseItemSortConfig(
-            DEFAULT_COLUMN_POSITION_TO_SORT, DEFAULT_SORT_ATTRIBUTE_NAME, ASCENDANT_SORT );
+    private static final FormResponseItemSortConfig _defaultFormResponseItemComparatorConfig = new FormResponseItemSortConfig( DEFAULT_COLUMN_POSITION_TO_SORT,
+            DEFAULT_SORT_ATTRIBUTE_NAME, ASCENDANT_SORT );
 
     /**
      * {@inheritDoc}

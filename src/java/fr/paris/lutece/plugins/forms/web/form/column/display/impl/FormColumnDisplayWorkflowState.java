@@ -98,5 +98,5 @@ public class FormColumnDisplayWorkflowState extends AbstractFormColumnDisplay
         String strWorkflowStateTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
 
         return strWorkflowStateTemplate;
-}
+    }
 }

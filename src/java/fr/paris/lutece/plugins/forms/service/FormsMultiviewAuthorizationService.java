@@ -104,10 +104,10 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
             // Rebuild all the FormPanelInitializer to reset the previous data
             FormPanelDisplayFactory formPanelDisplayFactory = new FormPanelDisplayFactory( );
             formPanelDisplayFactory.buildFormPanelDisplayInitializer( request, _formPanel );
-            
-            List<FormFilter> listFormFilters = new ArrayList<>();
-            listFormFilters.add( buildFormResponseIdFilter( nIdFormResponse) );
-            
+
+            List<FormFilter> listFormFilters = new ArrayList<>( );
+            listFormFilters.add( buildFormResponseIdFilter( nIdFormResponse ) );
+
             _formListFacade.populateFormColumns( _formPanel, listFormResponseColumn, listFormFilters, 0, 1, null );
             List<FormResponseItem> listFormResponseItem = _formPanel.getFormResponseItemList( );
 
@@ -120,11 +120,12 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
 
         return bIsUserAuthorizedOnFormResponse;
     }
-    
+
     /**
      * Build a form response id filter from an id response
+     * 
      * @param nIdFormResponse
-     *                  The form response id
+     *            The form response id
      * @return the FormFilter
      */
     private FormFilter buildFormResponseIdFilter( int nIdFormResponse )
@@ -132,14 +133,14 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
         FormFilter formFilterId = new FormFilter( );
         FormFilterFormResponseIdConfiguration config = new FormFilterFormResponseIdConfiguration( 1, StringUtils.EMPTY, StringUtils.EMPTY );
         FormParameters formParam = new FormParameters( );
-        
-        Map<String,Object> mapFormParam = new HashMap<>();
+
+        Map<String, Object> mapFormParam = new HashMap<>( );
         mapFormParam.put( FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
-        
+
         formParam.setFormParametersMap( mapFormParam );
         formFilterId.setFormFilterConfiguration( config );
         formFilterId.setFormParameters( formParam );
 
         return formFilterId;
-}
+    }
 }

@@ -115,7 +115,8 @@ public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation implement
         {
             Response responseReference = findReferenceResponseAssociatedToNewResponse( responseNew, listResponseReference );
 
-            if ( responseReference == null || responseReference.getResponseValue( ) == null  || !responseReference.getResponseValue( ).equals( responseNew.getResponseValue( ) ) )
+            if ( responseReference == null || responseReference.getResponseValue( ) == null
+                    || !responseReference.getResponseValue( ).equals( responseNew.getResponseValue( ) ) )
             {
                 bAllResponsesEquals = false;
                 break;

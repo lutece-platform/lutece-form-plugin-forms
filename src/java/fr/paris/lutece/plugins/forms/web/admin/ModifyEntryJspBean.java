@@ -579,7 +579,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
-        
+
         field.setCode( IEntryTypeService.FIELD_ANSWER_CHOICE );
         field.setTitle( strTitle );
         field.setValue( strValue );

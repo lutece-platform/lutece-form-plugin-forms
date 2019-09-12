@@ -120,7 +120,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     {
         initCommonRequestData( entry, request );
         String strOnlyDisplayInBack = request.getParameter( PARAMETER_ONLY_DISPLAY_IN_BACK );
-        
+
         entry.setTitle( I18nService.getLocalizedString( PROPERTY_ENTRY_TITLE, locale ) );
 
         entry.setComment( StringUtils.EMPTY );
@@ -131,7 +131,8 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
         entry.setOnlyDisplayInBack( strOnlyDisplayInBack != null );
 
-        Field fieldAttributeName = createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE, null, request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
+        Field fieldAttributeName = createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE, null,
+                request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
         fieldAttributeName.setWidth( 50 );
         fieldAttributeName.setMaxSizeEnter( 0 );
         return null;

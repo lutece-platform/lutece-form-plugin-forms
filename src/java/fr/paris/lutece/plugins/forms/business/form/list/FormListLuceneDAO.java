@@ -69,7 +69,8 @@ public class FormListLuceneDAO implements IFormListDAO
      * {@inheritDoc}
      */
     @Override
-    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,  int nStartIndex, int nPageSize, FormResponseItemSortConfig sortConfig )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+            FormResponseItemSortConfig sortConfig )
     {
         // To retrieve the values to display on the table we must have a FormPanel and a list of FormColumn
         if ( formPanel == null || CollectionUtils.isEmpty( listFormColumn ) )
@@ -84,10 +85,11 @@ public class FormListLuceneDAO implements IFormListDAO
         List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart = buildFormPanelInitializerQueryPartList( formPanel, listQueryParametersValues );
         List<IFormColumnQueryPart> listFormColumnQueryPart = buildformColumnQueryPartList( listFormColumn );
         List<IFormFilterQueryPart> listFormFilterQueryPart = buildFormFilterQueryPartList( listFormFilter, listQueryParametersValues );
-        
+
         List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
 
-        for ( FormResponseSearchItem formResponseSearchItem : _formSearchEngine.getSearchResults( listFormPanelInitializerQueryPart, listFormColumnQueryPart, listFormFilterQueryPart, sortConfig, nStartIndex, nPageSize, formPanel ) )
+        for ( FormResponseSearchItem formResponseSearchItem : _formSearchEngine.getSearchResults( listFormPanelInitializerQueryPart, listFormColumnQueryPart,
+                listFormFilterQueryPart, sortConfig, nStartIndex, nPageSize, formPanel ) )
         {
             // Create a FormResponseItem sppfor the current result line
             FormResponseItem formResponseItem = createFormResponseItem( formResponseSearchItem );
@@ -288,4 +290,4 @@ public class FormListLuceneDAO implements IFormListDAO
 
         return formFilterLuceneQueryPartResult;
     }
-        }
+}

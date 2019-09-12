@@ -61,15 +61,15 @@ public class PatternFileTypeValidator extends AbstractPatternValidator
     {
         super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
     }
-    
+
     @Override
     protected String getValueToValidate( Response response )
     {
-    	File file = response.getFile( );
-    	if ( file != null )
-    	{
-    		return file.getMimeType( );
-    	}
-    	return null;
+        File file = response.getFile( );
+        if ( file != null )
+        {
+            return file.getMimeType( );
+        }
+        return null;
     }
 }

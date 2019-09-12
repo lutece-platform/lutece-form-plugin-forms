@@ -205,12 +205,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
                     _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
 
-                    int question_control_step = QuestionHome.findByPrimaryKey(control.getListIdQuestion().stream().findFirst().get()).getIdStep();
-                    if(question_control_step != _question.getIdStep()) {
-                       List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream()
-                               .filter(questionReponse -> control.getListIdQuestion().contains(questionReponse.getQuestion().getId()))
-                               .collect(Collectors.toList());
-                        _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, validator.validate(listFormQuestionReponseToCheck, control) );
+                    int question_control_step = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).stream( ).findFirst( ).get( ) ).getIdStep( );
+                    if ( question_control_step != _question.getIdStep( ) )
+                    {
+                        List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
+                                .filter( questionReponse -> control.getListIdQuestion( ).contains( questionReponse.getQuestion( ).getId( ) ) )
+                                .collect( Collectors.toList( ) );
+                        _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, validator.validate( listFormQuestionReponseToCheck, control ) );
 
                     }
                 }
@@ -332,21 +333,21 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _question.setIsVisible( true );
             }
         }
-        
+
         if ( displayType == DisplayType.EDITION_FRONTOFFICE )
         {
-        	 if ( _question.getEntry( ) != null )
-             {
-        		 _question.setIsVisible( true );
-             }
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( true );
+            }
         }
 
         if ( displayType == DisplayType.EDITION_BACKOFFICE )
         {
-        	 if ( _question.getEntry( ) != null )
-             {
-        		 _question.setIsVisible( true );
-             }
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( true );
+            }
         }
 
         if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
@@ -356,7 +357,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
             }
         }
-        
+
         if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
         {
             if ( _question.getEntry( ) != null )
@@ -368,10 +369,10 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         {
             if ( _question.getEntry( ) != null )
             {
-            	_question.setIsVisible( true );
+                _question.setIsVisible( true );
             }
         }
-        
+
         if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
         {
             if ( _question.getEntry( ) != null )
@@ -487,21 +488,22 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     }
 
     @Override
-    public boolean isVisible() {
-    	if ( _question == null )
-    	{
-    		return false;
-    	}
-    	return _question.isVisible( );
+    public boolean isVisible( )
+    {
+        if ( _question == null )
+        {
+            return false;
+        }
+        return _question.isVisible( );
     }
-    
+
     @Override
     public ICompositeDisplay filter( List<Integer> listQuestionIds )
     {
-    	if ( listQuestionIds.contains( _question.getId( ) ) )
-    	{
-    		return this;
-    	}
-    	return null;
+        if ( listQuestionIds.contains( _question.getId( ) ) )
+        {
+            return this;
+        }
+        return null;
     }
 }

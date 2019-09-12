@@ -44,7 +44,6 @@ import fr.paris.lutece.plugins.genericattributes.business.OcrProviderManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUpload;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 
-
 /**
  * The display service for entry type file
  */
@@ -52,7 +51,6 @@ public class EntryTypeFileReadingDisplayService extends EntryTypeFileDisplayServ
 {
 
     private static final String MARK_OCR_CODE_TEMPLATE = "ocr_code_template";
-   
 
     /**
      * Constructor of the EntryTypeFileDisplayService
@@ -62,7 +60,7 @@ public class EntryTypeFileReadingDisplayService extends EntryTypeFileDisplayServ
      */
     public EntryTypeFileReadingDisplayService( String strEntryServiceName )
     {
-    	super(strEntryServiceName);
+        super( strEntryServiceName );
     }
 
     /**
@@ -78,16 +76,16 @@ public class EntryTypeFileReadingDisplayService extends EntryTypeFileDisplayServ
      */
     public Map<String, Object> setModel( Entry entry, IEntryTypeService service, Map<String, Object> model )
     {
-		Field fieldType = entry.getFieldByCode( IEntryTypeService.FIELD_FILE_TYPE );
-		if ( fieldType != null )
-		{
-			IOcrProvider ocrProvider = OcrProviderManager.getOcrProvider( fieldType.getValue( ) );
-			model.put( MARK_OCR_CODE_TEMPLATE, ocrProvider.getHtmlCode( entry.getIdEntry( ), Form.RESOURCE_TYPE ) );
-		}
-		model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
+        Field fieldType = entry.getFieldByCode( IEntryTypeService.FIELD_FILE_TYPE );
+        if ( fieldType != null )
+        {
+            IOcrProvider ocrProvider = OcrProviderManager.getOcrProvider( fieldType.getValue( ) );
+            model.put( MARK_OCR_CODE_TEMPLATE, ocrProvider.getHtmlCode( entry.getIdEntry( ), Form.RESOURCE_TYPE ) );
+        }
+        model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
 
-		model.put( MARK_UPLOAD_HANDLER, ((AbstractEntryTypeUpload) service).getAsynchronousUploadHandler( ) );
+        model.put( MARK_UPLOAD_HANDLER, ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ) );
 
-		return model;
+        return model;
     }
 }

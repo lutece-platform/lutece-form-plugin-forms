@@ -105,10 +105,11 @@ public final class MultiviewFormService
      *            The size of page of docs to load
      * @param sortConfig
      */
-    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,  int nStartIndex, int nPageSize, FormResponseItemSortConfig sortConfig )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+            FormResponseItemSortConfig sortConfig )
     {
         FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
-        formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter,  nStartIndex, nPageSize, sortConfig );
+        formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig );
     }
 
     /**
@@ -162,8 +163,8 @@ public final class MultiviewFormService
         listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( ), column ) );
 
         // Then add global columns from config questions
-        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( ) : QuestionHome
-                .getListQuestionByIdFormUncomplete( nIdForm );
+        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
+                : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
 
         addColumnFromConfig( mapFormColumns, listQuestions, true );
 
@@ -194,9 +195,9 @@ public final class MultiviewFormService
      */
     public List<FormFilter> getFormFiltersList( Integer nIdForm, List<IFormColumn> listFormColumn )
     {
-        Map<String,FormFilter> mapFormFilter = new HashMap<>( );
+        Map<String, FormFilter> mapFormFilter = new HashMap<>( );
 
-        //First add the XML-based filters
+        // First add the XML-based filters
         for ( IFormFilterConfiguration formFilterConfiguration : SpringContextService.getBeansOfType( IFormFilterConfiguration.class ) )
         {
             FormFilter formFilter;
@@ -209,13 +210,12 @@ public final class MultiviewFormService
                 formFilter = new FormFilter( );
             }
             formFilter.setFormFilterConfiguration( formFilterConfiguration );
-            mapFormFilter.put( formFilter.getFormFilterConfiguration( ).getFormFilterName(), formFilter );
+            mapFormFilter.put( formFilter.getFormFilterConfiguration( ).getFormFilterName( ), formFilter );
         }
 
-
-        //Then add the global question-based for Filters
-        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( ) : QuestionHome
-                .getListQuestionByIdFormUncomplete( nIdForm );
+        // Then add the global question-based for Filters
+        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
+                : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
 
         addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, true );
 
@@ -224,8 +224,8 @@ public final class MultiviewFormService
             // Then add specific columns from config questions
             addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, false );
         }
- 
-         return new ArrayList<>( mapFormFilter.values( ) );
+
+        return new ArrayList<>( mapFormFilter.values( ) );
     }
 
     /**
@@ -298,32 +298,33 @@ public final class MultiviewFormService
 
                     if ( displayService instanceof EntryTypeDateDisplayService )
                     {
-                        FormFilter formFilter = new FormFilter();
-                        IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++, question.getTitle( ), 
-                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0" + FormResponseSearchItem.FIELD_DATE_SUFFIX );
-                        
+                        FormFilter formFilter = new FormFilter( );
+                        IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++, question.getTitle( ),
+                                FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0"
+                                        + FormResponseSearchItem.FIELD_DATE_SUFFIX );
+
                         formFilter.setFormFilterConfiguration( formFilterConfiguration );
                         mapFilters.put( question.getCode( ), formFilter );
                     }
-                    if ( displayService instanceof EntryTypeDefaultDisplayService  )
+                    if ( displayService instanceof EntryTypeDefaultDisplayService )
                     {
-                        FormFilter formFilter = new FormFilter();
-                        
+                        FormFilter formFilter = new FormFilter( );
+
                         for ( IFormColumn column : listFormColumns )
                         {
-                            if ( column.getFormColumnTitle().equals( question.getColumnTitle( ) ) )
+                            if ( column.getFormColumnTitle( ).equals( question.getColumnTitle( ) ) )
                             {
-                                if ( column instanceof FormColumnEntry)
+                                if ( column instanceof FormColumnEntry )
                                 {
-                                    IFormFilterConfiguration formFilterConfiguration = new FormFilterEntryConfiguration( nPosition++, question.getTitle( ), 
-                                    FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ), column  );
+                                    IFormFilterConfiguration formFilterConfiguration = new FormFilterEntryConfiguration( nPosition++, question.getTitle( ),
+                                            FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ), column );
 
                                     formFilter.setFormFilterConfiguration( formFilterConfiguration );
                                     mapFilters.put( question.getCode( ), formFilter );
                                 }
                             }
                         }
-                        
+
                     }
                 }
             }

@@ -69,7 +69,7 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
     @Override
     public String getParameterName( )
     {
-        return getFormFilter().getFormFilterConfiguration().getFormFilterName();
+        return getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( );
     }
 
     /**
@@ -78,9 +78,9 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
     @Override
     public Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request )
     {
-        String strPeriodDate = request.getParameter( getFormFilter().getFormFilterConfiguration().getFormFilterName() );
-        String strPeriodFrom = request.getParameter( getFormFilter().getFormFilterConfiguration().getFormFilterName() + FROM );
-        String strPeriodTo = request.getParameter( getFormFilter().getFormFilterConfiguration().getFormFilterName() + TO );
+        String strPeriodDate = request.getParameter( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) );
+        String strPeriodFrom = request.getParameter( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) + FROM );
+        String strPeriodTo = request.getParameter( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) + TO );
         setValue( strPeriodDate );
 
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
@@ -93,9 +93,8 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
             dateTo = dateTo.plusDays( 1 );
             DateTimeFormatter sqlFormatter = DateTimeFormatter.ofPattern( "yyyy-MM-dd" );
 
-            mapFilterNameValues
-                    .put( getFormFilter().getFormFilterConfiguration().getFormFilterName() + FROM, dateFrom.format( sqlFormatter ) );
-            mapFilterNameValues.put( getFormFilter().getFormFilterConfiguration().getFormFilterName() + TO, dateTo.format( sqlFormatter ) );
+            mapFilterNameValues.put( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) + FROM, dateFrom.format( sqlFormatter ) );
+            mapFilterNameValues.put( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) + TO, dateTo.format( sqlFormatter ) );
         }
 
         return mapFilterNameValues;
@@ -114,7 +113,7 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
 
         addDateRange( model );
 
-        model.put( MARK_FILTER_CONFIG, getFormFilter().getFormFilterConfiguration() );
+        model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
         if ( htmlTemplate != null )
         {

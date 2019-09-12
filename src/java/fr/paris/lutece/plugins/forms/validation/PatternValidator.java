@@ -60,10 +60,10 @@ public class PatternValidator extends AbstractPatternValidator
     {
         super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
     }
-    
+
     @Override
     protected String getValueToValidate( Response response )
     {
-    	return response.getResponseValue( );
+        return response.getResponseValue( );
     }
 }

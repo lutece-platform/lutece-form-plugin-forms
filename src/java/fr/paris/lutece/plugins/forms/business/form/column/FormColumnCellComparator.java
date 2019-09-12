@@ -148,12 +148,12 @@ public class FormColumnCellComparator implements Comparator<FormColumnCell>, Ser
 
         String strObjectOneRepresentation = String.valueOf( objectOne );
         String strObjectTwoRepresentation = String.valueOf( objectTwo );
-        
+
         if ( NumberUtils.isNumber( strObjectOneRepresentation ) && NumberUtils.isNumber( strObjectTwoRepresentation ) )
         {
             BigDecimal numOne = NumberUtils.createBigDecimal( strObjectOneRepresentation );
             BigDecimal numTwo = NumberUtils.createBigDecimal( strObjectTwoRepresentation );
-            
+
             nComparisonResult = numOne.compareTo( numTwo );
         }
         else

@@ -73,7 +73,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_auto_file_reading.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_auto_file_reading.html";
-    
+
     private static final String ENTRY_TYPE_AUT_READING_FILE = "forms.entryTypeAutomaticFileReading";
 
     /**
@@ -105,7 +105,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     @Override
     public String getTemplateModify( Entry entry, boolean bDisplayFront )
     {
-    	
+
         return TEMPLATE_MODIFY;
     }
 
@@ -161,7 +161,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     {
         return CollectionUtils.isNotEmpty( listResponseNew );
     }
-    
+
     /**
      * Set the list of fields
      * 
@@ -173,13 +173,13 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     @Override
     protected void createOrUpdateFileFields( Entry entry, HttpServletRequest request )
     {
-    	super.createOrUpdateFileFields( entry, request );
-    	
-    	String strOcrProvider = request.getParameter( PARAMETER_FILE_TYPE );
-    	
-    	createOrUpdateField( entry, FIELD_FILE_TYPE, null, strOcrProvider );
+        super.createOrUpdateFileFields( entry, request );
+
+        String strOcrProvider = request.getParameter( PARAMETER_FILE_TYPE );
+
+        createOrUpdateField( entry, FIELD_FILE_TYPE, null, strOcrProvider );
     }
-    
+
     /**
      * Builds the {@link ReferenceList} of all available files type
      * 
@@ -189,35 +189,38 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     {
         ReferenceList refList = new ReferenceList( );
 
-        //refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
+        // refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
 
-        for ( IOcrProvider typeDocumentProvider : OcrProviderManager.getOcrProvidersList() )
+        for ( IOcrProvider typeDocumentProvider : OcrProviderManager.getOcrProvidersList( ) )
         {
             refList.add( typeDocumentProvider.toRefItem( ) );
         }
 
         return refList;
     }
+
     /**
      * Get the config html code
-     * @param nIdStep the Id step
-     * @param nIdQuestion the question id
-     * @param nIdEntryQuestion the id entry
-     * @param strOcrKey the ocr provider
+     * 
+     * @param nIdStep
+     *            the Id step
+     * @param nIdQuestion
+     *            the question id
+     * @param nIdEntryQuestion
+     *            the id entry
+     * @param strOcrKey
+     *            the ocr provider
      * @return the config html code
      */
-    public String getOcrConfigTemplate( int nIdStep, int nIdQuestion, int nIdEntryQuestion,String strOcrKey )
+    public String getOcrConfigTemplate( int nIdStep, int nIdQuestion, int nIdEntryQuestion, String strOcrKey )
     {
-    	
-    	IOcrProvider ocrProvider= getOcrProvider( strOcrKey );
-    	
-        ReferenceList refList =  getEntryByStep(  nIdStep,  nIdQuestion,  strOcrKey );
 
-       
-        return ocrProvider.getConfigHtmlCode(refList, nIdEntryQuestion, Form.RESOURCE_TYPE);
+        IOcrProvider ocrProvider = getOcrProvider( strOcrKey );
+
+        ReferenceList refList = getEntryByStep( nIdStep, nIdQuestion, strOcrKey );
+
+        return ocrProvider.getConfigHtmlCode( refList, nIdEntryQuestion, Form.RESOURCE_TYPE );
     }
-    
-    
 
     /**
      * Gets the ocr provider.
@@ -228,7 +231,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
      */
     public IOcrProvider getOcrProvider( String strKey )
     {
-        return OcrProviderManager.getOcrProvider(strKey);
+        return OcrProviderManager.getOcrProvider( strKey );
     }
 
     /**
@@ -260,94 +263,116 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     {
         ReferenceList refList = new ReferenceList( );
 
-       // List<Integer> listAuthorizedEntryType = OcrProviderManager.getOcrProvider( strKey ).getAuthorizedEntryType( );
+        // List<Integer> listAuthorizedEntryType = OcrProviderManager.getOcrProvider( strKey ).getAuthorizedEntryType( );
         for ( Question question : QuestionHome.getQuestionsListByStep( nIdStep ) )
         {
-            if ( question.getId( ) != nIdQuestion /*&& listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) )*/ )
+            if ( question.getId( ) != nIdQuestion /* && listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) ) */)
             {
-                refList.addItem( question.getIdEntry() , question.getTitle( ) );
+                refList.addItem( question.getIdEntry( ), question.getTitle( ) );
             }
         }
 
         return refList;
     }
-   /**
-    * Fill form question response with ocr values readed
-    * @param listQuestionStep the questuin list
-    * @param listFormsQuestionResponse the form response list 
-    * @param request the HttpServletRequest request
-    */
-    public static boolean fill( List<Question> listQuestionStep, List<FormQuestionResponse> listFormsQuestionResponse, HttpServletRequest request ){
-			
-    	FormsAsynchronousUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
+
+    /**
+     * Fill form question response with ocr values readed
+     * 
+     * @param listQuestionStep
+     *            the questuin list
+     * @param listFormsQuestionResponse
+     *            the form response list
+     * @param request
+     *            the HttpServletRequest request
+     */
+    public static boolean fill( List<Question> listQuestionStep, List<FormQuestionResponse> listFormsQuestionResponse, HttpServletRequest request )
+    {
+
+        FormsAsynchronousUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
         String strAttributeName = handler.getUploadAction( request ).substring( handler.getUploadSubmitPrefix( ).length( ) );
-        String strIdEntry = strAttributeName.split(IEntryTypeService.PREFIX_ATTRIBUTE)[1].trim();  
-        Integer nIdEntry = Integer.parseInt(strIdEntry);
-        Question quest= listQuestionStep.stream().filter(mapper -> mapper.getIdEntry() == nIdEntry).collect(Collectors.toList()).get(0);
-  
-    	MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
-    	FileItem fileUploaded = multipartRequest.getFileList( strAttributeName ).get( 0 );
-    	Entry entry= quest.getEntry();
-    	   	
-        if( entry.getEntryType().getBeanName().equals(ENTRY_TYPE_AUT_READING_FILE)  && handler.hasAddFileFlag( request, strAttributeName ) && fileUploaded != null && !StringUtils.isEmpty(fileUploaded.getName()) ){ 
-        	
-        	Field fieldFileType = entry.getFieldByCode( FIELD_FILE_TYPE );
-			IOcrProvider ocrProvider= OcrProviderManager.getOcrProvider(fieldFileType.getValue( ) );
-			List<Response> listResponse= null;
-			try {
-				
-				listResponse = ocrProvider.process(fileUploaded, nIdEntry, Form.RESOURCE_TYPE);
-			
-			} catch (Exception e) {
-				
-				setCallOcrError( entry,listFormsQuestionResponse,  e.getMessage( ));
-				
-				return true;
-			}	
-			if( listResponse!= null && listResponse.size() > 0){
-				
-			    for ( FormQuestionResponse response : listFormsQuestionResponse )
-		        {
-				 List<Response> listResponseForQuestion = listResponse.stream().filter(p -> p.getEntry().getIdEntry() == response.getQuestion().getIdEntry( )).collect((Collectors.toList())); 
-				 if(listResponseForQuestion != null && listResponseForQuestion.size() > 0){
-					 response.setEntryResponse(listResponseForQuestion);
-				 }
-		        }
-			}else{
-				
-				return false;
-			}
-    	}else{
-    		
-    		return false;
-    	}
-        
-        return true;
-     }
-	/**
-	 * Set Call Ocr Error Message
-	 * @param entry
-	 * @param listFormsQuestionResponse
-	 * @param strErrorMeassge
-	 */
-    private static void setCallOcrError(Entry entry, List<FormQuestionResponse> listFormsQuestionResponse, String strErrorMeassge){
-    	
-    	for ( FormQuestionResponse formResponse : listFormsQuestionResponse )
+        String strIdEntry = strAttributeName.split( IEntryTypeService.PREFIX_ATTRIBUTE ) [1].trim( );
+        Integer nIdEntry = Integer.parseInt( strIdEntry );
+        Question quest = listQuestionStep.stream( ).filter( mapper -> mapper.getIdEntry( ) == nIdEntry ).collect( Collectors.toList( ) ).get( 0 );
+
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        FileItem fileUploaded = multipartRequest.getFileList( strAttributeName ).get( 0 );
+        Entry entry = quest.getEntry( );
+
+        if ( entry.getEntryType( ).getBeanName( ).equals( ENTRY_TYPE_AUT_READING_FILE ) && handler.hasAddFileFlag( request, strAttributeName )
+                && fileUploaded != null && !StringUtils.isEmpty( fileUploaded.getName( ) ) )
         {
-			if(formResponse.getQuestion().getIdEntry() == entry.getIdEntry() ){
-				
-				List<Response> listResponse= formResponse.getEntryResponse();
-				 Response response = new Response( );
-                 response.setEntry( formResponse.getQuestion().getEntry() );                         
-				GenericAttributeError genAttError = new GenericAttributeError( );
-		    	genAttError.setErrorMessage( strErrorMeassge );
-		    	listResponse.add( response );
-		    	formResponse.setError(genAttError);                     	
-             	
-             	formResponse.setEntryResponse(listResponse);
-             	break;
-			}
-	}		
+
+            Field fieldFileType = entry.getFieldByCode( FIELD_FILE_TYPE );
+            IOcrProvider ocrProvider = OcrProviderManager.getOcrProvider( fieldFileType.getValue( ) );
+            List<Response> listResponse = null;
+            try
+            {
+
+                listResponse = ocrProvider.process( fileUploaded, nIdEntry, Form.RESOURCE_TYPE );
+
+            }
+            catch( Exception e )
+            {
+
+                setCallOcrError( entry, listFormsQuestionResponse, e.getMessage( ) );
+
+                return true;
+            }
+            if ( listResponse != null && listResponse.size( ) > 0 )
+            {
+
+                for ( FormQuestionResponse response : listFormsQuestionResponse )
+                {
+                    List<Response> listResponseForQuestion = listResponse.stream( )
+                            .filter( p -> p.getEntry( ).getIdEntry( ) == response.getQuestion( ).getIdEntry( ) ).collect( ( Collectors.toList( ) ) );
+                    if ( listResponseForQuestion != null && listResponseForQuestion.size( ) > 0 )
+                    {
+                        response.setEntryResponse( listResponseForQuestion );
+                    }
+                }
+            }
+            else
+            {
+
+                return false;
+            }
+        }
+        else
+        {
+
+            return false;
+        }
+
+        return true;
     }
-    
+
+    /**
+     * Set Call Ocr Error Message
+     * 
+     * @param entry
+     * @param listFormsQuestionResponse
+     * @param strErrorMeassge
+     */
+    private static void setCallOcrError( Entry entry, List<FormQuestionResponse> listFormsQuestionResponse, String strErrorMeassge )
+    {
+
+        for ( FormQuestionResponse formResponse : listFormsQuestionResponse )
+        {
+            if ( formResponse.getQuestion( ).getIdEntry( ) == entry.getIdEntry( ) )
+            {
+
+                List<Response> listResponse = formResponse.getEntryResponse( );
+                Response response = new Response( );
+                response.setEntry( formResponse.getQuestion( ).getEntry( ) );
+                GenericAttributeError genAttError = new GenericAttributeError( );
+                genAttError.setErrorMessage( strErrorMeassge );
+                listResponse.add( response );
+                formResponse.setError( genAttError );
+
+                formResponse.setEntryResponse( listResponse );
+                break;
+            }
+        }
+    }
+
 }

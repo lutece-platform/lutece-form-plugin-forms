@@ -151,17 +151,17 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
      * {@inheritDoc }
      */
     @Override
-    public List<FormResponseSearchItem>  getSearchResults(  List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart , FormResponseItemSortConfig sortConfig , int nStartIndex, int nPageSize, FormPanel formPanel )
+    public List<FormResponseSearchItem> getSearchResults( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart,
+            List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart, FormResponseItemSortConfig sortConfig,
+            int nStartIndex, int nPageSize, FormPanel formPanel )
     {
-     
-        
-        
+
         // Build the query to execute
         Query query = LuceneQueryBuilder.buildQuery( listFormPanelInitializerQueryPart, listFormFilterQueryPart );
 
         // Build the sort
         Sort sort = buildLuceneSort( sortConfig );
-        
+
         List<FormResponseSearchItem> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
@@ -176,10 +176,10 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
             }
             else
             {
-                 topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
+                topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
             }
             ScoreDoc [ ] hits = topDocs.scoreDocs;
-            
+
             int nMaxIndex = Math.min( nStartIndex + nPageSize, hits.length );
             formPanel.setTotalFormResponseItemCount( hits.length );
             for ( int i = nStartIndex; i < nMaxIndex; i++ )
@@ -195,21 +195,22 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
 
         return listResults;
     }
-    
+
     /**
      * Build the Lucene Sort obj
-     * @param sortConfig 
-     *          The sort config
+     * 
+     * @param sortConfig
+     *            The sort config
      * @return the Lucene Sort obj
      */
     private Sort buildLuceneSort( FormResponseItemSortConfig sortConfig )
     {
         if ( sortConfig != null )
         {
-            String strAttributeName = sortConfig.getSortAttributeName();
+            String strAttributeName = sortConfig.getSortAttributeName( );
             if ( strAttributeName != null )
             {
-                if ( strAttributeName.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX) )
+                if ( strAttributeName.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
                 {
                     return new Sort( new SortField( sortConfig.getSortAttributeName( ), SortField.Type.LONG, sortConfig.isAscSort( ) ) );
                 }
@@ -221,7 +222,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 return new Sort( new SortField( sortConfig.getSortAttributeName( ), SortField.Type.STRING, sortConfig.isAscSort( ) ) );
             }
         }
-        
+
         return null;
     }
 

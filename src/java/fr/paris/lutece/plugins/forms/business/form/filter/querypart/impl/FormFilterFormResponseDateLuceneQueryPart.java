@@ -60,9 +60,8 @@ public class FormFilterFormResponseDateLuceneQueryPart extends AbstractFormFilte
 
             String strEntryTitle = String.valueOf( setFormParametersKeys.toArray( ) [0] );
 
-            //Remove _from from the EntryTitle
-            String strFieldTitle = strEntryTitle.replace( "_from", "");
-
+            // Remove _from from the EntryTitle
+            String strFieldTitle = strEntryTitle.replace( "_from", "" );
 
             String strDateFrom = String.valueOf( setFormParameters.toArray( ) [0] );
             String strDateTo = String.valueOf( setFormParameters.toArray( ) [1] );

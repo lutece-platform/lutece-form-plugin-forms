@@ -91,8 +91,7 @@ public class CSVDataLine
     public void addData( FormQuestionResponse formQuestionResponse )
     {
         Question question = formQuestionResponse.getQuestion( );
-        IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService(
-                question.getEntry( ).getEntryType( ) );
+        IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
 
         List<String> listResponseValue = entryDataService.responseToStrings( formQuestionResponse );
         StringBuilder sbReponseValues = new StringBuilder( );
@@ -102,8 +101,7 @@ public class CSVDataLine
             sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
         }
 
-        _mapDataToExport.put( Pair.of( question.getId( ), question.getIterationNumber( ) ),
-				sbReponseValues.toString( ) );
+        _mapDataToExport.put( Pair.of( question.getId( ), question.getIterationNumber( ) ), sbReponseValues.toString( ) );
     }
 
     /**

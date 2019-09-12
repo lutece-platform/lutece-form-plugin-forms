@@ -153,7 +153,7 @@ public class FormJspBean extends AbstractJspBean
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
-    
+
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
@@ -179,7 +179,7 @@ public class FormJspBean extends AbstractJspBean
 
         List<Form> listForms = FormHome.getFormList( );
         listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, adminUser );
-        
+
         Map<String, Object> model = getModel( );
         LocalizedPaginator<Form> paginator = new LocalizedPaginator<Form>( listForms, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );

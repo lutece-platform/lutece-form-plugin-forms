@@ -520,37 +520,39 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     {
         _model.putAll( model );
     }
-    
+
     @Override
-    public boolean isVisible() {
-    	for (ICompositeDisplay child : _listChildren)
-    	{
-    		if ( child.isVisible( ) )
-    		{
-    			return true;
-    		}
-    	}
-    	return false;
+    public boolean isVisible( )
+    {
+        for ( ICompositeDisplay child : _listChildren )
+        {
+            if ( child.isVisible( ) )
+            {
+                return true;
+            }
+        }
+        return false;
     }
-    
+
     @Override
-    public ICompositeDisplay filter( List<Integer> listQuestionIds ) {
-    	List<ICompositeDisplay> listChildrenFiltered = new ArrayList<>( );
-    	
-    	for (ICompositeDisplay child : _listChildren)
-    	{
-    		ICompositeDisplay newChild = child.filter( listQuestionIds );
-    		if ( newChild != null )
-    		{
-    			listChildrenFiltered.add( newChild );
-    		}
-    	}
-    	if ( listChildrenFiltered.isEmpty( ) )
-    	{
-    		return null;
-    	}
-    	_listChildren.clear( );
-    	_listChildren.addAll( listChildrenFiltered );
-    	return this;
+    public ICompositeDisplay filter( List<Integer> listQuestionIds )
+    {
+        List<ICompositeDisplay> listChildrenFiltered = new ArrayList<>( );
+
+        for ( ICompositeDisplay child : _listChildren )
+        {
+            ICompositeDisplay newChild = child.filter( listQuestionIds );
+            if ( newChild != null )
+            {
+                listChildrenFiltered.add( newChild );
+            }
+        }
+        if ( listChildrenFiltered.isEmpty( ) )
+        {
+            return null;
+        }
+        _listChildren.clear( );
+        _listChildren.addAll( listChildrenFiltered );
+        return this;
     }
 }

@@ -39,10 +39,9 @@ package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 public class FormFilterWorkflowConfiguration extends AbstractFormFilterConfiguration
 {
 
-    public FormFilterWorkflowConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName ) 
+    public FormFilterWorkflowConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName )
     {
         super( nPosition, strFormFilterLabel, strFormFilterName );
     }
-    
 
 }
