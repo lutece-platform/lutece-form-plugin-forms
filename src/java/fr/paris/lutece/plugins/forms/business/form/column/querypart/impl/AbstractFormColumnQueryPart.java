@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 /**
  * Abstract class for FormColumnQueryPart
  */
@@ -101,16 +102,16 @@ public abstract class AbstractFormColumnQueryPart implements IFormColumnQueryPar
      * @param document
      * @return The list of Lucene indexable fields based on a document and an entry code prefix
      */
-    protected Map<String,String> getEntryCodeFields( String strEntryCode, FormResponseSearchItem formResponseSearchItem )
+    protected Map<String, String> getEntryCodeFields( String strEntryCode, FormResponseSearchItem formResponseSearchItem )
     {
-        Map<String,String> listFields = new HashMap<>( );
-        for ( Map.Entry<String,String> entry : formResponseSearchItem.getMapEntryCodeFieldsValue( ).entrySet( ) )
+        Map<String, String> listFields = new HashMap<>( );
+        for ( Map.Entry<String, String> entry : formResponseSearchItem.getMapEntryCodeFieldsValue( ).entrySet( ) )
         {
             String strFieldSuffixEntryCode = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strEntryCode;
 
             if ( entry.getKey( ).startsWith( strFieldSuffixEntryCode ) )
             {
-                listFields.put( entry.getKey( ) , entry.getValue( ) );
+                listFields.put( entry.getKey( ), entry.getValue( ) );
             }
         }
         return listFields;

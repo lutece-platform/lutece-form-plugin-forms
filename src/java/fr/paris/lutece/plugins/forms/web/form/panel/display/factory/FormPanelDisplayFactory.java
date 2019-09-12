@@ -72,7 +72,8 @@ public class FormPanelDisplayFactory
      * @param activeFormPanelDisplay
      * @return the list of all FormPanelDisplay ordered by their position
      */
-    public List<IFormPanelDisplay> createFormPanelDisplayList( HttpServletRequest request, List<FormPanel> listFormPanel, IFormPanelDisplay activeFormPanelDisplay )
+    public List<IFormPanelDisplay> createFormPanelDisplayList( HttpServletRequest request, List<FormPanel> listFormPanel,
+            IFormPanelDisplay activeFormPanelDisplay )
     {
         List<IFormPanelDisplay> listFormPanelDisplay = new ArrayList<>( );
         List<IFormPanelDisplayFactory> listFormPanelDisplayFactory = new FormPanelDisplayFactoryFacade( ).buildFormPanelDisplayFactoryList( );
@@ -114,7 +115,8 @@ public class FormPanelDisplayFactory
      * @param formPanelDisplay
      *            The formPanelInitializer to configure with the information from the request
      */
-    private void configureFormPanelDisplay( HttpServletRequest request, IFormPanelDisplay formPanelDisplay, IFormPanelDisplay activeFormPanelDisplay, boolean bIsFirst )
+    private void configureFormPanelDisplay( HttpServletRequest request, IFormPanelDisplay formPanelDisplay, IFormPanelDisplay activeFormPanelDisplay,
+            boolean bIsFirst )
     {
         boolean bIsSelectedPanel = isSelectedPanel( request, formPanelDisplay.getTechnicalCode( ), activeFormPanelDisplay, bIsFirst );
         formPanelDisplay.setActive( bIsSelectedPanel );
@@ -131,7 +133,7 @@ public class FormPanelDisplayFactory
      *            The name of the panel to analyze
      * @return true if the panel of the given name is the panel to analyze false otherwise
      */
-    private boolean isSelectedPanel( HttpServletRequest request, String strPanelTechnicalCode,  IFormPanelDisplay activeFormPanelDisplay, boolean bIsFirst )
+    private boolean isSelectedPanel( HttpServletRequest request, String strPanelTechnicalCode, IFormPanelDisplay activeFormPanelDisplay, boolean bIsFirst )
     {
         boolean bIsSelectedPanel = Boolean.FALSE;
 
@@ -158,10 +160,11 @@ public class FormPanelDisplayFactory
                         bIsSelectedPanel = strPanelTechnicalCode.equals( strPreviousFormPanelSelected );
                     }
                 }
-                else if ( bIsFirst )
-                {
-                    bIsSelectedPanel = true;
-                }
+                else
+                    if ( bIsFirst )
+                    {
+                        bIsSelectedPanel = true;
+                    }
             }
         }
 

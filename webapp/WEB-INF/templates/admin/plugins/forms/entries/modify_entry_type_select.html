@@ -62,9 +62,12 @@
             <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
                 <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
             </@formGroup>
-            <@formGroup labelFor='is_shown_in_completeness' labelKey='#i18n{forms.createEntry.labelResponsesCompleteness}' helpKey='#i18n{forms.createEntry.labelResponsesCompletenessComment}'>
-            	<@checkBox name='is_shown_in_completeness' id='is_shown_in_completeness' value='1' checked=entry.shownInCompleteness />
+            <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+            	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
             </@formGroup>
+            <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
             ${question_modify_template!}
 						<@formGroup rows=2>
 							<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false />
@@ -96,22 +99,24 @@
 						</tr>
 						<#assign cpt=0>
 						<#list list as field>
-						<#assign cpt=cpt+1>
-						<tr>
-							<td>${field.title}</td>
-							<td>${field.value}</td>
-							<td><#if field.defaultValue><@tag color='success'><@icon style='check' title='#i18n{forms.createEntry.manageField.rowDefaultValue}' /></@tag></#if></td>
-							<td>
-								<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' title='#i18n{portal.util.labelModify}' buttonIcon='edit' showTitle=false />
-								<#if cpt!=1>
-								<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveUp}' buttonIcon='chevron-up' showTitle=false />
-								</#if> 
-								<#if field_has_next>
-								<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveDown}' buttonIcon='chevron-down' showTitle=false />
-								</#if>
-								<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' buttonIcon='trash' showTitle=false color='btn-danger' />
-							</td>
-						</tr>
+						<#if field.code == 'answer_choice'>
+							<#assign cpt=cpt+1>
+							<tr>
+								<td>${field.title}</td>
+								<td>${field.value}</td>
+								<td><#if field.defaultValue><@tag color='success'><@icon style='check' title='#i18n{forms.createEntry.manageField.rowDefaultValue}' /></@tag></#if></td>
+								<td>
+									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' title='#i18n{portal.util.labelModify}' buttonIcon='edit' showTitle=false />
+									<#if cpt!=1>
+									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveUp}' buttonIcon='chevron-up' showTitle=false />
+									</#if> 
+									<#if field_has_next>
+									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveDown}' buttonIcon='chevron-down' showTitle=false />
+									</#if>
+									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' buttonIcon='trash' showTitle=false color='btn-danger' />
+								</td>
+							</tr>
+						</#if>
 						</#list> 
 					</@table>
 				</fieldset>

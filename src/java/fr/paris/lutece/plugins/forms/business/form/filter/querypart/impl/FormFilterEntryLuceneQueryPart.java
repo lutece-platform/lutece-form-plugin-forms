@@ -58,7 +58,7 @@ import org.apache.lucene.search.TermQuery;
 public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
     IFormSearchEngine _formSearchEngine;
-    
+
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
@@ -70,21 +70,24 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
             boolean bEmptyQuery = true;
             for ( Map.Entry<String, Object> formParam : setFormParameters )
             {
-                
-                if ( !formParam.getValue().toString().equals( String.valueOf( FormsConstants.DEFAULT_ID_VALUE ) ) )
+
+                if ( !formParam.getValue( ).toString( ).equals( String.valueOf( FormsConstants.DEFAULT_ID_VALUE ) ) )
                 {
                     bEmptyQuery = false;
                     String strQuestionCode = formParam.getKey( );
                     Question question = QuestionHome.findByCode( strQuestionCode );
-                    List<Field> listFields = FieldHome.getFieldListByIdEntry( question.getEntry().getIdEntry( ) );
+                    List<Field> listFields = FieldHome.getFieldListByIdEntry( question.getEntry( ).getIdEntry( ) );
 
-                    Query query = new TermQuery( new Term( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX+ strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0", formParam.getValue( ).toString( ) ) );
+                    Query query = new TermQuery( new Term( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode
+                            + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0", formParam.getValue( ).toString( ) ) );
                     booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
 
                     for ( Field field : listFields )
                     {
                         String strFieldName = getFieldName( field );
-                        query = new TermQuery( new Term( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX+ strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ + strFieldName, formParam.getValue( ).toString( ) ) );
+                        query = new TermQuery( new Term( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode
+                                + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_
+                                + strFieldName, formParam.getValue( ).toString( ) ) );
                         booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
                     }
                 }
@@ -97,28 +100,29 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
             {
                 setFormFilterQuery( null );
             }
-                
+
         }
         else
         {
             setFormFilterQuery( null );
         }
     }
-    
+
     /**
      * Get the field name
+     * 
      * @param responseField
      * @param response
      * @return the field name
      */
     private String getFieldName( fr.paris.lutece.plugins.genericattributes.business.Field responseField )
     {
-        if ( responseField.getIdField( ) >0 )
+        if ( responseField.getIdField( ) > 0 )
             return String.valueOf( responseField.getIdField( ) );
         if ( !StringUtils.isEmpty( responseField.getCode( ) ) )
-            return responseField.getCode();
-        
-        if ( !StringUtils.isEmpty( responseField.getTitle() ) )
+            return responseField.getCode( );
+
+        if ( !StringUtils.isEmpty( responseField.getTitle( ) ) )
             return responseField.getTitle( );
 
         return StringUtils.EMPTY;

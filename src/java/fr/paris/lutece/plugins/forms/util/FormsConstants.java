@@ -95,7 +95,7 @@ public final class FormsConstants
     public static final String PARAMETER_ID_FIELD = "id_field";
     public static final String PARAMETER_ID_RESPONSE = "id_response";
     public static final String PARAMETER_ID_FIELD_OCR = "id_field_ocr";
-	public static final String PARAMETER_OCR_DOCUMENT = "ocr_document";
+    public static final String PARAMETER_OCR_DOCUMENT = "ocr_document";
     public static final String PARAMETER_TYPE_DOCUMENT_KEY = "type_document_key";
     public static final String PARAMETER_ID_MAPPING = "id_mapping";
 
@@ -126,7 +126,7 @@ public final class FormsConstants
     public static final String PARAMETER_REF_LIST_VALUE = "refListValue";
     public static final String PARAMETER_REF_LIST_FIELD = "refListField";
     public static final String PARAMETER_REF_LIST_MAPPING = "refListMapping";
-    
+
     public static final String PARAMETER_ACTION_GO_TO_STEP = "action_doGoToStep";
     public static final String PARAMETER_INFO_KEY = "info_key";
     public static final String PARAMETER_BACK_URL = "back_url";
@@ -167,7 +167,8 @@ public final class FormsConstants
     public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
     public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
     public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
-    public static final int ORDER_NOT_SET = Integer.parseInt(DatastoreService.getDataValue("forms.formResponseStep.orderNotSet", NumberUtils.INTEGER_MINUS_ONE.toString()));
+    public static final int ORDER_NOT_SET = Integer.parseInt( DatastoreService.getDataValue( "forms.formResponseStep.orderNotSet",
+            NumberUtils.INTEGER_MINUS_ONE.toString( ) ) );
     public static final int FILE_TYPE_RIB = 1;
 
     // Markers

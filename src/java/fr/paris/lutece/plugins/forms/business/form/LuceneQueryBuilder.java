@@ -65,8 +65,7 @@ public final class LuceneQueryBuilder
      *            The list of FormFilterQueryPart to retrieve the where parts of the query
      * @return the global lucene query build from the FormColmuns and FormFilters
      */
-    public static Query buildQuery( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart,
-            List<IFormFilterQueryPart> listFormFilterQueryPart )
+    public static Query buildQuery( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart )
     {
         BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
         for ( IFormFilterQueryPart formFilterQueryPart : listFormFilterQueryPart )
@@ -84,8 +83,7 @@ public final class LuceneQueryBuilder
         {
             if ( formPanelInitializerQueryPart instanceof IFormPanelInitializerLuceneQueryPart )
             {
-                Query queryFormFilterQueryPart = ( (IFormPanelInitializerLuceneQueryPart) formPanelInitializerQueryPart )
-                        .getFormPanelInitializerSelectQuery( );
+                Query queryFormFilterQueryPart = ( (IFormPanelInitializerLuceneQueryPart) formPanelInitializerQueryPart ).getFormPanelInitializerSelectQuery( );
                 if ( queryFormFilterQueryPart != null )
                 {
                     booleanQueryBuilder.add( queryFormFilterQueryPart, BooleanClause.Occur.FILTER );

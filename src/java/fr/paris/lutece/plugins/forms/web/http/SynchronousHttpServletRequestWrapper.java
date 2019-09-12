@@ -15,58 +15,57 @@ import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 
 public class SynchronousHttpServletRequestWrapper extends MultipartHttpServletRequest
 {
-    private final Map<String, String[]> modifiableParameters;
-    private Map<String, String[]> allParameters = null;
+    private final Map<String, String [ ]> modifiableParameters;
+    private Map<String, String [ ]> allParameters = null;
 
     /**
-     * Create a new request wrapper that will merge additional parameters into
-     * the request object without prematurely reading parameters from the
-     * original request.
+     * Create a new request wrapper that will merge additional parameters into the request object without prematurely reading parameters from the original
+     * request.
      * 
      * @param request
      * @param additionalParams
      */
-    public SynchronousHttpServletRequestWrapper( final MultipartHttpServletRequest request, final Map<String, String[]> additionalParams)
+    public SynchronousHttpServletRequestWrapper( final MultipartHttpServletRequest request, final Map<String, String [ ]> additionalParams )
     {
-    	super( request, request.getFileListMap( ), request.getParameterMap( ) );
-        modifiableParameters = new TreeMap<String, String[]>();
-        modifiableParameters.putAll(additionalParams);
-       
+        super( request, request.getFileListMap( ), request.getParameterMap( ) );
+        modifiableParameters = new TreeMap<String, String [ ]>( );
+        modifiableParameters.putAll( additionalParams );
+
     }
 
     @Override
-    public String getParameter(final String name)
+    public String getParameter( final String name )
     {
-        String[] strings = getParameterMap().get(name);
-        if (strings != null)
+        String [ ] strings = getParameterMap( ).get( name );
+        if ( strings != null )
         {
-            return strings[0];
+            return strings [0];
         }
-        return super.getParameter(name);
+        return super.getParameter( name );
     }
 
     @Override
-    public Map<String, String[]> getParameterMap()
+    public Map<String, String [ ]> getParameterMap( )
     {
-        if (allParameters == null)
+        if ( allParameters == null )
         {
-            allParameters = new TreeMap<String, String[]>();
-            allParameters.putAll(super.getParameterMap());
-            allParameters.putAll(modifiableParameters);
+            allParameters = new TreeMap<String, String [ ]>( );
+            allParameters.putAll( super.getParameterMap( ) );
+            allParameters.putAll( modifiableParameters );
         }
-        //Return an unmodifiable collection because we need to uphold the interface contract.
-        return Collections.unmodifiableMap(allParameters);
+        // Return an unmodifiable collection because we need to uphold the interface contract.
+        return Collections.unmodifiableMap( allParameters );
     }
 
     @Override
-    public Enumeration<String> getParameterNames()
+    public Enumeration<String> getParameterNames( )
     {
-        return Collections.enumeration(getParameterMap().keySet());
+        return Collections.enumeration( getParameterMap( ).keySet( ) );
     }
 
     @Override
-    public String[] getParameterValues(final String name)
+    public String [ ] getParameterValues( final String name )
     {
-        return getParameterMap().get(name);
+        return getParameterMap( ).get( name );
     }
 }

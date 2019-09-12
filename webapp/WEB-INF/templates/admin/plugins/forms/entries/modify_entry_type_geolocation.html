@@ -41,7 +41,7 @@
                         </@formGroup>
                         <!-- champs mode d’édition (suggestPOI, ligne, polygone)  -->
                         <@formGroup labelFor='edit_mode' labelKey='#i18n{forms.createEntry.editMode}'>
-                            <#assign editModeValue = getFieldValue( entry, "editMode" )>
+                            <#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
                             <#if editModeValue?has_content>
                                 <@select name='edit_mode' items=entryTypeService.editModeRefList default_value=editModeValue />
                             <#else>
@@ -50,7 +50,7 @@
                         </@formGroup>
                         <!-- view number  -->
                         <@formGroup labelFor='view_number' labelKey='#i18n{forms.createEntry.viewNumber}'>
-                            <#assign viewNumberValue = getFieldValue( entry, "viewNumber" )>
+                            <#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
                             <@input type='text' name='view_number' id='view_number' value=viewNumberValue maxlength=255 />
                         </@formGroup>
                         <@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
@@ -65,9 +65,12 @@
                         <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
                                                     <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
                                                 </@formGroup>
-                        <@formGroup labelFor='is_shown_in_completeness' labelKey='#i18n{forms.createEntry.labelResponsesCompleteness}' helpKey='#i18n{forms.createEntry.labelResponsesCompletenessComment}'>
-	                    	<@checkBox name='is_shown_in_completeness' id='is_shown_in_completeness' value='1' checked=entry.shownInCompleteness />
+                        <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+	                    	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
 	                    </@formGroup>
+	                    <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
                         ${question_modify_template!}
                         <@formGroup>
                             <@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false />

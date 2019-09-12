@@ -9,6 +9,7 @@
 	<@boxBody>
 		<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
 			<fieldset>
+				<#assign config=getFieldByCode( entry, "text_config")>
 				<legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : '${form.title}'</legend>
 				<input name="id_entry" value="${entry.idEntry}" type="hidden">
 				<input name="id_step" value="${step.id}" type="hidden">
@@ -29,31 +30,25 @@
 					<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
 				</@formGroup>
 				<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
-					<@input type='textarea' name='value' id='value' rows=10><#list entry.fields as field>${field.value}</#list></@input>
+					<@input type='textarea' name='value' id='value' rows=10>${config.value}</@input>
 				</@formGroup>
 				<@formGroup>
 					<#if entry.mandatory><#assign checked = true /></#if>
 					<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=checked />
 				</@formGroup>
 				<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-					<#list entry.fields as field>
-						<@input type='text' name='width' id='width' value='${field.width}' />
-					</#list>
+					<@input type='text' name='width' id='width' value='${config.width}' />
 				</@formGroup>
 				<@formGroup labelFor='height' labelKey='#i18n{forms.createEntry.labelHeight}' mandatory=true>
-					<#list entry.fields as field>
-						<@input type='text' name='height' id='height' inputSize=5 value='${field.height}' />
-					</#list>	
+					<@input type='text' name='height' id='height' inputSize=5 value='${config.height}' />
 				</@formGroup>
 				<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
-					<#list entry.fields as field>
-						<#if field.maxSizeEnter!=-1>
-							<#assign value='${field.maxSizeEnter}' />
-						<#else>
-							<#assign value='' />
-						</#if>
-						<@input type='text' name='max_size_enter' id='max_size_enter' value=value />
-					</#list>
+					<#if config.maxSizeEnter!=-1>
+						<#assign value='${config.maxSizeEnter}' />
+					<#else>
+						<#assign value='' />
+					</#if>
+					<@input type='text' name='max_size_enter' id='max_size_enter' value=value />
 				</@formGroup>
 				<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 					<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
@@ -64,9 +59,12 @@
 				<@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}'>
 					<@checkBox name='editable_back' id='editable_back' value='1' checked=entry.editableBack />
 				</@formGroup>
-				<@formGroup labelFor='is_shown_in_completeness' labelKey='#i18n{forms.createEntry.labelResponsesCompleteness}' helpKey='#i18n{forms.createEntry.labelResponsesCompletenessComment}'>
-                	<@checkBox name='is_shown_in_completeness' id='is_shown_in_completeness' value='1' checked=entry.shownInCompleteness />
+				<@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+                	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
                 </@formGroup>
+                <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
 				<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelUseRichText}' helpKey='#i18n{forms.createEntry.labelUseRichTextComment}'>
 					<!#-- 	fieldInLine means use rich text -->
 					<#if entry.fieldInLine><#assign checked = true /></#if>

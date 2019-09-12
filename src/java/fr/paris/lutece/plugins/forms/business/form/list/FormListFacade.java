@@ -81,7 +81,8 @@ public class FormListFacade
      *            The number of docs to load for pagination purpose
      * @param sortConfig
      */
-    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,  int nStartIndex, int nPageSize, FormResponseItemSortConfig sortConfig )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+            FormResponseItemSortConfig sortConfig )
     {
         listFormColumn.sort( Comparator.comparing( IFormColumn::getFormColumnPosition ) );
 

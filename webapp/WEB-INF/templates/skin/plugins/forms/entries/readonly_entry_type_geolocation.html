@@ -3,17 +3,17 @@
 	<@formGroup labelFor='${entry.idEntry}_address' labelKey='${entry.title}' helpKey=entry.helpMessage mandatory=entry.mandatory>
 	    <#assign responseX = "" >
 	    <#assign responseY = "" >
-	    <#if getResponseContainingTheFieldWithTitle( list_responses, "address" )?? >
-	       <#assign responseAddress = getResponseContainingTheFieldWithTitle( list_responses, "address" ).toStringValueResponse >
+	    <#if getResponseContainingTheFieldWithCode( list_responses, "address" )?? >
+	       <#assign responseAddress = getResponseContainingTheFieldWithCode( list_responses, "address" ).toStringValueResponse >
 	    </#if>
-	    <#if getResponseContainingTheFieldWithTitle( list_responses, "geometry" )?? >
-	       <#assign responseGeometry = getResponseContainingTheFieldWithTitle( list_responses, "geometry" ).toStringValueResponse >
+	    <#if getResponseContainingTheFieldWithCode( list_responses, "geometry" )?? >
+	       <#assign responseGeometry = getResponseContainingTheFieldWithCode( list_responses, "geometry" ).toStringValueResponse >
 	    </#if>
-	    <#if getResponseContainingTheFieldWithTitle( list_responses, "X" )?? >
-	       <#assign responseX = getResponseContainingTheFieldWithTitle( list_responses, "X" ).toStringValueResponse >
+	    <#if getResponseContainingTheFieldWithCode( list_responses, "X" )?? >
+	       <#assign responseX = getResponseContainingTheFieldWithCode( list_responses, "X" ).toStringValueResponse >
 	    </#if>
-	    <#if getResponseContainingTheFieldWithTitle( list_responses, "Y" )?? >
-	       <#assign responseY = getResponseContainingTheFieldWithTitle( list_responses, "Y" ).toStringValueResponse >
+	    <#if getResponseContainingTheFieldWithCode( list_responses, "Y" )?? >
+	       <#assign responseY = getResponseContainingTheFieldWithCode( list_responses, "Y" ).toStringValueResponse >
 	    </#if>
 	    <#if responseX == "" || responseX == "0" || responseY == "" || responseY == "0">
 	        #i18n{forms.entryType.geolocalisation.message.noGeolocation}
@@ -28,7 +28,7 @@
 		<#assign editModeValue = "ReadOnly">
 
 		<#assign viewNumberValue = "1">
-		<#assign viewNumberValue = getFieldValue( entry, "viewNumber" )>
+		<#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
 
 		<#if entry.mapProvider?has_content>
 				<#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>

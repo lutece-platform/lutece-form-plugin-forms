@@ -34,19 +34,15 @@
 							<@checkBox name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
 						</@formGroup>
 						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-							<#list entry.fields as field>
-								<#if !field.title??>
-								<@input type='text' name='width' id='width' value='${field.width}' />
-								<#assign id_field=field.idField>
-								<#break>
-								</#if> 
-							</#list>
+							<#assign field=getFieldByCode(entry, "file_config")>
+							<@input type='text' name='width' id='width' value='${field.width}' />
+							<#assign id_field=field.idField>
 						</@formGroup>
 						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.createEntry.labelFileMaxSize}' mandatory=true>
 							<@input type='text' name='file_max_size' id='file_max_size' value=getFileMaxSize(entry) />
 						</@formGroup>
 						<!-- File type -->
-						<#assign fileType = getFieldValue( entry, "file_type" )>
+						<#assign fileType = getFieldValueByCode( entry, "file_type" )>
 						<@formGroup labelFor='file_type' labelKey='#i18n{forms.createEntry.fileType}' mandatory=true>
 							<#list entryTypeService.fileTypeRefList as file>
 								<#if fileType="${file.code}">
@@ -65,9 +61,12 @@
                         <@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}'>
                             <@checkBox name='editable_back' id='editable_back' value='1' checked=entry.editableBack />
                         </@formGroup>
-                        <@formGroup labelFor='is_shown_in_completeness' labelKey='#i18n{forms.createEntry.labelResponsesCompleteness}' helpKey='#i18n{forms.createEntry.labelResponsesCompletenessComment}'>
-	                    	<@checkBox name='is_shown_in_completeness' id='is_shown_in_completeness' value='1' checked=entry.shownInCompleteness />
+                        <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+	                    	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
 	                    </@formGroup>
+	                     <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>

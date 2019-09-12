@@ -14,9 +14,8 @@
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
       <div class="input-group">
         <span class="input-group-addon"><i class="fa fa-calendar fa-lg"></i></span>
-        <#list entry.fields as field>
-          <input type="text" name="${idName}" id="${idName}" class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>" value="${(response.toStringValueResponse)!(field.valueTypeDate)!}" />
-        </#list>
+        <#assign field = getFieldByCode( entry, "default_date_value" ) >
+        <input type="text" name="${idName}" id="${idName}" class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>" value="${(response.toStringValueResponse)!(field.valueTypeDate)!}" />
         <#if entry.helpMessage?exists&&entry.helpMessage!=''>
           <span class="help-block">${entry.helpMessage}</span>
         </#if>  

@@ -10,6 +10,7 @@
 		<fieldset>
 		<legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"</legend>
 		<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+			<#assign config=getFieldByCode( entry, "text_config")>
 			<input name="id_entry" value="${entry.idEntry}" type="hidden" />
 			<input name="id_step" value="${step.id}" type="hidden" />
 			<input name="id_question" value="${question.id}" type="hidden" />
@@ -29,9 +30,7 @@
 				<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
 			</@formGroup>
 			<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
-				<#list entry.fields as field>
-					<@input type='text' name='value' id='value' value='${field.value}' />
-				</#list>
+				<@input type='text' name='value' id='value' value='${config.value}' />
 			</@formGroup>
 			<@formGroup>
 				<#if entry.mandatory><#assign checked = true /></#if>
@@ -41,19 +40,15 @@
 				<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
 			</@formGroup>
 			<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-				<#list entry.fields as field>
-					<@input type='text' name='width' id='width' value='${field.width}' />
-					<#assign id_field=field.idField> 
-				</#list>
+				<@input type='text' name='width' id='width' value='${config.width}' />
+				<#assign id_field=config.idField> 
 			</@formGroup>
 			<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
-				<#list entry.fields as field>
-					<#if field.maxSizeEnter!=-1>
-						<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='${field.maxSizeEnter}' />
-					<#else>
-						<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='' />
-					</#if>
-				</#list>	
+				<#if config.maxSizeEnter!=-1>
+					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='${config.maxSizeEnter}' />
+				<#else>
+					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='' />
+				</#if>
 			</@formGroup>
 			<@formGroup >
 				<#if entry.confirmField><#assign checkedValue = true /><#else><#assign checkedValue = false /></#if>
@@ -68,9 +63,12 @@
 				<@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}'>
 					<@checkBox name='editable_back' id='editable_back' value='1' checked=entry.editableBack />
 				</@formGroup>
-			<@formGroup labelFor='is_shown_in_completeness' labelKey='#i18n{forms.createEntry.labelResponsesCompleteness}' helpKey='#i18n{forms.createEntry.labelResponsesCompletenessComment}'>
-            	<@checkBox name='is_shown_in_completeness' id='is_shown_in_completeness' value='1' checked=entry.shownInCompleteness />
+			<@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+            	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
             </@formGroup>
+            <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
 			<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 				<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 			</@formGroup>

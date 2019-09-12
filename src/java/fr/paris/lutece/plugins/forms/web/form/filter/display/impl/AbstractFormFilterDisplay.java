@@ -209,7 +209,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
         model.put( MARK_FILTER_LIST, referenceList );
         model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
         model.put( MARK_FILTER_NAME, strParameterName );
-        model.put( MARK_FILTER_CONFIG, getFormFilter().getFormFilterConfiguration() );
+        model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
 
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
         if ( htmlTemplate != null )

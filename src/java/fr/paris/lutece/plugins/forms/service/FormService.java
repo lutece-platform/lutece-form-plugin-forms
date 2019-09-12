@@ -100,22 +100,22 @@ public class FormService
      */
     public void saveForm( Form form, FormResponse formResponse )
     {
-    	 TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
 
-	     try
-	     {
-	        formResponse.setFromSave( Boolean.FALSE );
-	
-	        filterFinalSteps( formResponse );
-	        saveFormResponse( formResponse );
-	        saveFormResponseSteps( formResponse );
-	        TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
-	         }
-	         catch( Exception e )
-         {
-             TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
-             throw new AppException( e.getMessage( ), e );
-         }
+        try
+        {
+            formResponse.setFromSave( Boolean.FALSE );
+
+            filterFinalSteps( formResponse );
+            saveFormResponse( formResponse );
+            saveFormResponseSteps( formResponse );
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+        }
+        catch( Exception e )
+        {
+            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+            throw new AppException( e.getMessage( ), e );
+        }
         fireFormResponseEventCreation( formResponse );
     }
 
@@ -411,96 +411,107 @@ public class FormService
 
         return formResponseManager;
     }
-    
+
     // FORM RESPONSE CREATION
     /**
      * Fire the create event on given form Response
-     * @param formResponse the form Response
+     * 
+     * @param formResponse
+     *            the form Response
      */
     public void fireFormResponseEventCreation( FormResponse formResponse )
     {
-        ResourceEvent formResponseEvent = new ResourceEvent();
-        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) ) ;
+        ResourceEvent formResponseEvent = new ResourceEvent( );
+        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) );
         formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
-        
+
         ResourceEventManager.fireAddedResource( formResponseEvent );
     }
 
     /**
-     * Fire the create event on all the form responses associated to given form 
-     * @param form The form
+     * Fire the create event on all the form responses associated to given form
+     * 
+     * @param form
+     *            The form
      */
     public void fireFormResponseEventCreation( Form form )
     {
-        new Thread(() -> {
+        new Thread( ( ) -> {
             List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
             for ( FormResponse formResponse : listFormResponse )
             {
                 fireFormResponseEventCreation( formResponse );
             }
-        }).start();
+        } ).start( );
     }
-    
+
     // FORM RESPONSE UPDATE
     /**
      * Fire the form response event update on given formResponse
-     * @param formResponse the formResponse
+     * 
+     * @param formResponse
+     *            the formResponse
      */
     public void fireFormResponseEventUpdate( FormResponse formResponse )
     {
-            ResourceEvent formResponseEvent = new ResourceEvent();
-            formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) ) ;
-            formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
+        ResourceEvent formResponseEvent = new ResourceEvent( );
+        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) );
+        formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
 
-            ResourceEventManager.fireUpdatedResource( formResponseEvent );
+        ResourceEventManager.fireUpdatedResource( formResponseEvent );
     }
 
     /**
      * Fire the update event on all the form responses associated to given form
-     * @param form 
-     *              The form
+     * 
+     * @param form
+     *            The form
      */
     public void fireFormResponseEventUpdate( Form form )
     {
-        new Thread(() -> {
+        new Thread( ( ) -> {
             List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
             for ( FormResponse formResponse : listFormResponse )
             {
                 fireFormResponseEventUpdate( formResponse );
             }
-        }).start();
+        } ).start( );
     }
-    
+
     // FORM RESPONSE DELETION
-    
+
     /**
      * Fire the form response deletion event
-     * @param formResponse the form response
+     * 
+     * @param formResponse
+     *            the form response
      */
     public void fireFormResponseEventDelete( FormResponse formResponse )
     {
-        ResourceEvent formResponseEvent = new ResourceEvent();
-        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) ) ;
+        ResourceEvent formResponseEvent = new ResourceEvent( );
+        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) );
         formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
-        
+
         ResourceEventManager.fireDeletedResource( formResponseEvent );
     }
-    
+
     /**
      * Fire the delete event of all the form responses associated to given form
-     * @param form the form
+     * 
+     * @param form
+     *            the form
      */
     public void fireFormResponseEventDelete( Form form )
     {
-        new Thread(() -> {
-            List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId() );
+        new Thread( ( ) -> {
+            List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
             for ( FormResponse formResponse : listFormResponse )
             {
                 fireFormResponseEventDelete( formResponse );
             }
-        }).start();
+        } ).start( );
     }
 }

@@ -133,7 +133,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
             model.put( MARK_FILTER_LIST, refListForms );
             model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
             model.put( MARK_FILTER_NAME, FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
-            model.put( MARK_FILTER_CONFIG, getFormFilter().getFormFilterConfiguration() );
+            model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
             model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM, request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ) );
 
             HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );

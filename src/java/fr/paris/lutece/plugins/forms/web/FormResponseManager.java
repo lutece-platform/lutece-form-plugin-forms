@@ -247,17 +247,15 @@ public class FormResponseManager
         return listFormQuestionResponse;
     }
 
-
     /**
      * Finds all responses
      *
      * @return the found responses
      */
-    public List<FormQuestionResponse> findAllResponses(  )
+    public List<FormQuestionResponse> findAllResponses( )
     {
-        List<FormQuestionResponse> listFormQuestionResponse =   _formResponse.getSteps().stream()
-                .flatMap( step -> step.getQuestions().stream())
-                .collect(Collectors.toList());
+        List<FormQuestionResponse> listFormQuestionResponse = _formResponse.getSteps( ).stream( ).flatMap( step -> step.getQuestions( ).stream( ) )
+                .collect( Collectors.toList( ) );
         return listFormQuestionResponse;
     }
 

@@ -109,14 +109,14 @@ public class LuceneFormSearchFactory
             try
             {
                 Directory luceneDirectory = getDirectory( );
-    
+
                 if ( !DirectoryReader.indexExists( luceneDirectory ) )
                 {
                     bCreateIndex = Boolean.TRUE;
                 }
-    
+
                 IndexWriterConfig conf = new IndexWriterConfig( getAnalyzer( ) );
-    
+
                 if ( bCreateIndex )
                 {
                     conf.setOpenMode( OpenMode.CREATE );
@@ -134,7 +134,7 @@ public class LuceneFormSearchFactory
             }
         }
         return _indexWriter;
-        
+
     }
 
     /**
@@ -151,13 +151,13 @@ public class LuceneFormSearchFactory
         boolean indexInWebapp = AppPropertiesService.getPropertyBoolean( PATH_INDEX_IN_WEBAPP, true );
         if ( indexInWebapp )
         {
-        	strIndex = AppPathService.getPath( PATH_INDEX );
+            strIndex = AppPathService.getPath( PATH_INDEX );
         }
         else
         {
-        	strIndex = AppPropertiesService.getProperty( PATH_INDEX );
+            strIndex = AppPropertiesService.getProperty( PATH_INDEX );
         }
-        
+
         return NIOFSDirectory.open( Paths.get( strIndex ) );
     }
 }

@@ -101,10 +101,10 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
             if ( formColumn != null )
             {
                 FormColumnEntry formColumnEntry = (FormColumnEntry) formColumn;
-                    List<String> listEntryCode = formColumnEntry.getListEntryCode( );
-                    strEntryValueColumnName = listEntryCode.get( 0 );
+                List<String> listEntryCode = formColumnEntry.getListEntryCode( );
+                strEntryValueColumnName = listEntryCode.get( 0 );
             }
-            
+
             mapFilterNameValues.put( strEntryValueColumnName, strEntryParameterValue );
             strEntryValue = strEntryParameterValue;
         }

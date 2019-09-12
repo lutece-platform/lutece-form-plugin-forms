@@ -38,7 +38,7 @@ package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
  */
 public class FormFilterDateConfiguration extends AbstractFormFilterConfiguration
 {
-    public FormFilterDateConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName ) 
+    public FormFilterDateConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName )
     {
         super( nPosition, strFormFilterLabel, strFormFilterName );
     }

@@ -86,7 +86,7 @@ public interface IQuestionDAO
      * @return The instance of the question
      */
     Question load( int nKey, Plugin plugin );
-    
+
     /**
      * Load the data from the table
      * 
@@ -97,7 +97,7 @@ public interface IQuestionDAO
      * @return The instance of the question
      */
     Question loadByCode( String strCode, Plugin plugin );
-    
+
     /**
      * Load the data from the table
      * 
@@ -118,7 +118,7 @@ public interface IQuestionDAO
      */
     List<Question> selectQuestionsList( Plugin plugin );
 
-        /**
+    /**
      * Load the data of all the question objects and returns them as a list
      * 
      * @param plugin
@@ -149,7 +149,7 @@ public interface IQuestionDAO
      */
     List<Question> selectQuestionsListByFormId( int nIdForm, Plugin plugin );
 
-/**
+    /**
      * Load the data of all the question objects by form id and returns them as a list
      * 
      * @param nIdForm

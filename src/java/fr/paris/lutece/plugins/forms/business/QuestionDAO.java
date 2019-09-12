@@ -61,6 +61,7 @@ public final class QuestionDAO implements IQuestionDAO
     private static final String SQL_QUERY_SELECT_BY_STEP = SQL_QUERY_SELECT_ALL + " WHERE id_step = ?";
     private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title, fq.code, fq.description, fq.id_entry, fq.id_step, fq.is_visible_multiview_global, fq.is_visible_multiview_form_selected , fq.column_title, fq.is_filterable_multiview_global, fq.is_filterable_multiview_form_selected FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
     private static final String SQL_QUERY_SELECT_IN = SQL_QUERY_SELECT_ALL + " WHERE id_question IN ( ";
+
     /**
      * {@inheritDoc }
      */
@@ -112,10 +113,10 @@ public final class QuestionDAO implements IQuestionDAO
 
         daoUtil.close( );
         question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
-        
+
         return question;
     }
-    
+
     /**
      * {@inheritDoc }
      */
@@ -134,8 +135,8 @@ public final class QuestionDAO implements IQuestionDAO
 
         daoUtil.close( );
         question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
-        daoUtil.free();
-        
+        daoUtil.free( );
+
         return question;
     }
 
@@ -193,9 +194,10 @@ public final class QuestionDAO implements IQuestionDAO
         }
 
         daoUtil.close( );
-        
-        for(Question quest:questionList ){
-        	
+
+        for ( Question quest : questionList )
+        {
+
             quest.setEntry( getQuestionEntry( quest.getIdEntry( ) ) );
 
         }
@@ -219,8 +221,9 @@ public final class QuestionDAO implements IQuestionDAO
         }
 
         daoUtil.close( );
-       for(Question quest:questionList ){
-        	
+        for ( Question quest : questionList )
+        {
+
             quest.setEntry( getQuestionEntry( quest.getIdEntry( ) ) );
 
         }
@@ -257,7 +260,7 @@ public final class QuestionDAO implements IQuestionDAO
         {
             questionList.add( dataToObjectWithoutStepEntry( daoUtil ) );
         }
-        
+
         daoUtil.close( );
         return questionList;
     }
@@ -293,8 +296,9 @@ public final class QuestionDAO implements IQuestionDAO
         {
             questionList.add( dataToObject( daoUtil ) );
         }
-        for(Question quest:questionList ){
-        	
+        for ( Question quest : questionList )
+        {
+
             quest.setEntry( getQuestionEntry( quest.getIdEntry( ) ) );
 
         }
@@ -303,7 +307,7 @@ public final class QuestionDAO implements IQuestionDAO
     }
 
     @Override
-    public List<Question> selectQuestionsListByFormIdUncomplete(int nIdForm, Plugin plugin) 
+    public List<Question> selectQuestionsListByFormIdUncomplete( int nIdForm, Plugin plugin )
     {
         List<Question> questionList = new ArrayList<Question>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin );
@@ -314,7 +318,7 @@ public final class QuestionDAO implements IQuestionDAO
         {
             questionList.add( dataToObjectWithoutStepEntry( daoUtil ) );
         }
-        
+
         daoUtil.close( );
         return questionList;
     }
@@ -374,7 +378,7 @@ public final class QuestionDAO implements IQuestionDAO
         question.setCode( daoUtil.getString( "code" ) );
         question.setDescription( daoUtil.getString( "description" ) );
         question.setIdEntry( daoUtil.getInt( "id_entry" ) );
-       // question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+        // question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
         question.setIdStep( daoUtil.getInt( "id_step" ) );
         question.setVisibleMultiviewGlobal( daoUtil.getBoolean( "is_visible_multiview_global" ) );
         question.setVisibleMultiviewFormSelected( daoUtil.getBoolean( "is_visible_multiview_form_selected" ) );
@@ -385,30 +389,30 @@ public final class QuestionDAO implements IQuestionDAO
 
         return question;
     }
-    
+
     @Override
     public List<Question> loadMultiple( List<Integer> keyList, Plugin plugin )
     {
-    	List<Question> list = new ArrayList<>( );
-    	String query = SQL_QUERY_SELECT_IN + keyList.stream( ).distinct( ).map( i -> "?" ).collect( Collectors.joining( "," ) ) + " )";
-    	
-    	try ( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
-    	{
-    		for ( int i = 0; i < keyList.size( ); i++ )
-    		{
-    			daoUtil.setInt( i + 1 , keyList.get( i ) );
-    		}
-    		daoUtil.executeQuery( );
-    		
-    		while ( daoUtil.next( ) )
-    		{
-    			list.add( dataToObjectWithoutStepEntry( daoUtil ) );
-    		}
-    		daoUtil.close( );
-    	}
-    	return list;
+        List<Question> list = new ArrayList<>( );
+        String query = SQL_QUERY_SELECT_IN + keyList.stream( ).distinct( ).map( i -> "?" ).collect( Collectors.joining( "," ) ) + " )";
+
+        try( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
+        {
+            for ( int i = 0; i < keyList.size( ); i++ )
+            {
+                daoUtil.setInt( i + 1, keyList.get( i ) );
+            }
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                list.add( dataToObjectWithoutStepEntry( daoUtil ) );
+            }
+            daoUtil.close( );
+        }
+        return list;
     }
-    
+
     /**
      * 
      * @param daoUtil
@@ -430,7 +434,7 @@ public final class QuestionDAO implements IQuestionDAO
         question.setColumnTitle( daoUtil.getString( "column_title" ) );
         question.setFiltrableMultiviewGlobal( daoUtil.getBoolean( "is_filterable_multiview_global" ) );
         question.setFiltrableMultiviewFormSelected( daoUtil.getBoolean( "is_filterable_multiview_form_selected" ) );
-        
+
         return question;
     }
 }

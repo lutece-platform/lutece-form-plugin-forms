@@ -43,8 +43,8 @@ import fr.paris.lutece.portal.service.rbac.RBACResource;
 public interface IFormPanelConfiguration extends RBACResource
 {
 
-	public static final String RESOURCE_TYPE = "FORM_PANEL_CONF";
-	
+    public static final String RESOURCE_TYPE = "FORM_PANEL_CONF";
+
     /**
      * Return the technical code of the FormPanel
      * 
@@ -72,16 +72,16 @@ public interface IFormPanelConfiguration extends RBACResource
      * @return the list of FormPanelInitializer class name of the FormPanelConfiguration
      */
     List<String> getListFormPanelInitializerName( );
-    
+
     @Override
     default String getResourceTypeCode( )
     {
-    	return RESOURCE_TYPE;
+        return RESOURCE_TYPE;
     }
-    
+
     @Override
     default String getResourceId( )
     {
-    	return getTechnicalCode( );
+        return getTechnicalCode( );
     }
 }

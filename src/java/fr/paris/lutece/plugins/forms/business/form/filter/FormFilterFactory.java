@@ -73,6 +73,6 @@ public class FormFilterFactory
     public List<FormFilter> buildFormFilterList( Integer nIdForm, List<IFormColumn> listFormColumns )
     {
         return MultiviewFormService.getInstance( ).getFormFiltersList( nIdForm, listFormColumns );
-        
+
     }
 }

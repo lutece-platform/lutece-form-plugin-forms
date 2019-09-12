@@ -145,9 +145,10 @@ public interface ICompositeDisplay
 
     /**
      * is the composite display visible.
+     * 
      * @return
      */
     boolean isVisible( );
-    
+
     ICompositeDisplay filter( List<Integer> listQuestionIds );
 }

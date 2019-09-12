@@ -41,13 +41,12 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 public class FormFilterEntryConfiguration extends AbstractFormFilterConfiguration
 {
     private final IFormColumn _formColumn;
-    
-    public FormFilterEntryConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName, IFormColumn formColumn ) 
+
+    public FormFilterEntryConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName, IFormColumn formColumn )
     {
-        super(nPosition, strFormFilterLabel, strFormFilterName);
+        super( nPosition, strFormFilterLabel, strFormFilterName );
         _formColumn = formColumn;
     }
-
 
     /**
      * Return the FormColumn linked to the FormFilter

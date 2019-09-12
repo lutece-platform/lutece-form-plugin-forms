@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 public class FormFilterFormResponseIdConfiguration extends AbstractFormFilterConfiguration
 {
 
-    public FormFilterFormResponseIdConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName ) 
+    public FormFilterFormResponseIdConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName )
     {
         super( nPosition, strFormFilterLabel, strFormFilterName );
     }
