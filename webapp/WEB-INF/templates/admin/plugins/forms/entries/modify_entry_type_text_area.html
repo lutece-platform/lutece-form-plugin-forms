@@ -40,8 +40,9 @@
 				<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
 					<@input type='text' name='width' id='width' value='${field_width?number}' />
 				</@formGroup>
+				<#assign field_height=getFieldValueByCode( entry, "height")>
 				<@formGroup labelFor='height' labelKey='#i18n{forms.createEntry.labelHeight}' mandatory=true>
-					<@input type='text' name='height' id='height' inputSize=5 value='${config.height}' />
+					<@input type='text' name='height' id='height' inputSize=5 value='${field_height?number}' />
 				</@formGroup>
 				<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
 					<#if config.maxSizeEnter!=-1>
