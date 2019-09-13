@@ -36,8 +36,9 @@
 					<#if entry.mandatory><#assign checked = true /></#if>
 					<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=checked />
 				</@formGroup>
+				<#assign field_width=getFieldValueByCode( entry, "width")>
 				<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-					<@input type='text' name='width' id='width' value='${config.width}' />
+					<@input type='text' name='width' id='width' value='${field_width?number}' />
 				</@formGroup>
 				<@formGroup labelFor='height' labelKey='#i18n{forms.createEntry.labelHeight}' mandatory=true>
 					<@input type='text' name='height' id='height' inputSize=5 value='${config.height}' />

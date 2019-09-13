@@ -2,12 +2,13 @@
 
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 	<#macro getTextAreaContent responseContent has_error entry field>
+		<#assign field_width=getFieldValueByCode( entry, "width")>
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
 		<!#-- 	fieldInLine means use rich text -->
 		<#if has_error>
-			<textarea name="${idName}" id="${idName}" cols="${field.width}" rows="${field.height}" class="alert alert-danger<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
+			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field.height}" class="alert alert-danger<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
 		<#else>
-			<textarea name="${idName}" id="${idName}" cols="${field.width}" rows="${field.height}" class="${entry.CSSClass!}<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
+			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field.height}" class="${entry.CSSClass!}<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
 		</#if>
 	</#macro>
 	

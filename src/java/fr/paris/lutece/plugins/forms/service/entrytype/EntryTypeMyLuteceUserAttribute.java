@@ -133,8 +133,6 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
 
         Field fieldAttributeName = createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE, null,
                 request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
-        fieldAttributeName.setWidth( 50 );
-        fieldAttributeName.setMaxSizeEnter( 0 );
         return null;
     }
 

@@ -5,8 +5,9 @@
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
 			<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+				<#assign field_width=getFieldValueByCode( entry, "width")>
 				<#assign field=getFieldByCode( entry, "text_config")>
-					<input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field.width &gt; 0>style="width:${field.width}px;"</#if>
+					<input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field_width?number &gt; 0>style="width:${field_width?number}px;"</#if>
 					<#if list_responses?has_content>
 						<#list list_responses as response>
 						<#if response.entry.idEntry == entry.idEntry>
@@ -52,9 +53,10 @@
 				<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
 			</#if>
 			<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}_confirm_field">${confirmField.title}<#if entry.mandatory> *</#if></label>
-			<#list entry.fields as field>
+			<#assign field_width=getFieldValueByCode( entry, "width")>
+				<#assign field=getFieldByCode( entry, "text_config")>
 				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-					<input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field.width}" value="" 
+					<input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field_width?number}" value="" 
 					<#if field.maxSizeEnter!=-1>maxlength="${field.maxSizeEnter}"</#if>/>
 				</div>
 			</#list>
