@@ -45,8 +45,9 @@
 					<@input type='text' name='height' id='height' inputSize=5 value='${field_height?number}' />
 				</@formGroup>
 				<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
-					<#if config.maxSizeEnter!=-1>
-						<#assign value='${config.maxSizeEnter}' />
+				<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
+					<#if field_max_size?number!=-1>
+						<#assign value='${field_max_size?number}' />
 					<#else>
 						<#assign value='' />
 					</#if>

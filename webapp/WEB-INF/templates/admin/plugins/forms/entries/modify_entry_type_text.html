@@ -45,8 +45,9 @@
 				<#assign id_field=config.idField> 
 			</@formGroup>
 			<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
-				<#if config.maxSizeEnter!=-1>
-					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='${config.maxSizeEnter}' />
+				<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
+				<#if field_max_size?number!=-1>
+					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='${field_max_size?number}' />
 				<#else>
 					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='' />
 				</#if>
