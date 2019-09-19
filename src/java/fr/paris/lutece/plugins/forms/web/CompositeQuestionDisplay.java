@@ -245,6 +245,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 if ( _question.getId( ) == question.getId( ) && _question.getIterationNumber( ) == question.getIterationNumber( ) )
                 {
                     listResponse = formQuestionResponse.getEntryResponse( );
+                    _question.setIsVisible( true );
                     break;
                 }
             }
