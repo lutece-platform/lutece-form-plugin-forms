@@ -41,6 +41,7 @@ import java.nio.file.Paths;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
@@ -86,12 +87,14 @@ public class LuceneFormSearchFactory
      * @throws IOException
      *             - if there is a low-level IO error
      */
+    @Deprecated
     public IndexSearcher getIndexSearcher( ) throws IOException
     {
         Directory luceneDirectory = getDirectory( );
-
         return new IndexSearcher( DirectoryReader.open( luceneDirectory ) );
     }
+    
+    
 
     /**
      * Create the IndexWriter with its configuration
@@ -144,7 +147,7 @@ public class LuceneFormSearchFactory
      * @throws IOException
      *             - if the path string cannot be converted to a Path
      */
-    private Directory getDirectory( ) throws IOException
+    public Directory getDirectory( ) throws IOException
     {
         String strIndex = AppPathService.getPath( PATH_INDEX );
 

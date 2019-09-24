@@ -44,12 +44,17 @@ import fr.paris.lutece.portal.service.search.IndexationService;
 import fr.paris.lutece.portal.service.search.LuceneSearchEngine;
 import fr.paris.lutece.portal.service.search.SearchItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
@@ -60,6 +65,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.SortedNumericSortField;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
 
 public class LuceneFormSearchEngine implements IFormSearchEngine
 {
@@ -76,9 +82,9 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         ArrayList<Integer> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
-        try
+        try( Directory directory = _luceneFormSearchFactory.getDirectory() ; IndexReader ir = DirectoryReader.open( directory ) ; )
         {
-            searcher = _luceneFormSearchFactory.getIndexSearcher( );
+        	searcher = new IndexSearcher( ir );
 
             Collection<String> queries = new ArrayList<>( );
             Collection<String> fields = new ArrayList<>( );
@@ -127,6 +133,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 SearchItem si = new SearchItem( document );
                 listResults.add( Integer.parseInt( si.getId( ) ) );
             }
+            ir.close();
         }
         catch( Exception e )
         {
@@ -165,9 +172,10 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         List<FormResponseSearchItem> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
-        try
+        try( Directory directory = _luceneFormSearchFactory.getDirectory() ; IndexReader ir = DirectoryReader.open( directory ) ; )
         {
-            searcher = _luceneFormSearchFactory.getIndexSearcher( );
+        	
+            searcher = new IndexSearcher( ir );
             TopDocs topDocs = null;
             // Get results documents
             if ( sort != null )
@@ -187,12 +195,13 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 Document document = searcher.doc( hits [i].doc );
                 listResults.add( new FormResponseSearchItem( document ) );
             }
+            ir.close();
         }
         catch( IOException e )
         {
             AppLogService.error( e.getMessage( ), e );
         }
-
+        
         return listResults;
     }
 
