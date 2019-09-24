@@ -111,6 +111,19 @@ public final class FormResponseHome
 
         return formResponse;
     }
+    
+    /**
+     * Returns an instance of a formResponse whose identifier is specified in parameter<br />
+     * Doesn't load the list of {@link FormResponseStep}
+     * 
+     * @param nKey
+     *            The formResponse primary key
+     * @return an instance of FormResponse
+     */
+    public static FormResponse loadById( int nKey )
+    {
+        return _dao.load( nKey, _plugin );
+    }
 
     /**
      * Returns an instance of a formResponse whose identifier is specified in parameter
