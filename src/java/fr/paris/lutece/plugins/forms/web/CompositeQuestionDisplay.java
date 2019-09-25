@@ -83,6 +83,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     // Marks
     private static final String MARK_QUESTION_ENTRY = "questionEntry";
+    private static final String MARK_COMPLETENESS_FO = "is_completeness_bo";
     private static final String MARK_ENTRY_ITERATION_NUMBER = "entry_iteration_number";
 
     private Question _question;
@@ -188,6 +189,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _model.put( MARK_ENTRY_ITERATION_NUMBER, _question.getIterationNumber( ) );
                 _model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
                 _model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
+                _model.put( MARK_COMPLETENESS_FO, displayType == DisplayType.COMPLETE_FRONTOFFICE );
 
                 strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale, _model, displayType );
 

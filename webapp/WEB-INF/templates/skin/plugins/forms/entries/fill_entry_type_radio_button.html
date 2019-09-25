@@ -1,6 +1,6 @@
 <#include "/admin/plugins/forms/commons.html" />
 
-<#if !entry.onlyDisplayInBack>
+<#if !entry.onlyDisplayInBack || is_completeness_bo>
 	<#assign hide="">
 	<#list entry.fields as field>
 		<#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>

@@ -1,6 +1,6 @@
 <#include "/admin/plugins/forms/commons.html" />
 
-<#if !entry.onlyDisplayInBack>
+<#if !entry.onlyDisplayInBack || is_completeness_bo>
 	<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 	<div class="form-group">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
