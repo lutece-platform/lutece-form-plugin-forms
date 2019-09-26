@@ -1,6 +1,6 @@
 <#include "/admin/plugins/forms/commons.html" />
 
-<#if !entry.onlyDisplayInBack>
+<#if !entry.onlyDisplayInBack || is_completeness_bo>
 <#assign cpt=0>
 
 	<#assign hasError = false />
