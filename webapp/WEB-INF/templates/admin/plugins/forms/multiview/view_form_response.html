@@ -26,13 +26,8 @@
 
 <div class="row" id="form-response-details">
     <div class="col-xs-12 col-sm-9">
-       <#if error?? && error != "">
-        <div class="alert alert-danger" id="messages_errors_div">
-            <a class="close" data-dismiss="alert" href="#">x</a>
-            <i class="fa fa-exclamation-circle"></i>  ${error} <br>
-        </div>
-       </#if>
-       <#if list_multiview_step_display?has_content>
+        <@messages errors=errors />
+        <#if list_multiview_step_display?has_content>
             <#list list_multiview_step_display as multiview_step_display>
                 ${multiview_step_display}
             </#list>

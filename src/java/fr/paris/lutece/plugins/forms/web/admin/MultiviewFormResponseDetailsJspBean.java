@@ -124,7 +124,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String PARAMETER_ID_FORM_RESPONSE = "id_form_response";
     private static final String PARAMETER_BACK_FROM_ACTION = "back_form_action";
     private static final String PARAMETER_ID_ACTION = "id_action";
-    private static final String PARAMETER_ERROR = "error";
 
     // Marks
     private static final String MARK_LIST_FILTER_VALUES = "list_filter_values";
@@ -140,7 +139,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String MARK_HISTORY_WORKFLOW_ENABLED = "history_workflow";
     private static final String MARK_WORKFLOW_STATE = "workflow_state";
     private static final String MARK_WORKFLOW_ACTION_LIST = "workflow_action_list";
-    private static final String MARK_WORKFLOW_ACTION_ERROR = "error";
 
     // Messages
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
@@ -154,8 +152,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
     private final transient IFormsMultiviewAuthorizationService _formsMultiviewAuthorizationService = SpringContextService
             .getBean( IFormsMultiviewAuthorizationService.BEAN_NAME );
-
-    private  String  error = "";
 
     /**
      * Return the page with the details of a form response
@@ -203,11 +199,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             _mapFilterValues = fillFilterMapValues( request );
         }
         populateModelWithFilterValues( _mapFilterValues, model );
-        //Check if error to show
-        if ( request.getParameter( PARAMETER_ERROR ) != null )
-        {
-            model.put(MARK_WORKFLOW_ACTION_ERROR, request.getParameter( PARAMETER_ERROR ) );
-        }
+
         return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_VIEW_FORM_RESPONSE, model );
     }
 
@@ -224,7 +216,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     {
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
 
-        Map<String, Object> mapFormResponseDetailsModel = new HashMap<>( );
+        Map<String, Object> mapFormResponseDetailsModel = getModel();
         mapFormResponseDetailsModel.put( MARK_FORM_RESPONSE, formResponse );
         mapFormResponseDetailsModel.put( MARK_FORM, form );
 
@@ -516,8 +508,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         }
         else
         {
-            this.error =  I18nService.getLocalizedString(MESSAGE_ACTION_ERROR, request.getLocale() );
-            return redirectToResponseDetailView( request );
+            addError(MESSAGE_ACTION_ERROR, request.getLocale() );
+            return redirect( request, VIEW_FORM_RESPONSE_DETAILS, PARAMETER_ID_FORM_RESPONSE, Integer.parseInt(request.getParameter( PARAMETER_ID_FORM_RESPONSE )) , PARAMETER_BACK_FROM_ACTION, 1 );
         }
         return manageRedirection( request );
     }
@@ -624,10 +616,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             Map<String, String> mapParameters = new LinkedHashMap<>( );
             mapParameters.put( PARAMETER_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
             mapParameters.put( PARAMETER_BACK_FROM_ACTION, Boolean.TRUE.toString( ) );
-            if(!"".equals(this.error)){
-                mapParameters.put( PARAMETER_ERROR, this.error);
-                this.error = "";
-            }
 
             return redirect( request, VIEW_FORM_RESPONSE_DETAILS, mapParameters );
         }
