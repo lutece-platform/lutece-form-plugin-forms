@@ -219,9 +219,9 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
             String strAttributeName = sortConfig.getSortAttributeName( );
             if ( strAttributeName != null )
             {
-                if ( strAttributeName.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
+            	if ( strAttributeName.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
                 {
-                    return new Sort( new SortField( sortConfig.getSortAttributeName( ), SortField.Type.LONG, sortConfig.isAscSort( ) ) );
+                    return new Sort( new SortedNumericSortField( sortConfig.getSortAttributeName( ), SortField.Type.LONG, sortConfig.isAscSort( ) ) );
                 }
                 if ( strAttributeName.endsWith( FormResponseSearchItem.FIELD_INT_SUFFIX ) )
                 {
