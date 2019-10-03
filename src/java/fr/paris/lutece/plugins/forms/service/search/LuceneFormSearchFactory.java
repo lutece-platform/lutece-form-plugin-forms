@@ -93,8 +93,6 @@ public class LuceneFormSearchFactory
         Directory luceneDirectory = getDirectory( );
         return new IndexSearcher( DirectoryReader.open( luceneDirectory ) );
     }
-    
-    
 
     /**
      * Create the IndexWriter with its configuration

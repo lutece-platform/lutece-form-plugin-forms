@@ -640,10 +640,11 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
                                 try
                                 {
-                                	LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
-                                	Timestamp timestamp = Timestamp.valueOf( localDate.atTime( 12, 30 ) );
+                                    LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
+                                    Timestamp timestamp = Timestamp.valueOf( localDate.atTime( 12, 30 ) );
                                     doc.add( new LongPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
-                                    doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
+                                    doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp
+                                            .getTime( ) ) );
                                     doc.add( new StoredField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
                                 }
                                 catch( Exception e )
