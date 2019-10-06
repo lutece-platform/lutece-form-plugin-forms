@@ -42,7 +42,6 @@ import java.util.Map;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemComparator;
 import fr.paris.lutece.test.LuteceTestCase;
 
 /**
