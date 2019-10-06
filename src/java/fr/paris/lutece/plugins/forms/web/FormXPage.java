@@ -117,6 +117,8 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
     private static final String MESSAGE_WARNING_LOST_SESSION = "forms.warning.lost.session";
     private static final String MESSAGE_ERROR_STEP_NOT_FINAL = "forms.error.step.isnot.final";
+    private static final String MESSAGE_STEP_TITLE = "forms.step.title";
+    private static final String MESSAGE_SUMMARY_TITLE = "forms.summary.title";
     /**
      * Generated serial id
      */
@@ -272,6 +274,7 @@ public class FormXPage extends MVCApplication
         }
         Map<String, Object> model = getModel( );
         String strTitleForm = StringUtils.EMPTY;
+        String strPathForm = StringUtils.EMPTY;
         int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE && ( _currentStep == null || nIdForm != _currentStep.getIdForm( ) ) )
@@ -289,7 +292,9 @@ public class FormXPage extends MVCApplication
             checkAuthentication( form, request );
             checkIfUserResponseForm( form, request );
             checkNumberMaxResponseForm( form, request );
-            strTitleForm = form.getTitle( );
+            strTitleForm = I18nService.getLocalizedString( MESSAGE_STEP_TITLE,
+                    new String[ ] { form.getTitle( ), _currentStep.getTitle( ) }, getLocale( request ) );
+            strPathForm = form.getTitle( );
 
             if ( form.isActive( ) )
             {
@@ -308,7 +313,7 @@ public class FormXPage extends MVCApplication
 
         XPage xPage = getXPage( TEMPLATE_VIEW_STEP, request.getLocale( ), model );
         xPage.setTitle( strTitleForm );
-        xPage.setPathLabel( strTitleForm );
+        xPage.setPathLabel( strPathForm );
 
         return xPage;
     }
@@ -489,11 +494,11 @@ public class FormXPage extends MVCApplication
         Form form = FormHome.findByPrimaryKey( Integer.parseInt( idForm ) );
         Map<String, Object> model = buildModelForSummary( request );
         model.put( FormsConstants.MARK_ID_FORM, idForm );
-        strTitleForm = form.getTitle( );
+        strTitleForm = I18nService.getLocalizedString( MESSAGE_SUMMARY_TITLE, new String[] { form.getTitle( ) }, getLocale( request ) );
 
         XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, request.getLocale( ), model );
         xPage.setTitle( strTitleForm );
-        xPage.setPathLabel( strTitleForm );
+        xPage.setPathLabel( form.getTitle( ) );
 
         return xPage;
     }
@@ -614,7 +619,10 @@ public class FormXPage extends MVCApplication
 
         model.put( FormsConstants.PARAMETER_BACK_URL, strBackUrl );
 
-        return getXPage( TEMPLATE_FORM_SUBMITTED, request.getLocale( ), model );
+        XPage xPage = getXPage( TEMPLATE_FORM_SUBMITTED, request.getLocale( ), model );
+        xPage.setTitle( form.getTitle( ) );
+        xPage.setPathLabel( form.getTitle( ) );
+        return xPage;
     }
 
     /**
