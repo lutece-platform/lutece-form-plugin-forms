@@ -48,7 +48,7 @@ import java.util.List;
 public final class TransitionDAO implements ITransitionDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECT = "SELECT t.id_transition, t.from_step, fromStep.title, t.next_step, nextStep.title, t.priority, f.id_form FROM forms_transition t "
+    private static final String SQL_QUERY_SELECT = "SELECT t.id_transition, t.from_step, fromStep.title as fromTitle, t.next_step, nextStep.title as nextTitle, t.priority, f.id_form FROM forms_transition t "
             + "INNER JOIN forms_step fromStep ON fromStep.id_step = t.from_step "
             + "INNER JOIN forms_step nextStep ON nextStep.id_step = t.next_step "
             + " LEFT JOIN forms_form f ON fromStep.id_form = f.id_form ";
@@ -295,9 +295,9 @@ public final class TransitionDAO implements ITransitionDAO
 
         transition.setId( daoUtil.getInt( "id_transition" ) );
         transition.setFromStep( daoUtil.getInt( "from_step" ) );
-        transition.setFromStepTitle( daoUtil.getString( "fromStep.title" ) );
+        transition.setFromStepTitle( daoUtil.getString( "fromTitle" ) );
         transition.setNextStep( daoUtil.getInt( "next_step" ) );
-        transition.setNextStepTitle( daoUtil.getString( "nextStep.title" ) );
+        transition.setNextStepTitle( daoUtil.getString( "nextTitle" ) );
         transition.setPriority( daoUtil.getInt( "priority" ) );
 
         return transition;
