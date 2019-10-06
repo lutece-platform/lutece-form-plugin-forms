@@ -60,7 +60,7 @@ CREATE TABLE forms_question (
 id_question int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
 code varchar(100) default '' NOT NULL,
-description LONGTEXT,
+description LONG VARCHAR,
 id_entry int default '0',
 id_step int default '0',
 is_visible_multiview_global SMALLINT default 0 NOT NULL,
