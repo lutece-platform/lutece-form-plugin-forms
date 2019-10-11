@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
@@ -103,7 +104,10 @@ public class ListValueValidator extends AbstractValidator
             {
                 for ( Field field : question.getEntry( ).getFields( ) )
                 {
-                    refListValue.addItem( field.getIdField( ), field.getTitle( ) );
+                    if ( IEntryTypeService.FIELD_ANSWER_CHOICE.equals( field.getCode( ) ) )
+                    {
+                        refListValue.addItem( field.getIdField( ), field.getTitle( ) );
+                    }
                 }
             }
 
