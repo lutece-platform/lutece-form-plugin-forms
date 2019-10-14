@@ -60,7 +60,7 @@ CREATE TABLE forms_question (
 id_question int AUTO_INCREMENT,
 title varchar(255) default '' NOT NULL,
 code varchar(100) default '' NOT NULL,
-description LONGTEXT,
+description LONG VARCHAR,
 id_entry int default '0',
 id_step int default '0',
 is_visible_multiview_global SMALLINT default 0 NOT NULL,
@@ -243,5 +243,5 @@ CREATE TABLE forms_indexer_action (
   id_task INT DEFAULT 0 NOT NULL ,
   PRIMARY KEY (id_action)
 );
-CREATE INDEX idx_frs_id_form_response on forms_indexer_action  ( id_form_response );
-CREATE INDEX idx_frs_id_task on forms_indexer_action  ( id_task );
+CREATE INDEX idx_fia_id_form_response on forms_indexer_action  ( id_form_response );
+CREATE INDEX idx_fia_id_task on forms_indexer_action  ( id_task );
