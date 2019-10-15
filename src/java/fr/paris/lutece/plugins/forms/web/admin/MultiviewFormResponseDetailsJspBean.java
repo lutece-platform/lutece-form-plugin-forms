@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -142,6 +143,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     // Messages
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
     private static final String MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE = "forms.multiviewForms.pageTitle";
+    private static final String MESSAGE_ACTION_ERROR = "forms.multiviewForms.action.error";
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
@@ -214,7 +216,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     {
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
 
-        Map<String, Object> mapFormResponseDetailsModel = new HashMap<>( );
+        Map<String, Object> mapFormResponseDetailsModel = getModel();
         mapFormResponseDetailsModel.put( MARK_FORM_RESPONSE, formResponse );
         mapFormResponseDetailsModel.put( MARK_FORM, form );
 
@@ -506,9 +508,9 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         }
         else
         {
-            return redirectView( request, VIEW_TASKS_FORM );
+            addError(MESSAGE_ACTION_ERROR, request.getLocale() );
+            return redirect( request, VIEW_FORM_RESPONSE_DETAILS, PARAMETER_ID_FORM_RESPONSE, Integer.parseInt(request.getParameter( PARAMETER_ID_FORM_RESPONSE )) , PARAMETER_BACK_FROM_ACTION, 1 );
         }
-
         return manageRedirection( request );
     }
 
