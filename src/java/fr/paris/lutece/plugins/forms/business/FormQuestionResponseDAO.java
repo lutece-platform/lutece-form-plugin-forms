@@ -286,31 +286,30 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
         return formQuestionResponseList;
     }
-    
+
     @Override
-    public List<FormQuestionResponse> selectFormQuestionResponseListByListFormResponseStep(	List<FormResponseStep> listFormResponseStep, Plugin plugin )
+    public List<FormQuestionResponse> selectFormQuestionResponseListByListFormResponseStep( List<FormResponseStep> listFormResponseStep, Plugin plugin )
     {
-    	String query = SQL_QUERY_SELECT_BY_LIST_RESPONSE_STEP + listFormResponseStep.stream( )
-	    	.map( frs -> " (  id_form_response = ? AND id_step = ? ) " )
-	    	.collect( Collectors.joining( " OR " ) );
-    	
-    	List<FormQuestionResponse> list = new ArrayList<>( );
-    	try ( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
-    	{
-    		int nIndex = 1;
-    		for ( FormResponseStep formResponseStep : listFormResponseStep )
-    		{
-    			daoUtil.setInt( nIndex++, formResponseStep.getFormResponseId( ) );
-    			daoUtil.setInt( nIndex++, formResponseStep.getStep( ).getId( ) );
-    		}
-    		daoUtil.executeQuery( );
-    		
-    		while ( daoUtil.next( ) )
-    		{
-    			list.add( dataToObject( daoUtil ) );
-    		}
-    	}
-    	return list;
+        String query = SQL_QUERY_SELECT_BY_LIST_RESPONSE_STEP
+                + listFormResponseStep.stream( ).map( frs -> " (  id_form_response = ? AND id_step = ? ) " ).collect( Collectors.joining( " OR " ) );
+
+        List<FormQuestionResponse> list = new ArrayList<>( );
+        try( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
+        {
+            int nIndex = 1;
+            for ( FormResponseStep formResponseStep : listFormResponseStep )
+            {
+                daoUtil.setInt( nIndex++, formResponseStep.getFormResponseId( ) );
+                daoUtil.setInt( nIndex++, formResponseStep.getStep( ).getId( ) );
+            }
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                list.add( dataToObject( daoUtil ) );
+            }
+        }
+        return list;
     }
 
     /**
@@ -404,22 +403,25 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             formQuestionResponse.setEntryResponse( listEntryResponse );
         }
     }
-    
+
     @Override
     public void completeListWithEntryResponses( List<FormQuestionResponse> formQuestionResponsesList, Plugin plugin )
     {
-    	if ( CollectionUtils.isNotEmpty( formQuestionResponsesList ) )
-    	{
-    		List<FormQuestionEntryResponse> listFormQuestionEntryResponse = _formQuestionEntryResponseDAO.selectByFormQuestionResponseList( formQuestionResponsesList, plugin );
-    		
-    		for ( FormQuestionResponse formQuestionResponse : formQuestionResponsesList )
-    		{
-    			List<FormQuestionEntryResponse> entryResponseList = listFormQuestionEntryResponse.stream( ).filter( entry -> entry._nIdQuestionResponse == formQuestionResponse.getId( ) ).collect( Collectors.toList( ) );
-    			formQuestionResponse.setEntryResponse( entryResponseList.stream( ).map( entryResponse -> entryResponse._response).filter( Objects::nonNull ).collect( Collectors.toList( ) ) );
-    		}
-    	}
+        if ( CollectionUtils.isNotEmpty( formQuestionResponsesList ) )
+        {
+            List<FormQuestionEntryResponse> listFormQuestionEntryResponse = _formQuestionEntryResponseDAO.selectByFormQuestionResponseList(
+                    formQuestionResponsesList, plugin );
+
+            for ( FormQuestionResponse formQuestionResponse : formQuestionResponsesList )
+            {
+                List<FormQuestionEntryResponse> entryResponseList = listFormQuestionEntryResponse.stream( )
+                        .filter( entry -> entry._nIdQuestionResponse == formQuestionResponse.getId( ) ).collect( Collectors.toList( ) );
+                formQuestionResponse.setEntryResponse( entryResponseList.stream( ).map( entryResponse -> entryResponse._response ).filter( Objects::nonNull )
+                        .collect( Collectors.toList( ) ) );
+            }
+        }
     }
-    
+
     /**
      * Completes the specified list of form question responses with the entry responses
      * 
@@ -524,7 +526,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             return listFormQuestionEntryResponse;
 
         }
-        
+
         /**
          * Selects the form question entry responses for the specified form question response
          * 
@@ -536,17 +538,17 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
          */
         private List<FormQuestionEntryResponse> selectByFormQuestionResponseList( List<FormQuestionResponse> formQuestionResponseList, Plugin plugin )
         {
-        	List<Integer> idList = formQuestionResponseList.stream( ).map( FormQuestionResponse::getId ).distinct( ).collect( Collectors.toList( ) );
-        	String query = SQL_QUERY_SELECT_IN + idList.stream( ).distinct( ).map( i -> "?" ).collect( Collectors.joining( "," ) ) + " )";
-           
+            List<Integer> idList = formQuestionResponseList.stream( ).map( FormQuestionResponse::getId ).distinct( ).collect( Collectors.toList( ) );
+            String query = SQL_QUERY_SELECT_IN + idList.stream( ).distinct( ).map( i -> "?" ).collect( Collectors.joining( "," ) ) + " )";
+
             List<FormQuestionEntryResponse> listFormQuestionEntryResponse = new ArrayList<>( );
 
-            try ( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
+            try( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
             {
-            	for (int i = 0; i < idList.size( ); i++ )
-        		{
-        			daoUtil.setInt( i + 1 , idList.get( i ) );
-        		}
+                for ( int i = 0; i < idList.size( ); i++ )
+                {
+                    daoUtil.setInt( i + 1, idList.get( i ) );
+                }
                 daoUtil.executeQuery( );
 
                 while ( daoUtil.next( ) )
@@ -555,16 +557,17 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
                 }
             }
             ResponseFilter filter = new ResponseFilter( );
-            filter.setListId(listFormQuestionEntryResponse.stream( ).map( entryReponse -> entryReponse._response.getIdResponse( ) ).distinct( ).collect( Collectors.toList( ) ) );
-            
+            filter.setListId( listFormQuestionEntryResponse.stream( ).map( entryReponse -> entryReponse._response.getIdResponse( ) ).distinct( )
+                    .collect( Collectors.toList( ) ) );
+
             List<Response> responseList = ResponseHome.getResponseList( filter );
-            
+
             for ( FormQuestionEntryResponse formQuestionEntryResponse : listFormQuestionEntryResponse )
             {
-            	Integer responseId = formQuestionEntryResponse._response.getIdResponse( );
-            	formQuestionEntryResponse._response = responseList.stream( ).filter( resp -> resp.getIdResponse( ) == responseId).findFirst( ).orElse( null );
+                Integer responseId = formQuestionEntryResponse._response.getIdResponse( );
+                formQuestionEntryResponse._response = responseList.stream( ).filter( resp -> resp.getIdResponse( ) == responseId ).findFirst( ).orElse( null );
             }
-            
+
             return listFormQuestionEntryResponse;
 
         }
@@ -657,7 +660,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
             return formQuestionEntryResponse;
         }
-        
+
         /**
          * Creates a form question entry response from the specified {@code DAOUtil} object
          * 
@@ -671,7 +674,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             formQuestionEntryResponse._nId = daoUtil.getInt( "id_question_entry_response" );
             formQuestionEntryResponse._nIdQuestionResponse = daoUtil.getInt( "id_question_response" );
             formQuestionEntryResponse._response = new Response( );
-            formQuestionEntryResponse._response.setIdResponse(  daoUtil.getInt( "id_entry_response" ) );
+            formQuestionEntryResponse._response.setIdResponse( daoUtil.getInt( "id_entry_response" ) );
 
             return formQuestionEntryResponse;
         }

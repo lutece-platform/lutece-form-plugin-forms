@@ -33,6 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import java.util.List;
+import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
@@ -48,14 +55,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * class EntryTypeText
@@ -78,13 +77,6 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     private static final String PROPERTY_ENTRY_TITLE = "forms.entryTypeMyLuteceUserAttribute.title";
     private static final String PARAMETER_ONLY_DISPLAY_IN_BACK = "only_display_in_back";
     private static final String PARAMETER_MYLUTECE_ATTRIBUTE_NAME = "mylutece_attribute_name";
-
-    private static final int FIELD_MYLUTECE_ATTRIBUTE_NAME_INDEX = 0;
-    private static final String FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE = "attribute_name";
-    private static final int FIELD_IS_ONLY_DISPLAYED_IN_BACK_INDEX = 1;
-    private static final String FIELD_ONLY_DISPLAY_IN_BACK_CODE = PARAMETER_ONLY_DISPLAY_IN_BACK;
-    private static final String FIELD_IS_ONLY_DISPLAYED_IN_BACK_FALSE = "0";
-    private static final String FIELD_IS_ONLY_DISPLAYED_IN_BACK_TRUE = "1";
 
     private ReferenceList _refListUserAttributes;
 
@@ -127,6 +119,8 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     public String getRequestData( Entry entry, HttpServletRequest request, Locale locale )
     {
         initCommonRequestData( entry, request );
+        String strOnlyDisplayInBack = request.getParameter( PARAMETER_ONLY_DISPLAY_IN_BACK );
+
         entry.setTitle( I18nService.getLocalizedString( PROPERTY_ENTRY_TITLE, locale ) );
 
         entry.setComment( StringUtils.EMPTY );
@@ -135,31 +129,12 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         entry.setTitle( request.getParameter( PARAMETER_TITLE ) );
         entry.setHelpMessage( request.getParameter( PARAMETER_HELP_MESSAGE ) );
         entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
+        entry.setOnlyDisplayInBack( strOnlyDisplayInBack != null );
 
-        Field fieldAttributeName = null;
-        Field fieldIsOnlyDisplayedInBack = null;
-
-        if ( entry.getFields( ) == null )
-        {
-            ArrayList<Field> listFields = new ArrayList<Field>( );
-            fieldAttributeName = new Field( );
-            fieldIsOnlyDisplayedInBack = new Field( );
-            listFields.add( fieldAttributeName );
-            listFields.add( fieldIsOnlyDisplayedInBack );
-            entry.setFields( listFields );
-        }
-
-        fieldAttributeName = entry.getFields( ).get( FIELD_MYLUTECE_ATTRIBUTE_NAME_INDEX );
-        fieldAttributeName.setCode( FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE );
-        fieldAttributeName.setValue( request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
+        Field fieldAttributeName = createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE, null,
+                request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
         fieldAttributeName.setWidth( 50 );
         fieldAttributeName.setMaxSizeEnter( 0 );
-
-        fieldIsOnlyDisplayedInBack = entry.getFields( ).get( FIELD_IS_ONLY_DISPLAYED_IN_BACK_INDEX );
-        fieldIsOnlyDisplayedInBack.setCode( FIELD_ONLY_DISPLAY_IN_BACK_CODE );
-        fieldIsOnlyDisplayedInBack.setValue( request.getParameter( PARAMETER_ONLY_DISPLAY_IN_BACK ) == null ? FIELD_IS_ONLY_DISPLAYED_IN_BACK_FALSE
-                : FIELD_IS_ONLY_DISPLAYED_IN_BACK_TRUE );
-
         return null;
     }
 
@@ -183,7 +158,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
             }
         }
 
-        String strAttribute = entry.getFields( ).get( 0 ).getValue( );
+        String strAttribute = entry.getFieldByCode( FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE ).getValue( );
 
         if ( ( user == null ) || ( StringUtils.isNotEmpty( strAttribute ) && StringUtils.isEmpty( user.getUserInfo( strAttribute ) ) ) )
         {

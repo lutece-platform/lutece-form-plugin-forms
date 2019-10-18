@@ -31,10 +31,7 @@
 				  	<#elseif i == 1 && j == 1>
 				  		<b>${entry.comment}</b>
 				  	<#else>
-				  		<#assign idName = 'response_' + i + '_' + j>
-				  		<#if entry_iteration_number?has_content >
-				  			<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry + '_response_' + i + '_' + j>
-				  		</#if>
+				  		<#assign idName = 'nIt' + entry_iteration_number +  '_response_' + i + '_' + j>
 				  		<input id="${idName}" name="${idName}" value="${inputValue}" type="text" class="form-control input-sm" />
 				  	</#if>
 			  	</td>

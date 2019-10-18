@@ -62,6 +62,7 @@ public interface IFormSearchEngine
 
     /**
      * Get the FormResponseSearchItem list based on given FormPanel, FormColumnList and FormFilterList
+     * 
      * @param listFormPanelInitializerQueryPart
      * @param listFormColumnQueryPart
      * @param listFormFilterQueryPart
@@ -71,5 +72,7 @@ public interface IFormSearchEngine
      * @param sortConfig
      * @return the list of FormResponseSearchItem
      */
-    List<FormResponseSearchItem> getSearchResults( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart, FormResponseItemSortConfig sortConfig, int nStartIndex, int nPageSize, FormPanel formPanel );
+    List<FormResponseSearchItem> getSearchResults( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart,
+            List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart, FormResponseItemSortConfig sortConfig,
+            int nStartIndex, int nPageSize, FormPanel formPanel );
 }

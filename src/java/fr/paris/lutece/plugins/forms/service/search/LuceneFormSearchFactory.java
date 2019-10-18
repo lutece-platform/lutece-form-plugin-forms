@@ -41,6 +41,7 @@ import java.nio.file.Paths;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
@@ -86,10 +87,10 @@ public class LuceneFormSearchFactory
      * @throws IOException
      *             - if there is a low-level IO error
      */
+    @Deprecated
     public IndexSearcher getIndexSearcher( ) throws IOException
     {
         Directory luceneDirectory = getDirectory( );
-
         return new IndexSearcher( DirectoryReader.open( luceneDirectory ) );
     }
 
@@ -109,14 +110,14 @@ public class LuceneFormSearchFactory
             try
             {
                 Directory luceneDirectory = getDirectory( );
-    
+
                 if ( !DirectoryReader.indexExists( luceneDirectory ) )
                 {
                     bCreateIndex = Boolean.TRUE;
                 }
-    
+
                 IndexWriterConfig conf = new IndexWriterConfig( getAnalyzer( ) );
-    
+
                 if ( bCreateIndex )
                 {
                     conf.setOpenMode( OpenMode.CREATE );
@@ -134,7 +135,7 @@ public class LuceneFormSearchFactory
             }
         }
         return _indexWriter;
-        
+
     }
 
     /**
@@ -144,20 +145,20 @@ public class LuceneFormSearchFactory
      * @throws IOException
      *             - if the path string cannot be converted to a Path
      */
-    private Directory getDirectory( ) throws IOException
+    public Directory getDirectory( ) throws IOException
     {
         String strIndex = AppPathService.getPath( PATH_INDEX );
 
         boolean indexInWebapp = AppPropertiesService.getPropertyBoolean( PATH_INDEX_IN_WEBAPP, true );
         if ( indexInWebapp )
         {
-        	strIndex = AppPathService.getPath( PATH_INDEX );
+            strIndex = AppPathService.getPath( PATH_INDEX );
         }
         else
         {
-        	strIndex = AppPropertiesService.getProperty( PATH_INDEX );
+            strIndex = AppPropertiesService.getProperty( PATH_INDEX );
         }
-        
+
         return NIOFSDirectory.open( Paths.get( strIndex ) );
     }
 }

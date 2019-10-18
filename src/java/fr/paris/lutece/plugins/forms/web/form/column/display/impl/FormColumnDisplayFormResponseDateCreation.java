@@ -84,7 +84,8 @@ public class FormColumnDisplayFormResponseDateCreation extends AbstractFormColum
         Date dateFormResponseDateCreation = null;
         if ( formColumnCell != null )
         {
-            Object objFormResponseDateCreation = formColumnCell.getFormColumnCellValueByName( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
+            Object objFormResponseDateCreation = formColumnCell
+                    .getFormColumnCellValueByName( FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
             if ( objFormResponseDateCreation != null )
             {
                 String strTimestamp = String.valueOf( objFormResponseDateCreation );
@@ -99,5 +100,5 @@ public class FormColumnDisplayFormResponseDateCreation extends AbstractFormColum
         String strFormResponseDateCreationTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
 
         return strFormResponseDateCreationTemplate;
-}
+    }
 }

@@ -62,7 +62,7 @@ public class FormDisplay implements Serializable
     private int _nDepth;
 
     private Control _displayControl;
-    
+
     private List<Control> _validationControlList = new ArrayList<>( );
 
     /**
@@ -222,20 +222,21 @@ public class FormDisplay implements Serializable
         this._displayControl = displayControl;
     }
 
-	/**
-	 * @return the _validationControlList
-	 */
-	public List<Control> getValidationControlList( )
-	{
-		return _validationControlList;
-	}
+    /**
+     * @return the _validationControlList
+     */
+    public List<Control> getValidationControlList( )
+    {
+        return _validationControlList;
+    }
 
-	/**
-	 * @param _validationControlList the _validationControlList to set
-	 */
-	public void setValidationControlList( List<Control> validationControlList )
-	{
-		_validationControlList = validationControlList;
-	}
+    /**
+     * @param _validationControlList
+     *            the _validationControlList to set
+     */
+    public void setValidationControlList( List<Control> validationControlList )
+    {
+        _validationControlList = validationControlList;
+    }
 
 }

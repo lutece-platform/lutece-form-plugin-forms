@@ -7,16 +7,16 @@ import javax.servlet.http.HttpServletRequest;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl.FormPanelFormResponseIdFilterInitializerQueryPart;
 
-public abstract class FormPanelFormResponseIdFilterDisplayInitialiser extends AbstractFormPanelDisplayInitializer {
+public abstract class FormPanelFormResponseIdFilterDisplayInitialiser extends AbstractFormPanelDisplayInitializer
+{
 
-	@Override
+    @Override
     public void buildFormParameters( HttpServletRequest request )
     {
-		FormParameters formParameters = new FormParameters( );
-		formParameters.getFormParametersMap().put( FormPanelFormResponseIdFilterInitializerQueryPart.PARAM_ID_LIST, getIdList( request ) );
+        FormParameters formParameters = new FormParameters( );
+        formParameters.getFormParametersMap( ).put( FormPanelFormResponseIdFilterInitializerQueryPart.PARAM_ID_LIST, getIdList( request ) );
         getFormPanelInitializer( ).setFormParameters( formParameters );
     }
-	
-	
-	protected abstract List<Integer> getIdList( HttpServletRequest request );
+
+    protected abstract List<Integer> getIdList( HttpServletRequest request );
 }

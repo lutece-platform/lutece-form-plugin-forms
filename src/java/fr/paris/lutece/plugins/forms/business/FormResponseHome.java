@@ -111,7 +111,20 @@ public final class FormResponseHome
 
         return formResponse;
     }
-    
+
+    /**
+     * Returns an instance of a formResponse whose identifier is specified in parameter<br />
+     * Doesn't load the list of {@link FormResponseStep}
+     * 
+     * @param nKey
+     *            The formResponse primary key
+     * @return an instance of FormResponse
+     */
+    public static FormResponse loadById( int nKey )
+    {
+        return _dao.load( nKey, _plugin );
+    }
+
     /**
      * Returns an instance of a formResponse whose identifier is specified in parameter
      * 
@@ -121,42 +134,45 @@ public final class FormResponseHome
      */
     public static FormResponse findByPrimaryKeyForIndex( int nKey )
     {
-    	// FormResponse
+        // FormResponse
         FormResponse formResponse = _dao.load( nKey, _plugin );
         if ( formResponse.isFromSave( ) )
         {
-        	return null;
+            return null;
         }
-        
+
         // FormResponseStep
         List<FormResponseStep> formResponseStepList = FormResponseStepHome.findStepsByFormResponsePartial( formResponse.getId( ) );
         formResponse.setSteps( formResponseStepList );
-        
+
         // FormQuestionResponse
-        List<FormQuestionResponse> formQuestionResponseList = FormQuestionResponseHome.selectFormQuestionResponseListByListFormResponseStep( formResponseStepList );
-        
+        List<FormQuestionResponse> formQuestionResponseList = FormQuestionResponseHome
+                .selectFormQuestionResponseListByListFormResponseStep( formResponseStepList );
+
         // Questions
-        List<Question> questionList = QuestionHome.findByPrimaryKeyList( formQuestionResponseList.stream( ).map( FormQuestionResponse::getQuestion ).map( Question::getId ).distinct( ).collect( Collectors.toList( ) ) );
-        List<Entry> entryList = EntryHome.findByPrimaryKeyList( questionList.stream( ).map(Question::getIdEntry ).distinct( ).collect( Collectors.toList( ) ) );
+        List<Question> questionList = QuestionHome.findByPrimaryKeyList( formQuestionResponseList.stream( ).map( FormQuestionResponse::getQuestion )
+                .map( Question::getId ).distinct( ).collect( Collectors.toList( ) ) );
+        List<Entry> entryList = EntryHome.findByPrimaryKeyList( questionList.stream( ).map( Question::getIdEntry ).distinct( ).collect( Collectors.toList( ) ) );
         for ( Question question : questionList )
         {
-        	question.setEntry( entryList.stream( ).filter( entry -> entry.getIdEntry( ) == question.getIdEntry( ) ).findFirst( ).orElse( null ) );
+            question.setEntry( entryList.stream( ).filter( entry -> entry.getIdEntry( ) == question.getIdEntry( ) ).findFirst( ).orElse( null ) );
         }
-        
+
         // Populate FormQuestionResponse
-        for ( FormQuestionResponse fqr : formQuestionResponseList)
+        for ( FormQuestionResponse fqr : formQuestionResponseList )
         {
-        	fqr.setQuestion( questionList.stream( ).filter( q -> q.getId( ) == fqr.getQuestion( ).getId( ) ).findFirst( ).orElse( null ) );
+            fqr.setQuestion( questionList.stream( ).filter( q -> q.getId( ) == fqr.getQuestion( ).getId( ) ).findFirst( ).orElse( null ) );
         }
-        
+
         // Populate FormResponseStep
-        for ( FormResponseStep formQuestionStep: formResponseStepList )
+        for ( FormResponseStep formQuestionStep : formResponseStepList )
         {
-        	formQuestionStep.setQuestions( formQuestionResponseList.stream( ).filter( fqr -> formQuestionStep.getStep( ).getId( ) == fqr.getIdStep( ) ).collect( Collectors.toList( ) ) );
+            formQuestionStep.setQuestions( formQuestionResponseList.stream( ).filter( fqr -> formQuestionStep.getStep( ).getId( ) == fqr.getIdStep( ) )
+                    .collect( Collectors.toList( ) ) );
         }
         return formResponse;
     }
-    
+
     /**
      * Returns an instance of a uncomplete (without steps) formResponse whose identifier is specified in parameter
      * 
@@ -167,7 +183,7 @@ public final class FormResponseHome
     public static FormResponse findUncompleteByPrimaryKey( int nKey )
     {
         FormResponse formResponse = _dao.load( nKey, _plugin );
-        
+
         return formResponse;
     }
 
@@ -186,7 +202,7 @@ public final class FormResponseHome
         }
         return listFormResponses;
     }
-    
+
     /**
      * Returns all the formResponse ids
      * 
@@ -196,12 +212,12 @@ public final class FormResponseHome
     {
         return _dao.selectAllFormResponsesId( _plugin );
     }
-    
+
     /**
      * Returns all the formResponse objects, completed with the steps
      * 
      * @param nIdForm
-     *              the id form
+     *            the id form
      * @return all the formResponse objects completed with the steps
      */
     public static List<FormResponse> selectAllFormResponsesUncompleteByIdForm( int nIdForm )
@@ -222,7 +238,7 @@ public final class FormResponseHome
             formResponse.setSteps( FormResponseStepHome.findStepsByFormResponse( formResponse.getId( ) ) );
         }
     }
-    
+
     /**
      * Load the data of all the formResponse objects and returns them as a list
      * 

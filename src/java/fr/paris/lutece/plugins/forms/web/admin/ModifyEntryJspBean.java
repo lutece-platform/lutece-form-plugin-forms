@@ -45,6 +45,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.business.role.RoleHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -306,7 +307,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         Field field = new Field( );
         field.setParentEntry( entry );
 
-        String strError = getFieldData( request, field, false );
+        String strError = getFieldData( request, field );
 
         if ( strError != null )
         {
@@ -355,7 +356,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         {
             field = FieldHome.findByPrimaryKey( nIdField );
 
-            String strError = getFieldData( request, field, false );
+            String strError = getFieldData( request, field );
 
             if ( strError != null )
             {
@@ -542,11 +543,9 @@ public class ModifyEntryJspBean extends AbstractJspBean
      *            the request
      * @param field
      *            field
-     * @param bIsForArray
-     *            the isForArray boolean
      * @return null if there is no error or else return the error page URL
      */
-    private String getFieldData( HttpServletRequest request, Field field, boolean bIsForArray )
+    private String getFieldData( HttpServletRequest request, Field field )
     {
         String strTitle = request.getParameter( PARAMETER_TITLE );
         String strValue = request.getParameter( PARAMETER_VALUE );
@@ -562,12 +561,12 @@ public class ModifyEntryJspBean extends AbstractJspBean
             strFieldError = FIELD_TITLE_FIELD;
         }
         else
-            if ( !bIsForArray && StringUtils.isBlank( strValue ) )
+            if ( StringUtils.isBlank( strValue ) )
             {
                 strFieldError = FIELD_VALUE_FIELD;
             }
             else
-                if ( !bIsForArray && !StringUtil.checkCodeKey( strValue ) )
+                if ( !StringUtil.checkCodeKey( strValue ) )
                 {
                     return AdminMessageService.getMessageUrl( request, MESSAGE_FIELD_VALUE_FIELD, AdminMessage.TYPE_STOP );
                 }
@@ -581,6 +580,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
+        field.setCode( IEntryTypeService.FIELD_ANSWER_CHOICE );
         field.setTitle( strTitle );
         field.setValue( strValue );
         field.setComment( strComment );

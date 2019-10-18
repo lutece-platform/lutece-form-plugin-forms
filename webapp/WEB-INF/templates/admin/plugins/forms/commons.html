@@ -83,19 +83,17 @@
 </#function>
 
 <#-- 
--- Get the response containing the field with the given code
--- @param responses the list of responses
--- @param the fieldCode the code
--- @return the response
+-- Get the field value from a given entry and a given title
+-- @param entry the entry
+-- @param fieldTitle the title
+-- @return the field
 -->
-<#function getResponseContainingTheFieldWithCode responses fieldCode>
-  <#if responses??>
-    <#list responses as response>
-      <#if response.field?? && response.field.code?? && response.field.code == fieldCode >
-        <#return response />
-      </#if>
-    </#list>
-  </#if>
+<#function getFieldValueByCode entry fieldCode>
+	<#if getFieldByCode( entry, fieldCode )??>
+		<#assign field = getFieldByCode( entry, fieldCode )>
+		<#return field.value>
+	</#if>
+	<#return "">
 </#function>
 
 <#-- 
@@ -108,6 +106,22 @@
   <#if responses??>
     <#list responses as response>
       <#if response.field?? && response.field.title?? && response.field.title == fieldTitle >
+        <#return response />
+      </#if>
+    </#list>
+  </#if>
+</#function>
+
+<#-- 
+-- Get the response containing the field with the given code
+-- @param responses the list of responses
+-- @param the fieldCode the code
+-- @return the response
+-->
+<#function getResponseContainingTheFieldWithCode responses fieldCode>
+  <#if responses??>
+    <#list responses as response>
+      <#if response.field?? && response.field.code?? && response.field.code == fieldCode >
         <#return response />
       </#if>
     </#list>
@@ -167,7 +181,7 @@
 -- @return the number of max authorized uploaded files
 -->
 <#function getMaxFiles entry>
-	<#assign fieldMaxFiles = getFieldValue( entry, "max_files" )>
+	<#assign fieldMaxFiles = getFieldValueByCode( entry, "max_files" )>
 	<#if fieldMaxFiles?? && fieldMaxFiles != "">
 		<#return fieldMaxFiles>
 	</#if>
@@ -180,12 +194,12 @@
 -- @return the max size
 -->
 <#function getFileMaxSize entry>
-	<#assign fieldFileMaxSize = getFieldValue( entry, "file_max_size" )>
+	<#assign fieldFileMaxSize = getFieldValueByCode( entry, "file_max_size" )>
 	<#if fieldFileMaxSize?? && fieldFileMaxSize != "">
 		<#return fieldFileMaxSize>
 	<#else>
 		<#if getField( entry, "option" )??>
-			<#assign fieldFileMaxSize = getField( entry, "option" )>
+			<#assign fieldFileMaxSize = getFieldByCode( entry, "option" )>
 			<#return fieldFileMaxSize.width> 
 		</#if>
 	</#if>
@@ -198,7 +212,7 @@
 -- @return true if it must export the binaries, false otherwise
 -->
 <#function exportBinary entry>
-	<#assign field = getFieldValue( entry, "export_binary" ) />
+	<#assign field = getFieldValueByCode( entry, "export_binary" ) />
 	<#if field?? && field = "true">
 		<#return true />
 	</#if>
@@ -867,7 +881,7 @@ $(function() {
 		"#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
 		"#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
 		"#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
-		"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
+		"#i18n{forms.multiviewForms.dateRangePicker.monthNames9}",
 		"#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
 		"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
 		"#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"

@@ -33,10 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
-
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.search.SearchIndexer;
-
 
 /**
  *
@@ -49,11 +47,12 @@ public interface IFormSearchIndexer extends SearchIndexer
      * add to the index writer the document associate to the key specified in parameter
      */
     void processIndexing( );
-    
+
     /**
      * Directly index one document
+     * 
      * @param nIdFormResponse
-     * @param nIdTask 
+     * @param nIdTask
      */
     void indexDocument( int nIdFormResponse, int nIdTask, Plugin plugin );
 
@@ -64,5 +63,5 @@ public interface IFormSearchIndexer extends SearchIndexer
      * @param nIdTask
      */
     void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin );
-    
+
 }

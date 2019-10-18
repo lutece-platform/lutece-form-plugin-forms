@@ -42,15 +42,14 @@ import fr.paris.lutece.portal.business.event.ResourceEvent;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import javax.inject.Inject;
 
-
 public class FormResponseEventListener implements EventRessourceListener
 {
     private static final String CONSTANT_FORM_RESPONSE_LISTENER_NAME = "formResponseEventListener";
     @Inject
-    private IFormSearchIndexer _formSearchIndexer; 
+    private IFormSearchIndexer _formSearchIndexer;
 
     @Override
-    public String getName( ) 
+    public String getName( )
     {
         return CONSTANT_FORM_RESPONSE_LISTENER_NAME;
     }
@@ -59,9 +58,9 @@ public class FormResponseEventListener implements EventRessourceListener
      * {@inheritDoc}
      */
     @Override
-    public void addedResource( ResourceEvent event ) 
+    public void addedResource( ResourceEvent event )
     {
-    	indexResource( event, IndexerAction.TASK_CREATE );
+        indexResource( event, IndexerAction.TASK_CREATE );
     }
 
     /**
@@ -70,37 +69,37 @@ public class FormResponseEventListener implements EventRessourceListener
     @Override
     public void deletedResource( ResourceEvent event )
     {
-    	indexResource( event, IndexerAction.TASK_DELETE );
+        indexResource( event, IndexerAction.TASK_DELETE );
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void updatedResource( ResourceEvent event ) 
+    public void updatedResource( ResourceEvent event )
     {
-    	indexResource( event, IndexerAction.TASK_MODIFY );
+        indexResource( event, IndexerAction.TASK_MODIFY );
     }
-    
-    private void indexResource( ResourceEvent event, int nIdTask)
+
+    private void indexResource( ResourceEvent event, int nIdTask )
     {
-    	if ( !checkResourceType( event ) )
-    	{
-    		return ;
-    	}
+        if ( !checkResourceType( event ) )
+        {
+            return;
+        }
         try
         {
             int nIdResource = Integer.parseInt( event.getIdResource( ) );
             _formSearchIndexer.indexDocument( nIdResource, nIdTask, FormsPlugin.getPlugin( ) );
         }
-        catch ( NumberFormatException e )
+        catch( NumberFormatException e )
         {
-            AppLogService.error( "Unable to parse given event id ressource to integer " + event.getIdResource(), e );
+            AppLogService.error( "Unable to parse given event id ressource to integer " + event.getIdResource( ), e );
         }
     }
-    
+
     private boolean checkResourceType( ResourceEvent event )
     {
-    	return FormResponse.RESOURCE_TYPE.equals( event.getTypeResource( ) );
+        return FormResponse.RESOURCE_TYPE.equals( event.getTypeResource( ) );
     }
 }

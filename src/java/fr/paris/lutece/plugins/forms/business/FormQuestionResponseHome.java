@@ -192,7 +192,7 @@ public final class FormQuestionResponseHome
 
         return listFormQuestionResponse;
     }
-    
+
     /**
      * Load the data of all the formQuestionResponse objects and returns them as a list
      * 
@@ -204,11 +204,11 @@ public final class FormQuestionResponseHome
      */
     public static List<FormQuestionResponse> selectFormQuestionResponseListByListFormResponseStep( List<FormResponseStep> listFormResponseStep )
     {
-    	List<FormQuestionResponse> list = _dao.selectFormQuestionResponseListByListFormResponseStep( listFormResponseStep, _plugin );
-    	_dao.completeListWithEntryResponses( list, _plugin );
-       return list;
+        List<FormQuestionResponse> list = _dao.selectFormQuestionResponseListByListFormResponseStep( listFormResponseStep, _plugin );
+        _dao.completeListWithEntryResponses( list, _plugin );
+        return list;
     }
-    
+
     /**
      * Load the data of all the formQuestionResponse objects for saving and returns them as a list
      * 

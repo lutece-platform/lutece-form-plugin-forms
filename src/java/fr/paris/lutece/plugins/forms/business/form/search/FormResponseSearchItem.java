@@ -63,7 +63,7 @@ public class FormResponseSearchItem extends SearchItem
     public static final String FIELD_RESPONSE_ID_ = "_response_id_";
     public static final String FIELD_DATE_SUFFIX = "_date";
     public static final String FIELD_INT_SUFFIX = "_int";
-    
+
     private static final int INTEGER_MINUS_ONE = -1;
 
     private int _nIdFormResponse;
@@ -80,12 +80,14 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Constructor based on a Lucene Document
-     * @param document the Lucene Document
+     * 
+     * @param document
+     *            the Lucene Document
      */
     public FormResponseSearchItem( Document document )
     {
         super( document );
-        
+
         _nIdFormResponse = manageNullValue( document.get( FIELD_ID_FORM_RESPONSE ) );
         _nIdForm = manageNullValue( document.get( FIELD_ID_FORM ) );
         _strFormTitle = document.get( FIELD_FORM_TITLE );
@@ -101,6 +103,7 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Get the id form response
+     * 
      * @return the id form response
      */
     public int getIdFormResponse( )
@@ -110,7 +113,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Set the id form response
-     * @param nIdFormResponse the id form response 
+     * 
+     * @param nIdFormResponse
+     *            the id form response
      */
     public void setIdFormResponse( int nIdFormResponse )
     {
@@ -119,6 +124,7 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Get the id of the form
+     * 
      * @return the id of the form
      */
     public int getIdForm( )
@@ -128,7 +134,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Set the id of the form
-     * @param nIdForm the id of the form
+     * 
+     * @param nIdForm
+     *            the id of the form
      */
     public void setIdForm( int nIdForm )
     {
@@ -137,6 +145,7 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Get the form title
+     * 
      * @return the form title
      */
     public String getFormTitle( )
@@ -146,7 +155,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Set the form title
-     * @param strFormTitle the form title 
+     * 
+     * @param strFormTitle
+     *            the form title
      */
     public void setFormTitle( String strFormTitle )
     {
@@ -155,7 +166,8 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Get the creation date
-     * @return the creation date of the form 
+     * 
+     * @return the creation date of the form
      */
     public String getDateCreation( )
     {
@@ -164,16 +176,17 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Set the creation date
-     * @param strDateCreation 
+     * 
+     * @param strDateCreation
      */
     public void setDateCreation( String strDateCreation )
     {
         _strDateCreation = strDateCreation;
     }
 
-    
     /**
      * Get the date update
+     * 
      * @return the date update
      */
     public String getDateUpdate( )
@@ -183,7 +196,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Set the date update
-     * @param strDateUpdate the date update
+     * 
+     * @param strDateUpdate
+     *            the date update
      */
     public void setDateUpdate( String strDateUpdate )
     {
@@ -191,7 +206,8 @@ public class FormResponseSearchItem extends SearchItem
     }
 
     /**
-     * Get the guid 
+     * Get the guid
+     * 
      * @return the guid
      */
     public String getGuid( )
@@ -201,7 +217,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Set the guid
-     * @param strGuid the guid
+     * 
+     * @param strGuid
+     *            the guid
      */
     public void setGuid( String strGuid )
     {
@@ -210,6 +228,7 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Get the id of assignee user
+     * 
      * @return the id of assignee user
      */
     public int getIdAssigneeUser( )
@@ -219,7 +238,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Get the id of assignee user
-     * @param nIdAssigneeUser the id of assignee user
+     * 
+     * @param nIdAssigneeUser
+     *            the id of assignee user
      */
     public void setIdAssigneeUser( int nIdAssigneeUser )
     {
@@ -228,6 +249,7 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Get the id of assignee unit
+     * 
      * @return the id of assignee unit
      */
     public int getIdAssigneeUnit( )
@@ -237,7 +259,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Set the id of the assignee unit
-     * @param nIdAssigneeUnit the id of the assignee unit
+     * 
+     * @param nIdAssigneeUnit
+     *            the id of the assignee unit
      */
     public void setIdAssigneeUnit( int nIdAssigneeUnit )
     {
@@ -246,6 +270,7 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Get the id of the workflow state
+     * 
      * @return the id of the workflow state
      */
     public int getIdWorkflowState( )
@@ -255,7 +280,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Set the id of the workflow state
-     * @param nIdWorkflowState the id of the workflow state
+     * 
+     * @param nIdWorkflowState
+     *            the id of the workflow state
      */
     public void setIdWorkflowState( int nIdWorkflowState )
     {
@@ -264,6 +291,7 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Get the workflow state title
+     * 
      * @return the workflow state title
      */
     public String getWorkflowStateTitle( )
@@ -273,7 +301,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Set the workflow state title
-     * @param strWorkflowStateTitle the workflow state title
+     * 
+     * @param strWorkflowStateTitle
+     *            the workflow state title
      */
     public void setWorkflowStateTitle( String strWorkflowStateTitle )
     {
@@ -282,6 +312,7 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Get the map of entry cde fields value
+     * 
      * @return the map of entry code fields value
      */
     public Map<String, String> getMapEntryCodeFieldsValue( )
@@ -291,7 +322,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Set the map of entry code fields value
-     * @param mapEntryCodeFieldsValue the map of entry code fields value
+     * 
+     * @param mapEntryCodeFieldsValue
+     *            the map of entry code fields value
      */
     public void setMapEntryCodeFieldsValue( Map<String, String> mapEntryCodeFieldsValue )
     {
@@ -300,7 +333,9 @@ public class FormResponseSearchItem extends SearchItem
 
     /**
      * Populate the map of entry code fields value with the Lucene document
-     * @param document the Lucene document
+     * 
+     * @param document
+     *            the Lucene document
      */
     private void populateMapEntryCodeFieldsValue( Document document )
     {
@@ -315,7 +350,7 @@ public class FormResponseSearchItem extends SearchItem
         }
         _mapEntryCodeFieldsValue = mapEntryCodeFieldsValues;
     }
-    
+
     private Integer manageNullValue( String strDocumentValue )
     {
         Integer nReturn = INTEGER_MINUS_ONE;
@@ -325,7 +360,7 @@ public class FormResponseSearchItem extends SearchItem
             {
                 nReturn = Integer.parseInt( strDocumentValue );
             }
-            catch ( NumberFormatException e )
+            catch( NumberFormatException e )
             {
                 AppLogService.error( "Unable to convert " + strDocumentValue + " to integer." );
             }

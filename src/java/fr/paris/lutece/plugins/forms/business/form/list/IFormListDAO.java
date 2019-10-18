@@ -57,12 +57,13 @@ public interface IFormListDAO
      *            The list of FormColumn to populate
      * @param listFormFilter
      *            The list of FormFilter used for filtering the data to retrieve
-     * @param  nStartIndex
+     * @param nStartIndex
      *            The start index of doc that all will become FormResponseItem
-     * @param  nPageSize
+     * @param nPageSize
      *            The number of doc to load for pagination purpose
      * @param sortConfig
      *            The comparator config
      */
-    void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,  int nStartIndex, int nPageSize, FormResponseItemSortConfig sortConfig );
+    void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+            FormResponseItemSortConfig sortConfig );
 }

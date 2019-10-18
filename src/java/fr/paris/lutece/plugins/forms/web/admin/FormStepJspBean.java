@@ -178,9 +178,9 @@ public class FormStepJspBean extends AbstractJspBean
 
         List<Step> listSteps = StepHome.getStepsListByForm( nIdForm );
         List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( nIdForm );
-        
+
         listSteps = StepService.sortStepsWithTransitions( listSteps, listTransitions );
-        
+
         LocalizedPaginator<Step> paginator = new LocalizedPaginator<Step>( listSteps, _nItemsPerPage, getJspManageSteps( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
 

@@ -21,19 +21,19 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-public abstract class AbstractPatternValidator extends AbstractValidator {
+public abstract class AbstractPatternValidator extends AbstractValidator
+{
 
-	private static final String BEAN_NAME_REGULAR_EXPRESSION = "regularExpressionService";
-	private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
-	private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/pattern_template.html";
-	
-	private Plugin _plugin = PluginService.getPlugin( "forms" );
-	
-	public AbstractPatternValidator( String strValidatorName, String strValidatorDisplayName,
-			List<String> listAvailableEntryType )
-	{
-		super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
-	}
+    private static final String BEAN_NAME_REGULAR_EXPRESSION = "regularExpressionService";
+    private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
+    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/pattern_template.html";
+
+    private Plugin _plugin = PluginService.getPlugin( "forms" );
+
+    public AbstractPatternValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
+    {
+        super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
+    }
 
     @Override
     public String getDisplayHtml( Control control )
@@ -55,7 +55,7 @@ public abstract class AbstractPatternValidator extends AbstractValidator {
 
         return htmlTemplateQuestion.getHtml( );
     }
-    
+
     @Override
     public String getJavascriptValidation( )
     {
@@ -70,7 +70,7 @@ public abstract class AbstractPatternValidator extends AbstractValidator {
 
         return regularExpression.getValue( );
     }
-    
+
     @Override
     public boolean validate( FormQuestionResponse questionResponse, Control control )
     {
@@ -81,16 +81,16 @@ public abstract class AbstractPatternValidator extends AbstractValidator {
             IRegularExpressionService service = (IRegularExpressionService) SpringContextService.getBean( BEAN_NAME_REGULAR_EXPRESSION );
             for ( Response response : questionResponse.getEntryResponse( ) )
             {
-            	String toValidate = getValueToValidate( response );
-            	if ( StringUtils.isNotEmpty( toValidate ) )
-            	{
-            		return service.isMatches( toValidate, regularExpression );
-            	}
+                String toValidate = getValueToValidate( response );
+                if ( StringUtils.isNotEmpty( toValidate ) )
+                {
+                    return service.isMatches( toValidate, regularExpression );
+                }
             }
             return !questionResponse.getQuestion( ).getEntry( ).isMandatory( );
         }
         return false;
     }
-    
+
     protected abstract String getValueToValidate( Response response );
 }

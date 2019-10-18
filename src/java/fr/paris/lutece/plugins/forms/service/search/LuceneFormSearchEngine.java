@@ -44,12 +44,17 @@ import fr.paris.lutece.portal.service.search.IndexationService;
 import fr.paris.lutece.portal.service.search.LuceneSearchEngine;
 import fr.paris.lutece.portal.service.search.SearchItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 import javax.inject.Inject;
+
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
@@ -60,6 +65,7 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.SortedNumericSortField;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.Directory;
 
 public class LuceneFormSearchEngine implements IFormSearchEngine
 {
@@ -76,9 +82,9 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         ArrayList<Integer> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
-        try
+        try( Directory directory = _luceneFormSearchFactory.getDirectory( ) ; IndexReader ir = DirectoryReader.open( directory ) ; )
         {
-            searcher = _luceneFormSearchFactory.getIndexSearcher( );
+            searcher = new IndexSearcher( ir );
 
             Collection<String> queries = new ArrayList<>( );
             Collection<String> fields = new ArrayList<>( );
@@ -127,6 +133,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 SearchItem si = new SearchItem( document );
                 listResults.add( Integer.parseInt( si.getId( ) ) );
             }
+            ir.close( );
         }
         catch( Exception e )
         {
@@ -151,23 +158,24 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
      * {@inheritDoc }
      */
     @Override
-    public List<FormResponseSearchItem>  getSearchResults(  List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart, List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart , FormResponseItemSortConfig sortConfig , int nStartIndex, int nPageSize, FormPanel formPanel )
+    public List<FormResponseSearchItem> getSearchResults( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart,
+            List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart, FormResponseItemSortConfig sortConfig,
+            int nStartIndex, int nPageSize, FormPanel formPanel )
     {
-     
-        
-        
+
         // Build the query to execute
         Query query = LuceneQueryBuilder.buildQuery( listFormPanelInitializerQueryPart, listFormFilterQueryPart );
 
         // Build the sort
         Sort sort = buildLuceneSort( sortConfig );
-        
+
         List<FormResponseSearchItem> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
-        try
+        try( Directory directory = _luceneFormSearchFactory.getDirectory( ) ; IndexReader ir = DirectoryReader.open( directory ) ; )
         {
-            searcher = _luceneFormSearchFactory.getIndexSearcher( );
+
+            searcher = new IndexSearcher( ir );
             TopDocs topDocs = null;
             // Get results documents
             if ( sort != null )
@@ -176,10 +184,10 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
             }
             else
             {
-                 topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
+                topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
             }
             ScoreDoc [ ] hits = topDocs.scoreDocs;
-            
+
             int nMaxIndex = Math.min( nStartIndex + nPageSize, hits.length );
             formPanel.setTotalFormResponseItemCount( hits.length );
             for ( int i = nStartIndex; i < nMaxIndex; i++ )
@@ -187,6 +195,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 Document document = searcher.doc( hits [i].doc );
                 listResults.add( new FormResponseSearchItem( document ) );
             }
+            ir.close( );
         }
         catch( IOException e )
         {
@@ -195,23 +204,24 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
 
         return listResults;
     }
-    
+
     /**
      * Build the Lucene Sort obj
-     * @param sortConfig 
-     *          The sort config
+     * 
+     * @param sortConfig
+     *            The sort config
      * @return the Lucene Sort obj
      */
     private Sort buildLuceneSort( FormResponseItemSortConfig sortConfig )
     {
         if ( sortConfig != null )
         {
-            String strAttributeName = sortConfig.getSortAttributeName();
+            String strAttributeName = sortConfig.getSortAttributeName( );
             if ( strAttributeName != null )
             {
-                if ( strAttributeName.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX) )
+                if ( strAttributeName.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
                 {
-                    return new Sort( new SortField( sortConfig.getSortAttributeName( ), SortField.Type.LONG, sortConfig.isAscSort( ) ) );
+                    return new Sort( new SortedNumericSortField( sortConfig.getSortAttributeName( ), SortField.Type.LONG, sortConfig.isAscSort( ) ) );
                 }
                 if ( strAttributeName.endsWith( FormResponseSearchItem.FIELD_INT_SUFFIX ) )
                 {
@@ -221,7 +231,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 return new Sort( new SortField( sortConfig.getSortAttributeName( ), SortField.Type.STRING, sortConfig.isAscSort( ) ) );
             }
         }
-        
+
         return null;
     }
 

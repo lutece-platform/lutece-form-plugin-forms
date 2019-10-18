@@ -55,8 +55,11 @@
 										<@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
 											<@checkBox name='is_indexed' id='is_indexed' value='1' checked=true />
 										</@formGroup>
-			<@formGroup labelFor='is_shown_in_completeness' labelKey='#i18n{forms.createEntry.labelResponsesCompleteness}' helpKey='#i18n{forms.createEntry.labelResponsesCompletenessComment}'>
-				<@checkBox name='is_shown_in_completeness' id='is_shown_in_completeness' value='1' checked=false />
+			<@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+				<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=false />
+			</@formGroup>
+			<@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+				<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=false />
 			</@formGroup>
 										${question_create_template!}
 				<@formGroup>

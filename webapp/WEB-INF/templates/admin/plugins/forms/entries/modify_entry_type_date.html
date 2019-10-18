@@ -20,9 +20,9 @@
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
 							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
 						</@formGroup>
-                                                <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-                                                    <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
-                                                </@formGroup>
+                        <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                            <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+                        </@formGroup>
 						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
 							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
 						</@formGroup>
@@ -30,12 +30,11 @@
 							<@input type='textarea' name='comment' id='comment' rows=5>${entry.comment}</@input>
 						</@formGroup>
 						<@formGroup labelFor='date' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
-							<#list entry.fields as field>
-								<@inputGroup>
-									<@inputGroupItem type='addon'><@icon style='calendar' /></@inputGroupItem>
-									<@input type='text' name='value' id='date' value='${field.valueTypeDate?if_exists}' />
-								</@inputGroup>
-							</#list>
+							<#assign field = getFieldByCode( entry, "default_date_value" ) >
+							<@inputGroup>
+								<@inputGroupItem type='addon'><@icon style='calendar' /></@inputGroupItem>
+								<@input type='text' name='value' id='date' value='${field.valueTypeDate?if_exists}' />
+							</@inputGroup>
 						</@formGroup>
 						<@formGroup>
 							<#if entry.mandatory><#assign checked = true /></#if>
@@ -47,12 +46,15 @@
                         <@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}'>
                             <@checkBox name='editable_back' id='editable_back' value='1' checked=entry.editableBack />
                         </@formGroup>
-                                                <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-                                                    <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
-                                                </@formGroup>
-                        <@formGroup labelFor='is_shown_in_completeness' labelKey='#i18n{forms.createEntry.labelResponsesCompleteness}' helpKey='#i18n{forms.createEntry.labelResponsesCompletenessComment}'>
-	                    	<@checkBox name='is_shown_in_completeness' id='is_shown_in_completeness' value='1' checked=entry.shownInCompleteness />
+                        <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+                            <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+                        </@formGroup>
+                        <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+	                    	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
 	                    </@formGroup>
+	                    <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>

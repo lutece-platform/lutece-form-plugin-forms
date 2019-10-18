@@ -74,7 +74,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected String _strCurrentPageIndex;
     protected int _nItemsPerPage;
     protected LocalizedDelegatePaginator<Integer> _paginator;
-    
+
     protected void initiatePaginatorProperties( HttpServletRequest request )
     {
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
@@ -82,7 +82,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, nDefaultItemsPerPage );
 
     }
-    
+
     /**
      * Return a model that contains the list and paginator information
      * 
@@ -101,7 +101,8 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
 
         // Paginator
-        _paginator = new LocalizedDelegatePaginator<Integer>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems, getLocale( ) );
+        _paginator = new LocalizedDelegatePaginator<Integer>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems,
+                getLocale( ) );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
@@ -204,9 +205,10 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
             throw new AccessDeniedException( );
         }
     }
-    
+
     /**
      * Return the current page index as int
+     * 
      * @return the current page index
      */
     private int getCurrentPageIndex( )
@@ -217,13 +219,14 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         }
         return 1;
     }
-    
+
     /**
      * Get the index start
+     * 
      * @return the started index
      */
     protected int getIndexStart( )
     {
-        return ( getCurrentPageIndex( ) - 1) * _nItemsPerPage;
+        return ( getCurrentPageIndex( ) - 1 ) * _nItemsPerPage;
     }
 }

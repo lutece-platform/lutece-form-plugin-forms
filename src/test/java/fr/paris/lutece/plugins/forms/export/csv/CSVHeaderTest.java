@@ -41,95 +41,95 @@ import junit.framework.TestCase;
 public class CSVHeaderTest extends TestCase
 {
 
-	public void testAddHeader( )
-	{
-		Question q1 = getQuestion( 3, 0 );
-		Question q2 = getQuestion( 2, 0 );
-		Question q3 = getQuestion( 1, 0 );
+    public void testAddHeader( )
+    {
+        Question q1 = getQuestion( 3, 0 );
+        Question q2 = getQuestion( 2, 0 );
+        Question q3 = getQuestion( 1, 0 );
 
-		CSVHeader header = new CSVHeader( );
+        CSVHeader header = new CSVHeader( );
 
-		header.addHeader( q1 );
-		header.addHeader( q2 );
-		header.addHeader( q3 );
+        header.addHeader( q1 );
+        header.addHeader( q2 );
+        header.addHeader( q3 );
 
-		List<Question> questions = header.getColumnToExport( );
+        List<Question> questions = header.getColumnToExport( );
 
-		assertNotNull( questions );
-		assertEquals( 3, questions.size( ) );
-		assertEquals( q1, questions.get( 0 ) );
-		assertEquals( q2, questions.get( 1 ) );
-		assertEquals( q3, questions.get( 2 ) );
-	}
+        assertNotNull( questions );
+        assertEquals( 3, questions.size( ) );
+        assertEquals( q1, questions.get( 0 ) );
+        assertEquals( q2, questions.get( 1 ) );
+        assertEquals( q3, questions.get( 2 ) );
+    }
 
-	public void testAddHeaderSameQuestion( )
-	{
-		Question q1 = getQuestion( 1, 0 );
-		Question q1_bis = getQuestion( 1, 0 );
+    public void testAddHeaderSameQuestion( )
+    {
+        Question q1 = getQuestion( 1, 0 );
+        Question q1_bis = getQuestion( 1, 0 );
 
-		CSVHeader header = new CSVHeader( );
+        CSVHeader header = new CSVHeader( );
 
-		header.addHeader( q1 );
-		header.addHeader( q1_bis );
+        header.addHeader( q1 );
+        header.addHeader( q1_bis );
 
-		List<Question> questions = header.getColumnToExport( );
+        List<Question> questions = header.getColumnToExport( );
 
-		assertNotNull( questions );
-		assertEquals( 1, questions.size( ) );
-		assertEquals( q1, questions.get( 0 ) );
-	}
+        assertNotNull( questions );
+        assertEquals( 1, questions.size( ) );
+        assertEquals( q1, questions.get( 0 ) );
+    }
 
-	public void testAddHeaderIteration( )
-	{
-		Question q1 = getQuestion( 1, 0 );
-		Question q2 = getQuestion( 2, 0 );
-		Question q1_bis = getQuestion( 1, 1 );
+    public void testAddHeaderIteration( )
+    {
+        Question q1 = getQuestion( 1, 0 );
+        Question q2 = getQuestion( 2, 0 );
+        Question q1_bis = getQuestion( 1, 1 );
 
-		CSVHeader header = new CSVHeader( );
+        CSVHeader header = new CSVHeader( );
 
-		header.addHeader( q1 );
-		header.addHeader( q2 );
-		header.addHeader( q1_bis );
+        header.addHeader( q1 );
+        header.addHeader( q2 );
+        header.addHeader( q1_bis );
 
-		List<Question> questions = header.getColumnToExport( );
+        List<Question> questions = header.getColumnToExport( );
 
-		assertNotNull( questions );
-		assertEquals( 3, questions.size( ) );
-		assertEquals( q1, questions.get( 0 ) );
-		assertEquals( q1_bis, questions.get( 1 ) );
-		assertEquals( q2, questions.get( 2 ) );
-	}
+        assertNotNull( questions );
+        assertEquals( 3, questions.size( ) );
+        assertEquals( q1, questions.get( 0 ) );
+        assertEquals( q1_bis, questions.get( 1 ) );
+        assertEquals( q2, questions.get( 2 ) );
+    }
 
-	public void testAddHeaderIterationWithHole( )
-	{
-		Question q1 = getQuestion( 1, 0 );
-		Question q2 = getQuestion( 2, 0 );
-		Question q1_bis = getQuestion( 1, 2 );
-		Question q1_ter = getQuestion( 1, 1 );
+    public void testAddHeaderIterationWithHole( )
+    {
+        Question q1 = getQuestion( 1, 0 );
+        Question q2 = getQuestion( 2, 0 );
+        Question q1_bis = getQuestion( 1, 2 );
+        Question q1_ter = getQuestion( 1, 1 );
 
-		CSVHeader header = new CSVHeader( );
+        CSVHeader header = new CSVHeader( );
 
-		header.addHeader( q1 );
-		header.addHeader( q2 );
-		header.addHeader( q1_bis );
-		header.addHeader( q1_ter );
+        header.addHeader( q1 );
+        header.addHeader( q2 );
+        header.addHeader( q1_bis );
+        header.addHeader( q1_ter );
 
-		List<Question> questions = header.getColumnToExport( );
+        List<Question> questions = header.getColumnToExport( );
 
-		assertNotNull( questions );
-		assertEquals( 4, questions.size( ) );
-		assertEquals( q1, questions.get( 0 ) );
-		assertEquals( q1_ter, questions.get( 1 ) );
-		assertEquals( q1_bis, questions.get( 2 ) );
-		assertEquals( q2, questions.get( 3 ) );
-	}
+        assertNotNull( questions );
+        assertEquals( 4, questions.size( ) );
+        assertEquals( q1, questions.get( 0 ) );
+        assertEquals( q1_ter, questions.get( 1 ) );
+        assertEquals( q1_bis, questions.get( 2 ) );
+        assertEquals( q2, questions.get( 3 ) );
+    }
 
-	private Question getQuestion( int nId, int nIterationNumber )
-	{
-		Question question = new Question( );
-		question.setId( nId );
-		question.setIterationNumber( nIterationNumber );
-		return question;
-	}
+    private Question getQuestion( int nId, int nIterationNumber )
+    {
+        Question question = new Question( );
+        question.setId( nId );
+        question.setIterationNumber( nIterationNumber );
+        return question;
+    }
 
 }

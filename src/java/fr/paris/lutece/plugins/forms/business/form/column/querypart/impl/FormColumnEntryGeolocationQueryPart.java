@@ -54,7 +54,7 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
     private static final String CONSTANT_FIELD_ADDRESS = "address";
     private static final String CONSTANT_FIELD_X = "X";
     private static final String CONSTANT_FIELD_Y = "Y";
-    
+
     /**
      * {@inheritDoc}
      */
@@ -64,33 +64,32 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
 
         Map<String, Object> mapFormColumnValues = new HashMap<>( );
 
-        String strAddressValue = String.format(FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_ADDR, getFormColumn().getFormColumnPosition( ) );
-        String strXValue = String.format(FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_X, getFormColumn().getFormColumnPosition( ) );
-        String strYValue = String.format(FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y, getFormColumn().getFormColumnPosition( ) );
-        
-        
+        String strAddressValue = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_ADDR, getFormColumn( ).getFormColumnPosition( ) );
+        String strXValue = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_X, getFormColumn( ).getFormColumnPosition( ) );
+        String strYValue = String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y, getFormColumn( ).getFormColumnPosition( ) );
+
         for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
         {
-            Map<String,String> listFields = getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem );
-            for ( Map.Entry<String,String> field : listFields.entrySet( ) )
+            Map<String, String> listFields = getEntryCodeFields( strFormColumnEntryCode, formResponseSearchItem );
+            for ( Map.Entry<String, String> field : listFields.entrySet( ) )
             {
-                String[] splits = field.getKey().split("_");
-                String strIdField = splits[splits.length-1];
+                String [ ] splits = field.getKey( ).split( "_" );
+                String strIdField = splits [splits.length - 1];
                 int nIdField = Integer.parseInt( strIdField );
                 Field fieldGenatt = FieldHome.findByPrimaryKey( nIdField );
-                switch ( fieldGenatt.getValue( ) )
+                switch( fieldGenatt.getValue( ) )
                 {
                     case CONSTANT_FIELD_ADDRESS:
-                    mapFormColumnValues.put( strAddressValue, field.getValue( ) );
-                    break;
+                        mapFormColumnValues.put( strAddressValue, field.getValue( ) );
+                        break;
 
                     case CONSTANT_FIELD_X:
-                    mapFormColumnValues.put( strXValue, field.getValue( ) );
-                    break;
+                        mapFormColumnValues.put( strXValue, field.getValue( ) );
+                        break;
 
                     case CONSTANT_FIELD_Y:
-                    mapFormColumnValues.put( strYValue, field.getValue( ) );
-                    break;
+                        mapFormColumnValues.put( strYValue, field.getValue( ) );
+                        break;
                 }
             }
         }

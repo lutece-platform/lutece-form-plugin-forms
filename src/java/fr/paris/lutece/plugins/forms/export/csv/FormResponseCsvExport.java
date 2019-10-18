@@ -97,24 +97,22 @@ public class FormResponseCsvExport
     /**
      * Build the CSV string for column line
      */
-	private void buildCsvColumnToExport( )
-	{
-		StringBuilder sbCsvColumn = new StringBuilder( );
+    private void buildCsvColumnToExport( )
+    {
+        StringBuilder sbCsvColumn = new StringBuilder( );
 
-		sbCsvColumn.append( CSVUtil.safeString(
-				I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) ) );
-		sbCsvColumn.append( SEPARATOR );
-		sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION,
-				I18nService.getDefaultLocale( ) ) ) );
-		sbCsvColumn.append( SEPARATOR );
+        sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) ) );
+        sbCsvColumn.append( SEPARATOR );
+        sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION, I18nService.getDefaultLocale( ) ) ) );
+        sbCsvColumn.append( SEPARATOR );
 
-		for ( Question question : _csvHeader.getColumnToExport( ) )
-		{
-			sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question ) ) ).append( SEPARATOR );
-		}
+        for ( Question question : _csvHeader.getColumnToExport( ) )
+        {
+            sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question ) ) ).append( SEPARATOR );
+        }
 
-		_strCsvColumnToExport = sbCsvColumn.append( END_OF_LINE ).toString( );
-	}
+        _strCsvColumnToExport = sbCsvColumn.append( END_OF_LINE ).toString( );
+    }
 
     /**
      * Build the CSV string for all data lines
@@ -130,7 +128,8 @@ public class FormResponseCsvExport
 
             for ( Question question : _csvHeader.getColumnToExport( ) )
             {
-                sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append( SEPARATOR );
+                sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append(
+                        SEPARATOR );
             }
 
             sbCsvData.append( sbRecordContent.toString( ) ).append( END_OF_LINE );

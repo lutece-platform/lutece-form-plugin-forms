@@ -157,22 +157,22 @@ public class FormPanel
 
     /**
      * Get the total form response item count
+     * 
      * @return the total form response item count
      */
-    public int getTotalFormResponseItemCount() 
+    public int getTotalFormResponseItemCount( )
     {
         return _nTotalFormResponseItemCount;
     }
 
     /**
      * Set the total form response imte count
-     * @param nTotalFormResponseItemCount 
+     * 
+     * @param nTotalFormResponseItemCount
      */
-    public void setTotalFormResponseItemCount( int nTotalFormResponseItemCount ) 
+    public void setTotalFormResponseItemCount( int nTotalFormResponseItemCount )
     {
         _nTotalFormResponseItemCount = nTotalFormResponseItemCount;
     }
-    
-    
 
 }

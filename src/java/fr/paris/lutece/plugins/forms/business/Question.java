@@ -386,36 +386,42 @@ public class Question implements Serializable, Cloneable
 
     /**
      * Return true if the response list page is filtrable globally by this question, false otherwise
+     * 
      * @return true if the response list page is filtrable by this question, false otherwise
      */
-    public boolean isFiltrableMultiviewGlobal() 
+    public boolean isFiltrableMultiviewGlobal( )
     {
         return _bIsFiltrableMultiviewGlobal;
     }
 
     /**
      * Set the multiview filtrable boolean
-     * @param bIsFiltrableMultiviewGlobal the multiview global filtrable boolean
+     * 
+     * @param bIsFiltrableMultiviewGlobal
+     *            the multiview global filtrable boolean
      */
-    public void setFiltrableMultiviewGlobal(boolean bIsFiltrableMultiviewGlobal) 
+    public void setFiltrableMultiviewGlobal( boolean bIsFiltrableMultiviewGlobal )
     {
         _bIsFiltrableMultiviewGlobal = bIsFiltrableMultiviewGlobal;
     }
 
     /**
      * Return true if the response list page is filtrable when form is selected by this question, false otherwise
+     * 
      * @return true if the response list page is filtrable by this question, false otherwise
      */
-    public boolean isFiltrableMultiviewFormSelected() 
+    public boolean isFiltrableMultiviewFormSelected( )
     {
         return _bIsFiltrableMultiviewFormSelected;
     }
 
     /**
      * Set the multiview filtrable boolean
-     * @param bIsFiltrableMultiviewFormSelected the multiview FormSelected filtrable boolean
+     * 
+     * @param bIsFiltrableMultiviewFormSelected
+     *            the multiview FormSelected filtrable boolean
      */
-    public void setFiltrableMultiviewFormSelected(boolean bIsFiltrableMultiviewFormSelected) 
+    public void setFiltrableMultiviewFormSelected( boolean bIsFiltrableMultiviewFormSelected )
     {
         _bIsFiltrableMultiviewFormSelected = bIsFiltrableMultiviewFormSelected;
     }

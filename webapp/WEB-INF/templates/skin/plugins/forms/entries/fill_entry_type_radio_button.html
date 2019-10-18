@@ -1,6 +1,6 @@
 <#include "/admin/plugins/forms/commons.html" />
 
-<#if !entry.onlyDisplayInBack>
+<#if !entry.onlyDisplayInBack || is_completeness_bo>
 	<#assign hide="">
 	<#list entry.fields as field>
 		<#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
@@ -19,40 +19,41 @@
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 			<#assign inLine = entry.fieldInLine>
 			<#list entry.fields as field>
-				<#assign idName = buildEntryName( entry, entry_iteration_number )>
-				<#if entry.fieldInLine != true><div class="radio"></#if>
-					<label <#if entry.fieldInLine>class="radio-inline"</#if> for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> > 
-						<input type="radio" id="${idName}_${field.idField}" name="${idName}" value="${field.idField}"
-						<#if list_responses?? && list_responses?has_content>
-							<#list list_responses as response>
-								<#if response.entry.idEntry == entry.idEntry && response.field??>
-									<#if response.field.idField == field.idField>checked="checked"<#break></#if>
+				<#if field.code == 'answer_choice'>
+					<#assign idName = buildEntryName( entry, entry_iteration_number )>
+					<#if entry.fieldInLine != true><div class="radio"></#if>
+						<label <#if entry.fieldInLine>class="radio-inline"</#if> for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> > 
+							<input type="radio" id="${idName}_${field.idField}" name="${idName}" value="${field.idField}"
+							<#if list_responses?? && list_responses?has_content>
+								<#list list_responses as response>
+									<#if response.entry.idEntry == entry.idEntry && response.field??>
+										<#if response.field.idField == field.idField>checked="checked"<#break></#if>
+									</#if>
+								</#list>
+							<#else>
+								<#if field.defaultValue>checked="checked"</#if>
+							</#if> onclick="${hide} <#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
+								<#assign idName = 'div'>
+								<#if entry_iteration_number?has_content>
+									<#assign idName = 'div_nIt' + entry_iteration_number + '_'>
 								</#if>
-							</#list>
-						<#else>
-							<#if field.defaultValue>checked="checked"</#if>
-						</#if> onclick="${hide} <#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
-							<#assign idName = 'div'>
-							<#if entry_iteration_number?has_content>
-								<#assign idName = 'div_nIt' + entry_iteration_number + '_'>
+								<#assign idConditional = idName + field.idField>
+								displayId(${idConditional}.id);</#if>"
+							/>
+					 <#if !field.noDisplayTitle>
+					 	${field.title}
+					 </#if>
+						</label>
+						<#if entry.fieldInLine != true></div></#if>
+						
+						<#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0 && !inLine>
+							<#if list_entry_children??>
+								<#list list_entry_children as children>
+									<#if children.idField == field.idField && children.conditionalEntries??>${children.conditionalEntries}</#if>
+								</#list>
 							</#if>
-							<#assign idConditional = idName + field.idField>
-							displayId(${idConditional}.id);</#if>"
-						/>
-				 <#if !field.noDisplayTitle>
-				 	${field.title}
-				 </#if>
-					</label>
-					<#if entry.fieldInLine != true></div></#if>
-					
-					<#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0 && !inLine>
-						<#if list_entry_children??>
-							<#list list_entry_children as children>
-								<#if children.idField == field.idField && children.conditionalEntries??>${children.conditionalEntries}</#if>
-							</#list>
 						</#if>
 					</#if>
-					
 				</#list>
 				<#if entry.fieldInLine&&entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="help-block">${entry.helpMessage}</span>

@@ -193,8 +193,7 @@ public final class FormDisplayHome
         {
             formDisplay.setDisplayControl( listDisplayControl.get( 0 ) );
         }
-        
-        
+
         List<Control> listValidationControl = ControlHome.getControlByQuestionAndType( formDisplay.getCompositeId( ), ControlType.VALIDATION.getLabel( ) );
 
         if ( !listValidationControl.isEmpty( ) )

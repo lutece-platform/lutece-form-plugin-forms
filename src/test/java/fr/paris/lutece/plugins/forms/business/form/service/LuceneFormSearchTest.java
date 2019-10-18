@@ -86,7 +86,7 @@ public class LuceneFormSearchTest extends LuteceTestCase
         _formFormSearchIndexer = SpringContextService.getBean( "forms.luceneFormsSearchIndexer" );
         _formFormSearchEngine = SpringContextService.getBean( "forms.luceneFormsSearchEngine" );
     }
-    
+
     /**
      * Create a form
      * 

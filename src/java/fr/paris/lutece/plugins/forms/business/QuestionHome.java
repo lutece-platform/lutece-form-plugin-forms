@@ -112,7 +112,7 @@ public final class QuestionHome
     {
         return _dao.load( nKey, _plugin );
     }
-    
+
     /**
      * Returns an instance of a question whose identifier is specified in parameter
      * 
@@ -124,7 +124,7 @@ public final class QuestionHome
     {
         return _dao.loadByCode( strCode, _plugin );
     }
-    
+
     /**
      * Returns an instance of a question whose identifier is specified in parameter
      * 

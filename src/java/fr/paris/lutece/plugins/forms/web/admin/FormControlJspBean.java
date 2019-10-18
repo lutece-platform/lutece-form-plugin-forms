@@ -411,7 +411,7 @@ public class FormControlJspBean extends AbstractJspBean
             referenceListQuestion.addItem( question.getId( ), question.getTitle( ) );
         }
 
-        if ( StringUtils.isNotEmpty( strValidatorName ) && _control.getValidatorName( ) != strValidatorName )
+        if ( StringUtils.isNotEmpty( strValidatorName ) && !strValidatorName.equals( _control.getValidatorName( ) ) )
         {
             _control.setValidatorName( strValidatorName );
             _control.setValue( StringUtils.EMPTY );

@@ -102,23 +102,23 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private static final String FORMS = "forms";
     private static final String INDEXER_VERSION = "1.0.0";
     private static final String PROPERTY_INDEXER_ENABLE = "forms.globalIndexer.enable";
-    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy");
+    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy" );
     private static final int TAILLE_LOT = AppPropertiesService.getPropertyInt( "forms.index.writer.commit.size", 100 );
 
-    private static  AtomicBoolean  _bIndexIsRunning = new AtomicBoolean(false);
-    private static  AtomicBoolean _bIndexToLunch = new AtomicBoolean(false);
+    private static AtomicBoolean _bIndexIsRunning = new AtomicBoolean( false );
+    private static AtomicBoolean _bIndexToLunch = new AtomicBoolean( false );
 
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
     private IndexWriter _indexWriter;
     @Autowired( required = false )
     private StateService _stateService;
-    
+
     public LuceneFormSearchIndexer( )
     {
         IndexationService.registerIndexer( this );
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -145,7 +145,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     {
         return INDEXER_VERSION;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -192,31 +192,32 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     @Override
     public void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin )
     {
-            IndexerAction indexerAction = new IndexerAction( );
-            indexerAction.setIdFormResponse( nIdFormResponse );
-            indexerAction.setIdTask( nIdTask );
-            IndexerActionHome.create( indexerAction, plugin );
+        IndexerAction indexerAction = new IndexerAction( );
+        indexerAction.setIdFormResponse( nIdFormResponse );
+        indexerAction.setIdTask( nIdTask );
+        IndexerActionHome.create( indexerAction, plugin );
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-   public synchronized void indexDocuments( ) throws IOException, InterruptedException, SiteMessageException
+    public synchronized void indexDocuments( ) throws IOException, InterruptedException, SiteMessageException
     {
         List<Integer> listFormResponsesId = FormResponseHome.selectAllFormResponsesId( );
-        
-        deleteIndex();
-       /* for ( Integer nIdFormResponse : listFormResponsesId )
+
+        deleteIndex( );
+        /*
+         * for ( Integer nIdFormResponse : listFormResponsesId ) { addIndexerAction( nIdFormResponse, IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) ); }
+         */
+        _bIndexToLunch.set( true );
+        if ( _bIndexIsRunning.compareAndSet( false, true ) )
         {
-            addIndexerAction( nIdFormResponse, IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) );
-        }*/
-        _bIndexToLunch.set(true);
-        if(_bIndexIsRunning.compareAndSet(false, true)) {
-            new Thread(() -> {
-                try {
-               // while(_bIndexToLunch.compareAndSet(true, false)){
-                
+            new Thread( ( ) -> {
+                try
+                {
+                    // while(_bIndexToLunch.compareAndSet(true, false)){
+
                     List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
                     for ( Integer nIdFormResponse : listFormResponsesId )
                     {
@@ -233,48 +234,58 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                         }
                     }
                     indexFormResponseList( listFormResponses );
-                    //Indexation increment
-                    while(_bIndexToLunch.compareAndSet(true, false)){
-                         processIndexing();
-                    
-                        }
-                }catch (Exception e) {
-                    AppLogService.error(e.getMessage() , e);
-                    Thread.currentThread().interrupt();                    
-                } finally {
-                    _bIndexIsRunning.set(false);  
+                    // Indexation increment
+                    while ( _bIndexToLunch.compareAndSet( true, false ) )
+                    {
+                        processIndexing( );
+
+                    }
                 }
-               
-                
-                
-            }).start();
+                catch( Exception e )
+                {
+                    AppLogService.error( e.getMessage( ), e );
+                    Thread.currentThread( ).interrupt( );
+                }
+                finally
+                {
+                    _bIndexIsRunning.set( false );
+                }
+
+            } ).start( );
         }
 
     }
-    
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public void indexDocument(int nIdFormResponse, int nIdTask, Plugin plugin)
+    public void indexDocument( int nIdFormResponse, int nIdTask, Plugin plugin )
     {
         addIndexerAction( nIdFormResponse, nIdTask, plugin );
-        _bIndexToLunch.set(true);
-        if(_bIndexIsRunning.compareAndSet(false, true)) {
-	            new Thread(() -> {
-	            
-	            try {
-	                while(_bIndexToLunch.compareAndSet(true, false)){
-	                    processIndexing();
-	                }
-	            }catch (Exception e) {
-	        			AppLogService.error(e.getMessage() , e);
-	                    Thread.currentThread().interrupt();
-	            } finally {
-	                	_bIndexIsRunning.set(false);  
-	            }
-	            	
-	            }).start();
+        _bIndexToLunch.set( true );
+        if ( _bIndexIsRunning.compareAndSet( false, true ) )
+        {
+            new Thread( ( ) -> {
+
+                try
+                {
+                    while ( _bIndexToLunch.compareAndSet( true, false ) )
+                    {
+                        processIndexing( );
+                    }
+                }
+                catch( Exception e )
+                {
+                    AppLogService.error( e.getMessage( ), e );
+                    Thread.currentThread( ).interrupt( );
+                }
+                finally
+                {
+                    _bIndexIsRunning.set( false );
+                }
+
+            } ).start( );
         }
     }
 
@@ -293,8 +304,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         // Delete all record which must be delete
         for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_DELETE, plugin ) )
         {
-        	listIdsToDelete.add( action.getIdFormResponse( ) );
-            removeIndexerAction( action.getIdAction(), plugin );
+            listIdsToDelete.add( action.getIdFormResponse( ) );
+            removeIndexerAction( action.getIdAction( ), plugin );
         }
 
         // Update all record which must be update
@@ -302,47 +313,46 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         {
             listIdsToDelete.add( action.getIdFormResponse( ) );
             listIdsToAdd.add( action.getIdFormResponse( ) );
-            removeIndexerAction( action.getIdAction(), plugin );
+            removeIndexerAction( action.getIdAction( ), plugin );
         }
 
         // Add all form response which must be add
         for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_CREATE, plugin ) )
         {
             listIdsToAdd.add( action.getIdFormResponse( ) );
-            removeIndexerAction( action.getIdAction(), plugin );
+            removeIndexerAction( action.getIdAction( ), plugin );
         }
-        
-        
+
         List<Query> queryList = new ArrayList<>( TAILLE_LOT );
         for ( Integer nIdFormResponse : listIdsToDelete )
         {
-        	queryList.add( IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
-        	if ( queryList.size( ) == TAILLE_LOT )
-        	{
-        		deleteDocument( queryList );
-        		queryList.clear() ;
-        	}
+            queryList.add( IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
+            if ( queryList.size( ) == TAILLE_LOT )
+            {
+                deleteDocument( queryList );
+                queryList.clear( );
+            }
         }
         deleteDocument( queryList );
-        
+
         List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
         for ( Integer nIdFormResponse : listIdsToAdd )
         {
             // TODO IMPLEMENT A SQL IN( ..) instead
-        	FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
-        	if ( response != null )
-        	{
-        		listFormResponses.add( response );
-        	}
-            	if ( listFormResponses.size( ) == TAILLE_LOT )
-        	{
-        		indexFormResponseList( listFormResponses );
-        		listFormResponses.clear( );
-        	}
+            FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
+            if ( response != null )
+            {
+                listFormResponses.add( response );
+            }
+            if ( listFormResponses.size( ) == TAILLE_LOT )
+            {
+                indexFormResponseList( listFormResponses );
+                listFormResponses.clear( );
+            }
         }
         indexFormResponseList( listFormResponses );
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -421,16 +431,16 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
             if ( doc != null )
             {
-            	documentList.add( doc );
+                documentList.add( doc );
             }
         }
         addDocuments( documentList );
         endIndexing( );
     }
-    
+
     private void addDocuments( List<Document> documentList )
     {
-    	try
+        try
         {
             _indexWriter.addDocuments( documentList );
         }
@@ -438,7 +448,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         {
             AppLogService.error( "Unable to index form response", e );
         }
-    	documentList.clear();
+        documentList.clear( );
     }
 
     /**
@@ -470,8 +480,6 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         }
     }
 
-    
-
     /**
      * {@inheritDoc }
      */
@@ -493,18 +501,18 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         }
     }
 
-    private void deleteDocument( List<Query> luceneQueryList ) 
+    private void deleteDocument( List<Query> luceneQueryList )
     {
-        try 
+        try
         {
-            _indexWriter.deleteDocuments( luceneQueryList.toArray( new Query[luceneQueryList.size( )] ) );
-        } catch (IOException e)
+            _indexWriter.deleteDocuments( luceneQueryList.toArray( new Query [ luceneQueryList.size( )] ) );
+        }
+        catch( IOException e )
         {
-            AppLogService.error( "Unable to delete document ", e);
+            AppLogService.error( "Unable to delete document ", e );
         }
     }
-    
-    
+
     /**
      * Remove a Indexer Action
      * 
@@ -534,7 +542,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
         return IndexerActionHome.getList( filter, plugin );
     }
-    
+
     /**
      * Builds a document which will be used by Lucene during the indexing of this record
      * 
@@ -597,15 +605,17 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             doc.add( new StringField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, strFormResponseWorkflowStateTitle, Field.Store.YES ) );
             doc.add( new SortedDocValuesField( FormResponseSearchItem.FIELD_TITLE_WORKFLOW_STATE, new BytesRef( strFormResponseWorkflowStateTitle ) ) );
         }
-        
+
         // --- form response entry code / fields
+        Set<String> setFieldNameBuilderUsed = new HashSet<>( );
         for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
         {
             for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
             {
                 String strQuestionCode = formQuestionResponse.getQuestion( ).getCode( );
-                Entry entry = formQuestionResponse.getQuestion().getEntry();
+                Entry entry = formQuestionResponse.getQuestion( ).getEntry( );
                 IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
+
                 for ( Response response : formQuestionResponse.getEntryResponse( ) )
                 {
                     // TODO USE EXPORT MANAGER ?
@@ -613,49 +623,65 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
                     if ( !StringUtils.isEmpty( response.getResponseValue( ) ) )
                     {
-                    	 StringBuilder fieldNameBuilder = new StringBuilder( LuceneUtils.createLuceneEntryKey( strQuestionCode, response.getIterationNumber( ) ) );
-                    	 
+                        StringBuilder fieldNameBuilder = new StringBuilder( LuceneUtils.createLuceneEntryKey( strQuestionCode, response.getIterationNumber( ) ) );
+
                         if ( responseField != null )
                         {
                             String getFieldName = getFieldName( responseField, response );
                             fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ );
                             fieldNameBuilder.append( getFieldName );
                         }
-                        if ( entryTypeService instanceof EntryTypeDate )
+
+                        if ( !setFieldNameBuilderUsed.contains( fieldNameBuilder.toString( ) ) )
                         {
-                            DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
-                            try
+                            setFieldNameBuilderUsed.add( fieldNameBuilder.toString( ) );
+                            if ( entryTypeService instanceof EntryTypeDate )
                             {
-	                            LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
-	                            Timestamp timestamp = Timestamp.valueOf( localDate.atTime( 12, 30 ) );
-	                            doc.add( new LongPoint( fieldNameBuilder.toString( )+ FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
-	                            doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, String.valueOf( timestamp.getTime( ) ), Field.Store.YES ) );
-	                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, new BytesRef( String.valueOf( timestamp.getTime( ) ) ) ) );
-	                        }
-                            catch ( Exception e )
-                            {
-                                AppLogService.error( "Unable to parse " + response.getResponseValue() + " with date formatter " + FILTER_DATE_FORMAT, e );
+                                DateTimeFormatter formatter = DateTimeFormatter.ofPattern( FILTER_DATE_FORMAT );
+                                try
+                                {
+                                    LocalDate localDate = LocalDate.parse( response.getResponseValue( ), formatter );
+                                    Timestamp timestamp = Timestamp.valueOf( localDate.atTime( 12, 30 ) );
+                                    doc.add( new LongPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
+                                    doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp
+                                            .getTime( ) ) );
+                                    doc.add( new StoredField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
+                                }
+                                catch( Exception e )
+                                {
+                                    AppLogService.error( "Unable to parse " + response.getResponseValue( ) + " with date formatter " + FILTER_DATE_FORMAT, e );
+                                }
                             }
-                        }
-                        else if ( entryTypeService instanceof EntryTypeNumbering )
-                        {
-                        	try
-                        	{
-                        		Integer value = Integer.valueOf( response.getResponseValue( ) );
-                        		doc.add( new IntPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
-                        		doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
-                        		doc.add( new StoredField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
-                        	}
-                        	catch (NumberFormatException e) {
-                        		AppLogService.error( "Unable to parse " + response.getResponseValue() + " to integer ", e );
-							}
+                            else
+                                if ( entryTypeService instanceof EntryTypeNumbering )
+                                {
+                                    try
+                                    {
+                                        Integer value = Integer.valueOf( response.getResponseValue( ) );
+                                        doc.add( new IntPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
+                                        doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
+                                        doc.add( new StoredField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_INT_SUFFIX, value ) );
+                                    }
+                                    catch( NumberFormatException e )
+                                    {
+                                        AppLogService.error( "Unable to parse " + response.getResponseValue( ) + " to integer ", e );
+                                    }
+                                }
+                                else
+                                {
+                                    doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
+                                    doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+                                }
+
                         }
                         else
                         {
-                            doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                            doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+                            AppLogService.error( " FieldNameBuilder " + fieldNameBuilder.toString( ) + "  already used for formResponse.getId( )  "
+                                    + formResponse.getId( ) + "  formQuestionResponse.getId( )  " + formQuestionResponse.getId( )
+                                    + " response.getIdResponse( ) " + response.getIdResponse( ) + " formResponseStep" + formResponseStep.getId( ) );
+
                         }
-                        
+
                     }
                 }
             }
@@ -663,8 +689,6 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
         return doc;
     }
-    
-    
 
     /**
      * Concatenates the value of the specified field in this record
@@ -708,27 +732,26 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         return sb.toString( );
     }
 
-    
-    
     /**
      * Get the field name
+     * 
      * @param responseField
      * @param response
      * @return the field name
      */
     private String getFieldName( fr.paris.lutece.plugins.genericattributes.business.Field responseField, Response response )
     {
-        if ( responseField.getIdField( ) >0 )
+        if ( responseField.getIdField( ) > 0 )
             return String.valueOf( responseField.getIdField( ) );
         if ( !StringUtils.isEmpty( responseField.getCode( ) ) )
-            return responseField.getCode();
-        
-        if ( !StringUtils.isEmpty( responseField.getTitle() ) )
+            return responseField.getCode( );
+
+        if ( !StringUtils.isEmpty( responseField.getTitle( ) ) )
             return responseField.getTitle( );
 
         return String.valueOf( response.getIdResponse( ) );
     }
-    
+
     /**
      * Manage a given string null value
      * 
@@ -741,7 +764,5 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             return StringUtils.EMPTY;
         return strValue;
     }
-
-    
 
 }

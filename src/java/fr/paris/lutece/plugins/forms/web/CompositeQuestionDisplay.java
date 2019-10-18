@@ -83,6 +83,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     // Marks
     private static final String MARK_QUESTION_ENTRY = "questionEntry";
+    private static final String MARK_COMPLETENESS_FO = "is_completeness_bo";
     private static final String MARK_ENTRY_ITERATION_NUMBER = "entry_iteration_number";
 
     private Question _question;
@@ -188,6 +189,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _model.put( MARK_ENTRY_ITERATION_NUMBER, _question.getIterationNumber( ) );
                 _model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
                 _model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
+                _model.put( MARK_COMPLETENESS_FO, displayType == DisplayType.COMPLETE_FRONTOFFICE );
 
                 strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale, _model, displayType );
 
@@ -205,12 +207,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
                     _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
 
-                    int question_control_step = QuestionHome.findByPrimaryKey(control.getListIdQuestion().stream().findFirst().get()).getIdStep();
-                    if(question_control_step != _question.getIdStep()) {
-                       List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream()
-                               .filter(questionReponse -> control.getListIdQuestion().contains(questionReponse.getQuestion().getId()))
-                               .collect(Collectors.toList());
-                        _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, validator.validate(listFormQuestionReponseToCheck, control) );
+                    int question_control_step = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).stream( ).findFirst( ).get( ) ).getIdStep( );
+                    if ( question_control_step != _question.getIdStep( ) )
+                    {
+                        List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
+                                .filter( questionReponse -> control.getListIdQuestion( ).contains( questionReponse.getQuestion( ).getId( ) ) )
+                                .collect( Collectors.toList( ) );
+                        _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, validator.validate( listFormQuestionReponseToCheck, control ) );
 
                     }
                 }
@@ -244,6 +247,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 if ( _question.getId( ) == question.getId( ) && _question.getIterationNumber( ) == question.getIterationNumber( ) )
                 {
                     listResponse = formQuestionResponse.getEntryResponse( );
+                    _question.setIsVisible( true );
                     break;
                 }
             }
@@ -332,21 +336,21 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _question.setIsVisible( true );
             }
         }
-        
+
         if ( displayType == DisplayType.EDITION_FRONTOFFICE )
         {
-        	 if ( _question.getEntry( ) != null )
-             {
-        		 _question.setIsVisible( true );
-             }
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( true );
+            }
         }
 
         if ( displayType == DisplayType.EDITION_BACKOFFICE )
         {
-        	 if ( _question.getEntry( ) != null )
-             {
-        		 _question.setIsVisible( true );
-             }
+            if ( _question.getEntry( ) != null )
+            {
+                _question.setIsVisible( true );
+            }
         }
 
         if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
@@ -356,7 +360,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
             }
         }
-        
+
         if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
         {
             if ( _question.getEntry( ) != null )
@@ -368,10 +372,10 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         {
             if ( _question.getEntry( ) != null )
             {
-            	_question.setIsVisible( true );
+                _question.setIsVisible( true );
             }
         }
-        
+
         if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
         {
             if ( _question.getEntry( ) != null )
@@ -487,21 +491,22 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     }
 
     @Override
-    public boolean isVisible() {
-    	if ( _question == null )
-    	{
-    		return false;
-    	}
-    	return _question.isVisible( );
+    public boolean isVisible( )
+    {
+        if ( _question == null )
+        {
+            return false;
+        }
+        return _question.isVisible( );
     }
-    
+
     @Override
     public ICompositeDisplay filter( List<Integer> listQuestionIds )
     {
-    	if ( listQuestionIds.contains( _question.getId( ) ) )
-    	{
-    		return this;
-    	}
-    	return null;
+        if ( listQuestionIds.contains( _question.getId( ) ) )
+        {
+            return this;
+        }
+        return null;
     }
 }

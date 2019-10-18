@@ -82,10 +82,9 @@ public class AbstractFormFilterConfiguration implements IFormFilterConfiguration
      * {@inheritDoc}
      */
     @Override
-    public String getFormFilterName() 
+    public String getFormFilterName( )
     {
         return _strFormFilterName;
     }
 
-    
 }
