@@ -112,7 +112,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     {
         _formDisplay = formDisplay;
 
-        initComposite( formResponse, nIterationNumber );
+        initComposite( formResponse );
     }
 
     /**
@@ -123,7 +123,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
      * @param nIterationNumber
      *            the iteration number
      */
-    private void initComposite( FormResponse formResponse, int nIterationNumber )
+    private void initComposite( FormResponse formResponse )
     {
         if ( !StringUtils.isEmpty( _formDisplay.getCompositeType( ) ) )
         {
@@ -416,11 +416,10 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         }
 
         Iterator<FormQuestionResponse> responseIterator = listFormQuestionResponse.iterator( );
-        FormQuestionResponse formQuestionResponseTemp = new FormQuestionResponse( );
 
         while ( responseIterator.hasNext( ) )
         {
-            formQuestionResponseTemp = responseIterator.next( );
+        	FormQuestionResponse formQuestionResponseTemp = responseIterator.next( );
 
             if ( listQuestionIdChildren.contains( formQuestionResponseTemp.getQuestion( ).getId( ) ) )
             {

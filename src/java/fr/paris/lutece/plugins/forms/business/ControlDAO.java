@@ -74,6 +74,9 @@ public final class ControlDAO implements IControlDAO
     private static final String SQL_QUERY_CONTROL_QUESTION_SELECTALL = "SELECT fcq.id_question FROM forms_control_question fcq where fcq.id_control= ? ";
     private static final String SQL_QUERY_CONTROL_MAPPING_BY_IDCONTROL = "SELECT id_question, value FROM forms_control_question_mapping  where id_control= ? ";
 
+    
+    private static final String PARAMETER_CONTROL_ID= "id_control";
+    private static final String PARAMETER_VALUE= "value";
     /**
      * {@inheritDoc }
      */
@@ -163,7 +166,7 @@ public final class ControlDAO implements IControlDAO
     @Override
     public Set<Integer> loadIdQuestions( int nIdControl, Plugin plugin )
     {
-        Set<Integer> listQuestion = new HashSet<Integer>( );
+        Set<Integer> listQuestion = new HashSet< >( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_CONTROL_QUESTION_SELECTALL, plugin );
         daoUtil.setInt( 1, nIdControl );
         daoUtil.executeQuery( );
@@ -254,7 +257,7 @@ public final class ControlDAO implements IControlDAO
     @Override
     public List<Control> selectControlsList( Plugin plugin )
     {
-        List<Control> controlList = new ArrayList<Control>( );
+        List<Control> controlList = new ArrayList< >( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery( );
 
@@ -273,13 +276,13 @@ public final class ControlDAO implements IControlDAO
     @Override
     public List<Integer> selectIdControlsList( Plugin plugin )
     {
-        List<Integer> controlList = new ArrayList<Integer>( );
+        List<Integer> controlList = new ArrayList< >( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin );
         daoUtil.executeQuery( );
 
         while ( daoUtil.next( ) )
         {
-            controlList.add( daoUtil.getInt( "id_control" ) );
+            controlList.add( daoUtil.getInt( PARAMETER_CONTROL_ID ) );
         }
 
         daoUtil.close( );
@@ -298,7 +301,7 @@ public final class ControlDAO implements IControlDAO
 
         while ( daoUtil.next( ) )
         {
-            controlList.addItem( daoUtil.getInt( "id_control" ), daoUtil.getString( "value" ) );
+            controlList.addItem( daoUtil.getInt( PARAMETER_CONTROL_ID ), daoUtil.getString( PARAMETER_VALUE ) );
         }
 
         daoUtil.close( );
@@ -355,8 +358,8 @@ public final class ControlDAO implements IControlDAO
     {
         Control control = new Control( );
 
-        control.setId( daoUtil.getInt( "id_control" ) );
-        control.setValue( daoUtil.getString( "value" ) );
+        control.setId( daoUtil.getInt( PARAMETER_CONTROL_ID ) );
+        control.setValue( daoUtil.getString( PARAMETER_VALUE ) );
         control.setErrorMessage( daoUtil.getString( "error_message" ) );
         control.setValidatorName( daoUtil.getString( "validator_name" ) );
         control.setControlType( daoUtil.getString( "control_type" ) );
@@ -371,7 +374,7 @@ public final class ControlDAO implements IControlDAO
     @Override
     public List<Control> selectControlByQuestion( int nIdQuestion, Plugin plugin )
     {
-        List<Control> controlList = new ArrayList<Control>( );
+        List<Control> controlList = new ArrayList< >( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_QUESTION, plugin );
         daoUtil.setInt( 1, nIdQuestion );
         daoUtil.executeQuery( );
@@ -398,7 +401,7 @@ public final class ControlDAO implements IControlDAO
 
         while ( daoUtil.next( ) )
         {
-            controlList.addItem( daoUtil.getInt( "id_question" ), daoUtil.getString( "value" ) );
+            controlList.addItem( daoUtil.getInt( "id_question" ), daoUtil.getString( PARAMETER_VALUE ) );
         }
 
         daoUtil.close( );
