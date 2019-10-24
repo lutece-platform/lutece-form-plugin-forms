@@ -415,7 +415,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     @Override
     public List<ICompositeDisplay> getCompositeList( )
     {
-        List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
+        List<ICompositeDisplay> listICompositeDisplay = new ArrayList< >( );
         listICompositeDisplay.add( this );
         return listICompositeDisplay;
     }
@@ -452,7 +452,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     @Override
     public List<Control> getAllDisplayControls( )
     {
-        List<Control> listDisplayControls = new ArrayList<Control>( );
+        List<Control> listDisplayControls = new ArrayList< >( );
 
         if ( _formDisplay.getDisplayControl( ) != null )
         {

@@ -50,12 +50,6 @@ public abstract class AbstractFormPanelDisplayInitializer implements IFormPanelD
      * {@inheritDoc}
      */
     @Override
-    public abstract void buildFormParameters( HttpServletRequest request );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public IFormPanelInitializer getFormPanelInitializer( )
     {
         return _formPanelInitializer;

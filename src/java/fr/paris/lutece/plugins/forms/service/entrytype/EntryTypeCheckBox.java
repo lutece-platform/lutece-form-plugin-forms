@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import java.util.List;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -123,12 +121,12 @@ public class EntryTypeCheckBox extends AbstractEntryTypeCheckBox implements IRes
                 return false;
             }
 
-            if ( fieldReference != null && fieldNew == null )
+            else if ( fieldReference != null && fieldNew == null )
             {
                 return true;
             }
 
-            if ( fieldReference == null && fieldNew != null )
+            else if ( fieldReference == null  )
             {
                 return true;
             }

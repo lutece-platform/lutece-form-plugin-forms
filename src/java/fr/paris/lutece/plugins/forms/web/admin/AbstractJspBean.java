@@ -46,7 +46,6 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
-import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -101,7 +100,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
 
         // Paginator
-        _paginator = new LocalizedDelegatePaginator<Integer>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems,
+        _paginator = new LocalizedDelegatePaginator<>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems,
                 getLocale( ) );
 
         Map<String, Object> model = getModel( );
@@ -198,7 +197,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      *             An access denied exception
      */
     protected void checkUserPermission( String strRessourceType, String strResource, String strPermissionName, HttpServletRequest request )
-            throws AccessDeniedException
+ throws AccessDeniedException
     {
         if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, AdminUserService.getAdminUser( request ) ) )
         {

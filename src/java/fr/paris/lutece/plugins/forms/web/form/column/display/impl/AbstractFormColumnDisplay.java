@@ -111,18 +111,6 @@ public abstract class AbstractFormColumnDisplay implements IFormColumnDisplay
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract String buildFormColumnHeaderTemplate( String strSortUrl, Locale locale );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract String buildFormColumnCellTemplate( FormColumnCell formColumnCell, Locale locale );
-
-    /**
      * Return the title of the FormColumn or {@linkplain StringUtils.EMPTY} if not found
      * 
      * @return the title of the FormColumn or {@linkplain StringUtils.EMPTY} if not found

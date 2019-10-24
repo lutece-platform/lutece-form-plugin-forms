@@ -32,8 +32,6 @@ public abstract class AbstractValidator implements IValidator
         _listAvailableEntryType = listAvailableEntryType;
     }
 
-    @Override
-    public abstract boolean validate( FormQuestionResponse formQuestionResponse, Control control );
 
     @Override
     public boolean validate( List<FormQuestionResponse> formQuestionResponse, Control control )

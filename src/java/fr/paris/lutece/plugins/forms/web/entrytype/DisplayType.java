@@ -55,7 +55,7 @@ public final class DisplayType
     public enum Mode
     {
         EDITION, READONLY, SELECT
-    };
+    }
 
     private final Mode _mode;
     private final boolean _bIsFront;

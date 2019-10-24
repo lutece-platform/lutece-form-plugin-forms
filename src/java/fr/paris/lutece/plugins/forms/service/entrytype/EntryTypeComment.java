@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import java.util.List;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;

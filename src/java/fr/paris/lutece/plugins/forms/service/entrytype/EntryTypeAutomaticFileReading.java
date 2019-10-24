@@ -189,7 +189,6 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     {
         ReferenceList refList = new ReferenceList( );
 
-        // refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
 
         for ( IOcrProvider typeDocumentProvider : OcrProviderManager.getOcrProvidersList( ) )
         {
@@ -263,10 +262,9 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     {
         ReferenceList refList = new ReferenceList( );
 
-        // List<Integer> listAuthorizedEntryType = OcrProviderManager.getOcrProvider( strKey ).getAuthorizedEntryType( );
         for ( Question question : QuestionHome.getQuestionsListByStep( nIdStep ) )
         {
-            if ( question.getId( ) != nIdQuestion /* && listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) ) */)
+            if ( question.getId( ) != nIdQuestion )
             {
                 refList.addItem( question.getIdEntry( ), question.getTitle( ) );
             }
@@ -318,14 +316,14 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
 
                 return true;
             }
-            if ( listResponse != null && listResponse.size( ) > 0 )
+            if ( listResponse != null && !listResponse.isEmpty( ) )
             {
 
                 for ( FormQuestionResponse response : listFormsQuestionResponse )
                 {
                     List<Response> listResponseForQuestion = listResponse.stream( )
                             .filter( p -> p.getEntry( ).getIdEntry( ) == response.getQuestion( ).getIdEntry( ) ).collect( ( Collectors.toList( ) ) );
-                    if ( listResponseForQuestion != null && listResponseForQuestion.size( ) > 0 )
+                    if ( listResponseForQuestion != null && !listResponseForQuestion.isEmpty() )
                     {
                         response.setEntryResponse( listResponseForQuestion );
                     }

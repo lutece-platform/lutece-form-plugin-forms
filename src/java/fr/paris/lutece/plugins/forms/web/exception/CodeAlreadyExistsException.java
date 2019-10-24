@@ -38,7 +38,7 @@ package fr.paris.lutece.plugins.forms.web.exception;
  */
 public class CodeAlreadyExistsException extends Exception
 {
-    private String _strCode;
+    private final String _strCode;
 
     public CodeAlreadyExistsException( String strCode )
     {

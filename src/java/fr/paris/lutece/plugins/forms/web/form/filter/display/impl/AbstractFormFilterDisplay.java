@@ -155,11 +155,6 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
         _formFilter = formFilter;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract void buildTemplate( HttpServletRequest request );
 
     /**
      * Get the map of all parameter names and values used by the filter

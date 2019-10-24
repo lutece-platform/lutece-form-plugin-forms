@@ -33,9 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerLuceneQueryPart;
@@ -49,11 +46,6 @@ public abstract class AbstractFormPanelInitializerQueryPart implements IFormPane
     // Variables
     private Query _queryFormPanelInitializerSelectQuery;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract void buildFormPanelInitializerQuery( FormParameters formParameters );
 
     /**
      * {@inheritDoc}

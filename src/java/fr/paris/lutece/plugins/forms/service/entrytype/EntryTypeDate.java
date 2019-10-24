@@ -113,7 +113,7 @@ public class EntryTypeDate extends AbstractEntryTypeDate implements IResponseCom
             return false;
         }
 
-        if ( strResponseReference == null && strResponseNew != null )
+        if ( strResponseReference == null  )
         {
             return true;
         }
