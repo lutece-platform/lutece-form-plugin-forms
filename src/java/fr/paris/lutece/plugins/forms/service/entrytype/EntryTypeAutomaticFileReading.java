@@ -189,7 +189,6 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     {
         ReferenceList refList = new ReferenceList( );
 
-
         for ( IOcrProvider typeDocumentProvider : OcrProviderManager.getOcrProvidersList( ) )
         {
             refList.add( typeDocumentProvider.toRefItem( ) );
@@ -323,7 +322,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
                 {
                     List<Response> listResponseForQuestion = listResponse.stream( )
                             .filter( p -> p.getEntry( ).getIdEntry( ) == response.getQuestion( ).getIdEntry( ) ).collect( ( Collectors.toList( ) ) );
-                    if ( listResponseForQuestion != null && !listResponseForQuestion.isEmpty() )
+                    if ( listResponseForQuestion != null && !listResponseForQuestion.isEmpty( ) )
                     {
                         response.setEntryResponse( listResponseForQuestion );
                     }

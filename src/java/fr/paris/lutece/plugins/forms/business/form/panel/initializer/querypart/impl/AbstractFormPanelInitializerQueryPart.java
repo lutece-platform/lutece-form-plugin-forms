@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
 
-
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerLuceneQueryPart;
 import org.apache.lucene.search.Query;
@@ -45,7 +44,6 @@ public abstract class AbstractFormPanelInitializerQueryPart implements IFormPane
 {
     // Variables
     private Query _queryFormPanelInitializerSelectQuery;
-
 
     /**
      * {@inheritDoc}

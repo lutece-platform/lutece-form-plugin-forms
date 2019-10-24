@@ -216,7 +216,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     {
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
 
-        Map<String, Object> mapFormResponseDetailsModel = getModel();
+        Map<String, Object> mapFormResponseDetailsModel = getModel( );
         mapFormResponseDetailsModel.put( MARK_FORM_RESPONSE, formResponse );
         mapFormResponseDetailsModel.put( MARK_FORM, form );
 
@@ -508,8 +508,9 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         }
         else
         {
-            addError(MESSAGE_ACTION_ERROR, request.getLocale() );
-            return redirect( request, VIEW_FORM_RESPONSE_DETAILS, PARAMETER_ID_FORM_RESPONSE, Integer.parseInt(request.getParameter( PARAMETER_ID_FORM_RESPONSE )) , PARAMETER_BACK_FROM_ACTION, 1 );
+            addError( MESSAGE_ACTION_ERROR, request.getLocale( ) );
+            return redirect( request, VIEW_FORM_RESPONSE_DETAILS, PARAMETER_ID_FORM_RESPONSE,
+                    Integer.parseInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ) ), PARAMETER_BACK_FROM_ACTION, 1 );
         }
         return manageRedirection( request );
     }

@@ -111,7 +111,7 @@ public abstract class AbstractPatternValidator extends AbstractValidator
 
         if ( regularExpression != null )
         {
-            IRegularExpressionService service =  SpringContextService.getBean( BEAN_NAME_REGULAR_EXPRESSION );
+            IRegularExpressionService service = SpringContextService.getBean( BEAN_NAME_REGULAR_EXPRESSION );
             for ( Response response : questionResponse.getEntryResponse( ) )
             {
                 String toValidate = getValueToValidate( response );

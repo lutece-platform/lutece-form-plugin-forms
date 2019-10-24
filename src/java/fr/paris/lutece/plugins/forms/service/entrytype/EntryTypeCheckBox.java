@@ -121,15 +121,17 @@ public class EntryTypeCheckBox extends AbstractEntryTypeCheckBox implements IRes
                 return false;
             }
 
-            else if ( fieldReference != null && fieldNew == null )
-            {
-                return true;
-            }
+            else
+                if ( fieldReference != null && fieldNew == null )
+                {
+                    return true;
+                }
 
-            else if ( fieldReference == null  )
-            {
-                return true;
-            }
+                else
+                    if ( fieldReference == null )
+                    {
+                        return true;
+                    }
         }
 
         boolean bAllResponsesEquals = true;

@@ -73,9 +73,9 @@ public final class ControlDAO implements IControlDAO
     private static final String SQL_QUERY_CONTROL_QUESTION_SELECTALL = "SELECT fcq.id_question FROM forms_control_question fcq where fcq.id_control= ? ";
     private static final String SQL_QUERY_CONTROL_MAPPING_BY_IDCONTROL = "SELECT id_question, value FROM forms_control_question_mapping  where id_control= ? ";
 
-    
-    private static final String PARAMETER_CONTROL_ID= "id_control";
-    private static final String PARAMETER_VALUE= "value";
+    private static final String PARAMETER_CONTROL_ID = "id_control";
+    private static final String PARAMETER_VALUE = "value";
+
     /**
      * {@inheritDoc }
      */
@@ -165,7 +165,7 @@ public final class ControlDAO implements IControlDAO
     @Override
     public Set<Integer> loadIdQuestions( int nIdControl, Plugin plugin )
     {
-        Set<Integer> listQuestion = new HashSet< >( );
+        Set<Integer> listQuestion = new HashSet<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_CONTROL_QUESTION_SELECTALL, plugin );
         daoUtil.setInt( 1, nIdControl );
         daoUtil.executeQuery( );
@@ -256,7 +256,7 @@ public final class ControlDAO implements IControlDAO
     @Override
     public List<Control> selectControlsList( Plugin plugin )
     {
-        List<Control> controlList = new ArrayList< >( );
+        List<Control> controlList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery( );
 
@@ -275,7 +275,7 @@ public final class ControlDAO implements IControlDAO
     @Override
     public List<Integer> selectIdControlsList( Plugin plugin )
     {
-        List<Integer> controlList = new ArrayList< >( );
+        List<Integer> controlList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin );
         daoUtil.executeQuery( );
 
@@ -373,7 +373,7 @@ public final class ControlDAO implements IControlDAO
     @Override
     public List<Control> selectControlByQuestion( int nIdQuestion, Plugin plugin )
     {
-        List<Control> controlList = new ArrayList< >( );
+        List<Control> controlList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_QUESTION, plugin );
         daoUtil.setInt( 1, nIdQuestion );
         daoUtil.executeQuery( );

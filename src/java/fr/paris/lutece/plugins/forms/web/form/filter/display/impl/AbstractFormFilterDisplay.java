@@ -155,7 +155,6 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
         _formFilter = formFilter;
     }
 
-
     /**
      * Get the map of all parameter names and values used by the filter
      * 

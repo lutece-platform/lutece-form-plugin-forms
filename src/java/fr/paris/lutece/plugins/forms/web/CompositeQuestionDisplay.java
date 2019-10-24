@@ -336,43 +336,44 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _question.setIsVisible( true );
             }
         }
-        if( _question.getEntry( ) != null ){
-        	
-	        if ( displayType == DisplayType.EDITION_FRONTOFFICE )
-	        {
-	           
-	            _question.setIsVisible( true );
-	        }
-	
-	        if ( displayType == DisplayType.EDITION_BACKOFFICE )
-	        {
-	            _question.setIsVisible( true );
-	            
-	        }
-	
-	        if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
-	        {
-	            _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
-	            
-	        }
-	
-	        if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
-	        {
-	            _question.setIsVisible( true );
-	            
-	        }
-	        if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
-	        {
-	            _question.setIsVisible( true );
-	            
-	        }
-	
-	        if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
-	        {
-	            _question.setIsVisible( true );
-	           
-	        }
-	       }
+        if ( _question.getEntry( ) != null )
+        {
+
+            if ( displayType == DisplayType.EDITION_FRONTOFFICE )
+            {
+
+                _question.setIsVisible( true );
+            }
+
+            if ( displayType == DisplayType.EDITION_BACKOFFICE )
+            {
+                _question.setIsVisible( true );
+
+            }
+
+            if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
+            {
+                _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
+
+            }
+
+            if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
+            {
+                _question.setIsVisible( true );
+
+            }
+            if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
+            {
+                _question.setIsVisible( true );
+
+            }
+
+            if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
+            {
+                _question.setIsVisible( true );
+
+            }
+        }
     }
 
     /**
@@ -415,7 +416,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     @Override
     public List<ICompositeDisplay> getCompositeList( )
     {
-        List<ICompositeDisplay> listICompositeDisplay = new ArrayList< >( );
+        List<ICompositeDisplay> listICompositeDisplay = new ArrayList<>( );
         listICompositeDisplay.add( this );
         return listICompositeDisplay;
     }
@@ -452,7 +453,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     @Override
     public List<Control> getAllDisplayControls( )
     {
-        List<Control> listDisplayControls = new ArrayList< >( );
+        List<Control> listDisplayControls = new ArrayList<>( );
 
         if ( _formDisplay.getDisplayControl( ) != null )
         {

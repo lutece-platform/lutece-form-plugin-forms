@@ -162,7 +162,7 @@ public final class EntryServiceManager
      */
     public List<IValidator> getListAvailableValidator( EntryType entryType )
     {
-        List<IValidator> listAvailableValidator = new ArrayList< >( );
+        List<IValidator> listAvailableValidator = new ArrayList<>( );
 
         for ( IValidator validator : _listValidator )
         {

@@ -100,8 +100,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
 
         // Paginator
-        _paginator = new LocalizedDelegatePaginator<>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems,
-                getLocale( ) );
+        _paginator = new LocalizedDelegatePaginator<>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems, getLocale( ) );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
@@ -197,7 +196,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      *             An access denied exception
      */
     protected void checkUserPermission( String strRessourceType, String strResource, String strPermissionName, HttpServletRequest request )
- throws AccessDeniedException
+            throws AccessDeniedException
     {
         if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, AdminUserService.getAdminUser( request ) ) )
         {

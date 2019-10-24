@@ -292,8 +292,9 @@ public class FormXPage extends MVCApplication
             checkAuthentication( form, request );
             checkIfUserResponseForm( form, request );
             checkNumberMaxResponseForm( form, request );
-            strTitleForm = I18nService.getLocalizedString( MESSAGE_STEP_TITLE,
-                    new String[ ] { form.getTitle( ), _currentStep.getTitle( ) }, getLocale( request ) );
+            strTitleForm = I18nService.getLocalizedString( MESSAGE_STEP_TITLE, new String [ ] {
+                    form.getTitle( ), _currentStep.getTitle( )
+            }, getLocale( request ) );
             strPathForm = form.getTitle( );
 
             if ( form.isActive( ) )
@@ -494,7 +495,9 @@ public class FormXPage extends MVCApplication
         Form form = FormHome.findByPrimaryKey( Integer.parseInt( idForm ) );
         Map<String, Object> model = buildModelForSummary( request );
         model.put( FormsConstants.MARK_ID_FORM, idForm );
-        strTitleForm = I18nService.getLocalizedString( MESSAGE_SUMMARY_TITLE, new String[] { form.getTitle( ) }, getLocale( request ) );
+        strTitleForm = I18nService.getLocalizedString( MESSAGE_SUMMARY_TITLE, new String [ ] {
+            form.getTitle( )
+        }, getLocale( request ) );
 
         XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, request.getLocale( ), model );
         xPage.setTitle( strTitleForm );
