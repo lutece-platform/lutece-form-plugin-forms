@@ -218,7 +218,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         Locale locale = getLocale( );
         int nIdStep = INTEGER_MINUS_ONE;
 
-        List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
+        List<ICompositeDisplay> listICompositeDisplay = new ArrayList< >( );
         nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
 
         _step = StepHome.findByPrimaryKey( nIdStep );
@@ -288,7 +288,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         // EntryParameterService.getService( ).findAll( );
         ReferenceList listParamDefaultValues = new ReferenceList( );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap< >( );
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );

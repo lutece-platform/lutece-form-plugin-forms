@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.impl;
 
-import javax.servlet.http.HttpServletRequest;
-
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.IFormPanelDisplayInitializer;
 
