@@ -159,7 +159,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String ERROR_QUESTION_NOT_CREATED = "forms.error.question.notCreated";
     private static final String ERROR_GROUP_NOT_CREATED = "forms.error.group.notCreated";
     private static final String ERROR_GROUP_NOT_UPDATED = "forms.error.group.notUpdated";
-    private static final String ERROR_QUESTION_NOT_UPDATED = "forms.error.question.notUpdated";
     private static final String ERROR_STEP_OR_GROUP_NOT_VALIDATED = "forms.error.moveComposite.stepOrGroup.notvalidated";
     private static final String ERROR_OCCURED_MOVING_COMPOSITE = "forms.error.moveComposite.notCompleted";
     private static final String ERROR_ITERATION_NUMBER = "forms.error.group.iterationNumber";
@@ -216,10 +215,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getManageQuestions( HttpServletRequest request )
     {
         Locale locale = getLocale( );
-        int nIdStep = INTEGER_MINUS_ONE;
 
-        List<ICompositeDisplay> listICompositeDisplay = new ArrayList< >( );
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
 
         _step = StepHome.findByPrimaryKey( nIdStep );
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
@@ -234,7 +231,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_FORM, _form );
 
-        listICompositeDisplay = _formService.getStepCompositeList( nIdStep );
+        List<ICompositeDisplay> listICompositeDisplay = _formService.getStepCompositeList( nIdStep );
 
         model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
@@ -257,11 +254,9 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getCreateQuestion( HttpServletRequest request )
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-        int nIdTypeEntry = INTEGER_MINUS_ONE;
 
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        nIdTypeEntry = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ) );
+        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdTypeEntry = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ) );
         _nIdParentSelected = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
 
         _step = StepHome.findByPrimaryKey( nIdStep );
@@ -282,10 +277,6 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
-        // Default Values
-        // TODO: implement EntryParameterService to handle default values
-        // ReferenceList listParamDefaultValues =
-        // EntryParameterService.getService( ).findAll( );
         ReferenceList listParamDefaultValues = new ReferenceList( );
 
         Map<String, Object> model = new HashMap< >( );
@@ -328,9 +319,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getCreateGroup( HttpServletRequest request )
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-
-        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
         _nIdParentSelected = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
@@ -372,11 +361,10 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_GROUP )
     public String doCreateGroup( HttpServletRequest request )
     {
-        int nIdStep = INTEGER_MINUS_ONE;
-        int nParentGroup = INTEGER_MINUS_ONE;
+    
 
-        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -432,11 +420,9 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getModifyGroup( HttpServletRequest request )
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-        int nIdGroup = INTEGER_MINUS_ONE;
 
-        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
         {
@@ -477,9 +463,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_MODIFY_GROUP )
     public String doModifyGroup( HttpServletRequest request )
     {
-        int nIdStep = INTEGER_MINUS_ONE;
 
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -599,13 +584,10 @@ public class FormQuestionJspBean extends AbstractJspBean
     private String processQuestionCreation( HttpServletRequest request ) throws CodeAlreadyExistsException
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-        int nParentGroup = INTEGER_MINUS_ONE;
-        int nIdType = INTEGER_MINUS_ONE;
 
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
-        nIdType = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) );
+        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
+        int nIdType = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -696,12 +678,11 @@ public class FormQuestionJspBean extends AbstractJspBean
      */
     private String processQuestionDuplication( HttpServletRequest request )
     {
-        int nIdStep = INTEGER_MINUS_ONE;
         int nIdQuestion = INTEGER_MINUS_ONE;
 
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_TARGET );
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        Question questionToCopy = null;
+        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        Question questionToCopy = new Question();
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -749,7 +730,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         for ( Control control : listControlsToDuplicate )
         {
 
-            Set<Integer> listQuestion = new HashSet<Integer>( );
+            Set<Integer> listQuestion = new HashSet< >( );
             listQuestion.add( questionToCopy.getId( ) );
             control.setListIdQuestion( listQuestion );
             control.setIdControlTarget( questionToCopy.getId( ) );
@@ -783,13 +764,12 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getModifyQuestion( HttpServletRequest request )
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
 
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
 
         if ( ( strIdStep != null ) && !strIdStep.equals( EMPTY_STRING ) )
         {
-            nIdStep = Integer.parseInt( strIdStep );
+            int nIdStep = Integer.parseInt( strIdStep );
 
             if ( ( _step == null ) || ( _step.getId( ) != nIdStep ) )
             {
@@ -809,7 +789,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _entry = EntryHome.findByPrimaryKey( _question.getIdEntry( ) );
 
-        List<Field> listField = new ArrayList<Field>( _entry.getFields( ).size( ) );
+        List<Field> listField = new ArrayList< >( _entry.getFields( ).size( ) );
 
         for ( Field field : _entry.getFields( ) )
         {
@@ -826,7 +806,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap< >( );
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
@@ -866,7 +846,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String processQuestionUpdate( HttpServletRequest request ) throws CodeAlreadyExistsException
     {
 
-        int nIdEntry = INTEGER_MINUS_ONE;
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
         int nIdStep = -INTEGER_MINUS_ONE;
 
@@ -892,7 +871,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             _question = QuestionHome.findByPrimaryKey( nIdQuestion );
         }
 
-        nIdEntry = _question.getIdEntry( );
+        int nIdEntry = _question.getIdEntry( );
         _entry = EntryHome.findByPrimaryKey( nIdEntry );
 
         String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ) );
@@ -1040,11 +1019,9 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getConfirmRemoveComposite( HttpServletRequest request )
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-        int nIdDisplay = INTEGER_MINUS_ONE;
         String strMessage = StringUtils.EMPTY;
 
-        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
 
         if ( nIdStep == INTEGER_MINUS_ONE )
         {
@@ -1068,7 +1045,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
         }
 
-        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
+        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
@@ -1123,9 +1100,9 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_REMOVE_COMPOSITE )
     public String doRemoveComposite( HttpServletRequest request )
     {
-        int nIdDisplay = INTEGER_MINUS_ONE;
+        
 
-        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
+        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
@@ -1156,15 +1133,11 @@ public class FormQuestionJspBean extends AbstractJspBean
     @View( value = VIEW_MOVE_COMPOSITE )
     public String getMoveComposite( HttpServletRequest request )
     {
-        int nIdStepTarget = INTEGER_MINUS_ONE;
         Step stepTarget = new Step( );
-        int nIdParentTarget = INTEGER_MINUS_ONE;
-        int nIdDisplay = INTEGER_MINUS_ONE;
-        int nTargetPosition = INTEGER_MINUS_ONE;
         boolean bStepValidated = false;
         boolean bGroupValidated = false;
 
-        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
+        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
@@ -1175,7 +1148,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
-        nTargetPosition = _formDisplay.getDisplayOrder( );
+        int nTargetPosition = _formDisplay.getDisplayOrder( );
 
         String strIsStepValidated = request.getParameter( FormsConstants.PARAMETER_STEP_VALIDATED );
         if ( StringUtils.isNotBlank( strIsStepValidated ) )
@@ -1212,7 +1185,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             bGroupValidated = true;
         }
 
-        nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), -1 );
+        int nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), -1 );
         if ( bStepValidated )
         {
             if ( nIdStepTarget == INTEGER_MINUS_ONE )
@@ -1231,7 +1204,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             redirectToViewManageForm( request );
         }
 
-        nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), -1 );
+        int nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), -1 );
         if ( bGroupValidated )
         {
             if ( nIdParentTarget == INTEGER_MINUS_ONE )
@@ -1293,14 +1266,11 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_MOVE_COMPOSITE )
     public String doMoveComposite( HttpServletRequest request )
     {
-        int nIdStepTarget = INTEGER_MINUS_ONE;
-        int nIdParentTarget = INTEGER_MINUS_ONE;
-        int nIdDisplay = INTEGER_MINUS_ONE;
-        int nDisplayOrderTarget = INTEGER_MINUS_ONE;
+       
         boolean bStepValidated = false;
         boolean bGroupValidated = false;
 
-        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), -1 );
+        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), -1 );
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
@@ -1324,9 +1294,9 @@ public class FormQuestionJspBean extends AbstractJspBean
             bGroupValidated = BooleanUtils.toBoolean( strIsGroupValidated );
         }
 
-        nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
-        nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), INTEGER_MINUS_ONE );
-        nDisplayOrderTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_DISPLAY_ORDER ), INTEGER_MINUS_ONE );
+        int nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
+        int nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), INTEGER_MINUS_ONE );
+        int nDisplayOrderTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_DISPLAY_ORDER ), INTEGER_MINUS_ONE );
 
         if ( ( nIdStepTarget == INTEGER_MINUS_ONE ) || ( nIdParentTarget == INTEGER_MINUS_ONE ) )
         {
