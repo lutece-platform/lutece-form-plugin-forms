@@ -30,16 +30,6 @@
 								<@checkBox name='no_display_title' value='1' checked=checked />
 							</@formGroup>
 						</#if>
-            			<#if field.parentEntry.roleAssociated && role_list?exists >
-							<@formGroup labelFor='role_key' labelKey='#i18n{forms.createField.labelRole}' helpKey='#i18n{forms.createField.labelRoleComment}'>
-								<#if field.roleKey?exists>
-									<#assign default_value = field.roleKey />
-								<#else>
-									<#assign default_value = 'none' />
-								</#if>
-								<@select name='role_key' default_value=default_value items=role_list />
-							</@formGroup>
-						</#if>
 						<@formGroup>
                             <@button type='submit' name='action_modifyField' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' color='btn-link' showTitleXs=false />
                             <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' showTitleXs=false color='btn-link' />

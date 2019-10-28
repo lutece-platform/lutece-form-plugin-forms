@@ -33,12 +33,6 @@
 				<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
 					<@checkBox name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
 				</@formGroup>
-				
-				<#if is_authentification_enabled>
-					<@formGroup labelFor='role_associated' labelKey='#i18n{form.create_entry.label_role_associated}'>
-						<@checkBox name='role_associated' id='role_associated' value='1' checked=getChecked('role_associated',list_param_default_values) />
-					</@formGroup>
-				</#if>
 				<@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
 					<@checkBox name='only_display_in_back' id='only_display_in_back' value='1' />
 				</@formGroup>
