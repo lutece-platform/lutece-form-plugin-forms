@@ -104,7 +104,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private static final String PROPERTY_CREATE_FIELD_TITLE = "forms.createField.title";
     private static final String PROPERTY_MODIFY_FIELD_TITLE = "forms.modifyField.title";
 
-    private static final String MARK_ROLE_REF_LIST = "role_list";
     private static final String MARK_OPTION_NO_DISPLAY_TITLE = "option_no_display_title";
 
     // Jsp Definition
@@ -116,7 +115,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private static final String PARAMETER_DEFAULT_VALUE = "default_value";
     private static final String PARAMETER_NO_DISPLAY_TITLE = "no_display_title";
     private static final String PARAMETER_COMMENT = "comment";
-    private static final String PARAMETER_ROLE_KEY = "role_key";
     private static final String PARAMETER_OPTION_NO_DISPLAY_TITLE = "option_no_display_title";
 
     // Views
@@ -187,10 +185,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_FIELD, _field );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_ID_ENTRY, _nIdEntry );
-        if ( SecurityService.isAuthenticationEnable( ) )
-        {
-            model.put( MARK_ROLE_REF_LIST, RoleHome.getRolesList( ) );
-        }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_FIELD, locale, model );
         setPageTitleProperty( PROPERTY_CREATE_FIELD_TITLE );
@@ -269,11 +263,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_FIELD, field );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_ID_ENTRY, _nIdEntry );
-
-        if ( SecurityService.isAuthenticationEnable( ) )
-        {
-            model.put( MARK_ROLE_REF_LIST, RoleHome.getRolesList( ) );
-        }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_FIELD, locale, model );
 
@@ -552,7 +541,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
         String strDefaultValue = request.getParameter( PARAMETER_DEFAULT_VALUE );
         String strNoDisplayTitle = request.getParameter( PARAMETER_NO_DISPLAY_TITLE );
         String strComment = request.getParameter( PARAMETER_COMMENT );
-        String strRoleKey = request.getParameter( PARAMETER_ROLE_KEY );
 
         String strFieldError = EMPTY_STRING;
 
@@ -586,7 +574,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
         field.setComment( strComment );
         field.setDefaultValue( strDefaultValue != null );
         field.setNoDisplayTitle( strNoDisplayTitle != null );
-        field.setRoleKey( strRoleKey );
 
         return null; // No error
     }

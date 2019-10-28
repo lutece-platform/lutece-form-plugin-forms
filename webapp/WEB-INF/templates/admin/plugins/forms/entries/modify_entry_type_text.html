@@ -39,23 +39,32 @@
 			<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}'>
 				<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
 			</@formGroup>
+			<#assign field_width=getFieldValueByCode( entry, "width")>
 			<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-				<@input type='text' name='width' id='width' value='${config.width}' />
+				<@input type='text' name='width' id='width' value='${field_width?number}' />
 				<#assign id_field=config.idField> 
 			</@formGroup>
 			<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
-				<#if config.maxSizeEnter!=-1>
-					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='${config.maxSizeEnter}' />
+				<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
+				<#if field_max_size?number!=-1>
+					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='${field_max_size?number}' />
 				<#else>
 					<@input type='text' name='max_size_enter' id='max_size_enter' inputSize=5 value='' />
 				</#if>
 			</@formGroup>
 			<@formGroup >
-				<#if entry.confirmField><#assign checkedValue = true /><#else><#assign checkedValue = false /></#if>
+				<#assign confirmFieldField=getFieldByCode( entry, "confirm_field")>
+				<#if confirmFieldField.value?boolean>
+					<#assign checkedValue = true />
+					<#assign confirmFieldTitle = confirmFieldField.title />
+				<#else>
+					<#assign checkedValue = false />
+					<#assign confirmFieldTitle ="" />
+				</#if>
 				<@checkBox labelFor='confirm_field' labelKey='#i18n{forms.createEntry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' params='onchange="javascript:changeVisilityConfirmFieldTitle();"' checked=checkedValue />
 			</@formGroup>
 			<@formGroup labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.createEntry.labelConfirmFieldTitle}'>
-				<@input type='text' name='confirm_field_title' id='confirm_field_title' value='${entry.confirmFieldTitle!}'  maxlength=255 />
+				<@input type='text' name='confirm_field_title' id='confirm_field_title' value='${confirmFieldTitle!}'  maxlength=255 />
 			</@formGroup>
 				<@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
 					<@checkBox name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />

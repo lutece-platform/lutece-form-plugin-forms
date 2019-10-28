@@ -124,7 +124,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         entry.setTitle( I18nService.getLocalizedString( PROPERTY_ENTRY_TITLE, locale ) );
 
         entry.setComment( StringUtils.EMPTY );
-        entry.setMandatory( entry.isConfirmField( ) && Boolean.parseBoolean( request.getParameter( PARAMETER_MANDATORY ) ) );
+        entry.setMandatory( Boolean.parseBoolean( request.getParameter( PARAMETER_MANDATORY ) ) );
         entry.setCSSClass( request.getParameter( PARAMETER_CSS_CLASS ) );
         entry.setTitle( request.getParameter( PARAMETER_TITLE ) );
         entry.setHelpMessage( request.getParameter( PARAMETER_HELP_MESSAGE ) );
@@ -133,8 +133,6 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
 
         Field fieldAttributeName = createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE, null,
                 request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
-        fieldAttributeName.setWidth( 50 );
-        fieldAttributeName.setMaxSizeEnter( 0 );
         return null;
     }
 

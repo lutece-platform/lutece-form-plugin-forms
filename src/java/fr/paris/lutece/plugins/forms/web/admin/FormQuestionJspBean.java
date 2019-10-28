@@ -77,7 +77,6 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -146,7 +145,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String MARK_LOCALE = "locale";
     private static final String MARK_ENTRY_TYPE_SERVICE = "entryTypeService";
     private static final String MARK_LIST_PARAM_DEFAULT_VALUES = "list_param_default_values";
-    private static final String MARK_IS_AUTHENTIFICATION_ENABLED = "is_authentification_enabled";
     private static final String MARK_LIST = "list";
     private static final String MARK_GROUP_VALIDATED = "groupValidated";
     private static final String MARK_STEP_VALIDATED = "stepValidated";
@@ -288,7 +286,6 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_LIST_PARAM_DEFAULT_VALUES, listParamDefaultValues );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
-        model.put( MARK_IS_AUTHENTIFICATION_ENABLED, SecurityService.isAuthenticationEnable( ) );
 
         if ( _entry.getEntryType( ).getComment( ) )
         {
@@ -817,7 +814,6 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
-        model.put( MARK_IS_AUTHENTIFICATION_ENABLED, SecurityService.isAuthenticationEnable( ) );
 
         if ( _entry.getEntryType( ).getComment( ) )
         {
