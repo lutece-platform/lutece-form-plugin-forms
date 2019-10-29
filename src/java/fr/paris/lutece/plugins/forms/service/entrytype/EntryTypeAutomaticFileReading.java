@@ -56,6 +56,8 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
+import fr.paris.lutece.plugins.genericattributes.util.FileAttributesUtils;
+import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.url.UrlItem;
@@ -170,14 +172,13 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
      * @param request
      *            the HTTP request
      */
-    @Override
     protected void createOrUpdateFileFields( Entry entry, HttpServletRequest request )
     {
-        super.createOrUpdateFileFields( entry, request );
+        FileAttributesUtils.createOrUpdateFileFields( entry, request );
 
         String strOcrProvider = request.getParameter( PARAMETER_FILE_TYPE );
 
-        createOrUpdateField( entry, FIELD_FILE_TYPE, null, strOcrProvider );
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_FILE_TYPE, null, strOcrProvider );
     }
 
     /**

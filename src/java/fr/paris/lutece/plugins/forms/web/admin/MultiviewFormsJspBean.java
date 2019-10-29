@@ -248,7 +248,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
                 AdminUserService.getAdminUser( request ) ) )
         {
-            throw new AccessDeniedException( "Unauthorized" );
+            throw new AccessDeniedException( UNAUTHORIZED );
         }
 
         IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
@@ -279,7 +279,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
                 AdminUserService.getAdminUser( request ) ) )
         {
-            throw new AccessDeniedException( );
+            throw new AccessDeniedException( UNAUTHORIZED );
         }
 
         MultiviewConfig config = MultiviewConfig.getInstance( );
@@ -305,7 +305,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
                 AdminUserService.getAdminUser( request ) ) )
         {
-            throw new AccessDeniedException( );
+            throw new AccessDeniedException( UNAUTHORIZED );
         }
 
         MultiviewConfig config = MultiviewConfig.getInstance( );
