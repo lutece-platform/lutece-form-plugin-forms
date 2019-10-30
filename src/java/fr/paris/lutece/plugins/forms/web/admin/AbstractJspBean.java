@@ -59,6 +59,8 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      */
     private static final long serialVersionUID = 3421909824044642013L;
 
+    protected static final String UNAUTHORIZED = "Unauthorized";
+
     // Properties
     protected static final String PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE = "forms.itemsPerPage";
 
@@ -200,7 +202,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     {
         if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, AdminUserService.getAdminUser( request ) ) )
         {
-            throw new AccessDeniedException( );
+            throw new AccessDeniedException( UNAUTHORIZED );
         }
     }
 

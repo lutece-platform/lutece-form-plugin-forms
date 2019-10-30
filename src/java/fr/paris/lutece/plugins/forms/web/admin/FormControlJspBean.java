@@ -33,6 +33,18 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
@@ -63,20 +75,9 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * This class provides the user interface to manage Form controls ( manage, create, modify, remove )
@@ -164,11 +165,11 @@ public class FormControlJspBean extends AbstractJspBean
 
         List<Control> listControl = ControlHome.getControlByControlTargetAndType( _nIdTarget, _controlType );
 
-        LocalizedPaginator<Control> paginator = new LocalizedPaginator<Control>( listControl, _nItemsPerPage, getJspManageForm( request ),
-                PARAMETER_PAGE_INDEX, _strCurrentPageIndex, getLocale( ) );
+        LocalizedPaginator<Control> paginator = new LocalizedPaginator<>( listControl, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
+                _strCurrentPageIndex, getLocale( ) );
 
-        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
+        _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
         Map<String, Object> model = getModel( );
 
@@ -223,7 +224,7 @@ public class FormControlJspBean extends AbstractJspBean
 
             if ( _controlType.equals( ControlType.VALIDATION ) )
             {
-                Set<Integer> listQuestion = new HashSet<Integer>( );
+                Set<Integer> listQuestion = new HashSet<>( );
                 listQuestion.add( _nIdTarget );
                 _control.setListIdQuestion( listQuestion );
             }
@@ -444,10 +445,10 @@ public class FormControlJspBean extends AbstractJspBean
         }
 
         if ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE
-                && ( _control.getListIdQuestion( ) == null || !_control.getListIdQuestion( ).stream( ).anyMatch( p -> p.equals( nIdQuestion ) ) ) )
+                && ( _control.getListIdQuestion( ) == null || _control.getListIdQuestion( ).stream( ).noneMatch( p -> p.equals( nIdQuestion ) ) ) )
         {
 
-            Set<Integer> listIdQuestion = ( _control.getListIdQuestion( ) != null ) ? _control.getListIdQuestion( ) : new HashSet<Integer>( );
+            Set<Integer> listIdQuestion = ( _control.getListIdQuestion( ) != null ) ? _control.getListIdQuestion( ) : new HashSet<>( );
             listIdQuestion.add( nIdQuestion );
             _control.setListIdQuestion( listIdQuestion );
 
@@ -481,7 +482,7 @@ public class FormControlJspBean extends AbstractJspBean
             }
             model.put( FormsConstants.MARK_AVAILABLE_VALIDATORS, refListAvailableValidator );
 
-            if ( refListAvailableValidator.size( ) >= 1 && StringUtils.EMPTY.equals( _control.getValidatorName( ) ) )
+            if ( CollectionUtils.isNotEmpty( refListAvailableValidator ) && StringUtils.EMPTY.equals( _control.getValidatorName( ) ) )
             {
                 _control.setValidatorName( refListAvailableValidator.get( 0 ).getCode( ) );
             }
@@ -639,11 +640,9 @@ public class FormControlJspBean extends AbstractJspBean
      */
     private boolean populateAndValidateControl( HttpServletRequest request )
     {
-        // int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
-
-        if ( _control.getListIdQuestion( ) != null && _control.getListIdQuestion( ).size( ) > 0 && StringUtils.isNotEmpty( _control.getValidatorName( ) ) )
+        if ( CollectionUtils.isNotEmpty( _control.getListIdQuestion( ) ) && StringUtils.isNotEmpty( _control.getValidatorName( ) ) )
         {
-            Set<Integer> listIdQuestion = ( _control.getListIdQuestion( ) != null ) ? _control.getListIdQuestion( ) : new HashSet<Integer>( );
+            Set<Integer> listIdQuestion = ( _control.getListIdQuestion( ) != null ) ? _control.getListIdQuestion( ) : new HashSet<>( );
             for ( int nIdQuest : listIdQuestion )
             {
                 Question question = QuestionHome.findByPrimaryKey( nIdQuest );

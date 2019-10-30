@@ -150,9 +150,9 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
         entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
         entry.setTitle( strTitle );
         entry.setCSSClass( strCSSClass );
-        createOrUpdateField( entry, FIELD_LINK_CODE, null, strLinkText );
-        createOrUpdateField( entry, FIELD_TOS_CODE, null, strTermsOfService );
-        createOrUpdateField( entry, FIELD_AGREEMENT_CODE, null, Boolean.FALSE.toString( ) );
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_LINK_CODE, null, strLinkText );
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_TOS_CODE, null, strTermsOfService );
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_AGREEMENT_CODE, null, Boolean.FALSE.toString( ) );
         return null;
     }
 

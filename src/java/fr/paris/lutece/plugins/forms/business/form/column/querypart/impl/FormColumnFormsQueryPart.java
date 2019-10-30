@@ -33,11 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import java.util.HashMap;
 import java.util.Map;
+
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 
 public class FormColumnFormsQueryPart extends AbstractFormColumnQueryPart
 {

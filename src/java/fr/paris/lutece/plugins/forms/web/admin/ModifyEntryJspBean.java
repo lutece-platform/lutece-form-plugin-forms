@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
@@ -46,12 +55,10 @@ import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.portal.business.role.RoleHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -62,15 +69,6 @@ import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
 import fr.paris.lutece.util.url.UrlItem;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
@@ -138,7 +136,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private int _nIdEntry = -1;
     private Step _step;
     private Question _question;
-    private Field _field;
 
     /* -------- Fields management ---------- */
 
@@ -167,22 +164,14 @@ public class ModifyEntryJspBean extends AbstractJspBean
             return getJspManageQuestions( request, _step.getId( ) );
         }
 
-        _field = new Field( );
-        _field.setParentEntry( entry );
+        Field field = new Field( );
+        field.setParentEntry( entry );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         Locale locale = getLocale( );
+        model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
 
-        if ( request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null )
-        {
-            model.put( MARK_OPTION_NO_DISPLAY_TITLE, true );
-        }
-        else
-        {
-            model.put( MARK_OPTION_NO_DISPLAY_TITLE, false );
-        }
-
-        model.put( FormsConstants.MARK_FIELD, _field );
+        model.put( FormsConstants.MARK_FIELD, field );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_ID_ENTRY, _nIdEntry );
 
@@ -248,17 +237,9 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         field.setParentEntry( entry );
 
-        HashMap<String, Object> model = new HashMap<String, Object>( );
+        HashMap<String, Object> model = new HashMap<>( );
         Locale locale = getLocale( );
-
-        if ( request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null )
-        {
-            model.put( MARK_OPTION_NO_DISPLAY_TITLE, true );
-        }
-        else
-        {
-            model.put( MARK_OPTION_NO_DISPLAY_TITLE, false );
-        }
+        model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
 
         model.put( FormsConstants.MARK_FIELD, field );
         model.put( FormsConstants.MARK_QUESTION, _question );

@@ -54,7 +54,7 @@ public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
     @Override
     public List<GlobalFormsAction> selectAllFormActions( Plugin plugin )
     {
-        List<GlobalFormsAction> listActions = new ArrayList<GlobalFormsAction>( );
+        List<GlobalFormsAction> listActions = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS, plugin );
         daoUtil.executeQuery( );
 

@@ -92,7 +92,7 @@ public class UniqueValidator extends AbstractValidator
         {
             Response response = formQuestionResponse.getEntryResponse( ).get( 0 );
 
-            boolean multiForm = Boolean.valueOf( control.getValue( ) );
+            boolean multiForm = Boolean.parseBoolean( control.getValue( ) );
             ResponseFilter filter = new ResponseFilter( );
 
             if ( multiForm )

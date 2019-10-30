@@ -111,7 +111,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_ERROR_CONTROL = "forms.xpage.form.error.control";
     protected static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.xpage.form.error.inactive";
     protected static final String MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM = "forms.xpage.form.error.MaxResponse";
-    protected static final String MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM_ = "forms.xpage.form.error.limitNumberResponse";
+    protected static final String MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM = "forms.xpage.form.error.limitNumberResponse";
     protected static final String MESSAGE_LOAD_BACKUP = "forms.xpage.form.view.loadBackUp";
     protected static final String MESSAGE_LIST_FORMS_PAGETITLE = "forms.xpage.listForms.pagetitle";
     protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
@@ -169,11 +169,9 @@ public class FormXPage extends MVCApplication
      * @param request
      *            The HttpServletRequest
      * @return the list of all available forms
-     * @throws SiteMessageException
-     * @throws UserNotSignedException
      */
     @View( value = VIEW_LIST_FORM, defaultView = true )
-    public XPage getListFormView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public XPage getListFormView( HttpServletRequest request )
     {
         Locale locale = request.getLocale( );
         List<Form> listFormsAll = FormHome.getFormList( );
@@ -265,12 +263,9 @@ public class FormXPage extends MVCApplication
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
-        if ( paramInit != null )
+        if ( paramInit != null && paramInit.equals( PARAMETER_INIT ) )
         {
-            if ( paramInit.equals( PARAMETER_INIT ) )
-            {
-                init( request );
-            }
+            init( request );
         }
         Map<String, Object> model = getModel( );
         String strTitleForm = StringUtils.EMPTY;
@@ -326,10 +321,8 @@ public class FormXPage extends MVCApplication
      *            The Http request
      * @param model
      *            The model for XPage
-     * @throws UserNotSignedException
-     *             Exception
      */
-    private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model ) throws UserNotSignedException
+    private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model )
     {
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
@@ -491,11 +484,10 @@ public class FormXPage extends MVCApplication
         }
 
         String idForm = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
-        String strTitleForm = StringUtils.EMPTY;
         Form form = FormHome.findByPrimaryKey( Integer.parseInt( idForm ) );
         Map<String, Object> model = buildModelForSummary( request );
         model.put( FormsConstants.MARK_ID_FORM, idForm );
-        strTitleForm = I18nService.getLocalizedString( MESSAGE_SUMMARY_TITLE, new String [ ] {
+        String strTitleForm = I18nService.getLocalizedString( MESSAGE_SUMMARY_TITLE, new String [ ] {
             form.getTitle( )
         }, getLocale( request ) );
 
@@ -600,7 +592,6 @@ public class FormXPage extends MVCApplication
         }
 
         saveFormResponse( form, request );
-        // FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
         Map<String, Object> model = getModel( );
 
         model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
@@ -722,7 +713,7 @@ public class FormXPage extends MVCApplication
         List<Question> listQuestionStep = _stepDisplayTree.getQuestions( );
 
         boolean bValidStep = true;
-        List<FormQuestionResponse> listResponsesTemp = new ArrayList<FormQuestionResponse>( );
+        List<FormQuestionResponse> listResponsesTemp = new ArrayList<>( );
 
         String [ ] listConditionalQuestionsValues = request.getParameterValues( FormsConstants.PARAMETER_DISPLAYED_QUESTIONS );
 
@@ -837,7 +828,6 @@ public class FormXPage extends MVCApplication
                 List<FormQuestionResponse> listQuestionResponse = _formResponseManager.findResponsesFor( stepTarget ).stream( )
                         .filter( q -> transitionControl.getListIdQuestion( ).stream( ).anyMatch( t -> t.equals( q.getQuestion( ).getId( ) ) ) )
                         .collect( Collectors.toList( ) );
-                ;
 
                 IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
                 if ( validator != null && !validator.validate( listQuestionResponse, transitionControl ) )
@@ -1023,8 +1013,8 @@ public class FormXPage extends MVCApplication
 
         String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
 
-        int nIdGroupParent = Integer.valueOf( arrayIterationInfo [0] );
-        int nIndexIteration = Integer.valueOf( arrayIterationInfo [1] );
+        int nIdGroupParent = Integer.parseInt( arrayIterationInfo [0] );
+        int nIndexIteration = Integer.parseInt( arrayIterationInfo [1] );
 
         _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
 
@@ -1055,8 +1045,8 @@ public class FormXPage extends MVCApplication
 
         String error = null;
         String strFlagAsynchrounous = request.getParameter( "action_" + ACTION_UPLOAD );
-        Boolean isUpload = strFlagAsynchrounous.startsWith( FormsAsynchronousUploadHandler.getUploadFormsSubmitPrefix( ) );
-        Map<String, String [ ]> extraParams = new TreeMap<String, String [ ]>( );
+        boolean isUpload = strFlagAsynchrounous.startsWith( FormsAsynchronousUploadHandler.getUploadFormsSubmitPrefix( ) );
+        Map<String, String [ ]> extraParams = new TreeMap<>( );
         extraParams.put( strFlagAsynchrounous, new String [ ] {
             strFlagAsynchrounous
         } );
@@ -1136,18 +1126,13 @@ public class FormXPage extends MVCApplication
      *            The Http request request
      * @throws SiteMessageException
      *             the exception
-     * @throws UserNotSignedException
-     *             the exception
      */
-    private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException
     {
         /*
          * The deletion of the synchronized block is due to the accumulation of http threads on the server when scaling up. The current implementation does not
          * guarantee the following two checks in case of competitor access: -checkNumberMaxResponseForm (form, request); -checkIfUserResponseForm (form,
          * request); This implementation to review and modify.
-         */
-        /*
-         * synchronized( FormXPage.class ) {
          */
         checkNumberMaxResponseForm( form, request );
         checkIfUserResponseForm( form, request );
@@ -1159,7 +1144,6 @@ public class FormXPage extends MVCApplication
         }
         _formService.saveForm( form, formResponse );
         _formService.processFormAction( form, formResponse );
-        // }
     }
 
     /**
@@ -1192,11 +1176,8 @@ public class FormXPage extends MVCApplication
      * @param request
      *            the request
      * @throws SiteMessageException
-     *             Exception
-     * @throws UserNotSignedException
-     *             Exception
      */
-    private void checkIfUserResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    private void checkIfUserResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException
     {
         if ( form.isAuthentificationNeeded( ) && form.isOneResponseByUser( ) )
         {
@@ -1204,7 +1185,7 @@ public class FormXPage extends MVCApplication
             int nLimitNumberResponse = FormHome.getNumberOfResponseFormByUser( form.getId( ), user.getName( ) );
             if ( nLimitNumberResponse >= NumberUtils.INTEGER_ONE )
             {
-                SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM_, SiteMessage.TYPE_ERROR );
+                SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM, SiteMessage.TYPE_ERROR );
             }
         }
     }

@@ -35,21 +35,15 @@ package fr.paris.lutece.plugins.forms.web.http;
 
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-
-import org.apache.commons.fileupload.FileItem;
 
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 
 public class SynchronousHttpServletRequestWrapper extends MultipartHttpServletRequest
 {
-    private final Map<String, String [ ]> modifiableParameters;
-    private Map<String, String [ ]> allParameters = null;
+    private final Map<String, String [ ]> _modifiableParameters;
+    private Map<String, String [ ]> _allParameters = null;
 
     /**
      * Create a new request wrapper that will merge additional parameters into the request object without prematurely reading parameters from the original
@@ -61,8 +55,8 @@ public class SynchronousHttpServletRequestWrapper extends MultipartHttpServletRe
     public SynchronousHttpServletRequestWrapper( final MultipartHttpServletRequest request, final Map<String, String [ ]> additionalParams )
     {
         super( request, request.getFileListMap( ), request.getParameterMap( ) );
-        modifiableParameters = new TreeMap<String, String [ ]>( );
-        modifiableParameters.putAll( additionalParams );
+        _modifiableParameters = new TreeMap<>( );
+        _modifiableParameters.putAll( additionalParams );
 
     }
 
@@ -80,14 +74,14 @@ public class SynchronousHttpServletRequestWrapper extends MultipartHttpServletRe
     @Override
     public Map<String, String [ ]> getParameterMap( )
     {
-        if ( allParameters == null )
+        if ( _allParameters == null )
         {
-            allParameters = new TreeMap<String, String [ ]>( );
-            allParameters.putAll( super.getParameterMap( ) );
-            allParameters.putAll( modifiableParameters );
+            _allParameters = new TreeMap<>( );
+            _allParameters.putAll( super.getParameterMap( ) );
+            _allParameters.putAll( _modifiableParameters );
         }
         // Return an unmodifiable collection because we need to uphold the interface contract.
-        return Collections.unmodifiableMap( allParameters );
+        return Collections.unmodifiableMap( _allParameters );
     }
 
     @Override

@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.util;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -198,9 +197,7 @@ public final class FormsDisplayUtils
     public static ReferenceList getlistAvailablePositionsInGroup( int nIdStep, int nIdDisplayGroup, boolean bAddPosition, Locale locale )
     {
         ReferenceList listAvailablePositions = new ReferenceList( );
-        List<FormDisplay> listDisplay = new ArrayList<FormDisplay>( );
-
-        listDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, nIdDisplayGroup );
+        List<FormDisplay> listDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, nIdDisplayGroup );
 
         for ( int i = 1; i <= listDisplay.size( ); i++ )
         {

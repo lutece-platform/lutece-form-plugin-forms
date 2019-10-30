@@ -82,12 +82,10 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
-import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
-import fr.paris.lutece.util.html.Paginator;
+import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.url.UrlItem;
 
 /**
@@ -188,7 +186,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         {
             _formPanelDisplayActive = _listAuthorizedFormPanelDisplay.get( 0 );
         }
-        Map<String, Object> model = getPaginatedListModel( request, Paginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ),
+        Map<String, Object> model = getPaginatedListModel( request, AbstractPaginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ),
                 _formPanelDisplayActive.getFormPanel( ).getTotalFormResponseItemCount( ) );
 
         // Get the config multiview action if the current admin user is authorized
@@ -248,7 +246,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
                 AdminUserService.getAdminUser( request ) ) )
         {
-            throw new AccessDeniedException( "Unauthorized" );
+            throw new AccessDeniedException( UNAUTHORIZED );
         }
 
         IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
@@ -279,7 +277,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
                 AdminUserService.getAdminUser( request ) ) )
         {
-            throw new AccessDeniedException( );
+            throw new AccessDeniedException( UNAUTHORIZED );
         }
 
         MultiviewConfig config = MultiviewConfig.getInstance( );
@@ -305,7 +303,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
                 AdminUserService.getAdminUser( request ) ) )
         {
-            throw new AccessDeniedException( );
+            throw new AccessDeniedException( UNAUTHORIZED );
         }
 
         MultiviewConfig config = MultiviewConfig.getInstance( );
@@ -326,7 +324,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     private List<FormResponse> getFormResponseToExport( List<FormResponseItem> listFormResponseItemToDisplay )
     {
-        List<FormResponse> listFormResponse = new ArrayList<FormResponse>( );
+        List<FormResponse> listFormResponse = new ArrayList<>( );
 
         for ( FormResponseItem formResponseItem : listFormResponseItemToDisplay )
         {
@@ -595,9 +593,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             if ( filter instanceof FormFilterForms )
             {
                 Integer nIdForm = ( (FormFilterForms) filter ).getSelectedIdForm( );
-                List<FormFilter> listFormFilterReloaded = new ArrayList<>( );
-                listFormFilterReloaded = ( nIdForm != FormsConstants.DEFAULT_ID_VALUE ) ? new FormFilterFactory( ).buildFormFilterList( nIdForm,
-                        _listFormColumn ) : new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn );
+                List<FormFilter> listFormFilterReloaded = ( nIdForm != FormsConstants.DEFAULT_ID_VALUE ) ? new FormFilterFactory( ).buildFormFilterList(
+                        nIdForm, _listFormColumn ) : new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn );
 
                 _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilterReloaded );
             }

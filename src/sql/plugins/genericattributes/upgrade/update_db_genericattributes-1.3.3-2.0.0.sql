@@ -16,7 +16,7 @@ INSERT INTO genatt_field (id_entry, code, VALUE, title)
 	AND t.class_name = 'forms.entryTypeText';
 	
 ALTER TABLE genatt_entry DROP COLUMN confirm_field;
-ALTER TABLE genatt_entry DROP COLUMN confirm_field_title
+ALTER TABLE genatt_entry DROP COLUMN confirm_field_title;
 
 INSERT INTO genatt_field ( id_entry, code, value)
 	SELECT id_entry, 'width', width from genatt_field WHERE width > 0 AND code not in  ('file_config', 'user_config');

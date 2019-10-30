@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart;
 
-import java.util.List;
-
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 
 /**

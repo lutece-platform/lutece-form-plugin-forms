@@ -168,7 +168,7 @@ public final class TransitionDAO implements ITransitionDAO
     @Override
     public List<Transition> selectTransitionsList( Plugin plugin )
     {
-        List<Transition> transitionList = new ArrayList<Transition>( );
+        List<Transition> transitionList = new ArrayList<>( );
         String strSQLQuery = SQL_QUERY_SELECT + SQL_ORDER_BY_PRIORITY;
         DAOUtil daoUtil = new DAOUtil( strSQLQuery, plugin );
         daoUtil.executeQuery( );
@@ -188,7 +188,7 @@ public final class TransitionDAO implements ITransitionDAO
     @Override
     public List<Integer> selectIdTransitionsList( Plugin plugin )
     {
-        List<Integer> transitionList = new ArrayList<Integer>( );
+        List<Integer> transitionList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin );
         daoUtil.executeQuery( );
 
@@ -227,7 +227,7 @@ public final class TransitionDAO implements ITransitionDAO
     @Override
     public List<Transition> selectTransitionsListFromStep( int nIdStep, Plugin plugin )
     {
-        List<Transition> transitionList = new ArrayList<Transition>( );
+        List<Transition> transitionList = new ArrayList<>( );
         String strSQLQuery = SQL_QUERY_SELECT + SQL_FILTER_BY_STEP;
         DAOUtil daoUtil = new DAOUtil( strSQLQuery, plugin );
         daoUtil.setInt( 1, nIdStep );

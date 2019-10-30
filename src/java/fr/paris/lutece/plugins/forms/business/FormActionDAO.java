@@ -54,7 +54,7 @@ public class FormActionDAO implements IFormActionDAO
     @Override
     public List<FormAction> selectActionsByFormState( int nState, Plugin plugin )
     {
-        List<FormAction> listActions = new ArrayList<FormAction>( );
+        List<FormAction> listActions = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin );
         daoUtil.setInt( 1, nState );
         daoUtil.executeQuery( );
@@ -75,7 +75,7 @@ public class FormActionDAO implements IFormActionDAO
     @Override
     public List<FormAction> selectAllFormActions( Plugin plugin )
     {
-        List<FormAction> listActions = new ArrayList<FormAction>( );
+        List<FormAction> listActions = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS, plugin );
         daoUtil.executeQuery( );
 

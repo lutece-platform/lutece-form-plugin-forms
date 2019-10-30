@@ -68,7 +68,7 @@ public class FormResponseManager
      */
     public FormResponseManager( Form form )
     {
-        _listValidatedStep = new ArrayList<Step>( );
+        _listValidatedStep = new ArrayList<>( );
         _formResponse = new FormResponse( );
         _formResponse.setFormId( form.getId( ) );
         _formResponse.setSteps( new ArrayList<>( ) );
@@ -82,7 +82,7 @@ public class FormResponseManager
      */
     public FormResponseManager( FormResponse formResponse )
     {
-        _listValidatedStep = new ArrayList<Step>( );
+        _listValidatedStep = new ArrayList<>( );
         _formResponse = formResponse;
 
         initValidatedStep( );
@@ -253,9 +253,7 @@ public class FormResponseManager
      */
     public List<FormQuestionResponse> findAllResponses( )
     {
-        List<FormQuestionResponse> listFormQuestionResponse = _formResponse.getSteps( ).stream( ).flatMap( step -> step.getQuestions( ).stream( ) )
-                .collect( Collectors.toList( ) );
-        return listFormQuestionResponse;
+        return _formResponse.getSteps( ).stream( ).flatMap( step -> step.getQuestions( ).stream( ) ).collect( Collectors.toList( ) );
     }
 
     /**
@@ -349,11 +347,10 @@ public class FormResponseManager
                 for ( Control control : listControl )
                 {
                     IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-                    GenericAttributeError error = new GenericAttributeError( );
 
                     if ( !validator.validate( formQuestionResponse, control ) )
                     {
-                        error = new GenericAttributeError( );
+                        GenericAttributeError error = new GenericAttributeError( );
 
                         error.setIsDisplayableError( true );
                         error.setErrorMessage( control.getErrorMessage( ) );

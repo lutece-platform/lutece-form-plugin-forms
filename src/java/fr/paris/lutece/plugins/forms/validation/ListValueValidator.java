@@ -92,7 +92,7 @@ public class ListValueValidator extends AbstractValidator
     @Override
     public String getDisplayHtml( Control control )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         ReferenceList refListValue = new ReferenceList( );
 
         if ( control.getListIdQuestion( ) != null && !control.getListIdQuestion( ).isEmpty( ) )
@@ -141,7 +141,7 @@ public class ListValueValidator extends AbstractValidator
     @Override
     public String getJavascriptValidation( )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, I18nService.getDefaultLocale( ), model );
 
         return htmlTemplate.getHtml( );

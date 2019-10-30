@@ -33,11 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.column.display.impl;
 
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
 
