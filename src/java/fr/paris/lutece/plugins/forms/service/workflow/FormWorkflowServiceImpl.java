@@ -98,7 +98,7 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
      */
     private List<Integer> getListIdWorkflowState( int nIdWorkflow, AdminUser adminUser )
     {
-        List<Integer> listIdState = new ArrayList<Integer>( );
+        List<Integer> listIdState = new ArrayList<>( );
         Collection<State> collState = WorkflowService.getInstance( ).getAllStateByWorkflow( nIdWorkflow, adminUser );
 
         for ( State state : collState )

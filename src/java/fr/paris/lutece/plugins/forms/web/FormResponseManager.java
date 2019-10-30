@@ -63,12 +63,11 @@ public class FormResponseManager
     /**
      * Constructor
      * 
-     * @param form
-     *            the form
+     * @param form the form
      */
     public FormResponseManager( Form form )
     {
-        _listValidatedStep = new ArrayList<Step>( );
+        _listValidatedStep = new ArrayList<>( );
         _formResponse = new FormResponse( );
         _formResponse.setFormId( form.getId( ) );
         _formResponse.setSteps( new ArrayList<>( ) );
@@ -77,12 +76,11 @@ public class FormResponseManager
     /**
      * Constructor
      * 
-     * @param formResponse
-     *            the form response
+     * @param formResponse the form response
      */
     public FormResponseManager( FormResponse formResponse )
     {
-        _listValidatedStep = new ArrayList<Step>( );
+        _listValidatedStep = new ArrayList<>( );
         _formResponse = formResponse;
 
         initValidatedStep( );
@@ -161,8 +159,7 @@ public class FormResponseManager
     /**
      * Adds the specified step
      * 
-     * @param step
-     *            the step to add
+     * @param step the step to add
      */
     public void add( Step step )
     {
@@ -184,8 +181,7 @@ public class FormResponseManager
     /**
      * Tests if the specified step is validated or not
      * 
-     * @param step
-     *            the step
+     * @param step the step
      * @return {@code true} if the step is validated, {@code false} otherwise
      */
     private boolean isStepValidated( Step step )
@@ -196,8 +192,7 @@ public class FormResponseManager
     /**
      * Creates a form response step from the specified step
      * 
-     * @param step
-     *            the step
+     * @param step the step
      * @return the created form response step
      */
     private FormResponseStep createFormResponseStepFrom( Step step )
@@ -213,8 +208,7 @@ public class FormResponseManager
     /**
      * Goes to the step of the specified index
      * 
-     * @param nStepIndex
-     *            the step index
+     * @param nStepIndex the step index
      * @return the Step
      */
     public Step goTo( int nStepIndex )
@@ -230,8 +224,7 @@ public class FormResponseManager
     /**
      * Finds the responses for the specified step
      * 
-     * @param step
-     *            the step
+     * @param step the step
      * @return the found responses
      */
     public List<FormQuestionResponse> findResponsesFor( Step step )
@@ -253,16 +246,14 @@ public class FormResponseManager
      */
     public List<FormQuestionResponse> findAllResponses( )
     {
-        List<FormQuestionResponse> listFormQuestionResponse = _formResponse.getSteps( ).stream( ).flatMap( step -> step.getQuestions( ).stream( ) )
+        return _formResponse.getSteps( ).stream( ).flatMap( step -> step.getQuestions( ).stream( ) )
                 .collect( Collectors.toList( ) );
-        return listFormQuestionResponse;
     }
 
     /**
      * Finds the form response step for the specified step
      * 
-     * @param step
-     *            the step
+     * @param step the step
      * @return the found form response step
      */
     private FormResponseStep findFormResponseStepFor( Step step )
@@ -284,8 +275,7 @@ public class FormResponseManager
     /**
      * Adds the specified responses
      * 
-     * @param listFormQuestionResponse
-     *            the responses to add
+     * @param listFormQuestionResponse the responses to add
      */
     public void addResponses( List<FormQuestionResponse> listFormQuestionResponse )
     {
@@ -343,17 +333,17 @@ public class FormResponseManager
 
             for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
             {
-                List<Control> listControl = ControlHome.getControlByQuestionAndType( formQuestionResponse.getQuestion( ).getId( ),
-                        ControlType.VALIDATION.getLabel( ) );
+                List<Control> listControl = ControlHome.getControlByQuestionAndType(
+                        formQuestionResponse.getQuestion( ).getId( ), ControlType.VALIDATION.getLabel( ) );
 
                 for ( Control control : listControl )
                 {
-                    IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-                    GenericAttributeError error = new GenericAttributeError( );
+                    IValidator validator = EntryServiceManager.getInstance( )
+                            .getValidator( control.getValidatorName( ) );
 
                     if ( !validator.validate( formQuestionResponse, control ) )
                     {
-                        error = new GenericAttributeError( );
+                        GenericAttributeError error = new GenericAttributeError( );
 
                         error.setIsDisplayableError( true );
                         error.setErrorMessage( control.getErrorMessage( ) );

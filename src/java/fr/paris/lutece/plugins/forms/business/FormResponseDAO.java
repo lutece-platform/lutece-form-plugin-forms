@@ -158,7 +158,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     @Override
     public List<FormResponse> selectFormResponseList( Plugin plugin )
     {
-        List<FormResponse> formResponseList = new ArrayList<FormResponse>( );
+        List<FormResponse> formResponseList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery( );
 
@@ -255,8 +255,6 @@ public final class FormResponseDAO implements IFormResponseDAO
     private FormResponse dataToObject( DAOUtil daoUtil )
     {
         FormResponse formResponse = new FormResponse( );
-
-        formResponse = new FormResponse( );
         formResponse.setId( daoUtil.getInt( "id_response" ) );
         formResponse.setFormId( daoUtil.getInt( "id_form" ) );
         formResponse.setGuid( daoUtil.getString( "guid" ) );

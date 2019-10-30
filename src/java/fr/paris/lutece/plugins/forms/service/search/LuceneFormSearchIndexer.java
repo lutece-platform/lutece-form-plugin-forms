@@ -87,6 +87,7 @@ import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.search.IndexationService;
+import fr.paris.lutece.portal.service.search.SearchItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -161,7 +162,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     @Override
     public List<String> getListType( )
     {
-        List<String> listType = new ArrayList<String>( 1 );
+        List<String> listType = new ArrayList<>( 1 );
         listType.add( FORMS );
 
         return listType;
@@ -207,17 +208,12 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         List<Integer> listFormResponsesId = FormResponseHome.selectAllFormResponsesId( );
 
         deleteIndex( );
-        /*
-         * for ( Integer nIdFormResponse : listFormResponsesId ) { addIndexerAction( nIdFormResponse, IndexerAction.TASK_CREATE, FormsPlugin.getPlugin( ) ); }
-         */
         _bIndexToLunch.set( true );
         if ( _bIndexIsRunning.compareAndSet( false, true ) )
         {
             new Thread( ( ) -> {
                 try
                 {
-                    // while(_bIndexToLunch.compareAndSet(true, false)){
-
                     List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
                     for ( Integer nIdFormResponse : listFormResponsesId )
                     {
@@ -402,7 +398,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             initIndexing( true );
         }
 
-        Map<Integer, Form> mapForms = FormHome.getFormList( ).stream( ).collect( Collectors.toMap( form -> form.getId( ), form -> form ) );
+        Map<Integer, Form> mapForms = FormHome.getFormList( ).stream( ).collect( Collectors.toMap( Form::getId, form -> form ) );
         List<Document> documentList = new ArrayList<>( );
         for ( FormResponse formResponse : listFormResponse )
         {
@@ -458,7 +454,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      */
     private void initIndexing( boolean bCreate )
     {
-        Boolean boolCreate = new Boolean( bCreate );
+        Boolean boolCreate = Boolean.valueOf( bCreate );
         _indexWriter = _luceneFormSearchFactory.getIndexWriter( boolCreate );
     }
 
@@ -560,7 +556,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         int nIdFormResponse = formResponse.getId( );
 
         // --- document identifier
-        doc.add( new StringField( FormResponseSearchItem.FIELD_UID, String.valueOf( nIdFormResponse ), Field.Store.YES ) );
+        doc.add( new StringField( SearchItem.FIELD_UID, String.valueOf( nIdFormResponse ), Field.Store.YES ) );
 
         // --- form response identifier
         doc.add( new IntPoint( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
@@ -568,7 +564,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         doc.add( new StoredField( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
 
         // --- field contents
-        doc.add( new TextField( FormResponseSearchItem.FIELD_CONTENTS, manageNullValue( getContentToIndex( formResponse ) ), Field.Store.NO ) );
+        doc.add( new TextField( SearchItem.FIELD_CONTENTS, manageNullValue( getContentToIndex( formResponse ) ), Field.Store.NO ) );
 
         // --- form title
         String strFormTitle = manageNullValue( form.getTitle( ) );

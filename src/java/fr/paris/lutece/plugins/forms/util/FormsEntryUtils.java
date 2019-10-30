@@ -137,7 +137,7 @@ public final class FormsEntryUtils
      */
     public static List<EntryType> initListEntryType( )
     {
-        List<EntryType> listEntryType = new ArrayList<EntryType>( );
+        List<EntryType> listEntryType = new ArrayList<>( );
         List<EntryType> listRefEntryType = EntryTypeHome.getList( FormsPlugin.PLUGIN_NAME );
 
         for ( EntryType entryType : listRefEntryType )

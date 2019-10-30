@@ -246,7 +246,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     @Override
     public List<FormQuestionResponse> selectFormQuestionResponseList( Plugin plugin )
     {
-        List<FormQuestionResponse> formQuestionResponseList = new ArrayList<FormQuestionResponse>( );
+        List<FormQuestionResponse> formQuestionResponseList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery( );
         while ( daoUtil.next( ) )
@@ -267,7 +267,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     @Override
     public List<FormQuestionResponse> selectFormQuestionResponseListByStepAndFormResponse( int nIdFormResponse, int nIdStep, Plugin plugin )
     {
-        List<FormQuestionResponse> formQuestionResponseList = new ArrayList<FormQuestionResponse>( );
+        List<FormQuestionResponse> formQuestionResponseList = new ArrayList<>( );
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP, plugin );
         daoUtil.setInt( 1, nIdFormResponse );
@@ -317,7 +317,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     @Override
     public List<FormQuestionResponse> selectFormQuestionResponseListByFormResponse( int nIdFormResponse, Plugin plugin )
     {
-        List<FormQuestionResponse> formQuestionResponseList = new ArrayList<FormQuestionResponse>( );
+        List<FormQuestionResponse> formQuestionResponseList = new ArrayList<>( );
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FORM_RESPONSE, plugin );
         daoUtil.setInt( 1, nIdFormResponse );

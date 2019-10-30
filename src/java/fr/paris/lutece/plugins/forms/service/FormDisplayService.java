@@ -73,13 +73,11 @@ public final class FormDisplayService
     public void deleteDisplayAndDescendants( int nIdDIsplay )
     {
         FormDisplay formDisplayToDelete = FormDisplayHome.findByPrimaryKey( nIdDIsplay );
-        List<FormDisplay> listChildrenDisplay = new ArrayList<FormDisplay>( );
-
         if ( formDisplayToDelete != null )
         {
             int formDisplayCompositeId = formDisplayToDelete.getCompositeId( );
 
-            listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( formDisplayToDelete.getStepId( ), formDisplayToDelete.getId( ) );
+            List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( formDisplayToDelete.getStepId( ), formDisplayToDelete.getId( ) );
 
             if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplayToDelete.getCompositeType( ) ) )
             {

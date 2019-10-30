@@ -155,7 +155,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     @Override
     public List<FormDisplay> selectFormDisplayList( Plugin plugin )
     {
-        List<FormDisplay> formDisplayList = new ArrayList<FormDisplay>( );
+        List<FormDisplay> formDisplayList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery( );
 
@@ -175,7 +175,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     @Override
     public List<FormDisplay> selectFormDisplayListByParent( int nIdStep, int nIdParent, Plugin plugin )
     {
-        List<FormDisplay> formDisplayList = new ArrayList<FormDisplay>( );
+        List<FormDisplay> formDisplayList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_PARENT, plugin );
         daoUtil.setInt( 1, nIdStep );
         daoUtil.setInt( 2, nIdParent );

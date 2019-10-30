@@ -60,7 +60,7 @@ public class FormResponseCsvExport
 
     private final CSVHeader _csvHeader = new CSVHeader( );
 
-    private final List<CSVDataLine> _listDataToExport = new ArrayList<CSVDataLine>( );
+    private final List<CSVDataLine> _listDataToExport = new ArrayList<>( );
 
     private String _strCsvColumnToExport;
 

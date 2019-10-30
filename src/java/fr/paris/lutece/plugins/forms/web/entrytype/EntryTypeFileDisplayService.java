@@ -204,7 +204,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     @SuppressWarnings( "unchecked" )
     private List<Response> retrieveResponseListFromModel( Map<String, Object> model )
     {
-        List<Response> listResponse = new ArrayList<Response>( );
+        List<Response> listResponse = new ArrayList<>( );
 
         if ( !MapUtils.isEmpty( model ) && model.containsKey( LIST_RESPONSES ) )
         {

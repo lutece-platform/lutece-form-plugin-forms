@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -47,8 +46,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -254,7 +253,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
         if ( bHistoryEnabled )
         {
-            Map<String, Object> resourceActions = new HashMap<String, Object>( );
+            Map<String, Object> resourceActions = new HashMap<>( );
 
             Collection<fr.paris.lutece.plugins.workflowcore.business.action.Action> lListActions = workflowService.getActions( formResponse.getId( ),
                     FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), getUser( ) );
