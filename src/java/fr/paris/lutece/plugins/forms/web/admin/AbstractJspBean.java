@@ -58,7 +58,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      * Generated serial UID
      */
     private static final long serialVersionUID = 3421909824044642013L;
-    
+
     protected static final String UNAUTHORIZED = "Unauthorized";
 
     // Properties

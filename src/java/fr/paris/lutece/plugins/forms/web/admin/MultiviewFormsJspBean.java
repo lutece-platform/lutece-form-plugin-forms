@@ -593,8 +593,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             if ( filter instanceof FormFilterForms )
             {
                 Integer nIdForm = ( (FormFilterForms) filter ).getSelectedIdForm( );
-                List<FormFilter>  listFormFilterReloaded = ( nIdForm != FormsConstants.DEFAULT_ID_VALUE ) ? new FormFilterFactory( ).buildFormFilterList( nIdForm,
-                        _listFormColumn ) : new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn );
+                List<FormFilter> listFormFilterReloaded = ( nIdForm != FormsConstants.DEFAULT_ID_VALUE ) ? new FormFilterFactory( ).buildFormFilterList(
+                        nIdForm, _listFormColumn ) : new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn );
 
                 _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilterReloaded );
             }

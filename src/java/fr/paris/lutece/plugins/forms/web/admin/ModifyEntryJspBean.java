@@ -169,7 +169,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         Map<String, Object> model = new HashMap<>( );
         Locale locale = getLocale( );
-           model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
+        model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
 
         model.put( FormsConstants.MARK_FIELD, field );
         model.put( FormsConstants.MARK_QUESTION, _question );

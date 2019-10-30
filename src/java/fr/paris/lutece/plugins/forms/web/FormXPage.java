@@ -265,7 +265,7 @@ public class FormXPage extends MVCApplication
         String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
         if ( paramInit != null && paramInit.equals( PARAMETER_INIT ) )
         {
-                init( request );
+            init( request );
         }
         Map<String, Object> model = getModel( );
         String strTitleForm = StringUtils.EMPTY;
@@ -1175,7 +1175,7 @@ public class FormXPage extends MVCApplication
      *            the form
      * @param request
      *            the request
-     * @throws SiteMessageException 
+     * @throws SiteMessageException
      */
     private void checkIfUserResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException
     {

@@ -252,7 +252,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getCreateQuestion( HttpServletRequest request )
     {
 
-
         int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         int nIdTypeEntry = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ) );
         _nIdParentSelected = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
@@ -277,7 +276,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         ReferenceList listParamDefaultValues = new ReferenceList( );
 
-        Map<String, Object> model = new HashMap< >( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
@@ -358,7 +357,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_GROUP )
     public String doCreateGroup( HttpServletRequest request )
     {
-    
 
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
         int nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
@@ -416,7 +414,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     @View( value = VIEW_MODIFY_GROUP )
     public String getModifyGroup( HttpServletRequest request )
     {
-
 
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
         int nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ), FormsConstants.DEFAULT_ID_VALUE );
@@ -581,7 +578,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     private String processQuestionCreation( HttpServletRequest request ) throws CodeAlreadyExistsException
     {
 
-
         int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         int nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
         int nIdType = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) );
@@ -679,7 +675,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_TARGET );
         int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        Question questionToCopy = new Question();
+        Question questionToCopy = new Question( );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -727,7 +723,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         for ( Control control : listControlsToDuplicate )
         {
 
-            Set<Integer> listQuestion = new HashSet< >( );
+            Set<Integer> listQuestion = new HashSet<>( );
             listQuestion.add( questionToCopy.getId( ) );
             control.setListIdQuestion( listQuestion );
             control.setIdControlTarget( questionToCopy.getId( ) );
@@ -761,7 +757,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getModifyQuestion( HttpServletRequest request )
     {
 
-
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
 
         if ( ( strIdStep != null ) && !strIdStep.equals( EMPTY_STRING ) )
@@ -786,7 +781,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _entry = EntryHome.findByPrimaryKey( _question.getIdEntry( ) );
 
-        List<Field> listField = new ArrayList< >( _entry.getFields( ).size( ) );
+        List<Field> listField = new ArrayList<>( _entry.getFields( ).size( ) );
 
         for ( Field field : _entry.getFields( ) )
         {
@@ -803,7 +798,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
 
-        Map<String, Object> model = new HashMap< >( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
@@ -1096,7 +1091,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_REMOVE_COMPOSITE )
     public String doRemoveComposite( HttpServletRequest request )
     {
-        
 
         int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
 
@@ -1262,7 +1256,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_MOVE_COMPOSITE )
     public String doMoveComposite( HttpServletRequest request )
     {
-       
+
         boolean bStepValidated = false;
         boolean bGroupValidated = false;
 

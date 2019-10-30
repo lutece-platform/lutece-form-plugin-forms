@@ -218,36 +218,36 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                     for ( Integer nIdFormResponse : listFormResponsesId )
                     {
                         // TODO IMPLEMENT A SQL IN( ..) instead
-                        FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
-                        if ( response != null )
-                        {
-                            listFormResponses.add( response );
-                        }
-                        if ( listFormResponses.size( ) == TAILLE_LOT )
-                        {
-                            indexFormResponseList( listFormResponses );
-                            listFormResponses.clear( );
-                        }
-                    }
-                    indexFormResponseList( listFormResponses );
-                    // Indexation increment
-                    while ( _bIndexToLunch.compareAndSet( true, false ) )
+                    FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
+                    if ( response != null )
                     {
-                        processIndexing( );
-
+                        listFormResponses.add( response );
+                    }
+                    if ( listFormResponses.size( ) == TAILLE_LOT )
+                    {
+                        indexFormResponseList( listFormResponses );
+                        listFormResponses.clear( );
                     }
                 }
-                catch( Exception e )
+                indexFormResponseList( listFormResponses );
+                // Indexation increment
+                while ( _bIndexToLunch.compareAndSet( true, false ) )
                 {
-                    AppLogService.error( e.getMessage( ), e );
-                    Thread.currentThread( ).interrupt( );
-                }
-                finally
-                {
-                    _bIndexIsRunning.set( false );
-                }
+                    processIndexing( );
 
-            } ).start( );
+                }
+            }
+            catch( Exception e )
+            {
+                AppLogService.error( e.getMessage( ), e );
+                Thread.currentThread( ).interrupt( );
+            }
+            finally
+            {
+                _bIndexIsRunning.set( false );
+            }
+
+        }   ).start( );
         }
 
     }

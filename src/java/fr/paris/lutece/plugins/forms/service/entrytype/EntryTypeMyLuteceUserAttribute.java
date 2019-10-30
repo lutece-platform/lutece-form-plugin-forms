@@ -131,8 +131,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
         entry.setOnlyDisplayInBack( strOnlyDisplayInBack != null );
 
-        GenericAttributesUtils.createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE, null,
-                request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE, null, request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
         return null;
     }
 

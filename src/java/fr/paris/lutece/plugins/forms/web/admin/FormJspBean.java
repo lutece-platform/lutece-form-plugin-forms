@@ -198,8 +198,9 @@ public class FormJspBean extends AbstractJspBean
 
         model.put( MARK_FORM_LIST, paginator.getPageItems( ) );
         model.put( MARK_LOCALE, request.getLocale( ) );
-        model.put( MARK_PERMISSION_CREATE_FORMS, RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, adminUser ) );
-        
+        model.put( MARK_PERMISSION_CREATE_FORMS,
+                RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, adminUser ) );
+
         setPageTitleProperty( EMPTY_STRING );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_FORMS, locale, model );
