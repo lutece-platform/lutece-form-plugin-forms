@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.column.display.impl;
 
-import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,10 +43,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.math.NumberUtils;
-
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
@@ -166,20 +163,4 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         return strFormColumnEntryTemplate;
     }
 
-    /**
-     * Return the position of the FormColumn or {@linkplain NumberUtils.INTEGER_MINUS_ONE} if doesn't exist
-     * 
-     * @return the position of the FormColumn
-     */
-    private int getFormColumnPosition( )
-    {
-        int nFormColumnPosition = NumberUtils.INTEGER_MINUS_ONE;
-        IFormColumn formColumn = getFormColumn( );
-        if ( formColumn != null )
-        {
-            nFormColumnPosition = formColumn.getFormColumnPosition( );
-        }
-
-        return nFormColumnPosition;
-    }
 }

@@ -164,7 +164,7 @@ public final class FormDAO implements IFormDAO
     @Override
     public List<Form> selectFormsList( Plugin plugin )
     {
-        List<Form> formList = new ArrayList<Form>( );
+        List<Form> formList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery( );
 

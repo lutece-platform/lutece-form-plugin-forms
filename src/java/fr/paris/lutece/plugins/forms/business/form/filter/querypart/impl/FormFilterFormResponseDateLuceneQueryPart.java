@@ -69,8 +69,8 @@ public class FormFilterFormResponseDateLuceneQueryPart extends AbstractFormFilte
             SimpleDateFormat formatter = new SimpleDateFormat( "yyyy-MM-dd" );
             try
             {
-                Date dateFrom = (Date) formatter.parse( strDateFrom );
-                Date dateTo = (Date) formatter.parse( strDateTo );
+                Date dateFrom = formatter.parse( strDateFrom );
+                Date dateTo = formatter.parse( strDateTo );
                 long lFrom = dateFrom.getTime( );
                 long lTo = dateTo.getTime( );
                 if ( strDateFrom != null && strDateTo != null )
