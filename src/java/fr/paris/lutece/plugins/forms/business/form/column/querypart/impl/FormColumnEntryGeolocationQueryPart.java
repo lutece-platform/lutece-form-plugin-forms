@@ -33,17 +33,16 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.apache.lucene.index.IndexableField;
 
 /**
  * Implementation of the IFormColumnQueryPart interface for a form column

@@ -52,8 +52,6 @@ import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterEntryConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;

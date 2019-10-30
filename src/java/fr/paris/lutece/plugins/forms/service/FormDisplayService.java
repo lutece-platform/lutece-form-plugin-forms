@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;

@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import java.util.Locale;
 import java.util.Map;
 
@@ -42,6 +40,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
@@ -50,7 +50,6 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import java.util.List;
 
 /**
  * The display service for entry type date

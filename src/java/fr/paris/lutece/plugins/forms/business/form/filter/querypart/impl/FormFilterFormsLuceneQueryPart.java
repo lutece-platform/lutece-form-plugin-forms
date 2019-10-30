@@ -33,13 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
+import java.util.Collection;
+
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.search.Query;
+
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-import java.util.Collection;
-import org.apache.lucene.document.IntPoint;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
 
 /**
  * Implementation of the IFormFilterQueryPart for an Entry filter

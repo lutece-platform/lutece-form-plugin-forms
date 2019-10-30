@@ -39,7 +39,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
