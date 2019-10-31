@@ -207,8 +207,8 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
                     _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
 
-                    int question_control_step = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).stream( ).findFirst( ).get( ) ).getIdStep( );
-                    if ( question_control_step != _question.getIdStep( ) )
+                    int questionControlStep = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).stream( ).findFirst( ).get( ) ).getIdStep( );
+                    if ( questionControlStep != _question.getIdStep( ) )
                     {
                         List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
                                 .filter( questionReponse -> control.getListIdQuestion( ).contains( questionReponse.getQuestion( ).getId( ) ) )

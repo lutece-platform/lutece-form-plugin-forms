@@ -219,31 +219,32 @@ public class FormXPage extends MVCApplication
     public void checkMyLuteceAuthentification( Form form, HttpServletRequest request ) throws UserNotSignedException
     {
         // Try to register the user in case of external authentication
-        if ( SecurityService.isAuthenticationEnable( ) )
+        if ( !SecurityService.isAuthenticationEnable( ) )
         {
-            if ( SecurityService.getInstance( ).isExternalAuthentication( ) )
+            return;
+        }
+        if ( SecurityService.getInstance( ).isExternalAuthentication( ) )
+        {
+            // The authentication is external
+            // Should register the user if it's not already done
+            if ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
             {
-                // The authentication is external
-                // Should register the user if it's not already done
-                if ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
-                {
-                    if ( ( SecurityService.getInstance( ).getRemoteUser( request ) == null ) && ( form.isAuthentificationNeeded( ) ) )
-                    {
-                        // Authentication is required to access to the portal
-                        throw new UserNotSignedException( );
-                    }
-                }
-            }
-            else
-            {
-                // If portal authentication is enabled and user is null and the requested URL
-                // is not the login URL, user cannot access to Portal
-                if ( ( form.isAuthentificationNeeded( ) ) && ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
-                        && !SecurityService.getInstance( ).isLoginUrl( request ) )
+                if ( ( SecurityService.getInstance( ).getRemoteUser( request ) == null ) && ( form.isAuthentificationNeeded( ) ) )
                 {
                     // Authentication is required to access to the portal
                     throw new UserNotSignedException( );
                 }
+            }
+        }
+        else
+        {
+            // If portal authentication is enabled and user is null and the requested URL
+            // is not the login URL, user cannot access to Portal
+            if ( ( form.isAuthentificationNeeded( ) ) && ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
+                    && !SecurityService.getInstance( ).isLoginUrl( request ) )
+            {
+                // Authentication is required to access to the portal
+                throw new UserNotSignedException( );
             }
         }
     }
@@ -722,7 +723,7 @@ public class FormXPage extends MVCApplication
             for ( int i = 0; i < listConditionalQuestionsValues.length; i++ )
             {
                 String [ ] listQuestionId = listConditionalQuestionsValues [i].split( FormsConstants.SEPARATOR_UNDERSCORE );
-                if ( !StringUtils.isEmpty( listQuestionId [0] ) && Integer.parseInt( listQuestionId [0] ) == question.getId( )
+                if ( StringUtils.isNotEmpty( listQuestionId [0] ) && Integer.parseInt( listQuestionId [0] ) == question.getId( )
                         && Integer.parseInt( listQuestionId [1] ) == question.getIterationNumber( ) )
                 {
                     question.setIsVisible( true );

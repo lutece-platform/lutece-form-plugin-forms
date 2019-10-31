@@ -297,7 +297,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
         Entry entry = quest.getEntry( );
 
         if ( entry.getEntryType( ).getBeanName( ).equals( ENTRY_TYPE_AUT_READING_FILE ) && handler.hasAddFileFlag( request, strAttributeName )
-                && fileUploaded != null && !StringUtils.isEmpty( fileUploaded.getName( ) ) )
+                && fileUploaded != null && StringUtils.isNotEmpty( fileUploaded.getName( ) ) )
         {
 
             Field fieldFileType = entry.getFieldByCode( FIELD_FILE_TYPE );
@@ -316,14 +316,14 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
 
                 return true;
             }
-            if ( listResponse != null && !listResponse.isEmpty( ) )
+            if ( CollectionUtils.isNotEmpty( listResponse ) )
             {
 
                 for ( FormQuestionResponse response : listFormsQuestionResponse )
                 {
                     List<Response> listResponseForQuestion = listResponse.stream( )
                             .filter( p -> p.getEntry( ).getIdEntry( ) == response.getQuestion( ).getIdEntry( ) ).collect( ( Collectors.toList( ) ) );
-                    if ( listResponseForQuestion != null && !listResponseForQuestion.isEmpty( ) )
+                    if ( CollectionUtils.isNotEmpty( listResponseForQuestion ) )
                     {
                         response.setEntryResponse( listResponseForQuestion );
                     }
