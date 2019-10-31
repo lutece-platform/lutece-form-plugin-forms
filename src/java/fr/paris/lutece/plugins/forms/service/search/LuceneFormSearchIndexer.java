@@ -624,7 +624,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                         if ( responseField != null )
                         {
                             String getFieldName = getFieldName( responseField, response );
-                            fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ );
+                            fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR );
                             fieldNameBuilder.append( getFieldName );
                         }
 

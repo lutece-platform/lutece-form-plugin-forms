@@ -56,7 +56,7 @@ public final class LuceneUtils
     {
         StringBuilder fieldNameBuilder = new StringBuilder( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX );
         fieldNameBuilder.append( strQuestionCode );
-        fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ );
+        fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER );
 
         if ( nIterationNumber == -1 )
             nIterationNumber = 0;

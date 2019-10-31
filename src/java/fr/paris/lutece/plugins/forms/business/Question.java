@@ -335,12 +335,12 @@ public class Question implements Serializable, Cloneable
     /**
      * Set the is vibile Multiview Global boolean
      * 
-     * @param _bIsVisibleMultiviewGlobal
+     * @param bIsVisibleMultiviewGlobal
      *            the boolean
      */
-    public void setVisibleMultiviewGlobal( boolean _bIsVisibleMultiviewGlobal )
+    public void setVisibleMultiviewGlobal( boolean bIsVisibleMultiviewGlobal )
     {
-        this._bIsVisibleMultiviewGlobal = _bIsVisibleMultiviewGlobal;
+        this._bIsVisibleMultiviewGlobal = bIsVisibleMultiviewGlobal;
     }
 
     /**

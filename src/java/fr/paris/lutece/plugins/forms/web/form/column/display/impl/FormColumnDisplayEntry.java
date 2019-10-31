@@ -50,7 +50,6 @@ import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
-import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
@@ -87,12 +86,11 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         model.put( MARK_ENTRY_VALUE_COLUMN_TITLE, getFormColumnTitle( ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_POSITION, getPosition( ) );
 
-        String columSort = String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getPosition( ) );
         if ( getFormColumn( ) instanceof FormColumnEntry )
         {
             FormColumnEntry column = ( (FormColumnEntry) getFormColumn( ) );
-            columSort = column.getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
-            String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0";
+            String columSort = column.getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
+            String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0";
 
             String strEntryCode = column.getListEntryCode( ).get( 0 );
             Question question = QuestionHome.findByCode( strEntryCode );
