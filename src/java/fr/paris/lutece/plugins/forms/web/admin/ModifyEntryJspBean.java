@@ -492,10 +492,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         if ( nIndexField != -1 && ( ( bMoveUp && nIndexField > 0 ) || ( !bMoveUp && nIndexField < ( listField.size( ) - 1 ) ) ) )
         {
-            int nNewPosition;
-            Field fieldToInversePosition;
-            fieldToInversePosition = listField.get( bMoveUp ? ( nIndexField - 1 ) : ( nIndexField + 1 ) );
-            nNewPosition = fieldToInversePosition.getPosition( );
+            Field fieldToInversePosition = listField.get( bMoveUp ? ( nIndexField - 1 ) : ( nIndexField + 1 ) );
+            int nNewPosition = fieldToInversePosition.getPosition( );
             fieldToInversePosition.setPosition( field.getPosition( ) );
             field.setPosition( nNewPosition );
             FieldHome.update( field );

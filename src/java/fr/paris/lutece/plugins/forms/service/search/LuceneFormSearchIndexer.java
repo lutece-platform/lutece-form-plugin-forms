@@ -482,7 +482,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      */
     private void deleteIndex( )
     {
-        if ( _indexWriter == null || !_indexWriter.isOpen( ) ) {
+        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
+        {
             initIndexing( true );
         }
         try
@@ -763,7 +764,9 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private String manageNullValue( String strValue )
     {
         if ( strValue == null )
+        {
             return StringUtils.EMPTY;
+        }
         return strValue;
     }
 

@@ -170,12 +170,7 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     {
         if ( responseReference == null && responseNew == null )
         {
-            return false;
-        }
-
-        if ( responseReference == null && responseNew != null )
-        {
-            return true;
+            return responseNew != null;
         }
 
         if ( responseReference != null && responseNew == null )

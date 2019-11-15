@@ -900,7 +900,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             }
         }
 
-        String strTitle = Boolean.TRUE.equals(_entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
+        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
         _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
         _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );

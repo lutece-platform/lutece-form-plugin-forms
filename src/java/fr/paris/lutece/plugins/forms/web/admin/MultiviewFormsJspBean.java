@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -86,6 +87,7 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.html.AbstractPaginator;
+import fr.paris.lutece.util.string.StringUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
 /**
