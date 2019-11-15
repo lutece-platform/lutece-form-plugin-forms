@@ -227,13 +227,12 @@ public class FormXPage extends MVCApplication
         {
             // The authentication is external
             // Should register the user if it's not already done
-            if ( SecurityService.getInstance( ).getRegisteredUser( request ) == null )
+            if ( SecurityService.getInstance( ).getRegisteredUser( request ) == null
+                    && SecurityService.getInstance( ).getRemoteUser( request ) == null 
+                    && form.isAuthentificationNeeded( ) )
             {
-                if ( ( SecurityService.getInstance( ).getRemoteUser( request ) == null ) && ( form.isAuthentificationNeeded( ) ) )
-                {
-                    // Authentication is required to access to the portal
-                    throw new UserNotSignedException( );
-                }
+                // Authentication is required to access to the portal
+                throw new UserNotSignedException( );
             }
         }
         else

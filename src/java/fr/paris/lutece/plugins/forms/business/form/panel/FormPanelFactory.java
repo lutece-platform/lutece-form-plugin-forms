@@ -102,7 +102,7 @@ public class FormPanelFactory
             try
             {
                 formPanelInitializerClass = Class.forName( strInitializerName ).asSubclass( IFormPanelInitializer.class );
-                IFormPanelInitializer formPanelInitializer = (IFormPanelInitializer) formPanelInitializerClass.newInstance( );
+                IFormPanelInitializer formPanelInitializer = formPanelInitializerClass.newInstance( );
                 formPanel.getListFormPanelInitializer( ).add( formPanelInitializer );
             }
             catch( ClassNotFoundException | InstantiationException | IllegalAccessException e )

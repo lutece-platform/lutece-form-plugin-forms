@@ -122,9 +122,7 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
         model.put( MARK_ENTRY_X, strEntryX );
         model.put( MARK_ENTRY_Y, strEntryY );
 
-        String strFormColumnEntryTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
-
-        return strFormColumnEntryTemplate;
+        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }
 
     /**

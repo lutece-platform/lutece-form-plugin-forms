@@ -59,7 +59,9 @@ public final class LuceneUtils
         fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER );
 
         if ( nIterationNumber == -1 )
+        {
             nIterationNumber = 0;
+        }
         fieldNameBuilder.append( nIterationNumber );
         return fieldNameBuilder.toString( );
     }

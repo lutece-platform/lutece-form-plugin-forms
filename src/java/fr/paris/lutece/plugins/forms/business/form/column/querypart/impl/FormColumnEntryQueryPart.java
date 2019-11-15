@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,6 @@ public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
             FormColumnEntry formColumnEntry = (FormColumnEntry) column;
             return formColumnEntry.getListEntryCode( );
         }
-        return null;
+        return new ArrayList<>( );
     }
 }

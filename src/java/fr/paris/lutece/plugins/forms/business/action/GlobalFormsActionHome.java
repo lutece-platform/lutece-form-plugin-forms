@@ -82,8 +82,6 @@ public final class GlobalFormsActionHome
      */
     public static GlobalFormsAction selectGlobalFormActionByCode( String strCode, Plugin plugin, Locale locale )
     {
-        GlobalFormsAction globalFormAction = _dao.selectGlobalFormsActionByCode( strCode, plugin, locale );
-
-        return globalFormAction;
+        return _dao.selectGlobalFormsActionByCode( strCode, plugin, locale );
     }
 }

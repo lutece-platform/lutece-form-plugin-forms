@@ -219,7 +219,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         mapFormResponseDetailsModel.put( MARK_FORM_RESPONSE, formResponse );
         mapFormResponseDetailsModel.put( MARK_FORM, form );
 
-        List<Step> listSteps = new ArrayList<>( );
         Map<Integer, Step> mapSteps = new HashMap<>( );
         List<Integer> listStepsOfForm = StepHome.getIdStepsListByForm( form.getId( ) );
         List<FormResponseStep> listFormResponseStep = formResponse.getSteps( );
@@ -239,8 +238,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             }
         }
 
-        listStepsOrdered.stream( ).forEach( nIdStep -> listSteps.add( StepHome.findByPrimaryKey( nIdStep ) ) );
-
+        List<Step> listSteps = listStepsOrdered.stream( ).map( StepHome::findByPrimaryKey ).collect( Collectors.toList( ) );
         List<String> listStepDisplayTree = buildFormStepDisplayTreeList( request, listSteps, formResponse );
         listSteps.stream( ).forEach( step -> mapSteps.put( step.getId( ), step ) );
 

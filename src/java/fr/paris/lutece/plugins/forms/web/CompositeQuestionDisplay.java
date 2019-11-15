@@ -94,12 +94,9 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     /**
      * Constructor
      * 
-     * @param formDisplay
-     *            the form display
-     * @param formResponse
-     *            the form response
-     * @param nIterationNumber
-     *            the iteration number
+     * @param formDisplay      the form display
+     * @param formResponse     the form response
+     * @param nIterationNumber the iteration number
      */
     public CompositeQuestionDisplay( FormDisplay formDisplay, FormResponse formResponse, int nIterationNumber )
     {
@@ -112,10 +109,8 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     /**
      * Initializes the composite
      * 
-     * @param formResponse
-     *            the form response
-     * @param nIterationNumber
-     *            the iteration number
+     * @param formResponse     the form response
+     * @param nIterationNumber the iteration number
      */
     private void initComposite( FormResponse formResponse, int nIterationNumber )
     {
@@ -138,29 +133,30 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     /**
      * 
-     * @param formResponse
-     *            the formResponse
+     * @param formResponse the formResponse
      * @return the current question from the given formResponse
      */
     private Question getQuestionFromFormResponse( FormResponse formResponse )
     {
-        if ( formResponse != null && !formResponse.getSteps( ).isEmpty( ) )
+        if ( formResponse == null || formResponse.getSteps( ).isEmpty( ) )
         {
-            List<FormResponseStep> listSteps = formResponse.getSteps( );
+            return null;
+        }
 
-            for ( FormResponseStep formResponseStep : listSteps )
+        List<FormResponseStep> listSteps = formResponse.getSteps( );
+
+        for ( FormResponseStep formResponseStep : listSteps )
+        {
+            if ( formResponseStep.getStep( ).getId( ) == _question.getIdStep( ) )
             {
-                if ( formResponseStep.getStep( ).getId( ) == _question.getIdStep( ) )
-                {
-                    List<FormQuestionResponse> questionsResponse = formResponseStep.getQuestions( );
+                List<FormQuestionResponse> questionsResponse = formResponseStep.getQuestions( );
 
-                    for ( FormQuestionResponse questionResponse : questionsResponse )
+                for ( FormQuestionResponse questionResponse : questionsResponse )
+                {
+                    if ( questionResponse.getQuestion( ).getId( ) == _question.getId( ) && questionResponse
+                            .getQuestion( ).getIterationNumber( ) == _question.getIterationNumber( ) )
                     {
-                        if ( questionResponse.getQuestion( ).getId( ) == _question.getId( )
-                                && questionResponse.getQuestion( ).getIterationNumber( ) == _question.getIterationNumber( ) )
-                        {
-                            return questionResponse.getQuestion( );
-                        }
+                        return questionResponse.getQuestion( );
                     }
                 }
             }
@@ -173,13 +169,15 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
      * {@inheritDoc}
      */
     @Override
-    public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
+    public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse,
+            Locale locale, DisplayType displayType )
     {
         String strQuestionTemplate = StringUtils.EMPTY;
 
         if ( _question.getEntry( ) != null )
         {
-            IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( _question.getEntry( ).getEntryType( ) );
+            IEntryDisplayService displayService = EntryServiceManager.getInstance( )
+                    .getEntryDisplayService( _question.getEntry( ).getEntryType( ) );
 
             if ( displayService != null )
             {
@@ -191,14 +189,16 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
                 _model.put( MARK_COMPLETENESS_FO, displayType == DisplayType.COMPLETE_FRONTOFFICE );
 
-                strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale, _model, displayType );
+                strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale,
+                        _model, displayType );
 
                 _model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
                 _model.put( FormsConstants.MARK_QUESTION, _question );
                 if ( _formDisplay.getDisplayControl( ) != null )
                 {
                     Control control = _formDisplay.getDisplayControl( );
-                    IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+                    IValidator validator = EntryServiceManager.getInstance( )
+                            .getValidator( control.getValidatorName( ) );
 
                     _model.put( FormsConstants.MARK_VALIDATOR, validator );
                     Control controlNew = control.clone( );
@@ -207,20 +207,26 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
                     _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
 
-                    int questionControlStep = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).stream( ).findFirst( ).get( ) ).getIdStep( );
+                    int questionControlStep = QuestionHome
+                            .findByPrimaryKey( control.getListIdQuestion( ).stream( ).findFirst( ).get( ) )
+                            .getIdStep( );
                     if ( questionControlStep != _question.getIdStep( ) )
                     {
                         List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
-                                .filter( questionReponse -> control.getListIdQuestion( ).contains( questionReponse.getQuestion( ).getId( ) ) )
+                                .filter( questionReponse -> control.getListIdQuestion( )
+                                        .contains( questionReponse.getQuestion( ).getId( ) ) )
                                 .collect( Collectors.toList( ) );
-                        _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, validator.validate( listFormQuestionReponseToCheck, control ) );
+                        _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION,
+                                validator.validate( listFormQuestionReponseToCheck, control ) );
 
                     }
                 }
 
-                HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, _model );
+                HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ),
+                        locale, _model );
 
-                strQuestionTemplate = htmlTemplateQuestion != null ? htmlTemplateQuestion.getHtml( ) : StringUtils.EMPTY;
+                strQuestionTemplate = htmlTemplateQuestion != null ? htmlTemplateQuestion.getHtml( )
+                        : StringUtils.EMPTY;
             }
         }
 
@@ -228,10 +234,10 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     }
 
     /**
-     * Finds the responses associated to this instance among the specified list of form question responses
+     * Finds the responses associated to this instance among the specified list of
+     * form question responses
      * 
-     * @param listFormQuestionResponse
-     *            the list of form question responses
+     * @param listFormQuestionResponse the list of form question responses
      * @return the responses
      */
     private List<Response> findResponses( List<FormQuestionResponse> listFormQuestionResponse )
@@ -244,7 +250,8 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             {
                 Question question = formQuestionResponse.getQuestion( );
 
-                if ( _question.getId( ) == question.getId( ) && _question.getIterationNumber( ) == question.getIterationNumber( ) )
+                if ( _question.getId( ) == question.getId( )
+                        && _question.getIterationNumber( ) == question.getIterationNumber( ) )
                 {
                     listResponse = formQuestionResponse.getEntryResponse( );
                     _question.setIsVisible( true );
@@ -259,8 +266,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     /**
      * Finds the template to use for the specified display type
      * 
-     * @param displayType
-     *            the display type
+     * @param displayType the display type
      * @return the template
      */
     private String findTemplateFor( DisplayType displayType )
@@ -307,16 +313,15 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     /**
      * 
-     * @param listResponse
-     *            The current question responses
-     * @param displayType
-     *            The current displayType
+     * @param listResponse The current question responses
+     * @param displayType  The current displayType
      */
     private void setQuestionVisibility( List<Response> listResponse, DisplayType displayType )
     {
         if ( displayType == DisplayType.READONLY_BACKOFFICE && _formDisplay != null )
         {
-            List<Control> listConditionalControl = ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ), ControlType.CONDITIONAL );
+            List<Control> listConditionalControl = ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ),
+                    ControlType.CONDITIONAL );
             Control controlConditionnalDisplay = null;
 
             if ( !listConditionalControl.isEmpty( ) )
@@ -389,14 +394,17 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
      * {@inheritDoc}
      */
     @Override
-    public void removeIteration( HttpServletRequest request, int nIdGroupParent, int nIndexIterationToRemove, FormResponse formResponse )
+    public void removeIteration( HttpServletRequest request, int nIdGroupParent, int nIndexIterationToRemove,
+            FormResponse formResponse )
     {
         FormDisplay formDisplayParent = FormDisplayHome.findByPrimaryKey( _formDisplay.getParentId( ) );
 
-        if ( formDisplayParent != null && FormsConstants.COMPOSITE_GROUP_TYPE.equals( formDisplayParent.getCompositeType( ) )
+        if ( formDisplayParent != null
+                && FormsConstants.COMPOSITE_GROUP_TYPE.equals( formDisplayParent.getCompositeType( ) )
                 && formDisplayParent.getCompositeId( ) == nIdGroupParent )
         {
-            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( _question.getEntry( ).getEntryType( ) );
+            IEntryDataService entryDataService = EntryServiceManager.getInstance( )
+                    .getEntryDataService( _question.getEntry( ).getEntryType( ) );
 
             if ( entryDataService != null )
             {

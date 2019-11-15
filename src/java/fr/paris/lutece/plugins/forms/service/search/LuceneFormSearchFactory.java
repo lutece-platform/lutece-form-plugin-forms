@@ -81,6 +81,7 @@ public class LuceneFormSearchFactory
     /**
      * Return the IndexSearcher to use for the search
      * 
+     * @deprecated
      * @return the index searcher to use for the search
      * @throws IOException
      *             - if there is a low-level IO error
@@ -116,7 +117,7 @@ public class LuceneFormSearchFactory
 
                 IndexWriterConfig conf = new IndexWriterConfig( getAnalyzer( ) );
 
-                if ( bCreateIndex )
+                if ( Boolean.TRUE.equals( bCreateIndex ) )
                 {
                     conf.setOpenMode( OpenMode.CREATE );
                 }
@@ -145,7 +146,7 @@ public class LuceneFormSearchFactory
      */
     public Directory getDirectory( ) throws IOException
     {
-        String strIndex = AppPathService.getPath( PATH_INDEX );
+        String strIndex;
 
         boolean indexInWebapp = AppPropertiesService.getPropertyBoolean( PATH_INDEX_IN_WEBAPP, true );
         if ( indexInWebapp )

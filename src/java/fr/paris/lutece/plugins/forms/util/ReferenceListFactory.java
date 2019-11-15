@@ -49,6 +49,7 @@ public class ReferenceListFactory
 {
     // Constants
     private static final String DEFAULT_NAME = StringUtils.EMPTY;
+    private static final String DEFAULT_CODE = FormsConstants.REFERENCE_ITEM_DEFAULT_CODE;
 
     // Variables
     private final Collection<?> _collectionItem;
@@ -56,7 +57,7 @@ public class ReferenceListFactory
     private final String _strNameAttribute;
     private boolean _bNumerical = Boolean.TRUE;
     private boolean _bDefaultSortNeeded = Boolean.FALSE;
-    private final String _strDefaultCode = FormsConstants.REFERENCE_ITEM_DEFAULT_CODE;
+    
     private String _strDefaultName = FormsConstants.REFERENCE_ITEM_DEFAULT_NAME;
 
     /**
@@ -106,7 +107,7 @@ public class ReferenceListFactory
         ReferenceList referenceListResult = new ReferenceList( );
 
         // Add the default ReferenceItem if necessary
-        referenceListResult.addItem( _strDefaultCode, _strDefaultName );
+        referenceListResult.addItem( DEFAULT_CODE, _strDefaultName );
 
         if ( _collectionItem != null && !_collectionItem.isEmpty( ) )
         {

@@ -436,7 +436,8 @@ public class FormService
      */
     public void fireFormResponseEventCreation( Form form )
     {
-        new Thread( ( ) -> {
+        new Thread( ( ) ->
+        {
             List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
             for ( FormResponse formResponse : listFormResponse )
@@ -470,7 +471,8 @@ public class FormService
      */
     public void fireFormResponseEventUpdate( Form form )
     {
-        new Thread( ( ) -> {
+        new Thread( ( ) ->
+        {
             List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
             for ( FormResponse formResponse : listFormResponse )
@@ -505,7 +507,8 @@ public class FormService
      */
     public void fireFormResponseEventDelete( Form form )
     {
-        new Thread( ( ) -> {
+        new Thread( ( ) ->
+        {
             List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
             for ( FormResponse formResponse : listFormResponse )

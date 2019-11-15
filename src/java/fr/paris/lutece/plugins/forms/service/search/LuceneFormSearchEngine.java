@@ -133,7 +133,6 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 SearchItem si = new SearchItem( document );
                 listResults.add( Integer.parseInt( si.getId( ) ) );
             }
-            ir.close( );
         }
         catch( Exception e )
         {
@@ -195,7 +194,6 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 Document document = searcher.doc( hits [i].doc );
                 listResults.add( new FormResponseSearchItem( document ) );
             }
-            ir.close( );
         }
         catch( IOException e )
         {

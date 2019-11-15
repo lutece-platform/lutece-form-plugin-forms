@@ -33,22 +33,19 @@
  */
 package fr.paris.lutece.plugins.forms.business.action;
 
+import java.util.Locale;
+
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.portal.service.rbac.Permission;
 import fr.paris.lutece.portal.service.rbac.ResourceIdService;
 import fr.paris.lutece.portal.service.rbac.ResourceType;
 import fr.paris.lutece.portal.service.rbac.ResourceTypeManager;
-import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
-import java.util.Locale;
-import org.apache.commons.lang3.StringUtils;
 
 public class GlobalFormsActionIdService extends ResourceIdService
 {
-
-    public GlobalFormsActionIdService( )
-    {
-    }
 
     /**
      * {@inheritDoc}
@@ -76,17 +73,11 @@ public class GlobalFormsActionIdService extends ResourceIdService
     @Override
     public ReferenceList getResourceIdList( Locale locale )
     {
-        ReferenceList refList = new ReferenceList( );
-
-        GlobalFormsActionHome.selectAllFormActions( FormsPlugin.getPlugin( ), locale ).forEach( action -> {
-            ReferenceItem item = new ReferenceItem( );
-            item.setCode( action.getCode( ) );
-            item.setName( action.getName( ) );
-
-            refList.add( item );
-        } );
-
-        return refList;
+        ReferenceList referenceList = new ReferenceList( );
+        GlobalFormsActionHome.selectAllFormActions( FormsPlugin.getPlugin( ), locale )
+            .stream( )
+            .forEach( ( GlobalFormsAction action ) -> referenceList.addItem( action.getCode( ), action.getName( ) ) );
+        return referenceList;
     }
 
     /**
@@ -95,7 +86,8 @@ public class GlobalFormsActionIdService extends ResourceIdService
     @Override
     public String getTitle( String strCode, Locale locale )
     {
-        GlobalFormsAction action = GlobalFormsActionHome.selectGlobalFormActionByCode( strCode, FormsPlugin.getPlugin( ), locale );
+        GlobalFormsAction action = GlobalFormsActionHome.selectGlobalFormActionByCode( strCode,
+                FormsPlugin.getPlugin( ), locale );
         return ( action != null ) ? action.getName( ) : StringUtils.EMPTY;
     }
 

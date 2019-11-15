@@ -100,6 +100,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 {
 
     private static final long serialVersionUID = 7515975782241863390L;
+    private static final String ERROR_CODE_EXISTS = " Provided code already exists ";
 
     private static final String EMPTY_STRING = "";
 
@@ -286,7 +287,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( MARK_LIST_PARAM_DEFAULT_VALUES, listParamDefaultValues );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
 
-        if ( _entry.getEntryType( ).getComment( ) )
+        if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
             setPageTitleProperty( PROPERTY_CREATE_COMMENT_TITLE );
         }
@@ -536,7 +537,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( " Provided code already exists " + e.getCode( ), e );
+            AppLogService.error( ERROR_CODE_EXISTS + e.getCode( ), e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
@@ -562,7 +563,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( " Provided code already exists ", e );
+            AppLogService.error( ERROR_CODE_EXISTS, e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
             return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
         }
@@ -629,7 +630,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
 
         _question = new Question( );
-        String strTitle = _entry.getEntryType( ).getComment( ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
+        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
         _question.setTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
         _question.setDescription( _entry.getComment( ) );
@@ -810,7 +811,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
 
-        if ( _entry.getEntryType( ).getComment( ) )
+        if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
             setPageTitleProperty( PROPERTY_MODIFY_COMMENT_TITLE );
         }
@@ -899,7 +900,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             }
         }
 
-        String strTitle = _entry.getEntryType( ).getComment( ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
+        String strTitle = Boolean.TRUE.equals(_entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
         _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
         _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
@@ -941,7 +942,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( " Provided code already exists " + e.getCode( ), e );
+            AppLogService.error( ERROR_CODE_EXISTS + e.getCode( ), e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
@@ -969,7 +970,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( " Provided code already exists ", e );
+            AppLogService.error( ERROR_CODE_EXISTS, e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,

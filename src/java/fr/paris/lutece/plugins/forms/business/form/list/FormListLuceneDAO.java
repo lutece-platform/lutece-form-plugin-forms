@@ -97,12 +97,8 @@ public class FormListLuceneDAO implements IFormListDAO
 
             for ( IFormColumnQueryPart formColumnQueryPart : listFormColumnQueryPart )
             {
-                if ( formColumnQueryPart instanceof IFormColumnQueryPart )
-                {
-                    FormColumnCell formColumnCell = ( (IFormColumnQueryPart) formColumnQueryPart ).getFormColumnCell( formResponseSearchItem );
-                    formResponseItem.addFormColumnCell( formColumnCell );
-                }
-
+                FormColumnCell formColumnCell = formColumnQueryPart.getFormColumnCell( formResponseSearchItem );
+                formResponseItem.addFormColumnCell( formColumnCell );
             }
         }
         formPanel.setFormResponseItemList( listFormResponseItem );

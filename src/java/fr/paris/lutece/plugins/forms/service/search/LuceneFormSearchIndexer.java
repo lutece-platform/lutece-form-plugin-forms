@@ -211,7 +211,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         _bIndexToLunch.set( true );
         if ( _bIndexIsRunning.compareAndSet( false, true ) )
         {
-            new Thread( ( ) -> {
+            new Thread( ( ) ->
+            {
                 try
                 {
                     List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
@@ -262,8 +263,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         _bIndexToLunch.set( true );
         if ( _bIndexIsRunning.compareAndSet( false, true ) )
         {
-            new Thread( ( ) -> {
-
+            new Thread( ( ) ->
+            {
                 try
                 {
                     while ( _bIndexToLunch.compareAndSet( true, false ) )
@@ -481,8 +482,9 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      */
     private void deleteIndex( )
     {
-        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
+        if ( _indexWriter == null || !_indexWriter.isOpen( ) ) {
             initIndexing( true );
+        }
         try
         {
             _indexWriter.deleteAll( );
@@ -738,13 +740,17 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private String getFieldName( fr.paris.lutece.plugins.genericattributes.business.Field responseField, Response response )
     {
         if ( responseField.getIdField( ) > 0 )
+        {
             return String.valueOf( responseField.getIdField( ) );
+        }
         if ( !StringUtils.isEmpty( responseField.getCode( ) ) )
+        {
             return responseField.getCode( );
-
+        }
         if ( !StringUtils.isEmpty( responseField.getTitle( ) ) )
+        {
             return responseField.getTitle( );
-
+        }
         return String.valueOf( response.getIdResponse( ) );
     }
 

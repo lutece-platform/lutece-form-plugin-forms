@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.forms.web.form.multiview.util;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -92,7 +91,7 @@ public final class FormListTemplateBuilder
     private static final String PROPERTY_POPUP_CONTENT = "popupContent";
 
     // To serialize to geojson
-    private static ObjectMapper mapper = new ObjectMapper( );
+    private static ObjectMapper _mapper = new ObjectMapper( );
 
     /**
      * Constructor
@@ -172,7 +171,7 @@ public final class FormListTemplateBuilder
             String strOriginalBeanName = SpringContextService.getContext( ).getAliases( BEAN_NAME_MULTIVIEWMAP ) [0];
 
             // TODO copypasted from SpringContextService, maybe this need to be public
-            int nPos = strOriginalBeanName.indexOf( "." );
+            int nPos = strOriginalBeanName.indexOf( '.' );
             String strPrefix = null;
             if ( nPos > 0 )
             {
@@ -210,10 +209,11 @@ public final class FormListTemplateBuilder
         List<Object> listValidatedCoordinates = listStoredCoordinates
                 .stream( )
                 .filter( Objects::nonNull )
-                .map( str -> {
+                .map( ( Object str ) ->
+                {
                     try
                     {
-                        return mapper.readValue( (String) str, Number.class );
+                        return _mapper.readValue( (String) str, Number.class );
                     }
                     catch( IOException e )
                     {
@@ -236,7 +236,7 @@ public final class FormListTemplateBuilder
         root.put( GEOJSON_PROPERTIES, properties );
         try
         {
-            return Optional.of( mapper.writeValueAsString( root ) );
+            return Optional.of( _mapper.writeValueAsString( root ) );
         }
         catch( JsonProcessingException e )
         {
