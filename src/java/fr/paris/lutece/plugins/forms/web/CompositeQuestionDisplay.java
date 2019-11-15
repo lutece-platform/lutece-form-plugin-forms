@@ -174,42 +174,46 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
         String strQuestionTemplate = StringUtils.EMPTY;
 
-        if ( _question.getEntry( ) != null )
+        if ( _question.getEntry( ) == null )
         {
-            IEntryDisplayService displayService = EntryServiceManager.getInstance( )
-                    .getEntryDisplayService( _question.getEntry( ).getEntryType( ) );
+            return strQuestionTemplate;
+        }
 
-            if ( displayService != null )
+        IEntryDisplayService displayService = EntryServiceManager.getInstance( )
+                .getEntryDisplayService( _question.getEntry( ).getEntryType( ) );
+
+        if ( displayService != null )
+        {
+            List<Response> listResponse = findResponses( listFormQuestionResponse );
+            setQuestionVisibility( listResponse, displayType );
+
+            _model.put( MARK_ENTRY_ITERATION_NUMBER, _question.getIterationNumber( ) );
+            _model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
+            _model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
+            _model.put( MARK_COMPLETENESS_FO, displayType == DisplayType.COMPLETE_FRONTOFFICE );
+
+            strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale,
+                    _model, displayType );
+
+            _model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
+            _model.put( FormsConstants.MARK_QUESTION, _question );
+            if ( _formDisplay.getDisplayControl( ) != null )
             {
-                List<Response> listResponse = findResponses( listFormQuestionResponse );
-                setQuestionVisibility( listResponse, displayType );
+                Control control = _formDisplay.getDisplayControl( );
+                IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
 
-                _model.put( MARK_ENTRY_ITERATION_NUMBER, _question.getIterationNumber( ) );
-                _model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
-                _model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
-                _model.put( MARK_COMPLETENESS_FO, displayType == DisplayType.COMPLETE_FRONTOFFICE );
+                _model.put( FormsConstants.MARK_VALIDATOR, validator );
+                Control controlNew = control.clone( );
+                controlNew.setValue( validator.getJavascriptControlValue( control ) );
+                _model.put( FormsConstants.MARK_CONTROL, controlNew );
 
-                strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale,
-                        _model, displayType );
+                _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
 
-                _model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
-                _model.put( FormsConstants.MARK_QUESTION, _question );
-                if ( _formDisplay.getDisplayControl( ) != null )
+                if ( CollectionUtils.isNotEmpty( control.getListIdQuestion( ) )
+                        && CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
                 {
-                    Control control = _formDisplay.getDisplayControl( );
-                    IValidator validator = EntryServiceManager.getInstance( )
-                            .getValidator( control.getValidatorName( ) );
-
-                    _model.put( FormsConstants.MARK_VALIDATOR, validator );
-                    Control controlNew = control.clone( );
-                    controlNew.setValue( validator.getJavascriptControlValue( control ) );
-                    _model.put( FormsConstants.MARK_CONTROL, controlNew );
-
-                    _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
-
                     int questionControlStep = QuestionHome
-                            .findByPrimaryKey( control.getListIdQuestion( ).stream( ).findFirst( ).get( ) )
-                            .getIdStep( );
+                            .findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) ).getIdStep( );
                     if ( questionControlStep != _question.getIdStep( ) )
                     {
                         List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
@@ -221,13 +225,12 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
                     }
                 }
-
-                HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ),
-                        locale, _model );
-
-                strQuestionTemplate = htmlTemplateQuestion != null ? htmlTemplateQuestion.getHtml( )
-                        : StringUtils.EMPTY;
             }
+
+            HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale,
+                    _model );
+
+            strQuestionTemplate = htmlTemplateQuestion != null ? htmlTemplateQuestion.getHtml( ) : StringUtils.EMPTY;
         }
 
         return strQuestionTemplate;
@@ -329,55 +332,48 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 controlConditionnalDisplay = listConditionalControl.get( 0 );
             }
 
-            if ( controlConditionnalDisplay != null )
-            {
-                if ( CollectionUtils.isNotEmpty( listResponse ) )
-                {
-                    _question.setIsVisible( true );
-                }
-            }
-            else
+            if ( controlConditionnalDisplay == null || CollectionUtils.isNotEmpty( listResponse ) )
             {
                 _question.setIsVisible( true );
             }
         }
-        if ( _question.getEntry( ) != null )
+        if ( _question.getEntry( ) == null )
+        {
+            return;
+        }
+
+        if ( displayType == DisplayType.EDITION_FRONTOFFICE )
         {
 
-            if ( displayType == DisplayType.EDITION_FRONTOFFICE )
-            {
+            _question.setIsVisible( true );
+        }
 
-                _question.setIsVisible( true );
-            }
+        if ( displayType == DisplayType.EDITION_BACKOFFICE )
+        {
+            _question.setIsVisible( true );
 
-            if ( displayType == DisplayType.EDITION_BACKOFFICE )
-            {
-                _question.setIsVisible( true );
+        }
+        if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
+        {
+            _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
 
-            }
+        }
 
-            if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
-            {
-                _question.setIsVisible( CollectionUtils.isNotEmpty( listResponse ) );
+        if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
+        {
+            _question.setIsVisible( true );
 
-            }
+        }
+        if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
+        {
+            _question.setIsVisible( true );
 
-            if ( displayType == DisplayType.RESUBMIT_FRONTOFFICE )
-            {
-                _question.setIsVisible( true );
+        }
 
-            }
-            if ( displayType == DisplayType.COMPLETE_BACKOFFICE )
-            {
-                _question.setIsVisible( true );
+        if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
+        {
+            _question.setIsVisible( true );
 
-            }
-
-            if ( displayType == DisplayType.COMPLETE_FRONTOFFICE )
-            {
-                _question.setIsVisible( true );
-
-            }
         }
     }
 
