@@ -211,7 +211,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         _bIndexToLunch.set( true );
         if ( _bIndexIsRunning.compareAndSet( false, true ) )
         {
-            new Thread( ( ) -> {
+            new Thread( ( ) ->
+            {
                 try
                 {
                     List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
@@ -262,8 +263,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         _bIndexToLunch.set( true );
         if ( _bIndexIsRunning.compareAndSet( false, true ) )
         {
-            new Thread( ( ) -> {
-
+            new Thread( ( ) ->
+            {
                 try
                 {
                     while ( _bIndexToLunch.compareAndSet( true, false ) )
@@ -482,7 +483,9 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private void deleteIndex( )
     {
         if ( _indexWriter == null || !_indexWriter.isOpen( ) )
+        {
             initIndexing( true );
+        }
         try
         {
             _indexWriter.deleteAll( );
@@ -624,7 +627,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                         if ( responseField != null )
                         {
                             String getFieldName = getFieldName( responseField, response );
-                            fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_ );
+                            fieldNameBuilder.append( FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR );
                             fieldNameBuilder.append( getFieldName );
                         }
 
@@ -738,13 +741,17 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private String getFieldName( fr.paris.lutece.plugins.genericattributes.business.Field responseField, Response response )
     {
         if ( responseField.getIdField( ) > 0 )
+        {
             return String.valueOf( responseField.getIdField( ) );
+        }
         if ( !StringUtils.isEmpty( responseField.getCode( ) ) )
+        {
             return responseField.getCode( );
-
+        }
         if ( !StringUtils.isEmpty( responseField.getTitle( ) ) )
+        {
             return responseField.getTitle( );
-
+        }
         return String.valueOf( response.getIdResponse( ) );
     }
 
@@ -757,7 +764,9 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private String manageNullValue( String strValue )
     {
         if ( strValue == null )
+        {
             return StringUtils.EMPTY;
+        }
         return strValue;
     }
 

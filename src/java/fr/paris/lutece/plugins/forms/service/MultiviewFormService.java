@@ -66,6 +66,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service dedicated to managing of the multiview of forms
@@ -91,32 +92,30 @@ public final class MultiviewFormService
     }
 
     /**
-     * Populate the given FormPanel with the information from the given list of FormColumns and FormFilters
+     * Populate the given FormPanel with the information from the given list of
+     * FormColumns and FormFilters
      * 
-     * @param formPanel
-     *            The FormPanel used to retrieve the values of the FormColumns
-     * @param listFormColumn
-     *            The list of all FormColumn to use to be populated
-     * @param listFormFilter
-     *            The list of FormFilter to use for retrieving the data of the columns to populate
-     * @param nStartIndex
-     *            The start index of doc to load
-     * @param nPageSize
-     *            The size of page of docs to load
+     * @param formPanel      The FormPanel used to retrieve the values of the
+     *                       FormColumns
+     * @param listFormColumn The list of all FormColumn to use to be populated
+     * @param listFormFilter The list of FormFilter to use for retrieving the data
+     *                       of the columns to populate
+     * @param nStartIndex    The start index of doc to load
+     * @param nPageSize      The size of page of docs to load
      * @param sortConfig
      */
-    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
-            FormResponseItemSortConfig sortConfig )
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn,
+            List<FormFilter> listFormFilter, int nStartIndex, int nPageSize, FormResponseItemSortConfig sortConfig )
     {
         FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
-        formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig );
+        formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize,
+                sortConfig );
     }
 
     /**
      * Find the FormPanel which is active in the given list
      * 
-     * @param listFormPanelDisplay
-     *            The list to retrieve the active FormPanelDisplay
+     * @param listFormPanelDisplay The list to retrieve the active FormPanelDisplay
      * @return the IFormFilterPanelDisplay which is active or null if not found
      */
     public IFormPanelDisplay findActiveFormPanel( List<IFormPanelDisplay> listFormPanelDisplay )
@@ -163,7 +162,8 @@ public final class MultiviewFormService
         listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( ), column ) );
 
         // Then add global columns from config questions
-        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
+        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE )
+                ? QuestionHome.getQuestionsListUncomplete( )
                 : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
 
         addColumnFromConfig( mapFormColumns, listQuestions, true );
@@ -198,7 +198,8 @@ public final class MultiviewFormService
         Map<String, FormFilter> mapFormFilter = new HashMap<>( );
 
         // First add the XML-based filters
-        for ( IFormFilterConfiguration formFilterConfiguration : SpringContextService.getBeansOfType( IFormFilterConfiguration.class ) )
+        for ( IFormFilterConfiguration formFilterConfiguration : SpringContextService
+                .getBeansOfType( IFormFilterConfiguration.class ) )
         {
             FormFilter formFilter;
             if ( formFilterConfiguration instanceof FormFilterFormsConfiguration )
@@ -214,7 +215,8 @@ public final class MultiviewFormService
         }
 
         // Then add the global question-based for Filters
-        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
+        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE )
+                ? QuestionHome.getQuestionsListUncomplete( )
                 : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
 
         addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, true );
@@ -235,44 +237,43 @@ public final class MultiviewFormService
      * @param listQuestions
      * @param bGlobal
      */
-    private void addColumnFromConfig( Map<String, IFormColumn> mapColumns, List<Question> listQuestions, boolean bGlobal )
+    private void addColumnFromConfig( Map<String, IFormColumn> mapColumns, List<Question> listQuestions,
+            boolean bGlobal )
     {
         int nPosition = mapColumns.size( );
         for ( Question question : listQuestions )
         {
-            if ( ( bGlobal == true ) ? question.isVisibleMultiviewGlobal( ) : question.isVisibleMultiviewFormSelected( ) )
+            if ( bGlobal ? question.isVisibleMultiviewGlobal( ) : question.isVisibleMultiviewFormSelected( ) )
             {
                 question = QuestionHome.findByPrimaryKey( question.getId( ) );
 
                 if ( !mapColumns.keySet( ).contains( question.getColumnTitle( ) ) )
                 {
-                    IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
+                    IEntryDisplayService displayService = EntryServiceManager.getInstance( )
+                            .getEntryDisplayService( question.getEntry( ).getEntryType( ) );
                     IFormColumn column = displayService.getFormColumn( ++nPosition, question.getColumnTitle( ) );
-
-                    if ( column instanceof FormColumnEntry )
-                    {
-                        ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
-                    }
-                    if ( column instanceof FormColumnEntryGeolocation )
-                    {
-                        ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
-                    }
+                    addEntryCodeToColumn( column, question );
 
                     mapColumns.put( column.getFormColumnTitle( ), column );
                 }
                 else
                 {
                     IFormColumn column = mapColumns.get( question.getColumnTitle( ) );
-                    if ( column instanceof FormColumnEntry )
-                    {
-                        ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
-                    }
-                    if ( column instanceof FormColumnEntryGeolocation )
-                    {
-                        ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
-                    }
+                    addEntryCodeToColumn( column, question );
                 }
             }
+        }
+    }
+
+    private void addEntryCodeToColumn( IFormColumn column, Question question )
+    {
+        if ( column instanceof FormColumnEntry )
+        {
+            ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
+        }
+        if ( column instanceof FormColumnEntryGeolocation )
+        {
+            ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
         }
     }
 
@@ -283,50 +284,60 @@ public final class MultiviewFormService
      * @param listQuestions
      * @param bGlobal
      */
-    private void addFilterFromConfig( Map<String, FormFilter> mapFilters, List<Question> listQuestions, List<IFormColumn> listFormColumns, boolean bGlobal )
+    private void addFilterFromConfig( Map<String, FormFilter> mapFilters, List<Question> listQuestions,
+            List<IFormColumn> listFormColumns, boolean bGlobal )
     {
         int nPosition = mapFilters.size( );
-        for ( Question question : listQuestions )
+
+        List<Question> listFiltrableQuestions = listQuestions.stream( )
+                .filter( question -> bGlobal ? question.isFiltrableMultiviewGlobal( )
+                        : question.isFiltrableMultiviewFormSelected( ) )
+                .collect( Collectors.toList( ) );
+
+        for ( Question question : listFiltrableQuestions )
         {
-            if ( ( bGlobal == true ) ? question.isFiltrableMultiviewGlobal( ) : question.isFiltrableMultiviewFormSelected( ) )
+            question = QuestionHome.findByPrimaryKey( question.getId( ) );
+
+            if ( mapFilters.keySet( ).contains( question.getCode( ) ) )
             {
-                question = QuestionHome.findByPrimaryKey( question.getId( ) );
+                continue;
+            }
 
-                if ( !mapFilters.keySet( ).contains( question.getCode( ) ) )
+            IEntryDisplayService displayService = EntryServiceManager.getInstance( )
+                    .getEntryDisplayService( question.getEntry( ).getEntryType( ) );
+
+            if ( displayService instanceof EntryTypeDateDisplayService )
+            {
+                FormFilter formFilter = new FormFilter( );
+                IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++,
+                        question.getTitle( ),
+                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( )
+                                + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0"
+                                + FormResponseSearchItem.FIELD_DATE_SUFFIX );
+
+                formFilter.setFormFilterConfiguration( formFilterConfiguration );
+                mapFilters.put( question.getCode( ), formFilter );
+            }
+            if ( displayService instanceof EntryTypeDefaultDisplayService )
+            {
+                FormFilter formFilter = new FormFilter( );
+
+                List<IFormColumn> listFormColumnsEntry = listFormColumns.stream( )
+                        .filter( c -> c instanceof FormColumnEntry ).collect( Collectors.toList( ) );
+
+                for ( IFormColumn column : listFormColumnsEntry )
                 {
-                    IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
-
-                    if ( displayService instanceof EntryTypeDateDisplayService )
+                    if ( column.getFormColumnTitle( ).equals( question.getColumnTitle( ) ) )
                     {
-                        FormFilter formFilter = new FormFilter( );
-                        IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++, question.getTitle( ),
-                                FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0"
-                                        + FormResponseSearchItem.FIELD_DATE_SUFFIX );
+                        IFormFilterConfiguration formFilterConfiguration = new FormFilterEntryConfiguration(
+                                nPosition++, question.getTitle( ),
+                                FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ), column );
 
                         formFilter.setFormFilterConfiguration( formFilterConfiguration );
                         mapFilters.put( question.getCode( ), formFilter );
                     }
-                    if ( displayService instanceof EntryTypeDefaultDisplayService )
-                    {
-                        FormFilter formFilter = new FormFilter( );
-
-                        for ( IFormColumn column : listFormColumns )
-                        {
-                            if ( column.getFormColumnTitle( ).equals( question.getColumnTitle( ) ) )
-                            {
-                                if ( column instanceof FormColumnEntry )
-                                {
-                                    IFormFilterConfiguration formFilterConfiguration = new FormFilterEntryConfiguration( nPosition++, question.getTitle( ),
-                                            FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ), column );
-
-                                    formFilter.setFormFilterConfiguration( formFilterConfiguration );
-                                    mapFilters.put( question.getCode( ), formFilter );
-                                }
-                            }
-                        }
-
-                    }
                 }
+
             }
         }
     }
@@ -334,8 +345,7 @@ public final class MultiviewFormService
     /**
      * Filter the columns with the multiview config
      * 
-     * @param mapColumns
-     *            the map columns
+     * @param mapColumns the map columns
      */
     private void filterWithMultiviewConfig( Map<String, IFormColumn> mapColumns )
     {

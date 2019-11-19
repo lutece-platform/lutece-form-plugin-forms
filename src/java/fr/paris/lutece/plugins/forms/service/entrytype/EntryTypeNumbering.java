@@ -111,16 +111,10 @@ public class EntryTypeNumbering extends AbstractEntryTypeNumbering implements IR
         String strResponseReference = listResponseReference.get( 0 ).getResponseValue( );
         String strResponseNew = listResponseNew.get( 0 ).getResponseValue( );
 
-        if ( strResponseReference == null && strResponseNew == null )
+        if ( strResponseReference == null )
         {
-            return false;
+            return strResponseNew != null;
         }
-
-        if ( strResponseReference == null && strResponseNew != null )
-        {
-            return true;
-        }
-
         return !strResponseReference.equals( strResponseNew );
     }
 }

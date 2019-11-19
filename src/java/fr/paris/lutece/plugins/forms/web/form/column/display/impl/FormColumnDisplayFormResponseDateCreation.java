@@ -96,8 +96,6 @@ public class FormColumnDisplayFormResponseDateCreation extends AbstractFormColum
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_FORM_RESPONSE_DATE_CREATION, dateFormResponseDateCreation );
 
-        String strFormResponseDateCreationTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
-
-        return strFormResponseDateCreationTemplate;
+        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }
 }

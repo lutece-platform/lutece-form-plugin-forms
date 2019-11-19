@@ -182,8 +182,6 @@ public final class FormMessageDAO implements IFormMessageDAO
     private FormMessage dataToObject( DAOUtil daoUtil )
     {
         FormMessage formMessage = new FormMessage( );
-
-        formMessage = new FormMessage( );
         formMessage.setId( daoUtil.getInt( "id" ) );
         formMessage.setIdForm( daoUtil.getInt( "id_form" ) );
         formMessage.setEndMessageDisplay( daoUtil.getBoolean( "end_message_display" ) );

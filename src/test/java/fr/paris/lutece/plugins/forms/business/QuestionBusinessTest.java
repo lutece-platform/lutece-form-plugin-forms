@@ -54,6 +54,8 @@ public class QuestionBusinessTest extends LuteceTestCase
     {
         // Initialize an object
         Question question = new Question( );
+        question.setCode( "code" );
+        question.setColumnTitle( "column_title" );
         question.setTitle( TITLE1 );
         question.setDescription( DESCRIPTION1 );
         question.setIdEntry( IDENTRY1 );

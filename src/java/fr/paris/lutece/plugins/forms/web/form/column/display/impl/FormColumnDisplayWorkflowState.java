@@ -94,8 +94,6 @@ public class FormColumnDisplayWorkflowState extends AbstractFormColumnDisplay
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_WORKFLOW_STATE_NAME, strWorkflowStateName );
 
-        String strWorkflowStateTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
-
-        return strWorkflowStateTemplate;
+        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }
 }

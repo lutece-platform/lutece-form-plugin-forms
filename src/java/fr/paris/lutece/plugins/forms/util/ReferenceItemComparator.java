@@ -56,7 +56,7 @@ public class ReferenceItemComparator implements Comparator<ReferenceItem>, Seria
     @Override
     public int compare( ReferenceItem referenceItemOne, ReferenceItem referenceItemTwo )
     {
-        int nComparisonResult = NumberUtils.INTEGER_ZERO;
+        int nComparisonResult;
 
         if ( referenceItemOne != null )
         {

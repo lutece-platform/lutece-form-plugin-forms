@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -87,6 +88,8 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
                     case CONSTANT_FIELD_Y:
                         mapFormColumnValues.put( strYValue, field.getValue( ) );
                         break;
+                    default:
+                        break;
                 }
             }
         }
@@ -107,6 +110,6 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
             FormColumnEntryGeolocation formColumnEntry = (FormColumnEntryGeolocation) column;
             return formColumnEntry.getListEntryCode( );
         }
-        return null;
+        return new ArrayList<>( );
     }
 }

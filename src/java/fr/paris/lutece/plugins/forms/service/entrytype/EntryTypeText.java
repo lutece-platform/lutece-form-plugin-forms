@@ -109,14 +109,9 @@ public class EntryTypeText extends AbstractEntryTypeText implements IResponseCom
         String strResponseReference = listResponseReference.get( 0 ).getResponseValue( );
         String strResponseNew = listResponseNew.get( 0 ).getResponseValue( );
 
-        if ( strResponseReference == null && strResponseNew == null )
+        if ( strResponseReference == null )
         {
-            return false;
-        }
-
-        if ( strResponseReference == null && strResponseNew != null )
-        {
-            return true;
+            return strResponseNew != null;
         }
 
         return !strResponseReference.equals( strResponseNew );

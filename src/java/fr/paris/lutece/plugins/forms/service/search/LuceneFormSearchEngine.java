@@ -90,7 +90,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
             Collection<String> fields = new ArrayList<>( );
             Collection<BooleanClause.Occur> flags = new ArrayList<>( );
 
-            QueryParser qpContent = new QueryParser( FormResponseSearchItem.FIELD_CONTENTS, IndexationService.getAnalyser( ) );
+            QueryParser qpContent = new QueryParser( SearchItem.FIELD_CONTENTS, IndexationService.getAnalyser( ) );
             QueryParser qpDateCreation = new QueryParser( FormResponseSearchItem.FIELD_DATE_CREATION, IndexationService.getAnalyser( ) );
             QueryParser qpDateUpdate = new QueryParser( FormResponseSearchItem.FIELD_DATE_UPDATE, IndexationService.getAnalyser( ) );
             QueryParser qpGuid = new QueryParser( FormResponseSearchItem.FIELD_GUID, IndexationService.getAnalyser( ) );
@@ -110,7 +110,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
             queries.add( queryDateUpdate.toString( ) );
             queries.add( queryGuid.toString( ) );
 
-            fields.add( FormResponseSearchItem.FIELD_CONTENTS );
+            fields.add( SearchItem.FIELD_CONTENTS );
             fields.add( FormResponseSearchItem.FIELD_DATE_CREATION );
             fields.add( FormResponseSearchItem.FIELD_DATE_UPDATE );
             fields.add( FormResponseSearchItem.FIELD_GUID );
@@ -133,7 +133,6 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 SearchItem si = new SearchItem( document );
                 listResults.add( Integer.parseInt( si.getId( ) ) );
             }
-            ir.close( );
         }
         catch( Exception e )
         {
@@ -195,7 +194,6 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 Document document = searcher.doc( hits [i].doc );
                 listResults.add( new FormResponseSearchItem( document ) );
             }
-            ir.close( );
         }
         catch( IOException e )
         {

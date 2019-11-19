@@ -147,29 +147,6 @@ public class FormsResourceIdService extends ResourceIdService
         permission.setPermissionTitleKey( PROPERTY_LABEL_EDIT_PARAMS );
         resourceType.registerPermission( permission );
 
-        /*
-         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_COPY ); permission.setPermissionTitleKey( PROPERTY_LABEL_COPY );
-         * resourceType.registerPermission( permission );
-         * 
-         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_TEST ); permission.setPermissionTitleKey( PROPERTY_LABEL_TEST );
-         * resourceType.registerPermission( permission );
-         * 
-         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_CHANGE_STATE ); permission.setPermissionTitleKey( PROPERTY_LABEL_CHANGE_STATE
-         * ); resourceType.registerPermission( permission );
-         * 
-         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_MANAGE_VALIDATOR ); permission.setPermissionTitleKey(
-         * PROPERTY_LABEL_MANAGE_VALIDATOR ); resourceType.registerPermission( permission );
-         * 
-         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_VIEW_RESULT ); permission.setPermissionTitleKey( PROPERTY_LABEL_VIEW_RESULT
-         * ); resourceType.registerPermission( permission );
-         * 
-         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_MANAGE_FORM_RESPONSE ); permission.setPermissionTitleKey(
-         * PROPERTY_LABEL_MANAGE_FORM_RESPONSE ); resourceType.registerPermission( permission );
-         * 
-         * permission = new Permission( ); permission.setPermissionKey( PERMISSION_MODIFY_FORM_RESPONSE ); permission.setPermissionTitleKey(
-         * PROPERTY_LABEL_MODIFY_FORM_RESPONSE ); resourceType.registerPermission( permission );
-         */
-
         ResourceTypeManager.registerResourceType( resourceType );
     }
 

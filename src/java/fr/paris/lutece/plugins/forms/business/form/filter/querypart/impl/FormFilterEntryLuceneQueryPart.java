@@ -80,14 +80,14 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
                     List<Field> listFields = FieldHome.getFieldListByIdEntry( question.getEntry( ).getIdEntry( ) );
 
                     Query query = new TermQuery( new Term( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode
-                            + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0", formParam.getValue( ).toString( ) ) );
+                            + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0", formParam.getValue( ).toString( ) ) );
                     booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
 
                     for ( Field field : listFields )
                     {
                         String strFieldName = getFieldName( field );
                         query = new TermQuery( new Term( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode
-                                + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_
+                                + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR
                                 + strFieldName, formParam.getValue( ).toString( ) ) );
                         booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
                     }
@@ -119,13 +119,17 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
     private String getFieldName( fr.paris.lutece.plugins.genericattributes.business.Field responseField )
     {
         if ( responseField.getIdField( ) > 0 )
+        {
             return String.valueOf( responseField.getIdField( ) );
+        }
         if ( !StringUtils.isEmpty( responseField.getCode( ) ) )
+        {
             return responseField.getCode( );
-
+        }
         if ( !StringUtils.isEmpty( responseField.getTitle( ) ) )
+        {
             return responseField.getTitle( );
-
+        }
         return StringUtils.EMPTY;
     }
 }

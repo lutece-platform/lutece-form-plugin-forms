@@ -107,14 +107,9 @@ public class EntryTypeTextArea extends AbstractEntryTypeTextArea implements IRes
         String strResponseReference = listResponseReference.get( 0 ).getToStringValueResponse( );
         String strResponseNew = listResponseNew.get( 0 ).getToStringValueResponse( );
 
-        if ( strResponseReference == null && strResponseNew == null )
+        if ( strResponseReference == null )
         {
-            return false;
-        }
-
-        if ( strResponseReference == null && strResponseNew != null )
-        {
-            return true;
+            return strResponseNew != null;
         }
 
         return !strResponseReference.equals( strResponseNew );

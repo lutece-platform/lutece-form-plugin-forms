@@ -182,9 +182,7 @@ public final class FormResponseHome
      */
     public static FormResponse findUncompleteByPrimaryKey( int nKey )
     {
-        FormResponse formResponse = _dao.load( nKey, _plugin );
-
-        return formResponse;
+        return _dao.load( nKey, _plugin );
     }
 
     /**

@@ -168,17 +168,12 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     @Override
     public boolean isResponseChanged( FormQuestionResponse responseReference, FormQuestionResponse responseNew )
     {
-        if ( responseReference == null && responseNew == null )
+        if ( responseReference == null )
         {
-            return false;
+            return responseNew != null;
         }
 
-        if ( responseReference == null && responseNew != null )
-        {
-            return true;
-        }
-
-        if ( responseReference != null && responseNew == null )
+        if ( responseNew == null )
         {
             return true;
         }

@@ -121,7 +121,7 @@ public final class FormsEntryUtils
 
         for ( EntryType entryType : listEntryType )
         {
-            if ( !entryType.getGroup( ) && !entryType.getMyLuteceUser( ) )
+            if ( Boolean.FALSE.equals( entryType.getGroup( ) ) && Boolean.FALSE.equals( entryType.getMyLuteceUser( ) ) )
             {
                 refListEntryType.addItem( entryType.getIdType( ), entryType.getTitle( ) );
             }
@@ -142,7 +142,7 @@ public final class FormsEntryUtils
 
         for ( EntryType entryType : listRefEntryType )
         {
-            if ( !entryType.getGroup( ) && !entryType.getMyLuteceUser( ) )
+            if ( Boolean.FALSE.equals( entryType.getGroup( ) ) && Boolean.FALSE.equals( entryType.getMyLuteceUser( ) ) )
             {
                 listEntryType.add( entryType );
             }

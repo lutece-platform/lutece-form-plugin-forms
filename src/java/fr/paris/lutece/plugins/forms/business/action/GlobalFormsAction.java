@@ -209,6 +209,6 @@ public class GlobalFormsAction implements RBACResource, Localizable
     @Override
     public String getResourceId( )
     {
-        return _strCode;
+        return getCode( );
     }
 }

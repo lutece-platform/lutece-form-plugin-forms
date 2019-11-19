@@ -94,8 +94,6 @@ public class FormColumnDisplayForms extends AbstractFormColumnDisplay
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_FORMS_TITLE, strFormsTitle );
 
-        String strFormColumnFormsTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
-
-        return strFormColumnFormsTemplate;
+        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }
 }
