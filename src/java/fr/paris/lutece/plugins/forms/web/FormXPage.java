@@ -36,8 +36,10 @@ package fr.paris.lutece.plugins.forms.web;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -90,9 +92,6 @@ import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.util.url.UrlItem;
-
-import java.util.Locale;
-import java.util.stream.Collectors;
 
 /**
  * 
@@ -156,6 +155,7 @@ public class FormXPage extends MVCApplication
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    private static Map<Integer, Integer> _responsePerFormMap = new HashMap<>( );
 
     // Attributes
     private FormResponseManager _formResponseManager;
@@ -1129,20 +1129,21 @@ public class FormXPage extends MVCApplication
      */
     private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException
     {
-        /*
-         * The deletion of the synchronized block is due to the accumulation of http threads on the server when scaling up. The current implementation does not
-         * guarantee the following two checks in case of competitor access: -checkNumberMaxResponseForm (form, request); -checkIfUserResponseForm (form,
-         * request); This implementation to review and modify.
-         */
-        checkNumberMaxResponseForm( form, request );
-        checkIfUserResponseForm( form, request );
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         if ( form.isAuthentificationNeeded( ) )
         {
+            checkIfUserResponseForm( form, request );
             LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
             formResponse.setGuid( user.getName( ) );
         }
-        _formService.saveForm( form, formResponse );
+        
+        synchronized ( FormXPage.class )
+        {
+            checkNumberMaxResponseForm( form, request );
+            _formService.saveForm( form, formResponse );
+            increaseNumberResponse( form );
+        }
+        
         _formService.processFormAction( form, formResponse );
     }
 
@@ -1156,16 +1157,26 @@ public class FormXPage extends MVCApplication
      * @throws SiteMessageException
      *             the exception
      */
-    private void checkNumberMaxResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException
+    private static void checkNumberMaxResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException
     {
         if ( form.getMaxNumberResponse( ) != 0 )
         {
-            int nNumberReponseForm = FormHome.getNumberOfResponseForms( form.getId( ) );
+            int nNumberReponseForm = _responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms );
             if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
             {
                 SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
             }
         }
+    }
+    
+    /**
+     * Increase the number of response of the Form
+     * @param form
+     */
+    private static void increaseNumberResponse( Form form )
+    {
+        int nNumberReponseForm = _responsePerFormMap.get( form.getId( ) );
+        _responsePerFormMap.put( form.getId( ), nNumberReponseForm + 1 );
     }
 
     /**
