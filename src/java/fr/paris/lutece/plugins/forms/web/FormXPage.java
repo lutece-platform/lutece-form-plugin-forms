@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -156,6 +158,7 @@ public class FormXPage extends MVCApplication
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     private static Map<Integer, Integer> _responsePerFormMap = new HashMap<>( );
+    private static ConcurrentMap<Integer, Object> _lockFormId = new ConcurrentHashMap<>( );
 
     // Attributes
     private FormResponseManager _formResponseManager;
@@ -1132,19 +1135,33 @@ public class FormXPage extends MVCApplication
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         if ( form.isAuthentificationNeeded( ) )
         {
-            checkIfUserResponseForm( form, request );
             LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
             formResponse.setGuid( user.getName( ) );
         }
         
-        synchronized ( FormXPage.class )
+        if ( form.isOneResponseByUser( ) || form.getMaxNumberResponse( ) != 0 )
         {
-            checkNumberMaxResponseForm( form, request );
+            Object lock = getLockOnForm( form );
+            synchronized ( lock )
+            {
+                checkIfUserResponseForm( form, request );
+                checkNumberMaxResponseForm( form, request );
+                _formService.saveForm( form, formResponse );
+                increaseNumberResponse( form );
+            }
+        }
+        else
+        {
             _formService.saveForm( form, formResponse );
-            increaseNumberResponse( form );
         }
         
         _formService.processFormAction( form, formResponse );
+    }
+    
+    private static synchronized Object getLockOnForm( Form form )
+    {
+        _lockFormId.putIfAbsent( form.getId( ), new Object( ) );
+        return _lockFormId.get( form.getId( ) );
     }
 
     /**
