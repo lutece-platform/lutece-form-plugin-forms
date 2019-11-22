@@ -288,8 +288,17 @@ public class FormXPage extends MVCApplication
         {
             Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
             checkAuthentication( form, request );
-            checkIfUserResponseForm( form, request );
-            checkNumberMaxResponseForm( form, request );
+            
+            if ( form.isOneResponseByUser( ) || form.getMaxNumberResponse( ) != 0 )
+            {
+                Object lock = getLockOnForm( form );
+                synchronized ( lock )
+                {
+                    checkIfUserResponseForm( form, request );
+                    checkNumberMaxResponseForm( form, request );
+                }
+            }
+            
             strTitleForm = I18nService.getLocalizedString( MESSAGE_STEP_TITLE, new String [ ] {
                     form.getTitle( ), _currentStep.getTitle( )
             }, getLocale( request ) );
