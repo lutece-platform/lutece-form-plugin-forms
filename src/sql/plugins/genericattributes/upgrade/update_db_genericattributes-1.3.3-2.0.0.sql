@@ -32,7 +32,7 @@ INSERT INTO genatt_field ( id_entry, code, value)
 ALTER TABLE genatt_field DROP COLUMN height;
 
 INSERT INTO genatt_field ( id_entry, code, value)
-	SELECT id_entry, 'max_size', max_size_enter from genatt_field WHERE max_size_enter > 0;
+	SELECT id_entry, 'max_size', max_size_enter from genatt_field WHERE max_size_enter is not null AND max_size_enter != 0;
 	
 ALTER TABLE genatt_field DROP COLUMN max_size_enter;
 
