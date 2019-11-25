@@ -49,10 +49,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import org.junit.Ignore;
+
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
 
 //@RunWith( SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations={"classpath:/conf/plugins/forms_context.xml"})
+@Ignore
 public class LuceneFormSearchTest extends LuteceTestCase
 {
     private static final Timestamp TIMESTAMP_NOW = Timestamp.valueOf( LocalDateTime.now( ) );
