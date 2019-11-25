@@ -143,7 +143,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
         daoUtil.setInt( nIndex++, formDisplay.getDisplayOrder( ) );
         daoUtil.setString( nIndex++, formDisplay.getCompositeType( ) );
         daoUtil.setInt( nIndex++, formDisplay.getDepth( ) );
-        daoUtil.setInt( nIndex++, formDisplay.getId( ) );
+        daoUtil.setInt( nIndex, formDisplay.getId( ) );
 
         daoUtil.executeUpdate( );
         daoUtil.close( );
