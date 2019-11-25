@@ -35,6 +35,9 @@ package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
@@ -48,7 +51,6 @@ import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
-import java.util.stream.Collectors;
 
 /**
  * 
@@ -100,6 +102,13 @@ public class FormResponseManager
             if ( nStepOrder != FormsConstants.ORDER_NOT_SET )
             {
                 _listValidatedStep.add( nStepOrder, formResponseStep.getStep( ) );
+            }
+            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+            {
+                if ( CollectionUtils.isNotEmpty( formQuestionResponse.getEntryResponse( ) ) )
+                {
+                    formQuestionResponse.getQuestion( ).setIsVisible( true );
+                }
             }
         }
     }
