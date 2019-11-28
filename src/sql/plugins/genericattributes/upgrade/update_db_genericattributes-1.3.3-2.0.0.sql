@@ -42,3 +42,21 @@ ALTER TABLE genatt_field DROP COLUMN image_type;
 
 ALTER TABLE genatt_entry DROP COLUMN is_role_associated;
 ALTER TABLE genatt_field DROP COLUMN role_key;
+
+UPDATE genatt_response r
+SET r.response_value = UNIX_TIMESTAMP(STR_TO_DATE(r.response_value, "%m/%d/%Y") )
+WHERE SUBSTR(r.response_value, 4, 2) > 12
+AND r.id_entry IN  (
+SELECT e.id_entry FROM genatt_entry e
+INNER JOIN genatt_entry_type t ON t.id_type = e.id_type
+WHERE t.class_name = 'forms.entryTypeDate'
+AND e.id_entry = r.id_entry);
+
+UPDATE genatt_response r
+SET r.response_value = UNIX_TIMESTAMP(STR_TO_DATE(r.response_value, "%d/%m/%Y") )
+WHERE r.response_value LIKE '%/%'
+AND r.id_entry IN  (
+SELECT e.id_entry FROM genatt_entry e
+INNER JOIN genatt_entry_type t ON t.id_type = e.id_type
+WHERE t.class_name = 'forms.entryTypeDate'
+AND e.id_entry = r.id_entry);
