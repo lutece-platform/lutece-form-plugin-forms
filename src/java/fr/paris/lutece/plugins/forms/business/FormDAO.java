@@ -152,7 +152,7 @@ public final class FormDAO implements IFormDAO
         daoUtil.setBoolean( nIndex++, form.isDisplaySummary( ) );
         daoUtil.setString( nIndex++, form.getReturnUrl( ) );
         daoUtil.setInt( nIndex++, form.getMaxNumberResponse( ) );
-        daoUtil.setInt( nIndex++, form.getId( ) );
+        daoUtil.setInt( nIndex, form.getId( ) );
 
         daoUtil.executeUpdate( );
         daoUtil.close( );

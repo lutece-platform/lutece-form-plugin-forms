@@ -114,7 +114,7 @@ public final class ControlDAO implements IControlDAO
 
         int nIndex = 1;
         daoUtil.setInt( nIndex++, nIdControl );
-        daoUtil.setInt( nIndex++, nIdQuestion );
+        daoUtil.setInt( nIndex, nIdQuestion );
 
         daoUtil.executeUpdate( );
         daoUtil.close( );
@@ -132,7 +132,7 @@ public final class ControlDAO implements IControlDAO
         int nIndex = 1;
         daoUtil.setInt( nIndex++, nIdControl );
         daoUtil.setInt( nIndex++, nIdQuestion );
-        daoUtil.setString( nIndex++, strValue );
+        daoUtil.setString( nIndex, strValue );
 
         daoUtil.executeUpdate( );
         daoUtil.close( );
