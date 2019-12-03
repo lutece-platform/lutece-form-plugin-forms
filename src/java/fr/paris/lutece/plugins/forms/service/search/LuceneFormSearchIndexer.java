@@ -636,7 +636,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                             {
                                 try
                                 {
-                                    Timestamp timestamp = Timestamp.valueOf( response.getResponseValue( ) );
+                                    Timestamp timestamp = new Timestamp( Long.valueOf( response.getResponseValue( ) ) );
                                     doc.add( new LongPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
                                     doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp
                                             .getTime( ) ) );
