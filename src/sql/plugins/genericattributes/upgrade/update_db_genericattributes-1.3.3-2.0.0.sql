@@ -60,3 +60,5 @@ SELECT e.id_entry FROM genatt_entry e
 INNER JOIN genatt_entry_type t ON t.id_type = e.id_type
 WHERE t.class_name = 'forms.entryTypeDate'
 AND e.id_entry = r.id_entry);
+
+ALTER TABLE genatt_entry modify COLUMN id_entry int AUTO_INCREMENT NOT NULL;
