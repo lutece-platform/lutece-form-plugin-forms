@@ -92,4 +92,22 @@ public class StepServiceTest extends LuteceTestCase
         assertEquals( 22, orderedList.get( 2 ).getId( ) );
         assertEquals( 3, orderedList.get( 3 ).getId( ) );
     }
+    
+    public void testSortStepsWithTransitionsNoInitial( )
+    {
+        List<Step> listSteps = new ArrayList<>( );
+        Step step1 = new Step( );
+        step1.setId( 1 );
+        step1.setInitial( true );
+        listSteps.add( step1 );
+        
+        Step step3 = new Step( );
+        step3.setId( 3 );
+        listSteps.add( step3 );
+        
+        List<Transition> listTransitions =  new ArrayList<>( );
+        List<Step> orderedList = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+        assertEquals( 2, orderedList.size( ) );
+        
+    }
 }

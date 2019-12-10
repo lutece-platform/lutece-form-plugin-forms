@@ -108,7 +108,7 @@ public final class StepService
         Step initialStep = listSteps.stream( ).filter( Step::isInitial ).findFirst( ).orElse( null );
         if ( initialStep == null )
         {
-            return listStepOrdered;
+            return listSteps;
         }
 
         Set<Integer> listIdStepOrderWithTransitions = new LinkedHashSet<>( );
