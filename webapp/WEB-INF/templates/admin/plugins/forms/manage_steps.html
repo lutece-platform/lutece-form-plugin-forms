@@ -138,11 +138,11 @@
 <@formModal />
 
 <#if hasFinal=0 && hasInitial=0 >
-	<#assign msg="Attention vous n'avez pas encore d&eacute;fini d'&eacute;tape initiale et d'&eacute;tape finale" />
+	<#assign msg="#i18n{forms.manage_steps.warning.no.initial.final}" />
 <#elseif hasFinal=1  && hasInitial=0>	
-	<#assign msg="Attention vous n'avez pas  d&eacute;fini d'&eacute;tapes initiale" />
+	<#assign msg="#i18n{forms.manage_steps.warning.no.initial}" />
 <#elseif hasFinal=0  && hasInitial=1>	
-	<#assign msg="Attention vous n'avez pas d&eacute;fini d'&eacute;tapes finale" />
+	<#assign msg="#i18n{forms.manage_steps.warning.no.final}" />
 <#else>
 	<#assign msg="" />				
 </#if>
