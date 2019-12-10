@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -45,9 +47,6 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 
 /**
  * Service dedicated to management of formDisplay

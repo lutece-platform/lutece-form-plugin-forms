@@ -249,7 +249,11 @@ public class FormResponseManager
 
         if ( isStepValidated( step ) )
         {
-            listFormQuestionResponse = findFormResponseStepFor( step ).getQuestions( );
+            FormResponseStep formResponseStep = findFormResponseStepFor( step );
+            if ( formResponseStep != null )
+            {
+                listFormQuestionResponse = formResponseStep.getQuestions( );
+            }
         }
 
         return listFormQuestionResponse;

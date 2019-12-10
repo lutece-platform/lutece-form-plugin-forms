@@ -45,7 +45,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
-import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -53,7 +52,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 /**
  * Abstract class for FormPanelDisplay class
  */
-public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay, IFormListPosition
+public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay
 {
     // Template
     private static final String TEMPLATE_MULTIVIEW_FORM_PANEL = "admin/plugins/forms/multiview/panel/multiview_form_panel_template.html";

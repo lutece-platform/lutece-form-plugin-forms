@@ -45,14 +45,6 @@ public class FormColumnFactory
     public static final String BEAN_NAME = "forms.formColumn.factory";
 
     /**
-     * Constructor
-     * 
-     */
-    public FormColumnFactory( )
-    {
-    }
-
-    /**
      * Build the list of all FormColumn
      * 
      * @param nIdForm
