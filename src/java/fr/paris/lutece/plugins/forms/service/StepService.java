@@ -33,7 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
@@ -44,7 +47,6 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import java.util.ArrayList;
 
 /**
  * Service dedicated to management of formDisplay
@@ -106,10 +108,10 @@ public final class StepService
         Step initialStep = listSteps.stream( ).filter( Step::isInitial ).findFirst( ).orElse( null );
         if ( initialStep == null )
         {
-            return listStepOrdered;
+            return listSteps;
         }
 
-        List<Integer> listIdStepOrderWithTransitions = new ArrayList<>( );
+        Set<Integer> listIdStepOrderWithTransitions = new LinkedHashSet<>( );
         listIdStepOrderWithTransitions.add( initialStep.getId( ) );
         listIdStepOrderWithTransitions.addAll( getNextStep( initialStep.getId( ), listTransitions ) );
         for ( Integer nIdStep : listIdStepOrderWithTransitions )
@@ -145,13 +147,18 @@ public final class StepService
         List<Integer> listIdNextSteps = new ArrayList<>( );
         if ( idFromStep != null )
         {
+            List<Transition> nextTransitionsList = new ArrayList<>( ); 
             for ( Transition transition : listTransitions )
             {
                 if ( transition.getFromStep( ) == idFromStep )
                 {
                     listIdNextSteps.add( transition.getNextStep( ) );
-                    listIdNextSteps.addAll( getNextStep( transition.getNextStep( ), listTransitions ) );
+                    nextTransitionsList.add( transition );
                 }
+            }
+            for ( Transition transition : nextTransitionsList )
+            {
+                listIdNextSteps.addAll( getNextStep( transition.getNextStep( ), listTransitions ) );
             }
         }
         return listIdNextSteps;
