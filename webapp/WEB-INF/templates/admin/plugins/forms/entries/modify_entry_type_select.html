@@ -46,19 +46,22 @@
                         <@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}' showLabel=false rows=2>
                             <@checkBox name='editable_back' id='editable_back' value='1' labelKey='#i18n{forms.createEntry.labelEditableInBO}' checked=entry.editableBack />
                         </@formGroup>
-            <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' rows=2>
+			            <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' rows=2>
 							<@input type='text' name='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
-            <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-                <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
-            </@formGroup>
-            <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
-            	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
-            </@formGroup>
-            <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+			            <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+			                <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+			            </@formGroup>
+			            <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+			            	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
+			            </@formGroup>
+			            <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
 							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
 						</@formGroup>
-            ${question_modify_template!}
+						<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
+							<@checkBox name='exportable' id='exportable' value='1' checked=entry.exportable />
+						</@formGroup>
+            			${question_modify_template!}
 						<@formGroup rows=2>
 							<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false />
 							<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false />
