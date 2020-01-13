@@ -29,8 +29,8 @@
               <@input type='text' name='link' id='link' value='${fieldLink.value}' maxlength=255 />
             </@formGroup>
             <#assign fieldTos = getFieldByCode( entry, "tos" ) >			
-            <@formGroup labelFor='tos' labelKey='#i18n{forms.entryType.termsOfService.labelTermsOfService}'>
-              <@input type='textarea' name='tos' id='tos' richtext=true mandatory=true>${fieldTos.value}</@input>
+            <@formGroup labelFor='tos' labelKey='#i18n{forms.entryType.termsOfService.labelTermsOfService}' mandatory=true>
+              <@input type='textarea' name='tos' id='tos' richtext=true >${fieldTos.value}</@input>
             </@formGroup>
             <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
               <@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />

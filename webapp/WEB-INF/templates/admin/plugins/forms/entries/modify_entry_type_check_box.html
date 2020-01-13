@@ -41,7 +41,7 @@
 							<#else>
 								<#assign checked = false>
 							</#if>
-							<@checkBox name='mandatory' value='1' checked=checked labelKey='#i18n{forms.createEntry.labelMandatory}' />
+							<@checkBox id='mandatory' name='mandatory' value='1' checked=checked labelKey='#i18n{forms.createEntry.labelMandatory}' />
 						</@formGroup>
 						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}' rows=2>
 							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
