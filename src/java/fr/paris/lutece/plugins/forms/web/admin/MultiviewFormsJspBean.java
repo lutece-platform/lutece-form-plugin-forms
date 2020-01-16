@@ -45,10 +45,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsAction;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionHome;
@@ -328,17 +326,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         for ( FormResponseItem formResponseItem : listFormResponseItemToDisplay )
         {
-            FormResponse formResponse = FormResponseHome.findByPrimaryKey( formResponseItem.getIdFormResponse( ) );
-
-            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
-            {
-                for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
-                {
-                    // TODO Remove the formQuestionResponse from the formResponse if the associated question is not exportable
-                }
-            }
-
-            listFormResponse.add( formResponse );
+            listFormResponse.add( FormResponseHome.findByPrimaryKeyForIndex( formResponseItem.getIdFormResponse( ) ) );
         }
 
         return listFormResponse;
