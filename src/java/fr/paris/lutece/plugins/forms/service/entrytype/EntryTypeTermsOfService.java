@@ -48,6 +48,7 @@ import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeService;
 import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
+import fr.paris.lutece.portal.service.html.HtmlCleanerService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -316,5 +317,15 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
     {
         return false;
+    }
+    
+    @Override
+    public String getResponseValueForExport( Entry entry, HttpServletRequest request, Response response, Locale locale )
+    {
+        if ( StringUtils.isEmpty( response.getResponseValue( ) ) )
+        {
+            return StringUtils.EMPTY;
+        }
+        return HtmlCleanerService.text( response.getResponseValue( ) );
     }
 }
