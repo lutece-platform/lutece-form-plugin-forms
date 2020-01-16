@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,51 +52,23 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class FormResponseCsvExport
 {
     private static final String SEPARATOR = FormsConstants.SEPARATOR_SEMICOLON;
-    private static final String END_OF_LINE = FormsConstants.END_OF_LINE;
     private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
     private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
 
     private final CSVHeader _csvHeader = new CSVHeader( );
 
-    private final List<CSVDataLine> _listDataToExport = new ArrayList<>( );
-
-    private String _strCsvColumnToExport;
-
-    private String _strCsvDataToExport;
-
-    /**
-     * Constructor
-     * 
-     * @param listFormResponse
-     *            The list of data to export
-     */
-    public FormResponseCsvExport( List<FormResponse> listFormResponse )
-    {
-        for ( FormResponse formResponse : listFormResponse )
-        {
-            CSVDataLine csvDataLine = new CSVDataLine( formResponse );
-
-            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
-            {
-                for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
-                {
-                    _csvHeader.addHeader( formQuestionResponse.getQuestion( ) );
-                    csvDataLine.addData( formQuestionResponse );
-                }
-            }
-
-            _listDataToExport.add( csvDataLine );
-        }
-
-        buildCsvColumnToExport( );
-        buildCsvDataToExport( );
-    }
-
     /**
      * Build the CSV string for column line
      */
-    private void buildCsvColumnToExport( )
+    public String buildCsvColumnToExport( FormResponse formResponse )
     {
+        for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+        {
+            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+            {
+                _csvHeader.addHeader( formQuestionResponse.getQuestion( ) );
+            }
+        }
         StringBuilder sbCsvColumn = new StringBuilder( );
 
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) ) );
@@ -111,47 +81,37 @@ public class FormResponseCsvExport
             sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question ) ) ).append( SEPARATOR );
         }
 
-        _strCsvColumnToExport = sbCsvColumn.append( END_OF_LINE ).toString( );
+        return sbCsvColumn.toString( );
     }
 
     /**
      * Build the CSV string for all data lines
      */
-    private void buildCsvDataToExport( )
+    public String buildCsvDataToExport( FormResponse formResponse )
     {
+        CSVDataLine csvDataLine = new CSVDataLine( formResponse );
+
+        for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+        {
+            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+            {
+                csvDataLine.addData( formQuestionResponse );
+            }
+        }
+        
         StringBuilder sbCsvData = new StringBuilder( );
 
-        for ( CSVDataLine csvDataLine : _listDataToExport )
+        StringBuilder sbRecordContent = new StringBuilder( );
+        sbRecordContent.append( csvDataLine.getCommonDataToExport( ) );
+
+        for ( Question question : _csvHeader.getColumnToExport( ) )
         {
-            StringBuilder sbRecordContent = new StringBuilder( );
-            sbRecordContent.append( csvDataLine.getCommonDataToExport( ) );
-
-            for ( Question question : _csvHeader.getColumnToExport( ) )
-            {
-                sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append(
-                        SEPARATOR );
-            }
-
-            sbCsvData.append( sbRecordContent.toString( ) ).append( END_OF_LINE );
+            sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append(
+                    SEPARATOR );
         }
 
-        _strCsvDataToExport = sbCsvData.toString( );
-    }
+        sbCsvData.append( sbRecordContent.toString( ) );
 
-    /**
-     * @return the _strCsvColumnToExport
-     */
-    public String getCsvColumnToExport( )
-    {
-        return _strCsvColumnToExport;
+        return sbCsvData.toString( );
     }
-
-    /**
-     * @return the _strCsvDataToExport
-     */
-    public String getCsvDataToExport( )
-    {
-        return _strCsvDataToExport;
-    }
-
 }

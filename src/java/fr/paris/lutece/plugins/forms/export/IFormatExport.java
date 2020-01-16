@@ -35,12 +35,15 @@ package fr.paris.lutece.plugins.forms.export;
 
 import java.util.List;
 
-import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 
 /**
  * 
- * @author a614328
- *
+ * Interface for export formats of formResponses
  */
 public interface IFormatExport
 {
@@ -63,9 +66,13 @@ public interface IFormatExport
     String getFormatContentType( );
 
     /**
-     * @param listFormResponse
-     *            The list of responses to export
-     * @return the export file
+     * Creates the {@link IFileGenerator}.
+     * @param formPanel
+     * @param listFormColumn
+     * @param listFormFilter
+     * @param sortConfig
+     * @return
      */
-    byte [ ] getByteExportFile( List<FormResponse> listFormResponse );
+    IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            FormResponseItemSortConfig sortConfig );
 }

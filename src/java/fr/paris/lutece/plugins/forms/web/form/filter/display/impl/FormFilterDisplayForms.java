@@ -62,7 +62,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     // Constants
     private static final String FORM_CODE_ATTRIBUTE = "id";
     private static final String FORM_NAME_ATTRIBUTE = "title";
-    private static final String DEFAULT_ID_FORM = "-1";
+    public static final String DEFAULT_ID_FORM = "-1";
 
     /**
      * {@inheritDoc}
