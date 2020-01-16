@@ -66,8 +66,11 @@
                 	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
                 </@formGroup>
                 <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
-							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
-						</@formGroup>
+					<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+				</@formGroup>
+				<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
+					<@checkBox name='exportable' id='exportable' value='1' checked=entry.exportable />
+				</@formGroup>
 				<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelUseRichText}' helpKey='#i18n{forms.createEntry.labelUseRichTextComment}'>
 					<!#-- 	fieldInLine means use rich text -->
 					<#if entry.fieldInLine><#assign checked = true /></#if>
