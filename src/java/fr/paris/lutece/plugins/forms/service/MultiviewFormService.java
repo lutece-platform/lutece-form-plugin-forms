@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.service;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnComparator;
 import java.util.List;
@@ -53,6 +54,7 @@ import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilt
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
+import fr.paris.lutece.plugins.forms.business.form.list.IFormListDAO;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -110,6 +112,13 @@ public final class MultiviewFormService
         FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
         formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize,
                 sortConfig );
+    }
+    
+    public List<FormResponseItem> searchAllListFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            FormResponseItemSortConfig sortConfig )
+    {
+        IFormListDAO formListDAO = SpringContextService.getBean( IFormListDAO.BEAN_NAME );
+        return formListDAO.searchAllFormResponseItem( formPanel, listFormColumn, listFormFilter, sortConfig );
     }
 
     /**

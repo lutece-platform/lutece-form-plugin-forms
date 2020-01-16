@@ -186,8 +186,12 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
             }
             ScoreDoc [ ] hits = topDocs.scoreDocs;
-
-            int nMaxIndex = Math.min( nStartIndex + nPageSize, hits.length );
+            
+            int nMaxIndex = hits.length;
+            if ( nPageSize > 0)
+            {
+                nMaxIndex = Math.min( nStartIndex + nPageSize, hits.length );
+            }
             formPanel.setTotalFormResponseItemCount( hits.length );
             for ( int i = nStartIndex; i < nMaxIndex; i++ )
             {

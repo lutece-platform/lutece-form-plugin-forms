@@ -78,14 +78,29 @@ public class FormListLuceneDAO implements IFormListDAO
             return;
         }
 
+        List<FormResponseItem> listFormResponseItem = searchFormResponseItem( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig );
+
+        formPanel.setFormResponseItemList( listFormResponseItem );
+    }
+    
+    @Override
+    public List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            FormResponseItemSortConfig sortConfig )
+    {
+        return searchFormResponseItem( formPanel, listFormColumn, listFormFilter, 0, 0, sortConfig );
+    }
+    
+    private List<FormResponseItem> searchFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+            FormResponseItemSortConfig sortConfig )
+    {
         // Create the list of all values of the parameter to used
         List<String> listQueryParametersValues = new ArrayList<>( );
-
+        
         // Build the list of query part from the formPanel, the list of columns and the list of filters
         List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart = buildFormPanelInitializerQueryPartList( formPanel, listQueryParametersValues );
         List<IFormColumnQueryPart> listFormColumnQueryPart = buildformColumnQueryPartList( listFormColumn );
         List<IFormFilterQueryPart> listFormFilterQueryPart = buildFormFilterQueryPartList( listFormFilter, listQueryParametersValues );
-
+        
         List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
 
         for ( FormResponseSearchItem formResponseSearchItem : _formSearchEngine.getSearchResults( listFormPanelInitializerQueryPart, listFormColumnQueryPart,
@@ -101,7 +116,8 @@ public class FormListLuceneDAO implements IFormListDAO
                 formResponseItem.addFormColumnCell( formColumnCell );
             }
         }
-        formPanel.setFormResponseItemList( listFormResponseItem );
+        
+        return listFormResponseItem;
     }
 
     /**

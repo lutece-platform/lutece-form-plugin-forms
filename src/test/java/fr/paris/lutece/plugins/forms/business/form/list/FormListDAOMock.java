@@ -80,4 +80,20 @@ public class FormListDAOMock implements IFormListDAO
 
         formPanel.setFormResponseItemList( listFormResponseItem );
     }
+
+    @Override
+    public List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn,
+            List<FormFilter> listFormFilter, FormResponseItemSortConfig sortConfig )
+    {
+        List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
+
+        for ( Integer nIdFormResponse : _listIdAuthorizedFormResponse )
+        {
+            FormResponseItem formResponseItem = new FormResponseItem( );
+            formResponseItem.setIdFormResponse( nIdFormResponse );
+
+            listFormResponseItem.add( formResponseItem );
+        }
+        return listFormResponseItem;
+    }
 }
