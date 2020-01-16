@@ -63,6 +63,9 @@ import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeComment;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -257,7 +260,6 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                         && _question.getIterationNumber( ) == question.getIterationNumber( ) )
                 {
                     listResponse = formQuestionResponse.getEntryResponse( );
-                    _question.setIsVisible( true );
                     break;
                 }
             }
@@ -332,9 +334,19 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 controlConditionnalDisplay = listConditionalControl.get( 0 );
             }
 
-            if ( controlConditionnalDisplay == null || CollectionUtils.isNotEmpty( listResponse ) )
+            // No Conditional Display
+            if ( controlConditionnalDisplay == null )
             {
                 _question.setIsVisible( true );
+            }
+            else
+            {
+                IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _question.getEntry( ) );
+                // If there is a conditional display, shows question if it has responses or if it is a comment 
+                if ( CollectionUtils.isNotEmpty( listResponse ) || entryTypeService instanceof AbstractEntryTypeComment )
+                {
+                    _question.setIsVisible( true );
+                }
             }
         }
         if ( _question.getEntry( ) == null )
