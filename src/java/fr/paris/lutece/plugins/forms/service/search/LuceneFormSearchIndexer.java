@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.forms.service.search;
 
 import java.io.IOException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -636,11 +635,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                             {
                                 try
                                 {
-                                    Timestamp timestamp = Timestamp.valueOf( response.getResponseValue( ) );
-                                    doc.add( new LongPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
-                                    doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp
-                                            .getTime( ) ) );
-                                    doc.add( new StoredField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp.getTime( ) ) );
+                                    Long timestamp = Long.valueOf( response.getResponseValue( ) );
+                                    doc.add( new LongPoint( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp ) );
+                                    doc.add( new NumericDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp ) );
+                                    doc.add( new StoredField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_DATE_SUFFIX, timestamp ) );
                                 }
                                 catch( Exception e )
                                 {
