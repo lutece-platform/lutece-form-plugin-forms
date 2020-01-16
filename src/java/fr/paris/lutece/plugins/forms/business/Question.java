@@ -321,6 +321,16 @@ public class Question implements Serializable, Cloneable
     {
         return _entry.isIndexed( );
     }
+    
+    /**
+     * Return the responses exportable boolean
+     * 
+     * @return true if the responses of this question are exportable, false otherwise
+     */
+    public boolean isResponseExportable( )
+    {
+        return _entry.isExportable( );
+    }
 
     /**
      * Get the is visible Multiview Global boolean

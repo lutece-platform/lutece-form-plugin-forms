@@ -66,7 +66,10 @@ public class FormResponseCsvExport
         {
             for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
             {
-                _csvHeader.addHeader( formQuestionResponse.getQuestion( ) );
+                if ( formQuestionResponse.getQuestion( ).isResponseExportable( ) )
+                {
+                    _csvHeader.addHeader( formQuestionResponse.getQuestion( ) );
+                }
             }
         }
         StringBuilder sbCsvColumn = new StringBuilder( );
@@ -95,7 +98,10 @@ public class FormResponseCsvExport
         {
             for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
             {
-                csvDataLine.addData( formQuestionResponse );
+                if ( formQuestionResponse.getQuestion( ).isResponseExportable( ) )
+                {
+                    csvDataLine.addData( formQuestionResponse );
+                }
             }
         }
         
