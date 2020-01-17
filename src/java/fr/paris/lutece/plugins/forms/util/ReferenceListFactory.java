@@ -57,7 +57,7 @@ public class ReferenceListFactory
     private final String _strNameAttribute;
     private boolean _bNumerical = Boolean.TRUE;
     private boolean _bDefaultSortNeeded = Boolean.FALSE;
-    
+
     private String _strDefaultName = FormsConstants.REFERENCE_ITEM_DEFAULT_NAME;
 
     /**

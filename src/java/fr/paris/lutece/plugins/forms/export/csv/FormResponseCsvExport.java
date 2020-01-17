@@ -104,7 +104,7 @@ public class FormResponseCsvExport
                 }
             }
         }
-        
+
         StringBuilder sbCsvData = new StringBuilder( );
 
         StringBuilder sbRecordContent = new StringBuilder( );
@@ -112,8 +112,7 @@ public class FormResponseCsvExport
 
         for ( Question question : _csvHeader.getColumnToExport( ) )
         {
-            sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append(
-                    SEPARATOR );
+            sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append( SEPARATOR );
         }
 
         sbCsvData.append( sbRecordContent.toString( ) );

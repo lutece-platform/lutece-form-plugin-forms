@@ -100,7 +100,7 @@ public final class QuestionDAO implements IQuestionDAO
     @Override
     public Question load( int nKey, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
 
             daoUtil.setInt( 1, nKey );
@@ -128,7 +128,7 @@ public final class QuestionDAO implements IQuestionDAO
     @Override
     public Question loadByCode( String strCode, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_CODE, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_CODE, plugin ) )
         {
             daoUtil.setString( 1, strCode );
             daoUtil.executeQuery( );
@@ -298,7 +298,7 @@ public final class QuestionDAO implements IQuestionDAO
     {
         List<Question> questionList = new ArrayList<>( );
 
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin ) )
         {
             daoUtil.setInt( 1, nIdForm );
             daoUtil.executeQuery( );
@@ -407,7 +407,7 @@ public final class QuestionDAO implements IQuestionDAO
         List<Question> list = new ArrayList<>( );
         String query = SQL_QUERY_SELECT_IN + keyList.stream( ).distinct( ).map( i -> "?" ).collect( Collectors.joining( "," ) ) + " )";
 
-        try( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
         {
             for ( int i = 0; i < keyList.size( ); i++ )
             {

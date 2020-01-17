@@ -141,8 +141,8 @@ public class FormService
      */
     private void filterFinalSteps( FormResponse formResponse )
     {
-        formResponse.setSteps( formResponse.getSteps( ).stream( ).filter( step -> step.getOrder( ) != FormsConstants.ORDER_NOT_SET )
-                .collect( Collectors.toList( ) ) );
+        formResponse.setSteps(
+                formResponse.getSteps( ).stream( ).filter( step -> step.getOrder( ) != FormsConstants.ORDER_NOT_SET ).collect( Collectors.toList( ) ) );
     }
 
     /**
@@ -436,8 +436,7 @@ public class FormService
      */
     public void fireFormResponseEventCreation( Form form )
     {
-        new Thread( ( ) ->
-        {
+        new Thread( ( ) -> {
             List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
             for ( FormResponse formResponse : listFormResponse )
@@ -471,8 +470,7 @@ public class FormService
      */
     public void fireFormResponseEventUpdate( Form form )
     {
-        new Thread( ( ) ->
-        {
+        new Thread( ( ) -> {
             List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
             for ( FormResponse formResponse : listFormResponse )
@@ -507,8 +505,7 @@ public class FormService
      */
     public void fireFormResponseEventDelete( Form form )
     {
-        new Thread( ( ) ->
-        {
+        new Thread( ( ) -> {
             List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
             for ( FormResponse formResponse : listFormResponse )

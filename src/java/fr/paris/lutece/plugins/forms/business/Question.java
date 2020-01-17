@@ -321,7 +321,7 @@ public class Question implements Serializable, Cloneable
     {
         return _entry.isIndexed( );
     }
-    
+
     /**
      * Return the responses exportable boolean
      * 

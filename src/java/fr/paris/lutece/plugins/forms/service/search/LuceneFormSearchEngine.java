@@ -82,7 +82,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         ArrayList<Integer> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
-        try( Directory directory = _luceneFormSearchFactory.getDirectory( ) ; IndexReader ir = DirectoryReader.open( directory ) ; )
+        try ( Directory directory = _luceneFormSearchFactory.getDirectory( ) ; IndexReader ir = DirectoryReader.open( directory ) ; )
         {
             searcher = new IndexSearcher( ir );
 
@@ -171,7 +171,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         List<FormResponseSearchItem> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
-        try( Directory directory = _luceneFormSearchFactory.getDirectory( ) ; IndexReader ir = DirectoryReader.open( directory ) ; )
+        try ( Directory directory = _luceneFormSearchFactory.getDirectory( ) ; IndexReader ir = DirectoryReader.open( directory ) ; )
         {
 
             searcher = new IndexSearcher( ir );
@@ -186,9 +186,9 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
                 topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
             }
             ScoreDoc [ ] hits = topDocs.scoreDocs;
-            
+
             int nMaxIndex = hits.length;
-            if ( nPageSize > 0)
+            if ( nPageSize > 0 )
             {
                 nMaxIndex = Math.min( nStartIndex + nPageSize, hits.length );
             }

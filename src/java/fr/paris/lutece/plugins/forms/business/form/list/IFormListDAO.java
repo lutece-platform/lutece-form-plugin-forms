@@ -67,10 +67,10 @@ public interface IFormListDAO
      */
     void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
             FormResponseItemSortConfig sortConfig );
-    
-    
+
     /**
      * Search the Lucene Index.
+     * 
      * @param formPanel
      * @param listFormColumn
      * @param listFormFilter
@@ -79,5 +79,6 @@ public interface IFormListDAO
      * @param sortConfig
      * @return
      */
-    List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, FormResponseItemSortConfig sortConfig );
+    List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            FormResponseItemSortConfig sortConfig );
 }

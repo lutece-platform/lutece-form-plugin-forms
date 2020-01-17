@@ -138,12 +138,14 @@ public class EntryTypeMyLuteceUserAttributeDisplayService implements IEntryDispl
         switch( displayType.getMode( ) )
         {
             case EDITION:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale,
-                        setModel( entry, request, displayType, model ) ).getHtml( );
+                strEntryHtml = AppTemplateService
+                        .getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, request, displayType, model ) )
+                        .getHtml( );
                 break;
             case READONLY:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale,
-                        setModel( entry, request, displayType, model ) ).getHtml( );
+                strEntryHtml = AppTemplateService
+                        .getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, request, displayType, model ) )
+                        .getHtml( );
                 break;
             default: // Nothing to do
         }

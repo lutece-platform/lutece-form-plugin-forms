@@ -72,8 +72,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     private static final String MARK_COLUMN_SORT_ATTRIBUTE = "column_sort_attribute";
     private static final String MARK_SORT_URL = "sort_url";
 
-    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format",
-            "dd/MM/yyyy" );
+    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy" );
     private final DateFormat _dateFormat = new SimpleDateFormat( FILTER_DATE_FORMAT );
 
     /**
@@ -91,8 +90,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         {
             FormColumnEntry column = ( (FormColumnEntry) getFormColumn( ) );
             String columSort = column.getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
-            String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort
-                    + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0";
+            String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0";
 
             String strEntryCode = column.getListEntryCode( ).get( 0 );
             Question question = QuestionHome.findByCode( strEntryCode );
@@ -109,8 +107,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
             model.put( MARK_COLUMN_SORT_ATTRIBUTE, strAttributeSort );
         }
 
-        String strColumnHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model )
-                .getHtml( );
+        String strColumnHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );
         setFormColumnHeaderTemplate( strColumnHeaderTemplate );
 
         return strColumnHeaderTemplate;
@@ -145,7 +142,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
 
                         listEntryValues.add( strDate );
                     }
-                    catch ( Exception e )
+                    catch( Exception e )
                     {
                         listEntryValues.add( stringToConvert );
                     }
@@ -161,8 +158,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_ENTRY_VALUES, listEntryValues );
 
-        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model )
-                .getHtml( );
+        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }
 
 }

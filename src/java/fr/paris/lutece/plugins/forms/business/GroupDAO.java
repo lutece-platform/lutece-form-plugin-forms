@@ -61,7 +61,7 @@ public final class GroupDAO implements IGroupDAO
     public void insert( Group group, Plugin plugin )
     {
 
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setString( nIndex++, group.getTitle( ) );
@@ -88,7 +88,7 @@ public final class GroupDAO implements IGroupDAO
     public Group load( int nKey, Plugin plugin )
     {
 
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
             daoUtil.setInt( 1, nKey );
             daoUtil.executeQuery( );
@@ -109,7 +109,7 @@ public final class GroupDAO implements IGroupDAO
     @Override
     public void delete( int nKey, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
         {
 
             daoUtil.setInt( 1, nKey );
@@ -124,7 +124,7 @@ public final class GroupDAO implements IGroupDAO
     @Override
     public void store( Group group, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
         {
 
             int nIndex = 1;
@@ -150,7 +150,7 @@ public final class GroupDAO implements IGroupDAO
     public List<Group> selectGroupsList( Plugin plugin )
     {
         List<Group> groupList = new ArrayList<>( );
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
 
             daoUtil.executeQuery( );
@@ -172,7 +172,7 @@ public final class GroupDAO implements IGroupDAO
     {
         List<Integer> groupList = new ArrayList<>( );
 
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin ) )
         {
             daoUtil.executeQuery( );
 
@@ -193,7 +193,7 @@ public final class GroupDAO implements IGroupDAO
     {
         ReferenceList groupList = new ReferenceList( );
 
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
             daoUtil.executeQuery( );
 

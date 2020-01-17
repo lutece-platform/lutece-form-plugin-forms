@@ -65,18 +65,17 @@ public final class StepService
     }
 
     /**
-     * Remove a given Step and the all its formDisplays. The responses,
-     * group/question associated to the displays will be deleted. All the
-     * descendants of the displays will also be removed
+     * Remove a given Step and the all its formDisplays. The responses, group/question associated to the displays will be deleted. All the descendants of the
+     * displays will also be removed
      * 
-     * @param nIdStep The Step Id
+     * @param nIdStep
+     *            The Step Id
      */
     public void removeStep( int nIdStep )
     {
         FormDisplayService displayService = SpringContextService.getBean( FormDisplayService.BEAN_NAME );
 
-        List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep,
-                DISPLAY_ROOT_PARENT_ID );
+        List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, DISPLAY_ROOT_PARENT_ID );
 
         for ( FormDisplay childDisplay : listChildrenDisplay )
         {
@@ -95,11 +94,12 @@ public final class StepService
     }
 
     /**
-     * Return a list of steps based on given step list and transition between steps
-     * list
+     * Return a list of steps based on given step list and transition between steps list
      * 
-     * @param listSteps       the list of steps
-     * @param listTransitions the list of transitions
+     * @param listSteps
+     *            the list of steps
+     * @param listTransitions
+     *            the list of transitions
      * @return the list of given steps based on given transitions
      */
     public static List<Step> sortStepsWithTransitions( List<Step> listSteps, List<Transition> listTransitions )
@@ -147,7 +147,7 @@ public final class StepService
         List<Integer> listIdNextSteps = new ArrayList<>( );
         if ( idFromStep != null )
         {
-            List<Transition> nextTransitionsList = new ArrayList<>( ); 
+            List<Transition> nextTransitionsList = new ArrayList<>( );
             for ( Transition transition : listTransitions )
             {
                 if ( transition.getFromStep( ) == idFromStep )

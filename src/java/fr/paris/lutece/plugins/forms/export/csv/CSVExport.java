@@ -58,17 +58,18 @@ public class CSVExport implements IFormatExport
     /**
      * Constructor of the PatternValidator
      * 
-     * @param strFormatExportName        The export format bean name
-     * @param strFormatExportDisplayName The export format display name
-     * @param strFormatExportDescription The export format description
+     * @param strFormatExportName
+     *            The export format bean name
+     * @param strFormatExportDisplayName
+     *            The export format display name
+     * @param strFormatExportDescription
+     *            The export format description
      */
     public CSVExport( String strFormatExportName, String strFormatExportDisplayName, String strFormatExportDescription )
     {
         _strFormatExportName = strFormatExportName;
-        _strFormatExportDisplayName = I18nService.getLocalizedString( strFormatExportDisplayName,
-                I18nService.getDefaultLocale( ) );
-        _strFormatExportDescription = I18nService.getLocalizedString( strFormatExportDescription,
-                I18nService.getDefaultLocale( ) );
+        _strFormatExportDisplayName = I18nService.getLocalizedString( strFormatExportDisplayName, I18nService.getDefaultLocale( ) );
+        _strFormatExportDescription = I18nService.getLocalizedString( strFormatExportDescription, I18nService.getDefaultLocale( ) );
     }
 
     /**

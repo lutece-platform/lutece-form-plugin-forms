@@ -51,7 +51,7 @@ import fr.paris.lutece.test.LuteceTestCase;
 
 public class FormResponseManagerTest extends LuteceTestCase
 {
-    
+
     private static final Timestamp TIMESTAMP_NOW = Timestamp.valueOf( LocalDateTime.now( ) );
     private static final int DEFAULT_INT = -1;
     private static final UUID DEFAULT_GUID = UUID.randomUUID( );
@@ -69,33 +69,34 @@ public class FormResponseManagerTest extends LuteceTestCase
 
     // Entry type
     private static final String BEAN_NAME_ENTRY_TYPE_TEXT = "forms.entryTypeText";
-    
-    
+
     public void testConstructorFromFormResponse( )
     {
         FormResponse response = createFormResponse( "e" );
-        
+
         FormResponseManager manager = new FormResponseManager( response );
-        
+
         assertEquals( 2, manager.getValidatedSteps( ).size( ) );
-        
+
         for ( FormResponseStep step : manager.getFormResponse( ).getSteps( ) )
         {
             Question q = step.getQuestions( ).get( 0 ).getQuestion( );
             if ( q.getId( ) == 1 )
             {
                 assertTrue( q.isVisible( ) );
-            } 
-            else if ( q.getId( ) == 2 )
-            {
-                assertFalse( q.isVisible( ) );
             }
-            else {
-                fail( );
-            }
-                
+            else
+                if ( q.getId( ) == 2 )
+                {
+                    assertFalse( q.isVisible( ) );
+                }
+                else
+                {
+                    fail( );
+                }
+
         }
-        
+
     }
 
     /**
@@ -126,7 +127,7 @@ public class FormResponseManagerTest extends LuteceTestCase
         question1.setDescription( DEFAULT_QUESTION_DESCRIPTION );
         question1.setId( 1 );
         question1.setEntry( entry );
-        
+
         Question question2 = new Question( );
         question2.setDescription( DEFAULT_QUESTION_DESCRIPTION );
         question2.setId( 2 );
@@ -158,26 +159,26 @@ public class FormResponseManagerTest extends LuteceTestCase
         formResponseStep1.setOrder( 0 );
         formResponseStep1.setId( DEFAULT_INT );
         formResponseStep1.setQuestions( listFormQuestionResponse1 );
-        
+
         List<FormQuestionResponse> listFormQuestionResponse2 = new ArrayList<>( );
         FormQuestionResponse formQuestionResponse2 = new FormQuestionResponse( );
         formQuestionResponse2.setQuestion( question2 );
         listFormQuestionResponse2.add( formQuestionResponse2 );
-        
+
         Step step2 = new Step( );
         step2.setDescription( DEFAULT_STEP_DESCRIPTION );
         step2.setFinal( true );
         step2.setInitial( true );
         step2.setIdForm( DEFAULT_INT );
         step2.setTitle( DEFAULT_STEP_TITLE );
-        
+
         FormResponseStep formResponseStep2 = new FormResponseStep( );
         formResponseStep2.setStep( step2 );
         formResponseStep2.setFormResponseId( DEFAULT_INT );
         formResponseStep2.setOrder( 1 );
         formResponseStep2.setId( DEFAULT_INT );
         formResponseStep2.setQuestions( listFormQuestionResponse2 );
-        
+
         List<FormResponseStep> listFormResponseStep = new ArrayList<>( );
         listFormResponseStep.add( formResponseStep1 );
         listFormResponseStep.add( formResponseStep2 );

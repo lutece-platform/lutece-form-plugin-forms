@@ -230,8 +230,7 @@ public class FormXPage extends MVCApplication
         {
             // The authentication is external
             // Should register the user if it's not already done
-            if ( SecurityService.getInstance( ).getRegisteredUser( request ) == null
-                    && SecurityService.getInstance( ).getRemoteUser( request ) == null 
+            if ( SecurityService.getInstance( ).getRegisteredUser( request ) == null && SecurityService.getInstance( ).getRemoteUser( request ) == null
                     && form.isAuthentificationNeeded( ) )
             {
                 // Authentication is required to access to the portal
@@ -288,17 +287,17 @@ public class FormXPage extends MVCApplication
         {
             Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
             checkAuthentication( form, request );
-            
+
             if ( form.isOneResponseByUser( ) || form.getMaxNumberResponse( ) != 0 )
             {
                 Object lock = getLockOnForm( form );
-                synchronized ( lock )
+                synchronized( lock )
                 {
                     checkIfUserResponseForm( form, request );
                     checkNumberMaxResponseForm( form, request );
                 }
             }
-            
+
             strTitleForm = I18nService.getLocalizedString( MESSAGE_STEP_TITLE, new String [ ] {
                     form.getTitle( ), _currentStep.getTitle( )
             }, getLocale( request ) );
@@ -350,7 +349,7 @@ public class FormXPage extends MVCApplication
                     _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
 
                     Object [ ] args = {
-                        _formResponseManager.getFormResponse( ).getUpdate( ),
+                            _formResponseManager.getFormResponse( ).getUpdate( ),
                     };
 
                     model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, request.getLocale( ) ) );
@@ -500,7 +499,7 @@ public class FormXPage extends MVCApplication
         Map<String, Object> model = buildModelForSummary( request );
         model.put( FormsConstants.MARK_ID_FORM, idForm );
         String strTitleForm = I18nService.getLocalizedString( MESSAGE_SUMMARY_TITLE, new String [ ] {
-            form.getTitle( )
+                form.getTitle( )
         }, getLocale( request ) );
 
         XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, request.getLocale( ), model );
@@ -751,8 +750,8 @@ public class FormXPage extends MVCApplication
                 if ( entryDataService != null )
                 {
 
-                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request, question.isVisible( )
-                            && bValidateQuestionStep );
+                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request,
+                            question.isVisible( ) && bValidateQuestionStep );
 
                     if ( formQuestionResponse.hasError( ) )
                     {
@@ -810,7 +809,7 @@ public class FormXPage extends MVCApplication
         if ( currentStep == null )
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_CONTROL, new Object [ ] {
-                errorList.stream( ).collect( Collectors.joining( ) )
+                    errorList.stream( ).collect( Collectors.joining( ) )
             }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( VIEW_STEP ) );
         }
         return redirectView( request, VIEW_STEP );
@@ -1060,7 +1059,7 @@ public class FormXPage extends MVCApplication
         boolean isUpload = strFlagAsynchrounous.startsWith( FormsAsynchronousUploadHandler.getUploadFormsSubmitPrefix( ) );
         Map<String, String [ ]> extraParams = new TreeMap<>( );
         extraParams.put( strFlagAsynchrounous, new String [ ] {
-            strFlagAsynchrounous
+                strFlagAsynchrounous
         } );
         HttpServletRequest wrappedRequest = new SynchronousHttpServletRequestWrapper( (MultipartHttpServletRequest) request, extraParams );
 
@@ -1147,11 +1146,11 @@ public class FormXPage extends MVCApplication
             LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
             formResponse.setGuid( user.getName( ) );
         }
-        
+
         if ( form.isOneResponseByUser( ) || form.getMaxNumberResponse( ) != 0 )
         {
             Object lock = getLockOnForm( form );
-            synchronized ( lock )
+            synchronized( lock )
             {
                 checkIfUserResponseForm( form, request );
                 checkNumberMaxResponseForm( form, request );
@@ -1163,10 +1162,10 @@ public class FormXPage extends MVCApplication
         {
             _formService.saveForm( form, formResponse );
         }
-        
+
         _formService.processFormAction( form, formResponse );
     }
-    
+
     private static synchronized Object getLockOnForm( Form form )
     {
         _lockFormId.putIfAbsent( form.getId( ), new Object( ) );
@@ -1194,9 +1193,10 @@ public class FormXPage extends MVCApplication
             }
         }
     }
-    
+
     /**
      * Increase the number of response of the Form
+     * 
      * @param form
      */
     private static void increaseNumberResponse( Form form )

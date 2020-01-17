@@ -155,12 +155,14 @@ public final class FormResponseHome
         // Questions
         List<Question> questionList = QuestionHome.findByPrimaryKeyList( formQuestionResponseList.stream( ).map( FormQuestionResponse::getQuestion )
                 .map( Question::getId ).distinct( ).collect( Collectors.toList( ) ) );
-        List<Entry> entryList = EntryHome.findByPrimaryKeyList( questionList.stream( ).map( Question::getIdEntry ).distinct( ).collect( Collectors.toList( ) ) );
+        List<Entry> entryList = EntryHome
+                .findByPrimaryKeyList( questionList.stream( ).map( Question::getIdEntry ).distinct( ).collect( Collectors.toList( ) ) );
         List<Field> fieldList = FieldHome.getFieldListByListIdEntry( entryList.stream( ).map( Entry::getIdEntry ).collect( Collectors.toList( ) ) );
-        
+
         for ( Entry entry : entryList )
         {
-            entry.setFields( fieldList.stream( ).filter( ( Field f ) -> f.getParentEntry( ).getIdEntry( ) == entry.getIdEntry(  ) ).collect( Collectors.toList( ) ) );
+            entry.setFields(
+                    fieldList.stream( ).filter( ( Field f ) -> f.getParentEntry( ).getIdEntry( ) == entry.getIdEntry( ) ).collect( Collectors.toList( ) ) );
         }
         for ( Question question : questionList )
         {
@@ -171,12 +173,12 @@ public final class FormResponseHome
         for ( FormQuestionResponse fqr : formQuestionResponseList )
         {
             fqr.setQuestion( questionList.stream( ).filter( q -> q.getId( ) == fqr.getQuestion( ).getId( ) ).findFirst( ).orElse( null ) );
-            
+
             for ( Response resp : fqr.getEntryResponse( ) )
             {
                 if ( resp.getField( ) != null )
                 {
-                    resp.setField( fieldList.stream( ).filter( (Field f) -> f.getIdField( ) == resp.getField( ).getIdField( ) ).findFirst( ).orElse( null ) );
+                    resp.setField( fieldList.stream( ).filter( ( Field f ) -> f.getIdField( ) == resp.getField( ).getIdField( ) ).findFirst( ).orElse( null ) );
                 }
             }
         }

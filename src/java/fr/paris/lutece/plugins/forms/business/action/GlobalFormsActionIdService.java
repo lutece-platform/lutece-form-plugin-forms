@@ -74,9 +74,8 @@ public class GlobalFormsActionIdService extends ResourceIdService
     public ReferenceList getResourceIdList( Locale locale )
     {
         ReferenceList referenceList = new ReferenceList( );
-        GlobalFormsActionHome.selectAllFormActions( FormsPlugin.getPlugin( ), locale )
-            .stream( )
-            .forEach( ( GlobalFormsAction action ) -> referenceList.addItem( action.getCode( ), action.getName( ) ) );
+        GlobalFormsActionHome.selectAllFormActions( FormsPlugin.getPlugin( ), locale ).stream( )
+                .forEach( ( GlobalFormsAction action ) -> referenceList.addItem( action.getCode( ), action.getName( ) ) );
         return referenceList;
     }
 
@@ -86,8 +85,7 @@ public class GlobalFormsActionIdService extends ResourceIdService
     @Override
     public String getTitle( String strCode, Locale locale )
     {
-        GlobalFormsAction action = GlobalFormsActionHome.selectGlobalFormActionByCode( strCode,
-                FormsPlugin.getPlugin( ), locale );
+        GlobalFormsAction action = GlobalFormsActionHome.selectGlobalFormActionByCode( strCode, FormsPlugin.getPlugin( ), locale );
         return ( action != null ) ? action.getName( ) : StringUtils.EMPTY;
     }
 

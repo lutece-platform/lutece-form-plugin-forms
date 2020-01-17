@@ -344,7 +344,7 @@ public class FormJspBean extends AbstractJspBean
             {
 
                 Object [ ] tabFormTitleCopy = {
-                    formToBeCopied.getTitle( ),
+                        formToBeCopied.getTitle( ),
                 };
                 String strTitleCopyForm = I18nService.getLocalizedString( PROPERTY_COPY_FORM_TITLE, tabFormTitleCopy, getLocale( ) );
 

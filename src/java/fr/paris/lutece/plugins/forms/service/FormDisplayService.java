@@ -76,7 +76,8 @@ public final class FormDisplayService
         {
             int formDisplayCompositeId = formDisplayToDelete.getCompositeId( );
 
-            List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( formDisplayToDelete.getStepId( ), formDisplayToDelete.getId( ) );
+            List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( formDisplayToDelete.getStepId( ),
+                    formDisplayToDelete.getId( ) );
 
             if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplayToDelete.getCompositeType( ) ) )
             {

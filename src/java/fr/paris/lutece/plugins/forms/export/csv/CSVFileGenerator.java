@@ -59,7 +59,7 @@ import fr.paris.lutece.util.file.FileUtil;
  */
 public class CSVFileGenerator implements IFileGenerator
 {
-    private static final String TMP_DIR = System.getProperty("java.io.tmpdir");
+    private static final String TMP_DIR = System.getProperty( "java.io.tmpdir" );
     private static final boolean ZIP_EXPORT = Boolean.parseBoolean( AppPropertiesService.getProperty( "forms.export.csv.zip", "false" ) );
     private static final int FLUSH_SIZE = 1000;
     public static final String UTF8_BOM = "\uFEFF";
@@ -107,7 +107,7 @@ public class CSVFileGenerator implements IFileGenerator
     {
         return isZippable( ) ? FileUtil.CONSTANT_MIME_TYPE_ZIP : FileUtil.CONSTANT_MIME_TYPE_CSV;
     }
-    
+
     @Override
     public boolean isZippable( )
     {
@@ -120,16 +120,16 @@ public class CSVFileGenerator implements IFileGenerator
 
         boolean first = true;
         int count = 0;
-        
+
         try ( BufferedWriter bos = Files.newBufferedWriter( tempFile, StandardCharsets.UTF_8 ) )
         {
             bos.write( UTF8_BOM );
-            List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn, _listFormFilter, _sortConfig );
+            List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn,
+                    _listFormFilter, _sortConfig );
             for ( FormResponseItem formResponseItem : listFormResponseItems )
             {
                 count++;
-                FormResponse formResponse = FormResponseHome
-                        .findByPrimaryKeyForIndex( formResponseItem.getIdFormResponse( ) );
+                FormResponse formResponse = FormResponseHome.findByPrimaryKeyForIndex( formResponseItem.getIdFormResponse( ) );
                 if ( first )
                 {
                     bos.write( formResponseExport.buildCsvColumnToExport( formResponse ) );

@@ -134,8 +134,8 @@ public final class FormResponseStepHome
     {
         if ( formResponseStep != null )
         {
-            formResponseStep.setQuestions( FormQuestionResponseHome.findQuestionsByStepAndFormResponse( formResponseStep.getFormResponseId( ), formResponseStep
-                    .getStep( ).getId( ) ) );
+            formResponseStep.setQuestions( FormQuestionResponseHome.findQuestionsByStepAndFormResponse( formResponseStep.getFormResponseId( ),
+                    formResponseStep.getStep( ).getId( ) ) );
         }
     }
 

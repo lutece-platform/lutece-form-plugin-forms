@@ -541,7 +541,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         if ( !strFieldError.equals( EMPTY_STRING ) )
         {
             Object [ ] tabRequiredFields = {
-                I18nService.getLocalizedString( strFieldError, getLocale( ) ),
+                    I18nService.getLocalizedString( strFieldError, getLocale( ) ),
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
