@@ -71,11 +71,6 @@
 				<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
 					<@checkBox name='exportable' id='exportable' value='1' checked=entry.exportable />
 				</@formGroup>
-				<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelUseRichText}' helpKey='#i18n{forms.createEntry.labelUseRichTextComment}'>
-					<!#-- 	fieldInLine means use rich text -->
-					<#if entry.fieldInLine><#assign checked = true /></#if>
-					<@checkBox name='useRichText' value='true' checked=checked />
-				</@formGroup>
 				<@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
 					<@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
 				</@formGroup>
