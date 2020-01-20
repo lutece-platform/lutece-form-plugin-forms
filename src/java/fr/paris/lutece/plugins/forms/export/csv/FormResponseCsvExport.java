@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -54,51 +52,26 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class FormResponseCsvExport
 {
     private static final String SEPARATOR = FormsConstants.SEPARATOR_SEMICOLON;
-    private static final String END_OF_LINE = FormsConstants.END_OF_LINE;
     private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
     private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
 
     private final CSVHeader _csvHeader = new CSVHeader( );
 
-    private final List<CSVDataLine> _listDataToExport = new ArrayList<>( );
-
-    private String _strCsvColumnToExport;
-
-    private String _strCsvDataToExport;
-
-    /**
-     * Constructor
-     * 
-     * @param listFormResponse
-     *            The list of data to export
-     */
-    public FormResponseCsvExport( List<FormResponse> listFormResponse )
-    {
-        for ( FormResponse formResponse : listFormResponse )
-        {
-            CSVDataLine csvDataLine = new CSVDataLine( formResponse );
-
-            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
-            {
-                for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
-                {
-                    _csvHeader.addHeader( formQuestionResponse.getQuestion( ) );
-                    csvDataLine.addData( formQuestionResponse );
-                }
-            }
-
-            _listDataToExport.add( csvDataLine );
-        }
-
-        buildCsvColumnToExport( );
-        buildCsvDataToExport( );
-    }
-
     /**
      * Build the CSV string for column line
      */
-    private void buildCsvColumnToExport( )
+    public String buildCsvColumnToExport( FormResponse formResponse )
     {
+        for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+        {
+            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+            {
+                if ( formQuestionResponse.getQuestion( ).isResponseExportable( ) )
+                {
+                    _csvHeader.addHeader( formQuestionResponse.getQuestion( ) );
+                }
+            }
+        }
         StringBuilder sbCsvColumn = new StringBuilder( );
 
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) ) );
@@ -111,47 +84,39 @@ public class FormResponseCsvExport
             sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question ) ) ).append( SEPARATOR );
         }
 
-        _strCsvColumnToExport = sbCsvColumn.append( END_OF_LINE ).toString( );
+        return sbCsvColumn.toString( );
     }
 
     /**
      * Build the CSV string for all data lines
      */
-    private void buildCsvDataToExport( )
+    public String buildCsvDataToExport( FormResponse formResponse )
     {
-        StringBuilder sbCsvData = new StringBuilder( );
+        CSVDataLine csvDataLine = new CSVDataLine( formResponse );
 
-        for ( CSVDataLine csvDataLine : _listDataToExport )
+        for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
         {
-            StringBuilder sbRecordContent = new StringBuilder( );
-            sbRecordContent.append( csvDataLine.getCommonDataToExport( ) );
-
-            for ( Question question : _csvHeader.getColumnToExport( ) )
+            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
             {
-                sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append(
-                        SEPARATOR );
+                if ( formQuestionResponse.getQuestion( ).isResponseExportable( ) )
+                {
+                    csvDataLine.addData( formQuestionResponse );
+                }
             }
-
-            sbCsvData.append( sbRecordContent.toString( ) ).append( END_OF_LINE );
         }
 
-        _strCsvDataToExport = sbCsvData.toString( );
-    }
+        StringBuilder sbCsvData = new StringBuilder( );
 
-    /**
-     * @return the _strCsvColumnToExport
-     */
-    public String getCsvColumnToExport( )
-    {
-        return _strCsvColumnToExport;
-    }
+        StringBuilder sbRecordContent = new StringBuilder( );
+        sbRecordContent.append( csvDataLine.getCommonDataToExport( ) );
 
-    /**
-     * @return the _strCsvDataToExport
-     */
-    public String getCsvDataToExport( )
-    {
-        return _strCsvDataToExport;
-    }
+        for ( Question question : _csvHeader.getColumnToExport( ) )
+        {
+            sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append( SEPARATOR );
+        }
 
+        sbCsvData.append( sbRecordContent.toString( ) );
+
+        return sbCsvData.toString( );
+    }
 }

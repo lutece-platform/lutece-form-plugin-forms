@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@ public class ReferenceListFactory
     private final String _strNameAttribute;
     private boolean _bNumerical = Boolean.TRUE;
     private boolean _bDefaultSortNeeded = Boolean.FALSE;
-    
+
     private String _strDefaultName = FormsConstants.REFERENCE_ITEM_DEFAULT_NAME;
 
     /**

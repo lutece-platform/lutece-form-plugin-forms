@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -76,7 +76,8 @@ public final class FormDisplayService
         {
             int formDisplayCompositeId = formDisplayToDelete.getCompositeId( );
 
-            List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( formDisplayToDelete.getStepId( ), formDisplayToDelete.getId( ) );
+            List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( formDisplayToDelete.getStepId( ),
+                    formDisplayToDelete.getId( ) );
 
             if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplayToDelete.getCompositeType( ) ) )
             {

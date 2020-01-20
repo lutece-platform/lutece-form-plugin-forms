@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -208,44 +208,43 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         _bIndexToLunch.set( true );
         if ( _bIndexIsRunning.compareAndSet( false, true ) )
         {
-            new Thread( ( ) ->
-            {
+            new Thread( ( ) -> {
                 try
                 {
                     List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
                     for ( Integer nIdFormResponse : listFormResponsesId )
                     {
                         // TODO IMPLEMENT A SQL IN( ..) instead
-                    FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
-                    if ( response != null )
-                    {
-                        listFormResponses.add( response );
+                        FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
+                        if ( response != null )
+                        {
+                            listFormResponses.add( response );
+                        }
+                        if ( listFormResponses.size( ) == TAILLE_LOT )
+                        {
+                            indexFormResponseList( listFormResponses );
+                            listFormResponses.clear( );
+                        }
                     }
-                    if ( listFormResponses.size( ) == TAILLE_LOT )
+                    indexFormResponseList( listFormResponses );
+                    // Indexation increment
+                    while ( _bIndexToLunch.compareAndSet( true, false ) )
                     {
-                        indexFormResponseList( listFormResponses );
-                        listFormResponses.clear( );
+                        processIndexing( );
+
                     }
                 }
-                indexFormResponseList( listFormResponses );
-                // Indexation increment
-                while ( _bIndexToLunch.compareAndSet( true, false ) )
+                catch( Exception e )
                 {
-                    processIndexing( );
-
+                    AppLogService.error( e.getMessage( ), e );
+                    Thread.currentThread( ).interrupt( );
                 }
-            }
-            catch( Exception e )
-            {
-                AppLogService.error( e.getMessage( ), e );
-                Thread.currentThread( ).interrupt( );
-            }
-            finally
-            {
-                _bIndexIsRunning.set( false );
-            }
+                finally
+                {
+                    _bIndexIsRunning.set( false );
+                }
 
-        }   ).start( );
+            } ).start( );
         }
 
     }
@@ -260,8 +259,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         _bIndexToLunch.set( true );
         if ( _bIndexIsRunning.compareAndSet( false, true ) )
         {
-            new Thread( ( ) ->
-            {
+            new Thread( ( ) -> {
                 try
                 {
                     while ( _bIndexToLunch.compareAndSet( true, false ) )
@@ -619,7 +617,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
                     if ( !StringUtils.isEmpty( response.getResponseValue( ) ) )
                     {
-                        StringBuilder fieldNameBuilder = new StringBuilder( LuceneUtils.createLuceneEntryKey( strQuestionCode, response.getIterationNumber( ) ) );
+                        StringBuilder fieldNameBuilder = new StringBuilder(
+                                LuceneUtils.createLuceneEntryKey( strQuestionCode, response.getIterationNumber( ) ) );
 
                         if ( responseField != null )
                         {

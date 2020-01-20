@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,7 +62,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     // Constants
     private static final String FORM_CODE_ATTRIBUTE = "id";
     private static final String FORM_NAME_ATTRIBUTE = "title";
-    private static final String DEFAULT_ID_FORM = "-1";
+    public static final String DEFAULT_ID_FORM = "-1";
 
     /**
      * {@inheritDoc}

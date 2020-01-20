@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,8 +62,8 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
         if ( nIdWorkflow > 0 && workflowService.isAvailable( ) )
         {
             workflowService.getState( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdWorkflow, form.getId( ) );
-            WorkflowService.getInstance( )
-                    .executeActionAutomatic( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdWorkflow, Integer.valueOf( nIdFormResponse ) );
+            WorkflowService.getInstance( ).executeActionAutomatic( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdWorkflow,
+                    Integer.valueOf( nIdFormResponse ) );
         }
     }
 

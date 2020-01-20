@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.list;
 
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import java.util.List;
 
@@ -65,5 +66,19 @@ public interface IFormListDAO
      *            The comparator config
      */
     void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+            FormResponseItemSortConfig sortConfig );
+
+    /**
+     * Search the Lucene Index.
+     * 
+     * @param formPanel
+     * @param listFormColumn
+     * @param listFormFilter
+     * @param nStartIndex
+     * @param nPageSize
+     * @param sortConfig
+     * @return
+     */
+    List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormResponseItemSortConfig sortConfig );
 }

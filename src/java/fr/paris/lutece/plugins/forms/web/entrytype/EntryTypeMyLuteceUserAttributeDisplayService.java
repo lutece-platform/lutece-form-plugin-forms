@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -138,12 +138,14 @@ public class EntryTypeMyLuteceUserAttributeDisplayService implements IEntryDispl
         switch( displayType.getMode( ) )
         {
             case EDITION:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale,
-                        setModel( entry, request, displayType, model ) ).getHtml( );
+                strEntryHtml = AppTemplateService
+                        .getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, request, displayType, model ) )
+                        .getHtml( );
                 break;
             case READONLY:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale,
-                        setModel( entry, request, displayType, model ) ).getHtml( );
+                strEntryHtml = AppTemplateService
+                        .getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, request, displayType, model ) )
+                        .getHtml( );
                 break;
             default: // Nothing to do
         }

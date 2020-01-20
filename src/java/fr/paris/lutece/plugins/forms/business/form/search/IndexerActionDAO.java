@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,7 +60,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     public synchronized void insert( IndexerAction indexerAction, Plugin plugin )
     {
 
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             daoUtil.setInt( 1, indexerAction.getIdFormResponse( ) );
             daoUtil.setInt( 2, indexerAction.getIdTask( ) );
@@ -82,7 +82,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     {
         IndexerAction indexerAction = null;
 
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin ) )
         {
             daoUtil.setInt( 1, nId );
             daoUtil.executeQuery( );
@@ -105,7 +105,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     @Override
     public void delete( int nId, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
         {
 
             daoUtil.setInt( 1, nId );
@@ -120,7 +120,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     @Override
     public void store( IndexerAction indexerAction, Plugin plugin )
     {
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
         {
 
             daoUtil.setInt( 1, indexerAction.getIdAction( ) );
@@ -142,7 +142,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     {
         List<IndexerAction> indexerActionList = new ArrayList<>( );
 
-        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT + SQL_FILTER_ID_TASK, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT + SQL_FILTER_ID_TASK, plugin ) )
         {
 
             int nIndex = 1;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,8 +48,7 @@ public final class TransitionDAO implements ITransitionDAO
 {
     // Constants
     private static final String SQL_QUERY_SELECT = "SELECT t.id_transition, t.from_step, fromStep.title as fromTitle, t.next_step, nextStep.title as nextTitle, t.priority, f.id_form FROM forms_transition t "
-            + "INNER JOIN forms_step fromStep ON fromStep.id_step = t.from_step "
-            + "INNER JOIN forms_step nextStep ON nextStep.id_step = t.next_step "
+            + "INNER JOIN forms_step fromStep ON fromStep.id_step = t.from_step " + "INNER JOIN forms_step nextStep ON nextStep.id_step = t.next_step "
             + " LEFT JOIN forms_form f ON fromStep.id_form = f.id_form ";
     private static final String SQL_FILTER_BY_ID = " WHERE t.id_transition = ? ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_transition ( from_step, next_step, priority ) VALUES ( ?, ?, ? ) ";

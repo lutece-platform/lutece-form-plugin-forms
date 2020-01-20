@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -296,8 +296,8 @@ public class FormQuestionJspBean extends AbstractJspBean
             setPageTitleProperty( PROPERTY_CREATE_QUESTION_TITLE );
         }
 
-        model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE, AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model )
-                .getHtml( ) );
+        model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE,
+                AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model ).getHtml( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( EntryTypeServiceManager.getEntryTypeService( _entry ).getTemplateCreate( _entry, false ),
                 getLocale( ), model );
@@ -557,8 +557,9 @@ public class FormQuestionJspBean extends AbstractJspBean
         try
         {
             String strReturnUrl = processQuestionCreation( request );
-            return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ),
-                    FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
+            return strReturnUrl != null ? strReturnUrl
+                    : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
+                            _question.getId( ) );
 
         }
         catch( CodeAlreadyExistsException e )
@@ -630,7 +631,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
 
         _question = new Question( );
-        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
+        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
+                : _entry.getTitle( );
         _question.setTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
         _question.setDescription( _entry.getComment( ) );
@@ -820,8 +822,8 @@ public class FormQuestionJspBean extends AbstractJspBean
             setPageTitleProperty( PROPERTY_MODIFY_QUESTION_TITLE );
         }
 
-        model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE, AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model )
-                .getHtml( ) );
+        model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,
+                AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model ).getHtml( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
 
@@ -900,7 +902,8 @@ public class FormQuestionJspBean extends AbstractJspBean
             }
         }
 
-        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
+        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
+                : _entry.getTitle( );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
         _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
         _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );

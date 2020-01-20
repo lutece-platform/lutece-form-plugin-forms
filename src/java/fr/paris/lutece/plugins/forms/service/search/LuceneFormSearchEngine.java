@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,7 +82,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         ArrayList<Integer> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
-        try( Directory directory = _luceneFormSearchFactory.getDirectory( ) ; IndexReader ir = DirectoryReader.open( directory ) ; )
+        try ( Directory directory = _luceneFormSearchFactory.getDirectory( ) ; IndexReader ir = DirectoryReader.open( directory ) ; )
         {
             searcher = new IndexSearcher( ir );
 
@@ -171,7 +171,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         List<FormResponseSearchItem> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
-        try( Directory directory = _luceneFormSearchFactory.getDirectory( ) ; IndexReader ir = DirectoryReader.open( directory ) ; )
+        try ( Directory directory = _luceneFormSearchFactory.getDirectory( ) ; IndexReader ir = DirectoryReader.open( directory ) ; )
         {
 
             searcher = new IndexSearcher( ir );
@@ -187,7 +187,11 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
             }
             ScoreDoc [ ] hits = topDocs.scoreDocs;
 
-            int nMaxIndex = Math.min( nStartIndex + nPageSize, hits.length );
+            int nMaxIndex = hits.length;
+            if ( nPageSize > 0 )
+            {
+                nMaxIndex = Math.min( nStartIndex + nPageSize, hits.length );
+            }
             formPanel.setTotalFormResponseItemCount( hits.length );
             for ( int i = nStartIndex; i < nMaxIndex; i++ )
             {

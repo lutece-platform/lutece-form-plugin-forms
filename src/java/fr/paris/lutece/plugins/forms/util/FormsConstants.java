@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -166,8 +166,8 @@ public final class FormsConstants
     public static final String REFERENCE_ITEM_DEFAULT_CODE = "-1";
     public static final String REFERENCE_ITEM_DEFAULT_NAME = "-";
     public static final int DEFAULT_ID_VALUE = NumberUtils.INTEGER_MINUS_ONE;
-    public static final int ORDER_NOT_SET = Integer.parseInt( DatastoreService.getDataValue( "forms.formResponseStep.orderNotSet",
-            NumberUtils.INTEGER_MINUS_ONE.toString( ) ) );
+    public static final int ORDER_NOT_SET = Integer
+            .parseInt( DatastoreService.getDataValue( "forms.formResponseStep.orderNotSet", NumberUtils.INTEGER_MINUS_ONE.toString( ) ) );
     public static final int FILE_TYPE_RIB = 1;
 
     // Markers

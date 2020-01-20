@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,8 +51,8 @@ public class FormPanelFormResponseIdFilterInitializerQueryPart extends AbstractF
     public void buildFormPanelInitializerQuery( FormParameters formParameters )
     {
         List<Integer> idList = (List<Integer>) formParameters.getFormParametersMap( ).get( PARAM_ID_LIST );
-        setFormPanelInitializerSelectQuery( new DocValuesNumbersQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, idList.stream( ).map( Integer::longValue )
-                .collect( Collectors.toList( ) ) ) );
+        setFormPanelInitializerSelectQuery( new DocValuesNumbersQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE,
+                idList.stream( ).map( Integer::longValue ).collect( Collectors.toList( ) ) ) );
     }
 
 }

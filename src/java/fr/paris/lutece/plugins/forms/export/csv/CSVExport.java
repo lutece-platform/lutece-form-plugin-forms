@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,12 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import org.apache.commons.collections.CollectionUtils;
-
-import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
@@ -49,10 +50,10 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class CSVExport implements IFormatExport
 {
     private static final String CONSTANT_MIME_TYPE_CSV = "application/csv";
-    private static final char CHARACTER_UTF_8_BOM = '\uFEFF';
 
     private final String _strFormatExportName;
     private final String _strFormatExportDisplayName;
+    private final String _strFormatExportDescription;
 
     /**
      * Constructor of the PatternValidator
@@ -61,11 +62,14 @@ public class CSVExport implements IFormatExport
      *            The export format bean name
      * @param strFormatExportDisplayName
      *            The export format display name
+     * @param strFormatExportDescription
+     *            The export format description
      */
-    public CSVExport( String strFormatExportName, String strFormatExportDisplayName )
+    public CSVExport( String strFormatExportName, String strFormatExportDisplayName, String strFormatExportDescription )
     {
         _strFormatExportName = strFormatExportName;
         _strFormatExportDisplayName = I18nService.getLocalizedString( strFormatExportDisplayName, I18nService.getDefaultLocale( ) );
+        _strFormatExportDescription = I18nService.getLocalizedString( strFormatExportDescription, I18nService.getDefaultLocale( ) );
     }
 
     /**
@@ -95,25 +99,10 @@ public class CSVExport implements IFormatExport
         return CONSTANT_MIME_TYPE_CSV;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public byte [ ] getByteExportFile( List<FormResponse> listFormResponse )
+    public IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            FormResponseItemSortConfig sortConfig )
     {
-        byte [ ] byteExportFile = { };
-
-        if ( CollectionUtils.isNotEmpty( listFormResponse ) )
-        {
-            FormResponseCsvExport formResponseExport = new FormResponseCsvExport( listFormResponse );
-
-            StringBuilder sbExportFile = new StringBuilder( );
-            sbExportFile.append( CHARACTER_UTF_8_BOM ).append( formResponseExport.getCsvColumnToExport( ) ).append( formResponseExport.getCsvDataToExport( ) );
-
-            byteExportFile = sbExportFile.toString( ).getBytes( StandardCharsets.UTF_8 );
-        }
-
-        return byteExportFile;
+        return new CSVFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription );
     }
-
 }

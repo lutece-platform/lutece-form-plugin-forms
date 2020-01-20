@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -287,7 +287,7 @@ public class FormControlJspBean extends AbstractJspBean
             }
 
             Object [ ] args = {
-                _question.getTitle( ),
+                    _question.getTitle( ),
             };
 
             _strControlTitle = I18nService.getLocalizedString( INFO_CONDITION_QUESTION_TITLE, args, request.getLocale( ) );
@@ -303,7 +303,7 @@ public class FormControlJspBean extends AbstractJspBean
                 }
 
                 Object [ ] args = {
-                    _group.getTitle( ),
+                        _group.getTitle( ),
                 };
 
                 _strControlTitle = I18nService.getLocalizedString( INFO_CONDITION_GROUP_TITLE, args, request.getLocale( ) );

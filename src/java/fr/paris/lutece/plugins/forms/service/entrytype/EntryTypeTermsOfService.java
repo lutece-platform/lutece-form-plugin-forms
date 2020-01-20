@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -202,7 +202,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     private String buildErrorUrl( String strFieldInError, HttpServletRequest request, Locale locale )
     {
         Object [ ] tabRequiredFields = {
-            I18nService.getLocalizedString( strFieldInError, locale ),
+                I18nService.getLocalizedString( strFieldInError, locale ),
         };
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
@@ -318,7 +318,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     {
         return false;
     }
-    
+
     @Override
     public String getResponseValueForExport( Entry entry, HttpServletRequest request, Response response, Locale locale )
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -320,6 +320,16 @@ public class Question implements Serializable, Cloneable
     public boolean isResponsesIndexed( )
     {
         return _entry.isIndexed( );
+    }
+
+    /**
+     * Return the responses exportable boolean
+     * 
+     * @return true if the responses of this question are exportable, false otherwise
+     */
+    public boolean isResponseExportable( )
+    {
+        return _entry.isExportable( );
     }
 
     /**
