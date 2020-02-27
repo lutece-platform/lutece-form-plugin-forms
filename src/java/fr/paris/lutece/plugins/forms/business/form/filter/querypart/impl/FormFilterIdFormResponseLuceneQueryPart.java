@@ -33,14 +33,15 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.search.Query;
+
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-import java.util.Map;
-import java.util.Set;
-import org.apache.lucene.document.IntPoint;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
 
 /**
  * Implementation of the IFormFilterQueryPart for an Entry filter
@@ -55,21 +56,22 @@ public class FormFilterIdFormResponseLuceneQueryPart extends AbstractFormFilterL
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
-        BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
         if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
             Set<Map.Entry<String, Object>> setFormParameters = formParameters.getFormParametersMap( ).entrySet( );
-
-            for ( Map.Entry<String, Object> formParam : setFormParameters )
-            {
-                int nIdFormResponse = Integer.parseInt( formParam.getValue( ).toString( ) );
-                if ( nIdFormResponse != CONSTANT_INTEGER_MINUS_ONE )
-                {
-                    Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse );
-                    booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
-                }
-            }
-            setFormFilterQuery( booleanQueryBuilder.build( ) );
+            
+            
+            int[] idArray = setFormParameters.stream( )
+                    .map( Map.Entry::getValue )
+                    .filter( Objects::nonNull )
+                    .map( Object::toString )
+                    .map( Integer::parseInt )
+                    .filter( ( Integer i ) -> i != CONSTANT_INTEGER_MINUS_ONE )
+                    .distinct( )
+                    .mapToInt( Integer::intValue ).toArray( );
+            
+            Query query = IntPoint.newSetQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, idArray );
+            setFormFilterQuery( query );
         }
         else
         {
