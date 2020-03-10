@@ -9,7 +9,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>plugin-forms</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>1.0.6</version>
+    <version>1.0.7-SNAPSHOT</version>
     <name>Lutece forms plugin</name>
      <repositories>
          <repository>
@@ -59,6 +59,6 @@
         <connection>scm:git:https://github.com/lutece-platform/lutece-form-plugin-forms.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-form-plugin-forms.git</developerConnection>
         <url>https://github.com/lutece-platform/lutece-form-plugin-forms.git</url>
-        <tag>lutece-form-plugin-forms-1.0.6</tag>
+        <tag>HEAD</tag>
     </scm>
 </project>
