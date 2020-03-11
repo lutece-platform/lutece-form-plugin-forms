@@ -558,7 +558,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      */
     @Action( value = ACTION_SAVE_FORM_RESPONSE )
-    public XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         Form form = null;
 
