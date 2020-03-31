@@ -48,14 +48,14 @@
 				<@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
 					<@checkBox name='only_display_in_back' id='only_display_in_back' value='1' />
 				</@formGroup>
+				<@formGroup helpKey='#i18n{forms.createEntry.labelUseRichTextComment}'>
+					<@checkBox labelFor='css_class' labelKey='#i18n{forms.createEntry.labelUseRichText}' name='useRichText' value='true' />
+				</@formGroup>
 				<@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}'>
 					<@checkBox name='editable_back' id='editable_back' value='1' />
 				</@formGroup>
 				<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 					<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
-				</@formGroup>
-				<@formGroup helpKey='#i18n{forms.createEntry.labelUseRichTextComment}'>
-					<@checkBox labelFor='css_class' labelKey='#i18n{forms.createEntry.labelUseRichText}' name='useRichText' value='true' />
 				</@formGroup>
 				<@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
 					<@checkBox name='is_indexed' id='is_indexed' value='1' checked=true />

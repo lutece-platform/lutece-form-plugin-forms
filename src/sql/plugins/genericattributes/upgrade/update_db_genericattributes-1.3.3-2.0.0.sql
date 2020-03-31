@@ -62,3 +62,10 @@ WHERE t.class_name = 'forms.entryTypeDate'
 AND e.id_entry = r.id_entry);
 
 ALTER TABLE genatt_entry modify COLUMN id_entry int AUTO_INCREMENT NOT NULL;
+
+INSERT INTO genatt_field (id_entry, code, VALUE)
+	SELECT e.id_entry, 'richtext', 'true' from genatt_entry e 
+	INNER JOIN genatt_entry_type t ON t.id_type = e.id_type 
+	WHERE resource_type = 'FORMS_FORM' 
+	AND t.class_name = 'forms.entryTypeTextArea'
+	AND e.fields_in_line = 1;
