@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,11 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerLuceneQueryPart;
 import org.apache.lucene.search.Query;
 
@@ -48,12 +43,6 @@ public abstract class AbstractFormPanelInitializerQueryPart implements IFormPane
 {
     // Variables
     private Query _queryFormPanelInitializerSelectQuery;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract void buildFormPanelInitializerQuery( FormParameters formParameters );
 
     /**
      * {@inheritDoc}

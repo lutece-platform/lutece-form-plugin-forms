@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,17 +33,17 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.apache.lucene.index.IndexableField;
 
 /**
  * Implementation of the IFormColumnQueryPart interface for a form column
@@ -90,6 +90,8 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
                     case CONSTANT_FIELD_Y:
                         mapFormColumnValues.put( strYValue, field.getValue( ) );
                         break;
+                    default:
+                        break;
                 }
             }
         }
@@ -110,6 +112,6 @@ public class FormColumnEntryGeolocationQueryPart extends AbstractFormColumnQuery
             FormColumnEntryGeolocation formColumnEntry = (FormColumnEntryGeolocation) column;
             return formColumnEntry.getListEntryCode( );
         }
-        return null;
+        return new ArrayList<>( );
     }
 }

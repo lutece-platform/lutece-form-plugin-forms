@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,6 +56,8 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
+import fr.paris.lutece.plugins.genericattributes.util.FileAttributesUtils;
+import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.url.UrlItem;
@@ -170,14 +172,13 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
      * @param request
      *            the HTTP request
      */
-    @Override
     protected void createOrUpdateFileFields( Entry entry, HttpServletRequest request )
     {
-        super.createOrUpdateFileFields( entry, request );
+        FileAttributesUtils.createOrUpdateFileFields( entry, request );
 
         String strOcrProvider = request.getParameter( PARAMETER_FILE_TYPE );
 
-        createOrUpdateField( entry, FIELD_FILE_TYPE, null, strOcrProvider );
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_FILE_TYPE, null, strOcrProvider );
     }
 
     /**
@@ -188,8 +189,6 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     public ReferenceList getFileTypeRefList( )
     {
         ReferenceList refList = new ReferenceList( );
-
-        // refList.addItem( StringUtils.EMPTY, StringUtils.EMPTY );
 
         for ( IOcrProvider typeDocumentProvider : OcrProviderManager.getOcrProvidersList( ) )
         {
@@ -263,10 +262,9 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     {
         ReferenceList refList = new ReferenceList( );
 
-        // List<Integer> listAuthorizedEntryType = OcrProviderManager.getOcrProvider( strKey ).getAuthorizedEntryType( );
         for ( Question question : QuestionHome.getQuestionsListByStep( nIdStep ) )
         {
-            if ( question.getId( ) != nIdQuestion /* && listAuthorizedEntryType.contains( entry.getEntryType( ).getIdType( ) ) */)
+            if ( question.getId( ) != nIdQuestion )
             {
                 refList.addItem( question.getIdEntry( ), question.getTitle( ) );
             }
@@ -299,7 +297,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
         Entry entry = quest.getEntry( );
 
         if ( entry.getEntryType( ).getBeanName( ).equals( ENTRY_TYPE_AUT_READING_FILE ) && handler.hasAddFileFlag( request, strAttributeName )
-                && fileUploaded != null && !StringUtils.isEmpty( fileUploaded.getName( ) ) )
+                && fileUploaded != null && StringUtils.isNotEmpty( fileUploaded.getName( ) ) )
         {
 
             Field fieldFileType = entry.getFieldByCode( FIELD_FILE_TYPE );
@@ -318,14 +316,14 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
 
                 return true;
             }
-            if ( listResponse != null && listResponse.size( ) > 0 )
+            if ( CollectionUtils.isNotEmpty( listResponse ) )
             {
 
                 for ( FormQuestionResponse response : listFormsQuestionResponse )
                 {
                     List<Response> listResponseForQuestion = listResponse.stream( )
                             .filter( p -> p.getEntry( ).getIdEntry( ) == response.getQuestion( ).getIdEntry( ) ).collect( ( Collectors.toList( ) ) );
-                    if ( listResponseForQuestion != null && listResponseForQuestion.size( ) > 0 )
+                    if ( CollectionUtils.isNotEmpty( listResponseForQuestion ) )
                     {
                         response.setEntryResponse( listResponseForQuestion );
                     }

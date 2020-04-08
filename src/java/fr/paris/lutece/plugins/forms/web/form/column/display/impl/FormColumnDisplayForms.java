@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -94,8 +94,6 @@ public class FormColumnDisplayForms extends AbstractFormColumnDisplay
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_FORMS_TITLE, strFormsTitle );
 
-        String strFormColumnFormsTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
-
-        return strFormColumnFormsTemplate;
+        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }
 }

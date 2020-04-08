@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,10 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
-public class FormColumnComparator implements Comparator<IFormColumn>
+public class FormColumnComparator implements Comparator<IFormColumn>, Serializable
 {
+
+    private static final long serialVersionUID = -7061089211691735547L;
 
     /**
      * {@inheritDoc}

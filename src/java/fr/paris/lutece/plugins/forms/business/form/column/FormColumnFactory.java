@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,14 +43,6 @@ public class FormColumnFactory
 {
     // Constants
     public static final String BEAN_NAME = "forms.formColumn.factory";
-
-    /**
-     * Constructor
-     * 
-     */
-    public FormColumnFactory( )
-    {
-    }
 
     /**
      * Build the list of all FormColumn

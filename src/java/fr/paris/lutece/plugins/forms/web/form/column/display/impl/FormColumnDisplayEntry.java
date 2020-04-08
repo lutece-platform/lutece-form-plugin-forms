@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.column.display.impl;
 
-import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,15 +43,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.math.NumberUtils;
-
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
-import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
@@ -90,12 +86,11 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         model.put( MARK_ENTRY_VALUE_COLUMN_TITLE, getFormColumnTitle( ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_POSITION, getPosition( ) );
 
-        String columSort = String.format( FormEntryNameConstants.COLUMN_ENTRY_VALUE_PATTERN, getPosition( ) );
         if ( getFormColumn( ) instanceof FormColumnEntry )
         {
             FormColumnEntry column = ( (FormColumnEntry) getFormColumn( ) );
-            columSort = column.getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
-            String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0";
+            String columSort = column.getListEntryCode( ).stream( ).distinct( ).collect( Collectors.joining( "," ) );
+            String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0";
 
             String strEntryCode = column.getListEntryCode( ).get( 0 );
             Question question = QuestionHome.findByCode( strEntryCode );
@@ -127,59 +122,43 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         List<String> listEntryValues = new ArrayList<>( );
         if ( formColumnCell != null && formColumnCell.getFormColumnCellValues( ).size( ) > 0 )
         {
-            formColumnCell.getFormColumnCellValues( ).entrySet( ).forEach( entry -> {
+            for ( java.util.Map.Entry<String, Object> entry : formColumnCell.getFormColumnCellValues( ).entrySet( ) )
+            {
                 Object objEntryValue = entry.getValue( );
                 String objEntryKey = entry.getKey( );
-                if ( objEntryValue != null )
+                if ( objEntryValue == null )
                 {
-                    if ( objEntryKey.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
+                    continue;
+                }
+
+                if ( objEntryKey.endsWith( FormResponseSearchItem.FIELD_DATE_SUFFIX ) )
+                {
+                    String stringToConvert = String.valueOf( objEntryValue );
+                    try
                     {
-                        String stringToConvert = String.valueOf( objEntryValue );
-                        try
-                        {
-                            Long convertedLong = Long.parseLong( stringToConvert );
-                            Date date = new Date( convertedLong );
-                            String strDate = _dateFormat.format( date );
+                        Long convertedLong = Long.parseLong( stringToConvert );
+                        Date date = new Date( convertedLong );
+                        String strDate = _dateFormat.format( date );
 
-                            listEntryValues.add( strDate );
-                        }
-                        catch( Exception e )
-                        {
-                            listEntryValues.add( stringToConvert );
-                        }
-
+                        listEntryValues.add( strDate );
                     }
-                    else
+                    catch( Exception e )
                     {
-                        listEntryValues.add( String.valueOf( objEntryValue ) );
+                        listEntryValues.add( stringToConvert );
                     }
 
                 }
-            } );
+                else
+                {
+                    listEntryValues.add( String.valueOf( objEntryValue ) );
+                }
+            }
         }
 
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_ENTRY_VALUES, listEntryValues );
 
-        String strFormColumnEntryTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
-
-        return strFormColumnEntryTemplate;
+        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }
 
-    /**
-     * Return the position of the FormColumn or {@linkplain NumberUtils.INTEGER_MINUS_ONE} if doesn't exist
-     * 
-     * @return the position of the FormColumn
-     */
-    private int getFormColumnPosition( )
-    {
-        int nFormColumnPosition = NumberUtils.INTEGER_MINUS_ONE;
-        IFormColumn formColumn = getFormColumn( );
-        if ( formColumn != null )
-        {
-            nFormColumnPosition = formColumn.getFormColumnPosition( );
-        }
-
-        return nFormColumnPosition;
-    }
 }

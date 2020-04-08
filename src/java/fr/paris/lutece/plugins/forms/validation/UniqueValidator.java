@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.validation;
 
 import java.util.Collection;
@@ -93,7 +92,7 @@ public class UniqueValidator extends AbstractValidator
         {
             Response response = formQuestionResponse.getEntryResponse( ).get( 0 );
 
-            boolean multiForm = Boolean.valueOf( control.getValue( ) );
+            boolean multiForm = Boolean.parseBoolean( control.getValue( ) );
             ResponseFilter filter = new ResponseFilter( );
 
             if ( multiForm )

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.validation;
 
 import java.util.HashMap;
@@ -93,7 +92,7 @@ public class ListValueValidator extends AbstractValidator
     @Override
     public String getDisplayHtml( Control control )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         ReferenceList refListValue = new ReferenceList( );
 
         if ( control.getListIdQuestion( ) != null && !control.getListIdQuestion( ).isEmpty( ) )
@@ -142,7 +141,7 @@ public class ListValueValidator extends AbstractValidator
     @Override
     public String getJavascriptValidation( )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, I18nService.getDefaultLocale( ), model );
 
         return htmlTemplate.getHtml( );

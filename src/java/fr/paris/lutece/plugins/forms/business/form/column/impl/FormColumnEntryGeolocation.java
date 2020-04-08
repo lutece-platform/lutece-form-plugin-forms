@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -75,7 +75,6 @@ public class FormColumnEntryGeolocation extends AbstractFormColumn
         setFormColumnTitle( strFormColumnCode );
     }
 
-
     /**
      * Return the list of Entry to filter on for the Form Column
      * 
@@ -96,7 +95,6 @@ public class FormColumnEntryGeolocation extends AbstractFormColumn
     {
         _listEntryCode = listEntryCode;
     }
-
 
     /**
      * Add an entry code to the form column

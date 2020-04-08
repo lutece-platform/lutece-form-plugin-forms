@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.forms.web.form.multiview.util;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -92,7 +91,7 @@ public final class FormListTemplateBuilder
     private static final String PROPERTY_POPUP_CONTENT = "popupContent";
 
     // To serialize to geojson
-    private static ObjectMapper mapper = new ObjectMapper( );
+    private static ObjectMapper _mapper = new ObjectMapper( );
 
     /**
      * Constructor
@@ -139,7 +138,8 @@ public final class FormListTemplateBuilder
             List<FormColumnLineTemplate> listFormColumnLineTemplatePaginated;
             if ( maybeFirstGeolocColumn.isPresent( ) && maybeMapProvider.isPresent( ) )
             {
-                List<FormColumnLineTemplate> listFormColumnLineTemplate = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItem, locale );
+                List<FormColumnLineTemplate> listFormColumnLineTemplate = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItem,
+                        locale );
                 List<String> listGeoJsonPoints = buildGeoJsonPointsList( maybeFirstGeolocColumn.get( ), listFormResponseItem, listFormColumnLineTemplate,
                         strRedirectionDetailsBaseUrl );
                 model.put( MARK_FROM_RESPONSE_GEOJSON_POINT_LIST, listGeoJsonPoints );
@@ -172,7 +172,7 @@ public final class FormListTemplateBuilder
             String strOriginalBeanName = SpringContextService.getContext( ).getAliases( BEAN_NAME_MULTIVIEWMAP ) [0];
 
             // TODO copypasted from SpringContextService, maybe this need to be public
-            int nPos = strOriginalBeanName.indexOf( "." );
+            int nPos = strOriginalBeanName.indexOf( '.' );
             String strPrefix = null;
             if ( nPos > 0 )
             {
@@ -195,10 +195,9 @@ public final class FormListTemplateBuilder
             List<FormColumnLineTemplate> listFormColumnLineTemplate, String strRedirectionDetailsBaseUrl )
     {
         return IntStream
-                .range( 0, listFormResponseItem.size( ) )
-                .mapToObj(
-                        i -> buildResponseItemJson( geolocFormColumnDisplay, listFormResponseItem.get( i ), listFormColumnLineTemplate.get( i ),
-                                strRedirectionDetailsBaseUrl ) ).filter( Optional::isPresent ).map( Optional::get ).collect( Collectors.toList( ) );
+                .range( 0, listFormResponseItem.size( ) ).mapToObj( i -> buildResponseItemJson( geolocFormColumnDisplay, listFormResponseItem.get( i ),
+                        listFormColumnLineTemplate.get( i ), strRedirectionDetailsBaseUrl ) )
+                .filter( Optional::isPresent ).map( Optional::get ).collect( Collectors.toList( ) );
     }
 
     private static Optional<String> buildResponseItemJson( FormColumnDisplayEntryGeolocation formColumnDisplayEntryGeolocation,
@@ -207,20 +206,17 @@ public final class FormListTemplateBuilder
         int nColumnCellPosition = columnDisplayPositionToCellIndex( formColumnDisplayEntryGeolocation.getPosition( ) );
         FormColumnCell geolocFormColumnCell = formResponseItem.getFormColumnCellValues( ).get( nColumnCellPosition );
         List<Object> listStoredCoordinates = formColumnDisplayEntryGeolocation.buildXYList( geolocFormColumnCell );
-        List<Object> listValidatedCoordinates = listStoredCoordinates
-                .stream( )
-                .filter( Objects::nonNull )
-                .map( str -> {
-                    try
-                    {
-                        return mapper.readValue( (String) str, Number.class );
-                    }
-                    catch( IOException e )
-                    {
-                        throw new AppException( "Error reading coordinates for formResponseItem idFormResponse=" + formResponseItem.getIdFormResponse( )
-                                + " : " + str, e );
-                    }
-                } ).collect( Collectors.toList( ) );
+        List<Object> listValidatedCoordinates = listStoredCoordinates.stream( ).filter( Objects::nonNull ).map( ( Object str ) -> {
+            try
+            {
+                return _mapper.readValue( (String) str, Number.class );
+            }
+            catch( IOException e )
+            {
+                throw new AppException( "Error reading coordinates for formResponseItem idFormResponse=" + formResponseItem.getIdFormResponse( ) + " : " + str,
+                        e );
+            }
+        } ).collect( Collectors.toList( ) );
         if ( listValidatedCoordinates.size( ) != 2 )
         {
             return Optional.empty( );
@@ -236,7 +232,7 @@ public final class FormListTemplateBuilder
         root.put( GEOJSON_PROPERTIES, properties );
         try
         {
-            return Optional.of( mapper.writeValueAsString( root ) );
+            return Optional.of( _mapper.writeValueAsString( root ) );
         }
         catch( JsonProcessingException e )
         {

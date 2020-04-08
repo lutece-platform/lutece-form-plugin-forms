@@ -27,6 +27,7 @@
     <bean id="forms.csvExport" class="fr.paris.lutece.plugins.forms.export.csv.CSVExport">
     	<constructor-arg type="java.lang.String" index="0" value="forms.csvExport" />
     	<constructor-arg type="java.lang.String" index="1" value="forms.export.csv.name" />
+        <constructor-arg type="java.lang.String" index="2" value="forms.export.csv.description" />
     </bean>
     
     <!-- Listener services -->

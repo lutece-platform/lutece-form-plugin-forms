@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,7 @@ public class FormActionDAO implements IFormActionDAO
     @Override
     public List<FormAction> selectActionsByFormState( int nState, Plugin plugin )
     {
-        List<FormAction> listActions = new ArrayList<FormAction>( );
+        List<FormAction> listActions = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin );
         daoUtil.setInt( 1, nState );
         daoUtil.executeQuery( );
@@ -75,7 +75,7 @@ public class FormActionDAO implements IFormActionDAO
     @Override
     public List<FormAction> selectAllFormActions( Plugin plugin )
     {
-        List<FormAction> listActions = new ArrayList<FormAction>( );
+        List<FormAction> listActions = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS, plugin );
         daoUtil.executeQuery( );
 

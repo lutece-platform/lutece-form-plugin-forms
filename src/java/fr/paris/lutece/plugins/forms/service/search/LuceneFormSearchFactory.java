@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2014, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,15 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
-import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
-
 import java.io.IOException;
 import java.nio.file.Paths;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
@@ -49,10 +48,9 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
-
-import javax.inject.Inject;
-import javax.inject.Named;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
  * Factory for the search on Directory
@@ -83,6 +81,7 @@ public class LuceneFormSearchFactory
     /**
      * Return the IndexSearcher to use for the search
      * 
+     * @deprecated
      * @return the index searcher to use for the search
      * @throws IOException
      *             - if there is a low-level IO error
@@ -118,7 +117,7 @@ public class LuceneFormSearchFactory
 
                 IndexWriterConfig conf = new IndexWriterConfig( getAnalyzer( ) );
 
-                if ( bCreateIndex )
+                if ( Boolean.TRUE.equals( bCreateIndex ) )
                 {
                     conf.setOpenMode( OpenMode.CREATE );
                 }
@@ -147,7 +146,7 @@ public class LuceneFormSearchFactory
      */
     public Directory getDirectory( ) throws IOException
     {
-        String strIndex = AppPathService.getPath( PATH_INDEX );
+        String strIndex;
 
         boolean indexInWebapp = AppPropertiesService.getPropertyBoolean( PATH_INDEX_IN_WEBAPP, true );
         if ( indexInWebapp )

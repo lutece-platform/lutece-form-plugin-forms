@@ -1,13 +1,14 @@
 <#include "/admin/plugins/forms/commons.html" />
 
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<#macro getTextAreaContent responseContent has_error entry field>
+	<#macro getTextAreaContent responseContent has_error entry >
+		<#assign field_height=getFieldValueByCode( entry, "height")>
+		<#assign field_width=getFieldValueByCode( entry, "width")>
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-		<!#-- 	fieldInLine means use rich text -->
 		<#if has_error>
-			<textarea name="${idName}" id="${idName}" cols="${field.width}" rows="${field.height}" class="alert alert-danger<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
+			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="alert alert-danger form-control">${responseContent}</textarea>
 		<#else>
-			<textarea name="${idName}" id="${idName}" cols="${field.width}" rows="${field.height}" class="${entry.CSSClass!}<#if entry.fieldInLine> richtext</#if> form-control">${responseContent}</textarea>
+			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="${entry.CSSClass!} form-control">${responseContent}</textarea>
 		</#if>
 	</#macro>
 	
@@ -20,17 +21,17 @@
 						<#list list_responses as response>
 							<#if response.entry.idEntry == entry.idEntry && response.toStringValueResponse??>
 								<#if response.entry.error??>
-									<@getTextAreaContent responseContent=response.toStringValueResponse has_error=true entry=entry field=field/>
+									<@getTextAreaContent responseContent=response.toStringValueResponse has_error=true entry=entry />
 								<#else>
-									<@getTextAreaContent responseContent=response.toStringValueResponse has_error=false entry=entry field=field/>
+									<@getTextAreaContent responseContent=response.toStringValueResponse has_error=false entry=entry />
 								</#if>
 							</#if>
 						</#list>
 					<#else>
 						<#if field.value?exists>
-							<@getTextAreaContent responseContent=field.value has_error=false entry=entry field=field/>
+							<@getTextAreaContent responseContent=field.value has_error=false entry=entry />
 						<#else>
-							<@getTextAreaContent responseContent="" has_error=false entry=entry field=field/>
+							<@getTextAreaContent responseContent="" has_error=false entry=entry />
 						</#if>
 					</#if>
 				<#if entry.helpMessage?exists&&entry.helpMessage!=''>

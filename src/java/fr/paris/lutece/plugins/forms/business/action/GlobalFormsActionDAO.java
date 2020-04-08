@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,7 @@ public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
     @Override
     public List<GlobalFormsAction> selectAllFormActions( Plugin plugin )
     {
-        List<GlobalFormsAction> listActions = new ArrayList<GlobalFormsAction>( );
+        List<GlobalFormsAction> listActions = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS, plugin );
         daoUtil.executeQuery( );
 

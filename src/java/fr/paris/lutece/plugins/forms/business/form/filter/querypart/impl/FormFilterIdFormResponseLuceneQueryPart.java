@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,17 +59,10 @@ public class FormFilterIdFormResponseLuceneQueryPart extends AbstractFormFilterL
         if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
             Set<Map.Entry<String, Object>> setFormParameters = formParameters.getFormParametersMap( ).entrySet( );
-            
-            
-            int[] idArray = setFormParameters.stream( )
-                    .map( Map.Entry::getValue )
-                    .filter( Objects::nonNull )
-                    .map( Object::toString )
-                    .map( Integer::parseInt )
-                    .filter( ( Integer i ) -> i != CONSTANT_INTEGER_MINUS_ONE )
-                    .distinct( )
-                    .mapToInt( Integer::intValue ).toArray( );
-            
+
+            int [ ] idArray = setFormParameters.stream( ).map( Map.Entry::getValue ).filter( Objects::nonNull ).map( Object::toString ).map( Integer::parseInt )
+                    .filter( ( Integer i ) -> i != CONSTANT_INTEGER_MINUS_ONE ).distinct( ).mapToInt( Integer::intValue ).toArray( );
+
             Query query = IntPoint.newSetQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, idArray );
             setFormFilterQuery( query );
         }

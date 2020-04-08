@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import java.util.Locale;
 import java.util.Map;
 
@@ -42,12 +40,13 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import java.util.List;
 
 /**
  * The display service for entry type date
@@ -103,12 +102,12 @@ public class EntryTypeDateDisplayService implements IEntryDisplayService
         switch( displayType.getMode( ) )
         {
             case EDITION:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale,
-                        setModel( entry, locale, model ) ).getHtml( );
+                strEntryHtml = AppTemplateService
+                        .getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, locale, model ) ).getHtml( );
                 break;
             case READONLY:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale,
-                        setModel( entry, locale, model ) ).getHtml( );
+                strEntryHtml = AppTemplateService
+                        .getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, locale, model ) ).getHtml( );
                 break;
             default: // Nothing to do
         }

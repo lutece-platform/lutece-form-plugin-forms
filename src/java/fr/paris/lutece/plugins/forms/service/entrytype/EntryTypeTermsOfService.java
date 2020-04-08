@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -48,6 +48,7 @@ import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeService;
 import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
+import fr.paris.lutece.portal.service.html.HtmlCleanerService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -150,9 +151,9 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
         entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
         entry.setTitle( strTitle );
         entry.setCSSClass( strCSSClass );
-        createOrUpdateField( entry, FIELD_LINK_CODE, null, strLinkText );
-        createOrUpdateField( entry, FIELD_TOS_CODE, null, strTermsOfService );
-        createOrUpdateField( entry, FIELD_AGREEMENT_CODE, null, Boolean.FALSE.toString( ) );
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_LINK_CODE, null, strLinkText );
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_TOS_CODE, null, strTermsOfService );
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_AGREEMENT_CODE, null, Boolean.FALSE.toString( ) );
         return null;
     }
 
@@ -201,7 +202,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     private String buildErrorUrl( String strFieldInError, HttpServletRequest request, Locale locale )
     {
         Object [ ] tabRequiredFields = {
-            I18nService.getLocalizedString( strFieldInError, locale ),
+                I18nService.getLocalizedString( strFieldInError, locale ),
         };
 
         return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
@@ -316,5 +317,15 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
     {
         return false;
+    }
+
+    @Override
+    public String getResponseValueForExport( Entry entry, HttpServletRequest request, Response response, Locale locale )
+    {
+        if ( StringUtils.isEmpty( response.getResponseValue( ) ) )
+        {
+            return StringUtils.EMPTY;
+        }
+        return HtmlCleanerService.text( response.getResponseValue( ) );
     }
 }

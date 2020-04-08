@@ -4,8 +4,10 @@
   <#assign idName = buildEntryName( entry, entry_iteration_number )>
     <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+      <#assign field_width=getFieldValueByCode( entry, "width")>
+      <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
       <#assign field=getFieldByCode( entry, "text_config")>
-        <input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field.width &gt; 0>style="width:${field.width}px;"</#if>
+        <input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field_width?number &gt; 0>style="width:${field_width?number}px;"</#if>
           <#if list_responses?has_content>
             <#list list_responses as response>
             <#if response.entry.idEntry == entry.idEntry>
@@ -24,8 +26,8 @@
                value="" 
             </#if>
           </#if>
-          <#if field.maxSizeEnter!=-1>
-            maxlength="${field.maxSizeEnter}"
+          <#if field_max_size?number!=-1>
+            maxlength="${field_max_size?number}"
           </#if>
         class="${entry.CSSClass!} "  />
       <#if entry.helpMessage?exists&&entry.helpMessage!=''>
@@ -42,14 +44,17 @@
     </#if>
   </#list>
 </#if>
-<#if entry.confirmField>
+<#assign confirmField=getFieldByCode( entry, "confirm_field")>
+<#if confirmField.value?boolean >
   <div class="form-group">
     <#assign idName = buildEntryName( entry, entry_iteration_number )>
-    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}_confirm_field">${entry.confirmFieldTitle}<#if entry.mandatory> *</#if></label>
+    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}_confirm_field">${confirmField.title}<#if entry.mandatory> *</#if></label>
+    <#assign field_width=getFieldValueByCode( entry, "width")>
+    <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
     <#assign field=getFieldByCode( entry, "text_config")>
       <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-        <input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field.width}" value="" 
-        <#if field.maxSizeEnter!=-1>maxlength="${field.maxSizeEnter}"</#if>/>
+        <input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field_width?number}" value="" 
+        <#if field_max_size?number!=-1>maxlength="${field_max_size?number}"</#if>/>
       </div>
   </div>
 </#if>

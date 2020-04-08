@@ -24,10 +24,10 @@
                                             <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
                                         </@formGroup>
 					<@formGroup labelFor='num_row' labelKey='#i18n{forms.createEntry.labelNumberRows}' mandatory=true rows=2>
-						<@input type='text' name='num_row' id='num_row' value='${entry.numberRow}' maxlength=255 readonly=true />
+						<@input type='text' name='num_row' id='num_row' value=getFieldValueByCode(entry, "array_row") maxlength=255 readonly=true />
 					</@formGroup>
 					<@formGroup labelFor='num_column' labelKey='#i18n{forms.createEntry.labelNumberColumns}' mandatory=true rows=2>
-						<@input type='text' name='num_column' id='num_column' value='${entry.numberColumn}' maxlength=255 readonly=true />
+						<@input type='text' name='num_column' id='num_column' value=getFieldValueByCode(entry, "array_column") maxlength=255 readonly=true />
 					</@formGroup>
 					<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelArrayTitle}' helpKey='#i18n{forms.createEntry.labelArrayTitleHelp}' rows=2>
 						<@input type='text' name='comment' id='comment' value='${entry.comment}' maxlength=255 />
@@ -37,6 +37,9 @@
                     </@formGroup>
                     <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
 						<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+					</@formGroup>
+					<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
+						<@checkBox name='exportable' id='exportable' value='1' checked=entry.exportable />
 					</@formGroup>
                                         ${question_modify_template!}
 					<@formGroup rows=2>
@@ -52,10 +55,10 @@
 			<@boxHeader />
 			<@boxBody>
 				<@table>
-					<#assign x=entry.numberRow>
+					<#assign x=getFieldValueByCode(entry, "array_row")?number>
 					<#list 1..x+1 as i>
 						<tr>
-						<#assign y=entry.numberColumn>
+						<#assign y=getFieldValueByCode(entry, "array_column")?number>
 						<#list 1..y+1 as j>
 							<td>
 							<#assign title="">

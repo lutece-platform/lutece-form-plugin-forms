@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -92,7 +92,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     private int _nIterationNumber;
     private int _nNbBaseChildren;
 
-    private final List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
+    private final List<ICompositeDisplay> _listChildren = new ArrayList<>( );
     private Group _group;
     private final FormDisplay _formDisplay;
     private String _strIconName;
@@ -112,7 +112,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     {
         _formDisplay = formDisplay;
 
-        initComposite( formResponse, nIterationNumber );
+        initComposite( formResponse );
     }
 
     /**
@@ -123,7 +123,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
      * @param nIterationNumber
      *            the iteration number
      */
-    private void initComposite( FormResponse formResponse, int nIterationNumber )
+    private void initComposite( FormResponse formResponse )
     {
         if ( !StringUtils.isEmpty( _formDisplay.getCompositeType( ) ) )
         {
@@ -227,7 +227,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     @Override
     public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
     {
-        List<String> listChildrenHtml = new ArrayList<String>( );
+        List<String> listChildrenHtml = new ArrayList<>( );
 
         for ( ICompositeDisplay child : _listChildren )
         {
@@ -395,7 +395,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
      */
     private void updateIterationResponse( FormResponse formResponse, List<FormDisplay> listFormDisplayChildren, int nIndexIterationToRemove )
     {
-        List<FormQuestionResponse> listFormQuestionResponse = new ArrayList<FormQuestionResponse>( );
+        List<FormQuestionResponse> listFormQuestionResponse = new ArrayList<>( );
 
         for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
         {
@@ -405,7 +405,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
             }
         }
 
-        List<Integer> listQuestionIdChildren = new ArrayList<Integer>( );
+        List<Integer> listQuestionIdChildren = new ArrayList<>( );
 
         for ( FormDisplay formDisplayChild : listFormDisplayChildren )
         {
@@ -416,11 +416,10 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         }
 
         Iterator<FormQuestionResponse> responseIterator = listFormQuestionResponse.iterator( );
-        FormQuestionResponse formQuestionResponseTemp = new FormQuestionResponse( );
 
         while ( responseIterator.hasNext( ) )
         {
-            formQuestionResponseTemp = responseIterator.next( );
+            FormQuestionResponse formQuestionResponseTemp = responseIterator.next( );
 
             if ( listQuestionIdChildren.contains( formQuestionResponseTemp.getQuestion( ).getId( ) ) )
             {
@@ -442,7 +441,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     @Override
     public List<ICompositeDisplay> getCompositeList( )
     {
-        List<ICompositeDisplay> listCompositeDisplay = new ArrayList<ICompositeDisplay>( );
+        List<ICompositeDisplay> listCompositeDisplay = new ArrayList<>( );
         listCompositeDisplay.add( this );
 
         for ( FormDisplay child : FormDisplayHome.getFormDisplayListByParent( this.getFormDisplay( ).getStepId( ), this.getFormDisplay( ).getId( ) ) )
@@ -485,7 +484,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     @Override
     public List<Control> getAllDisplayControls( )
     {
-        List<Control> listDisplayControls = new ArrayList<Control>( );
+        List<Control> listDisplayControls = new ArrayList<>( );
 
         if ( _formDisplay.getDisplayControl( ) != null )
         {

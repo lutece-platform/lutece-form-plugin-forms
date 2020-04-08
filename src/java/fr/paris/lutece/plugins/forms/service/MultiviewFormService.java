@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.service;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
-
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnComparator;
 import java.util.List;
@@ -54,6 +54,7 @@ import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilt
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
+import fr.paris.lutece.plugins.forms.business.form.list.IFormListDAO;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -68,6 +69,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Service dedicated to managing of the multiview of forms
@@ -112,6 +114,13 @@ public final class MultiviewFormService
     {
         FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
         formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig );
+    }
+
+    public List<FormResponseItem> searchAllListFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            FormResponseItemSortConfig sortConfig )
+    {
+        IFormListDAO formListDAO = SpringContextService.getBean( IFormListDAO.BEAN_NAME );
+        return formListDAO.searchAllFormResponseItem( formPanel, listFormColumn, listFormFilter, sortConfig );
     }
 
     /**
@@ -243,7 +252,7 @@ public final class MultiviewFormService
         int nPosition = mapColumns.size( );
         for ( Question question : listQuestions )
         {
-            if ( ( bGlobal == true ) ? question.isVisibleMultiviewGlobal( ) : question.isVisibleMultiviewFormSelected( ) )
+            if ( bGlobal ? question.isVisibleMultiviewGlobal( ) : question.isVisibleMultiviewFormSelected( ) )
             {
                 question = QuestionHome.findByPrimaryKey( question.getId( ) );
 
@@ -251,32 +260,29 @@ public final class MultiviewFormService
                 {
                     IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
                     IFormColumn column = displayService.getFormColumn( ++nPosition, question.getColumnTitle( ) );
-
-                    if ( column instanceof FormColumnEntry )
-                    {
-                        ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
-                    }
-                    if ( column instanceof FormColumnEntryGeolocation )
-                    {
-                        ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
-                    }
+                    addEntryCodeToColumn( column, question );
 
                     mapColumns.put( column.getFormColumnTitle( ), column );
                 }
                 else
                 {
                     IFormColumn column = mapColumns.get( question.getColumnTitle( ) );
-                    if ( column instanceof FormColumnEntry )
-                    {
-                        ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
-                    }
-                    if ( column instanceof FormColumnEntryGeolocation )
-                    {
-                        ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
-
-                    }
+                    addEntryCodeToColumn( column, question );
                 }
             }
+        }
+    }
+
+    private void addEntryCodeToColumn( IFormColumn column, Question question )
+    {
+        if ( column instanceof FormColumnEntry )
+        {
+            ( (FormColumnEntry) column ).addEntryCode( question.getCode( ) );
+        }
+        if ( column instanceof FormColumnEntryGeolocation )
+        {
+            ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
+
         }
     }
 
@@ -290,47 +296,50 @@ public final class MultiviewFormService
     private void addFilterFromConfig( Map<String, FormFilter> mapFilters, List<Question> listQuestions, List<IFormColumn> listFormColumns, boolean bGlobal )
     {
         int nPosition = mapFilters.size( );
-        for ( Question question : listQuestions )
+
+        List<Question> listFiltrableQuestions = listQuestions.stream( )
+                .filter( question -> bGlobal ? question.isFiltrableMultiviewGlobal( ) : question.isFiltrableMultiviewFormSelected( ) )
+                .collect( Collectors.toList( ) );
+
+        for ( Question question : listFiltrableQuestions )
         {
-            if ( ( bGlobal == true ) ? question.isFiltrableMultiviewGlobal( ) : question.isFiltrableMultiviewFormSelected( ) )
+            question = QuestionHome.findByPrimaryKey( question.getId( ) );
+
+            if ( mapFilters.keySet( ).contains( question.getCode( ) ) )
             {
-                question = QuestionHome.findByPrimaryKey( question.getId( ) );
+                continue;
+            }
 
-                if ( !mapFilters.keySet( ).contains( question.getCode( ) ) )
+            IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
+
+            if ( displayService instanceof EntryTypeDateDisplayService )
+            {
+                FormFilter formFilter = new FormFilter( );
+                IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++, question.getTitle( ),
+                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0"
+                                + FormResponseSearchItem.FIELD_DATE_SUFFIX );
+
+                formFilter.setFormFilterConfiguration( formFilterConfiguration );
+                mapFilters.put( question.getCode( ), formFilter );
+            }
+            if ( displayService instanceof EntryTypeDefaultDisplayService )
+            {
+                FormFilter formFilter = new FormFilter( );
+
+                List<IFormColumn> listFormColumnsEntry = listFormColumns.stream( ).filter( c -> c instanceof FormColumnEntry ).collect( Collectors.toList( ) );
+
+                for ( IFormColumn column : listFormColumnsEntry )
                 {
-                    IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
-
-                    if ( displayService instanceof EntryTypeDateDisplayService )
+                    if ( column.getFormColumnTitle( ).equals( question.getColumnTitle( ) ) )
                     {
-                        FormFilter formFilter = new FormFilter( );
-                        IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++, question.getTitle( ),
-                                FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0"
-                                        + FormResponseSearchItem.FIELD_DATE_SUFFIX );
+                        IFormFilterConfiguration formFilterConfiguration = new FormFilterEntryConfiguration( nPosition++, question.getTitle( ),
+                                FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ), column );
 
                         formFilter.setFormFilterConfiguration( formFilterConfiguration );
                         mapFilters.put( question.getCode( ), formFilter );
                     }
-                    if ( displayService instanceof EntryTypeDefaultDisplayService )
-                    {
-                        FormFilter formFilter = new FormFilter( );
-
-                        for ( IFormColumn column : listFormColumns )
-                        {
-                            if ( column.getFormColumnTitle( ).equals( question.getColumnTitle( ) ) )
-                            {
-                                if ( column instanceof FormColumnEntry )
-                                {
-                                    IFormFilterConfiguration formFilterConfiguration = new FormFilterEntryConfiguration( nPosition++, question.getTitle( ),
-                                            FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ), column );
-
-                                    formFilter.setFormFilterConfiguration( formFilterConfiguration );
-                                    mapFilters.put( question.getCode( ), formFilter );
-                                }
-                            }
-                        }
-
-                    }
                 }
+
             }
         }
     }

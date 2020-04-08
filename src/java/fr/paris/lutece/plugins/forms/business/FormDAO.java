@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,13 +31,12 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.business;
 
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
+import java.util.Calendar;
 import java.util.List;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -56,7 +55,7 @@ public final class FormDAO implements IFormDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, one_response_by_user = ?, breadcrumb_name = ?, display_summary = ?, return_url = ?, max_number_response = ? WHERE id_form = ?";
     private static final String SQL_QUERY_COUNT_NUMBER_OF_RESPONSE = "SELECT count(id_form) FROM forms_response WHERE id_form = ? and from_save = 0";
-    private static final String SQL_QUERY_COUNT_NUMBER__RESPONSE_USER = "SELECT count(id_form) FROM forms_response WHERE id_form=? and guid= ? AND from_save = 0 ";
+    private static final String SQL_QUERY_COUNT_NUMBER_RESPONSE_USER = "SELECT count(id_form) FROM forms_response WHERE id_form=? and guid= ? AND from_save = 0 ";
 
     /**
      * {@inheritDoc }
@@ -70,7 +69,7 @@ public final class FormDAO implements IFormDAO
             int nIndex = 1;
             daoUtil.setString( nIndex++, form.getTitle( ) );
             daoUtil.setString( nIndex++, form.getDescription( ) );
-            Timestamp tsUpdateDate = new Timestamp( GregorianCalendar.getInstance( ).getTimeInMillis( ) );
+            Timestamp tsUpdateDate = new Timestamp( Calendar.getInstance( ).getTimeInMillis( ) );
             daoUtil.setTimestamp( nIndex++, tsUpdateDate );
             daoUtil.setDate( nIndex++, form.getAvailabilityStartDate( ) );
             daoUtil.setDate( nIndex++, form.getAvailabilityEndDate( ) );
@@ -141,7 +140,7 @@ public final class FormDAO implements IFormDAO
         daoUtil.setInt( nIndex++, form.getId( ) );
         daoUtil.setString( nIndex++, form.getTitle( ) );
         daoUtil.setString( nIndex++, form.getDescription( ) );
-        Timestamp tsUpdateDate = new Timestamp( GregorianCalendar.getInstance( ).getTimeInMillis( ) );
+        Timestamp tsUpdateDate = new Timestamp( Calendar.getInstance( ).getTimeInMillis( ) );
         daoUtil.setTimestamp( nIndex++, tsUpdateDate );
         daoUtil.setDate( nIndex++, form.getAvailabilityStartDate( ) );
         daoUtil.setDate( nIndex++, form.getAvailabilityEndDate( ) );
@@ -153,7 +152,7 @@ public final class FormDAO implements IFormDAO
         daoUtil.setBoolean( nIndex++, form.isDisplaySummary( ) );
         daoUtil.setString( nIndex++, form.getReturnUrl( ) );
         daoUtil.setInt( nIndex++, form.getMaxNumberResponse( ) );
-        daoUtil.setInt( nIndex++, form.getId( ) );
+        daoUtil.setInt( nIndex, form.getId( ) );
 
         daoUtil.executeUpdate( );
         daoUtil.close( );
@@ -165,7 +164,7 @@ public final class FormDAO implements IFormDAO
     @Override
     public List<Form> selectFormsList( Plugin plugin )
     {
-        List<Form> formList = new ArrayList<Form>( );
+        List<Form> formList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery( );
 
@@ -225,7 +224,7 @@ public final class FormDAO implements IFormDAO
     @Override
     public int countNumberOfResponseFormByUser( int nIdForm, String strGuid )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_NUMBER__RESPONSE_USER );
+        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_NUMBER_RESPONSE_USER );
         daoUtil.setInt( 1, nIdForm );
         daoUtil.setString( 2, strGuid );
         daoUtil.executeQuery( );

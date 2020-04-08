@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -47,8 +46,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -216,11 +215,10 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     {
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
 
-        Map<String, Object> mapFormResponseDetailsModel = getModel();
+        Map<String, Object> mapFormResponseDetailsModel = getModel( );
         mapFormResponseDetailsModel.put( MARK_FORM_RESPONSE, formResponse );
         mapFormResponseDetailsModel.put( MARK_FORM, form );
 
-        List<Step> listSteps = new ArrayList<>( );
         Map<Integer, Step> mapSteps = new HashMap<>( );
         List<Integer> listStepsOfForm = StepHome.getIdStepsListByForm( form.getId( ) );
         List<FormResponseStep> listFormResponseStep = formResponse.getSteps( );
@@ -240,8 +238,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             }
         }
 
-        listStepsOrdered.stream( ).forEach( nIdStep -> listSteps.add( StepHome.findByPrimaryKey( nIdStep ) ) );
-
+        List<Step> listSteps = listStepsOrdered.stream( ).map( StepHome::findByPrimaryKey ).collect( Collectors.toList( ) );
         List<String> listStepDisplayTree = buildFormStepDisplayTreeList( request, listSteps, formResponse );
         listSteps.stream( ).forEach( step -> mapSteps.put( step.getId( ), step ) );
 
@@ -254,7 +251,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
         if ( bHistoryEnabled )
         {
-            Map<String, Object> resourceActions = new HashMap<String, Object>( );
+            Map<String, Object> resourceActions = new HashMap<>( );
 
             Collection<fr.paris.lutece.plugins.workflowcore.business.action.Action> lListActions = workflowService.getActions( formResponse.getId( ),
                     FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), getUser( ) );
@@ -293,9 +290,9 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 int nIdStep = step.getId( );
 
                 StepDisplayTree stepDisplayTree = new StepDisplayTree( nIdStep, formResponse );
-                listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request,
-                        FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) ), getLocale( ),
-                        DisplayType.READONLY_BACKOFFICE ) );
+                listFormDisplayTrees.add(
+                        stepDisplayTree.getCompositeHtml( request, FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) ),
+                                getLocale( ), DisplayType.READONLY_BACKOFFICE ) );
             }
         }
 
@@ -508,8 +505,9 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         }
         else
         {
-            addError(MESSAGE_ACTION_ERROR, request.getLocale() );
-            return redirect( request, VIEW_FORM_RESPONSE_DETAILS, PARAMETER_ID_FORM_RESPONSE, Integer.parseInt(request.getParameter( PARAMETER_ID_FORM_RESPONSE )) , PARAMETER_BACK_FROM_ACTION, 1 );
+            addError( MESSAGE_ACTION_ERROR, request.getLocale( ) );
+            return redirect( request, VIEW_FORM_RESPONSE_DETAILS, PARAMETER_ID_FORM_RESPONSE,
+                    Integer.parseInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ) ), PARAMETER_BACK_FROM_ACTION, 1 );
         }
         return manageRedirection( request );
     }

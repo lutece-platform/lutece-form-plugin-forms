@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,19 +31,26 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.math.NumberUtils;
+
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormAction;
+import fr.paris.lutece.plugins.forms.business.FormActionHome;
+import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.FormMessage;
+import fr.paris.lutece.plugins.forms.business.FormMessageHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.BreadcrumbManager;
-import fr.paris.lutece.plugins.forms.business.FormAction;
-import fr.paris.lutece.plugins.forms.business.FormActionHome;
-import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.business.FormHome;
-import fr.paris.lutece.plugins.forms.business.FormMessage;
-import fr.paris.lutece.plugins.forms.business.FormMessageHome;
 import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
@@ -64,16 +71,9 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
-import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
@@ -174,14 +174,14 @@ public class FormJspBean extends AbstractJspBean
         List<FormAction> listAuthorizedFormActions;
         _form = new Form( );
 
-        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
+        _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
         List<Form> listForms = FormHome.getFormList( );
         listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, adminUser );
 
         Map<String, Object> model = getModel( );
-        LocalizedPaginator<Form> paginator = new LocalizedPaginator<Form>( listForms, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
+        LocalizedPaginator<Form> paginator = new LocalizedPaginator<>( listForms, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
 
         listFormActions = FormActionHome.selectAllFormActions( plugin, locale );
@@ -198,15 +198,8 @@ public class FormJspBean extends AbstractJspBean
 
         model.put( MARK_FORM_LIST, paginator.getPageItems( ) );
         model.put( MARK_LOCALE, request.getLocale( ) );
-
-        if ( RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, adminUser ) )
-        {
-            model.put( MARK_PERMISSION_CREATE_FORMS, true );
-        }
-        else
-        {
-            model.put( MARK_PERMISSION_CREATE_FORMS, false );
-        }
+        model.put( MARK_PERMISSION_CREATE_FORMS,
+                RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, adminUser ) );
 
         setPageTitleProperty( EMPTY_STRING );
 
@@ -351,7 +344,7 @@ public class FormJspBean extends AbstractJspBean
             {
 
                 Object [ ] tabFormTitleCopy = {
-                    formToBeCopied.getTitle( ),
+                        formToBeCopied.getTitle( ),
                 };
                 String strTitleCopyForm = I18nService.getLocalizedString( PROPERTY_COPY_FORM_TITLE, tabFormTitleCopy, getLocale( ) );
 

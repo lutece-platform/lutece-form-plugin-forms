@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2017, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -59,8 +59,8 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     @Override
     public synchronized void insert( IndexerAction indexerAction, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
-        try
+
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             daoUtil.setInt( 1, indexerAction.getIdFormResponse( ) );
             daoUtil.setInt( 2, indexerAction.getIdTask( ) );
@@ -71,10 +71,7 @@ public final class IndexerActionDAO implements IIndexerActionDAO
                 indexerAction.setIdAction( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.free( );
-        }
+
     }
 
     /**
@@ -85,19 +82,19 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     {
         IndexerAction indexerAction = null;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin );
-        daoUtil.setInt( 1, nId );
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_FIND_BY_PRIMARY_KEY, plugin ) )
         {
-            indexerAction = new IndexerAction( );
-            indexerAction.setIdAction( daoUtil.getInt( 1 ) );
-            indexerAction.setIdFormResponse( daoUtil.getInt( 2 ) );
-            indexerAction.setIdTask( daoUtil.getInt( 3 ) );
-        }
+            daoUtil.setInt( 1, nId );
+            daoUtil.executeQuery( );
 
-        daoUtil.free( );
+            if ( daoUtil.next( ) )
+            {
+                indexerAction = new IndexerAction( );
+                indexerAction.setIdAction( daoUtil.getInt( 1 ) );
+                indexerAction.setIdFormResponse( daoUtil.getInt( 2 ) );
+                indexerAction.setIdTask( daoUtil.getInt( 3 ) );
+            }
+        }
 
         return indexerAction;
     }
@@ -108,10 +105,13 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     @Override
     public void delete( int nId, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nId );
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+
+            daoUtil.setInt( 1, nId );
+            daoUtil.executeUpdate( );
+        }
+
     }
 
     /**
@@ -120,15 +120,18 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     @Override
     public void store( IndexerAction indexerAction, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        daoUtil.setInt( 1, indexerAction.getIdAction( ) );
-        daoUtil.setInt( 2, indexerAction.getIdFormResponse( ) );
-        daoUtil.setInt( 3, indexerAction.getIdTask( ) );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
+        {
 
-        daoUtil.setInt( 4, indexerAction.getIdAction( ) );
+            daoUtil.setInt( 1, indexerAction.getIdAction( ) );
+            daoUtil.setInt( 2, indexerAction.getIdFormResponse( ) );
+            daoUtil.setInt( 3, indexerAction.getIdTask( ) );
 
-        daoUtil.executeUpdate( );
-        daoUtil.free( );
+            daoUtil.setInt( 4, indexerAction.getIdAction( ) );
+
+            daoUtil.executeUpdate( );
+        }
+
     }
 
     /**
@@ -139,30 +142,29 @@ public final class IndexerActionDAO implements IIndexerActionDAO
     {
         List<IndexerAction> indexerActionList = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT + SQL_FILTER_ID_TASK, plugin );
-
-        int nIndex = 1;
-
-        if ( filter.containsIdTask( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT + SQL_FILTER_ID_TASK, plugin ) )
         {
-            daoUtil.setInt( nIndex, filter.getIdTask( ) );
-            nIndex++;
+
+            int nIndex = 1;
+
+            if ( filter.containsIdTask( ) )
+            {
+                daoUtil.setInt( nIndex, filter.getIdTask( ) );
+            }
+
+            daoUtil.executeQuery( );
+
+            IndexerAction indexerAction = null;
+            while ( daoUtil.next( ) )
+            {
+                indexerAction = new IndexerAction( );
+                indexerAction.setIdAction( daoUtil.getInt( 1 ) );
+                indexerAction.setIdFormResponse( daoUtil.getInt( 2 ) );
+                indexerAction.setIdTask( daoUtil.getInt( 3 ) );
+
+                indexerActionList.add( indexerAction );
+            }
         }
-
-        daoUtil.executeQuery( );
-
-        IndexerAction indexerAction = null;
-        while ( daoUtil.next( ) )
-        {
-            indexerAction = new IndexerAction( );
-            indexerAction.setIdAction( daoUtil.getInt( 1 ) );
-            indexerAction.setIdFormResponse( daoUtil.getInt( 2 ) );
-            indexerAction.setIdTask( daoUtil.getInt( 3 ) );
-
-            indexerActionList.add( indexerAction );
-        }
-
-        daoUtil.free( );
 
         return indexerActionList;
     }

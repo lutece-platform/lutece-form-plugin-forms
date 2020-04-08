@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
@@ -44,7 +47,6 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import java.util.ArrayList;
 
 /**
  * Service dedicated to management of formDisplay
@@ -103,36 +105,30 @@ public final class StepService
     public static List<Step> sortStepsWithTransitions( List<Step> listSteps, List<Transition> listTransitions )
     {
         List<Step> listStepOrdered = new ArrayList<>( );
-        Step initialStep = null;
-        for ( Step step : listSteps )
+        Step initialStep = listSteps.stream( ).filter( Step::isInitial ).findFirst( ).orElse( null );
+        if ( initialStep == null )
         {
-            if ( step.isInitial( ) )
-            {
-                initialStep = step;
-            }
+            return listSteps;
         }
 
-        if ( initialStep != null )
+        Set<Integer> listIdStepOrderWithTransitions = new LinkedHashSet<>( );
+        listIdStepOrderWithTransitions.add( initialStep.getId( ) );
+        listIdStepOrderWithTransitions.addAll( getNextStep( initialStep.getId( ), listTransitions ) );
+        for ( Integer nIdStep : listIdStepOrderWithTransitions )
         {
-            List<Integer> listIdStepOrderWithTransitions = new ArrayList<>( );
-            listIdStepOrderWithTransitions.add( initialStep.getId( ) );
-            listIdStepOrderWithTransitions.addAll( getNextStep( initialStep.getId( ), listTransitions ) );
-            for ( Integer nIdStep : listIdStepOrderWithTransitions )
+            for ( Step stepToOrder : listSteps )
             {
-                for ( Step stepToOrder : listSteps )
+                if ( nIdStep == stepToOrder.getId( ) )
                 {
-                    if ( nIdStep == stepToOrder.getId( ) )
-                    {
-                        listStepOrdered.add( stepToOrder );
-                    }
+                    listStepOrdered.add( stepToOrder );
                 }
             }
-            for ( Step step : listSteps )
+        }
+        for ( Step step : listSteps )
+        {
+            if ( !listIdStepOrderWithTransitions.contains( step.getId( ) ) )
             {
-                if ( !listIdStepOrderWithTransitions.contains( step.getId( ) ) )
-                {
-                    listStepOrdered.add( step );
-                }
+                listStepOrdered.add( step );
             }
         }
 
@@ -151,13 +147,18 @@ public final class StepService
         List<Integer> listIdNextSteps = new ArrayList<>( );
         if ( idFromStep != null )
         {
+            List<Transition> nextTransitionsList = new ArrayList<>( );
             for ( Transition transition : listTransitions )
             {
                 if ( transition.getFromStep( ) == idFromStep )
                 {
                     listIdNextSteps.add( transition.getNextStep( ) );
-                    listIdNextSteps.addAll( getNextStep( transition.getNextStep( ), listTransitions ) );
+                    nextTransitionsList.add( transition );
                 }
+            }
+            for ( Transition transition : nextTransitionsList )
+            {
+                listIdNextSteps.addAll( getNextStep( transition.getNextStep( ), listTransitions ) );
             }
         }
         return listIdNextSteps;

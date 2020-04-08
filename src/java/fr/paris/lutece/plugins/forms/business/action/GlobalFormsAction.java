@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -209,6 +209,6 @@ public class GlobalFormsAction implements RBACResource, Localizable
     @Override
     public String getResourceId( )
     {
-        return _strCode;
+        return getCode( );
     }
 }

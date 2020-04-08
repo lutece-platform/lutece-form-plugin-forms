@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,11 +42,11 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.MandatoryError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeMyLuteceUser;
+import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
@@ -73,7 +73,7 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_mylutece_user_attribute.html";
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_mylutece_user_attribute.html";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_mylutece_user_attribute.html";
-    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_mylutece_user_attribute.html";;
+    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_mylutece_user_attribute.html";
     private static final String PROPERTY_ENTRY_TITLE = "forms.entryTypeMyLuteceUserAttribute.title";
     private static final String PARAMETER_ONLY_DISPLAY_IN_BACK = "only_display_in_back";
     private static final String PARAMETER_MYLUTECE_ATTRIBUTE_NAME = "mylutece_attribute_name";
@@ -121,23 +121,21 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         initCommonRequestData( entry, request );
         String strCode = request.getParameter( PARAMETER_ENTRY_CODE );
         entry.setCode( strCode );
-        
+
         String strOnlyDisplayInBack = request.getParameter( PARAMETER_ONLY_DISPLAY_IN_BACK );
 
         entry.setTitle( I18nService.getLocalizedString( PROPERTY_ENTRY_TITLE, locale ) );
 
         entry.setComment( StringUtils.EMPTY );
-        entry.setMandatory( entry.isConfirmField( ) && Boolean.parseBoolean( request.getParameter( PARAMETER_MANDATORY ) ) );
+        entry.setMandatory( Boolean.parseBoolean( request.getParameter( PARAMETER_MANDATORY ) ) );
         entry.setCSSClass( request.getParameter( PARAMETER_CSS_CLASS ) );
         entry.setTitle( request.getParameter( PARAMETER_TITLE ) );
         entry.setHelpMessage( request.getParameter( PARAMETER_HELP_MESSAGE ) );
         entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
         entry.setOnlyDisplayInBack( strOnlyDisplayInBack != null );
 
-        Field fieldAttributeName = createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE, null,
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE, null,
                 request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
-        fieldAttributeName.setWidth( 50 );
-        fieldAttributeName.setMaxSizeEnter( 0 );
         return null;
     }
 

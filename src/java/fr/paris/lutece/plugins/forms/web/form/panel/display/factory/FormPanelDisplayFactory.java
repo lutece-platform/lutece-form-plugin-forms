@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -211,8 +211,8 @@ public class FormPanelDisplayFactory
      * @param listFormPanelInitializer
      *            The list of all FormPanelInitializer to retrieve those which is associated to the given IFormPanelDisplayInitializerFactory
      */
-    private void buildPanelDisplayInitializerFormParameters( HttpServletRequest request,
-            IFormPanelDisplayInitializerFactory formPanelDisplayInitializerFactory, List<IFormPanelInitializer> listFormPanelInitializer )
+    private void buildPanelDisplayInitializerFormParameters( HttpServletRequest request, IFormPanelDisplayInitializerFactory formPanelDisplayInitializerFactory,
+            List<IFormPanelInitializer> listFormPanelInitializer )
     {
         if ( formPanelDisplayInitializerFactory != null && !CollectionUtils.isEmpty( listFormPanelInitializer ) )
         {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -39,7 +39,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
@@ -97,8 +96,6 @@ public class FormColumnDisplayFormResponseDateCreation extends AbstractFormColum
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_FORM_RESPONSE_DATE_CREATION, dateFormResponseDateCreation );
 
-        String strFormResponseDateCreationTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
-
-        return strFormResponseDateCreationTemplate;
+        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }
 }

@@ -29,11 +29,6 @@
 								<@checkBox name='no_display_title' value='1' checked=checked />
 							</@formGroup>
 						</#if>
-						<#if field.parentEntry.roleAssociated && role_list?exists >
-							<@formGroup labelFor='role' labelKey='#i18n{forms.createField.labelRole}' helpKey='#i18n{forms.createField.labelRoleComment}'>
-								<@select name='role_key' default_value='none' items=role_list />
-							</@formGroup>
-						</#if>
 						<@formGroup>
 							<@button type='submit' name='action_createField' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false />
 							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' showTitleXs=false color='btn-secondary' />

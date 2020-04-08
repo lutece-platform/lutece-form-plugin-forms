@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -112,9 +112,7 @@ public final class FormMessageHome
      */
     public static FormMessage findByPrimaryKey( int nKey )
     {
-        FormMessage formMessage = _dao.load( nKey, _plugin );
-
-        return formMessage;
+        return _dao.load( nKey, _plugin );
     }
 
     /**
@@ -126,8 +124,6 @@ public final class FormMessageHome
      */
     public static FormMessage findByForm( int nIdForm )
     {
-        FormMessage formMessage = _dao.selectByForm( nIdForm, _plugin );
-
-        return formMessage;
+        return _dao.selectByForm( nIdForm, _plugin );
     }
 }

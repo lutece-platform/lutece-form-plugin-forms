@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -121,7 +121,7 @@ public final class FormsEntryUtils
 
         for ( EntryType entryType : listEntryType )
         {
-            if ( !entryType.getGroup( ) && !entryType.getMyLuteceUser( ) )
+            if ( Boolean.FALSE.equals( entryType.getGroup( ) ) && Boolean.FALSE.equals( entryType.getMyLuteceUser( ) ) )
             {
                 refListEntryType.addItem( entryType.getIdType( ), entryType.getTitle( ) );
             }
@@ -137,12 +137,12 @@ public final class FormsEntryUtils
      */
     public static List<EntryType> initListEntryType( )
     {
-        List<EntryType> listEntryType = new ArrayList<EntryType>( );
+        List<EntryType> listEntryType = new ArrayList<>( );
         List<EntryType> listRefEntryType = EntryTypeHome.getList( FormsPlugin.PLUGIN_NAME );
 
         for ( EntryType entryType : listRefEntryType )
         {
-            if ( !entryType.getGroup( ) && !entryType.getMyLuteceUser( ) )
+            if ( Boolean.FALSE.equals( entryType.getGroup( ) ) && Boolean.FALSE.equals( entryType.getMyLuteceUser( ) ) )
             {
                 listEntryType.add( entryType );
             }

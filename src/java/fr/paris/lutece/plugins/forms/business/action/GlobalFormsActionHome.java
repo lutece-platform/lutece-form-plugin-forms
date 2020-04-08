@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -82,8 +82,6 @@ public final class GlobalFormsActionHome
      */
     public static GlobalFormsAction selectGlobalFormActionByCode( String strCode, Plugin plugin, Locale locale )
     {
-        GlobalFormsAction globalFormAction = _dao.selectGlobalFormsActionByCode( strCode, plugin, locale );
-
-        return globalFormAction;
+        return _dao.selectGlobalFormsActionByCode( strCode, plugin, locale );
     }
 }

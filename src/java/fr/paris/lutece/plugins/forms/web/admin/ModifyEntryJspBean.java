@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
+
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
@@ -46,12 +55,10 @@ import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.portal.business.role.RoleHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -62,15 +69,6 @@ import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
 import fr.paris.lutece.util.url.UrlItem;
-
-import org.apache.commons.lang.StringUtils;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
@@ -104,7 +102,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private static final String PROPERTY_CREATE_FIELD_TITLE = "forms.createField.title";
     private static final String PROPERTY_MODIFY_FIELD_TITLE = "forms.modifyField.title";
 
-    private static final String MARK_ROLE_REF_LIST = "role_list";
     private static final String MARK_OPTION_NO_DISPLAY_TITLE = "option_no_display_title";
 
     // Jsp Definition
@@ -116,7 +113,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private static final String PARAMETER_DEFAULT_VALUE = "default_value";
     private static final String PARAMETER_NO_DISPLAY_TITLE = "no_display_title";
     private static final String PARAMETER_COMMENT = "comment";
-    private static final String PARAMETER_ROLE_KEY = "role_key";
     private static final String PARAMETER_OPTION_NO_DISPLAY_TITLE = "option_no_display_title";
 
     // Views
@@ -140,7 +136,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private int _nIdEntry = -1;
     private Step _step;
     private Question _question;
-    private Field _field;
 
     /* -------- Fields management ---------- */
 
@@ -169,28 +164,16 @@ public class ModifyEntryJspBean extends AbstractJspBean
             return getJspManageQuestions( request, _step.getId( ) );
         }
 
-        _field = new Field( );
-        _field.setParentEntry( entry );
+        Field field = new Field( );
+        field.setParentEntry( entry );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         Locale locale = getLocale( );
+        model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
 
-        if ( request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null )
-        {
-            model.put( MARK_OPTION_NO_DISPLAY_TITLE, true );
-        }
-        else
-        {
-            model.put( MARK_OPTION_NO_DISPLAY_TITLE, false );
-        }
-
-        model.put( FormsConstants.MARK_FIELD, _field );
+        model.put( FormsConstants.MARK_FIELD, field );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_ID_ENTRY, _nIdEntry );
-        if ( SecurityService.isAuthenticationEnable( ) )
-        {
-            model.put( MARK_ROLE_REF_LIST, RoleHome.getRolesList( ) );
-        }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_FIELD, locale, model );
         setPageTitleProperty( PROPERTY_CREATE_FIELD_TITLE );
@@ -254,26 +237,13 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         field.setParentEntry( entry );
 
-        HashMap<String, Object> model = new HashMap<String, Object>( );
+        HashMap<String, Object> model = new HashMap<>( );
         Locale locale = getLocale( );
-
-        if ( request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null )
-        {
-            model.put( MARK_OPTION_NO_DISPLAY_TITLE, true );
-        }
-        else
-        {
-            model.put( MARK_OPTION_NO_DISPLAY_TITLE, false );
-        }
+        model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
 
         model.put( FormsConstants.MARK_FIELD, field );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_ID_ENTRY, _nIdEntry );
-
-        if ( SecurityService.isAuthenticationEnable( ) )
-        {
-            model.put( MARK_ROLE_REF_LIST, RoleHome.getRolesList( ) );
-        }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_FIELD, locale, model );
 
@@ -522,10 +492,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         if ( nIndexField != -1 && ( ( bMoveUp && nIndexField > 0 ) || ( !bMoveUp && nIndexField < ( listField.size( ) - 1 ) ) ) )
         {
-            int nNewPosition;
-            Field fieldToInversePosition;
-            fieldToInversePosition = listField.get( bMoveUp ? ( nIndexField - 1 ) : ( nIndexField + 1 ) );
-            nNewPosition = fieldToInversePosition.getPosition( );
+            Field fieldToInversePosition = listField.get( bMoveUp ? ( nIndexField - 1 ) : ( nIndexField + 1 ) );
+            int nNewPosition = fieldToInversePosition.getPosition( );
             fieldToInversePosition.setPosition( field.getPosition( ) );
             field.setPosition( nNewPosition );
             FieldHome.update( field );
@@ -552,7 +520,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
         String strDefaultValue = request.getParameter( PARAMETER_DEFAULT_VALUE );
         String strNoDisplayTitle = request.getParameter( PARAMETER_NO_DISPLAY_TITLE );
         String strComment = request.getParameter( PARAMETER_COMMENT );
-        String strRoleKey = request.getParameter( PARAMETER_ROLE_KEY );
 
         String strFieldError = EMPTY_STRING;
 
@@ -574,7 +541,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         if ( !strFieldError.equals( EMPTY_STRING ) )
         {
             Object [ ] tabRequiredFields = {
-                I18nService.getLocalizedString( strFieldError, getLocale( ) ),
+                    I18nService.getLocalizedString( strFieldError, getLocale( ) ),
             };
 
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
@@ -586,7 +553,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
         field.setComment( strComment );
         field.setDefaultValue( strDefaultValue != null );
         field.setNoDisplayTitle( strNoDisplayTitle != null );
-        field.setRoleKey( strRoleKey );
 
         return null; // No error
     }

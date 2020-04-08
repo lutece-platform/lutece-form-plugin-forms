@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -81,13 +81,13 @@ public class StepDisplayTree
 
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
-    private final List<ICompositeDisplay> _listChildren = new ArrayList<ICompositeDisplay>( );
-    private final List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
+    private final List<ICompositeDisplay> _listChildren = new ArrayList<>( );
+    private final List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<>( );
     private Step _step;
     private Form _form;
     private final FormResponse _formResponse;
-    private final Map<Integer, List<Response>> _mapStepResponses = new HashMap<Integer, List<Response>>( );
-    private List<Control> _listDisplayControls = new ArrayList<Control>( );
+    private final Map<Integer, List<Response>> _mapStepResponses = new HashMap<>( );
+    private List<Control> _listDisplayControls = new ArrayList<>( );
     private final Map<String, Object> _model = new HashMap<>( );
 
     /**
@@ -167,7 +167,7 @@ public class StepDisplayTree
             _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
             List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, 0 );
-            _listDisplayControls = new ArrayList<Control>( );
+            _listDisplayControls = new ArrayList<>( );
             for ( FormDisplay formDisplayChild : listStepFormDisplay )
             {
                 ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild, _formResponse, 0 );

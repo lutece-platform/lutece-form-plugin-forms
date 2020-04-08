@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.business;
 
 import java.sql.Statement;
@@ -183,8 +182,6 @@ public final class FormMessageDAO implements IFormMessageDAO
     private FormMessage dataToObject( DAOUtil daoUtil )
     {
         FormMessage formMessage = new FormMessage( );
-
-        formMessage = new FormMessage( );
         formMessage.setId( daoUtil.getInt( "id" ) );
         formMessage.setIdForm( daoUtil.getInt( "id_form" ) );
         formMessage.setEndMessageDisplay( daoUtil.getBoolean( "end_message_display" ) );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,11 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.column.display.impl;
 
-import java.util.Locale;
-
 import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
 
@@ -109,18 +106,6 @@ public abstract class AbstractFormColumnDisplay implements IFormColumnDisplay
     {
         _nPosition = nPosition;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract String buildFormColumnHeaderTemplate( String strSortUrl, Locale locale );
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract String buildFormColumnCellTemplate( FormColumnCell formColumnCell, Locale locale );
 
     /**
      * Return the title of the FormColumn or {@linkplain StringUtils.EMPTY} if not found

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,10 +44,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import java.util.Map.Entry;
 
 /**
  * Implementation of the IFormColumnDisplay for the EntryGeolocation column
@@ -125,9 +123,7 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
         model.put( MARK_ENTRY_X, strEntryX );
         model.put( MARK_ENTRY_Y, strEntryY );
 
-        String strFormColumnEntryTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
-
-        return strFormColumnEntryTemplate;
+        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }
 
     /**

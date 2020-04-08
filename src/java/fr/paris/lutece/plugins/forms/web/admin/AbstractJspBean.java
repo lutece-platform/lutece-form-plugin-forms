@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -46,7 +46,7 @@ import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
-import fr.paris.lutece.portal.web.util.LocalizedPaginator;
+import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -59,6 +59,8 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      * Generated serial UID
      */
     private static final long serialVersionUID = 3421909824044642013L;
+
+    protected static final String UNAUTHORIZED = "Unauthorized";
 
     // Properties
     protected static final String PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -77,9 +79,9 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
 
     protected void initiatePaginatorProperties( HttpServletRequest request )
     {
-        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         int nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE, 50 );
-        _nItemsPerPage = Paginator.getItemsPerPage( request, Paginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, nDefaultItemsPerPage );
+        _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, nDefaultItemsPerPage );
 
     }
 
@@ -98,11 +100,10 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      */
     protected Map<String, Object> getPaginatedListModel( HttpServletRequest request, String strBookmark, List<Integer> list, String strUrl, int nbTotalItems )
     {
-        _strCurrentPageIndex = Paginator.getPageIndex( request, Paginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
 
         // Paginator
-        _paginator = new LocalizedDelegatePaginator<Integer>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems,
-                getLocale( ) );
+        _paginator = new LocalizedDelegatePaginator<>( list, _nItemsPerPage, strUrl, PARAMETER_PAGE_INDEX, _strCurrentPageIndex, nbTotalItems, getLocale( ) );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_NB_ITEMS_PER_PAGE, String.valueOf( _nItemsPerPage ) );
@@ -202,7 +203,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     {
         if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, AdminUserService.getAdminUser( request ) ) )
         {
-            throw new AccessDeniedException( );
+            throw new AccessDeniedException( UNAUTHORIZED );
         }
     }
 

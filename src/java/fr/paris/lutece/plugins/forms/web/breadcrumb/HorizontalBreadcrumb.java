@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -91,7 +91,7 @@ public class HorizontalBreadcrumb implements IBreadcrumb
     @Override
     public String getTopHtml( HttpServletRequest request, FormResponseManager formResponseManager )
     {
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( FormsConstants.MARK_LIST_STEPS, formResponseManager.getValidatedSteps( ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
 

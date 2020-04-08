@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -102,7 +102,7 @@ public class VerticalBreadcrumb implements IBreadcrumb
 
         listStep.subList( nCurrentStepIndex, listStep.size( ) ).clear( );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( FormsConstants.MARK_LIST_STEPS, listStep );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
 
@@ -123,7 +123,7 @@ public class VerticalBreadcrumb implements IBreadcrumb
 
         listStep.subList( 0, nCurrentStepIndex + 1 ).clear( );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( FormsConstants.MARK_LIST_STEPS, listStep );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
 

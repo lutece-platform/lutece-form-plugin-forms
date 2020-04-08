@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,23 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-import fr.paris.lutece.plugins.forms.util.FormEntryNameConstants;
-import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
-
-import java.security.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.lucene.document.LongPoint;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 
 /**
  * Implementation of the IFormColumnQueryPart interface for a form column
@@ -64,7 +55,6 @@ public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
     protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
     {
         Map<String, Object> mapFormColumnValues = new HashMap<>( );
-
 
         for ( String strFormColumnEntryCode : getListEntryCode( getFormColumn( ) ) )
         {
@@ -87,6 +77,6 @@ public class FormColumnEntryQueryPart extends AbstractFormColumnQueryPart
             FormColumnEntry formColumnEntry = (FormColumnEntry) column;
             return formColumnEntry.getListEntryCode( );
         }
-        return null;
+        return new ArrayList<>( );
     }
 }

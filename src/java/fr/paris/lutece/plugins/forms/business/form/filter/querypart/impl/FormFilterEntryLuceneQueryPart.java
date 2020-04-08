@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,6 +33,17 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
+
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
@@ -41,16 +52,6 @@ import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
 
 /**
  * Implementation of the IFormFilterQueryPart for an Entry filter
@@ -78,16 +79,19 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
                     Question question = QuestionHome.findByCode( strQuestionCode );
                     List<Field> listFields = FieldHome.getFieldListByIdEntry( question.getEntry( ).getIdEntry( ) );
 
-                    Query query = new TermQuery( new Term( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode
-                            + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0", formParam.getValue( ).toString( ) ) );
+                    Query query = new TermQuery(
+                            new Term( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0",
+                                    formParam.getValue( ).toString( ) ) );
                     booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
 
                     for ( Field field : listFields )
                     {
                         String strFieldName = getFieldName( field );
-                        query = new TermQuery( new Term( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode
-                                + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER_ + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR_
-                                + strFieldName, formParam.getValue( ).toString( ) ) );
+                        query = new TermQuery(
+                                new Term(
+                                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER
+                                                + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR + strFieldName,
+                                        formParam.getValue( ).toString( ) ) );
                         booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
                     }
                 }
@@ -118,13 +122,17 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
     private String getFieldName( fr.paris.lutece.plugins.genericattributes.business.Field responseField )
     {
         if ( responseField.getIdField( ) > 0 )
+        {
             return String.valueOf( responseField.getIdField( ) );
+        }
         if ( !StringUtils.isEmpty( responseField.getCode( ) ) )
+        {
             return responseField.getCode( );
-
+        }
         if ( !StringUtils.isEmpty( responseField.getTitle( ) ) )
+        {
             return responseField.getTitle( );
-
+        }
         return StringUtils.EMPTY;
     }
 }

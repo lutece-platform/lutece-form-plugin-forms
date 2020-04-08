@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -78,6 +78,21 @@ public class FormListLuceneDAO implements IFormListDAO
             return;
         }
 
+        List<FormResponseItem> listFormResponseItem = searchFormResponseItem( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig );
+
+        formPanel.setFormResponseItemList( listFormResponseItem );
+    }
+
+    @Override
+    public List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            FormResponseItemSortConfig sortConfig )
+    {
+        return searchFormResponseItem( formPanel, listFormColumn, listFormFilter, 0, 0, sortConfig );
+    }
+
+    private List<FormResponseItem> searchFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            int nStartIndex, int nPageSize, FormResponseItemSortConfig sortConfig )
+    {
         // Create the list of all values of the parameter to used
         List<String> listQueryParametersValues = new ArrayList<>( );
 
@@ -97,15 +112,12 @@ public class FormListLuceneDAO implements IFormListDAO
 
             for ( IFormColumnQueryPart formColumnQueryPart : listFormColumnQueryPart )
             {
-                if ( formColumnQueryPart instanceof IFormColumnQueryPart )
-                {
-                    FormColumnCell formColumnCell = ( (IFormColumnQueryPart) formColumnQueryPart ).getFormColumnCell( formResponseSearchItem );
-                    formResponseItem.addFormColumnCell( formColumnCell );
-                }
-
+                FormColumnCell formColumnCell = formColumnQueryPart.getFormColumnCell( formResponseSearchItem );
+                formResponseItem.addFormColumnCell( formColumnCell );
             }
         }
-        formPanel.setFormResponseItemList( listFormResponseItem );
+
+        return listFormResponseItem;
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,11 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
 
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormResponseDateCreationNameConstants;
-import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import java.util.HashMap;
 import java.util.Map;
+
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 
 public class FormColumnFormsQueryPart extends AbstractFormColumnQueryPart
 {

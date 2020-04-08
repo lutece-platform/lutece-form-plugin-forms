@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.impl;
 
-import javax.servlet.http.HttpServletRequest;
-
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.IFormPanelDisplayInitializer;
 
@@ -45,12 +43,6 @@ public abstract class AbstractFormPanelDisplayInitializer implements IFormPanelD
 {
     // Variables
     private IFormPanelInitializer _formPanelInitializer;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract void buildFormParameters( HttpServletRequest request );
 
     /**
      * {@inheritDoc}

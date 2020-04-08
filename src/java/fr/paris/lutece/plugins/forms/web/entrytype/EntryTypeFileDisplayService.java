@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -150,10 +150,9 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
                 File file = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
                 PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( file.getPhysicalFile( ).getIdPhysicalFile( ) );
                 FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
-                ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList(
-                        fileItem,
-                        "nIt" + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE
-                                + Integer.toString( response.getEntry( ).getIdEntry( ) ), request );
+                ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
+                        + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
+                        request );
             }
         }
         return AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, service, model ) )
@@ -204,7 +203,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     @SuppressWarnings( "unchecked" )
     private List<Response> retrieveResponseListFromModel( Map<String, Object> model )
     {
-        List<Response> listResponse = new ArrayList<Response>( );
+        List<Response> listResponse = new ArrayList<>( );
 
         if ( !MapUtils.isEmpty( model ) && model.containsKey( LIST_RESPONSES ) )
         {

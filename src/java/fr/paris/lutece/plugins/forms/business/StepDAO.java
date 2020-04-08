@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -166,7 +165,7 @@ public final class StepDAO implements IStepDAO
     @Override
     public List<Step> selectStepsList( Plugin plugin )
     {
-        List<Step> stepList = new ArrayList<Step>( );
+        List<Step> stepList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery( );
 
@@ -185,7 +184,7 @@ public final class StepDAO implements IStepDAO
     @Override
     public List<Integer> selectIdStepsList( Plugin plugin )
     {
-        List<Integer> stepList = new ArrayList<Integer>( );
+        List<Integer> stepList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin );
         daoUtil.executeQuery( );
 
@@ -204,7 +203,7 @@ public final class StepDAO implements IStepDAO
     @Override
     public List<Integer> selectIdStepsListByForm( int nIdForm, Plugin plugin )
     {
-        List<Integer> stepList = new ArrayList<Integer>( );
+        List<Integer> stepList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID_BY_FORM, plugin );
         daoUtil.setInt( 1, nIdForm );
         daoUtil.executeQuery( );
@@ -243,7 +242,7 @@ public final class StepDAO implements IStepDAO
     @Override
     public List<Step> selectStepsListbyForm( int nFormId, Plugin plugin )
     {
-        List<Step> stepList = new ArrayList<Step>( );
+        List<Step> stepList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin );
         daoUtil.setInt( 1, nFormId );
         daoUtil.executeQuery( );

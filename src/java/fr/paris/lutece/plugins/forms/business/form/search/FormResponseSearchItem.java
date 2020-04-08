@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,9 +58,9 @@ public class FormResponseSearchItem extends SearchItem
     public static final String FIELD_ID_ASSIGNEE_USER = "id_assignee_user";
     public static final String FIELD_ID_ASSIGNEE_UNIT = "id_assignee_unit";
     public static final String FIELD_ENTRY_CODE_SUFFIX = "entry_code_";
-    public static final String FIELD_RESPONSE_FIELD_SEPARATOR_ = "_field_";
-    public static final String FIELD_RESPONSE_FIELD_ITER_ = "_iter_";
-    public static final String FIELD_RESPONSE_ID_ = "_response_id_";
+    public static final String FIELD_RESPONSE_FIELD_SEPARATOR = "_field_";
+    public static final String FIELD_RESPONSE_FIELD_ITER = "_iter_";
+    public static final String FIELD_RESPONSE_ID = "_response_id_";
     public static final String FIELD_DATE_SUFFIX = "_date";
     public static final String FIELD_INT_SUFFIX = "_int";
 

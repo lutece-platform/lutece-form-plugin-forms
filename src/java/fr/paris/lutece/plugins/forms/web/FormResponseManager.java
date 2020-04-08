@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,11 +31,13 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
@@ -49,7 +51,6 @@ import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
-import java.util.stream.Collectors;
 
 /**
  * 
@@ -69,7 +70,7 @@ public class FormResponseManager
      */
     public FormResponseManager( Form form )
     {
-        _listValidatedStep = new ArrayList<Step>( );
+        _listValidatedStep = new ArrayList<>( );
         _formResponse = new FormResponse( );
         _formResponse.setFormId( form.getId( ) );
         _formResponse.setSteps( new ArrayList<>( ) );
@@ -83,7 +84,7 @@ public class FormResponseManager
      */
     public FormResponseManager( FormResponse formResponse )
     {
-        _listValidatedStep = new ArrayList<Step>( );
+        _listValidatedStep = new ArrayList<>( );
         _formResponse = formResponse;
 
         initValidatedStep( );
@@ -101,6 +102,13 @@ public class FormResponseManager
             if ( nStepOrder != FormsConstants.ORDER_NOT_SET )
             {
                 _listValidatedStep.add( nStepOrder, formResponseStep.getStep( ) );
+            }
+            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+            {
+                if ( CollectionUtils.isNotEmpty( formQuestionResponse.getEntryResponse( ) ) )
+                {
+                    formQuestionResponse.getQuestion( ).setIsVisible( true );
+                }
             }
         }
     }
@@ -241,7 +249,11 @@ public class FormResponseManager
 
         if ( isStepValidated( step ) )
         {
-            listFormQuestionResponse = findFormResponseStepFor( step ).getQuestions( );
+            FormResponseStep formResponseStep = findFormResponseStepFor( step );
+            if ( formResponseStep != null )
+            {
+                listFormQuestionResponse = formResponseStep.getQuestions( );
+            }
         }
 
         return listFormQuestionResponse;
@@ -254,9 +266,7 @@ public class FormResponseManager
      */
     public List<FormQuestionResponse> findAllResponses( )
     {
-        List<FormQuestionResponse> listFormQuestionResponse = _formResponse.getSteps( ).stream( ).flatMap( step -> step.getQuestions( ).stream( ) )
-                .collect( Collectors.toList( ) );
-        return listFormQuestionResponse;
+        return _formResponse.getSteps( ).stream( ).flatMap( step -> step.getQuestions( ).stream( ) ).collect( Collectors.toList( ) );
     }
 
     /**
@@ -350,11 +360,10 @@ public class FormResponseManager
                 for ( Control control : listControl )
                 {
                     IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-                    GenericAttributeError error = new GenericAttributeError( );
 
                     if ( !validator.validate( formQuestionResponse, control ) )
                     {
-                        error = new GenericAttributeError( );
+                        GenericAttributeError error = new GenericAttributeError( );
 
                         error.setIsDisplayableError( true );
                         error.setErrorMessage( control.getErrorMessage( ) );

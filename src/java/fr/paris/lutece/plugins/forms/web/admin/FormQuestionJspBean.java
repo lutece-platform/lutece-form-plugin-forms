@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
@@ -78,7 +77,6 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -102,6 +100,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 {
 
     private static final long serialVersionUID = 7515975782241863390L;
+    private static final String ERROR_CODE_EXISTS = " Provided code already exists ";
 
     private static final String EMPTY_STRING = "";
 
@@ -147,7 +146,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String MARK_LOCALE = "locale";
     private static final String MARK_ENTRY_TYPE_SERVICE = "entryTypeService";
     private static final String MARK_LIST_PARAM_DEFAULT_VALUES = "list_param_default_values";
-    private static final String MARK_IS_AUTHENTIFICATION_ENABLED = "is_authentification_enabled";
     private static final String MARK_LIST = "list";
     private static final String MARK_GROUP_VALIDATED = "groupValidated";
     private static final String MARK_STEP_VALIDATED = "stepValidated";
@@ -160,7 +158,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String ERROR_QUESTION_NOT_CREATED = "forms.error.question.notCreated";
     private static final String ERROR_GROUP_NOT_CREATED = "forms.error.group.notCreated";
     private static final String ERROR_GROUP_NOT_UPDATED = "forms.error.group.notUpdated";
-    private static final String ERROR_QUESTION_NOT_UPDATED = "forms.error.question.notUpdated";
     private static final String ERROR_STEP_OR_GROUP_NOT_VALIDATED = "forms.error.moveComposite.stepOrGroup.notvalidated";
     private static final String ERROR_OCCURED_MOVING_COMPOSITE = "forms.error.moveComposite.notCompleted";
     private static final String ERROR_ITERATION_NUMBER = "forms.error.group.iterationNumber";
@@ -217,10 +214,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getManageQuestions( HttpServletRequest request )
     {
         Locale locale = getLocale( );
-        int nIdStep = INTEGER_MINUS_ONE;
 
-        List<ICompositeDisplay> listICompositeDisplay = new ArrayList<ICompositeDisplay>( );
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
 
         _step = StepHome.findByPrimaryKey( nIdStep );
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
@@ -235,7 +230,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_FORM, _form );
 
-        listICompositeDisplay = _formService.getStepCompositeList( nIdStep );
+        List<ICompositeDisplay> listICompositeDisplay = _formService.getStepCompositeList( nIdStep );
 
         model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
@@ -258,11 +253,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getCreateQuestion( HttpServletRequest request )
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-        int nIdTypeEntry = INTEGER_MINUS_ONE;
-
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        nIdTypeEntry = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ) );
+        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdTypeEntry = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ) );
         _nIdParentSelected = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
 
         _step = StepHome.findByPrimaryKey( nIdStep );
@@ -283,13 +275,9 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
-        // Default Values
-        // TODO: implement EntryParameterService to handle default values
-        // ReferenceList listParamDefaultValues =
-        // EntryParameterService.getService( ).findAll( );
         ReferenceList listParamDefaultValues = new ReferenceList( );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
@@ -298,9 +286,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_LIST_PARAM_DEFAULT_VALUES, listParamDefaultValues );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
-        model.put( MARK_IS_AUTHENTIFICATION_ENABLED, SecurityService.isAuthenticationEnable( ) );
 
-        if ( _entry.getEntryType( ).getComment( ) )
+        if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
             setPageTitleProperty( PROPERTY_CREATE_COMMENT_TITLE );
         }
@@ -309,8 +296,8 @@ public class FormQuestionJspBean extends AbstractJspBean
             setPageTitleProperty( PROPERTY_CREATE_QUESTION_TITLE );
         }
 
-        model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE, AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model )
-                .getHtml( ) );
+        model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE,
+                AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model ).getHtml( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( EntryTypeServiceManager.getEntryTypeService( _entry ).getTemplateCreate( _entry, false ),
                 getLocale( ), model );
@@ -329,9 +316,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getCreateGroup( HttpServletRequest request )
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-
-        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
         _nIdParentSelected = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
@@ -373,11 +358,9 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_GROUP )
     public String doCreateGroup( HttpServletRequest request )
     {
-        int nIdStep = INTEGER_MINUS_ONE;
-        int nParentGroup = INTEGER_MINUS_ONE;
 
-        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -433,11 +416,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getModifyGroup( HttpServletRequest request )
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-        int nIdGroup = INTEGER_MINUS_ONE;
-
-        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+        int nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
         {
@@ -478,9 +458,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_MODIFY_GROUP )
     public String doModifyGroup( HttpServletRequest request )
     {
-        int nIdStep = INTEGER_MINUS_ONE;
 
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -558,7 +537,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( " Provided code already exists " + e.getCode( ), e );
+            AppLogService.error( ERROR_CODE_EXISTS + e.getCode( ), e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
@@ -578,13 +557,14 @@ public class FormQuestionJspBean extends AbstractJspBean
         try
         {
             String strReturnUrl = processQuestionCreation( request );
-            return strReturnUrl != null ? strReturnUrl : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ),
-                    FormsConstants.PARAMETER_ID_QUESTION, _question.getId( ) );
+            return strReturnUrl != null ? strReturnUrl
+                    : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
+                            _question.getId( ) );
 
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( " Provided code already exists ", e );
+            AppLogService.error( ERROR_CODE_EXISTS, e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
             return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
         }
@@ -600,13 +580,9 @@ public class FormQuestionJspBean extends AbstractJspBean
     private String processQuestionCreation( HttpServletRequest request ) throws CodeAlreadyExistsException
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-        int nParentGroup = INTEGER_MINUS_ONE;
-        int nIdType = INTEGER_MINUS_ONE;
-
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
-        nIdType = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) );
+        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        int nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
+        int nIdType = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -655,7 +631,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
 
         _question = new Question( );
-        String strTitle = _entry.getEntryType( ).getComment( ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
+        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
+                : _entry.getTitle( );
         _question.setTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
         _question.setDescription( _entry.getComment( ) );
@@ -697,12 +674,11 @@ public class FormQuestionJspBean extends AbstractJspBean
      */
     private String processQuestionDuplication( HttpServletRequest request )
     {
-        int nIdStep = INTEGER_MINUS_ONE;
         int nIdQuestion = INTEGER_MINUS_ONE;
 
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_TARGET );
-        nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        Question questionToCopy = null;
+        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        Question questionToCopy = new Question( );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
@@ -750,7 +726,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         for ( Control control : listControlsToDuplicate )
         {
 
-            Set<Integer> listQuestion = new HashSet<Integer>( );
+            Set<Integer> listQuestion = new HashSet<>( );
             listQuestion.add( questionToCopy.getId( ) );
             control.setListIdQuestion( listQuestion );
             control.setIdControlTarget( questionToCopy.getId( ) );
@@ -784,13 +760,11 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getModifyQuestion( HttpServletRequest request )
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
 
         if ( ( strIdStep != null ) && !strIdStep.equals( EMPTY_STRING ) )
         {
-            nIdStep = Integer.parseInt( strIdStep );
+            int nIdStep = Integer.parseInt( strIdStep );
 
             if ( ( _step == null ) || ( _step.getId( ) != nIdStep ) )
             {
@@ -810,7 +784,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _entry = EntryHome.findByPrimaryKey( _question.getIdEntry( ) );
 
-        List<Field> listField = new ArrayList<Field>( _entry.getFields( ).size( ) );
+        List<Field> listField = new ArrayList<>( _entry.getFields( ).size( ) );
 
         for ( Field field : _entry.getFields( ) )
         {
@@ -827,7 +801,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
 
-        Map<String, Object> model = new HashMap<String, Object>( );
+        Map<String, Object> model = new HashMap<>( );
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( FormsConstants.MARK_STEP, _step );
@@ -838,9 +812,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
-        model.put( MARK_IS_AUTHENTIFICATION_ENABLED, SecurityService.isAuthenticationEnable( ) );
 
-        if ( _entry.getEntryType( ).getComment( ) )
+        if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
             setPageTitleProperty( PROPERTY_MODIFY_COMMENT_TITLE );
         }
@@ -849,8 +822,8 @@ public class FormQuestionJspBean extends AbstractJspBean
             setPageTitleProperty( PROPERTY_MODIFY_QUESTION_TITLE );
         }
 
-        model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE, AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model )
-                .getHtml( ) );
+        model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,
+                AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model ).getHtml( ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
 
@@ -867,7 +840,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String processQuestionUpdate( HttpServletRequest request ) throws CodeAlreadyExistsException
     {
 
-        int nIdEntry = INTEGER_MINUS_ONE;
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
         int nIdStep = -INTEGER_MINUS_ONE;
 
@@ -893,7 +865,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             _question = QuestionHome.findByPrimaryKey( nIdQuestion );
         }
 
-        nIdEntry = _question.getIdEntry( );
+        int nIdEntry = _question.getIdEntry( );
         _entry = EntryHome.findByPrimaryKey( nIdEntry );
 
         String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ) );
@@ -902,7 +874,6 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             return strError;
         }
-
 
         if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getIdForm( ), _entry.getIdEntry( ) ) )
         {
@@ -931,7 +902,8 @@ public class FormQuestionJspBean extends AbstractJspBean
             }
         }
 
-        String strTitle = _entry.getEntryType( ).getComment( ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) ) : _entry.getTitle( );
+        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
+                : _entry.getTitle( );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
         _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
         _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
@@ -973,7 +945,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( " Provided code already exists " + e.getCode( ), e );
+            AppLogService.error( ERROR_CODE_EXISTS + e.getCode( ), e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
@@ -1001,7 +973,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
         catch( CodeAlreadyExistsException e )
         {
-            AppLogService.error( " Provided code already exists ", e );
+            AppLogService.error( ERROR_CODE_EXISTS, e );
             addError( ERROR_QUESTION_CODE_ALREADY_EXISTS, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
@@ -1042,11 +1014,9 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getConfirmRemoveComposite( HttpServletRequest request )
     {
 
-        int nIdStep = INTEGER_MINUS_ONE;
-        int nIdDisplay = INTEGER_MINUS_ONE;
         String strMessage = StringUtils.EMPTY;
 
-        nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
+        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
 
         if ( nIdStep == INTEGER_MINUS_ONE )
         {
@@ -1070,7 +1040,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
         }
 
-        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
+        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
@@ -1125,9 +1095,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_REMOVE_COMPOSITE )
     public String doRemoveComposite( HttpServletRequest request )
     {
-        int nIdDisplay = INTEGER_MINUS_ONE;
 
-        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
+        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
@@ -1158,15 +1127,11 @@ public class FormQuestionJspBean extends AbstractJspBean
     @View( value = VIEW_MOVE_COMPOSITE )
     public String getMoveComposite( HttpServletRequest request )
     {
-        int nIdStepTarget = INTEGER_MINUS_ONE;
         Step stepTarget = new Step( );
-        int nIdParentTarget = INTEGER_MINUS_ONE;
-        int nIdDisplay = INTEGER_MINUS_ONE;
-        int nTargetPosition = INTEGER_MINUS_ONE;
         boolean bStepValidated = false;
         boolean bGroupValidated = false;
 
-        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
+        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
@@ -1177,7 +1142,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
-        nTargetPosition = _formDisplay.getDisplayOrder( );
+        int nTargetPosition = _formDisplay.getDisplayOrder( );
 
         String strIsStepValidated = request.getParameter( FormsConstants.PARAMETER_STEP_VALIDATED );
         if ( StringUtils.isNotBlank( strIsStepValidated ) )
@@ -1214,7 +1179,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             bGroupValidated = true;
         }
 
-        nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), -1 );
+        int nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), -1 );
         if ( bStepValidated )
         {
             if ( nIdStepTarget == INTEGER_MINUS_ONE )
@@ -1233,7 +1198,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             redirectToViewManageForm( request );
         }
 
-        nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), -1 );
+        int nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), -1 );
         if ( bGroupValidated )
         {
             if ( nIdParentTarget == INTEGER_MINUS_ONE )
@@ -1295,14 +1260,11 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_MOVE_COMPOSITE )
     public String doMoveComposite( HttpServletRequest request )
     {
-        int nIdStepTarget = INTEGER_MINUS_ONE;
-        int nIdParentTarget = INTEGER_MINUS_ONE;
-        int nIdDisplay = INTEGER_MINUS_ONE;
-        int nDisplayOrderTarget = INTEGER_MINUS_ONE;
+
         boolean bStepValidated = false;
         boolean bGroupValidated = false;
 
-        nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), -1 );
+        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), -1 );
 
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
@@ -1326,9 +1288,9 @@ public class FormQuestionJspBean extends AbstractJspBean
             bGroupValidated = BooleanUtils.toBoolean( strIsGroupValidated );
         }
 
-        nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
-        nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), INTEGER_MINUS_ONE );
-        nDisplayOrderTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_DISPLAY_ORDER ), INTEGER_MINUS_ONE );
+        int nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
+        int nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), INTEGER_MINUS_ONE );
+        int nDisplayOrderTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_DISPLAY_ORDER ), INTEGER_MINUS_ONE );
 
         if ( ( nIdStepTarget == INTEGER_MINUS_ONE ) || ( nIdParentTarget == INTEGER_MINUS_ONE ) )
         {

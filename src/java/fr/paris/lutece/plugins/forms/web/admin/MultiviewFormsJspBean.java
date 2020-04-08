@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -45,14 +44,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.FormResponseStep;
+import fr.paris.lutece.plugins.filegenerator.service.TemporaryFileGeneratorService;
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsAction;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionHome;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
@@ -71,23 +68,23 @@ import fr.paris.lutece.plugins.forms.web.form.column.display.FormColumnDisplayFa
 import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.FormFilterDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayForms;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListTemplateBuilder;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.MultiviewFormUtil;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDisplayFactory;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
-import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
-import fr.paris.lutece.util.html.Paginator;
+import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.url.UrlItem;
 
 /**
@@ -115,7 +112,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
     // Constants
     private static final String BASE_SORT_URL_PATTERN = JSP_FORMS_MULTIVIEW + "?current_selected_panel=%s";
-    private static final String EXPORT_FILE_NAME = "forms.adminFeature.multiviewForms.export.filePath";
 
     // Views
     private static final String VIEW_MULTIVIEW_FORMS = "view_multiview_forms";
@@ -155,18 +151,18 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     @View( value = VIEW_MULTIVIEW_FORMS, defaultView = true )
     public String getMultiviewFormsView( HttpServletRequest request )
     {
-        // Retrieve the list of all filters, columns and panels if the pagination and the sort are not used
+        // Retrieve the list of all filters, columns and panels if the pagination and
+        // the sort are not used
         boolean bIsSessionLost = isSessionLost( );
         if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
         {
             initFormRelatedLists( request );
             manageSelectedPanel( );
         }
-        _listAuthorizedFormPanelDisplay = _listFormPanelDisplay
-                .stream( )
-                .filter(
-                        fpd -> RBACService.isAuthorized( fpd.getFormPanel( ).getFormPanelConfiguration( ), FormPanelConfigIdService.PERMISSION_VIEW,
-                                AdminUserService.getAdminUser( request ) ) ).collect( Collectors.toList( ) );
+        _listAuthorizedFormPanelDisplay = _listFormPanelDisplay.stream( )
+                .filter( fpd -> RBACService.isAuthorized( fpd.getFormPanel( ).getFormPanelConfiguration( ), FormPanelConfigIdService.PERMISSION_VIEW,
+                        AdminUserService.getAdminUser( request ) ) )
+                .collect( Collectors.toList( ) );
 
         // Build the Column for the Panel and save their values for the active panel
         initiatePaginatorProperties( request );
@@ -188,7 +184,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         {
             _formPanelDisplayActive = _listAuthorizedFormPanelDisplay.get( 0 );
         }
-        Map<String, Object> model = getPaginatedListModel( request, Paginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ),
+        Map<String, Object> model = getPaginatedListModel( request, AbstractPaginator.PARAMETER_PAGE_INDEX, listIdFormResponse, buildPaginatorUrl( ),
                 _formPanelDisplayActive.getFormPanel( ).getTotalFormResponseItemCount( ) );
 
         // Get the config multiview action if the current admin user is authorized
@@ -239,28 +235,50 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @param request
      *            The HTTP request
      * @throws AccessDeniedException
+     * @throws SiteMessageException
      */
     @Action( ACTION_EXPORT_RESPONSES )
-    public void doExportResponses( HttpServletRequest request ) throws AccessDeniedException
+    public String doExportResponses( HttpServletRequest request ) throws AccessDeniedException, SiteMessageException
     {
         GlobalFormsAction multiviewExportAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_EXPORT_RESPONSES,
                 FormsPlugin.getPlugin( ), request.getLocale( ) );
-        if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
-                AdminUserService.getAdminUser( request ) ) )
+        AdminUser user = AdminUserService.getAdminUser( request );
+        if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION, user ) )
         {
-            throw new AccessDeniedException( "Unauthorized" );
+            throw new AccessDeniedException( UNAUTHORIZED );
+        }
+
+        boolean filteredByForm = false;
+        FormFilterDisplayForms formFilter = (FormFilterDisplayForms) _listFormFilterDisplay.stream( ).filter( f -> f instanceof FormFilterDisplayForms )
+                .findFirst( ).orElse( null );
+        String strIdForm = "";
+        if ( formFilter != null )
+        {
+            strIdForm = formFilter.getValue( );
+            filteredByForm = StringUtils.isNotEmpty( strIdForm ) && !FormFilterDisplayForms.DEFAULT_ID_FORM.contentEquals( strIdForm );
+        }
+
+        if ( !filteredByForm )
+        {
+            addError( "forms.export.error.filter", getLocale( ) );
+            return redirectView( request, VIEW_MULTIVIEW_FORMS );
         }
 
         IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
 
-        List<FormResponseItem> listFormResponseItemToDisplay = _formPanelDisplayActive.getFormResponseItemList( );
-
-        if ( formatExport != null && CollectionUtils.isNotEmpty( listFormResponseItemToDisplay ) )
+        if ( formatExport != null )
         {
-            byte [ ] arrByteExportFile = formatExport.getByteExportFile( getFormResponseToExport( listFormResponseItemToDisplay ) );
+            int idForm = Integer.parseInt( strIdForm );
+            Form form = FormHome.findByPrimaryKey( idForm );
+            List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
-            download( arrByteExportFile, I18nService.getLocalizedString( EXPORT_FILE_NAME, getLocale( ) ), formatExport.getFormatContentType( ) );
+            TemporaryFileGeneratorService.getInstance( ).generateFile( formatExport.createFileGenerator( form.getTitle( ),
+                    _formPanelDisplayActive.getFormPanel( ), _listFormColumn, listFormFilter, _formResponseItemComparatorConfig ), user );
         }
+        addInfo( "forms.export.async.message", getLocale( ) );
+
+        return redirectView( request, VIEW_MULTIVIEW_FORMS );
+
     }
 
     /**
@@ -279,7 +297,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
                 AdminUserService.getAdminUser( request ) ) )
         {
-            throw new AccessDeniedException( );
+            throw new AccessDeniedException( UNAUTHORIZED );
         }
 
         MultiviewConfig config = MultiviewConfig.getInstance( );
@@ -305,7 +323,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
                 AdminUserService.getAdminUser( request ) ) )
         {
-            throw new AccessDeniedException( );
+            throw new AccessDeniedException( UNAUTHORIZED );
         }
 
         MultiviewConfig config = MultiviewConfig.getInstance( );
@@ -316,34 +334,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         config.save( );
 
         return redirectView( request, VIEW_MULTIVIEW_FORMS );
-    }
-
-    /**
-     * 
-     * @param listFormResponseItemToDisplay
-     *            The list of FormResponse to display
-     * @return the list of FormResponse to export
-     */
-    private List<FormResponse> getFormResponseToExport( List<FormResponseItem> listFormResponseItemToDisplay )
-    {
-        List<FormResponse> listFormResponse = new ArrayList<FormResponse>( );
-
-        for ( FormResponseItem formResponseItem : listFormResponseItemToDisplay )
-        {
-            FormResponse formResponse = FormResponseHome.findByPrimaryKey( formResponseItem.getIdFormResponse( ) );
-
-            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
-            {
-                for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
-                {
-                    // TODO Remove the formQuestionResponse from the formResponse if the associated question is not exportable
-                }
-            }
-
-            listFormResponse.add( formResponse );
-        }
-
-        return listFormResponse;
     }
 
     /**
@@ -446,10 +436,12 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             // Retrieve the FormPanel from the FormPanelDisplay
             FormPanel formPanel = formPanelDisplay.getFormPanel( );
 
-            // Populate the FormColumns from the information of the list of FormResponseItem of the given FormPanel
+            // Populate the FormColumns from the information of the list of FormResponseItem
+            // of the given FormPanel
             MultiviewFormService.getInstance( ).populateFormColumns( formPanel, _listFormColumn, listFormFilter, nIndexStart, nPageSize, sortConfig );
 
-            // Associate for each FormColumnDisplay its FormColumnValues if the panel is active
+            // Associate for each FormColumnDisplay its FormColumnValues if the panel is
+            // active
             if ( formPanelDisplay.isActive( ) )
             {
                 _formPanelDisplayActive = formPanelDisplay;
@@ -595,9 +587,9 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             if ( filter instanceof FormFilterForms )
             {
                 Integer nIdForm = ( (FormFilterForms) filter ).getSelectedIdForm( );
-                List<FormFilter> listFormFilterReloaded = new ArrayList<>( );
-                listFormFilterReloaded = ( nIdForm != FormsConstants.DEFAULT_ID_VALUE ) ? new FormFilterFactory( ).buildFormFilterList( nIdForm,
-                        _listFormColumn ) : new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn );
+                List<FormFilter> listFormFilterReloaded = ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
+                        ? new FormFilterFactory( ).buildFormFilterList( nIdForm, _listFormColumn )
+                        : new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn );
 
                 _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilterReloaded );
             }

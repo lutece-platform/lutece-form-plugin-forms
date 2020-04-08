@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import java.util.ArrayList;
@@ -169,17 +168,12 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     @Override
     public boolean isResponseChanged( FormQuestionResponse responseReference, FormQuestionResponse responseNew )
     {
-        if ( responseReference == null && responseNew == null )
+        if ( responseReference == null )
         {
-            return false;
+            return responseNew != null;
         }
 
-        if ( responseReference == null && responseNew != null )
-        {
-            return true;
-        }
-
-        if ( responseReference != null && responseNew == null )
+        if ( responseNew == null )
         {
             return true;
         }

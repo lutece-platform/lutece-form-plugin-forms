@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.business;
 
 import java.sql.Statement;
@@ -149,7 +148,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     @Override
     public List<FormResponseStep> selectFormResponseStepList( Plugin plugin )
     {
-        List<FormResponseStep> formResponseStepList = new ArrayList<FormResponseStep>( );
+        List<FormResponseStep> formResponseStepList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
 
         daoUtil.close( );

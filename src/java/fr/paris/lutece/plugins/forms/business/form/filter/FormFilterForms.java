@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -51,8 +51,7 @@ public class FormFilterForms extends FormFilter
             try
             {
                 String strIdForm = (String) listValues.get( 0 );
-                Integer nIdForm = new Integer( strIdForm );
-                return nIdForm;
+                return Integer.valueOf( strIdForm );
             }
             catch( NumberFormatException e )
             {

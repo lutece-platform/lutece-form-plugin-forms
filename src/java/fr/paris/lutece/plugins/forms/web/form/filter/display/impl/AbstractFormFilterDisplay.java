@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -154,12 +154,6 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
     {
         _formFilter = formFilter;
     }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract void buildTemplate( HttpServletRequest request );
 
     /**
      * Get the map of all parameter names and values used by the filter

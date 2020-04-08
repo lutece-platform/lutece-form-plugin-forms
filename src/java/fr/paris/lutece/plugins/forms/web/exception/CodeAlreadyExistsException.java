@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,7 +38,7 @@ package fr.paris.lutece.plugins.forms.web.exception;
  */
 public class CodeAlreadyExistsException extends Exception
 {
-    private String _strCode;
+    private final String _strCode;
 
     public CodeAlreadyExistsException( String strCode )
     {

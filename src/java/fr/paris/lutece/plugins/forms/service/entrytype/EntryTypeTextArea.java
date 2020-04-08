@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -107,14 +107,9 @@ public class EntryTypeTextArea extends AbstractEntryTypeTextArea implements IRes
         String strResponseReference = listResponseReference.get( 0 ).getToStringValueResponse( );
         String strResponseNew = listResponseNew.get( 0 ).getToStringValueResponse( );
 
-        if ( strResponseReference == null && strResponseNew == null )
+        if ( strResponseReference == null )
         {
-            return false;
-        }
-
-        if ( strResponseReference == null && strResponseNew != null )
-        {
-            return true;
+            return strResponseNew != null;
         }
 
         return !strResponseReference.equals( strResponseNew );

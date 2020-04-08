@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -141,8 +141,8 @@ public class FormService
      */
     private void filterFinalSteps( FormResponse formResponse )
     {
-        formResponse.setSteps( formResponse.getSteps( ).stream( ).filter( step -> step.getOrder( ) != FormsConstants.ORDER_NOT_SET )
-                .collect( Collectors.toList( ) ) );
+        formResponse.setSteps(
+                formResponse.getSteps( ).stream( ).filter( step -> step.getOrder( ) != FormsConstants.ORDER_NOT_SET ).collect( Collectors.toList( ) ) );
     }
 
     /**

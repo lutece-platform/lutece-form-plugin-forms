@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -323,6 +323,16 @@ public class Question implements Serializable, Cloneable
     }
 
     /**
+     * Return the responses exportable boolean
+     * 
+     * @return true if the responses of this question are exportable, false otherwise
+     */
+    public boolean isResponseExportable( )
+    {
+        return _entry.isExportable( );
+    }
+
+    /**
      * Get the is visible Multiview Global boolean
      * 
      * @return true if the question need to be see globally, false otherwise
@@ -335,12 +345,12 @@ public class Question implements Serializable, Cloneable
     /**
      * Set the is vibile Multiview Global boolean
      * 
-     * @param _bIsVisibleMultiviewGlobal
+     * @param bIsVisibleMultiviewGlobal
      *            the boolean
      */
-    public void setVisibleMultiviewGlobal( boolean _bIsVisibleMultiviewGlobal )
+    public void setVisibleMultiviewGlobal( boolean bIsVisibleMultiviewGlobal )
     {
-        this._bIsVisibleMultiviewGlobal = _bIsVisibleMultiviewGlobal;
+        this._bIsVisibleMultiviewGlobal = bIsVisibleMultiviewGlobal;
     }
 
     /**
@@ -382,7 +392,6 @@ public class Question implements Serializable, Cloneable
     {
         _bIsVisibleMultiviewFormSelected = bIsVisibleMultiviewFormSelected;
     }
-
 
     /**
      * Return true if the response list page is filtrable globally by this question, false otherwise

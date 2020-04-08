@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,6 +40,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -136,7 +137,7 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
 
         ReferenceList referenceList = new ReferenceList( );
 
-        if ( listWorkflowState != null && !listWorkflowState.isEmpty( ) )
+        if ( CollectionUtils.isNotEmpty( listWorkflowState ) )
         {
             ReferenceListFactory referenceListFactory = new ReferenceListFactory( listWorkflowState, WORKFLOW_STATE_CODE_ATTRIBUTE,
                     WORKFLOW_STATE_NAME_ATTRIBUTE );

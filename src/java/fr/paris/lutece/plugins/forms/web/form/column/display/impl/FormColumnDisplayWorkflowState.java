@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,7 +40,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
@@ -95,8 +94,6 @@ public class FormColumnDisplayWorkflowState extends AbstractFormColumnDisplay
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_WORKFLOW_STATE_NAME, strWorkflowStateName );
 
-        String strWorkflowStateTemplate = AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
-
-        return strWorkflowStateTemplate;
+        return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }
 }

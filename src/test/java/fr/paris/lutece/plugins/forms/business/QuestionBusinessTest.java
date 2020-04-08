@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
@@ -55,6 +54,8 @@ public class QuestionBusinessTest extends LuteceTestCase
     {
         // Initialize an object
         Question question = new Question( );
+        question.setCode( "code" );
+        question.setColumnTitle( "column_title" );
         question.setTitle( TITLE1 );
         question.setDescription( DESCRIPTION1 );
         question.setIdEntry( IDENTRY1 );

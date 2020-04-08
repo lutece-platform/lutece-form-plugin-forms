@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -31,7 +31,6 @@
  *
  * License 1.0
  */
-
 package fr.paris.lutece.plugins.forms.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -144,7 +143,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
         daoUtil.setInt( nIndex++, formDisplay.getDisplayOrder( ) );
         daoUtil.setString( nIndex++, formDisplay.getCompositeType( ) );
         daoUtil.setInt( nIndex++, formDisplay.getDepth( ) );
-        daoUtil.setInt( nIndex++, formDisplay.getId( ) );
+        daoUtil.setInt( nIndex, formDisplay.getId( ) );
 
         daoUtil.executeUpdate( );
         daoUtil.close( );
@@ -156,7 +155,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     @Override
     public List<FormDisplay> selectFormDisplayList( Plugin plugin )
     {
-        List<FormDisplay> formDisplayList = new ArrayList<FormDisplay>( );
+        List<FormDisplay> formDisplayList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
         daoUtil.executeQuery( );
 
@@ -176,7 +175,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     @Override
     public List<FormDisplay> selectFormDisplayListByParent( int nIdStep, int nIdParent, Plugin plugin )
     {
-        List<FormDisplay> formDisplayList = new ArrayList<FormDisplay>( );
+        List<FormDisplay> formDisplayList = new ArrayList<>( );
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_PARENT, plugin );
         daoUtil.setInt( 1, nIdStep );
         daoUtil.setInt( 2, nIdParent );

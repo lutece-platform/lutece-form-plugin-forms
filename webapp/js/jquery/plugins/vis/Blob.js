@@ -102,7 +102,8 @@
 					return data_URI_header + ";base64," + blob.data;
 				} else if (blob.encoding === "URI") {
 					return data_URI_header + "," + decodeURIComponent(blob.data);
-				} if (btoa) {
+				} 
+			if (btoa) {
 					return data_URI_header + ";base64," + btoa(blob.data);
 				} else {
 					return data_URI_header + "," + encodeURIComponent(blob.data);

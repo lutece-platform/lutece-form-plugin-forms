@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,6 @@ package fr.paris.lutece.plugins.forms.business.form.column;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Comparator;
-import java.util.Date;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -144,7 +143,7 @@ public class FormColumnCellComparator implements Comparator<FormColumnCell>, Ser
      */
     private int compareObject( Object objectOne, Object objectTwo )
     {
-        int nComparisonResult = NumberUtils.INTEGER_ZERO;
+        int nComparisonResult;
 
         String strObjectOneRepresentation = String.valueOf( objectOne );
         String strObjectTwoRepresentation = String.valueOf( objectTwo );

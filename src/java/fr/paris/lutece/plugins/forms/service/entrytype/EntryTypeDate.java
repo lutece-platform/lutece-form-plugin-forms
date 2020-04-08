@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -113,7 +113,7 @@ public class EntryTypeDate extends AbstractEntryTypeDate implements IResponseCom
             return false;
         }
 
-        if ( strResponseReference == null && strResponseNew != null )
+        if ( strResponseReference == null )
         {
             return true;
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2018, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -79,5 +79,21 @@ public class FormListDAOMock implements IFormListDAO
         }
 
         formPanel.setFormResponseItemList( listFormResponseItem );
+    }
+
+    @Override
+    public List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            FormResponseItemSortConfig sortConfig )
+    {
+        List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
+
+        for ( Integer nIdFormResponse : _listIdAuthorizedFormResponse )
+        {
+            FormResponseItem formResponseItem = new FormResponseItem( );
+            formResponseItem.setIdFormResponse( nIdFormResponse );
+
+            listFormResponseItem.add( formResponseItem );
+        }
+        return listFormResponseItem;
     }
 }
