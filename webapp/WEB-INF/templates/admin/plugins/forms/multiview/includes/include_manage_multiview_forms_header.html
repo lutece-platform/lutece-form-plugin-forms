@@ -30,11 +30,11 @@
 	</div>
 </div>
 <div class="row">
-	<@listTabs>
+	<@tabList>
 		<#list form_panel_list as form_panel>
 			<#if form_panel.template??>
 					${form_panel.template}
 			</#if>
 		</#list>
-	</@listTabs>
+	</@tabList>
 </div>
