@@ -32,7 +32,7 @@
 					<@formTabs tab="steps">
 						<ul class="nav navbar-nav navbar-right">
 							<li>
-								<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus fa-fw text-success'  title='#i18n{forms.manage_steps.buttonAdd}' color='btn-link' showTitleXs=false size='' params='data-toggle="modal" data-target="#pubModal"' />
+								<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus fa-fw text-success'  title='#i18n{forms.manage_steps.buttonAdd}' color='btn-link' size='' params='data-toggle="modal" data-target="#pubModal"' />
 							</li>
 							<#if form.active>
 								<li>
@@ -83,9 +83,9 @@
 										</#if>	 
 									</td>
 									<td class="col-sm-2">
-										<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' title='#i18n{forms.manage_steps.action.modifyStep} ${step.title}' showTitle=false buttonIcon='pencil' color='btn-link' />
-										<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.modify_step.tab.labelQuestions}' showTitle=false buttonIcon='list' color='btn-link' />
-										<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.removeStep}' showTitle=false buttonIcon='trash' color='btn-link' class='text-danger' /> 
+										<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' title='#i18n{forms.manage_steps.action.modifyStep} ${step.title}' buttonIcon='pencil' color='btn-link' />
+										<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.modify_step.tab.labelQuestions}' buttonIcon='list' color='btn-link' />
+										<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.removeStep}' buttonIcon='trash' color='btn-link' class='text-danger' /> 
 									</td>
 								</tr>
 							</#list>

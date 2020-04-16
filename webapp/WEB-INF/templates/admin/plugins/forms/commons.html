@@ -390,12 +390,12 @@ $( function(){
 										</@formGroup>
 								</@columns>     
 								<@columns xs=12 sm=3>       
-										<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' showLabel=false rows=2>
+										<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' rows=2>
 												<@checkBox labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' labelFor='authentificationNeeded' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
 										</@formGroup>
 								</@columns>       
 								<@columns xs=12 sm=4>           
-										<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' showLabel=false rows=2>
+										<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' rows=2>
 										<@checkBox labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) labelFor='oneResponseByUser' />
 										</@formGroup>
 								</@columns> 
@@ -416,10 +416,10 @@ $( function(){
 						<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
 								<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
 						</@formGroup>
-						<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' showLabel=false rows=2>
+						<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
 								<@checkBox labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
 						</@formGroup>
-						<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}' showLabel=false  rows=2>
+						<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
 								<@checkBox labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
 						</@formGroup>
 						<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>

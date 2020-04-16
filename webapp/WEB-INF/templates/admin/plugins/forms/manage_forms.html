@@ -4,7 +4,7 @@
         <@box color='primary' collapsed=true params='style="margin-bottom:0;"'>
             <@boxHeader title='#i18n{forms.manageForm.title}' boxTools=true>
                 <#if permission_create_forms>
-                    <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus  text-success' title='#i18n{forms.manageForm.buttonAdd}' showTitleXs=false color='btn-link' />
+                    <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus  text-success' title='#i18n{forms.manageForm.buttonAdd}' color='btn-link' />
                 </#if>
             </@boxHeader>
         </@box>
@@ -64,7 +64,7 @@
                                         <#if action.permission=='PUBLISH'>
                                             <#assign params='data-toggle="modal" data-target="#pubModal"' />
                                         </#if>
-                                        <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' class='${color} ${action.permission?lower_case}' showTitle=false buttonIcon=action.iconUrl color='btn-link' params=params />
+                                        <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' class='${color} ${action.permission?lower_case}' buttonIcon=action.iconUrl color='btn-link' params=params />
                                     </#list>
                                 </#if>
                                 <#if form.active>
