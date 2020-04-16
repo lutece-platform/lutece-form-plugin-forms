@@ -13,7 +13,7 @@
 				<@inputGroup>
 					<@select name='format_export' id='format_export' default_value='' items=format_export_list title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' params=param />
 					<@inputGroupItem>
-						<@button color='btn-info' type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content  showTitle=false buttonIcon='download' />
+						<@button color='btn-info' type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content  buttonIcon='download' />
 					</@inputGroupItem>
 				</@inputGroup>
 			</label>
