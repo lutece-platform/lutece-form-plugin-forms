@@ -12,21 +12,25 @@
     <icon-url>images/admin/skin/feature_default_icon.png</icon-url>
     <copyright>Copyright (c) 2018 Mairie de Paris</copyright>
     <db-pool-required>1</db-pool-required>
-    
+
     <core-version-dependency>
         <min-core-version>6.1.0</min-core-version>
-        <max-core-version/>	
+        <max-core-version/>
     </core-version-dependency>
 
     <css-stylesheets>
         <css-stylesheets-scope>portal</css-stylesheets-scope>
         <css-stylesheet>forms/forms.css</css-stylesheet>
     </css-stylesheets>
-    
+
     <admin-css-stylesheets>
         <admin-css-stylesheet>css/admin/plugins/forms/forms.css</admin-css-stylesheet>
     </admin-css-stylesheets>
-    
+
+    <freemarker-macro-files>
+        <freemarker-macro-file>admin/plugins/forms/forms_commons.html</freemarker-macro-file>
+    </freemarker-macro-files>
+
     <!-- Admin features parameters -->
     <admin-features>
         <admin-feature>
@@ -45,7 +49,7 @@
             <feature-url>jsp/admin/plugins/forms/MultiviewForms.jsp</feature-url>
             <feature-icon-url/>
       </admin-feature>
-    </admin-features>    
+    </admin-features>
 
     <!-- XPages parameters -->
     <applications>
@@ -64,7 +68,7 @@
         <javascript-files-scope>portal</javascript-files-scope>
         <javascript-file>forms/terms-of-service.js</javascript-file>
     </javascript-files>
-    
+
     <!-- RBAC Resources -->
     <rbac-resource-types>
         <rbac-resource-type>
@@ -79,7 +83,7 @@
         </rbac-resource-type>
         <rbac-resource-type>
             <rbac-resource-type-class>
-				fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService 
+				fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService
             </rbac-resource-type-class>
         </rbac-resource-type>
     </rbac-resource-types>
