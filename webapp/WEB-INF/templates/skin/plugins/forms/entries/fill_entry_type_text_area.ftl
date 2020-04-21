@@ -52,7 +52,7 @@
 		</#if>
 	
 	<#if entry.fieldInLine>
-		<#include "/util/editor/editor.html" />
+		<#include "/util/editor/editor.ftl" />
 		<@initEditor />
 	</#if>		
 </#if>

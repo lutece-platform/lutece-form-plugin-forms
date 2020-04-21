@@ -50,8 +50,8 @@ public class EntryTypeTextArea extends AbstractEntryTypeTextArea implements IRes
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_text_area.html";
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_text_area.html";
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_text_area.html";
-    private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_text_area.html";
-    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_text_area.html";
+    private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_text_area.ftl";
+    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_text_area.ftl";
 
     /**
      * {@inheritDoc}

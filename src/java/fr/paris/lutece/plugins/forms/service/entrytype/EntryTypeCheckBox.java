@@ -51,8 +51,8 @@ public class EntryTypeCheckBox extends AbstractEntryTypeCheckBox implements IRes
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_check_box.html";
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_check_box.html";
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_check_box.html";
-    private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_check_box.html";
-    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_check_box.html";
+    private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_check_box.ftl";
+    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_check_box.ftl";
 
     /**
      * {@inheritDoc}

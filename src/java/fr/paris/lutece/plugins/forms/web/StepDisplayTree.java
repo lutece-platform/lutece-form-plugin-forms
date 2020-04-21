@@ -70,9 +70,9 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 public class StepDisplayTree
 {
     // Templates
-    private static final String TEMPLATE_STEP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step.html";
-    private static final String TEMPLATE_STEP_EDITION_NO_BUTTON_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step_no_button.html";
-    private static final String TEMPLATE_STEP_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step_read_only.html";
+    private static final String TEMPLATE_STEP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step.ftl";
+    private static final String TEMPLATE_STEP_EDITION_NO_BUTTON_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step_no_button.ftl";
+    private static final String TEMPLATE_STEP_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step_read_only.ftl";
     private static final String TEMPLATE_STEP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_step.html";
     private static final String TEMPLATE_STEP_SELECT_BACKOFFICE = "/admin/plugins/forms/composite/select_step.html";
 
