@@ -58,7 +58,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class ListValueValidator extends AbstractValidator
 {
 
-    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_value_template.html";
+    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_value_template.ftl";
     private static final String TEMPLATE_JAVASCRIPT = "/skin/plugins/forms/validators/list_value_javascript.ftl";
 
     /**

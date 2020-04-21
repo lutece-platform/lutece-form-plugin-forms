@@ -89,10 +89,10 @@ public class FormJspBean extends AbstractJspBean
     private static final String EMPTY_STRING = "";
 
     // Templates
-    private static final String TEMPLATE_MANAGE_FORMS = "/admin/plugins/forms/manage_forms.html";
-    private static final String TEMPLATE_CREATE_FORM = "/admin/plugins/forms/create_form.html";
-    private static final String TEMPLATE_MODIFY_FORM = "/admin/plugins/forms/modify_form.html";
-    private static final String TEMPLATE_MODIFY_FORM_PUBLICATION = "/admin/plugins/forms/modify_publication.html";
+    private static final String TEMPLATE_MANAGE_FORMS = "/admin/plugins/forms/manage_forms.ftl";
+    private static final String TEMPLATE_CREATE_FORM = "/admin/plugins/forms/create_form.ftl";
+    private static final String TEMPLATE_MODIFY_FORM = "/admin/plugins/forms/modify_form.ftl";
+    private static final String TEMPLATE_MODIFY_FORM_PUBLICATION = "/admin/plugins/forms/modify_publication.ftl";
 
     private static final String PARAMETER_PAGE_INDEX = "page_index";
 

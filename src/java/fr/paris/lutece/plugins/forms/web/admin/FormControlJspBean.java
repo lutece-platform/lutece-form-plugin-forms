@@ -88,10 +88,10 @@ public class FormControlJspBean extends AbstractJspBean
 
     private static final long serialVersionUID = -9023450166890042022L;
 
-    private static final String TEMPLATE_MANAGE_CONTROL = "/admin/plugins/forms/manage_control.html";
-    private static final String TEMPLATE_MODIFY_TRANSITION_CONTROL = "/admin/plugins/forms/modify_transition_control.html";
-    private static final String TEMPLATE_MODIFY_CONDITION_CONTROL = "/admin/plugins/forms/modify_condition_control.html";
-    private static final String TEMPLATE_MODIFY_QUESTION_CONTROL = "/admin/plugins/forms/modify_question_control.html";
+    private static final String TEMPLATE_MANAGE_CONTROL = "/admin/plugins/forms/manage_control.ftl";
+    private static final String TEMPLATE_MODIFY_TRANSITION_CONTROL = "/admin/plugins/forms/modify_transition_control.ftl";
+    private static final String TEMPLATE_MODIFY_CONDITION_CONTROL = "/admin/plugins/forms/modify_condition_control.ftl";
+    private static final String TEMPLATE_MODIFY_QUESTION_CONTROL = "/admin/plugins/forms/modify_question_control.ftl";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_CONTROL = "forms.modify_control.pageTitle";

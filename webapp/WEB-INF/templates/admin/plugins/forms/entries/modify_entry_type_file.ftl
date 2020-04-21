@@ -1,0 +1,118 @@
+
+<#include "all_entry_commons.ftl" />
+<#include "/admin/util/editor/editor.ftl" />
+
+<@breadforms title=entry.entryType.title />
+<@row>
+	<@columns>
+		<@box color='primary'>
+			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
+			<@boxBody>
+				<fieldset>
+					<legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : '${form.title}'</legend>
+					<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+                    <input name="id_entry" value="${entry.idEntry}" type="hidden" />
+                    <input name="id_step" value="${step.id}" type="hidden" />
+                    <input name="id_question" value="${question.id}" type="hidden" />
+						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+							<@input type='text' name='type' id='type' readonly=true disabled=true value='${entry.entryType.title}' />
+						</@formGroup>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+						</@formGroup>
+                                                <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                                                    <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+                                                </@formGroup>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
+							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
+						</@formGroup>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
+							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
+						</@formGroup>
+						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
+							<@checkBox name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
+						</@formGroup>
+						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.createEntry.labelFileMaxSize}' mandatory=true>
+							<@input type='text' name='file_max_size' id='file_max_size' value=getFileMaxSize(entry) />
+						</@formGroup>
+						<@formGroup labelFor='max_files' labelKey='#i18n{forms.createEntry.labelMaxFiles}' mandatory=true>
+							<@input type='text' name='max_files' id='max_files' value=getMaxFiles(entry) maxlength=2 />
+						</@formGroup>
+						<@formGroup labelFor='export_binary' labelKey='#i18n{forms.createEntry.labelExportBinary}'>
+							<@checkBox labelKey='#i18n{forms.createEntry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
+							<@tag color='warning'>#i18n{forms.createEntry.labelExportBinaryWarning}</@tag>
+						</@formGroup>
+                    	<@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
+                        	<@checkBox name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
+                    	</@formGroup>
+                        <@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}'>
+                            <@checkBox name='editable_back' id='editable_back' value='1' checked=entry.editableBack />
+                        </@formGroup>
+                        <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+	                    	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
+	                    </@formGroup>
+	                    <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
+							<@checkBox name='exportable' id='exportable' value='1' checked=entry.exportable />
+						</@formGroup>
+						<@formGroup>
+							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
+							<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' showTitleXs=false size='' />
+							<@button type='submit' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />
+						</@formGroup>
+					</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+
+<#if regular_expression_list?exists>
+	<@columns>
+		<@box color='primary'>
+			<@boxHeader title='#i18n{forms.createEntry.manageRegularExpression.title}' />
+			<@boxBody>
+			<fieldset>
+				<legend class="sr-only">#i18n{forms.createEntry.manageRegularExpression.title}</legend>
+				<@tform action='jsp/admin/plugins/forms/DoInsertVerification.jsp#list'>
+					<input name="id_field" value="${id_field}" type="hidden" />
+					<@formGroup labelFor='id_expression' labelKey='#i18n{forms.createEntry.manageRegularExpression.labelInsert}' helpKey='#i18n{forms.createEntry.manageRegularExpression.labelInsertComment}'>
+						<@inputGroup>
+							<@select name='id_expression' id='id_expression' items=regular_expression_list default_value='-1' size='sm' />
+							<@inputGroupItem>
+								<@button type='submit' title='#i18n{forms.createEntry.manageRegularExpression.buttonInsert}' showTitle=false buttonIcon='plus' />
+							</@inputGroupItem>
+						</@inputGroup>
+					</@formGroup>
+				</@tform>
+			</fieldset>
+			<a name="list" id="list"></a>
+			<@table>
+				  <tr> 
+						<th>#i18n{forms.createEntry.manageRegularExpression.rowTitle}</th>
+						<th>#i18n{forms.createEntry.manageRegularExpression.rowInformationMessage}</th>
+						<th>#i18n{forms.createEntry.manageRegularExpression.rowValidExemple}</th>
+						<th>#i18n{forms.createEntry.manageField.rowActions}</th>
+				  </tr>
+				  <#list entry.fields as field>
+					   <#list field.regularExpressionList as expression>
+							<tr>
+								<td>${expression.title}</td>
+								<td>${expression.informationMessage}</td>
+								<td>${expression.validExemple}</td>
+								<td>
+									<@aButton href='jsp/admin/plugins/forms/DoRemoveVerification.jsp?id_expression=${expression.idExpression}&id_field=${id_field}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' showTitle=false buttonIcon='trash' color='btn-danger' />
+								</td>
+							  </tr>
+						</#list> 
+					</#list>
+				</@table>
+			</@boxBody>
+		</@box>
+	</@columns>
+	</#if>
+</@row>
+ <@initEditor />

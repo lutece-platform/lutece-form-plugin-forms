@@ -79,9 +79,9 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String EMPTY_STRING = "";
 
     // Templates
-    private static final String TEMPLATE_MANAGE_STEPS = "/admin/plugins/forms/manage_steps.html";
-    private static final String TEMPLATE_CREATE_STEP = "/admin/plugins/forms/create_step.html";
-    private static final String TEMPLATE_MODIFY_STEP = "/admin/plugins/forms/modify_step.html";
+    private static final String TEMPLATE_MANAGE_STEPS = "/admin/plugins/forms/manage_steps.ftl";
+    private static final String TEMPLATE_CREATE_STEP = "/admin/plugins/forms/create_step.ftl";
+    private static final String TEMPLATE_MODIFY_STEP = "/admin/plugins/forms/modify_step.ftl";
 
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";

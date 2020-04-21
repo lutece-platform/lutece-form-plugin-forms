@@ -48,10 +48,10 @@ public class EntryTypeText extends AbstractEntryTypeText implements IResponseCom
 {
     public static final String BEAN_FORM_RESPONSE_SERVICE = "forms.responseService";
 
-    private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_text.html";
-    private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_text.html";
-    private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_text.html";
-    private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_text.html";
+    private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_text.ftl";
+    private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_text.ftl";
+    private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_text.ftl";
+    private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_text.ftl";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_text.ftl";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_text.ftl";
 

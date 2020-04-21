@@ -106,9 +106,9 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final long serialVersionUID = 3673744119212180461L;
 
     // Templates
-    private static final String TEMPLATE_VIEW_FORM_RESPONSE = "admin/plugins/forms/multiview/view_form_response.html";
-    private static final String TEMPLATE_FORM_RESPONSE_HISTORY = "admin/plugins/forms/multiview/form_response_history.html";
-    private static final String TEMPLATE_TASK_FORM = "admin/plugins/forms/multiview/task_form_workflow.html";
+    private static final String TEMPLATE_VIEW_FORM_RESPONSE = "admin/plugins/forms/multiview/view_form_response.ftl";
+    private static final String TEMPLATE_FORM_RESPONSE_HISTORY = "admin/plugins/forms/multiview/form_response_history.ftl";
+    private static final String TEMPLATE_TASK_FORM = "admin/plugins/forms/multiview/task_form_workflow.ftl";
 
     // Views
     private static final String VIEW_FORM_RESPONSE_DETAILS = "view_form_response_details";

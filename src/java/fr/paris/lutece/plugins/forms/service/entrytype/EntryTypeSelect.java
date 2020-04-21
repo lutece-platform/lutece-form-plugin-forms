@@ -46,10 +46,10 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntry
  */
 public class EntryTypeSelect extends AbstractEntryTypeSelect implements IResponseComparator
 {
-    private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_select.html";
-    private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_select.html";
-    private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_select.html";
-    private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_select.html";
+    private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_select.ftl";
+    private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_select.ftl";
+    private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_select.ftl";
+    private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_select.ftl";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_select.ftl";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_select.ftl";
 

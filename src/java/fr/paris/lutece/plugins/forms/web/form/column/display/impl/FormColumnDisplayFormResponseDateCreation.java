@@ -48,8 +48,8 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 public class FormColumnDisplayFormResponseDateCreation extends AbstractFormColumnDisplay
 {
     // Templates
-    private static final String FORM_COLUMN_HEADER_TEMPLATE = "admin/plugins/forms/multiview/column/header/form_column_form_response_date_creation_header.html";
-    private static final String FORM_COLUMN_CELL_TEMPLATE = "admin/plugins/forms/multiview/column/cell/form_column_form_response_date_creation_cell.html";
+    private static final String FORM_COLUMN_HEADER_TEMPLATE = "admin/plugins/forms/multiview/column/header/form_column_form_response_date_creation_header.ftl";
+    private static final String FORM_COLUMN_CELL_TEMPLATE = "admin/plugins/forms/multiview/column/cell/form_column_form_response_date_creation_cell.ftl";
 
     // Marks
     private static final String MARK_FORM_RESPONSE_DATE_CREATION_COLUMN_TITLE = "column_title";

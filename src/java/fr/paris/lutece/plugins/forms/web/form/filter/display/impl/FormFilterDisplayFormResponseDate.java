@@ -58,7 +58,7 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
     private static final String FILTER_DATE_FORMAT = "dd/MM/yyyy";
 
     // Templates
-    private static final String FORM_FILTER_DATE_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/date_filter.html";
+    private static final String FORM_FILTER_DATE_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/date_filter.ftl";
 
     // Regex
     private static final String REGEX_DATE_FORMAT = "([0-9]{2}.[0-9]{2}.[0-9]{4}).([0-9]{2}.[0-9]{2}.[0-9]{4})";

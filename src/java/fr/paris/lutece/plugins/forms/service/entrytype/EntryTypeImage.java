@@ -58,10 +58,10 @@ public class EntryTypeImage extends AbstractEntryTypeFile implements IResponseCo
 
     private static final String JSP_DOWNLOAD_FILE = "jsp/admin/plugins/forms/DoDownloadFile.jsp";
 
-    private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_image.html";
-    private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_image.html";
-    private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_image.html";
-    private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_image.html";
+    private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_image.ftl";
+    private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_image.ftl";
+    private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_image.ftl";
+    private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_image.ftl";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_image.ftl";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_image.ftl";
 

@@ -68,8 +68,8 @@ import fr.paris.lutece.portal.service.util.AppException;
 public final class FormListTemplateBuilder
 {
     // Templates
-    private static final String TEMPLATE_MULTIVIEW_FORM_TABLE = "admin/plugins/forms/multiview/includes/include_manage_multiview_forms_table.html";
-    private static final String TEMPLATE_MULTIVIEW_GEOJSON_POPUP = "admin/plugins/forms/multiview/includes/include_manage_multiview_geojson_popup.html";
+    private static final String TEMPLATE_MULTIVIEW_FORM_TABLE = "admin/plugins/forms/multiview/includes/include_manage_multiview_forms_table.ftl";
+    private static final String TEMPLATE_MULTIVIEW_GEOJSON_POPUP = "admin/plugins/forms/multiview/includes/include_manage_multiview_geojson_popup.ftl";
 
     // Multiviewmap Provider bean name
     private static final String BEAN_NAME_MULTIVIEWMAP = "forms.multiviewMap";

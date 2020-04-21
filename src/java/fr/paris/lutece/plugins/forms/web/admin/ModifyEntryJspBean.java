@@ -88,8 +88,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private static final long serialVersionUID = 2261595222578282162L;
 
     // templates
-    private static final String TEMPLATE_CREATE_FIELD = "admin/plugins/forms/create_field.html";
-    private static final String TEMPLATE_MODIFY_FIELD = "admin/plugins/forms/modify_field.html";
+    private static final String TEMPLATE_CREATE_FIELD = "admin/plugins/forms/create_field.ftl";
+    private static final String TEMPLATE_MODIFY_FIELD = "admin/plugins/forms/modify_field.ftl";
 
     // message
     private static final String MESSAGE_CONFIRM_REMOVE_FIELD = "forms.message.confirmRemoveField";

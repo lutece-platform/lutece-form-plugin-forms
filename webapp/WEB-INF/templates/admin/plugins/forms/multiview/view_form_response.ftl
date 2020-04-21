@@ -1,0 +1,57 @@
+<#include "includes/include_view_form_response_header.ftl">
+<#--
+-- Build the HTML code to display the actions
+-- @param resource_actions the actions to display
+-- @return the HTML code of the actions
+-->
+
+<#macro display_actions resource_actions >
+<#if resource_actions.workflow_action_list?exists>
+    <h2>Actions</h2>
+    <#if resource_actions.workflow_action_list?has_content>
+        <#list resource_actions.workflow_action_list as action>
+            <a class="btn bg-navy btn-block" href="jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}">
+                <img class="img-circle img-action" src="image?resource_type=workflow_icon_img&id=${action.icon.id}" title="${action.name}" alt="${action.name}" > 
+                ${action.name}  
+            </a>
+        </#list>
+    <#else>
+        <div class="alert alert-warning">
+            <i class="fa fa-warning fa-fw"></i>  #i18n{forms.multiviewForms.view_record_history.history_empty}
+        </div>
+    </#if>
+</#if>
+</#macro>
+
+<div class="row" id="form-response-details">
+    <div class="col-xs-12 col-sm-9">
+        <@messages errors=errors />
+        <#if list_multiview_step_display?has_content>
+            <#list list_multiview_step_display as multiview_step_display>
+                ${multiview_step_display}
+            </#list>
+        </#if>
+    </div>
+    <div class="col-xs-12 col-sm-3" id="sticky-container">
+        <div id="info-right" class="panel panel-default">
+           <div class="panel-body">
+                <h2>Informations</h2>
+                <p>${form.title} <i class="fa fa-hashtag" title="#i18n{forms.multiviewForms.responseDetails.response.number}"></i> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}">${form_response.id}</strong></p>
+                <p><i class="fa fa-calendar"></i> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} : <strong>${form_response.creation}</strong></p>
+                <p><i class="fa fa-calendar"></i> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong>
+                </p>
+                <#if resource_actions?exists && resource_actions.workflow_state?exists>
+                    <p><i class="fa fa-info-circle"></i>   #i18n{forms.multiviewForms.responseDetails.response.state} : <strong >${resource_actions.workflow_state.name}</strong> </span>
+                </#if>
+                <@display_actions resource_actions! />
+                ${resource_history!}
+            </div>
+        </div>
+        
+    </div>
+</div>
+<!-- Open in site-forms\WEB-INF\templates\admin\plugins\forms\multiview\includes\include_view_form_response_header.ftl -->
+</div>
+<!-- END  -->
+
+<@scrollTopBtn />
