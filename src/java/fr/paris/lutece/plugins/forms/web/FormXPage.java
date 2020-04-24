@@ -141,10 +141,10 @@ public class FormXPage extends MVCApplication
     private static final String ACTION_FORM_RESPONSE_SUMMARY = "formResponseSummary";
 
     // Templates
-    private static final String TEMPLATE_VIEW_STEP = "/skin/plugins/forms/step_view.ftl";
-    private static final String TEMPLATE_FORM_SUBMITTED = "/skin/plugins/forms/form_submitted_view.ftl";
-    private static final String TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY = "/skin/plugins/forms/form_response_summary.ftl";
-    private static final String TEMPLATE_LIST_FORMS = "skin/plugins/forms/list_forms.ftl";
+    private static final String TEMPLATE_VIEW_STEP = "/skin/plugins/forms/step_view.html";
+    private static final String TEMPLATE_FORM_SUBMITTED = "/skin/plugins/forms/form_submitted_view.html";
+    private static final String TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY = "/skin/plugins/forms/form_response_summary.html";
+    private static final String TEMPLATE_LIST_FORMS = "skin/plugins/forms/list_forms.html";
 
     // Constants
     private static final int INCORRECT_ID = -1;

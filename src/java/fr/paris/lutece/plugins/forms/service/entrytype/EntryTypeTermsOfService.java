@@ -72,8 +72,8 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_terms_of_service.html";
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_terms_of_service.html";
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_terms_of_service.html";
-    private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_terms_of_service.ftl";
-    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_terms_of_service.ftl";
+    private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_terms_of_service.html";
+    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_terms_of_service.html";
 
     // Field codes
     private static final String FIELD_LINK_CODE = "link";

@@ -83,7 +83,7 @@ public class TermsOfServiceXPage extends MVCApplication
     private static final String MARK_TERMS_OF_SERVICE = "tos";
 
     // Template
-    private static final String TEMPLATE_XPAGE_REQUIREMENT_FORM = "skin/plugins/forms/terms_of_service.ftl";
+    private static final String TEMPLATE_XPAGE_REQUIREMENT_FORM = "skin/plugins/forms/terms_of_service.html";
 
     // Parameters
     private static final String PARAMETER_ENTRY_ID = "id_entry";
