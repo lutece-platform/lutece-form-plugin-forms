@@ -58,7 +58,7 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
     private static final String PARAMETER_ID_RESPONSE = "id_response_";
 
     // Templates
-    private static final String FORM_FILTER_SEARCHED_TEXT_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/searched_text_filter.ftl";
+    private static final String FORM_FILTER_SEARCHED_TEXT_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/searched_text_filter.html";
 
     // Variables
     private int _nPosition;

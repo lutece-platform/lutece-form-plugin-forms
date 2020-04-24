@@ -105,12 +105,12 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String EMPTY_STRING = "";
 
     // Templates
-    private static final String TEMPLATE_MANAGE_QUESTIONS = "/admin/plugins/forms/manage_questions.ftl";
-    private static final String TEMPLATE_CREATE_GROUP = "/admin/plugins/forms/create_group.ftl";
-    private static final String TEMPLATE_MODIFY_GROUP = "/admin/plugins/forms/modify_group.ftl";
-    private static final String TEMPLATE_MOVE_COMPOSITE = "/admin/plugins/forms/move_composite.ftl";
-    private static final String TEMPLATE_CREATE_QUESTION = "/admin/plugins/forms/create_question.ftl";
-    private static final String TEMPLATE_MODIFY_QUESTION = "/admin/plugins/forms/modify_question.ftl";
+    private static final String TEMPLATE_MANAGE_QUESTIONS = "/admin/plugins/forms/manage_questions.html";
+    private static final String TEMPLATE_CREATE_GROUP = "/admin/plugins/forms/create_group.html";
+    private static final String TEMPLATE_MODIFY_GROUP = "/admin/plugins/forms/modify_group.html";
+    private static final String TEMPLATE_MOVE_COMPOSITE = "/admin/plugins/forms/move_composite.html";
+    private static final String TEMPLATE_CREATE_QUESTION = "/admin/plugins/forms/create_question.html";
+    private static final String TEMPLATE_MODIFY_QUESTION = "/admin/plugins/forms/modify_question.html";
 
     // Properties
     private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.create_Question.titleComment";

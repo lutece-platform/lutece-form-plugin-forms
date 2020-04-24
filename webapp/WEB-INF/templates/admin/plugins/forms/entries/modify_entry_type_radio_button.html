@@ -1,0 +1,137 @@
+
+<#include "all_entry_commons.html" />
+<#include "/admin/util/editor/editor.html" />
+
+<@breadforms title=entry.entryType.title />
+<@row>
+	<fieldset>
+		<legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : '${form.title}'</legend>
+		<@columns md=3 lg=3 xl=3>
+			<@box color='primary'>
+				<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : ${form.title}' />
+				<@boxBody>
+					<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+                    <input name="id_entry" value="${entry.idEntry}" type="hidden" />
+                    <input name="id_step" value="${step.id}" type="hidden" />
+                    <input name="id_question" value="${question.id}" type="hidden" />
+						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}' rows=2>
+							<@input type='text' name='type' id='type' readonly=true disabled=true value='${entry.entryType.title}' />
+						</@formGroup>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true rows=2>
+							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+						</@formGroup>
+                                                <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                                                    <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+                                                </@formGroup>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}' rows=2>
+							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
+						</@formGroup>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}' rows=2>
+							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
+						</@formGroup>
+						<@formGroup labelFor='field_in_line' labelKey='#i18n{forms.createEntry.labelPresentation}' rows=2>
+							<@select id='field_in_line' name='field_in_line'>
+								<option value=1 <#if entry.fieldInLine >selected="selected" </#if> >#i18n{forms.createEntry.selectPresentationInLine}</option>
+								<option value=0 <#if !entry.fieldInLine >selected="selected" </#if>>#i18n{forms.createEntry.selectPresentationNotInLine}</option>
+							</@select>
+						</@formGroup>
+						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' showLabel=false rows=2>
+							<#if entry.mandatory>
+								<#assign checked = true>
+							<#else>
+								<#assign checked = false>
+							</#if>
+							<@checkBox name='mandatory' value='1' checked=checked labelKey='#i18n{forms.createEntry.labelMandatory}' />
+						</@formGroup>
+                        <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' showLabel=false rows=2>
+                            <@checkBox name='only_display_in_back' id='only_display_in_back' value='1'  labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
+                        </@formGroup>
+                        <@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}' showLabel=false rows=2>
+                            <@checkBox name='editable_back' id='editable_back' value='1' labelKey='#i18n{forms.createEntry.labelEditableInBO}' checked=entry.editableBack />
+                        </@formGroup>
+                        <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+	                    	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
+	                    </@formGroup>
+	                    <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
+						<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
+							<@checkBox name='exportable' id='exportable' value='1' checked=entry.exportable />
+						</@formGroup>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' rows=2>
+							<@input type='text' name='css_class' value='${entry.CSSClass!}' maxlength=255 />
+						</@formGroup>
+                                                ${question_modify_template!}
+						<@formGroup rows=2>
+							<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false />
+							<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false />
+							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' size='' showTitleXs=false  showTitleMd=false color='btn-secondary'/>
+						</@formGroup>
+					</@tform>
+				</@boxBody>
+			</@box>
+		</@columns>
+		
+		<@columns md=9 lg=9 xl=9>
+			<@box color='primary'>
+				<@boxHeader title='#i18n{forms.createEntry.manageField.title}' boxTools=true>
+					<@tform class='form-inline pull-right' action='jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true'>
+					    <input name="id_question" value="${question.id}" type="hidden" />
+						<@button type='submit' buttonIcon='plus' name='view_createField' title='#i18n{forms.createEntry.manageField.buttonInsert}' size='' />
+					</@tform>
+				</@boxHeader>
+				<@boxBody>
+					<fieldset>
+						<legend class="sr-only">#i18n{forms.createEntry.manageField.title}</legend>
+						<a name="list" id="list"></a>
+						<div class="clearfix"></div>
+						<@table>
+							<tr> 
+								<th>#i18n{forms.createEntry.manageField.rowTitle}</th>
+								<th>#i18n{forms.createEntry.manageField.rowValue}</th>
+								<th><@icon style='question-circle' title='#i18n{forms.createEntry.manageField.rowConditionalQuestion}' /></th>
+								<th>#i18n{forms.createEntry.manageField.rowActions}</th>
+							</tr>
+							<#assign cpt=0>
+								<#list list as field>
+									<#if field.code == 'answer_choice'>
+										<#assign cpt=cpt+1>
+										<tr>
+											<td>${field.title}</td>
+											<td>
+												<#if field.defaultValue>
+													<@tag color='success'><@icon style='check' title='#i18n{forms.createEntry.manageField.rowDefaultValue}' /></@tag>
+												</#if>&nbsp;${field.value}
+											</td>
+											<td>
+												<#if field.conditionalQuestions?exists>
+													 <#list field.conditionalQuestions as entry>
+														<#if entry.entryType.comment>
+															${entry.comment}
+														<#else>
+															${entry.title}
+														</#if><br>
+													</#list>
+												</#if>     	
+											</td>
+											<td>
+												<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' title='#i18n{portal.util.labelModify}' buttonIcon='edit' showTitle=false />
+												<#if cpt!=1>
+												<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveUp}' buttonIcon='chevron-up' showTitle=false />
+												</#if> 
+												<#if field_has_next>
+												<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveDown}' buttonIcon='chevron-down' showTitle=false />
+												</#if>
+												<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' buttonIcon='trash' showTitle=false color='btn-danger' />
+											</td>
+										</tr>
+									</#if>
+								</#list> 
+						</@table>
+					</fieldset>
+				</@boxBody>
+			</@box>
+		</@columns>
+	</fieldset>
+</@row>
+<@initEditor />

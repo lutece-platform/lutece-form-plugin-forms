@@ -57,7 +57,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class FormFilterDisplayForms extends AbstractFormFilterDisplay
 {
     // Templates
-    private static final String FORM_FORMS_FILTER_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/record_form_filter.ftl";
+    private static final String FORM_FORMS_FILTER_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/record_form_filter.html";
 
     // Constants
     private static final String FORM_CODE_ATTRIBUTE = "id";

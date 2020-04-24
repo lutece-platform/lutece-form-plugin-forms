@@ -1,1 +1,0 @@
-<@headerSort field='geolocation' title=column_title! jsp_url=sort_url attribute=column_sort_attribute />

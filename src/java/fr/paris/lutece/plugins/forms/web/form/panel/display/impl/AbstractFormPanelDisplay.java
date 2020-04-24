@@ -55,7 +55,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay
 {
     // Template
-    private static final String TEMPLATE_MULTIVIEW_FORM_PANEL = "admin/plugins/forms/multiview/panel/multiview_form_panel_template.ftl";
+    private static final String TEMPLATE_MULTIVIEW_FORM_PANEL = "admin/plugins/forms/multiview/panel/multiview_form_panel_template.html";
 
     // Marks
     private static final String MARK_PANEL_ACTIVE = "panel_active";

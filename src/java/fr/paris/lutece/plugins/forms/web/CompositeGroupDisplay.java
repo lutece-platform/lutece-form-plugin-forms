@@ -70,10 +70,10 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 {
     // Templates
     private static final String TEMPLATE_GROUP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group.ftl";
-    private static final String TEMPLATE_GROUP_EDITION_BACKOFFICE = "/admin/plugins/forms/composite/view_group_edition.ftl";
+    private static final String TEMPLATE_GROUP_EDITION_BACKOFFICE = "/admin/plugins/forms/composite/view_group_edition.html";
     private static final String TEMPLATE_GROUP_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group_read_only.ftl";
-    private static final String TEMPLATE_GROUP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_group.ftl";
-    private static final String TEMPLATE_GROUP_RESUBMIT_BACKOFFICE = "/admin/plugins/forms/composite/view_group_resubmit.ftl";
+    private static final String TEMPLATE_GROUP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_group.html";
+    private static final String TEMPLATE_GROUP_RESUBMIT_BACKOFFICE = "/admin/plugins/forms/composite/view_group_resubmit.html";
     private static final String TEMPLATE_GROUP_RESUBMIT_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group_resubmit.ftl";
 
     // Marks

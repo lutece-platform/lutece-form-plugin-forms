@@ -58,8 +58,8 @@ public abstract class AbstractListQuestionValidator extends AbstractValidator
 {
     protected List<String> _listAvailableFieldControl;
 
-    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_question_template.ftl";
-    private static final String TEMPLATE_JAVASCRIPT = "/skin/plugins/forms/validators/list_question_javascript.ftl";
+    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_question_template.html";
+    private static final String TEMPLATE_JAVASCRIPT = "/skin/plugins/forms/validators/list_question_javascript.html";
 
     /**
      * Constructor of the PatternValidator

@@ -74,9 +74,9 @@ public class FormTransitionJspBean extends AbstractJspBean
     private static final String EMPTY_STRING = "";
 
     // Templates
-    private static final String TEMPLATE_MANAGE_TRANSITIONS = "/admin/plugins/forms/manage_transitions.ftl";
-    private static final String TEMPLATE_CREATE_TRANSITION = "/admin/plugins/forms/create_transition.ftl";
-    private static final String TEMPLATE_MODIFY_TRANSITION = "/admin/plugins/forms/modify_transition.ftl";
+    private static final String TEMPLATE_MANAGE_TRANSITIONS = "/admin/plugins/forms/manage_transitions.html";
+    private static final String TEMPLATE_CREATE_TRANSITION = "/admin/plugins/forms/create_transition.html";
+    private static final String TEMPLATE_MODIFY_TRANSITION = "/admin/plugins/forms/modify_transition.html";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_TRANSITION = "forms.modify_transition.pageTitle";

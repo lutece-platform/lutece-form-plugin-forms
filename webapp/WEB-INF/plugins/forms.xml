@@ -28,7 +28,7 @@
     </admin-css-stylesheets>
 
     <freemarker-macro-files>
-        <freemarker-macro-file>admin/plugins/forms/forms_commons.ftl</freemarker-macro-file>
+        <freemarker-macro-file>admin/plugins/forms/forms_commons.html</freemarker-macro-file>
     </freemarker-macro-files>
 
     <!-- Admin features parameters -->

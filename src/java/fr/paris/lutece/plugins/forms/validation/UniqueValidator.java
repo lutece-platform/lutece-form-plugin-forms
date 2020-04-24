@@ -58,7 +58,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public class UniqueValidator extends AbstractValidator
 {
 
-    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/unique_template.ftl";
+    private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/unique_template.html";
 
     /**
      * Constructor of the PatternValidator

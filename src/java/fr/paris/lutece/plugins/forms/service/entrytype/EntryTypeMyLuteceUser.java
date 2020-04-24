@@ -48,8 +48,8 @@ public class EntryTypeMyLuteceUser extends AbstractEntryTypeMyLuteceUser impleme
      * Name of the bean of this service
      */
     public static final String BEAN_NAME = "forms.entryTypeMyLuteceUser";
-    private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_mylutece_user.ftl";
-    private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_mylutece_user.ftl";
+    private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_mylutece_user.html";
+    private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_mylutece_user.html";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_mylutece_user.ftl";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_mylutece_user.ftl";
 

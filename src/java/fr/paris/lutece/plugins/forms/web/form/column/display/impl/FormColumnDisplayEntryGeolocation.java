@@ -53,8 +53,8 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
 {
     // Templates
-    private static final String FORM_COLUMN_HEADER_TEMPLATE = "admin/plugins/forms/multiview/column/header/form_column_entry_geolocation_header.ftl";
-    private static final String FORM_COLUMN_CELL_TEMPLATE = "admin/plugins/forms/multiview/column/cell/form_column_entry_geolocation_cell.ftl";
+    private static final String FORM_COLUMN_HEADER_TEMPLATE = "admin/plugins/forms/multiview/column/header/form_column_entry_geolocation_header.html";
+    private static final String FORM_COLUMN_CELL_TEMPLATE = "admin/plugins/forms/multiview/column/cell/form_column_entry_geolocation_cell.html";
 
     // Marks
     private static final String MARK_ENTRY_VALUE_COLUMN_TITLE = "column_title";

@@ -49,8 +49,8 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 public class FormColumnDisplayWorkflowState extends AbstractFormColumnDisplay
 {
     // Templates
-    private static final String FORM_COLUMN_HEADER_TEMPLATE = "admin/plugins/forms/multiview/column/header/form_column_workflow_state_header.ftl";
-    private static final String FORM_COLUMN_CELL_TEMPLATE = "admin/plugins/forms/multiview/column/cell/form_column_workflow_state_cell.ftl";
+    private static final String FORM_COLUMN_HEADER_TEMPLATE = "admin/plugins/forms/multiview/column/header/form_column_workflow_state_header.html";
+    private static final String FORM_COLUMN_CELL_TEMPLATE = "admin/plugins/forms/multiview/column/cell/form_column_workflow_state_cell.html";
 
     // Marks
     private static final String MARK_WORKFLOW_STATE_COLUMN_TITLE = "column_title";

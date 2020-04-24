@@ -53,7 +53,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
 {
     // Template
-    protected static final String FILTER_TEMPLATE_NAME = "admin/plugins/forms/multiview/form_filter.ftl";
+    protected static final String FILTER_TEMPLATE_NAME = "admin/plugins/forms/multiview/form_filter.html";
 
     // Marks
     protected static final String MARK_FILTER_LIST = "filter_list";

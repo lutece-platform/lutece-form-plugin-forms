@@ -101,8 +101,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String ACTION_SAVE_MULTIVIEW_CONFIG = "doSaveMultiviewConfig";
 
     // Templates
-    private static final String TEMPLATE_FORMS_MULTIVIEW = "admin/plugins/forms/multiview/forms_multiview.ftl";
-    private static final String TEMPLATE_FORMS_MULTIVIEW_CONFIG = "admin/plugins/forms/multiview/forms_multiview_config.ftl";
+    private static final String TEMPLATE_FORMS_MULTIVIEW = "admin/plugins/forms/multiview/forms_multiview.html";
+    private static final String TEMPLATE_FORMS_MULTIVIEW_CONFIG = "admin/plugins/forms/multiview/forms_multiview_config.html";
 
     // Properties
     private static final String PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE = "forms.multiviewForms.pageTitle";
