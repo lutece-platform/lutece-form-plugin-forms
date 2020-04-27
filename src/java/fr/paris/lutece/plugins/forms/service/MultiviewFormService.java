@@ -33,16 +33,21 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
-import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
-import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.QuestionHome;
-
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
-import fr.paris.lutece.plugins.forms.business.form.column.FormColumnComparator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 
+import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnComparator;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
@@ -54,6 +59,7 @@ import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilt
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
+import fr.paris.lutece.plugins.forms.business.form.list.IFormListDAO;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -62,12 +68,6 @@ import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayServic
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import java.util.ArrayList;
-import java.util.Collections;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Service dedicated to managing of the multiview of forms
@@ -350,5 +350,12 @@ public final class MultiviewFormService
             mapColumns.entrySet( ).removeIf( entry -> entry.getValue( ) instanceof FormColumnForms );
         }
 
+    }
+    
+    public List<FormResponseItem> searchAllListFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            FormResponseItemSortConfig sortConfig )
+    {
+        IFormListDAO formListDAO = SpringContextService.getBean( IFormListDAO.BEAN_NAME );
+        return formListDAO.searchAllFormResponseItem( formPanel, listFormColumn, listFormFilter, sortConfig );
     }
 }

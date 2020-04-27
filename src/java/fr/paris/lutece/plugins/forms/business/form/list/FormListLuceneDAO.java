@@ -77,7 +77,21 @@ public class FormListLuceneDAO implements IFormListDAO
         {
             return;
         }
-
+        
+        List<FormResponseItem> listFormResponseItem = searchFormResponseItem( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig );
+        formPanel.setFormResponseItemList( listFormResponseItem );
+    }
+    
+    @Override
+    public List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+            FormResponseItemSortConfig sortConfig )
+    {
+        return searchFormResponseItem( formPanel, listFormColumn, listFormFilter, 0, 0, sortConfig );
+    }
+    
+    private List<FormResponseItem> searchFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+            FormResponseItemSortConfig sortConfig )
+    {
         // Create the list of all values of the parameter to used
         List<String> listQueryParametersValues = new ArrayList<>( );
 
@@ -105,8 +119,10 @@ public class FormListLuceneDAO implements IFormListDAO
 
             }
         }
-        formPanel.setFormResponseItemList( listFormResponseItem );
+        
+        return listFormResponseItem;
     }
+    
 
     /**
      * Create a FormResponseItem from a DAOUtil

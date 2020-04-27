@@ -33,9 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.list;
 
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
@@ -66,4 +67,16 @@ public interface IFormListDAO
      */
     void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
             FormResponseItemSortConfig sortConfig );
+    
+    /**
+     * Search the Lucene Index.
+     * @param formPanel
+     * @param listFormColumn
+     * @param listFormFilter
+     * @param nStartIndex
+     * @param nPageSize
+     * @param sortConfig
+     * @return
+     */
+    List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, FormResponseItemSortConfig sortConfig );
 }
