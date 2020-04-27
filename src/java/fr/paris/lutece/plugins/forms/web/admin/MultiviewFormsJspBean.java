@@ -45,6 +45,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.plugins.filegenerator.service.TemporaryFileGeneratorService;
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
@@ -69,22 +72,21 @@ import fr.paris.lutece.plugins.forms.web.form.column.display.FormColumnDisplayFa
 import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.FormFilterDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayForms;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListTemplateBuilder;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.MultiviewFormUtil;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDisplayFactory;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
-import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
 import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -239,26 +241,47 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @throws AccessDeniedException
      */
     @Action( ACTION_EXPORT_RESPONSES )
-    public void doExportResponses( HttpServletRequest request ) throws AccessDeniedException
+    public String doExportResponses( HttpServletRequest request ) throws AccessDeniedException
     {
-        GlobalFormsAction multiviewExportAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_EXPORT_RESPONSES,
-                FormsPlugin.getPlugin( ), request.getLocale( ) );
-        if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
-                AdminUserService.getAdminUser( request ) ) )
+        GlobalFormsAction multiviewExportAction = GlobalFormsActionHome.selectGlobalFormActionByCode(
+                FormsConstants.ACTION_FORMS_EXPORT_RESPONSES, FormsPlugin.getPlugin( ), request.getLocale( ) );
+        AdminUser user = AdminUserService.getAdminUser( request );
+        if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction,
+                GlobalFormsAction.PERMISSION_PERFORM_ACTION, user ) )
         {
             throw new AccessDeniedException( "Unauthorized" );
         }
-
-        IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
-
-        List<FormResponseItem> listFormResponseItemToDisplay = _formPanelDisplayActive.getFormResponseItemList( );
-
-        if ( formatExport != null && CollectionUtils.isNotEmpty( listFormResponseItemToDisplay ) )
+        
+        boolean filteredByForm = false;
+        FormFilterDisplayForms formFilter = (FormFilterDisplayForms) _listFormFilterDisplay.stream( ).filter( f -> f instanceof FormFilterDisplayForms  ).findFirst( ).orElse( null );
+        String strIdForm = "";
+        if ( formFilter != null )
         {
-            byte [ ] arrByteExportFile = formatExport.getByteExportFile( getFormResponseToExport( listFormResponseItemToDisplay ) );
-
-            download( arrByteExportFile, I18nService.getLocalizedString( EXPORT_FILE_NAME, getLocale( ) ), formatExport.getFormatContentType( ) );
+            strIdForm = formFilter.getValue( );
+            filteredByForm = StringUtils.isNotEmpty( strIdForm ) && !FormFilterDisplayForms.DEFAULT_ID_FORM.contentEquals( strIdForm );
         }
+        
+        if ( !filteredByForm )
+        {
+            addError( "forms.export.error.filter", getLocale( ) );
+            return redirectView( request, VIEW_MULTIVIEW_FORMS );
+        }
+        
+        IFormatExport formatExport = ExportServiceManager.getInstance( )
+                .getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
+        
+        if ( formatExport != null )
+        {
+            int idForm = Integer.parseInt( strIdForm );
+            Form form = FormHome.findByPrimaryKey( idForm );
+            List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter )
+                    .collect( Collectors.toList( ) );
+            TemporaryFileGeneratorService.getInstance( )
+            .generateFile( formatExport.createFileGenerator( form.getTitle( ), _formPanelDisplayActive.getFormPanel( ), _listFormColumn, listFormFilter, _formResponseItemComparatorConfig ), user );
+        }
+        addInfo( "forms.export.async.message", getLocale( ) );
+        
+        return redirectView( request, VIEW_MULTIVIEW_FORMS );
     }
 
     /**
