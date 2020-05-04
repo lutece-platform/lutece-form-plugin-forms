@@ -1201,8 +1201,11 @@ public class FormXPage extends MVCApplication
      */
     private static void increaseNumberResponse( Form form )
     {
-        int nNumberReponseForm = _responsePerFormMap.get( form.getId( ) );
-        _responsePerFormMap.put( form.getId( ), nNumberReponseForm + 1 );
+        if ( form.getMaxNumberResponse( ) != 0 )
+        {
+            int nNumberReponseForm = _responsePerFormMap.get( form.getId( ) );
+            _responsePerFormMap.put( form.getId( ), nNumberReponseForm + 1 );
+        }
     }
 
     /**
