@@ -45,8 +45,12 @@ import org.apache.commons.lang.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -99,8 +103,9 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
         }
         else
         {
+            AdminUser user = AdminUserService.getAdminUser( request );
             // Check if there is just one form
-            ReferenceList refListForms = createReferenceList( );
+            ReferenceList refListForms = createReferenceList( user );
             if ( refListForms.size( ) == 2 )
             {
                 strIdForm = refListForms.get( 1 ).getCode( );
@@ -123,7 +128,8 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     @Override
     public void buildTemplate( HttpServletRequest request )
     {
-        ReferenceList refListForms = createReferenceList( );
+        AdminUser user = AdminUserService.getAdminUser( request );
+        ReferenceList refListForms = createReferenceList( user );
         String strTemplateResult = StringUtils.EMPTY;
 
         if ( refListForms.size( ) > 2 )
@@ -152,9 +158,11 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
      * 
      * @return the ReferenceList of Forms on which we can filter
      */
-    private ReferenceList createReferenceList( )
+    private ReferenceList createReferenceList( AdminUser user )
     {
-        ReferenceListFactory referenceListFactory = new ReferenceListFactory( getFormsList( ), FORM_CODE_ATTRIBUTE, FORM_NAME_ATTRIBUTE );
+        List<Form> formList = getFormsList( );
+        formList.removeIf( f ->  !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ), FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, user ) );
+        ReferenceListFactory referenceListFactory = new ReferenceListFactory( formList, FORM_CODE_ATTRIBUTE, FORM_NAME_ATTRIBUTE );
 
         return referenceListFactory.createReferenceList( );
     }
