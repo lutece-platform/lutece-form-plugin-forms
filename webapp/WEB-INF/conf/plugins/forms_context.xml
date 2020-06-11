@@ -279,22 +279,22 @@
 	<!-- Filters Configurations -->
 	<bean id="forms.forms.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration">
 		<constructor-arg name="nPosition" type="int" value="1"/>
-		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="-"/>
+		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="forms.filter.form.title"/>
 		<constructor-arg name="strFormFilterName" type="java.lang.String" value="forms_title"/>
 	</bean>
 	<bean id="forms.formResponseDateCreation.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateConfiguration">
 		<constructor-arg name="nPosition" type="int" value="2"/>
-		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Cr&#233;&#233;e depuis..."/>
+		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="forms.filter.creation.title"/>
 		<constructor-arg name="strFormFilterName" type="java.lang.String" value="response_creation_date"/>
 	</bean>
-        <bean id="forms.searchedText.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration">
+    <bean id="forms.searchedText.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormResponseIdConfiguration">
 		<constructor-arg name="nPosition" type="int" value="3"/>
-		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="Texte"/>
+		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="forms.filter.text.title"/>
 		<constructor-arg name="strFormFilterName" type="java.lang.String" value="search_text"/>
 	</bean>
-        <bean id="forms.workflowState.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterWorkflowConfiguration">
+    <bean id="forms.workflowState.filterConfiguration" class="fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterWorkflowConfiguration">
 		<constructor-arg name="nPosition" type="int" value="4"/>
-		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="-"/>
+		<constructor-arg name="strFormFilterLabel" type="java.lang.String" value="forms.filter.state.title"/>
 		<constructor-arg name="strFormFilterName" type="java.lang.String" value="workflow_state"/>
 	</bean>
 	

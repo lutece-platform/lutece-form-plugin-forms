@@ -1,10 +1,10 @@
-<@formGroup formStyle='inline' class='forms-filter' labelKey=filter_config.getFormFilterLabel() labelFor=filter_name >
+<@formGroup formStyle='inline' class='forms-filter' labelKey='${filter_label}'!'' labelFor=filter_name >
     <input type="hidden" name="forms_previous_id_form" value="${forms_previous_id_form!-1}">
     <input type="hidden" id="${filter_config.getFormFilterName()!''}_from" name="${filter_config.getFormFilterName()!''}_from" value="${filter_list_value_from!''}">
     <input type="hidden" id="${filter_config.getFormFilterName()!''}_to" name="${filter_config.getFormFilterName()!''}_to" value="${filter_list_value_to!''}">
     <input type="hidden" class="formsFilterDate" value="${filter_config.getFormFilterName()!''}">
     <label for="${filter_config.getFormFilterName()!''}">
-        <input type="text" id="${filter_config.getFormFilterName()!''}" class="form-control" placeholder="${filter_config.getFormFilterLabel()}" name="${filter_config.getFormFilterName()!''}" value="${filter_list_value!''}">
+        <input type="text" id="${filter_config.getFormFilterName()!''}" class="form-control" placeholder="${filter_label}" name="${filter_config.getFormFilterName()!''}" value="${filter_list_value!''}">
     </label>
 </@formGroup>
 

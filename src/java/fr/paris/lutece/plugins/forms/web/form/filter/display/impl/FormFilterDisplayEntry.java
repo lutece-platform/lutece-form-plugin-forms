@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -119,7 +120,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
     public void buildTemplate( HttpServletRequest request )
     {
         String strParameterName = buildElementName( PARAMETER_ENTRY_VALUE_PATTERN );
-        manageFilterTemplate( request, createReferenceList( ), strParameterName );
+        manageFilterTemplate( request, createReferenceList( request.getLocale( ) ), strParameterName );
     }
 
     /**
@@ -127,7 +128,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
      * 
      * @return the ReferenceList with all values of the Entry for an Entry column
      */
-    private ReferenceList createReferenceList( )
+    private ReferenceList createReferenceList( Locale locale )
     {
         List<Entry> listIEntryToRetrieveValueFrom = new ArrayList<>( );
 
@@ -145,7 +146,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
         ReferenceListFactory referenceListFactory = new ReferenceListFactory( listResponse, ENTRY_RESPONSE_VALUE_ATTRIBUTE, ENTRY_RESPONSE_VALUE_ATTRIBUTE,
                 Boolean.FALSE );
 
-        String strDefaultReferenceListName = getFormFilterDisplayLabel( );
+        String strDefaultReferenceListName = getFormFilterDisplayLabel( locale );
         referenceListFactory.setDefaultName( strDefaultReferenceListName );
         referenceListFactory.setDefaultSortNeeded( Boolean.TRUE );
 

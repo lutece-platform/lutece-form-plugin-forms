@@ -44,6 +44,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
@@ -164,7 +165,7 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
 
         if ( form != null && form.getIdWorkflow( ) > ID_WORKFLOW_UNSET )
         {
-            listWorkflowState.addAll( WorkflowService.getInstance( ).getAllStateByWorkflow( form.getIdWorkflow( ), AdminUserService.getAdminUser( request ) ) );
+            listWorkflowState.addAll( WorkflowService.getInstance( ).getAllStateByWorkflow( form.getIdWorkflow( ), (User) AdminUserService.getAdminUser( request ) ) );
         }
 
         return listWorkflowState;

@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.form.filter.display.impl;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,6 +60,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
     protected static final String MARK_FILTER_LIST = "filter_list";
     protected static final String MARK_FILTER_CONFIG = "filter_config";
     protected static final String MARK_FILTER_NAME = "filter_name";
+    protected static final String MARK_FILTER_LABEL = "filter_label";
     protected static final String MARK_FILTER_LIST_VALUE = "filter_list_value";
 
     // Constants
@@ -204,6 +206,7 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
         model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
         model.put( MARK_FILTER_NAME, strParameterName );
         model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
+        model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( request.getLocale( ) ) );
 
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
         if ( htmlTemplate != null )
@@ -219,14 +222,14 @@ public abstract class AbstractFormFilterDisplay implements IFormFilterDisplay
      * 
      * @return the label of the FormFilter from its configuration or the default label if not found
      */
-    protected String getFormFilterDisplayLabel( )
+    protected String getFormFilterDisplayLabel( Locale locale )
     {
         String strFormFilterDisplayLabel = DEFAULT_FORM_FILTER_LABEL;
 
         FormFilter formFilter = getFormFilter( );
         if ( formFilter != null && formFilter.getFormFilterConfiguration( ) != null )
         {
-            strFormFilterDisplayLabel = formFilter.getFormFilterConfiguration( ).getFormFilterLabel( );
+            strFormFilterDisplayLabel = formFilter.getFormFilterConfiguration( ).getFormFilterLabel( locale );
         }
 
         return strFormFilterDisplayLabel;
