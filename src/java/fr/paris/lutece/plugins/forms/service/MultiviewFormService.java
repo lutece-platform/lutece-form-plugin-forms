@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnComparator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -164,7 +165,7 @@ public final class MultiviewFormService
      * @param nIdForm
      * @return the form columns list
      */
-    public List<IFormColumn> getFormColumnsList( Integer nIdForm )
+    public List<IFormColumn> getFormColumnsList( Integer nIdForm, Locale locale )
     {
         Map<String, IFormColumn> mapFormColumns = new LinkedHashMap<>( );
 
@@ -172,18 +173,18 @@ public final class MultiviewFormService
         List<IFormColumn> listFormColumns = SpringContextService.getBeansOfType( IFormColumn.class );
 
         Collections.sort( listFormColumns, new FormColumnComparator( ) ); // sort by position
-        listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( ), column ) );
+        listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( locale ), column ) );
 
         // Then add global columns from config questions
         List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
                 : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
 
-        addColumnFromConfig( mapFormColumns, listQuestions, true );
+        addColumnFromConfig( mapFormColumns, listQuestions, true, locale );
 
         if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )
         {
             // Then add specific columns from config questions
-            addColumnFromConfig( mapFormColumns, listQuestions, false );
+            addColumnFromConfig( mapFormColumns, listQuestions, false, locale );
         }
 
         // Filter the columns with the multiview config
@@ -205,7 +206,7 @@ public final class MultiviewFormService
      * @param nIdForm
      * @return the form columns list
      */
-    public List<FormFilter> getFormFiltersList( Integer nIdForm, List<IFormColumn> listFormColumn )
+    public List<FormFilter> getFormFiltersList( Integer nIdForm, List<IFormColumn> listFormColumn, Locale locale )
     {
         Map<String, FormFilter> mapFormFilter = new HashMap<>( );
 
@@ -229,12 +230,12 @@ public final class MultiviewFormService
         List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
                 : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
 
-        addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, true );
+        addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, true, locale );
 
         if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )
         {
             // Then add specific columns from config questions
-            addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, false );
+            addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, false, locale );
         }
 
         return new ArrayList<>( mapFormFilter.values( ) );
@@ -247,7 +248,7 @@ public final class MultiviewFormService
      * @param listQuestions
      * @param bGlobal
      */
-    private void addColumnFromConfig( Map<String, IFormColumn> mapColumns, List<Question> listQuestions, boolean bGlobal )
+    private void addColumnFromConfig( Map<String, IFormColumn> mapColumns, List<Question> listQuestions, boolean bGlobal, Locale locale )
     {
         int nPosition = mapColumns.size( );
         for ( Question question : listQuestions )
@@ -262,7 +263,7 @@ public final class MultiviewFormService
                     IFormColumn column = displayService.getFormColumn( ++nPosition, question.getColumnTitle( ) );
                     addEntryCodeToColumn( column, question );
 
-                    mapColumns.put( column.getFormColumnTitle( ), column );
+                    mapColumns.put( column.getFormColumnTitle( locale ), column );
                 }
                 else
                 {
@@ -293,7 +294,7 @@ public final class MultiviewFormService
      * @param listQuestions
      * @param bGlobal
      */
-    private void addFilterFromConfig( Map<String, FormFilter> mapFilters, List<Question> listQuestions, List<IFormColumn> listFormColumns, boolean bGlobal )
+    private void addFilterFromConfig( Map<String, FormFilter> mapFilters, List<Question> listQuestions, List<IFormColumn> listFormColumns, boolean bGlobal, Locale locale )
     {
         int nPosition = mapFilters.size( );
 
@@ -330,7 +331,7 @@ public final class MultiviewFormService
 
                 for ( IFormColumn column : listFormColumnsEntry )
                 {
-                    if ( column.getFormColumnTitle( ).equals( question.getColumnTitle( ) ) )
+                    if ( column.getFormColumnTitle( locale ).equals( question.getColumnTitle( ) ) )
                     {
                         IFormFilterConfiguration formFilterConfiguration = new FormFilterEntryConfiguration( nPosition++, question.getTitle( ),
                                 FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ), column );

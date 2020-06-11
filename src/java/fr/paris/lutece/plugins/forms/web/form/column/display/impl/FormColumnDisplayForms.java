@@ -65,7 +65,7 @@ public class FormColumnDisplayForms extends AbstractFormColumnDisplay
     public String buildFormColumnHeaderTemplate( String strSortUrl, Locale locale )
     {
         Map<String, Object> model = new LinkedHashMap<>( );
-        model.put( MARK_FORMS_COLUMN_TITLE, getFormColumnTitle( ) );
+        model.put( MARK_FORMS_COLUMN_TITLE, getFormColumnTitle( locale ) );
         model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
         model.put( MARK_COLUMN_SORT_ATTRIBUTE, FormMultiviewFormsNameConstants.COLUMN_FORM_TITLE );
 

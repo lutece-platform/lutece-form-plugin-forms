@@ -319,16 +319,17 @@
 	<!-- Columns -->
 	<bean id="forms.forms.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms">
 		<constructor-arg name="nFormColumnPosition" type="int" value="1"/>
-		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="Formulaire"/>
+		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="forms.column.form.title"/>
 	</bean>
 
 	<bean id="forms.formResponseCreationDate.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateCreation">
 		<constructor-arg name="nFormColumnPosition" type="int" value="2"/>
-		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="Cr&#201;&#201;e le"/>
+		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="forms.column.creation.title"/>
 	</bean>
-        <bean id="forms.workflowState.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState">
+    
+    <bean id="forms.workflowState.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnWorkflowState">
 		<constructor-arg name="nFormColumnPosition" type="int" value="3"/>		
-		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="&#201;tat"/>
+		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="forms.column.state.title"/>
 	</bean>
 	 
 	<!-- Columns Factories -->

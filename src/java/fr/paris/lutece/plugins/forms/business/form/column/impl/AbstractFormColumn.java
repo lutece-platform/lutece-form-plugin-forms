@@ -33,9 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.impl;
 
+import java.util.Locale;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
  * Abstract class for FormColumn implementation
@@ -68,8 +72,13 @@ public abstract class AbstractFormColumn implements IFormColumn
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnTitle( )
+    public String getFormColumnTitle( Locale locale )
     {
+        String title = I18nService.getLocalizedString( _strFormColumnTitle, locale );
+        if ( StringUtils.isNotEmpty( title ) )
+        {
+            return title;
+        }
         return _strFormColumnTitle;
     }
 

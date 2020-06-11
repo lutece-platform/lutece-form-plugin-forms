@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column;
 
+import java.util.Locale;
+
 /**
  * Interface for a FormColumn object
  */
@@ -56,9 +58,10 @@ public interface IFormColumn
     /**
      * Return the title of the FormColumn which will be displayed on the table
      * 
+     * @param the locale in which to display the title
      * @return the title of the FormColumn which will be displayed on the table
      */
-    String getFormColumnTitle( );
+    String getFormColumnTitle( Locale locale);
 
     /**
      * Set the title of the FormColumn which will be displayed on the table

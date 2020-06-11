@@ -73,7 +73,7 @@ public class FormColumnDisplayEntryGeolocation extends AbstractFormColumnDisplay
     public String buildFormColumnHeaderTemplate( String strSortUrl, Locale locale )
     {
         Map<String, Object> model = new LinkedHashMap<>( );
-        model.put( MARK_ENTRY_VALUE_COLUMN_TITLE, getFormColumnTitle( ) );
+        model.put( MARK_ENTRY_VALUE_COLUMN_TITLE, getFormColumnTitle( locale ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_POSITION, getPosition( ) );
 
         model.put( MARK_COLUMN_SORT_ATTRIBUTE, String.format( FormEntryNameConstants.COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_ADDR, getPosition( ) ) );
