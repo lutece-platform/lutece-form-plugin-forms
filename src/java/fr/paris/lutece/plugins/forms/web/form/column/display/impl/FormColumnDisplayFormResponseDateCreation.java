@@ -65,7 +65,7 @@ public class FormColumnDisplayFormResponseDateCreation extends AbstractFormColum
     {
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
-        model.put( MARK_FORM_RESPONSE_DATE_CREATION_COLUMN_TITLE, getFormColumnTitle( ) );
+        model.put( MARK_FORM_RESPONSE_DATE_CREATION_COLUMN_TITLE, getFormColumnTitle( locale ) );
         model.put( MARK_COLUMN_SORT_ATTRIBUTE, FormMultiviewFormResponseDateCreationNameConstants.COLUMN_FORM_RESPONSE_DATE_CREATION );
 
         String strFormResponseDateCreationHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );

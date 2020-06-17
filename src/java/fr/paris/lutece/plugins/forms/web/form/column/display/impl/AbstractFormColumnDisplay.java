@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.column.display.impl;
 
+import java.util.Locale;
+
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
@@ -112,14 +114,14 @@ public abstract class AbstractFormColumnDisplay implements IFormColumnDisplay
      * 
      * @return the title of the FormColumn or {@linkplain StringUtils.EMPTY} if not found
      */
-    protected String getFormColumnTitle( )
+    protected String getFormColumnTitle( Locale locale )
     {
         String strFormColumnTitle = StringUtils.EMPTY;
 
         IFormColumn formColumn = getFormColumn( );
         if ( formColumn != null )
         {
-            strFormColumnTitle = formColumn.getFormColumnTitle( );
+            strFormColumnTitle = formColumn.getFormColumnTitle( locale );
         }
 
         return strFormColumnTitle;

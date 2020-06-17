@@ -83,7 +83,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     {
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
-        model.put( MARK_ENTRY_VALUE_COLUMN_TITLE, getFormColumnTitle( ) );
+        model.put( MARK_ENTRY_VALUE_COLUMN_TITLE, getFormColumnTitle( locale ) );
         model.put( MARK_ENTRY_VALUE_COLUMN_POSITION, getPosition( ) );
 
         if ( getFormColumn( ) instanceof FormColumnEntry )

@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -382,8 +383,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             // Nothing to do
         }
 
-        _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm );
-        List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( nIdForm, _listFormColumn );
+        _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm, request.getLocale( ) );
+        List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ) );
         _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilter );
         _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
         _listFormPanelDisplay = new FormPanelDisplayFactory( ).createFormPanelDisplayList( request, listFormPanel, _formPanelDisplayActive );
@@ -424,7 +425,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
         // Check in filters if the columns list has to be fetch again
-        reloadFormColumnList( listFormFilter );
+        reloadFormColumnList( listFormFilter, request.getLocale( ) );
         if ( formSelectedAsChanged( request ) )
         {
             _strFormSelectedValue = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
@@ -556,7 +557,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @param listFormFilter
      *            the form filter list
      */
-    private void reloadFormColumnList( List<FormFilter> listFormFilter )
+    private void reloadFormColumnList( List<FormFilter> listFormFilter, Locale locale )
     {
         FormColumnFactory formColumnFactory = SpringContextService.getBean( FormColumnFactory.BEAN_NAME );
 
@@ -568,11 +569,11 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
                 if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
                 {
-                    _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm );
+                    _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm, locale );
                 }
                 else
                 {
-                    _listFormColumn = formColumnFactory.buildFormColumnList( null );
+                    _listFormColumn = formColumnFactory.buildFormColumnList( null, locale );
                 }
 
                 _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
@@ -588,8 +589,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             {
                 Integer nIdForm = ( (FormFilterForms) filter ).getSelectedIdForm( );
                 List<FormFilter> listFormFilterReloaded = ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
-                        ? new FormFilterFactory( ).buildFormFilterList( nIdForm, _listFormColumn )
-                        : new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn );
+                        ? new FormFilterFactory( ).buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ) )
+                        : new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn, request.getLocale( ) );
 
                 _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilterReloaded );
             }

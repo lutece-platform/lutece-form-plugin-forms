@@ -129,6 +129,7 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
         String strSearchedText = request.getParameter( PARAMETER_SEARCHED_TEXT );
         model.put( MARK_SEARCHED_TEXT, strSearchedText );
         model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
+        model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( request.getLocale( ) ) );
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
 
         _strTemplate = htmlTemplate.getHtml( );

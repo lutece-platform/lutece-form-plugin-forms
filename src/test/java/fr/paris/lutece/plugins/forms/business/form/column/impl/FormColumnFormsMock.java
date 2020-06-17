@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.impl;
 
+import java.util.Locale;
+
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
@@ -82,7 +84,7 @@ public class FormColumnFormsMock implements IFormColumn
      * {@inheritDoc}
      */
     @Override
-    public String getFormColumnTitle( )
+    public String getFormColumnTitle( Locale locale )
     {
         return _strFormColumnTitle;
     }

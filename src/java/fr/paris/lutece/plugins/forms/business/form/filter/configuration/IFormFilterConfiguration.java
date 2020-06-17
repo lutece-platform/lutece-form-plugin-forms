@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
+import java.util.Locale;
+
 /**
  * Configuration for a FormFilter object
  */
@@ -51,7 +53,7 @@ public interface IFormFilterConfiguration
      * 
      * @return the label of the FormFilter
      */
-    String getFormFilterLabel( );
+    String getFormFilterLabel( Locale locale );
 
     /**
      * Get the name of the FormFilter

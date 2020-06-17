@@ -114,6 +114,7 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
         addDateRange( model );
 
         model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
+        model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( request.getLocale( ) ) );
         HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
         if ( htmlTemplate != null )
         {

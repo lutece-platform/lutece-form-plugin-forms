@@ -33,6 +33,12 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
+import java.util.Locale;
+
+import org.apache.commons.lang3.StringUtils;
+
+import fr.paris.lutece.portal.service.i18n.I18nService;
+
 /**
  * Configuration for a FormFilter object
  */
@@ -73,8 +79,15 @@ public class AbstractFormFilterConfiguration implements IFormFilterConfiguration
      * 
      * @return the label of the FormFilter
      */
-    public String getFormFilterLabel( )
+    @Override
+    public String getFormFilterLabel( Locale locale )
     {
+        String title = I18nService.getLocalizedString( _strFormFilterLabel, locale );
+        if ( StringUtils.isNotEmpty( title ) )
+        {
+            return title;
+        }
+        
         return _strFormFilterLabel;
     }
 

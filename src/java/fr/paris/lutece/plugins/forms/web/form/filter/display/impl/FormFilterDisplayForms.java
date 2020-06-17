@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
@@ -140,6 +141,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
             model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
             model.put( MARK_FILTER_NAME, FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
             model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
+            model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( request.getLocale( ) ) );
             model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM, request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ) );
 
             HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
@@ -161,7 +163,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     private ReferenceList createReferenceList( AdminUser user )
     {
         List<Form> formList = getFormsList( );
-        formList.removeIf( f ->  !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ), FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, user ) );
+        formList.removeIf( f ->  !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ), FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) user ) );
         ReferenceListFactory referenceListFactory = new ReferenceListFactory( formList, FORM_CODE_ATTRIBUTE, FORM_NAME_ATTRIBUTE );
 
         return referenceListFactory.createReferenceList( );
