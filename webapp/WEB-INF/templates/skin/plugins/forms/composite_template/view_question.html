@@ -30,17 +30,23 @@
 			var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber};
 			var input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
 			input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
+				console.log('change ${control.id}_${question.iterationNumber}');
 				var inputValue = getFieldValue(input${control.id}_${question.iterationNumber});
-				if(input${control.id}_${question.iterationNumber}.is(":visible") && validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
+				if(!$("div[displayControl='${control.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid") && validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
 			    {
+					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').removeClass("control_invalid");
 					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').show();
 					$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
 				}
 				else
 				{
+					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').addClass("control_invalid");
 					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').hide();
 					$('#${question.id}_${question.iterationNumber}').val('');
 				}
+				var currentControl = "${question.id}_${question.iterationNumber}";
+				var currentInput = getInputElement(currentControl);
+				currentInput.change();
 			});
 			input${control.id}_${question.iterationNumber}.change();
 		});
