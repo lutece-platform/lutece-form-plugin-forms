@@ -1239,7 +1239,7 @@ public class FormXPage extends MVCApplication
         _currentStep = null;
         _stepDisplayTree = null;
         _breadcrumb = null;
-        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
+        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
     }
 
     /**
