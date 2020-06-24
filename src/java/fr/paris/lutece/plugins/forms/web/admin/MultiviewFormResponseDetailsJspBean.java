@@ -405,7 +405,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             return redirectView( request, VIEW_FORM_RESPONSE_DETAILS );
         }
 
-        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ).getId( ) );
+        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
 
         String strHtmlTasksForm = WorkflowService.getInstance( ).getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request,
                 getLocale( ) );
