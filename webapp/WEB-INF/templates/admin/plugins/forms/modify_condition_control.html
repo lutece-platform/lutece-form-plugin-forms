@@ -7,7 +7,7 @@
 <@box>
     <@boxHeader title='${modify_condition_title}' boxTools=true>
         <#if control.id gt 0>
-            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' class='pull-right' buttonIcon='trash' color='btn-link text-danger' />
+            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' class='pull-right' buttonIcon='trash' color='btn-link text-danger' params=' target="_top"' />
         </#if>
     </@boxHeader>
     <@boxBody>
@@ -57,15 +57,15 @@
 
 <script>
 $( function(){
-    var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
+    var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');;
     $('body').css( 'overflow-x', 'hidden' );
     $('.content-header').hide();
     $('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
     $('header').remove();
     $('#breadforms').remove();
-    $('#footer').remove();
-
-    btnAction.click( function(e){ 
+    $('#footer').remove();4
+	
+	btnAction.click( function(e){ 
         formAction.submit( function(){
             e.preventDefault();
             formAction.attr('target','_top');
