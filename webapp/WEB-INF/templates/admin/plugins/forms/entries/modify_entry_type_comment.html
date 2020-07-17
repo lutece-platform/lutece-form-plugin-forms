@@ -26,9 +26,13 @@
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
-                                                <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-                                                    <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
-                                                </@formGroup>
+						<#assign displayBo=getFieldValueByCode( entry, "display_in_bo") == 'true'>
+						<@formGroup labelFor='display_in_bo' labelKey='#i18n{forms.createEntry.labelResponsesDisplayBo}' helpKey='#i18n{forms.createEntry.labelResponsesDisplayBoComment}'>
+                            <@checkBox name='display_in_bo' id='display_in_bo' value='1' checked=displayBo />
+                        </@formGroup>
+                        <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+                            <@checkBox name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+                        </@formGroup>
                                                 ${question_modify_template!}
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.createEntry.buttonSave}' showTitleXs=false size='' />
