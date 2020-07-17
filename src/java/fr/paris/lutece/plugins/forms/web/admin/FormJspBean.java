@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.plugins.forms.business.FormActionHome;
@@ -178,7 +179,7 @@ public class FormJspBean extends AbstractJspBean
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
         List<Form> listForms = FormHome.getFormList( );
-        listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, adminUser );
+        listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, (User) adminUser );
 
         Map<String, Object> model = getModel( );
         LocalizedPaginator<Form> paginator = new LocalizedPaginator<>( listForms, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
@@ -188,7 +189,7 @@ public class FormJspBean extends AbstractJspBean
 
         for ( Form form : paginator.getPageItems( ) )
         {
-            listAuthorizedFormActions = (List<FormAction>) RBACService.getAuthorizedActionsCollection( listFormActions, form, getUser( ) );
+            listAuthorizedFormActions = (List<FormAction>) RBACService.getAuthorizedActionsCollection( listFormActions, form, (User) getUser( ) );
             form.setActions( listAuthorizedFormActions );
 
         }
@@ -199,7 +200,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_FORM_LIST, paginator.getPageItems( ) );
         model.put( MARK_LOCALE, request.getLocale( ) );
         model.put( MARK_PERMISSION_CREATE_FORMS,
-                RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, adminUser ) );
+                RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, (User) adminUser ) );
 
         setPageTitleProperty( EMPTY_STRING );
 
@@ -232,7 +233,7 @@ public class FormJspBean extends AbstractJspBean
         if ( WorkflowService.getInstance( ).isAvailable( ) )
         {
             AdminUser adminUser = getUser( );
-            ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( adminUser, getLocale( ) );
+            ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( (User) adminUser, getLocale( ) );
             model.put( MARK_WORKFLOW_REF_LIST, referenceList );
         }
 
@@ -336,7 +337,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        if ( ( nId != -1 ) && RBACService.isAuthorized( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, getUser( ) ) )
+        if ( ( nId != -1 ) && RBACService.isAuthorized( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, (User) getUser( ) ) )
         {
             Form formToBeCopied = FormHome.findByPrimaryKey( nId );
 
@@ -432,7 +433,7 @@ public class FormJspBean extends AbstractJspBean
 
             if ( WorkflowService.getInstance( ).isAvailable( ) )
             {
-                ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( adminUser, getLocale( ) );
+                ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( (User) adminUser, getLocale( ) );
                 model.put( MARK_WORKFLOW_REF_LIST, referenceList );
             }
 

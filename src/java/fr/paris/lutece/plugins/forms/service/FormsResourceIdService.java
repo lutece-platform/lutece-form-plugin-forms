@@ -91,15 +91,8 @@ public class FormsResourceIdService extends ResourceIdService
 
     private static final String PROPERTY_LABEL_RESOURCE_TYPE = "forms.permission.label.resourceType";
     private static final String PROPERTY_LABEL_CREATE = "forms.permission.label.create";
-    private static final String PROPERTY_LABEL_TEST = "forms.permission.label.test";
     private static final String PROPERTY_LABEL_DELETE = "forms.permission.label.delete";
     private static final String PROPERTY_LABEL_MODIFY = "forms.permission.label.modify";
-    private static final String PROPERTY_LABEL_COPY = "forms.permission.label.copy";
-    private static final String PROPERTY_LABEL_VIEW_RESULT = "forms.permission.label.viewResult";
-    private static final String PROPERTY_LABEL_CHANGE_STATE = "forms.permission.label.changeState";
-    private static final String PROPERTY_LABEL_MANAGE_VALIDATOR = "forms.permission.label.manageValidator";
-    private static final String PROPERTY_LABEL_MANAGE_FORM_RESPONSE = "forms.permission.label.manageFormResponse";
-    private static final String PROPERTY_LABEL_MODIFY_FORM_RESPONSE = "forms.permission.label.modifyFormResponse";
     private static final String PROPERTY_LABEL_VIEW_FORM_RESPONSE = "forms.permission.label.viewFormResponse";
     private static final String PROPERTY_LABEL_EDIT_PARAMS = "forms.permission.label.editParams";
 

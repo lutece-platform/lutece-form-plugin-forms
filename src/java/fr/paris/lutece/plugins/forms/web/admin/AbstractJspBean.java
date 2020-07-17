@@ -38,6 +38,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -47,7 +48,6 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
 import fr.paris.lutece.util.html.AbstractPaginator;
-import fr.paris.lutece.util.html.Paginator;
 import fr.paris.lutece.util.url.UrlItem;
 
 /**
@@ -201,7 +201,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected void checkUserPermission( String strRessourceType, String strResource, String strPermissionName, HttpServletRequest request )
             throws AccessDeniedException
     {
-        if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, AdminUserService.getAdminUser( request ) ) )
+        if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, (User) AdminUserService.getAdminUser( request ) ) )
         {
             throw new AccessDeniedException( UNAUTHORIZED );
         }

@@ -57,6 +57,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
@@ -66,7 +67,6 @@ import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
-import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.IFormsMultiviewAuthorizationService;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
@@ -144,9 +144,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE = "forms.multiviewForms.pageTitle";
     private static final String MESSAGE_ACTION_ERROR = "forms.multiviewForms.action.error";
 
-    // Other
-    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
-
     // Variables
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
     private final transient IFormsMultiviewAuthorizationService _formsMultiviewAuthorizationService = SpringContextService
@@ -166,12 +163,16 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     {
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
+        if ( formResponse == null )
+        {
+            throw new AccessDeniedException( MESSAGE_ACCESS_DENIED );
+        }
 
         boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( formResponse.getFormId( ) ),
-                FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, getUser( ) );
+                FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) getUser( ) );
         boolean bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( request, nIdFormResponse );
 
-        if ( formResponse == null || !bRBACAuthorization || !bAuthorizedRecord )
+        if ( !bRBACAuthorization || !bAuthorizedRecord )
         {
             throw new AccessDeniedException( MESSAGE_ACCESS_DENIED );
         }
@@ -254,7 +255,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             Map<String, Object> resourceActions = new HashMap<>( );
 
             Collection<fr.paris.lutece.plugins.workflowcore.business.action.Action> lListActions = workflowService.getActions( formResponse.getId( ),
-                    FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), getUser( ) );
+                    FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), (User) getUser( ) );
             State state = workflowService.getState( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), formResponse.getFormId( ) );
             resourceActions.put( MARK_WORKFLOW_STATE, state );
             resourceActions.put( MARK_WORKFLOW_ACTION_LIST, lListActions );
@@ -262,7 +263,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             mapFormResponseDetailsModel.put( MARK_RESOURCE_ACTIONS, resourceActions );
             mapFormResponseDetailsModel.put( MARK_HISTORY_WORKFLOW_ENABLED, bHistoryEnabled );
             mapFormResponseDetailsModel.put( MARK_RESOURCE_HISTORY, workflowService.getDisplayDocumentHistory( formResponse.getId( ),
-                    FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), request, getLocale( ), mapFormResponseDetailsModel, TEMPLATE_FORM_RESPONSE_HISTORY ) );
+                    FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), request, getLocale( ), mapFormResponseDetailsModel, TEMPLATE_FORM_RESPONSE_HISTORY, null ) );
         }
 
         return mapFormResponseDetailsModel;
@@ -408,7 +409,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
 
         String strHtmlTasksForm = WorkflowService.getInstance( ).getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request,
-                getLocale( ) );
+                getLocale( ), null );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_ID_FORM_RESPONSE, nIdFormResponse );
@@ -452,7 +453,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 boolean bIsAutomaticAction = Boolean.FALSE;
 
                 workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale,
-                        bIsAutomaticAction );
+                        bIsAutomaticAction, null );
 
                 // Update Form response modification date
                 FormResponseHome.update( formResponse );
@@ -488,11 +489,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         int nIdForm = ( formResponse != null ) ? formResponse.getFormId( ) : NumberUtils.INTEGER_MINUS_ONE;
 
         WorkflowService workflowService = WorkflowService.getInstance( );
-        if ( workflowService.canProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, false ) )
+        if ( workflowService.canProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, false, null ) )
         {
             try
             {
-                String strError = workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, getLocale( ) );
+                String strError = workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, getLocale( ), null );
                 if ( strError != null )
                 {
                     return redirect( request, strError );

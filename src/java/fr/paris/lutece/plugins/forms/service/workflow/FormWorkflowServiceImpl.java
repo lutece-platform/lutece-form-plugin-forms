@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
@@ -63,7 +64,7 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
         {
             workflowService.getState( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdWorkflow, form.getId( ) );
             WorkflowService.getInstance( ).executeActionAutomatic( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdWorkflow,
-                    Integer.valueOf( nIdFormResponse ) );
+                    Integer.valueOf( nIdFormResponse ), null );
         }
     }
 
@@ -79,7 +80,7 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
         {
             List<Integer> listIdWorkflowState = getListIdWorkflowState( nIdWorkflow, adminUser );
             List<Integer> listIdResources = workflowService.getAuthorizedResourceList( FormResponse.RESOURCE_TYPE, nIdWorkflow, listIdWorkflowState, nIdForm,
-                    adminUser );
+                    (User) adminUser );
 
             workflowService.doRemoveWorkFlowResourceByListId( listIdResources, FormResponse.RESOURCE_TYPE, nIdWorkflow );
         }
@@ -99,7 +100,7 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
     private List<Integer> getListIdWorkflowState( int nIdWorkflow, AdminUser adminUser )
     {
         List<Integer> listIdState = new ArrayList<>( );
-        Collection<State> collState = WorkflowService.getInstance( ).getAllStateByWorkflow( nIdWorkflow, adminUser );
+        Collection<State> collState = WorkflowService.getInstance( ).getAllStateByWorkflow( nIdWorkflow, (User) adminUser );
 
         for ( State state : collState )
         {
