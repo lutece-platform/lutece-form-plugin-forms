@@ -76,11 +76,11 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
 
-        int nIndex = 1;
-        daoUtil.setInt( nIndex++, formQuestionResponse.getIdFormResponse( ) );
-        daoUtil.setInt( nIndex++, formQuestionResponse.getQuestion( ).getId( ) );
-        daoUtil.setInt( nIndex++, formQuestionResponse.getIdStep( ) );
-        daoUtil.setInt( nIndex++, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
+        int nIndex = 0;
+        daoUtil.setInt( ++nIndex, formQuestionResponse.getIdFormResponse( ) );
+        daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getId( ) );
+        daoUtil.setInt( ++nIndex, formQuestionResponse.getIdStep( ) );
+        daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
 
         daoUtil.executeUpdate( );
 
@@ -193,13 +193,13 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
         DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, Statement.RETURN_GENERATED_KEYS, plugin );
 
-        int nIndex = 1;
-        daoUtil.setInt( nIndex++, formQuestionResponse.getIdFormResponse( ) );
-        daoUtil.setInt( nIndex++, formQuestionResponse.getQuestion( ).getId( ) );
-        daoUtil.setInt( nIndex++, formQuestionResponse.getIdStep( ) );
-        daoUtil.setInt( nIndex++, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
+        int nIndex = 0;
+        daoUtil.setInt( ++nIndex, formQuestionResponse.getIdFormResponse( ) );
+        daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getId( ) );
+        daoUtil.setInt( ++nIndex, formQuestionResponse.getIdStep( ) );
+        daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
 
-        daoUtil.setInt( nIndex++, formQuestionResponse.getId( ) );
+        daoUtil.setInt( ++nIndex, formQuestionResponse.getId( ) );
 
         daoUtil.executeUpdate( );
 
@@ -611,9 +611,9 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
             DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_ENTRY_RESPONSE, Statement.RETURN_GENERATED_KEYS, plugin );
 
-            int nIndex = 1;
-            daoUtil.setInt( nIndex++, formQuestionEntryResponse._nIdQuestionResponse );
-            daoUtil.setInt( nIndex++, formQuestionEntryResponse._response.getIdResponse( ) );
+            int nIndex = 0;
+            daoUtil.setInt( ++nIndex, formQuestionEntryResponse._nIdQuestionResponse );
+            daoUtil.setInt( ++nIndex, formQuestionEntryResponse._response.getIdResponse( ) );
 
             daoUtil.executeUpdate( );
 

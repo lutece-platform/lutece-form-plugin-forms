@@ -45,6 +45,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.filegenerator.service.TemporaryFileGeneratorService;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -78,7 +79,6 @@ import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDis
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -162,7 +162,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         }
         _listAuthorizedFormPanelDisplay = _listFormPanelDisplay.stream( )
                 .filter( fpd -> RBACService.isAuthorized( fpd.getFormPanel( ).getFormPanelConfiguration( ), FormPanelConfigIdService.PERMISSION_VIEW,
-                        AdminUserService.getAdminUser( request ) ) )
+                        (User) AdminUserService.getAdminUser( request ) ) )
                 .collect( Collectors.toList( ) );
 
         // Build the Column for the Panel and save their values for the active panel
@@ -193,7 +193,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                 FormsPlugin.getPlugin( ), request.getLocale( ) );
 
         if ( RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
-                AdminUserService.getAdminUser( request ) ) )
+                (User) AdminUserService.getAdminUser( request ) ) )
         {
             model.put( FormsConstants.MARK_MULTIVIEW_CONFIG_ACTION, multiviewConfigAction );
         }
@@ -202,7 +202,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                 FormsPlugin.getPlugin( ), request.getLocale( ) );
 
         if ( RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
-                AdminUserService.getAdminUser( request ) ) )
+                (User) AdminUserService.getAdminUser( request ) ) )
         {
             model.put( FormsConstants.MARK_MULTIVIEW_EXPORT_ACTION, multiviewExportAction );
         }
@@ -236,15 +236,14 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @param request
      *            The HTTP request
      * @throws AccessDeniedException
-     * @throws SiteMessageException
      */
     @Action( ACTION_EXPORT_RESPONSES )
-    public String doExportResponses( HttpServletRequest request ) throws AccessDeniedException, SiteMessageException
+    public String doExportResponses( HttpServletRequest request ) throws AccessDeniedException
     {
         GlobalFormsAction multiviewExportAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_EXPORT_RESPONSES,
                 FormsPlugin.getPlugin( ), request.getLocale( ) );
         AdminUser user = AdminUserService.getAdminUser( request );
-        if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION, user ) )
+        if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION, (User) user ) )
         {
             throw new AccessDeniedException( UNAUTHORIZED );
         }
@@ -296,7 +295,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG,
                 FormsPlugin.getPlugin( ), request.getLocale( ) );
         if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
-                AdminUserService.getAdminUser( request ) ) )
+                (User) AdminUserService.getAdminUser( request ) ) )
         {
             throw new AccessDeniedException( UNAUTHORIZED );
         }
@@ -322,7 +321,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         GlobalFormsAction multiviewConfigAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG,
                 FormsPlugin.getPlugin( ), request.getLocale( ) );
         if ( !RBACService.isAuthorized( (RBACResource) multiviewConfigAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION,
-                AdminUserService.getAdminUser( request ) ) )
+                (User) AdminUserService.getAdminUser( request ) ) )
         {
             throw new AccessDeniedException( UNAUTHORIZED );
         }

@@ -148,7 +148,7 @@ public class FormColumnCellComparator implements Comparator<FormColumnCell>, Ser
         String strObjectOneRepresentation = String.valueOf( objectOne );
         String strObjectTwoRepresentation = String.valueOf( objectTwo );
 
-        if ( NumberUtils.isNumber( strObjectOneRepresentation ) && NumberUtils.isNumber( strObjectTwoRepresentation ) )
+        if ( NumberUtils.isCreatable( strObjectOneRepresentation ) && NumberUtils.isCreatable( strObjectTwoRepresentation ) )
         {
             BigDecimal numOne = NumberUtils.createBigDecimal( strObjectOneRepresentation );
             BigDecimal numTwo = NumberUtils.createBigDecimal( strObjectTwoRepresentation );

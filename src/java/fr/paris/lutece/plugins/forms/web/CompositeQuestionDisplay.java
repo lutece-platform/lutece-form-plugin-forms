@@ -314,6 +314,31 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         return strTemplate;
     }
 
+    private void setQuestionVisibilityReadOnlyBO( List<Response> listResponse )
+    {
+        List<Control> listConditionalControl = ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ), ControlType.CONDITIONAL );
+        Control controlConditionnalDisplay = null;
+
+        if ( !listConditionalControl.isEmpty( ) )
+        {
+            controlConditionnalDisplay = listConditionalControl.get( 0 );
+        }
+
+        // No Conditional Display
+        if ( controlConditionnalDisplay == null )
+        {
+            _question.setIsVisible( true );
+        }
+        else
+        {
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _question.getEntry( ) );
+            // If there is a conditional display, shows question if it has responses or if it is a comment
+            if ( CollectionUtils.isNotEmpty( listResponse ) || entryTypeService instanceof AbstractEntryTypeComment )
+            {
+                _question.setIsVisible( true );
+            }
+        }
+    }
     /**
      * 
      * @param listResponse
@@ -325,28 +350,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
         if ( displayType == DisplayType.READONLY_BACKOFFICE && _formDisplay != null )
         {
-            List<Control> listConditionalControl = ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ), ControlType.CONDITIONAL );
-            Control controlConditionnalDisplay = null;
-
-            if ( !listConditionalControl.isEmpty( ) )
-            {
-                controlConditionnalDisplay = listConditionalControl.get( 0 );
-            }
-
-            // No Conditional Display
-            if ( controlConditionnalDisplay == null )
-            {
-                _question.setIsVisible( true );
-            }
-            else
-            {
-                IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _question.getEntry( ) );
-                // If there is a conditional display, shows question if it has responses or if it is a comment
-                if ( CollectionUtils.isNotEmpty( listResponse ) || entryTypeService instanceof AbstractEntryTypeComment )
-                {
-                    _question.setIsVisible( true );
-                }
-            }
+            setQuestionVisibilityReadOnlyBO( listResponse );
         }
         if ( _question.getEntry( ) == null )
         {
@@ -394,7 +398,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     @Override
     public void iterate( int nIdFormDisplay )
     {
-
+        // Nothing to do
     }
 
     /**

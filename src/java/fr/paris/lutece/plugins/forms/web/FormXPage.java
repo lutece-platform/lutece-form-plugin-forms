@@ -265,7 +265,7 @@ public class FormXPage extends MVCApplication
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
-        if ( paramInit != null && paramInit.equals( PARAMETER_INIT ) )
+        if ( PARAMETER_INIT.equals( paramInit ) )
         {
             init( request );
         }
@@ -613,7 +613,7 @@ public class FormXPage extends MVCApplication
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
         String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed );
 
-        if ( formMessage != null && bIsEndMessageDisplayed )
+        if ( formMessage.getEndMessageDisplay( ) )
         {
             model.put( FormsConstants.MARK_INFO, formMessage.getEndMessage( ) );
         }

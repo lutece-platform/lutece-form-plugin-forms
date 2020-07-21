@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.transaction.annotation.Transactional;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -367,16 +368,16 @@ public class FormService
         if ( adminUser != null && adminUser.checkRight( MultiviewFormResponseDetailsJspBean.RIGHT_FORMS_MULTIVIEW ) )
         {
             Form form = FormHome.findByPrimaryKey( nIdForm );
-            if ( form != null && AdminWorkgroupService.isAuthorized( form, adminUser ) )
+            if ( form != null && AdminWorkgroupService.isAuthorized( form, (User) adminUser ) )
             {
                 boolean bRbacModify = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( form.getId( ) ),
-                        FormsResourceIdService.PERMISSION_MODIFY_FORM_RESPONSE, adminUser );
+                        FormsResourceIdService.PERMISSION_MODIFY_FORM_RESPONSE, (User) adminUser );
 
                 boolean bRbacManage = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( form.getId( ) ),
-                        FormsResourceIdService.PERMISSION_MANAGE_FORM_RESPONSE, adminUser );
+                        FormsResourceIdService.PERMISSION_MANAGE_FORM_RESPONSE, (User) adminUser );
 
                 boolean bRbacView = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( form.getId( ) ),
-                        FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, adminUser );
+                        FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) adminUser );
 
                 bUserAccessFile = bRbacModify || bRbacManage || bRbacView;
             }
