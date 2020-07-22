@@ -57,6 +57,8 @@ import fr.paris.lutece.util.url.UrlItem;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -565,15 +567,58 @@ public class FormTransitionJspBean extends AbstractJspBean
     private ReferenceList getTransitionTargetStepReferenceList( int nIdForm, int nIdStep )
     {
         ReferenceList listTransitionTargetSteps = new ReferenceList( );
-
+        List<Transition> transitions = TransitionHome.getTransitionsListFromForm( nIdForm );
         for ( ReferenceItem step : StepHome.getStepReferenceListByForm( nIdForm ) )
         {
-            if ( NumberUtils.toInt( step.getCode( ) ) != nIdStep )
+
+                if ( ( transitions.isEmpty( ) && NumberUtils.toInt( step.getCode( ) ) != nIdStep )
+                        || validateStep ( NumberUtils.toInt( step.getCode( ) ), nIdStep, transitions  ) )
             {
                 listTransitionTargetSteps.add( step );
             }
         }
         return listTransitionTargetSteps;
+    }
+
+    private boolean validateStep( int nStepToValidate, int nIdStep, List<Transition> transitions )
+    {
+
+        return ( ( nStepToValidate != nIdStep
+                && transitions.stream( )
+                        .noneMatch( t -> nIdStep == t.getNextStep( ) && nStepToValidate == t.getFromStep( ) )
+                && transitions.stream( )
+                        .noneMatch( t -> nIdStep == t.getFromStep( ) && nStepToValidate == t.getNextStep( ) )
+                && isTargetStep( nIdStep, nStepToValidate, transitions.stream( ).collect( Collectors.toList( ) ) ) )
+                && ( ( transitions.stream( )
+                        .anyMatch( t -> t.getFromStep( ) != nIdStep && t.getNextStep( ) != nStepToValidate ) ) ||
+
+                        transitions.stream( ).noneMatch( t -> ( t.getFromStep( ) == nStepToValidate )
+                                && ( t.getNextStep( ) == nStepToValidate ) ) ) );
+    }
+
+    private boolean isTargetStep( int myStep, int stepToValidate, List<Transition> transitions )
+    {
+        List<Transition> listT = transitions.stream( ).filter( tr -> myStep == tr.getNextStep( ) )
+                .collect( Collectors.toList( ) );
+
+        if ( listT.size( ) == 0 )
+        {
+            return true;
+        }
+        else
+        {
+            Transition t = listT.get( 0 );
+
+            if ( stepToValidate == t.getFromStep( ) )
+            {
+                return false;
+            }
+            else
+            {
+                transitions.remove( t );
+                return isTargetStep( t.getFromStep( ), stepToValidate, transitions );
+            }
+        }
     }
 
 }
