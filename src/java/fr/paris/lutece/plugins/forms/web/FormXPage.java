@@ -176,7 +176,7 @@ public class FormXPage extends MVCApplication
     @View( value = VIEW_LIST_FORM, defaultView = true )
     public XPage getListFormView( HttpServletRequest request )
     {
-        Locale locale = request.getLocale( );
+        Locale locale = getLocale( request );
         List<Form> listFormsAll = FormHome.getFormList( );
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM_LIST, listFormsAll );
@@ -318,7 +318,7 @@ public class FormXPage extends MVCApplication
             }
         }
 
-        XPage xPage = getXPage( TEMPLATE_VIEW_STEP, request.getLocale( ), model );
+        XPage xPage = getXPage( TEMPLATE_VIEW_STEP, getLocale( request ), model );
         xPage.setTitle( strTitleForm );
         xPage.setPathLabel( strPathForm );
 
@@ -352,7 +352,7 @@ public class FormXPage extends MVCApplication
                             _formResponseManager.getFormResponse( ).getUpdate( ),
                     };
 
-                    model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, request.getLocale( ) ) );
+                    model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, getLocale( request ) ) );
                 }
             }
             else
@@ -371,7 +371,7 @@ public class FormXPage extends MVCApplication
         _stepDisplayTree.addModel( modelForStep );
 
         model.put( STEP_HTML_MARKER,
-                _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), request.getLocale( ), DisplayType.EDITION_FRONTOFFICE ) );
+                _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( request ), DisplayType.EDITION_FRONTOFFICE ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
     }
@@ -399,7 +399,7 @@ public class FormXPage extends MVCApplication
         }
         if ( bSessionLost )
         {
-            addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+            addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
             return redirectView( request, VIEW_STEP );
         }
         try
@@ -444,7 +444,7 @@ public class FormXPage extends MVCApplication
 
         if ( bSessionLost )
         {
-            addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+            addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
             return redirectView( request, VIEW_STEP );
         }
 
@@ -484,7 +484,7 @@ public class FormXPage extends MVCApplication
             findFormFrom( request );
             if ( bSessionLost )
             {
-                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
             }
             fillResponseManagerWithResponses( request, true );
@@ -502,7 +502,7 @@ public class FormXPage extends MVCApplication
                 form.getTitle( )
         }, getLocale( request ) );
 
-        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, request.getLocale( ), model );
+        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, getLocale( request ), model );
         xPage.setTitle( strTitleForm );
         xPage.setPathLabel( form.getTitle( ) );
 
@@ -545,7 +545,7 @@ public class FormXPage extends MVCApplication
         {
             StepDisplayTree stepDisplayTree = new StepDisplayTree( step.getId( ), _formResponseManager.getFormResponse( ) );
 
-            listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( step ), request.getLocale( ),
+            listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request, _formResponseManager.findResponsesFor( step ), getLocale( request ),
                     DisplayType.READONLY_FRONTOFFICE ) );
         }
 
@@ -574,7 +574,7 @@ public class FormXPage extends MVCApplication
             form = findFormFrom( request );
             if ( bSessionLost )
             {
-                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
             }
 
@@ -598,7 +598,7 @@ public class FormXPage extends MVCApplication
         {
 
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-            addError( MESSAGE_ERROR_STEP_NOT_FINAL, request.getLocale( ) );
+            addError( MESSAGE_ERROR_STEP_NOT_FINAL, getLocale( request ) );
             return redirectView( request, VIEW_STEP );
         }
 
@@ -624,7 +624,7 @@ public class FormXPage extends MVCApplication
 
         model.put( FormsConstants.PARAMETER_BACK_URL, strBackUrl );
 
-        XPage xPage = getXPage( TEMPLATE_FORM_SUBMITTED, request.getLocale( ), model );
+        XPage xPage = getXPage( TEMPLATE_FORM_SUBMITTED, getLocale( request ), model );
         xPage.setTitle( form.getTitle( ) );
         xPage.setPathLabel( form.getTitle( ) );
         return xPage;
@@ -791,7 +791,7 @@ public class FormXPage extends MVCApplication
             findFormFrom( request );
             if ( bSessionLost )
             {
-                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
             }
             fillResponseManagerWithResponses( request, true );
@@ -881,7 +881,7 @@ public class FormXPage extends MVCApplication
             form = findFormFrom( request );
             if ( bSessionLost )
             {
-                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
             }
         }
@@ -968,7 +968,7 @@ public class FormXPage extends MVCApplication
             findFormFrom( request );
             if ( bSessionLost )
             {
-                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
             }
 
@@ -1010,7 +1010,7 @@ public class FormXPage extends MVCApplication
             findFormFrom( request );
             if ( bSessionLost )
             {
-                addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+                addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
             }
             fillResponseManagerWithResponses( request, false );
@@ -1050,7 +1050,7 @@ public class FormXPage extends MVCApplication
         boolean bSessionLost = isSessionLost( );
         if ( bSessionLost )
         {
-            addWarning( MESSAGE_WARNING_LOST_SESSION, request.getLocale( ) );
+            addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
             return redirectView( request, VIEW_STEP );
         }
 
@@ -1071,7 +1071,7 @@ public class FormXPage extends MVCApplication
 
             MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
             List<FileItem> fileUploaded = multipartRequest.getFileList( strAttributeName );
-            error = handler.canUploadFiles( wrappedRequest, strAttributeName, fileUploaded, request.getLocale( ) );
+            error = handler.canUploadFiles( wrappedRequest, strAttributeName, fileUploaded, getLocale( request ) );
         }
 
         try
