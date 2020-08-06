@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is the business class for the object Question
@@ -83,6 +84,8 @@ public class Question implements Serializable, Cloneable
     private boolean _bIsFiltrableMultiviewGlobal;
 
     private boolean _bIsFiltrableMultiviewFormSelected;
+    
+    private List<Integer> _listIterationNumber;
 
     /**
      * Returns the Id
@@ -433,5 +436,21 @@ public class Question implements Serializable, Cloneable
     public void setFiltrableMultiviewFormSelected( boolean bIsFiltrableMultiviewFormSelected )
     {
         _bIsFiltrableMultiviewFormSelected = bIsFiltrableMultiviewFormSelected;
+    }
+
+    /**
+     * @return the _listIterationNumber
+     */
+    public List<Integer> getIterationNumbers( )
+    {
+        return _listIterationNumber;
+    }
+
+    /**
+     * @param listIterationNumber the listIterationNumber to set
+     */
+    public void setIterationNumbers( List<Integer> listIterationNumber )
+    {
+        this._listIterationNumber = listIterationNumber;
     }
 }

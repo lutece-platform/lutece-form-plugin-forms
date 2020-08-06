@@ -172,7 +172,15 @@ public final class FormResponseHome
         // Populate FormQuestionResponse
         for ( FormQuestionResponse fqr : formQuestionResponseList )
         {
-            fqr.setQuestion( questionList.stream( ).filter( q -> q.getId( ) == fqr.getQuestion( ).getId( ) ).findFirst( ).orElse( null ) );
+            //FORMS-530
+            List<Question> listIteratedQuestions = questionList.stream( ).filter( q -> fqr.getQuestion( ).getId( ) == q.getId( ) ).collect( Collectors.toList( ) );
+           if ( listIteratedQuestions != null && !listIteratedQuestions.isEmpty( ) )
+           {
+               
+               Question qs = listIteratedQuestions.get( 0 );
+               qs.setIterationNumbers( listIteratedQuestions.stream( ).map( q -> q.getIterationNumber( ) ).distinct( ).collect( Collectors.toList( ) ) );
+               fqr.setQuestion( qs );
+           }
 
             for ( Response resp : fqr.getEntryResponse( ) )
             {

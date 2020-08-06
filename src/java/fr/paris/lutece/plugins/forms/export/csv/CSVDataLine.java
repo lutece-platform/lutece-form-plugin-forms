@@ -100,8 +100,7 @@ public class CSVDataLine
         {
             sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
         }
-
-        _mapDataToExport.put( Pair.of( question.getId( ), question.getIterationNumber( ) ), sbReponseValues.toString( ) );
+          _mapDataToExport.put( Pair.of( question.getId( ), formQuestionResponse.getEntryResponse( ).get( 0 ).getIterationNumber( ) ), sbReponseValues.toString( ) );
     }
 
     /**
@@ -111,7 +110,16 @@ public class CSVDataLine
      */
     public String getDataToExport( Question question )
     {
-        return _mapDataToExport.get( Pair.of( question.getId( ), question.getIterationNumber( ) ) );
+        StringBuilder str = new StringBuilder( );
+        for ( Integer i : question.getIterationNumbers( ) )
+        {
+            if ( _mapDataToExport.get( Pair.of( question.getId( ), i ) ) != null )
+            {
+                str.append( _mapDataToExport.get( Pair.of( question.getId( ), i ) ) );
+            }
+            else str.append( "" );    
+        }
+        return str.toString( );
     }
 
     public String getCommonDataToExport( )
