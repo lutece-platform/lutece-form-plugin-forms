@@ -222,6 +222,10 @@ public class FormStepJspBean extends AbstractJspBean
 
         _step = ( _step != null ) ? _step : new Step( );
         _step.setIdForm( nIdForm );
+        if ( StepHome.getInitialStep( nIdForm ) == null )
+        {
+            _step.setInitial( true );
+        }
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_STEP, _step );
