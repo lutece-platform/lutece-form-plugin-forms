@@ -26,7 +26,11 @@
 						</@formGroup>
 						<#if option_no_display_title>
 							<@formGroup labelFor='no_display_title' labelKey='#i18n{forms.createField.labelNoDisplayTitle}'>
-								<#if field.noDisplayTitle><#assign checked = true /></#if>
+								<#if field.noDisplayTitle><#assign checked = true />
+								<#else>
+									<#assign checked = false />
+								</#if>
+								
 								<@checkBox name='no_display_title' value='1' checked=checked />
 							</@formGroup>
 						</#if>
