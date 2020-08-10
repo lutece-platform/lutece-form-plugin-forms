@@ -57,6 +57,8 @@ import fr.paris.lutece.util.url.UrlItem;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
@@ -565,10 +567,12 @@ public class FormTransitionJspBean extends AbstractJspBean
     private ReferenceList getTransitionTargetStepReferenceList( int nIdForm, int nIdStep )
     {
         ReferenceList listTransitionTargetSteps = new ReferenceList( );
-
+        List<Transition> transitions = TransitionHome.getTransitionsListFromForm( nIdForm );
         for ( ReferenceItem step : StepHome.getStepReferenceListByForm( nIdForm ) )
         {
-            if ( NumberUtils.toInt( step.getCode( ) ) != nIdStep )
+
+                if ( ( transitions.isEmpty( ) && NumberUtils.toInt( step.getCode( ) ) != nIdStep )
+                        || validateStep ( NumberUtils.toInt( step.getCode( ) ), nIdStep, transitions  ) )
             {
                 listTransitionTargetSteps.add( step );
             }
@@ -576,4 +580,28 @@ public class FormTransitionJspBean extends AbstractJspBean
         return listTransitionTargetSteps;
     }
 
+    /**
+     * @param nStepToValidate
+     *              the identifier of the step which will be add to the list of transitions steps
+     * @param nIdStep
+     *              the identifier of the current step
+     * @param transitions
+     *              the list of transitions
+     *              
+     * @return true if the step can be added to the list
+     */
+    private boolean validateStep( int nStepToValidate, int nIdStep, List<Transition> transitions )
+    {
+
+        return ( ( nStepToValidate != nIdStep
+                && transitions.stream( )
+                        .noneMatch( t -> nIdStep == t.getNextStep( ) && nStepToValidate == t.getFromStep( ) )
+                && transitions.stream( )
+                        .noneMatch( t -> nIdStep == t.getFromStep( ) && nStepToValidate == t.getNextStep( ) ) )
+                && ( ( transitions.stream( )
+                        .anyMatch( t -> t.getFromStep( ) != nIdStep && t.getNextStep( ) != nStepToValidate ) ) ||
+
+                        transitions.stream( ).noneMatch( t -> ( t.getFromStep( ) == nStepToValidate )
+                                && ( t.getNextStep( ) == nStepToValidate ) ) ) );
+    }
 }
