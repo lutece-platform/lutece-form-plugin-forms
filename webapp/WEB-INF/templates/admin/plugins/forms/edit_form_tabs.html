@@ -1,14 +1,14 @@
 <#macro formTabs tab >
-    <ul class="nav nav-tabs navbar-left" role="tablist">
+    <@ul class="nav nav-tabs navbar-left" role="tablist">
         <li <#if tab="steps">class="active"</#if>>
-            <a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}">
-                <i class="fa fa-step-forward"></i> #i18n{forms.modify_form.tab.labelSteps}
-            </a>
+        	<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}'>
+            	<@icon style='step-forward' /> #i18n{forms.modify_form.tab.labelSteps}
+            </@link>
         </li>
         <li <#if tab="general">class="active"</#if>>
-            <a href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}">
-                <i class="fa fa-cog"></i> #i18n{forms.modify_form.tab.labelGeneral}
-            </a>
+        	<@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}'>
+                <@icon style='step-cog' /> #i18n{forms.modify_form.tab.labelGeneral}
+            </@link>
         </li>
         <!-- 
             <li <#if tab="publication">class="active"</#if>>
@@ -17,7 +17,7 @@
                 </a>
             </li> 
         -->
-    </ul>
+    </@ul>
     <#nested>
 </#macro>
 

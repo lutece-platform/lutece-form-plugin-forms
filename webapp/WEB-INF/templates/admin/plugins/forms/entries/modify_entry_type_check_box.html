@@ -4,8 +4,7 @@
 
 <@breadforms title=entry.entryType.title />
 <@row>
-	<fieldset>
-		<legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"</legend>
+	<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' legendClass='sr-only' >
 		<@columns md=3 lg=3 xl=3>
 			<@box color='primary'>
 				<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
@@ -20,9 +19,9 @@
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true rows=2>
 							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
 						</@formGroup>
-                                                <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-                                                    <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
-                                                </@formGroup>
+                        <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                            <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+                        </@formGroup>
 						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}' rows=2>
 							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
 						</@formGroup>
@@ -64,7 +63,7 @@
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' rows=2>
 							<@input type='text' name='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
-                                                                ${question_modify_template!}
+                         ${question_modify_template!}
 						<@formGroup rows=2>
 							<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false />
 							<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false />
@@ -84,8 +83,7 @@
 					</@tform>
 				</@boxHeader>
 				<@boxBody>
-					<fieldset>
-						<legend class="sr-only">#i18n{forms.createEntry.manageField.title}</legend>
+					<@fieldSet legend='#i18n{forms.createEntry.manageField.title}' legendClass='sr-only' >
 						<a name="list" id="list"></a>
 						<@table>
 							<tr> 
@@ -131,10 +129,10 @@
 								</#if>
 							</#list> 
 						</@table>
-					</fieldset>
+					</@fieldSet>
 				</@boxBody>
 			</@box>
 		</@columns>
-	</fieldset>
+	</@fieldSet>
 </@row>
 <@initEditor />

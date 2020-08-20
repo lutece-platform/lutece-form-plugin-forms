@@ -23,7 +23,7 @@
                                 <#if form.actions?exists>
                                     <#list form.actions as action>
                                         <#if action.permission=='MODIFY'>
-                                            <a href="${action.url}&id_form=${form.id}" title="${form.title}" class="btn btn-link" >
+                                            <@link href="${action.url}&id_form=${form.id}" title="${form.title}" class="btn btn-link" />
                                             <#assign hasAction=true />
                                             <#break>
 	                                    </#if>
@@ -68,13 +68,13 @@
                                     </#list>
                                 </#if>
                                 <#if form.active>
-                                    <a class="btn btn-link" href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" title="#i18n{forms.manageForm.FOLink.label} ${form.title}" target="_blank">
-                                        <i class="fa fa-external-link fa-fw"></i>
-                                    </a>
+                                    <@link class="btn btn-link" href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" title="#i18n{forms.manageForm.FOLink.label} ${form.title}" target="_blank">
+                                        <@icon style='external-link' class='fa-fw' />
+                                    </@link>
                                 </#if>
                             </td>
                             <td class="hidden-xs col-sm-2">
-                                <a class="btn btn-link btn-flat publish" href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}" title="#i18n{forms.action.publish.name}" data-toggle="modal" data-target="#pubModal">
+                                <@link class="btn btn-link btn-flat publish" href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}" title="#i18n{forms.action.publish.name}" params='data-toggle="modal" data-target="#pubModal"' >
                                     <#setting locale=locale.language>
                                     <#if form.active>
                                         <@icon style='check' class='fa-fw text-success' />&nbsp;
@@ -94,7 +94,7 @@
                                             <@icon style='close' class='fa-fw text-danger' /> <@tag color='danger' >Indisponible</@tag>
                                         </#if> 
                                     </#if>
-                                </a>
+                                </@link>
                             </td>
                         </tr>
                     </#list>

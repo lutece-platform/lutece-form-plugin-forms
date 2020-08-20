@@ -7,7 +7,7 @@
             <#if step.final && step.initial>   
                 <li class="active">${form.title}</li>
             <#else>    
-                <li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" title="Liste des étapes">${form.title}</a></li>
+                <li><@link href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" title="Liste des étapes">${form.title}</@link></li>
                 <li class="active">${step.title}</li>
             </#if> 
         </@formBreadCrumb>
@@ -15,12 +15,12 @@
             <@boxBody>
                 <@tabs color='clearfix'>
                     <@formStepTabs tab="questions">
-                    <ul class="nav navbar-nav navbar-right">
+                    <@ul class="nav navbar-nav navbar-right">
                         <#if form.active>
                             <li>
-                                <a class="btn btn-link" href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" style="padding:6px 15px; margin-right: 15px" title="#i18n{forms.manageForm.FOLink.label} ${form.title}" target="_blank">
-                                    <i class="fa fa-external-link fa-fw"></i> #i18n{forms.manageForm.FOLink.label}
-                                </a>
+                                <@link class="btn btn-link" href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" params='style="padding:6px 15px; margin-right: 15px"' title="#i18n{forms.manageForm.FOLink.label} ${form.title}" target="_blank">
+                                    <@icon style='external-link' class="fa-fw" /> #i18n{forms.manageForm.FOLink.label}
+                                </@link>
                             </li>
                         </#if>
                         <#if step.final && step.initial>   
@@ -30,12 +30,12 @@
                                     <input type="hidden" name="id_step" value="${step.id}">
                                     <input type="hidden" name="title" value="${step.title}">
                                     <button  class="btn btn-info btn-sm" name="action_modifyStep" type="submit">
-                                        <i class="fa fa-cog"></i> #i18n{forms.manage_questions.action.step}
+                                        <@icon style="cog" /> #i18n{forms.manage_questions.action.step}
                                     </button>
                                 </@tform> 
                             </li>
                         </#if>  
-                        </ul>      
+                        </@ul>      
                     </@formStepTabs>
                 </@tabs>
                 <@tabContent>
@@ -106,7 +106,7 @@
                                                 <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn-iframe'  title='#i18n{forms.manage_questions.action.control}' params=group?then('style="visibility:hidden;"','') buttonIcon='check' color='btn-link' />
                                                 <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=duplicateQuestion&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}' class='btn-into'  title='#i18n{forms.manage_questions.action.copy}' params=group?then('style="visibility:hidden;"','') buttonIcon='copy' color='btn-link' />
                                             </td>
-                                            <td class="<#if group>bg-gray</#if>" style="vertical-align: middle"><#if group><i class="fa fa-minus-square-o fa-fw group-toggle"></i></#if></td>
+                                            <td class="<#if group>bg-gray</#if>" style="vertical-align: middle"><#if group><@icon style='minus-square-o' class='fa-fw group-toggle' /></#if></td>
                                         </tr>
                                     </#list>
                                     </tbody>

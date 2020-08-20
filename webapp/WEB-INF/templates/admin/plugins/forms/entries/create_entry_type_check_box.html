@@ -6,8 +6,7 @@
 <@box color='primary'>
     <@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
     <@boxBody>
-        <fieldset>
-            <legend class="sr-only">#i18n{forms.createEntry.titleQuestion} : '${form.title}'</legend>
+        <@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' legendClass='sr-only'>
             <@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
                 <input name="id_type" value="${entry.entryType.idType}" type="hidden">
                 <#if entry.fieldDepend?exists>
@@ -61,14 +60,14 @@
                 <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
                     <@input type='text' name='css_class' value='' maxlength=255 />
                 </@formGroup>
-                        ${question_create_template!}
+                ${question_create_template!}
                 <@formGroup>
                     <@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
                     <@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.createEntry.buttonApplyAndManageResponse}' showTitleXs=false size='' />
                     <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />
                 </@formGroup>
             </@tform>
-        </fieldset>
+        </@fieldSet>
     </@boxBody>
 </@box>
 

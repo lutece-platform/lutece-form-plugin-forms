@@ -3,7 +3,7 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <div class="form-group">
   <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+  <@columns sm=12 md=6 lg=6>
     <#if user??>
       <#list entry.fields as field>
         <span class="${entry.CSSClass!} " >${user.getUserInfo(field.value )}</span>
@@ -12,5 +12,5 @@
     <#if entry.helpMessage?exists&&entry.helpMessage!=''>
       <span class="help-block">${entry.helpMessage}</span>
     </#if>
-  </div>
+  </@columns>
 </div>

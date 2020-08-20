@@ -1,17 +1,17 @@
 <#macro formStepTabs tab >
-    <ul class="nav nav-tabs navbar-left" role="tablist">
+    <@ul class="nav nav-tabs navbar-left" role="tablist">
         <li <#if tab="questions">class="active"</#if>>
-            <a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}">
-                <i class="fa fa-th-list"></i> #i18n{forms.manage_questions.title}
-            </a>
+            <@link href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}">
+            	<@icon style='th-list' /> #i18n{forms.manage_questions.title}
+            </@link>
         </li>
         <#if !step.final>   
             <li <#if tab="transitions" || tab="general">class="active"</#if>>
-                <a href="jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}">
-                    <i class="fa fa-cog"></i> #i18n{forms.modify_step.labelTitle}
-                </a>
+                <@link href="jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}">
+                    <@icon style='cog' /> #i18n{forms.modify_step.labelTitle}
+                </@link>
             </li>
         </#if>    
-    </ul>
+    </@ul>
     <#nested>
 </#macro>

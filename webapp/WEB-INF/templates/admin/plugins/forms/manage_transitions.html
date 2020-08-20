@@ -12,7 +12,7 @@
 <@row>
     <@columns>
         <@formBreadCrumb>
-            <li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" title="Liste des étapes">${form.title}</a></li>
+            <li><@link href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" title="Liste des étapes">${form.title}</@link></li>
             <li class="active">${step.title}</li>
         </@formBreadCrumb>
         <@box color='primary'>

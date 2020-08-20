@@ -1,6 +1,7 @@
 
 <@formBreadCrumb>
-    <li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="Retour Formulaire">...</i></a></li><li><a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="Retour Etape">${step.title}</a></li>
+    <li><@link href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="Retour Formulaire">...</@link></li>
+    <li><@link href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="Retour Etape">${step.title}</@link></li>
     <li class="active">#i18n{forms.create_group.title}</li>
 </@formBreadCrumb>
 <@box color='primary'>

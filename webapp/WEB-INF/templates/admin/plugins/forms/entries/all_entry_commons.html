@@ -2,13 +2,13 @@
 <#macro breadforms title=''>
 <@breadcrumbs id='breadforms' > 
 	<li>
-		<a href="jsp/admin/plugins/forms/ManageForms.jsp" title="Retour"><i class="fa fa-home fa-fw"></i></a>
+		<@link href="jsp/admin/plugins/forms/ManageForms.jsp" title="Retour"><@icon style='home' class='fa-fw' /></@link>
 	</li>
 	<li>
-		<a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" title="Liste des étapes">${form.title}</a>
+		<@link href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" title="Liste des étapes">${form.title}</@link>
 	</li>
 	<li>
-		<a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="Liste des questions">${step.title}</a>
+		<@link href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="Liste des questions">${step.title}</@link>
 	</li>
 	<li class="active">
 		${title}
@@ -100,8 +100,7 @@ changeVisilityConfirmFieldTitle();
         </@tform>
     </@boxHeader>
     <@boxBody>
-    <fieldset>
-        <legend class="sr-only">#i18n{forms.createEntry.manageField.title}</legend>
+    <@fieldSet legend='#i18n{forms.createEntry.manageField.title}' legendClass='sr-only'>
         <a name="list" id="list"></a>
         <@table>
             <tr> 
@@ -132,7 +131,7 @@ changeVisilityConfirmFieldTitle();
 			</#list> 
         
         </@table>
-    </fieldset>
+    </@fieldSet>
     </@boxBody>
 </@box>
 </#macro>
@@ -144,20 +143,19 @@ changeVisilityConfirmFieldTitle();
         <@box color='primary'>
             <@boxHeader title='${itle}' />
             <@boxBody>
-                <fieldset>
-                <legend class="sr-only">#i18n{forms.createEntry.manageRegularExpression.title}</legend>
-                <@tform action='${action}'>
-                    <input name="id_field" value="${idField}" type="hidden">
-                    <@formGroup labelFor='id_expression' labelKey='#i18n{forms.createEntry.manageRegularExpression.labelInsert}' helpKey='#i18n{forms.createEntry.manageRegularExpression.labelInsertComment}'>
-                        <@inputGroup>
-                            <@select name='id_expression' id='id_expression' items=regular_expression_list default_value='-1' size='sm' />
-                            <@inputGroupItem>
-                                <@button type='submit' title='#i18n{forms.createEntry.manageRegularExpression.buttonInsert}' showTitle=false buttonIcon='plus' />
-                            </@inputGroupItem>
-                        </@inputGroup>
-                    </@formGroup>
-                </@tform>
-                </fieldset>
+                <@fieldSet legend='#i18n{forms.createEntry.manageRegularExpression.title}' legendClass='sr-only'>
+	                <@tform action='${action}'>
+	                    <input name="id_field" value="${idField}" type="hidden">
+	                    <@formGroup labelFor='id_expression' labelKey='#i18n{forms.createEntry.manageRegularExpression.labelInsert}' helpKey='#i18n{forms.createEntry.manageRegularExpression.labelInsertComment}'>
+	                        <@inputGroup>
+	                            <@select name='id_expression' id='id_expression' items=regular_expression_list default_value='-1' size='sm' />
+	                            <@inputGroupItem>
+	                                <@button type='submit' title='#i18n{forms.createEntry.manageRegularExpression.buttonInsert}' showTitle=false buttonIcon='plus' />
+	                            </@inputGroupItem>
+	                        </@inputGroup>
+	                    </@formGroup>
+	                </@tform>
+                </@fieldSet>
                 <a name="list" id="list"></a>
                 <@table>
                     <tr> 

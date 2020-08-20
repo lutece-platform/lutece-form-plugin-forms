@@ -8,8 +8,7 @@
 		<@box color='primary'>
 			<@boxHeader title='#i18n{forms.modifyEntry.titleComment} : "${form.title}"' />
 			<@boxBody>
-				<fieldset>
-					<legend class="sr-only">#i18n{forms.modifyEntry.titleComment} : '${form.title}'</legend>
+				<@fieldSet legend='#i18n{forms.modifyEntry.titleComment} : "${form.title}"' legendClass='sr-only' >
 					<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
                     <input name="id_entry" value="${entry.idEntry}" type="hidden" />
                     <input name="id_step" value="${step.id}" type="hidden" />
@@ -39,7 +38,7 @@
 							<@button type='button' name='cancel' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' params='onclick="javascript:window.history.back();"' />
 						</@formGroup>
 					</@tform>
-				</fieldset>
+				</@fieldSet>
 			</@boxBody>
 		</@box>
 	</@columns>

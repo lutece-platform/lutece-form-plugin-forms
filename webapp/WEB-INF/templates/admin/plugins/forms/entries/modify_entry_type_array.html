@@ -9,8 +9,7 @@
 		<@box color='primary'>
 			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
-				<fieldset>
-				<legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"</legend>
+				<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' legendClass='sr-only' >
                     <input name="id_entry" value="${entry.idEntry}" type="hidden" />
                     <input name="id_step" value="${step.id}" type="hidden" />
                     <input name="id_question" value="${question.id}" type="hidden" />
@@ -20,9 +19,9 @@
 					<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true rows=2>
 						<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
 					</@formGroup>
-                                        <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-                                            <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
-                                        </@formGroup>
+                    <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                        <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+                    </@formGroup>
 					<@formGroup labelFor='num_row' labelKey='#i18n{forms.createEntry.labelNumberRows}' mandatory=true rows=2>
 						<@input type='text' name='num_row' id='num_row' value=getFieldValueByCode(entry, "array_row") maxlength=255 readonly=true />
 					</@formGroup>
@@ -41,12 +40,13 @@
 					<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
 						<@checkBox name='exportable' id='exportable' value='1' checked=entry.exportable />
 					</@formGroup>
-                                        ${question_modify_template!}
+                	${question_modify_template!}
 					<@formGroup rows=2>
 						<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
 						<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' showTitleXs=false size='' />
 						<@button type='submit' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />
 					</@formGroup>
+				</@fieldSet>
 			</@boxBody>
 		</@box>
 	</@columns>
@@ -69,9 +69,9 @@
 								</#if>
 							</#list>
 								<#if j==1 && i!=1>
-									<input type="text" id="field_${i}_${j}" name="field_${i}_${j}" class="form-control" value="${title!}"> 
+									<@input type='text' id="field_${i}_${j}" name="field_${i}_${j}" value="${title!}" />
 								<#elseif i == 1 && j != 1>
-									<input type="text" id="field_${i}_${j}" name="field_${i}_${j}" class="form-control" value="${title!}">
+									<@input type='text' id="field_${i}_${j}" name="field_${i}_${j}" value="${title!}" />
 								<#elseif i == 1 && j == 1>
 									<b>${entry.comment}</b>
 								<#else>

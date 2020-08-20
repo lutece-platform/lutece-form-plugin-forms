@@ -1,7 +1,7 @@
 
 <@formBreadCrumb>
-    <li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="Retour Formulaire">...</i></a></li>
-    <li><a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="Retour Etape">${step.title}</a></li>
+    <li><@link href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="Retour Formulaire">...</i></@link></li>
+    <li><@link href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="Retour Etape">${step.title}</@link></li>
     <li class="active">#i18n{forms.modify_transition_control.title}</li></ul>
 </@formBreadCrumb>
 <@box>
@@ -32,7 +32,7 @@
 		<#list control.listIdQuestion as question >
 			<#list listQuestion as q >
 				<#if question == q.code?number>
-					<a href="jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}" title="remove"><i class="fa fa-trash" aria-hidden="true"></i>${q.name!}</i></a>
+					<@link href="jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}" title="remove"><@icon style="trash" />${q.name!}</@link>
 				</#if>
 			</#list>
 		</#list>	

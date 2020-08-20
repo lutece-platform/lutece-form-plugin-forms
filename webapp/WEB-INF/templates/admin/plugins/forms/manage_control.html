@@ -1,7 +1,7 @@
 
 <@formBreadCrumb>
-    <li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="Retour Formulaire">...</i></a></li>
-    <li><a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="Retour Etape">${step.title}</a></li>
+    <li><@link href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="Retour Formulaire">...</i></@link></li>
+    <li><@link href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="Retour Etape">${step.title}</@link></li>
     <li class="active">#i18n{forms.manage_controls.title.${control_type?lower_case}}</li></ul>
 </@formBreadCrumb>
 <@row>
@@ -42,9 +42,9 @@
                         <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' showTitleXs=false size='' />
                     </#if> 
                 -->
-            <#else>    
+            <#else>
                 <div class="alert alert-warning">
-                    <i class="fa fa-warning fa-fw"></i> #i18n{forms.manage_transitions.labelNoControl}
+                	<@icon style='warning' class='fa-fw' /> #i18n{forms.manage_transitions.labelNoControl}
                 </div>
             </#if>    
                 <@messages errors=errors />

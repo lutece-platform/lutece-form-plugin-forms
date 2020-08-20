@@ -7,8 +7,7 @@
 	<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
 	<@boxBody>
 		<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
-			<fieldset>
-				<legend class="sr-only">#i18n{forms.createEntry.titleQuestion} : "${form.title}"</legend>
+			<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' legendClass='sr-only'>
 				<input name="id_type" value="${entry.entryType.idType}" type="hidden">
 				<#if entry.fieldDepend?exists>
 					<input name="id_field" value="${entry.fieldDepend.idField}" type="hidden">
@@ -21,9 +20,9 @@
 				<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
 					<@input type='text' name='title' id='title' inputSize=80 value='' maxlength=255 />
 				</@formGroup>
-                                <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-                                    <@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
-                                </@formGroup>
+	            <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+	                <@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
+	            </@formGroup>
 				<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
 					<@input type='textarea' name='help_message' id='help_message' rows=2></@input>
 				</@formGroup>
@@ -53,23 +52,23 @@
 					<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=false />
 				</@formGroup>
 				<@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
-				<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=false />
-			</@formGroup>
-			<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
-				<@checkBox name='exportable' id='exportable' value='1' checked=false />
-			</@formGroup>
+					<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=false />
+				</@formGroup>
+				<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
+					<@checkBox name='exportable' id='exportable' value='1' checked=false />
+				</@formGroup>
 				<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 					<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 				</@formGroup>
-										<@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-											<@checkBox name='is_indexed' id='is_indexed' value='1' checked=true />
-										</@formGroup>
+				<@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+					<@checkBox name='is_indexed' id='is_indexed' value='1' checked=true />
+				</@formGroup>
 				<@formGroup>
 					<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
 					<@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.creatyEntry.buttonApply}' showTitleXs=false size='' />
 					<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />
 				</@formGroup>
-			</fieldset>
+			</@fieldSet>
 		</@tform>
 	</@boxBody>
 </@box>

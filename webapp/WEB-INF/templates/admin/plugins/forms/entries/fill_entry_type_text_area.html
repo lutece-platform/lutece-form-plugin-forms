@@ -19,7 +19,7 @@
 <div class="form-group">
   <#assign idName = buildEntryName( entry, entry_iteration_number )>
   <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+  <@columns sm=12 md=6 lg=6>
     <#assign field=getFieldByCode( entry, "text_config")>
       <#if list_responses?? && list_responses?has_content>
         <#list list_responses as response>
@@ -41,7 +41,7 @@
     <#if entry.helpMessage?exists&&entry.helpMessage!=''>
       <span class="help-block">${entry.helpMessage}</span>
     </#if>
-  </div>
+  </@columns>
 </div>
 
 <#if list_responses??>

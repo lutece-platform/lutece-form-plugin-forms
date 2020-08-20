@@ -5,8 +5,7 @@
 		<@box color='primary'>
 			<@boxHeader title='#i18n{forms.createField.title} : "${field.parentEntry.title}"' />
 			<@boxBody>
-        		<fieldset>
-					<legend class="sr-only">#i18n{forms.createField.title} : "${field.parentEntry.title}"</legend>
+				<@fieldSet legend='#i18n{forms.createField.title} : "${field.parentEntry.title}"' legendClass='sr-only'>
 					<@tform action='jsp/admin/plugins/forms/ModifyEntry.jsp'>
 					<input name="id_step" value="${question.idStep}" type="hidden" />
                     <input name="id_question" value="${question.id}" type="hidden" />
@@ -34,7 +33,7 @@
 							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' showTitleXs=false color='btn-secondary' />
 						</@formGroup>
 					</@tform>
-        		</fieldset>
+        		</@fieldSet>
 			</@boxBody>
 		</@box>
 	</@columns>

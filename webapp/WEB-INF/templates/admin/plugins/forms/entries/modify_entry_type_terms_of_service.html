@@ -10,8 +10,7 @@
       <@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
       <@boxBody>
         <@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
-          <fieldset>
-            <legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : '${form.title}'</legend>
+          <@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' legendClass='sr-only' >
             <input name="id_entry" value="${entry.idEntry}" type="hidden" />
             <input name="id_step" value="${step.id}" type="hidden" />
             <input name="id_question" value="${question.id}" type="hidden" />
@@ -45,7 +44,7 @@
               <@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
               <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />
             </@formGroup>		
-          </fieldset>
+          </@fieldSet>
         </@tform>
       </@boxBody>
     </@box>

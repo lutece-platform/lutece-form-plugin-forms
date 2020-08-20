@@ -6,8 +6,7 @@
 	<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}' />
 	<@boxBody>
 		<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
-			<fieldset>
-				<legend class="sr-only">#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}</legend>
+			<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}' legendClass='sr-only'>
 				<input name="id_type" value="${entry.entryType.idType}" type="hidden">
 				<#if entry.fieldDepend?exists>
 					<input name="id_field" value="${entry.fieldDepend.idField}" type="hidden">
@@ -20,9 +19,9 @@
 				<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
 					<@input type='text' name='title' id='title' value='' maxlength=255 />
 				</@formGroup>
-                                <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-                                    <@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
-                                </@formGroup>
+                <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                    <@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
+                </@formGroup>
 				<@formGroup labelFor='prefix' labelKey='#i18n{forms.createEntry.labelPrefix}' helpKey='#i18n{forms.createEntry.labelPrefixComment}'>
 					<@input type='text' name='prefix' id='prefix' value='' maxlength=255 />
 				</@formGroup>
@@ -32,13 +31,13 @@
 				<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
 					<@checkBox name='exportable' id='exportable' value='1' checked=false />
 				</@formGroup>
-										${question_create_template!}
+				${question_create_template!}
 				<@formGroup>
 					<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
 					<@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.creatyEntry.buttonApply}' showTitleXs=false size='' />
 					<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />
 				</@formGroup>
-			</fieldset>
+			</@fieldSet>
 		</@tform>
 	</@boxBody>
 </@box>

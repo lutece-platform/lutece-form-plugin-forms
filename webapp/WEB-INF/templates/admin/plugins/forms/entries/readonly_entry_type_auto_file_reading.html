@@ -12,9 +12,9 @@
                 <div class="col-xs-12 col-sm-9 col-sm-offset-3">
             </#if>
             <#if response.file?exists>
-                <a href="jsp/admin/plugins/forms/FormsDownloadFile.jsp?id_file=${response.file.idFile}&id_response=${response.idResponse}"/>
+                <@link href="jsp/admin/plugins/forms/FormsDownloadFile.jsp?id_file=${response.file.idFile}&id_response=${response.idResponse}">
                     ${response.file.title}(${response.file.size} O)
-                </a>
+                </@link>
             </#if>
             </div>
         </#list>

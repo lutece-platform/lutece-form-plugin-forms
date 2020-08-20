@@ -6,8 +6,7 @@
 <@box color='primary'>
     <@boxBody>
         <@tform method="post" name="manage_entries" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
-            <fieldset>
-                <legend class="sr-only">#i18n{forms.createEntry.titleQuestion} : '${form.title}'</legend>
+            <@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' legendClass='sr-only'>
                 <input name="id_type" value="${entry.entryType.idType}" type="hidden">
                 <#if entry.fieldDepend?exists>
                     <input name="id_field" value="${entry.fieldDepend.idField}" type="hidden">
@@ -76,7 +75,7 @@
                     <@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' size='' />
                     <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' size='' color='btn-secondary' />
                 </@formGroup>
-            </fieldset>
+            </@fieldSet>
         </@tform>
     </@boxBody>
 </@box>

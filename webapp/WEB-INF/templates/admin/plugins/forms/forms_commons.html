@@ -304,9 +304,9 @@ $( function(){
 <#macro formBreadCrumb >
 <ol id="breadforms" class="breadcrumb">
 	<li>
-		<a href="jsp/admin/plugins/forms/ManageForms.jsp" title="Retour Liste des formulaire">
-			<i class="fa fa-home fa-fw"></i>
-		</a>
+		<@link href="jsp/admin/plugins/forms/ManageForms.jsp" title="Retour Liste des formulaire">
+			<@icon style='home' class='fa-fw'/>
+		</@link>
 	</li>
 	<#nested>
 </ol>
@@ -330,34 +330,32 @@ $( function(){
 
 <#macro formsButton okAction='' viewAction=''  >
 <div class="form-group">
-	<div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
+	<@columns offsetSm=3 sm=8 offsetMd=3 md=8 >
   	<button  class="btn btn-link" id="action_${okAction}" name="action_${okAction}" type="submit">
-    	<i class='fa fa-check text-success'></i> #i18n{portal.admin.message.buttonValidate}
+  		<@icon style='check' class='text-success' /> #i18n{portal.admin.message.buttonValidate}
+	</button>
+	<#nested>
+	<#if viewAction !=''>
+		<button class="btn btn-link" name="view_${viewAction}" type="submit" formnovalidate >
+			<@icon style='close' class='text-danger' /> #i18n{portal.admin.message.buttonCancel}
 		</button>
-		<#nested>
-		<#if viewAction !=''>
-			<button class="btn btn-link" name="view_${viewAction}" type="submit" formnovalidate >
-				<i class='fa fa-close text-danger'></i> #i18n{portal.admin.message.buttonCancel}
-			</button>
-		</#if>
-  </div>
+	</#if>
+  </@columns>
 </div>
 </#macro>
 
 <#macro formModel >
 	<@row> 
 		<@columns xs=12 sm=7> 
-				<fieldset>
-						<legend>#i18n{forms.modify_form.labelDescription}</legend>   
-						<@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true rows=2>
-								<@input type='text' name='title' value='${form.title!}' />
-						</@formGroup>
-						<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
-								<@input type='textarea' name='description'>${form.description!}</@input>
-						</@formGroup>
-				</fieldset>
-				<fieldset>
-						<legend>#i18n{forms.create_form.labelDates}</legend>       
+				<@fieldSet legend='#i18n{forms.modify_form.labelDescription}' >
+					<@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true rows=2>
+							<@input type='text' name='title' value='${form.title!}' />
+					</@formGroup>
+					<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
+							<@input type='textarea' name='description'>${form.description!}</@input>
+					</@formGroup>
+				</@fieldSet>
+				<@fieldSet legend='#i18n{forms.create_form.labelDates}'>
 						<@row>
 								<@columns xs=12 sm=6>   
 										<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
@@ -380,9 +378,8 @@ $( function(){
 										</@formGroup>
 								</@columns>            
 						</@row>
-				</fieldset>
-				<fieldset>
-				<legend>#i18n{forms.create_form.display.labelRestrictions}</legend> 
+				</@fieldSet>
+				<@fieldSet legend='#i18n{forms.create_form.display.labelRestrictions}'>
 						<@row>     
 								<@columns xs=12 sm=4>  
 										<@formGroup labelFor='max_number_response' labelKey='#i18n{forms.createForm.labelMaxNumberResponse}' helpKey='#i18n{forms.create_form.labelMaxNumberResponseComment.help}' rows=2>
@@ -400,40 +397,37 @@ $( function(){
 										</@formGroup>
 								</@columns> 
 						</@row>          
-				</fieldset>
-				<fieldset>
-						<legend>#i18n{forms.create_form.display.label}</legend>
+				</@fieldSet>
+				<@fieldSet legend='#i18n{forms.create_form.display.label}'>
 						<@columns xs=12 sm=6> 
 								<@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true rows=2>
 										<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
 								</@formGroup>
 						</@columns> 
-				</fieldset>   
+				</@fieldSet>   
 		</@columns>
 		<@columns xs=12 sm=5>  
-		<fieldset>
-				<legend>#i18n{forms.create_form.labelDisplaySummary}</legend>
-						<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
-								<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
-						</@formGroup>
-						<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
-								<@checkBox labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
-						</@formGroup>
-						<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
-								<@checkBox labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
-						</@formGroup>
-						<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
-								<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
-						</@formGroup>
-				</fieldset> 
-				<#if workflow_list?has_content && workflow_list?size gt 1>
-						<fieldset>
-								<legend>#i18n{forms.modify_form.workflow.label}</legend>    
-								<@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' rows=2>
-										<@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
-								</@formGroup>
-						</fieldset> 
-				</#if>
+		<@fieldSet legend ='#i18n{forms.create_form.labelDisplaySummary}'>
+				<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
+						<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
+						<@checkBox labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
+						<@checkBox labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
+						<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
+				</@formGroup>
+		</@fieldSet> 
+			<#if workflow_list?has_content && workflow_list?size gt 1>
+				<@fieldSet legend ='#i18n{forms.modify_form.workflow.label}'>
+					<@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' rows=2>
+							<@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
+					</@formGroup>
+				</@fieldSet> 
+			</#if>
 		</@columns>
 </@row>
 </#macro>
@@ -939,12 +933,12 @@ $( function(){
 <th data-field="${field}" class="th-header" id="sort${id!}_${attribute!}">
 	${title}
 	<div class="btn-sort-group" role="group" aria-label="Tri">
-		<a class="btn-sort asc" href="${sort_url}true#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.asc}" >
-			<i class="fa fa-sort-asc fa-fw"></i>
-		</a>	
-		<a class="btn-sort desc" href="${sort_url}false#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.desc}">	
-			<i class="fa fa-sort-desc fa-fw"></i>
-		</a>
+		<@link class="btn-sort asc" href="${sort_url}true#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.asc}" >
+			<@icon style='sort-asc' class='fa-fw' />
+		</@link>	
+		<@link class="btn-sort desc" href="${sort_url}false#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.desc}">	
+			<@icon style='sort-desc' class='fa-fw' />
+		</@link>
 	</div>
 </th>
 </#macro>

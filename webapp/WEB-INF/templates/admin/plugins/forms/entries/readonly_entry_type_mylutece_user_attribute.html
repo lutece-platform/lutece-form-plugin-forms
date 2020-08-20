@@ -1,10 +1,10 @@
 <#if mylutece_user_login?? && mylutece_user_infos_list?has_content>
-    <fieldset>
+    <@fieldSet>
         <label>#i18n{forms.entryType.myLuteceUser.labelLogin} :</label> ${mylutece_user_login}
         <#list mylutece_user_infos_list as user_info>
             <label>#i18n{portal.security.${user_info.code}} :</label> ${user_info.name}
         </#list>
-    </fieldset>
+    </@fieldSet>
 <#else>
     <div class="form-group">
         <label class="col-xs-12 col-sm-3 control-label">
@@ -20,9 +20,9 @@
                     <div class="col-xs-12 col-sm-9 col-sm-offset-3">
                 </#if>
                 <#if form_response?? && response.entry??>
-                    <a href="jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}">
+                    <@link href="jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}">
                         ${response.toStringValueResponse!''}
-                    </a>
+                    </@link>
                 <#else>
                     ${response.toStringValueResponse!''}
                 </#if>

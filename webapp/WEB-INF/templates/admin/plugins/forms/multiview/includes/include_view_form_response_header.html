@@ -1,7 +1,7 @@
 <div id="form-detail-header" class="box box-primary clearfix">
 <div class="box-header">
 	<h3 class="box-title">
-		${form.title} <i class="fa fa-hashtag" title="#i18n{forms.multiviewForms.responseDetails.response.number}"></i> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}">${form_response.id}</strong>
+		${form.title} <@icon style='hashtag' title='#i18n{forms.multiviewForms.responseDetails.response.number}'/> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}">${form_response.id}</strong>
 	</h3>	
     <div class="box-tools">
 		<form id="form-response-detail-header" class="form-inline" action="jsp/admin/plugins/forms/MultiviewForms.jsp" method="get">
@@ -15,7 +15,7 @@
 				</#list>
 			</#if>
 			<button class="btn btn-default btn-sm pull-right" type="submit" >
-				<i class="fa fa-arrow-left"></i> #i18n{portal.util.labelBack}
+				<@icon style='arrow-left' /> #i18n{portal.util.labelBack}
 			</button>
 		</form>
 	</div> 

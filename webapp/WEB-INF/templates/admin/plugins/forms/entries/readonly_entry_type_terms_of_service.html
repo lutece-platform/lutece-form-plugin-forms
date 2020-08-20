@@ -14,7 +14,7 @@
   
   <div class="col-xs-12 col-sm-9">
     <#if responseAgreement?? && responseAgreement.toStringValueResponse == "true">
-      <a href="jsp/site/RunStandaloneApp.jsp?page=formsTermsOfService&view=acceptedTermsOfService&id_response=${(responseTos.idResponse)!}" onclick="javascript:openFormsTermsOfService(this.href); return false;" target="_blank">#i18n{forms.entryType.termsOfService.readOnly.link}</a>
+      <@link href="jsp/site/RunStandaloneApp.jsp?page=formsTermsOfService&view=acceptedTermsOfService&id_response=${(responseTos.idResponse)!}" params='onclick="javascript:openFormsTermsOfService(this.href); return false;"' target="_blank">#i18n{forms.entryType.termsOfService.readOnly.link}</@link>
     <#else>
       <@tag color='warning'><@icon style='exclamation-triangle' /></@tag>&nbsp;#i18n{forms.entryType.termsOfService.readOnly.unknown}
     </#if>
