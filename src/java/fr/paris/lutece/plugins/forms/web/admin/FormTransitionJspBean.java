@@ -33,6 +33,15 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -42,6 +51,7 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.utils.algo.helper.DetectCycleGraphBuilder;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -53,14 +63,6 @@ import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
@@ -324,7 +326,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
         populate( _transition, request, getLocale( ) );
 
-        if ( !validateTransition( _transition ) )
+        if ( detectCircularTransition( _transition ) || !validateTransition( _transition ) )
         {
             return false;
         }
@@ -351,7 +353,7 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         populate( _transition, request, getLocale( ) );
 
-        if ( !validateTransition( _transition ) )
+        if ( detectCircularTransition( _transition ) || !validateTransition( _transition ) )
         {
             return redirect( request, VIEW_MODIFY_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ),
                     FormsConstants.PARAMETER_ID_TRANSITION, _transition.getId( ) );
@@ -362,6 +364,19 @@ public class FormTransitionJspBean extends AbstractJspBean
         addInfo( INFO_TRANSITION_UPDATED, getLocale( ) );
 
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
+    }
+    
+    private boolean detectCircularTransition( Transition newTransition )
+    {
+        List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( _form.getId( ) );
+        listTransitions.add( newTransition );
+        
+        DetectCycleGraphBuilder builder = DetectCycleGraphBuilder.builder( );
+        for ( Transition transition : listTransitions )
+        {
+            builder.addToGraph( transition.getFromStep( ), transition.getNextStep( ) );
+        }
+        return builder.build( ).hasCycle( );
     }
 
     /**
