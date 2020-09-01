@@ -49,7 +49,7 @@ public class FormResponseSearchItem extends SearchItem
 {
     public static final String FIELD_ID_FORM_RESPONSE = "id_form_response";
     public static final String FIELD_DATE_CREATION = "response_creation_date";
-    public static final String FIELD_DATE_UPDATE = "date_update";
+    public static final String FIELD_DATE_UPDATE = "response_update_date";
     public static final String FIELD_GUID = "guid";
     public static final String FIELD_ID_FORM = "id_form";
     public static final String FIELD_FORM_TITLE = "form_title";

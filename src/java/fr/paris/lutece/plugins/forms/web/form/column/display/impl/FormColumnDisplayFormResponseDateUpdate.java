@@ -43,18 +43,18 @@ import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
 /**
- * Implementation of the IFormColumnDisplay for the column of the creation date of a form response
+ * Implementation of the IFormColumnDisplay for the column of the update date of a form response
  */
-public class FormColumnDisplayFormResponseDateCreation extends AbstractFormColumnDisplay
+public class FormColumnDisplayFormResponseDateUpdate extends AbstractFormColumnDisplay
 {
     // Templates
-    private static final String FORM_COLUMN_HEADER_TEMPLATE = "admin/plugins/forms/multiview/column/header/form_column_form_response_date_creation_header.html";
-    private static final String FORM_COLUMN_CELL_TEMPLATE = "admin/plugins/forms/multiview/column/cell/form_column_form_response_date_creation_cell.html";
+    private static final String FORM_COLUMN_HEADER_TEMPLATE = "admin/plugins/forms/multiview/column/header/form_column_form_response_date_update_header.html";
+    private static final String FORM_COLUMN_CELL_TEMPLATE = "admin/plugins/forms/multiview/column/cell/form_column_form_response_date_update_cell.html";
 
     // Marks
-    private static final String MARK_FORM_RESPONSE_DATE_CREATION_COLUMN_TITLE = "column_title";
+    private static final String MARK_FORM_RESPONSE_DATE_UPDATE_COLUMN_TITLE = "column_title";
     private static final String MARK_SORT_URL = "sort_url";
-    private static final String MARK_FORM_RESPONSE_DATE_CREATION = "form_response_date_creation";
+    private static final String MARK_FORM_RESPONSE_DATE_UPDATE = "form_response_date_update";
     private static final String MARK_COLUMN_SORT_ATTRIBUTE = "column_sort_attribute";
 
     /**
@@ -65,8 +65,8 @@ public class FormColumnDisplayFormResponseDateCreation extends AbstractFormColum
     {
         Map<String, Object> model = new LinkedHashMap<>( );
         model.put( MARK_SORT_URL, buildCompleteSortUrl( strSortUrl ) );
-        model.put( MARK_FORM_RESPONSE_DATE_CREATION_COLUMN_TITLE, getFormColumnTitle( locale ) );
-        model.put( MARK_COLUMN_SORT_ATTRIBUTE, FormResponseSearchItem.FIELD_DATE_CREATION );
+        model.put( MARK_FORM_RESPONSE_DATE_UPDATE_COLUMN_TITLE, getFormColumnTitle( locale ) );
+        model.put( MARK_COLUMN_SORT_ATTRIBUTE, FormResponseSearchItem.FIELD_DATE_UPDATE );
 
         String strFormResponseDateCreationHeaderTemplate = AppTemplateService.getTemplate( FORM_COLUMN_HEADER_TEMPLATE, locale, model ).getHtml( );
         setFormColumnHeaderTemplate( strFormResponseDateCreationHeaderTemplate );
@@ -80,20 +80,20 @@ public class FormColumnDisplayFormResponseDateCreation extends AbstractFormColum
     @Override
     public String buildFormColumnCellTemplate( FormColumnCell formColumnCell, Locale locale )
     {
-        Date dateFormResponseDateCreation = null;
+        Date dateFormResponseDateUpdate = null;
         if ( formColumnCell != null )
         {
-            Object objFormResponseDateCreation = formColumnCell.getFormColumnCellValueByName( FormResponseSearchItem.FIELD_DATE_CREATION );
+            Object objFormResponseDateCreation = formColumnCell.getFormColumnCellValueByName( FormResponseSearchItem.FIELD_DATE_UPDATE );
             if ( objFormResponseDateCreation != null )
             {
                 String strTimestamp = String.valueOf( objFormResponseDateCreation );
                 Long convertedLong = Long.parseLong( strTimestamp );
-                dateFormResponseDateCreation = new Date( convertedLong );
+                dateFormResponseDateUpdate = new Date( convertedLong );
             }
         }
 
         Map<String, Object> model = new LinkedHashMap<>( );
-        model.put( MARK_FORM_RESPONSE_DATE_CREATION, dateFormResponseDateCreation );
+        model.put( MARK_FORM_RESPONSE_DATE_UPDATE, dateFormResponseDateUpdate );
 
         return AppTemplateService.getTemplate( FORM_COLUMN_CELL_TEMPLATE, locale, model ).getHtml( );
     }

@@ -31,31 +31,33 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
+package fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl;
 
-import java.util.HashMap;
-import java.util.Map;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateUpdate;
+import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
+import fr.paris.lutece.plugins.forms.web.form.column.display.factory.IFormColumnDisplayFactory;
+import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisplayFormResponseDateUpdate;
 
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-
-public class FormColumnFormResponseDateCreationQueryPart extends AbstractFormColumnQueryPart
+/**
+ * Implementation of the IFormColumnDisplayFactory for the column of the update date of a form response
+ */
+public class FormColumnDisplayFormResponseDateUpdateFactory implements IFormColumnDisplayFactory
 {
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
+    public IFormColumnDisplay buildFormColumnDisplay( IFormColumn formColumn )
     {
-        Map<String, Object> mapFormColumnValues = new HashMap<>( );
+        FormColumnDisplayFormResponseDateUpdate formColumnDisplayFormResponseDateUpdate = null;
 
-        String creationDate = formResponseSearchItem.getDateCreation( );
-
-        if ( creationDate != null )
+        if ( formColumn instanceof FormColumnFormResponseDateUpdate )
         {
-            mapFormColumnValues.put( FormResponseSearchItem.FIELD_DATE_CREATION, creationDate );
+            formColumnDisplayFormResponseDateUpdate = new FormColumnDisplayFormResponseDateUpdate( );
+            formColumnDisplayFormResponseDateUpdate.setFormColumn( formColumn );
         }
 
-        return mapFormColumnValues;
-
+        return formColumnDisplayFormResponseDateUpdate;
     }
 }

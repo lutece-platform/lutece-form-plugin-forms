@@ -38,7 +38,7 @@ import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 
-public class FormColumnFormResponseDateCreationQueryPart extends AbstractFormColumnQueryPart
+public class FormColumnFormResponseDateUpdateQueryPart extends AbstractFormColumnQueryPart
 {
     /**
      * {@inheritDoc}
@@ -48,11 +48,11 @@ public class FormColumnFormResponseDateCreationQueryPart extends AbstractFormCol
     {
         Map<String, Object> mapFormColumnValues = new HashMap<>( );
 
-        String creationDate = formResponseSearchItem.getDateCreation( );
+        String updateDate = formResponseSearchItem.getDateUpdate( );
 
-        if ( creationDate != null )
+        if ( updateDate != null )
         {
-            mapFormColumnValues.put( FormResponseSearchItem.FIELD_DATE_CREATION, creationDate );
+            mapFormColumnValues.put( FormResponseSearchItem.FIELD_DATE_UPDATE, updateDate );
         }
 
         return mapFormColumnValues;
