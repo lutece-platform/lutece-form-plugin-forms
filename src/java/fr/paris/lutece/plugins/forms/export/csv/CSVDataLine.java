@@ -61,7 +61,7 @@ public class CSVDataLine
 {
     private static final String RESPONSE_SEPARATOR = " ";
 
-    private final Map<Pair<Integer, Integer>, String> _mapDataToExport;
+    private final Map<Integer, String> _mapDataToExport;
     private final String _commonDataToExport;
 
     /**
@@ -100,8 +100,16 @@ public class CSVDataLine
         {
             sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
         }
-
-        _mapDataToExport.put( Pair.of( question.getId( ), question.getIterationNumber( ) ), sbReponseValues.toString( ) );
+        if ( !_mapDataToExport.containsKey( question.getId( ) ) )
+        {
+            _mapDataToExport.put( question.getId( ), sbReponseValues.toString( ) );
+        }
+        else
+        {
+            StringBuilder sbConcatReponseValues = new StringBuilder ( );
+            sbConcatReponseValues.append( _mapDataToExport.get( question.getId( ) ) ).append( sbReponseValues.toString( ) );
+           _mapDataToExport.replace( question.getId( ), sbConcatReponseValues.toString( ) );
+        }       
     }
 
     /**
@@ -111,7 +119,7 @@ public class CSVDataLine
      */
     public String getDataToExport( Question question )
     {
-        return _mapDataToExport.get( Pair.of( question.getId( ), question.getIterationNumber( ) ) );
+        return _mapDataToExport.get( question.getId( ) );
     }
 
     public String getCommonDataToExport( )
