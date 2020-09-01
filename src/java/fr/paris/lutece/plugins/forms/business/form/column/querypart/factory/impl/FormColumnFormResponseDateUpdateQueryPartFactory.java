@@ -31,31 +31,32 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.impl;
 
-import java.util.HashMap;
-import java.util.Map;
+import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateUpdate;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.factory.IFormColumnQueryPartFactory;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormResponseDateUpdateQueryPart;
 
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-
-public class FormColumnFormResponseDateCreationQueryPart extends AbstractFormColumnQueryPart
+/**
+ * Implementation of the IFormColumnQueryPartFactory interface for a FormResponseDateUpdate column
+ */
+public class FormColumnFormResponseDateUpdateQueryPartFactory implements IFormColumnQueryPartFactory
 {
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
+    public IFormColumnQueryPart buildFormColumnQueryPart( IFormColumn formColumn )
     {
-        Map<String, Object> mapFormColumnValues = new HashMap<>( );
+        IFormColumnQueryPart formColumnFormResponseDateUpdateQueryPartFactory = null;
 
-        String creationDate = formResponseSearchItem.getDateCreation( );
-
-        if ( creationDate != null )
+        if ( formColumn instanceof FormColumnFormResponseDateUpdate )
         {
-            mapFormColumnValues.put( FormResponseSearchItem.FIELD_DATE_CREATION, creationDate );
+            formColumnFormResponseDateUpdateQueryPartFactory = new FormColumnFormResponseDateUpdateQueryPart( );
         }
 
-        return mapFormColumnValues;
-
+        return formColumnFormResponseDateUpdateQueryPartFactory;
     }
 }

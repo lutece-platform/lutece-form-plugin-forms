@@ -31,31 +31,25 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.business.form.column.querypart.impl;
+package fr.paris.lutece.plugins.forms.business.form.column.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-
-public class FormColumnFormResponseDateCreationQueryPart extends AbstractFormColumnQueryPart
+/**
+ * Implementation of the FormColumn for the column on the update date of form response
+ */
+public class FormColumnFormResponseDateUpdate extends AbstractFormColumn
 {
     /**
-     * {@inheritDoc}
+     * Constructor
+     * 
+     * @param nFormColumnPosition
+     *            The position of the FormColumn
+     * @param strFormColumnTitle
+     *            The title of the FormColumn
      */
-    @Override
-    protected Map<String, Object> getMapFormColumnValues( FormResponseSearchItem formResponseSearchItem )
+    public FormColumnFormResponseDateUpdate( int nFormColumnPosition, String strFormColumnTitle )
     {
-        Map<String, Object> mapFormColumnValues = new HashMap<>( );
-
-        String creationDate = formResponseSearchItem.getDateCreation( );
-
-        if ( creationDate != null )
-        {
-            mapFormColumnValues.put( FormResponseSearchItem.FIELD_DATE_CREATION, creationDate );
-        }
-
-        return mapFormColumnValues;
-
+        super( );
+        setFormColumnPosition( nFormColumnPosition );
+        setFormColumnTitle( strFormColumnTitle );
     }
 }
