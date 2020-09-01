@@ -107,7 +107,7 @@ public abstract class AbstractFormColumnQueryPart implements IFormColumnQueryPar
         Map<String, String> listFields = new HashMap<>( );
         for ( Map.Entry<String, String> entry : formResponseSearchItem.getMapEntryCodeFieldsValue( ).entrySet( ) )
         {
-            String strFieldSuffixEntryCode = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strEntryCode;
+            String strFieldSuffixEntryCode = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strEntryCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER;
 
             if ( entry.getKey( ).startsWith( strFieldSuffixEntryCode ) )
             {
