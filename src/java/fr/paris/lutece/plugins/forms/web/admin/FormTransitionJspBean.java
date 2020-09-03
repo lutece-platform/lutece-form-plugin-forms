@@ -565,10 +565,12 @@ public class FormTransitionJspBean extends AbstractJspBean
     private ReferenceList getTransitionTargetStepReferenceList( int nIdForm, int nIdStep )
     {
         ReferenceList listTransitionTargetSteps = new ReferenceList( );
+        List<Transition> listCurrentTransitions = TransitionHome.getTransitionsListFromStep( nIdStep );
 
         for ( ReferenceItem step : StepHome.getStepReferenceListByForm( nIdForm ) )
         {
-            if ( NumberUtils.toInt( step.getCode( ) ) != nIdStep )
+            if ( NumberUtils.toInt( step.getCode( ) ) != nIdStep && listCurrentTransitions.stream( )
+                    .allMatch( t -> NumberUtils.toInt( step.getCode( ) ) != t.getNextStep( ) ) )
             {
                 listTransitionTargetSteps.add( step );
             }
