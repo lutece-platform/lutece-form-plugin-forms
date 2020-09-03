@@ -84,6 +84,7 @@ public final class FormsConstants
     public static final String MARK_MULTIVIEW_CONFIG = "multiview_config";
     public static final String MARK_MULTIVIEW_CONFIG_ACTION = "multiviewConfigAction";
     public static final String MARK_MULTIVIEW_EXPORT_ACTION = "multiviewExportAction";
+    public static final String MARK_CAN_BE_FILTERED = "can_be_filtered";
     public static final String VALUE_VALIDATOR_LISTEQUESTION_NAME = "forms_listQuestionValidator";
 
     // Parameters

@@ -7,9 +7,11 @@
 <@formGroup labelKey='#i18n{forms.create_question.labelColumnTitle}' helpKey='#i18n{forms.create_question.labelColumnTitle.help}'>
     <@input type='text' name='column_title' value='' />
 </@formGroup>
-<@formGroup labelKey='#i18n{forms.create_question.labelFilterableMultiviewGlobal}' helpKey='#i18n{forms.create_question.labelFilterableMultiviewGlobal.help}'>
-    <@checkBox name='is_filterable_multiview_global' id='is_filterable_multiview_global' value='1' />
-</@formGroup>
-<@formGroup labelKey='#i18n{forms.create_question.labelFilterableMultiviewFormSelected}' helpKey='#i18n{forms.create_question.labelFilterableFormSelected.help}'>
-    <@checkBox name='is_filterable_multiview_form_selected' id='is_filterable_multiview_form_selected' value='1' />
-</@formGroup>
+<#if can_be_filtered>
+	<@formGroup labelKey='#i18n{forms.create_question.labelFilterableMultiviewGlobal}' helpKey='#i18n{forms.create_question.labelFilterableMultiviewGlobal.help}'>
+	    <@checkBox name='is_filterable_multiview_global' id='is_filterable_multiview_global' value='1' />
+	</@formGroup>
+	<@formGroup labelKey='#i18n{forms.create_question.labelFilterableMultiviewFormSelected}' helpKey='#i18n{forms.create_question.labelFilterableFormSelected.help}'>
+	    <@checkBox name='is_filterable_multiview_form_selected' id='is_filterable_multiview_form_selected' value='1' />
+	</@formGroup>
+</#if>
