@@ -62,6 +62,8 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeText;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTextArea;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsDisplayUtils;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
@@ -276,6 +278,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
         ReferenceList listParamDefaultValues = new ReferenceList( );
+        
+        IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
 
         Map<String, Object> model = new HashMap<>( );
         model.put( FormsConstants.MARK_ENTRY, _entry );
@@ -285,7 +289,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_LIST_PARAM_DEFAULT_VALUES, listParamDefaultValues );
-        model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
+        model.put( MARK_ENTRY_TYPE_SERVICE, entryTypeService );
 
         if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
@@ -295,7 +299,10 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             setPageTitleProperty( PROPERTY_CREATE_QUESTION_TITLE );
         }
+        
+        boolean canBeFiltered = !( entryTypeService instanceof EntryTypeText || entryTypeService instanceof EntryTypeTextArea );
 
+        model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
         model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model ).getHtml( ) );
 
@@ -822,6 +829,9 @@ public class FormQuestionJspBean extends AbstractJspBean
             setPageTitleProperty( PROPERTY_MODIFY_QUESTION_TITLE );
         }
 
+        boolean canBeFiltered = !( entryTypeService instanceof EntryTypeText || entryTypeService instanceof EntryTypeTextArea );
+
+        model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
         model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model ).getHtml( ) );
 
