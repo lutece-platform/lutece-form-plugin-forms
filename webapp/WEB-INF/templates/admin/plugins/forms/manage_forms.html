@@ -64,7 +64,7 @@
                                         <#if action.permission=='PUBLISH'>
                                             <#assign params='data-toggle="modal" data-target="#pubModal"' />
                                         </#if>
-                                        <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' class='${color} ${action.permission?lower_case}' buttonIcon=action.iconUrl color='btn-link' params=params />
+                                        <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' showTitle=false  class='${color} ${action.permission?lower_case}' buttonIcon=action.iconUrl color='btn-link' params=params />
                                     </#list>
                                 </#if>
                                 <#if form.active>
