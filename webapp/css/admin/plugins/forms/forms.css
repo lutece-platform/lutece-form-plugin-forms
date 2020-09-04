@@ -12,20 +12,21 @@ body, .wrapper{ height: 100%; overflow: visible; }
 /* MutliView */
 /* MutliView - Search filters */
 .form-control-static .badge{ vertical-align: top }
-.filter-forms{ margin-bottom: 5px; }
+.filter-forms{ margin-bottom: 5px; display:flex; justify-content: space-between; }
+.filter-forms #id_form{ max-width: 32rem }
 .filter-forms .forms-filter label .form-control, #multi-form-list table.table-hover tbody tr:hover { cursor: pointer }
-.filter-forms select { font-weight:normal; margin: 0; background:#fff; outline:none; display:inline-block; -webkit-appearance:none; -moz-appearance:none; appearance:none; cursor:pointer;}
-.filter-forms select::-ms-expand { display: none }
-.filter-forms .form-inline .form-group { vertical-align: top }
-.filter-forms .form-group .input-group .btn-info{ border: 1px solid #1d98f6 }
-.filter-forms .form-group .input-group .btn-danger{ border: 1px solid #d73925 }
-.filter-forms .caret{ color:#000; }
-.filter-forms label { position:relative; margin-bottom: 0; }
-.filter-forms #search-text label.sr-only { position: absolute; }
-.filter-forms label:last-of-type { margin-right:0; }
-.filter-forms label:after { content: '\f107'; font-family:'FontAwesome'; font-size:18px; right: 5px; top: 5px; position:absolute; pointer-events:none;color:#000; }
-.filter-forms .form-group:last-child { margin-left: 15px; }
-.filter-forms #forms_id_form{ max-width: 360px }
+/* .filter-forms select { font-weight:normal; margin: 0; background:#fff; outline:none; display:inline-block; -webkit-appearance:none; -moz-appearance:none; appearance:none; cursor:pointer;} */
+/* .filter-forms select::-ms-expand { display: none } */
+/* .filter-forms .form-inline .form-group { vertical-align: top } */
+/* .filter-forms .form-group .input-group .btn-info{ border: 1px solid #1d98f6 } */
+/* .filter-forms .form-group .input-group .btn-danger{ border: 1px solid #d73925 } */
+/* .filter-forms .caret{ color:#000; } */
+/* .filter-forms label { position:relative; margin-bottom: 0; } */
+/* .filter-forms #search-text label.sr-only { position: absolute; } */
+/* .filter-forms label:last-of-type { margin-right:0; } */
+/* .filter-forms label:after { content: '\f107'; font-family:'FontAwesome'; font-size:18px; right: 5px; top: 5px; position:absolute; pointer-events:none;color:#000; } */
+/* .filter-forms .form-group:last-child { margin-left: 15px; } */
+/* .filter-forms #forms_id_form{ max-width: 360px } */
 
 /* MutliView - table header sort */
 .btn-sort-group{ display:flex; flex-direction: column; justify-content:center; float: right; margin-right: 15px }
@@ -126,17 +127,17 @@ div.vis-network div.vis-navigation div.vis-button:hover{ box-shadow: none; opaci
 
 /* RESPONSIVE FIX */
 @media only screen and (max-width :1650px) {
-	.form-inline .form-group {	max-width: 20% }
+	/* .form-inline .form-group {	max-width: 20% } */
 }
 
 @media only screen and (max-width :1440px) {
-	.form-inline .form-group {	max-width: 15% }
+	/* .form-inline .form-group {	max-width: 15% } */
 }
 
 /* Small Devices, Tablets */
 @media only screen and (max-width :768px) {
-	.form-inline .form-group {	max-width: 100%; width: 100%	} 
-	.form-inline .form-group.pull-right{ max-width: initial; width: initial	}
-	.form-inline .form-group label { width: 100%	} 
+	/* .form-inline .form-group {	max-width: 100%; width: 100%	}  */
+	/* .form-inline .form-group.pull-right{ max-width: initial; width: initial	} */
+	/* .form-inline .form-group label { width: 100%	}  */
 	#multiview-no-forms { height: auto }
 }
