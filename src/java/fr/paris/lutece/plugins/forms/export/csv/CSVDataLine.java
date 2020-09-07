@@ -80,6 +80,7 @@ public class CSVDataLine
         StringBuilder commonData = new StringBuilder( );
         commonData.append( CSVUtil.safeString( form.getTitle( ) ) ).append( FormsConstants.SEPARATOR_SEMICOLON );
         commonData.append( CSVUtil.safeString( dateFormat.format( formResponse.getCreation( ) ) ) ).append( FormsConstants.SEPARATOR_SEMICOLON );
+        commonData.append( CSVUtil.safeString( dateFormat.format( formResponse.getUpdate( ) ) ) ).append( FormsConstants.SEPARATOR_SEMICOLON );
         _commonDataToExport = commonData.toString( );
     }
 

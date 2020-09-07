@@ -54,6 +54,7 @@ public class FormResponseCsvExport
     private static final String SEPARATOR = FormsConstants.SEPARATOR_SEMICOLON;
     private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
     private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
+    private static final String MESSAGE_EXPORT_FORM_DATE_UPDATE = "forms.export.formResponse.form.date.update";
 
     private final CSVHeader _csvHeader = new CSVHeader( );
 
@@ -77,6 +78,8 @@ public class FormResponseCsvExport
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) ) );
         sbCsvColumn.append( SEPARATOR );
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION, I18nService.getDefaultLocale( ) ) ) );
+        sbCsvColumn.append( SEPARATOR );
+        sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_UPDATE, I18nService.getDefaultLocale( ) ) ) );
         sbCsvColumn.append( SEPARATOR );
 
         for ( Question question : _csvHeader.getColumnToExport( ) )
