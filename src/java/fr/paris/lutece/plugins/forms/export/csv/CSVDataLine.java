@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.Pair;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -60,6 +59,7 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 public class CSVDataLine
 {
     private static final String RESPONSE_SEPARATOR = " ";
+    private static final String ITERATION_SEPARATOR = "|";
 
     private final Map<Integer, String> _mapDataToExport;
     private final String _commonDataToExport;
@@ -107,7 +107,7 @@ public class CSVDataLine
         else
         {
             StringBuilder sbConcatReponseValues = new StringBuilder ( );
-            sbConcatReponseValues.append( _mapDataToExport.get( question.getId( ) ) ).append( sbReponseValues.toString( ) );
+            sbConcatReponseValues.append( _mapDataToExport.get( question.getId( ) ) ).append( ITERATION_SEPARATOR ).append( sbReponseValues.toString( ) );
            _mapDataToExport.replace( question.getId( ), sbConcatReponseValues.toString( ) );
         }       
     }
