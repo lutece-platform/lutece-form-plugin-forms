@@ -50,13 +50,13 @@ public class FormColumnFormResponseDateUpdateQueryPartFactory implements IFormCo
     @Override
     public IFormColumnQueryPart buildFormColumnQueryPart( IFormColumn formColumn )
     {
-        IFormColumnQueryPart formColumnFormResponseDateCreationQueryPartFactory = null;
+        IFormColumnQueryPart formColumnFormResponseDateUpdateQueryPartFactory = null;
 
         if ( formColumn instanceof FormColumnFormResponseDateUpdate )
         {
-            formColumnFormResponseDateCreationQueryPartFactory = new FormColumnFormResponseDateUpdateQueryPart( );
+            formColumnFormResponseDateUpdateQueryPartFactory = new FormColumnFormResponseDateUpdateQueryPart( );
         }
 
-        return formColumnFormResponseDateCreationQueryPartFactory;
+        return formColumnFormResponseDateUpdateQueryPartFactory;
     }
 }
