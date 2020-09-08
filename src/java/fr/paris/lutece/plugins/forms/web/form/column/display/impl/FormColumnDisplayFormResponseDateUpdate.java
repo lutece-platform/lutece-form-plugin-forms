@@ -83,10 +83,10 @@ public class FormColumnDisplayFormResponseDateUpdate extends AbstractFormColumnD
         Date dateFormResponseDateUpdate = null;
         if ( formColumnCell != null )
         {
-            Object objFormResponseDateCreation = formColumnCell.getFormColumnCellValueByName( FormResponseSearchItem.FIELD_DATE_UPDATE );
-            if ( objFormResponseDateCreation != null )
+            Object objFormResponseDateUpdate = formColumnCell.getFormColumnCellValueByName( FormResponseSearchItem.FIELD_DATE_UPDATE );
+            if ( objFormResponseDateUpdate != null )
             {
-                String strTimestamp = String.valueOf( objFormResponseDateCreation );
+                String strTimestamp = String.valueOf( objFormResponseDateUpdate );
                 Long convertedLong = Long.parseLong( strTimestamp );
                 dateFormResponseDateUpdate = new Date( convertedLong );
             }
