@@ -70,7 +70,7 @@ public class CSVDataLine
      * @param formResponse
      *            the form response associated to this instance
      */
-    public CSVDataLine( FormResponse formResponse )
+    public CSVDataLine( FormResponse formResponse, String state )
     {
         _mapDataToExport = new HashMap<>( );
 
@@ -81,6 +81,7 @@ public class CSVDataLine
         commonData.append( CSVUtil.safeString( form.getTitle( ) ) ).append( FormsConstants.SEPARATOR_SEMICOLON );
         commonData.append( CSVUtil.safeString( dateFormat.format( formResponse.getCreation( ) ) ) ).append( FormsConstants.SEPARATOR_SEMICOLON );
         commonData.append( CSVUtil.safeString( dateFormat.format( formResponse.getUpdate( ) ) ) ).append( FormsConstants.SEPARATOR_SEMICOLON );
+        commonData.append( state ).append( FormsConstants.SEPARATOR_SEMICOLON );
         _commonDataToExport = commonData.toString( );
     }
 

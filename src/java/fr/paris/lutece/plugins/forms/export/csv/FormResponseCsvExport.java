@@ -53,6 +53,7 @@ public class FormResponseCsvExport
 {
     private static final String SEPARATOR = FormsConstants.SEPARATOR_SEMICOLON;
     private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
+    private static final String MESSAGE_EXPORT_FORM_STATE = "forms.export.formResponse.form.state";
     private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
     private static final String MESSAGE_EXPORT_FORM_DATE_UPDATE = "forms.export.formResponse.form.date.update";
 
@@ -73,6 +74,7 @@ public class FormResponseCsvExport
                 }
             }
         }
+        
         StringBuilder sbCsvColumn = new StringBuilder( );
 
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) ) );
@@ -80,6 +82,8 @@ public class FormResponseCsvExport
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION, I18nService.getDefaultLocale( ) ) ) );
         sbCsvColumn.append( SEPARATOR );
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_UPDATE, I18nService.getDefaultLocale( ) ) ) );
+        sbCsvColumn.append( SEPARATOR );
+        sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_STATE, I18nService.getDefaultLocale( ) ) ) );
         sbCsvColumn.append( SEPARATOR );
 
         for ( Question question : _csvHeader.getColumnToExport( ) )
@@ -93,9 +97,9 @@ public class FormResponseCsvExport
     /**
      * Build the CSV string for all data lines
      */
-    public String buildCsvDataToExport( FormResponse formResponse )
+    public String buildCsvDataToExport( FormResponse formResponse, String state )
     {
-        CSVDataLine csvDataLine = new CSVDataLine( formResponse );
+        CSVDataLine csvDataLine = new CSVDataLine( formResponse, state );
 
         for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
         {
