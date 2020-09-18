@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,12 @@ import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.business.Transition;
+import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
@@ -64,13 +71,19 @@ public class FormResponseCsvExport
      */
     public String buildCsvColumnToExport( FormResponse formResponse )
     {
-        for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+        List<Step> listSteps = StepHome.getStepsListByForm( formResponse.getFormId( ) );
+        List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( formResponse.getFormId( ) );
+        
+        List<Step> orderedStepList = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+        
+        for ( Step step : orderedStepList )
         {
-            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
+            List<Question> questionList = QuestionHome.getQuestionsListByStep( step.getId( ) );
+            for ( Question question : questionList )
             {
-                if ( formQuestionResponse.getQuestion( ).isResponseExportable( ) )
+                if ( question.isResponseExportable( ) )
                 {
-                    _csvHeader.addHeader( formQuestionResponse.getQuestion( ) );
+                    _csvHeader.addHeader( question );
                 }
             }
         }
