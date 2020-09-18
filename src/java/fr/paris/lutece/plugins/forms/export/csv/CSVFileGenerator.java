@@ -47,10 +47,12 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
+import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.file.FileUtil;
 
@@ -136,7 +138,7 @@ public class CSVFileGenerator implements IFileGenerator
                     bos.newLine( );
                     first = false;
                 }
-                bos.write( formResponseExport.buildCsvDataToExport( formResponse ) );
+                bos.write( formResponseExport.buildCsvDataToExport( formResponse, findWorkflowState( formResponseItem ) ) );
                 bos.newLine( );
                 if ( count % FLUSH_SIZE == 0 )
                 {
@@ -145,6 +147,22 @@ public class CSVFileGenerator implements IFileGenerator
             }
             bos.flush( );
         }
+    }
+    
+    private String findWorkflowState( FormResponseItem formResponseItem  )
+    {
+        for ( FormColumnCell cell : formResponseItem.getFormColumnCellValues( ) )
+        {
+            if ( cell != null )
+            {
+                Object objWorkflowStateName = cell.getFormColumnCellValueByName( FormMultiviewWorkflowStateNameConstants.COLUMN_WORKFLOW_STATE_NAME );
+                if ( objWorkflowStateName != null )
+                {
+                    return String.valueOf( objWorkflowStateName );
+                }
+            }
+        }
+        return "";
     }
 
     @Override
