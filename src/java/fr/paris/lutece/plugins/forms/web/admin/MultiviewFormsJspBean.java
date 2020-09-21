@@ -261,7 +261,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if ( !filteredByForm )
         {
             addError( "forms.export.error.filter", getLocale( ) );
-            return redirectView( request, VIEW_MULTIVIEW_FORMS );
+            return getMultiviewFormsView( request );
         }
 
         IFormatExport formatExport = ExportServiceManager.getInstance( ).getFormatExport( request.getParameter( PARAMETER_FORMAT_EXPORT ) );
@@ -277,7 +277,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         }
         addInfo( "forms.export.async.message", getLocale( ) );
 
-        return redirectView( request, VIEW_MULTIVIEW_FORMS );
+        return getMultiviewFormsView( request );
 
     }
 
