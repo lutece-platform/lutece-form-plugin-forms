@@ -1,4 +1,4 @@
-<div class="row <#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if>" displayControl="${question.id}_${question.iterationNumber}" <#if id_display??> hidden </#if>>${questionContent}</div>
+<div class="row <#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if>" displayControl="${question.id}_${question.iterationNumber}">${questionContent}</div>
 
 <#if validator??>
 	<input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='' hidden />
