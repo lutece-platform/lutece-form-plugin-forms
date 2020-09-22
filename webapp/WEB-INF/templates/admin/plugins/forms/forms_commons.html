@@ -242,7 +242,7 @@
 <#if locale?? && (2 <= locale?string?length) && (locale?string?substring(0,2) == "fr")>
 	<#assign editorLocale="fr_FR" />
 </#if>
-<script src="${webapp_url!}js/editors/tinymce/tinymce.min.js"></script>
+<script src="${webapp_url!}js/admin/editors/tinymce/tinymce.min.js"></script>
 <script>
 tinyMCE.init({
 	// General options ${editorLocale}
