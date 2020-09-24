@@ -82,6 +82,7 @@ public final class FormsConstants
     public static final String MARK_QUESTION_CREATE_TEMPLATE = "question_create_template";
     public static final String MARK_QUESTION_MODIFY_TEMPLATE = "question_modify_template";
     public static final String MARK_MULTIVIEW_CONFIG = "multiview_config";
+    public static final String MARK_FORM_USERASSIGNMENT_ENABLED = "userassignment_enabled";
     public static final String MARK_MULTIVIEW_CONFIG_ACTION = "multiviewConfigAction";
     public static final String MARK_MULTIVIEW_EXPORT_ACTION = "multiviewExportAction";
     public static final String MARK_CAN_BE_FILTERED = "can_be_filtered";
@@ -184,6 +185,7 @@ public final class FormsConstants
 
     // Datastore keys
     public static final String DS_KEY_FORM_TITLE_COLUMN = "forms.display.form.columnTitle";
+    public static final String DS_KEY_FORM_ASSIGNEE_COLUMN = "forms.display.form.columnAssignee";
 
     // Actions forms
     public static final String ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG = "multiviewConfig";

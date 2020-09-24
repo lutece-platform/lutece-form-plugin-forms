@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.column.impl;
 
+import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
+
 /**
  * Implementation of the FormColumn for the column on the Forms
  */
@@ -51,5 +53,11 @@ public class FormColumnForms extends AbstractFormColumn
         super( );
         setFormColumnPosition( nFormColumnPosition );
         setFormColumnTitle( strFormColumnTitle );
+    }
+    
+    @Override
+    public boolean isDisplayed( )
+    {
+        return MultiviewConfig.getInstance( ).isDisplayFormsTitleColumn( );
     }
 }

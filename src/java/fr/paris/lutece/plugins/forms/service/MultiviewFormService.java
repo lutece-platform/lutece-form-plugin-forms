@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
-import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
@@ -47,7 +46,6 @@ import org.apache.commons.collections.CollectionUtils;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
-import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterDateConfiguration;
@@ -187,8 +185,8 @@ public final class MultiviewFormService
             addColumnFromConfig( mapFormColumns, listQuestions, false, locale );
         }
 
-        // Filter the columns with the multiview config
-        filterWithMultiviewConfig( mapFormColumns );
+        // Filter the columns that must be displayed
+        mapFormColumns.entrySet( ).removeIf( entry -> !entry.getValue( ).isDisplayed( ) );
 
         // Set the order of the columns
         int nPosition = 1;
@@ -343,22 +341,5 @@ public final class MultiviewFormService
 
             }
         }
-    }
-
-    /**
-     * Filter the columns with the multiview config
-     * 
-     * @param mapColumns
-     *            the map columns
-     */
-    private void filterWithMultiviewConfig( Map<String, IFormColumn> mapColumns )
-    {
-        MultiviewConfig config = MultiviewConfig.getInstance( );
-
-        if ( !config.isDisplayFormsTitleColumn( ) )
-        {
-            mapColumns.entrySet( ).removeIf( entry -> entry.getValue( ) instanceof FormColumnForms );
-        }
-
     }
 }
