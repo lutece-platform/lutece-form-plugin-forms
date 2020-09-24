@@ -70,4 +70,13 @@ public interface IFormColumn
      *            The title to set to the FormColumn which will be displayed on the table
      */
     void setFormColumnTitle( String strFormColumnTitle );
+    
+    /**
+     * Determines if the column must be displayed.
+     * @return
+     */
+    default boolean isDisplayed( )
+    {
+        return true;
+    }
 }

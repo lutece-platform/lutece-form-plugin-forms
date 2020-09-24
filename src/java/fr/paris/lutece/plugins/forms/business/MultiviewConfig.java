@@ -40,6 +40,9 @@ public class MultiviewConfig
 {
     private static MultiviewConfig _instance;
 
+    boolean _bDisplayFormsTitleColumn;
+    boolean _bDisplayFormsAssigneeColumn;
+
     /**
      * Private constructor for singleton pattern
      */
@@ -47,9 +50,10 @@ public class MultiviewConfig
     {
         String strDisplayFormColumnTitle = DatastoreService.getDataValue( FormsConstants.DS_KEY_FORM_TITLE_COLUMN, "false" );
         _bDisplayFormsTitleColumn = Boolean.parseBoolean( strDisplayFormColumnTitle );
-    }
 
-    boolean _bDisplayFormsTitleColumn;
+        String strDisplayFormColumnAssignee = DatastoreService.getDataValue( FormsConstants.DS_KEY_FORM_ASSIGNEE_COLUMN, "false" );
+        _bDisplayFormsAssigneeColumn = Boolean.parseBoolean( strDisplayFormColumnAssignee );
+    }
 
     /**
      * Return the singleton instance of the multiview config
@@ -87,11 +91,30 @@ public class MultiviewConfig
     }
 
     /**
+     * @return the bDisplayFormsAssigneeColumn
+     */
+    public boolean isDisplayFormsAssigneeColumn( )
+    {
+        return _bDisplayFormsAssigneeColumn;
+    }
+
+    /**
+     * @param bDisplayFormsAssigneeColumn
+     *            the bDisplayFormsAssigneeColumn to set
+     */
+    public void setDisplayFormsAssigneeColumn( boolean bDisplayFormsAssigneeColumn )
+    {
+        _bDisplayFormsAssigneeColumn = bDisplayFormsAssigneeColumn;
+    }
+
+    /**
      * Save the config
      */
     public void save( )
     {
         String strDisplayFormsTitleColumn = Boolean.toString( _bDisplayFormsTitleColumn );
         DatastoreService.setDataValue( FormsConstants.DS_KEY_FORM_TITLE_COLUMN, strDisplayFormsTitleColumn );
+        String strDisplayFormsAssigneeColumn = Boolean.toString( _bDisplayFormsAssigneeColumn );
+        DatastoreService.setDataValue( FormsConstants.DS_KEY_FORM_ASSIGNEE_COLUMN, strDisplayFormsAssigneeColumn );
     }
 }

@@ -79,6 +79,7 @@ import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDis
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -122,6 +123,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_FORMAT_EXPORT = "format_export";
     private static final String PARAMETER_DISPLAY_FORMS_TITLE_COLUMN = "display_forms_title_column";
+    private static final String PARAMETER_DISPLAY_ASSIGNEE_COLUMN = "display_assignee_column";
 
     // Marks
     private static final String MARK_LOCALE = "locale";
@@ -304,6 +306,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_MULTIVIEW_CONFIG, config );
+        model.put( FormsConstants.MARK_FORM_USERASSIGNMENT_ENABLED, PluginService.isPluginEnable( "forms-userassignment" ) );
 
         return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW_CONFIG, model );
     }
@@ -330,6 +333,9 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         String strDisplayFormColumnTitle = request.getParameter( PARAMETER_DISPLAY_FORMS_TITLE_COLUMN );
         config.setDisplayFormsTitleColumn( strDisplayFormColumnTitle != null );
+        
+        String strDisplayFormColumnAssignee = request.getParameter( PARAMETER_DISPLAY_ASSIGNEE_COLUMN );
+        config.setDisplayFormsAssigneeColumn( strDisplayFormColumnAssignee != null );
 
         config.save( );
 
