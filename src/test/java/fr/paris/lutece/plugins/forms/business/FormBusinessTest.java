@@ -35,8 +35,7 @@ package fr.paris.lutece.plugins.forms.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
-import java.sql.Date;
-
+import java.sql.Timestamp;
 /**
  * This is the business class test for the object Form
  */
@@ -46,10 +45,10 @@ public class FormBusinessTest extends LuteceTestCase
     private static final String TITLE2 = "Title2";
     private static final String DESCRIPTION1 = "Description1";
     private static final String DESCRIPTION2 = "Description2";
-    private static final Date STARTDATE1 = java.sql.Date.valueOf( "1970-01-01" );
-    private static final Date STARTDATE2 = java.sql.Date.valueOf( "1970-01-02" );
-    private static final Date ENDDATE1 = java.sql.Date.valueOf( "1970-01-05" );
-    private static final Date ENDDATE2 = java.sql.Date.valueOf( "1970-01-06" );
+    private static final Timestamp STARTDATE1 = Timestamp.valueOf( "1970-01-01" );
+    private static final Timestamp STARTDATE2 = java.sql.Timestamp.valueOf( "1970-01-02" );
+    private static final Timestamp ENDDATE1 = java.sql.Timestamp.valueOf( "1970-01-05" );
+    private static final Timestamp ENDDATE2 = java.sql.Timestamp.valueOf( "1970-01-06" );
     private static final String BREADCRUMB1 = "forms.horizontalBreadcrumb";
     private static final String BREADCRUMB2 = "forms.verticalBreadcrumb";
 
