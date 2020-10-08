@@ -71,8 +71,8 @@ public final class FormDAO implements IFormDAO
             daoUtil.setString( nIndex++, form.getDescription( ) );
             Timestamp tsUpdateDate = new Timestamp( Calendar.getInstance( ).getTimeInMillis( ) );
             daoUtil.setTimestamp( nIndex++, tsUpdateDate );
-            daoUtil.setDate( nIndex++, form.getAvailabilityStartDate( ) );
-            daoUtil.setDate( nIndex++, form.getAvailabilityEndDate( ) );
+            daoUtil.setTimestamp( nIndex++, form.getAvailabilityStartDate( ) );
+            daoUtil.setTimestamp( nIndex++, form.getAvailabilityEndDate( ) );
             daoUtil.setString( nIndex++, form.getWorkgroup( ) );
             daoUtil.setInt( nIndex++, form.getIdWorkflow( ) );
             daoUtil.setBoolean( nIndex++, form.isAuthentificationNeeded( ) );
@@ -142,8 +142,8 @@ public final class FormDAO implements IFormDAO
         daoUtil.setString( nIndex++, form.getDescription( ) );
         Timestamp tsUpdateDate = new Timestamp( Calendar.getInstance( ).getTimeInMillis( ) );
         daoUtil.setTimestamp( nIndex++, tsUpdateDate );
-        daoUtil.setDate( nIndex++, form.getAvailabilityStartDate( ) );
-        daoUtil.setDate( nIndex++, form.getAvailabilityEndDate( ) );
+        daoUtil.setTimestamp( nIndex++, form.getAvailabilityStartDate( ) );
+        daoUtil.setTimestamp( nIndex++, form.getAvailabilityEndDate( ) );
         daoUtil.setString( nIndex++, form.getWorkgroup( ) );
         daoUtil.setInt( nIndex++, form.getIdWorkflow( ) );
         daoUtil.setBoolean( nIndex++, form.isAuthentificationNeeded( ) );
@@ -256,8 +256,8 @@ public final class FormDAO implements IFormDAO
         form.setDescription( daoUtil.getString( "description" ) );
         form.setCreationDate( daoUtil.getTimestamp( "creation_date" ) );
         form.setUpdateDate( daoUtil.getTimestamp( "update_date" ) );
-        form.setAvailabilityStartDate( daoUtil.getDate( "availability_start_date" ) );
-        form.setAvailabilityEndDate( daoUtil.getDate( "availability_end_date" ) );
+        form.setAvailabilityStartDate( daoUtil.getTimestamp( "availability_start_date" ) );
+        form.setAvailabilityEndDate( daoUtil.getTimestamp( "availability_end_date" ) );
         form.setWorkgroup( daoUtil.getString( "workgroup" ) );
         form.setIdWorkflow( daoUtil.getInt( "id_workflow" ) );
         form.setAuthentificationNeeded( daoUtil.getBoolean( "authentification_needed" ) );

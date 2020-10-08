@@ -362,7 +362,7 @@ $( function(){
 								<@columns xs=12 sm=6>   
 										<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
 												<@inputGroup>
-														<@input type='text' name='availabilityStartDate' id='availabilityStartDate' value='${form.availabilityStartDate!}' />
+														<@input type='text' name='availabilityStartDate' id='availabilityStartDate' value='${form.availabilityStartDateAndHour!}' />
 														<@inputGroupItem type='addon'>
 																<@icon style='calendar' />
 														</@inputGroupItem>
@@ -372,7 +372,7 @@ $( function(){
 								<@columns xs=12 sm=6>  
 										<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
 												<@inputGroup>
-														<@input type='text' name='availabilityEndDate' id='availabilityEndDate' value='${form.availabilityEndDate!}' />
+														<@input type='text' name='availabilityEndDate' id='availabilityEndDate' value='${form.availabilityEndDateAndHour!}' />
 														<@inputGroupItem type='addon'>
 																<@icon style='calendar' />
 														</@inputGroupItem>
