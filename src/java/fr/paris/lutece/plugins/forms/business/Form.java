@@ -475,14 +475,4 @@ public class Form implements AdminWorkgroupResource, RBACResource
     {
         _bOneResponseByUser = bOneResponseByUser;
     }
-    
-    public String getAvailabilityStartDateAndHour( )
-    {
-        return ( _dateAvailabilityStartDate != null ) ? _dateAvailabilityStartDate.toString( ) : StringUtils.EMPTY;
-    }
-    
-    public String getAvailabilityEndDateAndHour( )
-    {
-        return ( _dateAvailabilityEndDate != null ) ? _dateAvailabilityEndDate.toString( ) : StringUtils.EMPTY;
-    }
 }
