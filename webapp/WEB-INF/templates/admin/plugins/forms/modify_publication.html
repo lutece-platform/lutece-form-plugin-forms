@@ -25,7 +25,8 @@
     <input type="hidden" value="form.maxNumberResponse!'0'">
     <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' >
         <@inputGroup>
-            <@input type='text' name='availabilityStartDate' id='availabilityStartDate' value='${form.availabilityStartDate!}' />
+            <#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
+			<@input type='text' name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
             <@inputGroupItem type='addon'>
                 <@icon style='calendar' />
             </@inputGroupItem>
@@ -33,7 +34,8 @@
     </@formGroup>
     <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' >
         <@inputGroup>
-            <@input type='text' name='availabilityEndDate' id='availabilityEndDate' value='${form.availabilityEndDate!}' />
+          <#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
+		  <@input type='text' name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
             <@inputGroupItem type='addon'>
                 <@icon style='calendar' />
             </@inputGroupItem>
@@ -52,5 +54,5 @@ $('#pubModal header').hide();
 $('#pubModal footer').hide();
 </script>
 
-<@getDatePickerBootstrap idField="availabilityStartDate" language=locale />
-<@getDatePickerBootstrap idField="availabilityEndDate" language=locale />
+<@getDateTimePickerBootstrap idField="availabilityStartDate" language=locale />
+<@getDateTimePickerBootstrap idField="availabilityEndDate" language=locale />

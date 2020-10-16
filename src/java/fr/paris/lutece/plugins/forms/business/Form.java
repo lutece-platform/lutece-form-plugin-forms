@@ -40,6 +40,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
+import fr.paris.lutece.util.string.StringUtil;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -78,9 +79,9 @@ public class Form implements AdminWorkgroupResource, RBACResource
 
     private Timestamp _dateCreation;
 
-    private Date _dateAvailabilityStartDate;
+    private Timestamp _dateAvailabilityStartDate;
 
-    private Date _dateAvailabilityEndDate;
+    private Timestamp _dateAvailabilityEndDate;
 
     private Timestamp _dateUpdate;
 
@@ -214,7 +215,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
      * 
      * @return The AvailabilityStartDate
      */
-    public Date getAvailabilityStartDate( )
+    public Timestamp getAvailabilityStartDate( )
     {
         return _dateAvailabilityStartDate;
     }
@@ -225,7 +226,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
      * @param dateAvailabilityStartDate
      *            The AvailabilityStartDate
      */
-    public void setAvailabilityStartDate( Date dateAvailabilityStartDate )
+    public void setAvailabilityStartDate( Timestamp dateAvailabilityStartDate )
     {
         _dateAvailabilityStartDate = dateAvailabilityStartDate;
     }
@@ -235,7 +236,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
      * 
      * @return The AvailabilityEndDate
      */
-    public Date getAvailabilityEndDate( )
+    public Timestamp getAvailabilityEndDate( )
     {
         return _dateAvailabilityEndDate;
     }
@@ -246,7 +247,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
      * @param dateAvailabilityEndDate
      *            The AvailabilityEndDate
      */
-    public void setAvailabilityEndDate( Date dateAvailabilityEndDate )
+    public void setAvailabilityEndDate( Timestamp dateAvailabilityEndDate )
     {
         _dateAvailabilityEndDate = dateAvailabilityEndDate;
     }
