@@ -40,7 +40,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
-import fr.paris.lutece.util.string.StringUtil;
 
 import java.sql.Date;
 import java.sql.Timestamp;
