@@ -165,7 +165,8 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
 
         if ( form != null && form.getIdWorkflow( ) > ID_WORKFLOW_UNSET )
         {
-            listWorkflowState.addAll( WorkflowService.getInstance( ).getAllStateByWorkflow( form.getIdWorkflow( ), (User) AdminUserService.getAdminUser( request ) ) );
+            listWorkflowState
+                    .addAll( WorkflowService.getInstance( ).getAllStateByWorkflow( form.getIdWorkflow( ), (User) AdminUserService.getAdminUser( request ) ) );
         }
 
         return listWorkflowState;

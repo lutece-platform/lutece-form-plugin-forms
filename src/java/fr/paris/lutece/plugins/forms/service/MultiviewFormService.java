@@ -292,7 +292,8 @@ public final class MultiviewFormService
      * @param listQuestions
      * @param bGlobal
      */
-    private void addFilterFromConfig( Map<String, FormFilter> mapFilters, List<Question> listQuestions, List<IFormColumn> listFormColumns, boolean bGlobal, Locale locale )
+    private void addFilterFromConfig( Map<String, FormFilter> mapFilters, List<Question> listQuestions, List<IFormColumn> listFormColumns, boolean bGlobal,
+            Locale locale )
     {
         int nPosition = mapFilters.size( );
 

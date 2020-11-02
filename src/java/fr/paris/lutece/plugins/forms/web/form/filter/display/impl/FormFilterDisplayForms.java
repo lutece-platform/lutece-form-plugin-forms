@@ -163,7 +163,8 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
     private ReferenceList createReferenceList( AdminUser user )
     {
         List<Form> formList = getFormsList( );
-        formList.removeIf( f ->  !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ), FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) user ) );
+        formList.removeIf( f -> !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ),
+                FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) user ) );
         ReferenceListFactory referenceListFactory = new ReferenceListFactory( formList, FORM_CODE_ATTRIBUTE, FORM_NAME_ATTRIBUTE );
 
         return referenceListFactory.createReferenceList( );

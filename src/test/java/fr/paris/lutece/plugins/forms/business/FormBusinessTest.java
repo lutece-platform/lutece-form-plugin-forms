@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.test.LuteceTestCase;
 
 import java.sql.Timestamp;
+
 /**
  * This is the business class test for the object Form
  */

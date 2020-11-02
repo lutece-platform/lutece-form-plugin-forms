@@ -39,7 +39,9 @@ package fr.paris.lutece.plugins.forms.business;
  */
 public enum ControlType
 {
-    VALIDATION( "validation" ), TRANSITION( "transition" ), CONDITIONAL( "conditional" );
+    VALIDATION( "validation" ),
+    TRANSITION( "transition" ),
+    CONDITIONAL( "conditional" );
 
     private final String _strLabel;
 

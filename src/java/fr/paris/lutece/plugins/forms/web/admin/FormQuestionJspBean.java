@@ -278,7 +278,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
 
         ReferenceList listParamDefaultValues = new ReferenceList( );
-        
+
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
 
         Map<String, Object> model = new HashMap<>( );
@@ -299,7 +299,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         {
             setPageTitleProperty( PROPERTY_CREATE_QUESTION_TITLE );
         }
-        
+
         boolean canBeFiltered = !( entryTypeService instanceof EntryTypeText || entryTypeService instanceof EntryTypeTextArea );
 
         model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );

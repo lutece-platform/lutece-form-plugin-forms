@@ -40,7 +40,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -108,10 +107,10 @@ public class CSVDataLine
         }
         else
         {
-            StringBuilder sbConcatReponseValues = new StringBuilder ( );
+            StringBuilder sbConcatReponseValues = new StringBuilder( );
             sbConcatReponseValues.append( _mapDataToExport.get( question.getId( ) ) ).append( ITERATION_SEPARATOR ).append( sbReponseValues.toString( ) );
-           _mapDataToExport.replace( question.getId( ), sbConcatReponseValues.toString( ) );
-        }       
+            _mapDataToExport.replace( question.getId( ), sbConcatReponseValues.toString( ) );
+        }
     }
 
     /**

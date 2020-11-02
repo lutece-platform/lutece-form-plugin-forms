@@ -54,7 +54,7 @@ public class FormColumnForms extends AbstractFormColumn
         setFormColumnPosition( nFormColumnPosition );
         setFormColumnTitle( strFormColumnTitle );
     }
-    
+
     @Override
     public boolean isDisplayed( )
     {

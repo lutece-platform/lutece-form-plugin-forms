@@ -73,9 +73,9 @@ public class FormResponseCsvExport
     {
         List<Step> listSteps = StepHome.getStepsListByForm( formResponse.getFormId( ) );
         List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( formResponse.getFormId( ) );
-        
+
         List<Step> orderedStepList = StepService.sortStepsWithTransitions( listSteps, listTransitions );
-        
+
         for ( Step step : orderedStepList )
         {
             List<Question> questionList = QuestionHome.getQuestionsListByStep( step.getId( ) );
@@ -87,7 +87,7 @@ public class FormResponseCsvExport
                 }
             }
         }
-        
+
         StringBuilder sbCsvColumn = new StringBuilder( );
 
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) ) );
