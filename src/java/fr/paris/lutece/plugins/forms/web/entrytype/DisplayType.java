@@ -54,7 +54,9 @@ public final class DisplayType
      */
     public enum Mode
     {
-        EDITION, READONLY, SELECT
+        EDITION,
+        READONLY,
+        SELECT
     }
 
     private final Mode _mode;

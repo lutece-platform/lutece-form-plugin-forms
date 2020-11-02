@@ -87,7 +87,7 @@ public class AbstractFormFilterConfiguration implements IFormFilterConfiguration
         {
             return title;
         }
-        
+
         return _strFormFilterLabel;
     }
 

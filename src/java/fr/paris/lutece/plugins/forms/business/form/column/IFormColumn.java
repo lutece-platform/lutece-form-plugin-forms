@@ -58,7 +58,8 @@ public interface IFormColumn
     /**
      * Return the title of the FormColumn which will be displayed on the table
      * 
-     * @param the locale in which to display the title
+     * @param the
+     *            locale in which to display the title
      * @return the title of the FormColumn which will be displayed on the table
      */
     String getFormColumnTitle( Locale locale );
@@ -70,9 +71,10 @@ public interface IFormColumn
      *            The title to set to the FormColumn which will be displayed on the table
      */
     void setFormColumnTitle( String strFormColumnTitle );
-    
+
     /**
      * Determines if the column must be displayed.
+     * 
      * @return
      */
     default boolean isDisplayed( )

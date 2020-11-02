@@ -159,8 +159,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
         _nIdEntry = _question.getIdEntry( );
         Entry entry = EntryHome.findByPrimaryKey( _nIdEntry );
 
-        if ( ( ( _nIdEntry == -1 ) || ( entry == null ) )
-                || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
+        if ( ( ( _nIdEntry == -1 ) || ( entry == null ) ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ),
+                FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
         {
             return getJspManageQuestions( request, _step.getId( ) );
         }
@@ -224,8 +224,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
             field = FieldHome.findByPrimaryKey( nIdField );
         }
 
-        if ( ( field == null )
-                || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
+        if ( ( field == null ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY,
+                (User) getUser( ) ) )
         {
             return getJspManageQuestions( request, _step.getId( ) );
         }
@@ -322,8 +322,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
             }
         }
 
-        if ( ( nIdField != -1 )
-                || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
+        if ( ( nIdField != -1 ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY,
+                (User) getUser( ) ) )
         {
             field = FieldHome.findByPrimaryKey( nIdField );
 
@@ -360,8 +360,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        if ( ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null )
-                || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
+        if ( ( request.getParameter( FormsConstants.PARAMETER_ID_FIELD ) == null ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE,
+                EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
         {
             return redirectToViewManageForm( request );
         }
@@ -395,8 +395,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
             return redirectToViewManageForm( request );
         }
 
-        if ( ( strIdField == null )
-                || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ), FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
+        if ( ( strIdField == null ) || !RBACService.isAuthorized( Form.RESOURCE_TYPE, EMPTY_STRING + _step.getIdForm( ),
+                FormsResourceIdService.PERMISSION_MODIFY, (User) getUser( ) ) )
         {
             return redirectToViewManageForm( request );
         }

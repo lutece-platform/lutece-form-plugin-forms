@@ -358,22 +358,22 @@ public class FormResponseManager
                 {
                     List<Control> listControl = ControlHome.getControlByQuestionAndType( formQuestionResponse.getQuestion( ).getId( ),
                             ControlType.VALIDATION.getLabel( ) );
-    
+
                     for ( Control control : listControl )
                     {
                         IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-    
+
                         if ( !validator.validate( formQuestionResponse, control ) )
                         {
                             GenericAttributeError error = new GenericAttributeError( );
-    
+
                             error.setIsDisplayableError( true );
                             error.setErrorMessage( control.getErrorMessage( ) );
-    
+
                             formQuestionResponse.setError( error );
-    
+
                             goTo( _listValidatedStep.indexOf( step ) );
-    
+
                             return false;
                         }
                     }

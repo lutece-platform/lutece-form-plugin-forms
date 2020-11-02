@@ -262,8 +262,9 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
             mapFormResponseDetailsModel.put( MARK_RESOURCE_ACTIONS, resourceActions );
             mapFormResponseDetailsModel.put( MARK_HISTORY_WORKFLOW_ENABLED, bHistoryEnabled );
-            mapFormResponseDetailsModel.put( MARK_RESOURCE_HISTORY, workflowService.getDisplayDocumentHistory( formResponse.getId( ),
-                    FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), request, getLocale( ), mapFormResponseDetailsModel, TEMPLATE_FORM_RESPONSE_HISTORY, null ) );
+            mapFormResponseDetailsModel.put( MARK_RESOURCE_HISTORY,
+                    workflowService.getDisplayDocumentHistory( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), request, getLocale( ),
+                            mapFormResponseDetailsModel, TEMPLATE_FORM_RESPONSE_HISTORY, null ) );
         }
 
         return mapFormResponseDetailsModel;
@@ -493,7 +494,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         {
             try
             {
-                String strError = workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, getLocale( ), null );
+                String strError = workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, getLocale( ),
+                        null );
                 if ( strError != null )
                 {
                     return redirect( request, strError );

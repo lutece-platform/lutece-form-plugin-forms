@@ -148,8 +148,8 @@ public class CSVFileGenerator implements IFileGenerator
             bos.flush( );
         }
     }
-    
-    private String findWorkflowState( FormResponseItem formResponseItem  )
+
+    private String findWorkflowState( FormResponseItem formResponseItem )
     {
         for ( FormColumnCell cell : formResponseItem.getFormColumnCellValues( ) )
         {

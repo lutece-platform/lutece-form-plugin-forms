@@ -339,6 +339,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             }
         }
     }
+
     /**
      * 
      * @param listResponse

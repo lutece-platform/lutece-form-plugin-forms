@@ -39,7 +39,8 @@ package fr.paris.lutece.plugins.forms.business;
  */
 public enum CompositeDisplayType
 {
-    GROUP( "group" ), QUESTION( "question" );
+    GROUP( "group" ),
+    QUESTION( "question" );
 
     private final String _strLabel;
 

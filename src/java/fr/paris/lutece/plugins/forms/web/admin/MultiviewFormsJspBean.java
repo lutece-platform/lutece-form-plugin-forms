@@ -333,7 +333,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         String strDisplayFormColumnTitle = request.getParameter( PARAMETER_DISPLAY_FORMS_TITLE_COLUMN );
         config.setDisplayFormsTitleColumn( strDisplayFormColumnTitle != null );
-        
+
         String strDisplayFormColumnAssignee = request.getParameter( PARAMETER_DISPLAY_ASSIGNEE_COLUMN );
         config.setDisplayFormsAssigneeColumn( strDisplayFormColumnAssignee != null );
 

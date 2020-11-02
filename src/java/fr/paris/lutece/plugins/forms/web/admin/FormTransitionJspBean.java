@@ -365,12 +365,12 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         return redirect( request, VIEW_MANAGE_TRANSITIONS, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
     }
-    
+
     private boolean detectCircularTransition( Transition newTransition )
     {
         List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( _form.getId( ) );
         listTransitions.add( newTransition );
-        
+
         DetectCycleGraphBuilder builder = DetectCycleGraphBuilder.builder( );
         for ( Transition transition : listTransitions )
         {
@@ -584,8 +584,8 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         for ( ReferenceItem step : StepHome.getStepReferenceListByForm( nIdForm ) )
         {
-            if ( NumberUtils.toInt( step.getCode( ) ) != nIdStep && listCurrentTransitions.stream( )
-                    .allMatch( t -> NumberUtils.toInt( step.getCode( ) ) != t.getNextStep( ) ) )
+            if ( NumberUtils.toInt( step.getCode( ) ) != nIdStep
+                    && listCurrentTransitions.stream( ).allMatch( t -> NumberUtils.toInt( step.getCode( ) ) != t.getNextStep( ) ) )
             {
                 listTransitionTargetSteps.add( step );
             }
