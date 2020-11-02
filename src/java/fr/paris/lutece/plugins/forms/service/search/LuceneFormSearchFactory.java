@@ -46,7 +46,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.NIOFSDirectory;
+import org.apache.lucene.store.FSDirectory;
 
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -158,6 +158,6 @@ public class LuceneFormSearchFactory
             strIndex = AppPropertiesService.getProperty( PATH_INDEX );
         }
 
-        return NIOFSDirectory.open( Paths.get( strIndex ) );
+        return FSDirectory.open( Paths.get( strIndex ) );
     }
 }
