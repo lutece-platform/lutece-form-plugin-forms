@@ -354,25 +354,28 @@ public class FormResponseManager
 
             for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
             {
-                List<Control> listControl = ControlHome.getControlByQuestionAndType( formQuestionResponse.getQuestion( ).getId( ),
-                        ControlType.VALIDATION.getLabel( ) );
-
-                for ( Control control : listControl )
+                if ( formQuestionResponse.getQuestion( ).isVisible( ) )
                 {
-                    IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-
-                    if ( !validator.validate( formQuestionResponse, control ) )
+                    List<Control> listControl = ControlHome.getControlByQuestionAndType( formQuestionResponse.getQuestion( ).getId( ),
+                            ControlType.VALIDATION.getLabel( ) );
+    
+                    for ( Control control : listControl )
                     {
-                        GenericAttributeError error = new GenericAttributeError( );
-
-                        error.setIsDisplayableError( true );
-                        error.setErrorMessage( control.getErrorMessage( ) );
-
-                        formQuestionResponse.setError( error );
-
-                        goTo( _listValidatedStep.indexOf( step ) );
-
-                        return false;
+                        IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+    
+                        if ( !validator.validate( formQuestionResponse, control ) )
+                        {
+                            GenericAttributeError error = new GenericAttributeError( );
+    
+                            error.setIsDisplayableError( true );
+                            error.setErrorMessage( control.getErrorMessage( ) );
+    
+                            formQuestionResponse.setError( error );
+    
+                            goTo( _listValidatedStep.indexOf( step ) );
+    
+                            return false;
+                        }
                     }
                 }
             }
