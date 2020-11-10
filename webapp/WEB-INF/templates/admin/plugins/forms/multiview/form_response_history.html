@@ -1,12 +1,7 @@
-<h2>Historique</h2>
+<h2>#i18n{forms.multiviewForms.view_record_history.title}</h2>
 <#if resource_actions?has_content && history_information_list?has_content>
     <#assign defaultUserFrontId=5>
     <ul class="timeline-form">
-      <!-- <li>
-        <a target="_blank" href="https://www.totoprayogo.com/#">New Web Design</a>
-        <a href="#" class="float-right">21 March, 2014</a>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque scelerisque diam non nisi semper, et elementum lorem ornare. Maecenas placerat facilisis mollis. Duis sagittis ligula in sodales vehicula....</p>
-      </li> -->
     <#list history_information_list as history_information>
         <li>
             <h5 class="text-primary">${history_information.resource_history.action.description}
@@ -17,7 +12,7 @@
               <p>${task_information}</p>
               </#list>
             <#else>
-              <p>Pas d'information sur l'action</p>
+              <p>#i18n{forms.multiviewForms.view_record_history.no_information}</p>
             </#if>
             <p class="text-right">
               <#if history_information.admin_user_history?exists>

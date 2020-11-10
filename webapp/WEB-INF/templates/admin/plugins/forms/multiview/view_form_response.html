@@ -7,7 +7,7 @@
 
 <#macro display_actions resource_actions >
 <#if resource_actions.workflow_action_list?exists>
-    <h2>Actions</h2>
+    <h2>#i18n{forms.multiviewForms.view_record_history.actions}</h2>
     <#if resource_actions.workflow_action_list?has_content>
         <#list resource_actions.workflow_action_list as action>
             <a class="btn bg-navy btn-block" href="jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}">
@@ -35,7 +35,7 @@
     <div class="col-xs-12 col-sm-3" id="sticky-container">
         <div id="info-right" class="panel panel-default">
            <div class="panel-body">
-                <h2>Informations</h2>
+                <h2>#i18n{forms.multiviewForms.view_record_history.information}</h2>
                 <p>${form.title} <i class="fa fa-hashtag" title="#i18n{forms.multiviewForms.responseDetails.response.number}"></i> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}">${form_response.id}</strong></p>
                 <p><i class="fa fa-calendar"></i> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} : <strong>${form_response.creation}</strong></p>
                 <p><i class="fa fa-calendar"></i> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong>
