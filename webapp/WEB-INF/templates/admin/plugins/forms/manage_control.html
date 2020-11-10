@@ -1,13 +1,12 @@
 
 <@formBreadCrumb>
-    <li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="Retour Formulaire">...</i></a></li>
-    <li><a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="Retour Etape">${step.title}</a></li>
+    <li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="#i18n{forms.create_form.button.backForm}">...</i></a></li>
+    <li><a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="#i18n{forms.create_form.button.backStep}">${step.title}</a></li>
     <li class="active">#i18n{forms.manage_controls.title.${control_type?lower_case}}</li></ul>
 </@formBreadCrumb>
 <@row>
     <@columns>
         <@box>
-            <!-- < @ boxHeader title='<ol class="breadcrumb"><li><a href="jsp/admin/plugins/forms/ManageForms.jsp" title="Retour"><i class="fa fa-home fa-fw"></i></a></li><li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="Formulaire">...</a></li><li><a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}">${step.title}</a></li><li class="active">#i18n{forms.manage_controls.title.${control_type?lower_case}}</li></ol>' boxTools=true > -->
             <@boxHeader title='#i18n{forms.manage_controls.title.${control_type?lower_case}}' boxTools=true>
                 <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id}' buttonIcon='plus text-success' title='#i18n{forms.manage_questions.action.addControl}' showTitleXs=false color='btn-link' />
             </@boxHeader>

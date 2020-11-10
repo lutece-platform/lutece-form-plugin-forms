@@ -73,7 +73,7 @@
                                     </#list>
                                 </@table>
                                 <div id="tr-msg" class="alert alert-warning">
-                                    Attention : Aucune transition possible pour une &eacute;tape ayant le statut d'&eacute;tape "final" !
+                                    #i18n{forms.manage_transitions.warning.final}
                                 </div>
                             </div>
                         </div>
@@ -150,7 +150,7 @@ $( function(){
     $("#tr-msg").hide();
 
     <#if isOnlyOneStep=2>
-        toastr.info('Pour pouvoir utiliser plusieurs &eacute;tapes, d&eacute;cocher le statut "Final"');
+        toastr.info('#i18n{forms.manage_transitions.info.multiple.step}');
         $("#transitions").hide();
         $("#tr-msg").show();
     </#if>
@@ -160,9 +160,9 @@ $( function(){
             $("#transitions").hide();
             $("#tr-msg").show();
             if( steps ) {
-                toastr.warning("Attention :  Aucune transition possible pour une &eacute;tape ayant le statut d'&eacute;tape final !"); 
+                toastr.warning("#i18n{forms.manage_transitions.warning.final}"); 
             } else {
-                toastr.warning("Attention : Cette &eacute;tape &eacute;tant &agrave; la fois finale et initiale. Vous ne pourrez g&eacute;rer qu'une seule &eacute;tape !");
+                toastr.warning("#i18n{forms.manage_transitions.info.step.initial.final}");
             }   
         } else {
             $("#transitions").show();

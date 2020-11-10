@@ -48,7 +48,7 @@
                                         <#if form.availabilityStartDate?? && form.availabilityStartDate &gt; .now?datetime>
                                             <span class='text-danger'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </span>
                                         <#else>    
-                                            <@tag color='danger' >Indisponible</@tag>
+                                            <@tag color='danger' >#i18n{forms.manageForm.unavailable}</@tag>
                                         </#if> 
                                     </#if>
                                 </div>
@@ -91,7 +91,7 @@
                                         <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?datetime>
                                             <@icon style='clock-o' class='fa-fw text-info' /> <span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </span>
                                         <#else>    
-                                            <@icon style='close' class='fa-fw text-danger' /> <@tag color='danger' >Indisponible</@tag>
+                                            <@icon style='close' class='fa-fw text-danger' /> <@tag color='danger' >#i18n{forms.manageForm.unavailable}</@tag>
                                         </#if> 
                                     </#if>
                                 </a>
