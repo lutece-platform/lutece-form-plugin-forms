@@ -33,8 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
+import org.apache.commons.text.StringEscapeUtils;
+
 import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
 
 /**
  * This class provides utilitary methods for CSV export
@@ -44,7 +45,6 @@ public final class CSVUtil
 {
     private static final String ITERATION_PREFIX = " (";
     private static final String ITERATION_SUFFIX = ")";
-    private static final char DOUBLE_QUOTE = '\"';
 
     /**
      * Constructor
@@ -83,13 +83,6 @@ public final class CSVUtil
      */
     static String safeString( String strValue )
     {
-        String strSafeString = strValue;
-
-        if ( strSafeString.contains( FormsConstants.SEPARATOR_SEMICOLON ) )
-        {
-            strSafeString = new StringBuilder( DOUBLE_QUOTE ).append( strSafeString ).append( DOUBLE_QUOTE ).toString( );
-        }
-
-        return strSafeString;
+        return StringEscapeUtils.escapeCsv( strValue );
     }
 }

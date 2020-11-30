@@ -103,12 +103,12 @@ public class CSVDataLine
         }
         if ( !_mapDataToExport.containsKey( question.getId( ) ) )
         {
-            _mapDataToExport.put( question.getId( ), sbReponseValues.toString( ) );
+            _mapDataToExport.put( question.getId( ), CSVUtil.safeString( sbReponseValues.toString( ) ) );
         }
         else
         {
             StringBuilder sbConcatReponseValues = new StringBuilder( );
-            sbConcatReponseValues.append( _mapDataToExport.get( question.getId( ) ) ).append( ITERATION_SEPARATOR ).append( sbReponseValues.toString( ) );
+            sbConcatReponseValues.append( _mapDataToExport.get( question.getId( ) ) ).append( ITERATION_SEPARATOR ).append( CSVUtil.safeString( sbReponseValues.toString( ) ) );
             _mapDataToExport.replace( question.getId( ), sbConcatReponseValues.toString( ) );
         }
     }
