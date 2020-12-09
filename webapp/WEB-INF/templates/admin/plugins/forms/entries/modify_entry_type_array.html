@@ -1,67 +1,67 @@
-
 <#include "all_entry_commons.html" />
 <#include "/admin/util/editor/editor.html" />
 
 <@breadforms title=entry.entryType.title />
 <@row>
 	<@tform action="jsp/admin/plugins/forms/ManageQuestions.jsp">
-	<@columns md=3 lg=3 xl=3>
-		<@box color='primary'>
-			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
+	<@columns sm=12>
+		<@box>
+			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"'>
+				<@button type='button' style='card-control collapse' buttonTargetId='#modifyEntryFields' buttonIcon='plus' size='sm' />
+			</@boxHeader>
 			<@boxBody>
-				<fieldset>
-				<legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"</legend>
-                    <input name="id_entry" value="${entry.idEntry}" type="hidden" />
-                    <input name="id_step" value="${step.id}" type="hidden" />
-                    <input name="id_question" value="${question.id}" type="hidden" />
-					<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}' rows=2>
-							<@input type='text' name='type' id='type' readonly=true disabled=true value='${entry.entryType.title}' />
+				<@fieldSet fieldsetId='modifyEntryFields' legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+                    <@input type='hidden' name='id_entry' value='${entry.idEntry}' />
+                    <@input type='hidden' name='id_step' value='${step.id}' />
+                    <@input type='hidden' name='id_question' value='${question.id}' />
+					<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+						<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
 					</@formGroup>
-					<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true rows=2>
+					<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
 						<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
 					</@formGroup>
-                                        <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-                                            <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
-                                        </@formGroup>
-					<@formGroup labelFor='num_row' labelKey='#i18n{forms.createEntry.labelNumberRows}' mandatory=true rows=2>
+					<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+						<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+					</@formGroup>
+					<@formGroup labelFor='num_row' labelKey='#i18n{forms.createEntry.labelNumberRows}' mandatory=true>
 						<@input type='text' name='num_row' id='num_row' value=getFieldValueByCode(entry, "array_row") maxlength=255 readonly=true />
 					</@formGroup>
-					<@formGroup labelFor='num_column' labelKey='#i18n{forms.createEntry.labelNumberColumns}' mandatory=true rows=2>
+					<@formGroup labelFor='num_column' labelKey='#i18n{forms.createEntry.labelNumberColumns}' mandatory=true>
 						<@input type='text' name='num_column' id='num_column' value=getFieldValueByCode(entry, "array_column") maxlength=255 readonly=true />
 					</@formGroup>
-					<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelArrayTitle}' helpKey='#i18n{forms.createEntry.labelArrayTitleHelp}' rows=2>
+					<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelArrayTitle}' helpKey='#i18n{forms.createEntry.labelArrayTitleHelp}'>
 						<@input type='text' name='comment' id='comment' value='${entry.comment}' maxlength=255 />
 					</@formGroup>
-					<@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
-                    	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
+					<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+                    	<@checkBox labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
                     </@formGroup>
-                    <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
-						<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+                    <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+						<@checkBox labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
 					</@formGroup>
-					<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
-						<@checkBox name='exportable' id='exportable' value='1' checked=entry.exportable />
+					<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
+						<@checkBox labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' name='exportable' id='exportable' value='1' checked=entry.exportable />
 					</@formGroup>
                                         ${question_modify_template!}
 					<@formGroup rows=2>
-						<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false size='' />
-						<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' showTitleXs=false size='' />
-						<@button type='submit' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' showTitleXs=false size='' color='btn-secondary' />
+						<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
+						<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' hideTitle=['xs'] />
+						<@button type='submit' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' />
 					</@formGroup>
+				</@fieldSet>
 			</@boxBody>
 		</@box>
-	</@columns>
-	<@columns md=9 lg=9 xl=9>
+
 		<@box color='primary'>
-			<@boxHeader />
+			<@boxHeader title='${entry.comment!}' />
 			<@boxBody>
 				<@table>
 					<#assign x=getFieldValueByCode(entry, "array_row")?number>
 					<#list 1..x+1 as i>
 						<tr>
 						<#assign y=getFieldValueByCode(entry, "array_column")?number>
-						<#list 1..y+1 as j>
+							<#list 1..y+1 as j>
 							<td>
-							<#assign title="">
+							<#assign title='' />
 							<#list entry.fields as field>
 								<#assign value=i+"_"+j>
 								<#if field.value == value>
@@ -69,9 +69,9 @@
 								</#if>
 							</#list>
 								<#if j==1 && i!=1>
-									<input type="text" id="field_${i}_${j}" name="field_${i}_${j}" class="form-control" value="${title!}"> 
+									<@input type='text' id='field_${i}_${j}' name='field_${i}_${j}' value='${title!}' /> 
 								<#elseif i == 1 && j != 1>
-									<input type="text" id="field_${i}_${j}" name="field_${i}_${j}" class="form-control" value="${title!}">
+									<@input type='text' id='field_${i}_${j}' name='field_${i}_${j}' value='${title!}' />
 								<#elseif i == 1 && j == 1>
 									<b>${entry.comment}</b>
 								<#else>
@@ -82,9 +82,8 @@
 						</tr>
 					</#list>  
 				</@table>
-					</fieldset>
-				</@boxBody>
-			</@box>
+			</@boxBody>
+		</@box>
 	</@columns>
 </@tform>
 </@row>

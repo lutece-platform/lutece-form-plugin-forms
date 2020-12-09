@@ -1,22 +1,23 @@
-
 <#include "all_entry_commons.html" />
 <#include "/admin/util/editor/editor.html" />
 
 <@breadforms title=entry.entryType.title />
 <@row>
-	<fieldset>
-		<legend class="sr-only">#i18n{forms.modifyEntry.titleQuestion} : '${form.title}'</legend>
-		<@columns md=3 lg=3 xl=3>
-			<@box color='primary'>
-				<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : ${form.title}' />
-				<@boxBody>
-					<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
-                    <input name="id_entry" value="${entry.idEntry}" type="hidden" />
-                    <input name="id_step" value="${step.id}" type="hidden" />
-                    <input name="id_question" value="${question.id}" type="hidden" />
-                    <input type='hidden' name='max_files' id='max_files' value="1" />
+	<@columns sm=12>
+		<@box>
+			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : ${form.title}'>
+				<@button type='button' style='card-control collapse' buttonTargetId='#modifyEntryForm' size='sm' />
+			</@boxHeader>
+			<@boxBody>
+				<@tform id='modifyEntryForm' action='jsp/admin/plugins/forms/ManageQuestions.jsp' collapsed=true>
+					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
+						<@input type='hidden' name='id_step' value='${step.id}' />
+						<@input type='hidden' name='id_question' value='${question.id}' />
+						<@input type='hidden' name='max_files' id='max_files' value='1' />
+						
 						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
-							<@input type='text' name='type' id='type' readonly=true disabled=true value='${entry.entryType.title}' />
+							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
 						</@formGroup>
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
 							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
@@ -30,8 +31,8 @@
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
 							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
 						</@formGroup>
-						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
-							<@checkBox name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
+						<@formGroup>
+							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
 						</@formGroup>
 						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.createEntry.labelFileMaxSize}' mandatory=true>
 							<@input type='text' name='file_max_size' id='file_max_size' value=getFileMaxSize(entry) />
@@ -46,43 +47,41 @@
 								</#if>
 							</#list>
 						</@formGroup>
-						<@formGroup labelFor='export_binary' labelKey='#i18n{forms.createEntry.labelExportBinary}'>
-							<@checkBox labelKey='#i18n{forms.createEntry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
+						<@formGroup>
+							<@checkBox labelFor='export_binary' labelKey='#i18n{forms.createEntry.labelExportBinary}' labelKey='#i18n{forms.createEntry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
 							<@tag color='warning' params='style="white-space: normal;"'>#i18n{forms.createEntry.labelExportBinaryWarning}</@tag>
 						</@formGroup>
-                    	<@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
-                        	<@checkBox name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
+                    	<@formGroup>
+                        	<@checkBox labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
                     	</@formGroup>
-                        <@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}'>
-                            <@checkBox name='editable_back' id='editable_back' value='1' checked=entry.editableBack />
+                        <@formGroup>
+                            <@checkBox labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}' name='editable_back' id='editable_back' value='1' checked=entry.editableBack />
                         </@formGroup>
-                        <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
-	                    	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
+                        <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+	                    	<@checkBox labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
 	                    </@formGroup>
-	                     <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
-							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+	                     <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
 						</@formGroup>
-						<@formGroup labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
-							<@checkBox name='exportable' id='exportable' value='1' checked=entry.exportable />
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
+							<@checkBox labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' name='exportable' id='exportable' value='1' checked=entry.exportable />
 						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
 						<@formGroup rows=2>
-							<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false />
-							<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false />
-							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' size='' showTitleXs=false  showTitleMd=false color='btn-secondary'/>
+							<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' hideTitle=['xs','sm'] />
+							<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' hideTitle=['xs','sm'] />
+							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' hideTitle=['xs','sm'] color='default'/>
 						</@formGroup>
-					</@tform>
-				</@boxBody>
-			</@box>
-		</@columns>
-			<!-- -----------------------OCR CONFIG MAPPING----------------------- -->
-
-		<#assign ocr_mapping_template= entryTypeService.getOcrConfigTemplate( step.id , question.id, entry.idEntry, fileType)>
-
-		${ocr_mapping_template!}
-			<!-- ---------------------------------------------- -->
-	</fieldset>
+					</@fieldSet>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+	<!-- -----------------------OCR CONFIG MAPPING----------------------- -->
+	<#assign ocr_mapping_template= entryTypeService.getOcrConfigTemplate( step.id , question.id, entry.idEntry, fileType)>
+	${ocr_mapping_template!}
+	<!-- ---------------------------------------------------------------- -->
 </@row>
 <@initEditor />

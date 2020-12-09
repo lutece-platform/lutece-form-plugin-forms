@@ -301,15 +301,17 @@ $( function(){
 </script>
 </#macro>
 
-<#macro formBreadCrumb >
-<ol id="breadforms" class="breadcrumb" style="margin-bottom:3em; background-color:transparent;">
-	<li>
-		<a href="jsp/admin/plugins/forms/ManageForms.jsp" title="Retour Liste des formulaire">
-			<i class="fa fa-home fa-fw"></i>
-		</a>
-	</li>
-	<#nested>
-</ol>
+<#macro formBreadCrumb>
+<@row>
+	<ol id="breadforms" class="breadcrumb" style="margin-bottom:1em; background-color:transparent;">
+		<li>
+			<@link href='jsp/admin/plugins/forms/ManageForms.jsp' title='Retour Liste des formulaire'>
+				<@icon style='home' />
+			</@link>
+		</li>
+		<#nested>
+	</ol>
+</@row>
 </#macro>     
 
 <#macro formModal id='pubModal' title=''>
@@ -334,19 +336,13 @@ $( function(){
 </#macro>
 
 <#macro formsButton okAction='' viewAction=''  >
-<div class="form-group">
-	<div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
-  	<button  class="btn btn-link" id="action_${okAction}" name="action_${okAction}" type="submit">
-    	<i class='fa fa-check text-success'></i> #i18n{portal.admin.message.buttonValidate}
-		</button>
+<@formGroup>
+  	<@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
 		<#nested>
-		<#if viewAction !=''>
-			<button class="btn btn-link" name="view_${viewAction}" type="submit" formnovalidate >
-				<i class='fa fa-close text-danger'></i> #i18n{portal.admin.message.buttonCancel}
-			</button>
-		</#if>
-  </div>
-</div>
+	<#if viewAction !=''>
+		<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' />
+	</#if>
+</@formGroup>
 </#macro>
 
 <#macro formModel>

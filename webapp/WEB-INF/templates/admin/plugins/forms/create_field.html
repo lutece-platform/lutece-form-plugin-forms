@@ -5,12 +5,12 @@
 		<@box color='primary'>
 			<@boxHeader title='#i18n{forms.createField.title} : "${field.parentEntry.title}"' />
 			<@boxBody>
-        		<fieldset>
-					<legend class="sr-only">#i18n{forms.createField.title} : "${field.parentEntry.title}"</legend>
+        		<@fieldSet legend='#i18n{forms.createField.title} : "${field.parentEntry.title}"' hideLegend=['all']>
 					<@tform action='jsp/admin/plugins/forms/ModifyEntry.jsp'>
-					<input name="id_step" value="${question.idStep}" type="hidden" />
-                    <input name="id_question" value="${question.id}" type="hidden" />
-                    <input name="id_entry" value="${id_entry}" type="hidden" />
+						<@input type='hidden' name='id_step' value='${question.idStep}' />
+						<@input type='hidden' name='id_question' value='${question.id}' />
+						<@input type='hidden' name='id_entry' value='${id_entry}' />
+						
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
 							<@input type='text' name='title' id='title' value='' maxlength=255 />
 						</@formGroup>
@@ -20,21 +20,20 @@
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createField.labelComment}'>
 							<@input type='textarea' name='comment' id='comment'></@input>
 						</@formGroup>
-						<@formGroup labelFor='default_value' labelKey='#i18n{forms.createField.labelDefaultValue}'>
-							<@checkBox name='default_value' value='1' />
+						<@formGroup>
+							<@checkBox labelFor='default_value' labelKey='#i18n{forms.createField.labelDefaultValue}' name='default_value' id='default_value' value='1' />
 						</@formGroup>
 						<#if option_no_display_title>
-							<@formGroup labelFor='no_display_title' labelKey='#i18n{forms.createField.labelNoDisplayTitle}'>
-								<#if field.noDisplayTitle><#assign checked = true /></#if>
-								<@checkBox name='no_display_title' value='1' checked=checked />
+							<@formGroup>
+								<@checkBox labelFor='no_display_title' labelKey='#i18n{forms.createField.labelNoDisplayTitle}' name='no_display_title' id='no_display_title' value='1' checked=field.noDisplayTitle />
 							</@formGroup>
 						</#if>
 						<@formGroup>
-							<@button type='submit' name='action_createField' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false />
-							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' showTitleXs=false color='btn-secondary' />
+							<@button type='submit' name='action_createField' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
+							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' hideTitle=['xs'] color='default' />
 						</@formGroup>
 					</@tform>
-        		</fieldset>
+        		</@fieldSet>
 			</@boxBody>
 		</@box>
 	</@columns>
