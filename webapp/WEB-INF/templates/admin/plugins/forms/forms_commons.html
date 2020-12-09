@@ -302,7 +302,7 @@ $( function(){
 </#macro>
 
 <#macro formBreadCrumb >
-<ol id="breadforms" class="breadcrumb">
+<ol id="breadforms" class="breadcrumb" style="margin-bottom:3em; background-color:transparent;">
 	<li>
 		<a href="jsp/admin/plugins/forms/ManageForms.jsp" title="Retour Liste des formulaire">
 			<i class="fa fa-home fa-fw"></i>
@@ -313,19 +313,24 @@ $( function(){
 </#macro>     
 
 <#macro formModal id='pubModal' title=''>
-<div class="modal fade" id="${id}" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
+<@modal id='${id}'>
+    <@modalHeader />
+	<@modalBody>
         <iframe id="modalIframe" src=""></iframe>
-    </div>
-    </div>
-</div>
+    </@modalBody>
+    <@modalFooter />
+</@modal>
 </#macro>
 
-<#macro headerButton name='view_manageForm' label='portal.admin.message.buttonCancel' validate=true >
-<button class="btn btn-link" name="${name}" type="submit" <#if !validate>formnovalidate</#if>>
-   <i class='fa fa-<#if validate>check text-success<#else>remove text-danger</#if>'></i> #i18n{${label}}
-</button>
+<#macro headerButton name='view_manageForm' label='portal.admin.message.buttonCancel' validate=true>
+<#if validate>
+	<#assign color = '' />
+	<#assign buttonIcon = 'check' />
+<#else>
+	<#assign color = 'danger' />
+	<#assign buttonIcon = 'times' />
+</#if>
+<@button type='submit' name='${name}' title='#i18n{${label}}' cancel=!validate buttonIcon=buttonIcon  color=color />
 </#macro>
 
 <#macro formsButton okAction='' viewAction=''  >
@@ -344,75 +349,73 @@ $( function(){
 </div>
 </#macro>
 
-<#macro formModel >
+<#macro formModel>
 	<@row> 
-		<@columns xs=12 sm=7> 
-				<fieldset>
-						<legend>#i18n{forms.modify_form.labelDescription}</legend>   
-						<@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true rows=2>
-								<@input type='text' name='title' value='${form.title!}' />
+		<@columns md=7> 
+			<@fieldSet legend='#i18n{forms.modify_form.labelDescription}'>
+				<@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true rows=2>
+						<@input type='text' name='title' value='${form.title!}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
+						<@input type='textarea' name='description'>${form.description!}</@input>
+				</@formGroup>
+			</@fieldSet>
+			<@fieldSet legend='#i18n{forms.create_form.labelDates}'>  
+				<@row>
+					<@columns xs=12 sm=6>   
+						<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
+							<@inputGroup>
+							<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
+									<@input type='date' name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
+									<@inputGroupItem type='addon'>
+										<@icon style='calendar' />
+									</@inputGroupItem>
+							</@inputGroup>
 						</@formGroup>
-						<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
-								<@input type='textarea' name='description'>${form.description!}</@input>
+					</@columns>       
+					<@columns xs=12 sm=6>  
+						<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
+							<@inputGroup>
+							<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
+									<@input type='date' name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
+									<@inputGroupItem type='addon'>
+										<@icon style='calendar' />
+									</@inputGroupItem>
+							</@inputGroup>
 						</@formGroup>
-				</fieldset>
-				<fieldset>
-						<legend>#i18n{forms.create_form.labelDates}</legend>       
-						<@row>
-								<@columns xs=12 sm=6>   
-										<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
-												<@inputGroup>
-												<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-														<@input type='text' name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
-														<@inputGroupItem type='addon'>
-																<@icon style='calendar' />
-														</@inputGroupItem>
-												</@inputGroup>
-										</@formGroup>
-								</@columns>       
-								<@columns xs=12 sm=6>  
-										<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
-												<@inputGroup>
-												<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-														<@input type='text' name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
-														<@inputGroupItem type='addon'>
-																<@icon style='calendar' />
-														</@inputGroupItem>
-												</@inputGroup>
-										</@formGroup>
-								</@columns>            
-						</@row>
-				</fieldset>
-				<fieldset>
-				<legend>#i18n{forms.create_form.display.labelRestrictions}</legend> 
-						<@row>     
-								<@columns xs=12 sm=4>  
-										<@formGroup labelFor='max_number_response' labelKey='#i18n{forms.create_form.labelMaxNumberResponse}' helpKey='#i18n{forms.create_form.labelMaxNumberResponseComment.help}' rows=2>
-												<@input name='maxNumberResponse' id='maxNumberResponse' type='number' value=form.maxNumberResponse?string!'0' />
-										</@formGroup>
-								</@columns>     
-								<@columns xs=12 sm=3>       
-										<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' rows=2>
-												<@checkBox labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' labelFor='authentificationNeeded' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
-										</@formGroup>
-								</@columns>       
-								<@columns xs=12 sm=4>           
-										<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' rows=2>
-										<@checkBox labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) labelFor='oneResponseByUser' />
-										</@formGroup>
-								</@columns> 
-						</@row>          
-				</fieldset>
-				<fieldset>
-						<legend>#i18n{forms.create_form.display.label}</legend>
-						<@columns xs=12 sm=6> 
-								<@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true rows=2>
-										<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
-								</@formGroup>
-						</@columns> 
-				</fieldset>   
+					</@columns>            
+				</@row>
+			</@fieldSet>
+			<@fieldSet legend='#i18n{forms.create_form.display.labelRestrictions}'>
+				<@row>     
+					<@columns xs=12 sm=4>  
+						<@formGroup labelFor='max_number_response' labelKey='#i18n{forms.create_form.labelMaxNumberResponse}' helpKey='#i18n{forms.create_form.labelMaxNumberResponseComment.help}' rows=2>
+							<@input name='maxNumberResponse' id='maxNumberResponse' type='number' value=form.maxNumberResponse?string!'0' />
+						</@formGroup>
+					</@columns>     
+					<@columns xs=12 sm=4>       
+						<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' hideLabel=['all'] rows=2>
+							<@checkBox labelFor='authentificationNeeded' labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
+						</@formGroup>
+					</@columns>       
+					<@columns xs=12 sm=4>           
+						<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' hideLabel=['all'] rows=2>
+							<@checkBox labelFor='oneResponseByUser' labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) />
+						</@formGroup>
+					</@columns> 
+				</@row>          
+			</@fieldSet>
+			<@fieldSet legend='#i18n{forms.create_form.display.label}'>
+				<@row>
+					<@columns xs=12 sm=6> 
+						<@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true rows=2>
+								<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
+						</@formGroup>
+					</@columns>
+				</@row>
+			</@fieldSet>   
 		</@columns>
-		<@columns xs=12 sm=5>  
+		<@columns md=5>  
 		<fieldset>
 				<legend>#i18n{forms.create_form.labelDisplaySummary}</legend>
 						<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>

@@ -1,17 +1,14 @@
-
-<@tform class="form" method="post" name="create_form" action="jsp/admin/plugins/forms/ManageForms.jsp">
-<@box>
-    <@boxHeader title='#i18n{forms.create_form.title}' boxTools=true >
-        <@headerButton name='action_createForm' label='forms.create_form.buttonValidate' /> 
-        <@headerButton name='action_createForm' label='portal.admin.message.buttonCancel' validate=false /> 
-    </@boxHeader>
-    <@boxBody>
-        <@formModel /> 
-    </@boxBody>
-</@box>
+<@tform class='form' method='post' name='create_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
+	<@box>
+		<@boxHeader title='#i18n{forms.create_form.title}'>
+		</@boxHeader>
+		<@boxBody>
+			<@formModel /> 
+			<@headerButton name='action_createForm' label='forms.create_form.buttonValidate' /> 
+			<@headerButton name='action_createForm' label='portal.admin.message.buttonCancel' validate=false /> 
+		</@boxBody>
+	</@box>
 </@tform>
-<@getDateTimePickerBootstrap idField="availabilityStartDate" language=locale />
-<@getDateTimePickerBootstrap idField="availabilityEndDate" language=locale />
 <@formEditor /> 
 
 <@toastr infos=infos warnings=warnings errors=errors />

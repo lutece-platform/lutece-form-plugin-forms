@@ -69,3 +69,21 @@ INSERT INTO genatt_field (id_entry, code, VALUE)
 	WHERE resource_type = 'FORMS_FORM' 
 	AND t.class_name = 'forms.entryTypeTextArea'
 	AND e.fields_in_line = 1;
+	
+UPDATE genatt_entry_type SET icon_name='dot-circle' WHERE id_type=101;
+UPDATE genatt_entry_type SET icon_name='check-square' WHERE id_type=102;
+UPDATE genatt_entry_type SET icon_name='comment' WHERE id_type=103;
+UPDATE genatt_entry_type SET icon_name='calendar' WHERE id_type=104;
+UPDATE genatt_entry_type SET icon_name='list-alt' WHERE id_type=105;
+UPDATE genatt_entry_type SET icon_name='file-alt' WHERE id_type=106;
+UPDATE genatt_entry_type SET icon_name='file-alt' WHERE id_type=107;
+UPDATE genatt_entry_type SET icon_name='file' WHERE id_type=108;
+UPDATE genatt_entry_type SET icon_name='map-marked-alt' WHERE id_type=109;
+UPDATE genatt_entry_type SET icon_name='image' WHERE id_type=110;
+UPDATE genatt_entry_type SET icon_name='user' WHERE id_type=111;
+UPDATE genatt_entry_type SET icon_name='hashtag' WHERE id_type=112;
+UPDATE genatt_entry_type SET icon_name='user' WHERE id_type=113;
+UPDATE genatt_entry_type SET icon_name='table' WHERE id_type=114;
+UPDATE genatt_entry_type SET icon_name='indent' WHERE id_type=115;
+UPDATE genatt_entry_type SET icon_name='gavel' WHERE id_type=116;
+UPDATE genatt_entry_type SET icon_name='file' WHERE id_type=117;
