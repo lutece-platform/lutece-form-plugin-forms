@@ -33,7 +33,7 @@ changeVisilityConfirmFieldTitle();
 
 <#--- MACRO formBox --->
 <#macro formBox entry stepid questionid title='' action='jsp/admin/plugins/forms/ManageQuestions.jsp' editable=true display=true rows=2>
-<@box color='primary'>
+<@box>
     <@boxBody>
         <@tform action=action>
             <@input type='hidden' name='id_entry' value='${entry.idEntry}' />
@@ -83,9 +83,9 @@ changeVisilityConfirmFieldTitle();
             </@formGroup>
             ${question_create_template!}
             <@formGroup rows=rows>
-                <@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false color='btn-link' />
-                <@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false color='btn-link' />
-                <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' size='' showTitleXs=false  showTitleMd=false color='btn-link'/>
+                <@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false />
+                <@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false />
+                <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' size='' showTitleXs=false  showTitleMd=false color='default'/>
             </@formGroup>
         </@tform>
     </@boxBody>

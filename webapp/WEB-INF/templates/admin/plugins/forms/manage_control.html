@@ -1,35 +1,34 @@
-
 <@formBreadCrumb>
-    <li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="#i18n{forms.create_form.button.backForm}">...</i></a></li>
-    <li><a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="#i18n{forms.create_form.button.backStep}">${step.title}</a></li>
+    <li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
+    <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
     <li class="active">#i18n{forms.manage_controls.title.${control_type?lower_case}}</li></ul>
 </@formBreadCrumb>
 <@row>
     <@columns>
         <@box>
-            <@boxHeader title='#i18n{forms.manage_controls.title.${control_type?lower_case}}' boxTools=true>
-                <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id}' buttonIcon='plus text-success' title='#i18n{forms.manage_questions.action.addControl}' showTitleXs=false color='btn-link' />
+            <@boxHeader title='#i18n{forms.manage_controls.title.${control_type?lower_case}}'>
+                <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' hideTitle=['xs'] size='sm' />
             </@boxHeader>
             <@boxBody>
             <#if control_list?size gt 0>
                 <@table>
                     <thead>
                         <tr>
-                            <th class="col-xs-6 col-sm-5 col-md-7">#i18n{forms.modify_control.labelValidator}</th>
-                            <th class="col-xs-5 col-sm-6 col-md-4">#i18n{forms.manageForm.columnActions}</th>
+                            <@th xs=6 sm=5 md=7>#i18n{forms.modify_control.labelValidator}</@th>
+                            <@th xs=5 sm=6 md=4>#i18n{forms.manageForm.columnActions}</@th>
                         </tr>
                     </thead>
                     <tbody>
                         <#list control_list as control>
                             <#assign validator = validatorManager.getValidator( control.validatorName ) />
                             <tr>
-                                <td class="col-sm-6">
+                                <@td sm=6>
                                     ${validator.validatorDisplayName}
-                                </td>
-                                <td class="col-sm-3">
-                                    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}' title='#i18n{forms.manage_questions.action.control}' showTitle=false buttonIcon='pencil' color='btn-link' />
-                                    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' showTitle=false buttonIcon='trash' color='btn-link text-danger' />
-                                </td>
+                                </@td>
+                                <@td sm=3>
+                                    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
+                                    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
+                                </@td>
                             </tr>
                         </#list>
                     </tbody>
@@ -42,9 +41,9 @@
                     </#if> 
                 -->
             <#else>    
-                <div class="alert alert-warning">
-                    <i class="fa fa-warning fa-fw"></i> #i18n{forms.manage_transitions.labelNoControl}
-                </div>
+                <@alert color='warning'>
+                    <@icon style='exclamation-triangle' /> #i18n{forms.manage_transitions.labelNoControl}
+                </@alert>
             </#if>    
                 <@messages errors=errors />
                 <@messages infos=infos />

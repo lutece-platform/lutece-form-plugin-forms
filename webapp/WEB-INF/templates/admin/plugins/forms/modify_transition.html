@@ -1,19 +1,17 @@
 <@box>
     <@boxHeader title='#i18n{forms.modify_transition.title}' />
     <@boxBody>
-    <@tform class="form-horizontal col-xs-12 col-sm-10" method="post" id="modify_transition" name="modify_transition" action="jsp/admin/plugins/forms/ManageTransitions.jsp">
+    <@tform method='post' id='modify_transition' name='modify_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
         <@messages errors=errors />
-        <input type="hidden" id="id_step" name="id_step" value="${step.id}">
-        <input type="hidden" id="fromStep" name="fromStep" value="${step.id}">
-        <input type="hidden" id="id_transition" name="id_transition" value="${transition.id}">
+        <@input type="hidden" id='id_step' name='id_step' value='${step.id}' />
+        <@input type="hidden" id='fromStep' name='fromStep' value='${step.id}' />
+        <@input type="hidden" id='id_transition' name='id_transition' value='${transition.id}' />
         <@formGroup labelKey='#i18n{forms.modify_transition.labelNextStep}' helpKey='#i18n{forms.modify_transition.labelNextStep.help}' mandatory=true>
             <@inputGroup>
                 <@select name='nextStep' items=availableSteps default_value='${transition.nextStep}' />
-                <span class="input-group-btn">
-                    <button  class="btn btn-primary" id="action_modifyTransition" name="action_modifyTransition" type="submit">
-                        <i class='fa fa-check'></i> #i18n{portal.admin.message.buttonValidate}
-                    </button>
-                </span>
+                <@inputGroupItem>
+                    <@button type='submit' id='action_modifyTransition' name='action_modifyTransition' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' hideTitle=['all'] />
+                </@inputGroupItem>
             </@inputGroup>
         </@formGroup>
         <!--

@@ -363,7 +363,7 @@ $( function(){
 							<@inputGroup>
 							<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
 									<@input type='date' name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
-									<@inputGroupItem type='addon'>
+									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
 									</@inputGroupItem>
 							</@inputGroup>
@@ -374,7 +374,7 @@ $( function(){
 							<@inputGroup>
 							<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
 									<@input type='date' name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
-									<@inputGroupItem type='addon'>
+									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
 									</@inputGroupItem>
 							</@inputGroup>

@@ -3,11 +3,11 @@
 <#else>
     <#assign previous_searched_text = ''>
 </#if>
-<@formGroup formStyle='inline' id='search-text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}' labelFor='searched_text' showLabel=false>
+<@formGroup id='search-text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}' labelFor='searched_text' hideLabel=['all']>
     <@inputGroup>
         <@input name='searched_text' id='searched_text' value=previous_searched_text placeHolder='#i18n{forms.multiviewForms.labelFilter.searchText}' />
         <@inputGroupItem>
-            <@button color='btn-info' type='submit' id='btn_search' buttonIcon='search' />
+            <@button color='info' type='submit' id='btn_search' buttonIcon='search' />
         </@inputGroupItem>    
     </@inputGroup>
 </@formGroup>
