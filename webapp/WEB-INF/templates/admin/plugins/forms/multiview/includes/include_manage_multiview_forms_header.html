@@ -1,32 +1,31 @@
 <@input type='hidden' name='current_selected_panel' value='${current_selected_panel!""}' />
-<div class="filter-forms">
+<div class="d_filter-forms">
 	<#if form_filter_list?has_content>
 		<#list form_filter_list as form_filter>
 			${form_filter.template!''}
 		</#list>
 	</#if>
 	<#if multiviewExportAction?? >
-		<label for="format_export" >
-			<#assign param><#if !table_template?has_content>disabled<#else></#if> </#assign>
+		<@formGroup labelFor='format_export' labelKey='#i18n{forms.adminFeature.multiviewForms.export.buttonName}'>
 			<@inputGroup>
-				<@select name='format_export' id='format_export' default_value='' items=format_export_list title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' params=param />
+				<@select name='format_export' id='format_export' default_value='' items=format_export_list title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content />
 				<@inputGroupItem>
-					<@button color='btn-info' type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content  buttonIcon='download' />
+					<@button type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' hideTitle=['all'] disabled=!table_template?has_content buttonIcon='download' size='sm' />
 				</@inputGroupItem>
 			</@inputGroup>
-		</label>
+		</@formGroup>
 	</#if>
 	<#if multiviewConfigAction?? >
-		<label for="config_multiview">
-		<@inputGroup>
-			<@inputGroupItem>
-				<@aButton name='btn_multiview_config' id='btn_multiview_config' href='${multiviewConfigAction.url!}' params='' title='${multiviewConfigAction.name}' buttonIcon='${multiviewConfigAction.iconUrl}' />
-			</@inputGroupItem>
-		</@inputGroup>
-		</label>
+		<@formGroup labelFor='config_multiview'>
+			<@inputGroup>
+				<@inputGroupItem>
+					<@aButton name='btn_multiview_config' id='btn_multiview_config' href='${multiviewConfigAction.url!}' params='' title='${multiviewConfigAction.name}' buttonIcon='${multiviewConfigAction.iconUrl}' />
+				</@inputGroupItem>
+			</@inputGroup>
+		</@formGroup>
 	</#if>
 </div>
-<div class="row">
+<@tabs>
 	<@tabList>
 		<#list form_panel_list as form_panel>
 			<#if form_panel.template??>
@@ -34,7 +33,8 @@
 			</#if>
 		</#list>
 	</@tabList>
-</div>
+</@tabs>
+
 <link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
 <script src="js/jquery/plugins/toastr/toastr.min.js"></script>
 <@toastr infos=infos warnings=warnings errors=errors />

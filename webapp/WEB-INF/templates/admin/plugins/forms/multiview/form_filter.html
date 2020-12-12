@@ -1,7 +1,12 @@
 <#if filter_list?has_content>
-<#assign params=''>
+	
+	<#assign params=''>
 	<#if filter_name != 'search_form'>
 		<#assign params='onchange="this.form.submit()"'>
-	</#if> 
-	<@select name=filter_name id=filter_name default_value='${filter_list_value!-1}' items=filter_list params=params/>
+	</#if>
+	
+	<@formGroup labelFor=filter_name labelKey=''>
+		<@select name=filter_name id=filter_name default_value='${filter_list_value!-1}' items=filter_list params=params/>
+	</@formGroup>
+	
 </#if>

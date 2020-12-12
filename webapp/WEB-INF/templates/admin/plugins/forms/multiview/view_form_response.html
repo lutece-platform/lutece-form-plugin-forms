@@ -16,9 +16,9 @@
             </a>
         </#list>
     <#else>
-        <div class="alert alert-warning">
-            <i class="fa fa-warning fa-fw"></i>  #i18n{forms.multiviewForms.view_record_history.history_empty}
-        </div>
+        <@alert color='warning'>
+            <@icon style='exclamation-triangle' /> #i18n{forms.multiviewForms.view_record_history.history_empty}
+        </@alert>
     </#if>
 </#if>
 </#macro>
