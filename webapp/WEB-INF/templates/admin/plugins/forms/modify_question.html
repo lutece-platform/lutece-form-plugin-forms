@@ -1,17 +1,17 @@
-<@formGroup labelFor='is_visible_multiview_global' labelKey='#i18n{forms.modify_question.labelVisibleMultiviewGlobal}'>
-    <@checkBox name='is_visible_multiview_global' id='is_visible_multiview_global' value='1' checked=question.isVisibleMultiviewGlobal()/>
+<@formGroup labelKey='#i18n{forms.modify_question.labelVisibleMultiviewGlobal}' hideLabel=['all']>
+    <@checkBox labelFor='is_visible_multiview_global' labelKey='#i18n{forms.modify_question.labelVisibleMultiviewGlobal}' name='is_visible_multiview_global' id='is_visible_multiview_global' value='1' checked=question.isVisibleMultiviewGlobal()/>
 </@formGroup>
-<@formGroup labelFor='is_visible_multiview_form_selected' labelKey='#i18n{forms.modify_question.labelVisibleMultiviewFormSelected}'>
-    <@checkBox name='is_visible_multiview_form_selected' id='is_visible_multiview_form_selected' value='1' checked=question.isVisibleMultiviewFormSelected() />
+<@formGroup labelKey='#i18n{forms.modify_question.labelVisibleMultiviewFormSelected}' hideLabel=['all']>
+    <@checkBox labelFor='is_visible_multiview_form_selected' labelKey='#i18n{forms.modify_question.labelVisibleMultiviewFormSelected}' name='is_visible_multiview_form_selected' id='is_visible_multiview_form_selected' value='1' checked=question.isVisibleMultiviewFormSelected() />
 </@formGroup>
-<@formGroup labelKey='#i18n{forms.modify_question.labelColumnTitle}' helpKey='#i18n{forms.modify_question.labelColumnTitle.help}'>
+<@formGroup labelFor='column_title' labelKey='#i18n{forms.modify_question.labelColumnTitle}' helpKey='#i18n{forms.modify_question.labelColumnTitle.help}'>
     <@input type='text' name='column_title' value='${(question.columnTitle)!}' />
 </@formGroup>
 <#if can_be_filtered>
-	<@formGroup labelKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal}' helpKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal.help}'>
-	    <@checkBox name='is_filterable_multiview_global' id='is_filterable_multiview_global' value='1'  checked=question.isFiltrableMultiviewGlobal() />
+	<@formGroup labelKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal}' hideLabel=['all'] helpKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal.help}'>
+	    <@checkBox labelFor='is_filterable_multiview_global' labelKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal}' name='is_filterable_multiview_global' id='is_filterable_multiview_global' value='1' checked=question.isFiltrableMultiviewGlobal() />
 	</@formGroup>
-	<@formGroup labelKey='#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}' helpKey='#i18n{forms.modify_question.labelFilterableFormSelected.help}'>
-	    <@checkBox name='is_filterable_multiview_form_selected' id='is_filterable_multiview_form_selected' value='1' checked=question.isFiltrableMultiviewFormSelected() />
+	<@formGroup labelKey='#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}' hideLabel=['all'] helpKey='#i18n{forms.modify_question.labelFilterableFormSelected.help}'>
+	    <@checkBox labelFor='is_filterable_multiview_form_selected' labelKey='#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}' name='is_filterable_multiview_form_selected' id='is_filterable_multiview_form_selected' value='1' checked=question.isFiltrableMultiviewFormSelected() />
 	</@formGroup>
 </#if>

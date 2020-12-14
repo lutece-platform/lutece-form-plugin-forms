@@ -20,7 +20,7 @@
                                 <#if form.actions?exists>
                                     <#list form.actions as action>
                                         <#if action.permission=='MODIFY'>
-                                            <a href="${action.url}&id_form=${form.id}" title="${form.title}">${form.title}</a>
+                                            <@link href='${action.url}&id_form=${form.id}' title='${form.title}'>${form.title}</@link>
                                             <#break>
 	                                    </#if>
                                     </#list>

@@ -1,8 +1,3 @@
-<@formBreadCrumb>
-    <li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
-    <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
-    <li class="active">#i18n{forms.manage_controls.title.${control_type?lower_case}}</li></ul>
-</@formBreadCrumb>
 <@row>
     <@columns>
         <@box>
@@ -10,6 +5,11 @@
                 <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' hideTitle=['xs'] size='sm' />
             </@boxHeader>
             <@boxBody>
+				<@formBreadCrumb>
+					<li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
+					<li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
+					<li class="active">#i18n{forms.manage_controls.title.${control_type?lower_case}}</li></ul>
+				</@formBreadCrumb>
             <#if control_list?size gt 0>
                 <@table>
                     <thead>

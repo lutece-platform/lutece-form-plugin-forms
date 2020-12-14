@@ -1,7 +1,7 @@
 <td>
     <#if workflow_state_name?has_content>
-        <span class="label label-info unread">
+        <@tag color='info' class='unread'>
             ${workflow_state_name!''}
-        </span>
+        </@tag>
     </#if>
 </td>

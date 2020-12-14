@@ -21,7 +21,7 @@
 					<#if step.final && step.initial>   
 						<li class="active">${form.title}</li>
 					<#else>    
-						<li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}" title="Liste des étapes">${form.title}</a>
+						<li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link>
 						</li> 
 						<li class="active">${step.title}</li>
 					</#if> 
@@ -33,7 +33,7 @@
                     <div class="radio">
 						<label>
 							<input type="radio" id="parent_step" name="id_parent" value="0" <#if id_parent=0>checked</#if>>
-							<span class="group-radio-label"> #i18n{forms.manage_questions.type.step.label}  "${step.title}"</span>
+							<span class="group-radio-label"> #i18n{forms.manage_questions.type.step.label} "${step.title}"</span>
 						</label>
 					</div>
                     <@row>
@@ -127,20 +127,20 @@
 </@row>
 
 
-<div class="modal fade" id="qModal" tabindex="-1" role="dialog" aria-labelledby="qModalLabel">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <iframe id="modalIframe" src=""></iframe>
-        </div>
-    </div>
-</div>
+<@modal id='qModal'>
+    <@modalHeader />
+	<@modalBody>
+		<iframe id="modalIframe" src=""></iframe>
+	</@modalBody>
+	<@modalFooter />
+</@modal>
 
 <script>
 $( function(){
     $('.group-toggle').click( function(){
         var nIdGroup = $(this).parents('.group').find("input[name='own_display_id_composite']").val();
         $('input[name="own_display_id_parent"][value="' + nIdGroup + '"]').parents('tr').toggle();
-        $(this).toggleClass(' fa-minus-square').toggleClass('fa-plus-square');
+        $(this).toggleClass('fa-minus-square').toggleClass('fa-plus-square');
     });
     var isOpen=false;
     $('.btn-iframe').click( function(e){

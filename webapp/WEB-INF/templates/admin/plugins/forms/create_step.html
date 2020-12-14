@@ -2,19 +2,19 @@
 <@box>
     <@boxHeader title='#i18n{forms.manageForm.pageTitle}' />
     <@boxBody>
-        <@tform class="form-horizontal" method="post" name="create_step" action="jsp/admin/plugins/forms/ManageSteps.jsp">
-            <input type="hidden" id="id_form" name="id_form" value="${step.idForm}" >
-            <@formGroup labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true>
+        <@tform method='post' name='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
+            <@input type='hidden' id='id_form' name='id_form" value="${step.idForm}' />
+            <@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true>
                  <@input type='text' name='title' value='${step.title!}' />
             </@formGroup>
-            <@formGroup labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}' >
+            <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}' >
                  <@input type='textarea' name='description'>${step.description!}</@input>
             </@formGroup>
-            <@formGroup labelKey='#i18n{forms.create_step.labelInitial}' labelFor='initial' helpKey='#i18n{forms.create_step.labelInitial.help}' >
+            <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' >
                 <@checkBox labelFor='initial' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
             </@formGroup>
-            <@formGroup labelKey='#i18n{forms.create_step.labelFinal}' labelFor='final' helpKey='#i18n{forms.create_step.labelFinal.help}' >
-                <@checkBox labelFor='final' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+            <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all']>
+                <@checkBox labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
             </@formGroup>
             <@formsButton okAction='createStep' viewAction='manageSteps' />
         </@tform>

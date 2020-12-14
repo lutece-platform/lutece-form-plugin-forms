@@ -1,30 +1,28 @@
 ${multiviewmap!''}
-<div class="table-responsive">
-    <table class="table table-bordered table-hover table-striped">
-        <thead>
-            <tr>
-                <#if form_response_column_header_template_list?has_content>
-                    <#list form_response_column_header_template_list as form_response_column_header_template>
-                        ${form_response_column_header_template}
-                    </#list>
-                </#if>
-            </tr>
-        </thead>
-        <tbody>
-            <#if form_response_line_template_list?has_content>
-                <#list form_response_line_template_list as form_response_line_template>
-                    <tr data-url="${redirect_details_base_url}&id_form_response=${form_response_line_template.idFormResponse}">
-                        <#if form_response_line_template.formColumnCellTemplateList?has_content>
-                            <#list form_response_line_template.formColumnCellTemplateList as form_column_cell_template>
-                                ${form_column_cell_template}
-                            </#list>
-                        </#if>
-                    </tr>
-                </#list>
-            </#if>
-        </tbody>
-    </table>
-</div>
+<@table>
+	<thead>
+		<tr>
+			<#if form_response_column_header_template_list?has_content>
+				<#list form_response_column_header_template_list as form_response_column_header_template>
+					${form_response_column_header_template}
+				</#list>
+			</#if>
+		</tr>
+	</thead>
+	<tbody>
+		<#if form_response_line_template_list?has_content>
+			<#list form_response_line_template_list as form_response_line_template>
+				<tr data-url="${redirect_details_base_url}&id_form_response=${form_response_line_template.idFormResponse}">
+					<#if form_response_line_template.formColumnCellTemplateList?has_content>
+						<#list form_response_line_template.formColumnCellTemplateList as form_column_cell_template>
+							${form_column_cell_template}
+						</#list>
+					</#if>
+				</tr>
+			</#list>
+		</#if>
+	</tbody>
+</@table>
 <#if form_response_geojson_point_list?has_content>
 <script id="geojson_points" type="application/json">{
 	"type" : "FeatureCollection",
