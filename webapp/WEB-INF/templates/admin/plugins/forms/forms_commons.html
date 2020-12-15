@@ -332,17 +332,17 @@ $( function(){
 	<#assign color = 'danger' />
 	<#assign buttonIcon = 'times' />
 </#if>
-<@button type='submit' name='${name}' title='#i18n{${label}}' cancel=!validate buttonIcon=buttonIcon  color=color />
+<@button type='submit' name='${name}' title='#i18n{${label}}' cancel=!validate buttonIcon=buttonIcon color=color />
 </#macro>
 
-<#macro formsButton okAction='' viewAction=''  >
-<@formGroup>
-  	<@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
-		<#nested>
-	<#if viewAction !=''>
-		<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' />
-	</#if>
-</@formGroup>
+<#macro formsButton okAction='' viewAction='' rows=1>
+	<@formGroup rows=rows>
+		<@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
+			<#nested>
+		<#if viewAction !=''>
+			<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' />
+		</#if>
+	</@formGroup>
 </#macro>
 
 <#macro formModel>
@@ -362,7 +362,7 @@ $( function(){
 						<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
 							<@inputGroup>
 							<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-									<@input type='date' name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
+									<@input type='datetime' name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
 									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
 									</@inputGroupItem>
@@ -373,7 +373,7 @@ $( function(){
 						<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
 							<@inputGroup>
 							<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-									<@input type='date' name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
+									<@input type='datetime' name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
 									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
 									</@inputGroupItem>

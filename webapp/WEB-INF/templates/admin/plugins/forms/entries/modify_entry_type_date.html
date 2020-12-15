@@ -32,7 +32,7 @@
 							<#assign field = getFieldByCode( entry, "default_date_value" ) >
 							<@inputGroup>
 								<@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
-								<@input type='date' name='value' id='date' value='${field.valueTypeDate?if_exists}' />
+								<@input type='date' language=locale name='value' id='date' value='${field.valueTypeDate?if_exists}' />
 							</@inputGroup>
 						</@formGroup>
 						<@formGroup>
