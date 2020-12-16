@@ -1,8 +1,8 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
 
+<@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp">
 <@modalHeader modalTitle='#i18n{forms.modify_form.title} ${form.title!}' />
 <@modalBody>
-<@tform class="form-horizontal" method="post" name="modify_form" action="jsp/admin/plugins/forms/ManageForms.jsp">
     <@messages errors=errors />
     <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
     <#-- problem with populate method because it puts the value of checkbox to false -->
@@ -18,30 +18,30 @@
     <#if form?has_content && form.authentificationNeeded>
         <@input type='hidden' name='authentificationNeeded' value='1' />
     </#if>
-    <@input type='hidden' name='maxNumberResponse' value='form.maxNumberResponse!"0"' />
-    <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' >
+    <@input type='hidden' name='maxNumberResponse' value='form.maxNumberResponse!\'0\'' />
+    <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' rows=2>
         <@inputGroup>
             <#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-			<@input type='date' name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
+			<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
             <@inputGroupItem type='text'>
                 <@icon style='calendar' />
             </@inputGroupItem>
         </@inputGroup>
     </@formGroup>
-    <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' >
+    <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' rows=2>
         <@inputGroup>
           <#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-		  <@input type='date' name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
+		  <@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
             <@inputGroupItem type='text'>
                 <@icon style='calendar' />
             </@inputGroupItem>
         </@inputGroup>
     </@formGroup>
-    <@formGroup>
-        <@formsButton okAction='modifyForm' viewAction='manageForm' />
-    </@formGroup>
-</@tform>
 </@modalBody>
+<@modalFooter>
+    <@formsButton okAction='modifyForm' viewAction='manageForm' rows=2 />
+</@modalFooter>
+</@tform>
 
 <script>
 $('#pubModal .content-header').hide();

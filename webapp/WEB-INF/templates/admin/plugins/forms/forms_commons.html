@@ -305,7 +305,7 @@ $( function(){
 <@row>
 	<ol id="breadforms" class="breadcrumb" style="margin-bottom:1em; background-color:transparent;">
 		<li>
-			<@link href='jsp/admin/plugins/forms/ManageForms.jsp' title='Retour Liste des formulaire'>
+			<@link href='jsp/admin/plugins/forms/ManageForms.jsp' title='Retour liste des formulaires'>
 				<@icon style='home' />
 			</@link>
 		</li>
@@ -362,7 +362,7 @@ $( function(){
 						<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
 							<@inputGroup>
 							<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-									<@input type='datetime' name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
+									<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
 									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
 									</@inputGroupItem>
@@ -373,7 +373,7 @@ $( function(){
 						<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
 							<@inputGroup>
 							<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-									<@input type='datetime' name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
+									<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
 									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
 									</@inputGroupItem>
@@ -405,38 +405,36 @@ $( function(){
 				<@row>
 					<@columns xs=12 sm=6> 
 						<@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true rows=2>
-								<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
+							<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
 						</@formGroup>
 					</@columns>
 				</@row>
 			</@fieldSet>   
 		</@columns>
 		<@columns md=5>  
-		<fieldset>
-				<legend>#i18n{forms.create_form.labelDisplaySummary}</legend>
-						<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
-								<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
-						</@formGroup>
-						<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
-								<@checkBox labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
-						</@formGroup>
-						<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
-								<@checkBox labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
-						</@formGroup>
-						<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
-								<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
-						</@formGroup>
-				</fieldset> 
-				<#if workflow_list?has_content && workflow_list?size gt 1>
-						<fieldset>
-								<legend>#i18n{forms.modify_form.workflow.label}</legend>    
-								<@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' rows=2>
-										<@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
-								</@formGroup>
-						</fieldset> 
-				</#if>
+			<@fieldSet legend='#i18n{forms.create_form.labelDisplaySummary}'>
+				<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
+					<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' hideLabel=['all'] helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
+					<@checkBox labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
+					<@checkBox labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
+					<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
+				</@formGroup>
+			</@fieldSet> 
+			<#if workflow_list?has_content && workflow_list?size gt 1>
+				<@fieldSet legend='#i18n{forms.modify_form.workflow.label}'>
+					<@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' rows=2>
+						<@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
+					</@formGroup>
+				</@fieldSet> 
+			</#if>
 		</@columns>
-</@row>
+	</@row>
 </#macro>
 
 <#macro formVisualize>

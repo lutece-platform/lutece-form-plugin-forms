@@ -5,7 +5,7 @@
 </@formBreadCrumb>
 
 <@tform class='form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
-<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+	<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 	<@box color='primary'>
 		<@boxBody>
 			<@tabs color='clearfix'>
@@ -16,9 +16,9 @@
 					<@formModel />
 				</@tabPanel>
 			</@tabContent>
-			<@formGroup>
+			<@formGroup rows=2>
 				<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
-				<@headerButton validate=false />
+				<@headerButton validate=false />					
 			</@formGroup>
 		</@boxBody>
 	</@box>

@@ -67,7 +67,10 @@
                                             <#if transition_has_next>
                                                 <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveDownPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveDownPriorityTransition}' hideTitle=['all'] buttonIcon='chevron-down' size='sm' />
                                             </#if>
-                                            <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.modifyTransition}' hideTitle=['all'] buttonIcon='pencil' class='btn-iframe' size='sm' />
+                                            <#--<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.modifyTransition}' hideTitle=['all'] buttonIcon='pencil' class='btn-iframe' size='sm' />-->
+											
+											<@button type='button' style='modal' class='btn-modal' buttonTargetId='#transitionModal' params='data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}"' buttonIcon='pencil' size='sm' />
+											
                                             <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION' title='#i18n{forms.manage_controls.action.modifyControl}' hideTitle=['all'] buttonIcon='cog' class='btn-iframe' size='sm' />
                                             <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveTransition&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.removeTransition}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' /> 
                                         </@td>
@@ -104,6 +107,12 @@ $( function(){
         } else {
             isOpen=false;
         }
+    });
+	
+	$('.btn-modal').click( function(e){
+		var iframeUrl = $(this).data("url");
+		console.log(iframeUrl);
+		$("#transitionModal").find("#modalIframe").attr("src",iframeUrl);
     });
 
     if( $('#initial').prop('checked') && $('#final').prop('checked') ){
@@ -156,15 +165,15 @@ $( function(){
         $("#transitions").hide();
         $("#tr-msg").show();
     </#if>
-
+	
     $("#final").change( function(){
         if ( $(this).prop('checked') ){
             $("#transitions").hide();
             $("#tr-msg").show();
             if( steps ) {
-                toastr.warning("#i18n{forms.manage_transitions.warning.final}"); 
+			//toastr.warning('#i18n{forms.manage_transitions.warning.final}'); 
             } else {
-                toastr.warning("#i18n{forms.manage_transitions.info.step.initial.final}");
+			//toastr.warning('#i18n{forms.manage_transitions.info.step.initial.final}');
             }   
         } else {
             $("#transitions").show();

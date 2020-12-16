@@ -43,10 +43,10 @@
                                    <thead>
                                        <tr>
                                            <@th sm=1 hide=['xs']></@th>
-                                           <@th sm=6 hide=['xs']>#i18n{forms.manage_questions.columnTitle}</@th>
+                                           <@th sm=5 hide=['xs']>#i18n{forms.manage_questions.columnTitle}</@th>
                                            <@th sm=1 title='#i18n{forms.manage_questions.columnCondition}' hide=['xs']><@icon style='question'/></@th>
                                            <@th sm=4 hide=['xs']>#i18n{forms.manage_questions.columnAction}</@th>
-                                           <@th></@th>
+                                           <@th sm=1></@th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -67,7 +67,7 @@
                                                     </div>
                                                 </#if>
                                             </@td>
-                                            <@td sm=6>
+                                            <@td sm=5>
                                                 <#if group><label for="${parentd}"><h4></#if><#list 0..composite.formDisplay.depth as indent><#if indent_index gte 0><#if indent_has_next><@icon style='' class='fa-padded'/><#else><@icon style='${composite.icon!}' class='fa-padded'/></#if></#if></#list>${composite.title}<#if group></h4></label></#if>
                                                 <@div hide=['sm','md','lg','xl']>
 													<@btnGroup size='sm'>
@@ -88,18 +88,29 @@
 												<#if composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content><@icon style='check' /></#if>
 											</@td>
                                             <@td hide=['xs'] sm=4>
-                                                <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' size='sm' /> 
                                                 <#if group>
                                                     <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyGroup}' buttonIcon='pencil' size='sm' />
                                                 <#else>
                                                     <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyQuestion}' buttonIcon='pencil' size='sm' />
-                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_display=${composite.formDisplay.id}&id_step=${step.id}' class='btn-iframe' title='#i18n{forms.manage_questions.action.condition}' buttonIcon='question' size='sm' />
+													
+                                                    <#-- <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_display=${composite.formDisplay.id}&id_step=${step.id}' class='btn-iframe' title='#i18n{forms.manage_questions.action.condition}' buttonIcon='question' size='sm' /> -->
+													
+													<@button type='button' class='btn-modal' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_display=${composite.formDisplay.id}&id_step=${step.id}"' title='#i18n{forms.manage_questions.action.condition}' hideTitle=['all'] buttonIcon='question' size='sm' />
+													
+													<#--<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn-iframe'  title='#i18n{forms.manage_questions.action.control}' params=group?then('style="visibility:hidden;"','') buttonIcon='check' size='sm' />-->
+												
+													<@button type='button' class='btn-modal' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION"' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='check' size='sm' />
+													
+													<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=duplicateQuestion&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}' class='btn-into'  title='#i18n{forms.manage_questions.action.copy}' buttonIcon='copy' size='sm' />
                                                 </#if>
-                                                <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' class='btn-iframe' title='#i18n{forms.manage_questions.action.move}' buttonIcon='arrows-alt' size='sm' />
-                                                <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn-iframe'  title='#i18n{forms.manage_questions.action.control}' params=group?then('style="visibility:hidden;"','') buttonIcon='check' size='sm' />
-                                                <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=duplicateQuestion&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}' class='btn-into'  title='#i18n{forms.manage_questions.action.copy}' params=group?then('style="visibility:hidden;"','') buttonIcon='copy' size='sm' />
-                                            </@td>
-                                            <td><#if group><@icon style='minus-square' class='group-toggle' /></#if></td>
+												
+												<#--<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' class='btn-iframe' title='#i18n{forms.manage_questions.action.move}' buttonIcon='arrows-alt' size='sm' />-->
+												
+												<@button type='button' class='btn-modal' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}"' title='#i18n{forms.manage_questions.action.move}' hideTitle=['all'] buttonIcon='arrows-alt' size='sm' />
+												
+                                                <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' size='sm' /> 
+									        </@td>
+                                            <@td sm=1><#if group><@icon style='minus-square' class='group-toggle' /></#if></@td>
                                         </tr>
                                     </#list>
                                     </tbody>
@@ -153,6 +164,12 @@ $( function(){
         } else {
             isOpen=false;
         }
+    });
+	
+	$('.btn-modal').click( function(e){
+		var iframeUrl = $(this).data("url");
+		console.log(iframeUrl);
+		$("#qModal").find("#modalIframe").attr("src",iframeUrl);
     });
 });
 </script>

@@ -3,9 +3,11 @@
 		<@boxHeader title='#i18n{forms.create_form.title}'>
 		</@boxHeader>
 		<@boxBody>
-			<@formModel /> 
-			<@headerButton name='action_createForm' label='forms.create_form.buttonValidate' /> 
-			<@headerButton name='action_createForm' label='portal.admin.message.buttonCancel' validate=false /> 
+			<@formModel />
+			<@formGroup rows=2>
+				<@headerButton name='action_createForm' label='forms.create_form.buttonValidate' /> 
+				<@headerButton name='action_createForm' label='portal.admin.message.buttonCancel' validate=false />
+			</@formGroup>
 		</@boxBody>
 	</@box>
 </@tform>

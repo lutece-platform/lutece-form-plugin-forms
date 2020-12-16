@@ -6,7 +6,7 @@
 <@box>
     <@boxHeader title='${modify_condition_title}'>
         <#if control.id gt 0>
-            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='trash' color='danger' params=' target="_top"' size='sm' />
+            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' params=' target="_top"' size='sm' />
         </#if>
     </@boxHeader>
     <@boxBody>
@@ -24,7 +24,7 @@
 				<@inputGroup>
 					<@select name='id_question' items=listQuestion default_value='' />
 					<@inputGroupItem>
-						<@button type='submit' name='view_modifyControl' value='validateQuestion' hideTitle=['all'] buttonIcon='check'/>
+						<@button type='submit' name='view_modifyControl' value='validateQuestion' hideTitle=['all'] buttonIcon='check' />
 					</@inputGroupItem>
 				</@inputGroup>
 			<#if control.listIdQuestion??>
@@ -37,8 +37,11 @@
 			</#list>	
 			</#if>
 			</@formGroup>
-
-			<@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true>
+			
+			<#assign labelicon>
+				<@icon style='asterisk' />
+			</#assign>
+			<@formGroup labelKey='#i18n{forms.modify_control.labelValidator} ${labelicon}' helpKey='#i18n{forms.modify_control.labelValidator.help}'>
 				<@inputGroup>
 					<@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
 					<@inputGroupItem>
@@ -62,7 +65,7 @@ $( function(){
     $('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
     $('header').remove();
     $('#breadforms').remove();
-    $('#footer').remove();4
+    $('#footer').remove();
 	
 	btnAction.click( function(e){ 
         formAction.submit( function(){
