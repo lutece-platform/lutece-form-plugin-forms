@@ -420,7 +420,7 @@ $( function(){
 					<@checkBox labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
-					<@checkBox labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
+					<@checkBox labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
 					<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>

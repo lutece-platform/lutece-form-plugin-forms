@@ -1,22 +1,22 @@
 
 <@formBreadCrumb>
-    <li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="#i18n{forms.create_form.button.backForm}">...</i></a></li>
-    <li><a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="#i18n{forms.create_form.button.backStep}">${step.title}</a></li>
-    <li class="active">#i18n{forms.move_composite.title} ${display_title!}</li></ul>
+    <li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
+    <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
+    <li class="active">#i18n{forms.move_composite.title} ${display_title!}</li>
 </@formBreadCrumb>
 <@box>
    <@boxHeader title='#i18n{forms.move_composite.title} ${display_title!}' />
     <@boxBody>
-        <@tform method="post" id="modify_form" name="modify_form" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
+        <@tform method='post' id='modify_form' name='modify_form' action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
             <@messages errors=errors />
-            <input type="hidden" id="id_display" name="id_display" value="${display.id}">
-            <input type="hidden" id="stepValidated" name="stepValidated" value="${stepValidated?c}">
-            <input type="hidden" id="groupValidated" name="groupValidated" value="${groupValidated?c}">
+            <@input type='hidden' id='id_display' name='id_display' value='${display.id}' />
+            <@input type='hidden' id='stepValidated' name='stepValidated' value='${stepValidated?c}' />
+            <@input type='hidden' id='groupValidated' name='groupValidated' value='${groupValidated?c}' />
             <@formGroup labelKey='#i18n{forms.moveComposite.step.label}' helpKey='#i18n{forms.moveComposite.step.label.help}'>
                 <@inputGroup>
                     <@select name='id_step' items=list_steps default_value='${id_step!}' />
                     <@inputGroupItem>
-                        <@button type='submit' name="view_moveComposite" value="validateStep" showTitle=false buttonIcon='check'/>
+                        <@button type='submit' name="view_moveComposite" value="validateStep" hideTitle=['all'] buttonIcon='check'/>
                     </@inputGroupItem>
                 </@inputGroup>
             </@formGroup>
@@ -24,7 +24,7 @@
                 <@inputGroup>
                     <@select name='id_parent' items=list_groups default_value='${id_parent!}' />
                     <@inputGroupItem>
-                        <@button type='submit' name="view_moveComposite" value="validateGroup" showTitle=false buttonIcon='check'/>
+                        <@button type='submit' name="view_moveComposite" value="validateGroup" hideTitle=['all'] buttonIcon='check'/>
                     </@inputGroupItem>
                 </@inputGroup>
             </@formGroup>
@@ -32,6 +32,9 @@
                 <#if groupValidated==true>
                     <@inputGroup>
                         <@select name='displayOrder' items=list_positions default_value='${displayOrder!}' />
+						<@inputGroupItem>
+							<@button type='submit' id='action_moveComposite' name='action_moveComposite' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' hideTitle=['all'] />
+						</@inputGroupItem>
                     </@inputGroup>
                     <#else>
                     <@tag color='danger'>
@@ -39,7 +42,6 @@
                     </@tag>
                 </#if>
             </@formGroup>
-            <@formsButton okAction='moveComposite' viewAction='' />
         </@tform>
     </@boxBody>
 </@box>

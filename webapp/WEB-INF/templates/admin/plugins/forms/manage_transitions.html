@@ -52,7 +52,7 @@
                                         <@th sm=1>#i18n{forms.manage_transitions.columnPriority}</@th>
                                         <@th sm=4>#i18n{forms.manageForm.columnActions}
                                         <#if !step.final>               
-                                            <@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}' title='#i18n{forms.manage_transitions.buttonAdd}' params='data-toggle="modal" data-target="#transitionModal"'><@icon style='plus-square' /></@link>
+                                            <@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}' title='#i18n{forms.manage_transitions.buttonAdd}' params='data-toggle="modal" data-target="#transitionModal"' class=''><@icon style='plus-square' /></@link>
                                         </#if>
                                         </@th>
                                     </tr>
@@ -110,8 +110,15 @@ $( function(){
     });
 	
 	$('.btn-modal').click( function(e){
-		var iframeUrl = $(this).data("url");
-		console.log(iframeUrl);
+		if ($(this).is('[href]')) {
+			var iframeUrl = $(this).attr('href');
+			console.log(iframeUrl);
+		}
+		else if ($(this).is('[data-url]')) {
+			console.log("has attr data-url");
+			var iframeUrl = $(this).data("url");
+			console.log(iframeUrl);
+		}
 		$("#transitionModal").find("#modalIframe").attr("src",iframeUrl);
     });
 
