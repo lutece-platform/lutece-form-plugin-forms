@@ -90,8 +90,14 @@ public final class FormDisplayService
                 {
                     ControlHome.remove( control.getId( ) );
                 }
+                
+                listControl = ControlHome.getControlByQuestionAndType( formDisplayCompositeId, ControlType.CONDITIONAL.getLabel( ) );
 
-                // TODO : Remove conditionnal controls
+                for ( Control control : listControl )
+                {
+                    ControlHome.remove( control.getId( ) );
+                }
+                ControlHome.removeByControlTarget( formDisplayCompositeId, ControlType.CONDITIONAL );
 
                 // Delete the Question and its Entry
                 QuestionHome.remove( formDisplayCompositeId );
