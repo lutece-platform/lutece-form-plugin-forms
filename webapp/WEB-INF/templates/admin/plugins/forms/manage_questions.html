@@ -68,7 +68,7 @@
                                                 </#if>
                                             </@td>
                                             <@td sm=5>
-                                                <#if group><label for="${parentd}"><h4></#if><#list 0..composite.formDisplay.depth as indent><#if indent_index gte 0><#if indent_has_next><@icon style='' class='fa-padded'/><#else><@icon style='${composite.icon!}' class='fa-padded'/></#if></#if></#list>${composite.title}<#if group></h4></label></#if>
+                                                <#if group><label for="${parentd}"><h4></#if><#list 0..composite.formDisplay.depth as indent><#if indent_index gte 0><#if indent_has_next><@icon style='level-down-alt' /><#else><@icon style='${composite.icon!}' /></#if></#if></#list>${composite.title}<#if group></h4></label></#if>
                                                 <@div hide=['sm','md','lg','xl']>
 													<@btnGroup size='sm'>
                                                     <#if group>

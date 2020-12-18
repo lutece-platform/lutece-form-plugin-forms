@@ -15,22 +15,22 @@
 						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
 						<@input type='hidden' name='id_step' value='${step.id}' />
 						<@input type='hidden' name='id_question' value='${question.id}' />
-						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}' rows=2>
+						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
 							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
 						</@formGroup>
-						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true rows=2>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
 							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
 						</@formGroup>
 						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
 							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
 						</@formGroup>
-						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}' rows=2>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
 							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
 						</@formGroup>
-						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}' rows=2>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
 							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
 						</@formGroup>
-						<@formGroup labelFor='field_in_line' labelKey='#i18n{forms.createEntry.labelPresentation}' rows=2>
+						<@formGroup labelFor='field_in_line' labelKey='#i18n{forms.createEntry.labelPresentation}'>
 							<@select name='field_in_line' id='field_in_line'>
 								<option value=1 <#if entry.fieldInLine >selected="selected" </#if> >#i18n{forms.createEntry.selectPresentationInLine}</option>
 								<option value=0 <#if !entry.fieldInLine >selected="selected" </#if>>#i18n{forms.createEntry.selectPresentationNotInLine}</option>
@@ -57,11 +57,11 @@
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
 							<@checkBox labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' name='exportable' id='exportable' value='1' checked=entry.exportable />
 						</@formGroup>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' rows=2>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
 						${question_modify_template!}
-						<@formGroup rows=2>
+						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' hideTitle=['xs','sm'] />
 							<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' hideTitle=['xs','sm'] />
 							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' hideTitle=['xs','sm'] color='default'/>

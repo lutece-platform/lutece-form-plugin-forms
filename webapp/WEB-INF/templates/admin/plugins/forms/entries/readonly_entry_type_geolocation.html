@@ -1,5 +1,3 @@
-
-
 <@formGroup labelFor='${entry.idEntry}_address' labelKey='${entry.title}' helpKey=entry.helpMessage mandatory=entry.mandatory>
     <#assign responseX = "" >
     <#assign responseY = "" >
@@ -20,10 +18,10 @@
     <#else>
         ${(responseAddress)!}
         
-        <input type="hidden" id="${entry.idEntry}_address" name="${entry.idEntry}_address" value="${(responseAddress)!}">
-        <input type="hidden" id="${entry.idEntry}_geometry" name="${entry.idEntry}_geometry" value="${(responseGeometry)!}" />
-        <input type="hidden" id="${entry.idEntry}_x" name="${entry.idEntry}_x" value="${(responseX)!}">
-        <input type="hidden" id="${entry.idEntry}_y" name="${entry.idEntry}_y" value="${(responseY)!}">
+        <@input type='hidden' id='${entry.idEntry}_address' name='${entry.idEntry}_address' value='${(responseAddress)!}' />
+        <@input type='hidden' id='${entry.idEntry}_geometry' name='${entry.idEntry}_geometry' value='${(responseGeometry)!}' />
+        <@input type='hidden' id='${entry.idEntry}_x' name='${entry.idEntry}_x' value='${(responseX)!}' />
+        <@input type='hidden' id='${entry.idEntry}_y' name='${entry.idEntry}_y' value='${(responseY)!}' />
 
         <#assign editModeValue = "ReadOnly">
 
@@ -41,5 +39,4 @@
                 <#include entry.mapProvider.htmlCode />
         </#if>
     </#if>
-</@formGroup>
-                
+</@formGroup>                

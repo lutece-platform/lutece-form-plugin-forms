@@ -49,7 +49,7 @@
 							<#list step_list as step>
 								<tr>
 									<td>
-										<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='${step.title}' size='sm' />
+										<@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='${step.title}'>${step.title}</@link>
 										<#if step.initial><@tag color='info'>#i18n{forms.manage_steps.columnInitial}</@tag> <#assign hasInitial=1 > </#if>
 										<#if step.final><@tag color='info'>#i18n{forms.manage_steps.columnFinal}</@tag> <#assign hasFinal=1 ></#if>
 									</td>
@@ -64,11 +64,11 @@
 											</#list>
 										</#if>	 
 									</td>
-									<td>
+									<@td>
 										<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' title='#i18n{forms.manage_steps.action.modifyStep} ${step.title}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
 										<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.modify_step.tab.labelQuestions}' hideTitle=['all'] buttonIcon='list' size='sm' />
 										<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.removeStep}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' /> 
-									</td>
+									</@td>
 								</tr>
 							</#list>
 							<tr>
