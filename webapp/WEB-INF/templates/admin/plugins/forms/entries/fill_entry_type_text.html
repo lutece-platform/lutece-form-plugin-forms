@@ -1,60 +1,54 @@
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign field_width=getFieldValueByCode( entry, "width")>
+<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
+<#assign field=getFieldByCode( entry, "text_config")>
 
+<#if list_responses?has_content>
+	<#list list_responses as response>
+		<#if response.entry.idEntry == entry.idEntry>
+			<#if response.toStringValueResponse??>
+				<#assign inputValue = response.toStringValueResponse />
+			</#if>
+			<#if response.entry.error??>
+				<#assign groupStyle = 'error' />
+			</#if>
+		</#if>
+	</#list>
+<#else>
+	<#if field.value?exists>
+		<#assign inputValue = field.value />
+	<#else>
+		<#assign inputValue = '' />
+	</#if>
+</#if>
 
-<div class="form-group">
-  <#assign idName = buildEntryName( entry, entry_iteration_number )>
-    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-      <#assign field_width=getFieldValueByCode( entry, "width")>
-      <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
-      <#assign field=getFieldByCode( entry, "text_config")>
-        <input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field_width?number &gt; 0>style="width:${field_width?number}px;"</#if>
-          <#if list_responses?has_content>
-            <#list list_responses as response>
-            <#if response.entry.idEntry == entry.idEntry>
-              <#if response.toStringValueResponse??>
-                value="${response.toStringValueResponse}"
-              </#if>
-              <#if response.entry.error??>
-                class="error"
-              </#if>
-              </#if>
-            </#list>
-          <#else>
-            <#if field.value?exists>
-              value="${field.value}" 
-            <#else>
-               value="" 
-            </#if>
-          </#if>
-          <#if field_max_size?number!=-1>
-            maxlength="${field_max_size?number}"
-          </#if>
-        class="${entry.CSSClass!} "  />
-      <#if entry.helpMessage?exists&&entry.helpMessage!=''>
-        <span class="help-block">${entry.helpMessage}</span>
-      </#if>
-    </div>
-</div>
+<#if field_max_size?number!=-1>
+	<#assign maxlength = field_max_size?number />
+</#if>
+
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
+	<@input type='text' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue />
+</@formGroup>
 
 <#if list_responses??>
   <#list list_responses as response>
     <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
       <#assign error = response.entry.error>
-      <div class="alert alert-danger"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
+      <@alert color='danger'><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></@alert>
     </#if>
   </#list>
 </#if>
+
 <#assign confirmField=getFieldByCode( entry, "confirm_field")>
-<#if confirmField.value?boolean >
-  <div class="form-group">
-    <#assign idName = buildEntryName( entry, entry_iteration_number )>
-    <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}_confirm_field">${confirmField.title}<#if entry.mandatory> *</#if></label>
+<#if confirmField.value?boolean>
+	<#assign idName = buildEntryName( entry, entry_iteration_number )>
+	<@formGroup labelFor='${idName}_confirm_field' labelKey='${confirmField.title}' mandatory=entry.mandatory>
     <#assign field_width=getFieldValueByCode( entry, "width")>
     <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
     <#assign field=getFieldByCode( entry, "text_config")>
-      <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-        <input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field_width?number}" value="" 
-        <#if field_max_size?number!=-1>maxlength="${field_max_size?number}"</#if>/>
-      </div>
-  </div>
+	<#if field_max_size?number!=-1>
+		<#assign maxlength = field_max_size?number />
+	</#if>
+		<@input type='text' name='${idName}_confirm_field' id='${idName}_confirm_field' inputSize=field_width?number value='' maxlength=maxlength!0 />
+    </@formGroup>
 </#if>
