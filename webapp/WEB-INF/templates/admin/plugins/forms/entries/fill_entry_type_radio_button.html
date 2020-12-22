@@ -66,7 +66,7 @@
 <#if list_responses??>
   <#list list_responses as response>
     <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-      <@alert color='danger>
+      <@alert color='danger'>
       <#assign error = response.entry.error>
         <#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if>
       </@alert>

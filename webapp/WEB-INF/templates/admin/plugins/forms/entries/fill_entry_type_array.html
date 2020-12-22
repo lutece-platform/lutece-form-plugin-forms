@@ -1,15 +1,11 @@
-
-<div class="form-group">
-  <label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
-    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-      <div class="table-responsive">
-        <table class="table table-striped">
+<@formGroup labelFor='form${entry.idEntry}' id='form${entry.idEntry}' labelKey='${entry.title}' mandatory=entry.mandatory>
+	<@table>
       <#assign x=getFieldValueByCode(entry, "array_row")?number>
       <#list 1..x+1 as i>
-        <tr>
+        <@tr>
         <#assign y=getFieldValueByCode(entry, "array_column")?number>
         <#list 1..y+1 as j>
-          <td>
+          <@td>
           <#assign title="">
           <#assign inputValue = "">
           <#list entry.fields as field>
@@ -33,13 +29,11 @@
               <b>${entry.comment}</b>
             <#else>
               <#assign idName = 'nIt' + entry_iteration_number +  '_response_' + i + '_' + j>
-              <input id="${idName}" name="${idName}" value="${inputValue}" type="text" class="form-control input-sm" />
+              <@input type='text' id='${idName}' name='${idName}' value='${inputValue}' />
             </#if>
-          </td>
+          </@td>
           </#list>
-        </tr>
+        </@tr>
       </#list>  
-        </table>
-      </div>
-    </div>
-</div>
+	</@table>
+</@formGroup>

@@ -71,7 +71,10 @@
 											
 											<@button type='button' style='modal' class='btn-modal' buttonTargetId='#transitionModal' params='data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}"' buttonIcon='pencil' size='sm' />
 											
-                                            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION' title='#i18n{forms.manage_controls.action.modifyControl}' hideTitle=['all'] buttonIcon='cog' class='btn-iframe' size='sm' />
+                                            <#-- <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION' title='#i18n{forms.manage_controls.action.modifyControl}' hideTitle=['all'] buttonIcon='cog' class='btn-modal' size='sm' /> --> 
+											
+											<@button type='button' buttonTargetId='#transitionModal' style='modal' params='data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION"' title='#i18n{forms.manage_controls.action.modifyControl}' hideTitle=['all'] buttonIcon='cog' class='btn-modal' size='sm' />
+											
                                             <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveTransition&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.removeTransition}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' /> 
                                         </@td>
                                     </tr>
@@ -89,7 +92,7 @@
     </@columns>
 </@row>
 
-<@formModal id="transitionModal" />
+<@formModal id='transitionModal' />
 
 <link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
 <script src="js/jquery/plugins/toastr/toastr.min.js"></script>
@@ -109,16 +112,8 @@ $( function(){
         }
     });
 	
-	$('.btn-modal').click( function(e){
-		if ($(this).is('[href]')) {
-			var iframeUrl = $(this).attr('href');
-			console.log(iframeUrl);
-		}
-		else if ($(this).is('[data-url]')) {
-			console.log("has attr data-url");
-			var iframeUrl = $(this).data("url");
-			console.log(iframeUrl);
-		}
+	$('button.btn-modal').click( function(e){
+		var iframeUrl = $(this).data("url");
 		$("#transitionModal").find("#modalIframe").attr("src",iframeUrl);
     });
 
@@ -149,7 +144,7 @@ $( function(){
     <#if warnings??>
         <#if warnings?size &gt; 0 >
             <#list warnings as warning >
-                toastr.warning("${warning.message}" );
+                toastr.warning("${warning.message}");
             </#list>	
         </#if>
     </#if>

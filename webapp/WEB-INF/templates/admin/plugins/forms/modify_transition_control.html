@@ -1,17 +1,16 @@
-
 <@formBreadCrumb>
-    <li><a href="jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}" title="#i18n{forms.create_form.button.backForm}">...</i></a></li>
-    <li><a href="jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}" title="#i18n{forms.create_form.button.backStep}">${step.title}</a></li>
-    <li class="active">#i18n{forms.modify_transition_control.title}</li></ul>
+    <@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
+    <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
+    <li class="active">#i18n{forms.modify_transition_control.title}</li>
 </@formBreadCrumb>
 <@box>
-    <@boxHeader title='#i18n{forms.modify_transition_control.title}' boxTools=true >
+    <@boxHeader title='#i18n{forms.modify_transition_control.title}'>
         <#if control.id gt 0>
             <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='trash' class='pull-right text-danger' color='btn-link' />
         </#if>
     </@boxHeader>
     <@boxBody>
-        <@tform class="form-horizontal" method="post" id="modify_control" name="modify_control" action="jsp/admin/plugins/forms/ManageControls.jsp">
+        <@tform method='post' id='modify_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
             <@messages errors=errors />
             <@formGroup labelKey='#i18n{forms.modify_control.labelStep}' helpKey='#i18n{forms.modify_control.labelStep.help}' mandatory=true>
                  <@inputGroup>
@@ -32,7 +31,7 @@
 		<#list control.listIdQuestion as question >
 			<#list listQuestion as q >
 				<#if question == q.code?number>
-					<a href="jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}" title="remove"><i class="fa fa-trash" aria-hidden="true"></i>${q.name!}</i></a>
+					<@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}' title='remove'><@icon style='trash' /> ${q.name!}</@link>
 				</#if>
 			</#list>
 		</#list>	
