@@ -15,7 +15,7 @@
                     </tr>
                     <#list form_list as form>
                         <tr id="form_${form.id}">
-                            <td>
+                            <@td>
                                 <#assign hasAction=false />
                                 <#if form.actions?exists>
                                     <#list form.actions as action>
@@ -49,7 +49,7 @@
                                         </#if> 
                                     </#if>
                                 </@div>
-                            </td>
+                            </@td>
                             <@td>
                                 <#if form.actions?exists>
                                     <#list form.actions as action>
@@ -71,7 +71,7 @@
                                 </#if>
                             </@td>
                             <@td hide=['xs']>
-                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' params='data-toggle="modal" data-target="#pubModal"'>
+                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' params='data-toggle="modal" data-target="#pubModal" data-href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}"'>
                                     <#setting locale=locale.language>
                                     <#if form.active>
                                         <@icon style='check' class='text-success' />&nbsp;

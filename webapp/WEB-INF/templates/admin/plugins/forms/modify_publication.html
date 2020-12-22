@@ -1,6 +1,6 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
 
-<@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp">
+<@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp" params=' target="_top"'>
 <@modalHeader modalTitle='#i18n{forms.modify_form.title} ${form.title!}' />
 <@modalBody>
     <@messages errors=errors />
@@ -42,10 +42,25 @@
     <@formsButton okAction='modifyForm' viewAction='manageForm' rows=2 />
 </@modalFooter>
 </@tform>
-
 <script>
-$('#pubModal .content-header').hide();
-$('#pubModal #admin-wrapper').css( 'margin', '0' );
-$('#pubModal header').hide();
-$('#pubModal footer').hide();
+// Function to check if a webpage is in iFrame
+function isIniFrame() {
+ return window.self !== window.top ? true : false;
+}
+$( function() {
+    if ( isIniFrame() ){
+        window.top.$("#modalIframe");
+        $('body').css('background-color', 'white');
+        $('.skipnav').hide();
+        $('.modal-header .close').hide();
+        $('main').css( 'margin', '0' );
+        $('header').hide();
+        $('footer').hide();
+    } else {
+        $('#pubModal .content-header').hide();
+        $('#pubModal #admin-wrapper').css( 'margin', '0' );
+        $('#pubModal header').hide();
+        $('#pubModal footer').hide();
+    }
+});
 </script>

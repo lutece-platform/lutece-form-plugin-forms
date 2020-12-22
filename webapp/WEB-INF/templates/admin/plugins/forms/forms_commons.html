@@ -322,6 +322,12 @@ $( function(){
     </@modalBody>
     <@modalFooter />
 </@modal>
+<script>
+$('#${id}').on('show.bs.modal', function (event) {
+	var button = $(event.relatedTarget), modalSrc = button.data('href'), modal = $(this);
+ 	modal.find('.modal-body #modalIframe').attr('src', modalSrc );
+});
+</script>
 </#macro>
 
 <#macro headerButton name='view_manageForm' label='portal.admin.message.buttonCancel' validate=true>
