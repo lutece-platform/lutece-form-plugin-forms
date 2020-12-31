@@ -61,7 +61,7 @@
 											<#assign color = 'primary' />
                                         </#if>
                                         <#if action.permission=='PUBLISH'>
-                                            <#assign params='data-toggle="modal" data-target="#pubModal"' />
+                                            <#assign params='data-toggle="modal" data-target="#pubModal" data-url="${action.url}&id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"' />
                                         </#if>
                                         <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' hideTitle=['all'] color='${color}' class='${action.permission?lower_case}' buttonIcon=action.iconUrl params=params size='sm' />
                                     </#list>
@@ -71,7 +71,7 @@
                                 </#if>
                             </@td>
                             <@td hide=['xs']>
-                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' params='data-toggle="modal" data-target="#pubModal" data-href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}"'>
+                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' params='data-toggle="modal" data-target="#pubModal" data-url="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"'>
                                     <#setting locale=locale.language>
                                     <#if form.active>
                                         <@icon style='check' class='text-success' />&nbsp;

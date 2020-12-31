@@ -316,16 +316,17 @@ $( function(){
 
 <#macro formModal id='pubModal' title=''>
 <@modal id='${id}'>
-    <@modalHeader />
-	<@modalBody>
-        <iframe id="modalIframe" src=""></iframe>
-    </@modalBody>
-    <@modalFooter />
+	<@modalHeader />
+    <iframe id="modalIframe" src=""></iframe>
 </@modal>
 <script>
 $('#${id}').on('show.bs.modal', function (event) {
-	var button = $(event.relatedTarget), modalSrc = button.data('href'), modal = $(this);
- 	modal.find('.modal-body #modalIframe').attr('src', modalSrc );
+	var button = $(event.relatedTarget);
+	modalSrc = button.data('url');
+	modalTitle = button.data('modal-title');
+	modal = $(this);
+ 	modal.find('.modal-title').text(modalTitle);
+ 	modal.find('.modal-content #modalIframe').attr('src', modalSrc );
 });
 </script>
 </#macro>

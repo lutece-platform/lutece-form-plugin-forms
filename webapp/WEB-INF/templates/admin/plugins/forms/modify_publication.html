@@ -1,7 +1,7 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
 
 <@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp" params=' target="_top"'>
-<@modalHeader modalTitle='#i18n{forms.modify_form.title} ${form.title!}' />
+<#--<@modalHeader modalTitle='#i18n{forms.modify_form.title} ${form.title!}' />-->
 <@modalBody>
     <@messages errors=errors />
     <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
@@ -52,7 +52,10 @@ $( function() {
         window.top.$("#modalIframe");
         $('body').css('background-color', 'white');
         $('.skipnav').hide();
-        $('.modal-header .close').hide();
+		$('nav').hide();
+        $('#pubModal .content-header').hide();
+        $('.container-fluid').css( 'padding', '0px' );
+        $('.modal-body').css( 'padding', '24px' );
         $('main').css( 'margin', '0' );
         $('header').hide();
         $('footer').hide();

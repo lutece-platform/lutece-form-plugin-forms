@@ -52,7 +52,7 @@
                                     <tbody>
                                     <#list composite_list as composite>
                                     	<#assign group=composite.type == 'group' />
-										<#if group><#assign trClass='bg-gray' /><#else><#assign trClass='' /></#if>
+										<#if group><#assign trClass='tr-group' /><#else><#assign trClass='' /></#if>
                                         <tr <#if group>class="group ${trClass!}"</#if>>
                                             <@input type='hidden' name='own_display_id_parent' value='${composite.formDisplay.parentId}' />
                                             <@input type='hidden' name='own_display_id_composite' value='${composite.formDisplay.id}' />
@@ -68,7 +68,7 @@
                                                 </#if>
                                             </@td>
                                             <@td sm=5>
-                                                <#if group><label for="${parentd}"><h4></#if><#list 0..composite.formDisplay.depth as indent><#if indent_index gte 0><#if indent_has_next><@icon style='level-down-alt' /><#else><@icon style='${composite.icon!}' /></#if></#if></#list>${composite.title}<#if group></h4></label></#if>
+                                                <#if group><label for="${parentd}"><h4></#if><#list 0..composite.formDisplay.depth as indent><#if indent_index gte 0><#if indent_has_next><@icon style='level-down-alt' class='text-primary' /><#else><@icon style='${composite.icon!}' /></#if></#if></#list>${composite.title}<#if group></h4></label></#if>
                                                 <@div hide=['sm','md','lg','xl']>
 													<@btnGroup size='sm'>
                                                     <#if group>
@@ -110,7 +110,7 @@
 												
                                                 <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' size='sm' /> 
 									        </@td>
-                                            <@td sm=1><#if group><@icon style='minus-square' class='group-toggle' /></#if></@td>
+                                            <@td sm=1><#if group><@icon style='minus-square' class='text-primary group-toggle' /></#if></@td>
                                         </tr>
                                     </#list>
                                     </tbody>
@@ -138,13 +138,7 @@
 </@row>
 
 
-<@modal id='qModal'>
-    <@modalHeader />
-	<@modalBody>
-		<iframe id="modalIframe" src=""></iframe>
-	</@modalBody>
-	<@modalFooter />
-</@modal>
+<@formModal id='qModal' />
 
 <script>
 $( function(){
@@ -166,11 +160,6 @@ $( function(){
         }
     });
 	
-	$('.btn-modal').click( function(e){
-		var iframeUrl = $(this).data("url");
-		console.log(iframeUrl);
-		$("#qModal").find("#modalIframe").attr("src",iframeUrl);
-    });
 });
 </script>
 

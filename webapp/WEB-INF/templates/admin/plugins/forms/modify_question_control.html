@@ -3,37 +3,63 @@
     <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
     <li class="active">#i18n{forms.modify_question_control.title}</li>
 </@formBreadCrumb>
-<@box>
-    <@boxHeader title='#i18n{forms.modify_question_control.title}' />
-    <@boxBody>
-        <@tform method='post' id='modify_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
+
+<@tform method='post' id='modify_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
+	<@modalBody>
          <@messages errors=errors />
-             <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true>
-                <@inputGroup>
-                     <@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
-                     <@inputGroupItem>
-	                     <@button type='submit' name='view_modifyControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
-	                 </@inputGroupItem>
-                 </@inputGroup>
-            </@formGroup>
+		 <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true>
+			<@inputGroup>
+				 <@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
+				 <@inputGroupItem>
+					 <@button type='submit' name='view_modifyControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
+				 </@inputGroupItem>
+			 </@inputGroup>
+		</@formGroup>
 
-             ${control_template}
-             
-            <@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}'>
-                <@input type='text' name='errorMessage' value='${control.errorMessage!}' />
-            </@formGroup>
-
-            <@formsButton okAction='modifyControl' viewAction=''>
-                <#if control.id gt 0>
-                    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='times' color='danger' />
-                </#if>
-            </@formsButton>
-        </@tform>
-    </@boxBody>
-</@box>
+		 ${control_template}
+		 
+		<@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}'>
+			<@input type='text' name='errorMessage' value='${control.errorMessage!}' />
+		</@formGroup>
+	</@modalBody>
+	<@modalFooter>
+		<@formsButton okAction='modifyControl' viewAction=''>
+			<#if control.id gt 0>
+				<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='times' color='danger' />
+			</#if>
+		</@formsButton>
+	</@modalFooter>
+</@tform>
 
 <script>
-$( function(){
+// Function to check if a webpage is in iFrame
+function isIniFrame() {
+ return window.self !== window.top ? true : false;
+}
+$( function() {
+    if ( isIniFrame() ){
+        window.top.$("#modalIframe");
+        $('body').css('background-color', 'white');
+        $('.skipnav').hide();
+		$('nav').hide();
+        $('#pubModal .content-header').hide();
+        $('.container-fluid').css( 'padding', '0px' );
+        $('.modal-body').css( 'padding', '24px' );
+        $('main').css( 'margin', '0' );
+        $('header').hide();
+        $('footer').hide();
+		$('#breadforms').remove();
+
+		var modalTitle = "#i18n{forms.modify_question_control.title}";
+		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
+    } else {
+        $('#pubModal .content-header').hide();
+        $('#pubModal #admin-wrapper').css( 'margin', '0' );
+        $('#pubModal header').hide();
+        $('#pubModal footer').hide();
+    }
+});
+/*$( function(){
     var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
     $('body').css( 'overflow', 'hidden' );
     $('.content-header').hide();
@@ -50,5 +76,5 @@ $( function(){
             formAction.submit();
         });
     });
-});
+});*/
 </script>

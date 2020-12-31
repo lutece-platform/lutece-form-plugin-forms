@@ -1,58 +1,80 @@
-<@row>
-    <@columns>
-        <@box>
-            <@boxHeader title='#i18n{forms.manage_controls.title.${control_type?lower_case}}'>
-                <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' hideTitle=['xs'] size='sm' />
-            </@boxHeader>
-            <@boxBody>
-				<@formBreadCrumb>
-					<li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
-					<li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
-					<li class="active">#i18n{forms.manage_controls.title.${control_type?lower_case}}</li></ul>
-				</@formBreadCrumb>
-            <#if control_list?size gt 0>
-                <@table>
-                    <thead>
-                        <tr>
-                            <@th xs=6 sm=5 md=7>#i18n{forms.modify_control.labelValidator}</@th>
-                            <@th xs=5 sm=6 md=4>#i18n{forms.manageForm.columnActions}</@th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <#list control_list as control>
-                            <#assign validator = validatorManager.getValidator( control.validatorName ) />
-                            <tr>
-                                <@td sm=6>
-                                    ${validator.validatorDisplayName}
-                                </@td>
-                                <@td sm=3>
-                                    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
-                                    <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
-                                </@td>
-                            </tr>
-                        </#list>
-                    </tbody>
-                </@table>
-                <!--                
-                    <#if control_type == 'VALIDATION'>
-                        <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' size='' />
-                    <#else>
-                        <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' size='' />
-                    </#if> 
-                -->
-            <#else>    
-                <@alert color='warning'>
-                    <@icon style='exclamation-triangle' /> #i18n{forms.manage_transitions.labelNoControl}
-                </@alert>
-            </#if>    
-                <@messages errors=errors />
-                <@messages infos=infos />
-            </@boxBody>
-        </@box>
-    </@columns>
-</@row>
+<@formBreadCrumb>
+	<li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
+	<li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
+	<li class="active">#i18n{forms.manage_controls.title.${control_type?lower_case}}</li></ul>
+</@formBreadCrumb>
+
+<@modalBody>
+	<#if control_list?size gt 0>
+		<@table>
+			<thead>
+				<tr>
+					<@th xs=6 sm=5 md=7>#i18n{forms.modify_control.labelValidator}</@th>
+					<@th xs=5 sm=6 md=4>#i18n{forms.manageForm.columnActions}</@th>
+				</tr>
+			</thead>
+			<tbody>
+				<#list control_list as control>
+					<#assign validator = validatorManager.getValidator( control.validatorName ) />
+					<tr>
+						<@td sm=6>
+							${validator.validatorDisplayName}
+						</@td>
+						<@td sm=3>
+							<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
+							<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
+						</@td>
+					</tr>
+				</#list>
+			</tbody>
+		</@table>
+		<!--                
+			<#if control_type == 'VALIDATION'>
+				<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' size='' />
+			<#else>
+				<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' size='' />
+			</#if> 
+		-->
+	<#else>    
+		<@alert color='warning'>
+			<@icon style='exclamation-triangle' /> #i18n{forms.manage_transitions.labelNoControl}
+		</@alert>
+	</#if>    
+		<@messages errors=errors />
+		<@messages infos=infos />
+</@modalBody>
+<@modalFooter>
+	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
+</@modalFooter>
 <script>
-$( function(){
+// Function to check if a webpage is in iFrame
+function isIniFrame() {
+ return window.self !== window.top ? true : false;
+}
+$( function() {
+    if ( isIniFrame() ){
+        window.top.$("#modalIframe");
+        $('body').css('background-color', 'white');
+        $('.skipnav').hide();
+		$('nav').hide();
+        $('#pubModal .content-header').hide();
+        $('.container-fluid').css( 'padding', '0px' );
+        $('.modal-body').css( 'padding', '24px' );
+        $('main').css( 'margin', '0' );
+        $('header').hide();
+        $('footer').hide();
+		$('#breadforms').remove();
+
+		var modalTitle = "#i18n{forms.manage_controls.title.${control_type?lower_case}}";
+		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
+    } else {
+        $('#pubModal .content-header').hide();
+        $('#pubModal #admin-wrapper').css( 'margin', '0' );
+        $('#pubModal header').hide();
+        $('#pubModal footer').hide();
+    }
+});
+/*$( function(){
     var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
     $('body').css( 'overflow', 'hidden' );
     $('.content-header').hide();
@@ -68,5 +90,5 @@ $( function(){
             _this.unbind('submit').submit();
         });
     });
-});
+});*/
 </script>
