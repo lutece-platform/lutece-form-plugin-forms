@@ -1,24 +1,44 @@
-<@row>
-	<@columns>
-		<@box>
-			<@boxHeader title='#i18n{forms.create_transition.title}' />
-			<@boxBody>
-				<@tform method='post' name='create_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
-					<@messages errors=errors />
-					<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
-					<@input type='hidden' id='fromStep' name='fromStep' value='${step.id}' />
-					<@formGroup labelFor='nextStep' labelKey='#i18n{forms.create_transition.labelNextStep}' helpKey='#i18n{forms.create_transition.labelNextStep.help}' mandatory=true rows=2>
-						<@select name='nextStep' items=availableSteps default_value='' />
-					</@formGroup>
-					<@formsButton okAction='createTransition' viewAction='manageTransition' rows=2 />
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<!-- title='#i18n{forms.create_transition.title}' -->
+<@tform method='post' name='create_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
+	<@modalBody>
+		<@messages errors=errors />
+		<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
+		<@input type='hidden' id='fromStep' name='fromStep' value='${step.id}' />
+		<@formGroup labelFor='nextStep' labelKey='#i18n{forms.create_transition.labelNextStep}' helpKey='#i18n{forms.create_transition.labelNextStep.help}' mandatory=true rows=2>
+			<@select name='nextStep' items=availableSteps default_value='' />
+		</@formGroup>
+	</@modalBody>
+	<@modalFooter>
+		<@formsButton okAction='createTransition' viewAction='manageTransition' rows=2 />
+	</@modalFooter>
+</@tform>
 <script>
-$('#transitionModal .content-header').hide();
+// Function to check if a webpage is in iFrame
+function isIniFrame() {
+ return window.self !== window.top ? true : false;
+}
+$( function() {
+    if ( isIniFrame() ){
+        window.top.$("#modalIframe");
+        $('body').css('background-color', 'white');
+        $('.skipnav').hide();
+		$('nav').hide();
+        $('#pubModal .content-header').hide();
+        $('.container-fluid').css( 'padding', '0px' );
+        $('.modal-body').css( 'padding', '24px' );
+        $('main').css( 'margin', '0' );
+        $('header').hide();
+        $('footer').hide();
+		$('#breadforms').remove();
+    } else {
+        $('#pubModal .content-header').hide();
+        $('#pubModal #admin-wrapper').css( 'margin', '0' );
+        $('#pubModal header').hide();
+        $('#pubModal footer').hide();
+    }
+});
+/*$('#transitionModal .content-header').hide();
 $('#transitionModal #admin-wrapper').css( 'margin', '0' );
 $('#transitionModal header').hide();
-$('#transitionModal footer').hide();
+$('#transitionModal footer').hide();*/
 </script>

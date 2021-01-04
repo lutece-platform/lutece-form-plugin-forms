@@ -28,7 +28,7 @@
 				</#list>
 			</tbody>
 		</@table>
-		<!--                
+		<#--                
 			<#if control_type == 'VALIDATION'>
 				<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' size='' />
 			<#else>
@@ -67,6 +67,7 @@ $( function() {
 
 		var modalTitle = "#i18n{forms.manage_controls.title.${control_type?lower_case}}";
 		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
+		window.parent.$("#transitionModal").find(".modal-title").text(modalTitle);
     } else {
         $('#pubModal .content-header').hide();
         $('#pubModal #admin-wrapper').css( 'margin', '0' );
