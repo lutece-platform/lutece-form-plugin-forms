@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2020, City of Paris
+ * Copyright (c) 2002-2021, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -108,7 +108,8 @@ public class CSVDataLine
         else
         {
             StringBuilder sbConcatReponseValues = new StringBuilder( );
-            sbConcatReponseValues.append( _mapDataToExport.get( question.getId( ) ) ).append( ITERATION_SEPARATOR ).append( CSVUtil.safeString( sbReponseValues.toString( ) ) );
+            sbConcatReponseValues.append( _mapDataToExport.get( question.getId( ) ) ).append( ITERATION_SEPARATOR )
+                    .append( CSVUtil.safeString( sbReponseValues.toString( ) ) );
             _mapDataToExport.replace( question.getId( ), sbConcatReponseValues.toString( ) );
         }
     }
