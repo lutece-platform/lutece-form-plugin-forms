@@ -23,6 +23,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
+import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -45,7 +46,10 @@ public class FormResponsePdfExport
         {
             PDDocument pdDocument = new PDDocument();
             Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
-            for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
+            
+            // Filters the FormResponseStep with at least one question exportable in pdf
+            List<FormResponseStep> filteredList = formResponse.getSteps( ).stream( ).filter( frs -> frs.getQuestions( ).stream( ).map( FormQuestionResponse::getQuestion ).map( Question::getEntry ).anyMatch( Entry::isExportablePdf ) ).collect( Collectors.toList( ) );
+            for ( FormResponseStep formResponseStep : filteredList )
             {
                 PDPage pdPage = new PDPage();
                 PDPageContentStream contentStream = new PDPageContentStream( pdDocument, pdPage );
@@ -132,6 +136,7 @@ public class FormResponsePdfExport
     private PdfCell createPdfCell( FormResponseStep formResponseStep, FormDisplay formDisplay, Group group, int iterationNumber )
     {
         FormQuestionResponse formQuestionResponse = formResponseStep.getQuestions( ).stream( )
+                .filter( fqr -> fqr.getQuestion( ).getEntry( ).isExportablePdf( ) )
                 .filter( fqr -> fqr.getQuestion( ).getId( ) == formDisplay.getCompositeId( ) )
                 .filter( fqr -> fqr.getQuestion( ).getIterationNumber( ) == iterationNumber )
                 .findFirst( ).orElse( null );
