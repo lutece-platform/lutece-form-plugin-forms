@@ -36,6 +36,12 @@
         <constructor-arg type="java.lang.String" index="2" value="forms.export.pdf.description" />
     </bean>
     
+    <bean id="forms.fullExport" class="fr.paris.lutece.plugins.forms.export.full.FullExport">
+        <constructor-arg type="java.lang.String" index="0" value="forms.fullExport" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.export.full.name" />
+        <constructor-arg type="java.lang.String" index="2" value="forms.export.full.description" />
+    </bean>
+    
     <!-- Listener services -->
     <bean id="forms.formRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
     <bean id="forms.questionRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
