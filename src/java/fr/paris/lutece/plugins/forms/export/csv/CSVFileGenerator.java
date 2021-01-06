@@ -39,10 +39,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
-import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
@@ -59,19 +57,11 @@ import fr.paris.lutece.util.file.FileUtil;
 /**
  * FileGeneratro form Csv Export.
  */
-public class CSVFileGenerator implements IFileGenerator
+public class CSVFileGenerator extends AbstractFileGenerator
 {
-    private static final String TMP_DIR = System.getProperty( "java.io.tmpdir" );
     private static final boolean ZIP_EXPORT = Boolean.parseBoolean( AppPropertiesService.getProperty( "forms.export.csv.zip", "false" ) );
     private static final int FLUSH_SIZE = 1000;
     public static final String UTF8_BOM = "\uFEFF";
-
-    private final FormPanel _formPanel;
-    private final List<IFormColumn> _listFormColumn;
-    private final List<FormFilter> _listFormFilter;
-    private final FormResponseItemSortConfig _sortConfig;
-    private final String _fileName;
-    private final String _fileDescription;
 
     /**
      * Constructor
@@ -81,13 +71,7 @@ public class CSVFileGenerator implements IFileGenerator
     public CSVFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormResponseItemSortConfig sortConfig, String fileDescription )
     {
-        super( );
-        _fileName = FileUtil.normalizeFileName( formName );
-        _formPanel = formPanel;
-        _listFormColumn = new ArrayList<>( listFormColumn );
-        _listFormFilter = new ArrayList<>( listFormFilter );
-        _sortConfig = sortConfig;
-        _fileDescription = fileDescription;
+        super( FileUtil.normalizeFileName( formName ), formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription );
     }
 
     @Override
@@ -164,10 +148,10 @@ public class CSVFileGenerator implements IFileGenerator
         }
         return "";
     }
-
+    
     @Override
-    public String getDescription( )
+    public boolean hasMultipleFiles( )
     {
-        return _fileDescription;
+        return false;
     }
 }
