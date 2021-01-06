@@ -27,6 +27,9 @@
 						<@formGroup labelFor='prefix' labelKey='#i18n{forms.createEntry.labelPrefix}' helpKey='#i18n{forms.createEntry.labelPrefixComment}'>
 							<@input type='text' name='prefix' id='prefix' value='' maxlength=255 />
 						</@formGroup>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
+						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
 							<@checkBox labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
 						</@formGroup>
