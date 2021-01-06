@@ -77,7 +77,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
 
     // Field codes
     private static final String FIELD_LINK_CODE = "link";
-    private static final String FIELD_AGREEMENT_CODE = "agreement";
+    public static final String FIELD_AGREEMENT_CODE = "agreement";
 
     // Parameters
     private static final String PARAMETER_LINK = FIELD_LINK_CODE;

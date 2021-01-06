@@ -30,6 +30,12 @@
         <constructor-arg type="java.lang.String" index="2" value="forms.export.csv.description" />
     </bean>
     
+    <bean id="forms.pdfExport" class="fr.paris.lutece.plugins.forms.export.pdf.PDFExport">
+        <constructor-arg type="java.lang.String" index="0" value="forms.pdfExport" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.export.pdf.name" />
+        <constructor-arg type="java.lang.String" index="2" value="forms.export.pdf.description" />
+    </bean>
+    
     <!-- Listener services -->
     <bean id="forms.formRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
     <bean id="forms.questionRemovalService" class="fr.paris.lutece.portal.service.util.RemovalListenerService" />
