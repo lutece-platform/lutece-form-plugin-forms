@@ -41,11 +41,6 @@
 						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}'>
 							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
 						</@formGroup>
-						<#assign field_width=getFieldValueByCode( entry, "width")>
-						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-							<@input type='text' name='width' id='width' value='${field_width?number}' />
-							<#assign id_field=config.idField> 
-						</@formGroup>
 						<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
 							<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
 							<#if field_max_size?number!=-1>

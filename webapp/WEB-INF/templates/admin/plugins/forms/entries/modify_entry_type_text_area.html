@@ -34,10 +34,6 @@
 						<@formGroup>
 							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
 						</@formGroup>
-						<#assign field_width=getFieldValueByCode( entry, "width")>
-						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidth}' mandatory=true>
-							<@input type='text' name='width' id='width' value='${field_width?number}' />
-						</@formGroup>
 						<#assign field_height=getFieldValueByCode( entry, "height")>
 						<@formGroup labelFor='height' labelKey='#i18n{forms.createEntry.labelHeight}' mandatory=true>
 							<@input type='text' name='height' id='height' inputSize=5 value='${field_height?number}' />
