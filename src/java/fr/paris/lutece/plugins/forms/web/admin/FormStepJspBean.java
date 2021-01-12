@@ -39,8 +39,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
@@ -177,6 +180,11 @@ public class FormStepJspBean extends AbstractJspBean
 
         List<Step> listSteps = StepHome.getStepsListByForm( nIdForm );
         List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( nIdForm );
+        
+        for ( Transition transition : listTransitions )
+        {
+            transition.setConditional( CollectionUtils.isNotEmpty( ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION ) ) );
+        }
 
         listSteps = StepService.sortStepsWithTransitions( listSteps, listTransitions );
 

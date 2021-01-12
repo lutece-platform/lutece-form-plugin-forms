@@ -60,6 +60,8 @@ public class Transition implements Serializable
     private String _strControlTitle;
 
     private int _nPriority;
+    
+    private boolean _conditional;
 
     /**
      * Returns the Id
@@ -194,6 +196,22 @@ public class Transition implements Serializable
     public void setControlTitle( String strControlTitle )
     {
         _strControlTitle = strControlTitle;
+    }
+
+    /**
+     * @return the conditional
+     */
+    public boolean isConditional( )
+    {
+        return _conditional;
+    }
+
+    /**
+     * @param conditional the conditional to set
+     */
+    public void setConditional( boolean conditional )
+    {
+        _conditional = conditional;
     }
 
 }
