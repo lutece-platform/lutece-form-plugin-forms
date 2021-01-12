@@ -58,7 +58,7 @@
 											<#list transition_list as transition>
 												<#if transition.fromStep = step.id>
 													<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${transition.fromStep}' title='#i18n{forms.modify_transition.title} ${step.title}'>
-														<@icon style='chevron-right' />	${(transition.nextStepTitle)!''} ${(transition.controlTitle)!''} <@tag title='#i18n{forms.manage_transitions.columnPriority}'>${(transition.priority)!''}</@tag>  
+														<@icon style='chevron-right' />	${(transition.nextStepTitle)!''} ${(transition.controlTitle)!''}<#if transition.conditional> (<@icon style='question' />) </#if><@tag title='#i18n{forms.manage_transitions.columnPriority}'>${(transition.priority)!''}</@tag>
 													</@link>
 												</#if>	 
 											</#list>
