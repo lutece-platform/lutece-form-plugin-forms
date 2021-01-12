@@ -39,6 +39,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -169,6 +170,10 @@ public class FormTransitionJspBean extends AbstractJspBean
         Map<String, Object> model = getModel( );
 
         List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( nIdStep );
+        for ( Transition transition : listTransition )
+        {
+            transition.setConditional( CollectionUtils.isNotEmpty( ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION ) ) );
+        }
 
         model.put( MARK_TRANSITION_LIST, listTransition );
         model.put( FormsConstants.MARK_STEP, _step );
