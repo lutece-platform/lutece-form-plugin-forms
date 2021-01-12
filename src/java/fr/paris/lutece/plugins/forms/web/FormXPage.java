@@ -498,6 +498,8 @@ public class FormXPage extends MVCApplication
         Form form = FormHome.findByPrimaryKey( Integer.parseInt( idForm ) );
         Map<String, Object> model = buildModelForSummary( request );
         model.put( FormsConstants.MARK_ID_FORM, idForm );
+        model.put( FormsConstants.MARK_FORM, form );
+        
         String strTitleForm = I18nService.getLocalizedString( MESSAGE_SUMMARY_TITLE, new String [ ] {
                 form.getTitle( )
         }, getLocale( request ) );
