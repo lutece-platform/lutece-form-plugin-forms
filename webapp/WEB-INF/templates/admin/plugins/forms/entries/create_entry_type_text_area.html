@@ -11,6 +11,7 @@
 				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
 					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
+						<@input type='hidden' name='width' id='width' value='0' />
 						<#if entry.fieldDepend?exists>
 							<@input type='hidden' name='id_field' value='${entry.fieldDepend.idField}' />
 						</#if>
