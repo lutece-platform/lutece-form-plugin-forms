@@ -3,26 +3,28 @@
 <@formBreadCrumb>
     <li class="active">${form.title!}</li>
 </@formBreadCrumb>
-
-<@tform class='form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
-	<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-	<@box color='primary'>
-		<@boxBody>
-			<@tabs color='clearfix'>
+<@row>
+	<@columns>
+		<@box color='primary'>
+			<@boxHeader title='${form.title!}' />
+			<@boxBody>
 				<@formTabs tab="general" />
-			</@tabs>
-			<@tabContent>
-				<@tabPanel id='' active=true>
-					<@formModel />
-				</@tabPanel>
-			</@tabContent>
-			<@formGroup rows=2>
-				<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
-				<@headerButton validate=false />					
-			</@formGroup>
-		</@boxBody>
-	</@box>
-</@tform>
+				<@tform class='form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
+					<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+					<@tabContent>
+						<@tabPanel id='' active=true>
+							<@formModel />
+						</@tabPanel>
+					</@tabContent>
+					<@formGroup rows=2>
+						<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
+						<@headerButton validate=false />					
+					</@formGroup>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
 
 
 <@formEditor />
