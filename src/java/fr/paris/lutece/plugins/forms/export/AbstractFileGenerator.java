@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.export.csv;
+package fr.paris.lutece.plugins.forms.export;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -48,7 +48,7 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
-import fr.paris.lutece.plugins.forms.export.csv.AbstractFileGenerator;
+import fr.paris.lutece.plugins.forms.export.AbstractFileGenerator;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.file.FileUtil;
