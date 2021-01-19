@@ -44,7 +44,7 @@ import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
- * This class performs a CSV export
+ * This class performs a PDF export
  *
  */
 public class PDFExport implements IFormatExport
