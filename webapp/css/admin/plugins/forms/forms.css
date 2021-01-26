@@ -40,7 +40,7 @@ body, .wrapper{ height: 100%; overflow: visible; }
 .th-active, .th-active a{ color: #fff }
 
 /* Multiview - No answers */
-#multiview-no-forms { height: 70vh;	display: flex;	justify-content: center;align-items : center }
+#multiview-no-forms { height:70vh; display:flex; justify-content:center; align-items:start; width:100%;}
 
 /* Multiview - Detail view */
 #form-response-detail-header button{ margin-top: 5px }

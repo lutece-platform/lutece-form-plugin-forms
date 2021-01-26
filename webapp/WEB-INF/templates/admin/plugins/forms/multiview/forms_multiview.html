@@ -1,10 +1,11 @@
 <@row>
 	<@columns>
 		<@box>
-			<@boxHeader title='' />
+			<@boxHeader id='multiviewFormsHeader' title='#i18n{forms.multiviewForms.boxTitle}' />
 			<@boxBody>
-			<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' >
-				<#include "includes/include_manage_multiview_forms_header.html">
+				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='inline'>
+					<#include "includes/include_manage_multiview_forms_header.html">
+				</@tform>
 				<#if table_template?has_content>
 					<div id="multi-form-list">
 						${table_template}
@@ -20,12 +21,15 @@
 						</div>
 					</div>
 				</#if>
-			</@tform>
 			</@boxBody>
 		</@box>
 	</@columns>
 </@row>
 <script src="js/plugins/forms/multiview/forms-multiview.js"></script>
+<script>
+	var formTitle = $("#id_form option:selected").text();
+	$("#multiviewFormsHeader > *").text($("#multiviewFormsHeader > *").text() + " : " + formTitle);
+</script>
 
 <@dateFilterJs  />
 <@scrollTopBtn />

@@ -3,9 +3,9 @@
 <#else>
     <#assign previous_searched_text = ''>
 </#if>
-<@formGroup id='search-text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}' labelFor='searched_text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}'>
-        <@input name='searched_text' id='searched_text' value=previous_searched_text placeHolder='#i18n{forms.multiviewForms.labelFilter.searchText}' />
+<@formGroup formStyle='inline' id='search-text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}' labelFor='searched_text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}' hideLabel=['all']>
+	<@input name='searched_text' id='searched_text' value=previous_searched_text placeHolder='#i18n{forms.multiviewForms.labelFilter.searchText}' size='sm' />
 </@formGroup>
-<@formGroup>
-	<@button type='submit' id='btn_search' buttonIcon='search' title='#i18n{forms.multiviewForms.labelFilter.searchText}' />
+<@formGroup formStyle='inline'>
+	<@button type='submit' id='btn_search' buttonIcon='search' title='#i18n{forms.multiviewForms.labelFilter.searchText}' hideTitle=['all'] size='sm' />
 </@formGroup>

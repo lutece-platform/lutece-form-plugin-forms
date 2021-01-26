@@ -847,7 +847,7 @@ $('#${id}').on('show.bs.modal', function (event) {
 <script type="text/javascript" src="js/jquery/plugins/daterangepicker.js"></script>
 <script>
 $(function() {
-	$('.formsFilterDate').each( function( index )
+	$("[name='formsFilterDate']").each( function( index )
 	{
 		var filter='#' + $( this ).val(), filter_to=filter+'_to', filter_from=filter+'_from';
 		$(filter).daterangepicker( {
