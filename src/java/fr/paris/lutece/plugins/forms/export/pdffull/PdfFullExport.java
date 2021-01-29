@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.export.full;
+package fr.paris.lutece.plugins.forms.export.pdffull;
 
 import java.util.List;
 
@@ -44,7 +44,7 @@ import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.util.file.FileUtil;
 
-public class FullExport implements IFormatExport
+public class PdfFullExport implements IFormatExport
 {
     private final String _strFormatExportName;
     private final String _strFormatExportDisplayName;
@@ -60,7 +60,7 @@ public class FullExport implements IFormatExport
      * @param strFormatExportDescription
      *            The export format description
      */
-    public FullExport( String strFormatExportName, String strFormatExportDisplayName, String strFormatExportDescription )
+    public PdfFullExport( String strFormatExportName, String strFormatExportDisplayName, String strFormatExportDescription )
     {
         _strFormatExportName = strFormatExportName;
         _strFormatExportDisplayName = I18nService.getLocalizedString( strFormatExportDisplayName, I18nService.getDefaultLocale( ) );
@@ -89,7 +89,7 @@ public class FullExport implements IFormatExport
     public IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormResponseItemSortConfig sortConfig )
     {
-        return new FullFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription );
+        return new PdfFullFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription );
     }
 
 }

@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.export.full;
+package fr.paris.lutece.plugins.forms.export.pdffull;
 
 import java.io.File;
 import java.io.IOException;
@@ -59,11 +59,11 @@ import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.util.file.FileUtil;
 
-public class FullFileGenerator extends AbstractFileGenerator
+public class PdfFullFileGenerator extends AbstractFileGenerator
 {
     private boolean _hasMultipleFiles = false;
 
-    protected FullFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+    protected PdfFullFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormResponseItemSortConfig sortConfig, String fileDescription )
     {
         super( FileUtil.normalizeFileName( formName ), formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription );
