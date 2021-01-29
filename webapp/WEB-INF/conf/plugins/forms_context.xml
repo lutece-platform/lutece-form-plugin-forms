@@ -36,10 +36,10 @@
         <constructor-arg type="java.lang.String" index="2" value="forms.export.pdf.description" />
     </bean>
     
-    <bean id="forms.fullExport" class="fr.paris.lutece.plugins.forms.export.full.FullExport">
+    <bean id="forms.fullExport" class="fr.paris.lutece.plugins.forms.export.pdffull.PdfFullExport">
         <constructor-arg type="java.lang.String" index="0" value="forms.fullExport" />
-        <constructor-arg type="java.lang.String" index="1" value="forms.export.full.name" />
-        <constructor-arg type="java.lang.String" index="2" value="forms.export.full.description" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.export.pdffull.name" />
+        <constructor-arg type="java.lang.String" index="2" value="forms.export.pdffull.description" />
     </bean>
     
     <!-- Listener services -->
