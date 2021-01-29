@@ -43,6 +43,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
@@ -162,12 +165,29 @@ public class PdfFullFileGenerator extends AbstractFileGenerator
                 .flatMap( fqr -> fqr.getEntryResponse( ).stream( ) ).collect( Collectors.toList( ) );
 
         List<Path> listAttachments = new ArrayList<>( );
+        List<String> fileNames = new ArrayList<>( );
         for ( Response response : listResponse )
         {
             if ( response.getFile( ) != null )
             {
                 fr.paris.lutece.portal.business.file.File coreFile = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
-                Path attachment = directoryFile.resolve( coreFile.getTitle( ) );
+                
+                String filename =  coreFile.getTitle( );
+                
+                long nbFiles = fileNames.stream( ).filter( s -> s.equals(  coreFile.getTitle( ) ) ).count( );
+                if ( nbFiles > 0)
+                {
+                    StringBuilder fileSb = new StringBuilder( );
+                    fileSb.append( FilenameUtils.removeExtension( filename ) );
+                    fileSb.append( "_" );
+                    fileSb.append( ++nbFiles );
+                    fileSb.append( "." );
+                    fileSb.append( FilenameUtils.getExtension( filename ) );
+                    filename = fileSb.toString( );
+                }
+                fileNames.add( coreFile.getTitle( ) );
+                
+                Path attachment = directoryFile.resolve( filename );
 
                 PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( coreFile.getPhysicalFile( ).getIdPhysicalFile( ) );
                 try ( OutputStream outputStream = Files.newOutputStream( attachment ) )
