@@ -59,6 +59,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -112,6 +113,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_PERMISSION_CREATE_FORMS = "permission_create_forms";
     private static final String MARK_WORKFLOW_REF_LIST = "workflow_list";
     private static final String MARK_WEBAPP_URL = "webapp_url";
+    private static final String MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN = "is_active_kibana_forms_plugin";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -146,6 +148,9 @@ public class FormJspBean extends AbstractJspBean
     // Errors
     private static final String ERROR_FORM_NOT_UPDATED = "forms.error.form.notUpdated";
     private static final String ERROR_FORM_DATE_START_AFTER_END = "forms.error.form.date.startAfterEnd";
+
+    // Plugin names
+    private static final String KIBANA_FORMS_PLUGIN_NAME = "kibana-forms";
 
     // Session variable to store working values
     private Form _form;
@@ -201,6 +206,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, request.getLocale( ) );
         model.put( MARK_PERMISSION_CREATE_FORMS,
                 RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, (User) adminUser ) );
+        model.put( MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN, PluginService.isPluginEnable( KIBANA_FORMS_PLUGIN_NAME ) );
 
         setPageTitleProperty( EMPTY_STRING );
 

@@ -69,6 +69,9 @@
                                 <#if form.active>
                                     <@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' color='success' />
                                 </#if>
+                                <#if is_active_kibana_forms_plugin>
+                                <@aButton href='jsp/admin/plugins/kibana/KibanaDashboard.jsp?tab=FormsDataSource_${form.id}' title='#i18n{forms.manageForm.stats.label}' hideTitle=['all'] params='target="_blank"' buttonIcon='chart-area' size='sm' color='info' />
+                                </#if>
                             </@td>
                             <@td hide=['xs']>
                                 <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' params='data-toggle="modal" data-target="#pubModal" data-url="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"'>
