@@ -13,15 +13,6 @@
                 </@inputGroupItem>
             </@inputGroup>
         </@formGroup>
-        <!--
-        <div class="form-group">
-            <div class="col-xs-12 col-sm-offset-3 col-sm-8 col-md-offset-3 col-md-8">
-                 <button class="btn btn-default" name="view_manageTransition" type="submit" formnovalidate >
-                    <i class='fa fa-close'></i>&nbsp;#i18n{portal.admin.message.buttonCancel}
-                </button> 
-            </div>
-        </div>
-        -->
 	</@modalBody>
 </@tform>
 
@@ -30,10 +21,12 @@
 function isIniFrame() {
  return window.self !== window.top ? true : false;
 }
+
 $( function() {
     if ( isIniFrame() ){
-        window.top.$("#modalIframe");
-        $('body').css('background-color', 'white');
+	window.top.$("#modalIframe");
+        $('body').css('background-color', 'white').css( 'overflow', 'hidden' );
+		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
         $('.skipnav').hide();
 		$('nav').hide();
         $('#pubModal .content-header').hide();
@@ -43,27 +36,20 @@ $( function() {
         $('header').hide();
         $('footer').hide();
 		$('#breadforms').remove();
+		
+		var formAction = $('#modify_transition'), btnAction = $('#action_modifyTransition');
+
+		btnAction.click( function(e){ 
+			formAction.submit( function(e){
+				formAction.attr('target','_top');
+				_this.unbind('submit').submit();
+			});
+		});
     } else {
         $('#pubModal .content-header').hide();
         $('#pubModal #admin-wrapper').css( 'margin', '0' );
         $('#pubModal header').hide();
         $('#pubModal footer').hide();
     }
-});
-$( function(){
-    /*var formAction = $('#modify_transition'), btnAction = $('#action_modifyTransition');
-    $('body').css( 'overflow', 'hidden' );
-    $('.content-header').hide();
-    $('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
-    $('header').remove();
-    $('#footer').remove();*/
-
-    btnAction.click( function(e){ 
-        formAction.submit( function(){
-            e.preventDefault();
-            formAction.attr('target','_top');
-            _this.unbind('submit').submit();
-        });
-    });
 });
 </script>

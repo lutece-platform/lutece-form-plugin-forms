@@ -73,8 +73,7 @@ $( function(){
 
     btnAction.click( function(e){ 
         formAction.submit( function(){
-            e.preventDefault();
-            // formAction.attr('target','_top');
+            formAction.attr('target','_top');
             _this.unbind('submit').submit();
         });
     });

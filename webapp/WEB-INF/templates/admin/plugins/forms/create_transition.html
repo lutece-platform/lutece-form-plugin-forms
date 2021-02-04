@@ -1,5 +1,5 @@
 <!-- title='#i18n{forms.create_transition.title}' -->
-<@tform method='post' name='create_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
+<@tform method='post' id='create_transition' name='create_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
 	<@modalBody>
 		<@messages errors=errors />
 		<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
@@ -17,28 +17,36 @@
 function isIniFrame() {
  return window.self !== window.top ? true : false;
 }
+
 $( function() {
     if ( isIniFrame() ){
         window.top.$("#modalIframe");
         $('body').css('background-color', 'white');
         $('.skipnav').hide();
 		$('nav').hide();
-        $('#pubModal .content-header').hide();
-        $('.container-fluid').css( 'padding', '0px' );
+        $('.container-fluid').css( 'padding', '0' );
         $('.modal-body').css( 'padding', '24px' );
         $('main').css( 'margin', '0' );
         $('header').hide();
         $('footer').hide();
 		$('#breadforms').remove();
+		$('#transitionModal .content-header').hide();
+		$('#transitionModal #admin-wrapper').css( 'margin', '0' );
+		
+		var formAction = $('#create_transition'), btnAction = $('#action_createTransition');
+
+		btnAction.click( function(e){ 
+			formAction.submit( function(e){
+				formAction.attr('target','_top');
+				_this.unbind('submit').submit();
+			});
+		});
     } else {
-        $('#pubModal .content-header').hide();
-        $('#pubModal #admin-wrapper').css( 'margin', '0' );
-        $('#pubModal header').hide();
-        $('#pubModal footer').hide();
+        $('#transitionModal .content-header').hide();
+        $('#transitionModal #admin-wrapper').css( 'margin', '0' );
+        $('#transitionModal header').hide();
+        $('#transitionModal footer').hide();
     }
 });
-/*$('#transitionModal .content-header').hide();
-$('#transitionModal #admin-wrapper').css( 'margin', '0' );
-$('#transitionModal header').hide();
-$('#transitionModal footer').hide();*/
+
 </script>
