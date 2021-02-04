@@ -19,12 +19,14 @@ DELETE FROM core_user_right WHERE id_right = 'FORMS_MULTIVIEW';
 -- Dumping data for table core_admin_role
 --
 DELETE FROM core_admin_role WHERE role_key = 'forms_manager';
-INSERT INTO core_admin_role (role_key,role_description) VALUES ('forms_manager','Gestion des formulaires');
+INSERT INTO core_admin_role (role_key,role_description) VALUES ('forms_manager','FORMS - Gestion des formulaires');
+INSERT INTO core_admin_role (role_key,role_description) VALUES ('forms_multiview','FORMS - Visualisation des résultats des formulaires');
 
 --
 -- Dumping data for table core_user_role
 --
 INSERT INTO core_user_role (role_key,id_user) VALUES ('forms_manager',1);
+INSERT INTO core_user_role (role_key,id_user) VALUES ('forms_multiview',1);
 INSERT INTO core_user_role (role_key,id_user) VALUES ('forms_manager',2);
 
 --
