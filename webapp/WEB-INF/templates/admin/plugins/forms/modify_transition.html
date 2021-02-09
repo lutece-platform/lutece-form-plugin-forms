@@ -19,12 +19,12 @@
 <script>
 // Function to check if a webpage is in iFrame
 function isIniFrame() {
- return window.self !== window.top ? true : false;
+    return window.self !== window.top ? true : false;
 }
 
 $( function() {
     if ( isIniFrame() ){
-	window.top.$("#modalIframe");
+	    //window.top.$("#modalIframe");
         $('body').css('background-color', 'white').css( 'overflow', 'hidden' );
 		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
         $('.skipnav').hide();
@@ -45,6 +45,7 @@ $( function() {
 				_this.unbind('submit').submit();
 			});
 		});
+
     } else {
         $('#pubModal .content-header').hide();
         $('#pubModal #admin-wrapper').css( 'margin', '0' );

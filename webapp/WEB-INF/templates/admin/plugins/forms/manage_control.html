@@ -17,12 +17,10 @@
 				<#list control_list as control>
 					<#assign validator = validatorManager.getValidator( control.validatorName ) />
 					<tr>
-						<@td sm=6>
-							${validator.validatorDisplayName}
-						</@td>
+						<@td sm=6>${validator.validatorDisplayName}</@td>
 						<@td sm=3>
 							<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
-							<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
+							<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' params=' target="_top"' />
 						</@td>
 					</tr>
 				</#list>
@@ -30,9 +28,9 @@
 		</@table>
 		<#--                
 			<#if control_type == 'VALIDATION'>
-				<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' size='' />
+				<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' target='_top' title='#i18n{forms.form.returnPage}' size='' />
 			<#else>
-				<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' title='#i18n{forms.form.returnPage}' size='' />
+				<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' target='_top' title='#i18n{forms.form.returnPage}' size='' />
 			</#if> 
 		-->
 	<#else>    
@@ -46,25 +44,21 @@
 <@modalFooter>
 	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
 </@modalFooter>
+
 <script>
 // Function to check if a webpage is in iFrame
 function isIniFrame() {
- return window.self !== window.top ? true : false;
+	return window.self !== window.top ? true : false;
 }
+
 $( function() {
     if ( isIniFrame() ){
-        window.top.$("#modalIframe");
-        $('body').css('background-color', 'white');
-        $('.skipnav').hide();
-		$('nav').hide();
-        $('#pubModal .content-header').hide();
-        $('.container-fluid').css( 'padding', '0px' );
-        $('.modal-body').css( 'padding', '24px' );
-        $('main').css( 'margin', '0' );
-        $('header').hide();
-        $('footer').hide();
+		$('body').css( 'overflow', 'hidden' );
+		$('.content-header').hide();
+		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
+		$('header').remove();
 		$('#breadforms').remove();
-
+		$('#footer').remove();
 		var modalTitle = "#i18n{forms.manage_controls.title.${control_type?lower_case}}";
 		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
 		window.parent.$("#transitionModal").find(".modal-title").text(modalTitle);
@@ -75,21 +69,4 @@ $( function() {
         $('#pubModal footer').hide();
     }
 });
-/*$( function(){
-    var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
-    $('body').css( 'overflow', 'hidden' );
-    $('.content-header').hide();
-    $('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
-    $('header').remove();
-    $('#breadforms').remove();
-    $('#footer').remove();
-  
-    btnAction.click( function(e){ 
-        formAction.submit( function(){
-            e.preventDefault();
-            formAction.attr('target','_top');
-            _this.unbind('submit').submit();
-        });
-    });
-});*/
 </script>

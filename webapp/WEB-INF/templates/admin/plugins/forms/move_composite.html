@@ -62,6 +62,15 @@ $( function() {
         $('footer').hide();
 		$('#breadforms').remove();
 
+		var formAction = $('#modify_form'), btnAction = $('#action_moveComposite');
+		btnAction.click( function(e){ 
+			formAction.submit( function(){
+				e.preventDefault();
+				formAction.attr('target','_top');
+				_this.unbind('submit').submit();
+			});
+		});
+
 		var modalTitle = "#i18n{forms.move_composite.title} ${display_title!}";
 		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
     } else {
@@ -71,21 +80,4 @@ $( function() {
         $('#pubModal footer').hide();
     }
 });
-/*$( function(){
-    var formAction = $('#modify_form'), btnAction = $('#action_moveComposite');
-    $('body').css( 'overflow', 'hidden' );
-    $('.content-header').hide();
-    $('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
-    $('header').remove();
-    $('#breadforms').remove();
-    $('#footer').remove();
-
-    btnAction.click( function(e){ 
-        formAction.submit( function(){
-            e.preventDefault();
-            formAction.attr('target','_top');
-            _this.unbind('submit').submit();
-        });
-    });
-});*/
 </script>

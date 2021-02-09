@@ -27,19 +27,17 @@
 	                     <@button type='submit' name="view_modifyControl" value="validateQuestion" showTitle=false buttonIcon='check'/>
 	                 </@inputGroupItem>
                  </@inputGroup>
-		<#if control.listIdQuestion??>
-		<#list control.listIdQuestion as question >
-			<#list listQuestion as q >
-				<#if question == q.code?number>
-					<@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}' title='remove'><@icon style='trash' /> ${q.name!}</@link>
-				</#if>
-			</#list>
-		</#list>	
-		</#if>
+                <#if control.listIdQuestion??>
+                    <#list control.listIdQuestion as question >
+                        <#list listQuestion as q >
+                            <#if question == q.code?number>
+                                <@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}' title='remove'><@icon style='trash' /> ${q.name!}</@link>
+                            </#if>
+                        </#list>
+                    </#list>	
+                </#if>
             </@formGroup>
-	
-
-            <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true>
+            <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}'>
                 <@inputGroup>
                     <@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
                     <@inputGroupItem>
@@ -52,15 +50,11 @@
 					<@input type='textarea' name='errorMessage' value='${control.errorMessage!}' />
 				</@inputGroup>
 			</@formGroup>
-			
             ${control_template}
-            
             <@formsButton okAction='modifyControl' viewAction='' />
-            
         </@tform>
     </@boxBody>
 </@box>
-
 <script>
 $( function(){
     var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
@@ -70,12 +64,5 @@ $( function(){
     $('header').remove();
     $('#breadforms').remove();
     $('#footer').remove();
-
-    btnAction.click( function(e){ 
-        formAction.submit( function(){
-            formAction.attr('target','_top');
-            _this.unbind('submit').submit();
-        });
-    });
 });
 </script>

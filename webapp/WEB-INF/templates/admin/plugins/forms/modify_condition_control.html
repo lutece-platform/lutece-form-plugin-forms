@@ -3,7 +3,7 @@
     <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
     <li class="active">${modify_condition_title}</li>
 </@formBreadCrumb>
-<@tform method='post' id='modify_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
+<@tform method='post' name='modify_control' id='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
 	<@modalBody>
 		<@messages errors=errors />
 		<@formGroup labelKey='#i18n{forms.modify_control.labelStep}' helpKey='#i18n{forms.modify_control.labelStep.help}' mandatory=true>
@@ -14,7 +14,7 @@
 				</@inputGroupItem>
 			</@inputGroup>
 		</@formGroup>
-		<@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}' mandatory=true>
+		<@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}' >
 			<@inputGroup>
 				<@select name='id_question' items=listQuestion default_value='' />
 				<@inputGroupItem>
@@ -31,7 +31,6 @@
 		</#list>	
 		</#if>
 		</@formGroup>
-		
 		<#assign labelicon>
 			<@icon style='asterisk' />
 		</#assign>
@@ -43,13 +42,12 @@
 				</@inputGroupItem>
 			</@inputGroup>
 		</@formGroup>
-		
 		${control_template}
 	</@modalBody>
 	<@modalFooter>
 		<#if control.id gt 0>
-				<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='trash' color='danger' params=' target="_top"' size='sm' />
-			</#if>
+			<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='trash' color='danger' params=' target="_top"' size='sm' />
+		</#if>
 		<@formsButton okAction='modifyControl' viewAction='' />
 	</@modalFooter>
 </@tform>
@@ -57,21 +55,26 @@
 <script>
 // Function to check if a webpage is in iFrame
 function isIniFrame() {
- return window.self !== window.top ? true : false;
+ 	return window.self !== window.top ? true : false;
 }
+
 $( function() {
     if ( isIniFrame() ){
-        window.top.$("#modalIframe");
-        $('body').css('background-color', 'white');
-        $('.skipnav').hide();
-		$('nav').hide();
-        $('#pubModal .content-header').hide();
-        $('.container-fluid').css( 'padding', '0px' );
-        $('.modal-body').css( 'padding', '24px' );
-        $('main').css( 'margin', '0' );
-        $('header').hide();
-        $('footer').hide();
+		$('body').css( 'overflow-x', 'hidden' );
+		$('.content-header').hide();
+		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
+		$('header').remove();
 		$('#breadforms').remove();
+		$('#footer').remove();
+		
+		var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
+		btnAction.click( function(e){ 
+			formAction.submit( function(){
+				e.preventDefault();
+				formAction.attr( 'target', '_top' );
+				_this.unbind('submit').submit();
+			});
+		});
 
 		var modalTitle = "${modify_condition_title}";
 		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
@@ -83,21 +86,4 @@ $( function() {
     }
 });
 
-/*$( function(){
-    var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');;
-    $('body').css( 'overflow-x', 'hidden' );
-    $('.content-header').hide();
-    $('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
-    $('header').remove();
-    $('#breadforms').remove();
-    $('#footer').remove();
-	
-	btnAction.click( function(e){ 
-        formAction.submit( function(){
-            e.preventDefault();
-            formAction.attr('target','_top');
-            _this.unbind('submit').submit();
-        });
-    });
-});*/
 </script>

@@ -34,22 +34,25 @@
 <script>
 // Function to check if a webpage is in iFrame
 function isIniFrame() {
- return window.self !== window.top ? true : false;
+    return window.self !== window.top ? true : false;
 }
+
 $( function() {
     if ( isIniFrame() ){
-        window.top.$("#modalIframe");
-        $('body').css('background-color', 'white');
-        $('.skipnav').hide();
-		$('nav').hide();
-        $('#pubModal .content-header').hide();
-        $('.container-fluid').css( 'padding', '0px' );
-        $('.modal-body').css( 'padding', '24px' );
-        $('main').css( 'margin', '0' );
-        $('header').hide();
-        $('footer').hide();
+        var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
+		$('body').css( 'overflow', 'hidden' );
+		$('.content-header').hide();
+		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
+		$('header').remove();
 		$('#breadforms').remove();
-
+		$('#footer').remove();
+		btnAction.click( function(e){ 
+			formAction.submit( function(){
+				e.preventDefault();
+				formAction.attr('target','_top');
+				_this.unbind('submit').submit();
+			});
+		});
 		var modalTitle = "#i18n{forms.modify_question_control.title}";
 		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
     } else {
@@ -59,22 +62,5 @@ $( function() {
         $('#pubModal footer').hide();
     }
 });
-/*$( function(){
-    var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
-    $('body').css( 'overflow', 'hidden' );
-    $('.content-header').hide();
-    $('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
-    $('header').remove();
-    $('#footer').remove();
-    $('.box-header').remove();
-    $('#breadforms').remove();
 
-    btnAction.click( function(e){ 
-        formAction.submit( function(){
-            e.preventDefault();
-            formAction.attr('target','_top');
-            formAction.submit();
-        });
-    });
-});*/
 </script>
