@@ -14,6 +14,7 @@
                         <@th hide=['xs']>#i18n{forms.manageForm.columnPeriodDisponibility}</@th>
                     </tr>
                     <#list form_list as form>
+                    	<#assign can_publish=false>
                         <tr id="form_${form.id}">
                             <@td>
                                 <#assign hasAction=false />
@@ -61,6 +62,7 @@
 											<#assign color = 'primary' />
                                         </#if>
                                         <#if action.permission=='PUBLISH'>
+                                        	<#assign can_publish=true>
                                             <#assign params='data-toggle="modal" data-target="#pubModal" data-url="${action.url}&id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"' />
                                         </#if>
                                         <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' hideTitle=['all'] color='${color}' class='${action.permission?lower_case}' buttonIcon=action.iconUrl params=params size='sm' />
@@ -74,27 +76,49 @@
                                 </#if>
                             </@td>
                             <@td hide=['xs']>
-                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' params='data-toggle="modal" data-target="#pubModal" data-url="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"'>
-                                    <#setting locale=locale.language>
-                                    <#if form.active>
-                                        <@icon style='check' class='text-success' />&nbsp;
-                                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
-                                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
-                                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
-                                            #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
-                                        <#elseif form.availabilityStartDate??>
-                                            #i18n{forms.manageForm.columnPeriodDisponibilitySince} ${form.availabilityStartDate} 
-                                        <#elseif form.availabilityEndDate??>
-                                            #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
-                                        </#if>
-                                    <#else>
-                                        <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?datetime>
-                                            <@icon style='clock-o' class='text-info' /> <span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </span>
-                                        <#else>    
-                                            <@icon style='close' class='text-danger' /> <@tag color='danger' >#i18n{forms.manageForm.unavailable}</@tag>
-                                        </#if> 
-                                    </#if>
-                                </@link>
+                            	<#if can_publish>
+	                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' params='data-toggle="modal" data-target="#pubModal" data-url="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"'>
+	                                    <#setting locale=locale.language>
+	                                    <#if form.active>
+	                                        <@icon style='check' class='text-success' />&nbsp;
+	                                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
+	                                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
+	                                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
+	                                            #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
+	                                        <#elseif form.availabilityStartDate??>
+	                                            #i18n{forms.manageForm.columnPeriodDisponibilitySince} ${form.availabilityStartDate} 
+	                                        <#elseif form.availabilityEndDate??>
+	                                            #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
+	                                        </#if>
+	                                    <#else>
+	                                        <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?datetime>
+	                                            <@icon style='clock-o' class='text-info' /> <span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </span>
+	                                        <#else>    
+	                                            <@icon style='close' class='text-danger' /> <@tag color='danger' >#i18n{forms.manageForm.unavailable}</@tag>
+	                                        </#if> 
+	                                    </#if>
+	                                </@link>
+	                             <#else>
+	                             	<#setting locale=locale.language>
+	                                    <#if form.active>
+	                                        <@icon style='check' class='text-success' />&nbsp;
+	                                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
+	                                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
+	                                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
+	                                            #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
+	                                        <#elseif form.availabilityStartDate??>
+	                                            #i18n{forms.manageForm.columnPeriodDisponibilitySince} ${form.availabilityStartDate} 
+	                                        <#elseif form.availabilityEndDate??>
+	                                            #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
+	                                        </#if>
+	                                    <#else>
+	                                        <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?datetime>
+	                                            <@icon style='clock-o' class='text-info' /> <span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </span>
+	                                        <#else>    
+	                                            <@icon style='close' class='text-danger' /> <@tag color='danger' >#i18n{forms.manageForm.unavailable}</@tag>
+	                                        </#if> 
+	                                    </#if>
+	                             </#if>   
                             </@td>
                         </tr>
                     </#list>

@@ -67,6 +67,9 @@ public class FormsResourceIdService extends ResourceIdService
 
     /** Permission for copying a form */
     public static final String PERMISSION_COPY = "COPY";
+    
+    /** Permission for publying a form */
+    public static final String PERMISSION_PUBLISH = "PUBLISH";
 
     /** Permission for viewing result of a form */
     public static final String PERMISSION_VIEW_RESULT = "VIEW_RESULT";
@@ -93,6 +96,7 @@ public class FormsResourceIdService extends ResourceIdService
     private static final String PROPERTY_LABEL_CREATE = "forms.permission.label.create";
     private static final String PROPERTY_LABEL_DELETE = "forms.permission.label.delete";
     private static final String PROPERTY_LABEL_MODIFY = "forms.permission.label.modify";
+    private static final String PROPERTY_LABEL_PUBLISH = "forms.permission.label.publish";
     private static final String PROPERTY_LABEL_VIEW_FORM_RESPONSE = "forms.permission.label.viewFormResponse";
     private static final String PROPERTY_LABEL_EDIT_PARAMS = "forms.permission.label.editParams";
 
@@ -138,6 +142,11 @@ public class FormsResourceIdService extends ResourceIdService
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_MODIFY_PARAMS );
         permission.setPermissionTitleKey( PROPERTY_LABEL_EDIT_PARAMS );
+        resourceType.registerPermission( permission );
+        
+        permission = new Permission( );
+        permission.setPermissionKey( PERMISSION_PUBLISH );
+        permission.setPermissionTitleKey( PROPERTY_LABEL_PUBLISH );
         resourceType.registerPermission( permission );
 
         ResourceTypeManager.registerResourceType( resourceType );
