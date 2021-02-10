@@ -6,5 +6,3 @@ SELECT et.id_type FROM genatt_entry_type et WHERE et.class_name IN ('forms.entry
 
 ALTER TABLE forms_form MODIFY COLUMN availability_start_date timestamp;
 ALTER TABLE forms_form MODIFY COLUMN availability_end_date timestamp;
-
-UPDATE `forms_action` SET `action_permission`='PUBLISH' WHERE `id_action`=4;
