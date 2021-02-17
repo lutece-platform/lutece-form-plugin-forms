@@ -1,4 +1,12 @@
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
+	<#assign hasError = false />
+	<#if list_responses?? && list_responses?has_content>
+		<#assign response_error = list_responses[0]>
+		<#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
+			<#assign hasError = true />
+		</#if>
+	</#if>
+
 	<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 	<#assign nbFiles=getMaxFiles(entry)>
 	<div class="form-group ${entry.CSSClass!}">
@@ -15,7 +23,7 @@
 					</#if>
 				</#list>
 			</#if>
-			<@addFileInput fieldName=fieldName handler=uploadHandler cssClass=cssClass submitBtnName='action_doSynchronousUploadDocument' multiple=true />
+			<@addFileInput fieldName=fieldName handler=uploadHandler cssClass=cssClass submitBtnName='action_doSynchronousUploadDocument' multiple=true hasError=hasError />
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="help-block">${entry.helpMessage}</span>
 			</#if>
