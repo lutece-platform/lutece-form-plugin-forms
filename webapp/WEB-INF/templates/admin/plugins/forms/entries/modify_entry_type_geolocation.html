@@ -53,7 +53,10 @@
                             <@input type='text' name='view_number' id='view_number' value=viewNumberValue maxlength=255 />
                         </@formGroup>
                         <@formGroup>
-                            <@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory labelKey='#i18n{forms.createEntry.labelMandatory}' />
+                            <@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
+                        </@formGroup>
+                        <@formGroup helpKey='#i18n{forms.createEntry.labelGeolocMandatory.help}'>
+                            <@checkBox labelFor='exactAddr' labelKey='#i18n{forms.createEntry.labelGeolocMandatory}' name='exactAddr' id='exactAddr' value='1' />
                         </@formGroup>
                         <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
                             <@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
@@ -88,4 +91,34 @@
     </@columns>
 </@row>
 
+<script>
+$(function(){
+    const cbChekAddress=$('#exactAddr'), labelCheckAddr='checkaddress', inputCss=$('#css_class');
+    let cssClass=inputCss.val();
+    if( cssClass.search( labelCheckAddr ) >-1  ){
+        cbChekAddress.prop( 'checked', 'checked' );
+    }
+
+    cbChekAddress.change( function(e){
+        cssClass=inputCss.val();
+        if( cbChekAddress.prop('checked') ){
+            inputCss.val( cssClass.trim() + ' ' + labelCheckAddr );
+        } else {
+            if( cssClass.search( labelCheckAddr ) > - 1 ){
+                
+                inputCss.val( cssClass.replace( labelCheckAddr ,'') );
+            }
+        }
+    }); 
+    
+    inputCss.blur( function(e){
+        cssClass=inputCss.val();
+        if( cssClass.search( labelCheckAddr ) > -1 ){
+            cbChekAddress.prop( 'checked', 'checked' );
+        } else {
+            cbChekAddress.prop( 'checked', '' );
+        }
+    });
+})
+</script>
  <@initEditor />

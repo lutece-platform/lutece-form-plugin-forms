@@ -45,6 +45,9 @@
 						<@formGroup>
 							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) labelKey='#i18n{forms.createEntry.labelMandatory}' />
 						</@formGroup>
+						<@formGroup>
+                            <@checkBox labelFor='exactAddr' labelKey='Adresse exacte' name='exactAddr' id='exactAddr' value='1' />
+                        </@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
@@ -77,5 +80,34 @@
 		</@box>
 	</@columns>
 </@row>
+<script>
+	$(function(){
+		const cbChekAddress=$('#exactAddr'), labelCheckAddr='checkaddress', inputCss=$('#css_class');
+		let cssClass=inputCss.val();
+		if( cssClass.search( labelCheckAddr ) >-1  ){
+			cbChekAddress.prop( 'checked', 'checked' );
+		}
+	
+		cbChekAddress.change( function(e){
+			cssClass=inputCss.val();
+			if( cbChekAddress.prop('checked') ){
+				inputCss.val( cssClass.trim() + ' ' + labelCheckAddr );
+			} else {
+				if( cssClass.search( labelCheckAddr ) > - 1 ){
+				   inputCss.val( cssClass.replace( labelCheckAddr ,'') );
+				}
+			}
+		}); 
+		
+		inputCss.blur( function(e){
+			cssClass=inputCss.val();
+			if( cssClass.search( labelCheckAddr ) > -1 ){
+				cbChekAddress.prop( 'checked', 'checked' );
+			} else {
+				cbChekAddress.prop( 'checked', '' );
+			}
+		});
+	})
+	</script>
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
