@@ -289,10 +289,15 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     @Override
     public List<FormQuestionResponse> selectFormQuestionResponseListByListFormResponseStep( List<FormResponseStep> listFormResponseStep, Plugin plugin )
     {
+        List<FormQuestionResponse> list = new ArrayList<>( );
+        if ( CollectionUtils.isEmpty( listFormResponseStep ) )
+        {
+            return list;
+        }
+        
         String query = SQL_QUERY_SELECT_BY_LIST_RESPONSE_STEP
                 + listFormResponseStep.stream( ).map( frs -> " (  id_form_response = ? AND id_step = ? ) " ).collect( Collectors.joining( " OR " ) );
 
-        List<FormQuestionResponse> list = new ArrayList<>( );
         try ( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
         {
             int nIndex = 1;

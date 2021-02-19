@@ -44,6 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
+
 /**
  * This class provides Data Access methods for Question objects
  */
@@ -406,8 +408,12 @@ public final class QuestionDAO implements IQuestionDAO
     public List<Question> loadMultiple( List<Integer> keyList, Plugin plugin )
     {
         List<Question> list = new ArrayList<>( );
+        if ( CollectionUtils.isEmpty( keyList ) )
+        {
+            return list;
+        }
+        
         String query = SQL_QUERY_SELECT_IN + keyList.stream( ).distinct( ).map( i -> "?" ).collect( Collectors.joining( "," ) ) + " )";
-
         try ( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
         {
             for ( int i = 0; i < keyList.size( ); i++ )
