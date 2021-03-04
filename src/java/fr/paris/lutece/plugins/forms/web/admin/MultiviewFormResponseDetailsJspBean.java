@@ -454,7 +454,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 boolean bIsAutomaticAction = Boolean.FALSE;
 
                 workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale,
-                        bIsAutomaticAction, null );
+                        bIsAutomaticAction, getUser( ) );
 
                 // Update Form response modification date
                 FormResponseHome.update( formResponse );

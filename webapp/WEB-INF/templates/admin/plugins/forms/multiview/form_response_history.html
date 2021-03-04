@@ -15,10 +15,10 @@
               <p>#i18n{forms.multiviewForms.view_record_history.no_information}</p>
             </#if>
             <p class="text-right">
-              <#if history_information.admin_user_history?exists>
-                <em>${history_information.admin_user_history.firstName} ${history_information.admin_user_history.lastName}</em>
+              <#if history_information.user_history?exists>
+                <em>${history_information.user_history.firstName} ${history_information.user_history.lastName}</em>
                 <#if adminAvatar>
-                  <img class="fa direct-chat-img" src="servlet/plugins/adminavatar/avatar?id_user=${history_information.admin_user_history.userId}" alt="Avatar" title="Avatar">
+                  <img class="fa direct-chat-img" src="servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId}" alt="Avatar" title="Avatar">
                 <#else>
                   <i class="fa fa-user"></i>
                 </#if>
