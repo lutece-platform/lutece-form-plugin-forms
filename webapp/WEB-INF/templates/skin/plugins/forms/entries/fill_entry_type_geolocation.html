@@ -88,7 +88,7 @@
 			$('#${entry.idEntry}_address_results').remove();
 			
 			/* Check if an entry has been selected in the data list and prevent from validating step */
-             var wsv = sessionStorage.getItem('wsvalidated');
+             var wsv = sessionStorage.getItem('wsvalidated_${entry.idEntry}');
             if( wsv === 'done' ){
                 jAdresse.addClass('wssuggest');
                 jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
@@ -118,7 +118,7 @@
                     } else {
                         $(e.target).addClass('wsvalidated').removeClass('wssuggest').removeClass('is-invalid').next('.invalid-feedback').remove();
                         $('.btn-action').removeAttr('disabled');
-                        sessionStorage.setItem('wsvalidated', 'done');
+                        sessionStorage.setItem('wsvalidated_${entry.idEntry}', 'done');
                     }
                 });
             }
