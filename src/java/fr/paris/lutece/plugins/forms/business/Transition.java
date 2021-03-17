@@ -60,7 +60,7 @@ public class Transition implements Serializable
     private String _strControlTitle;
 
     private int _nPriority;
-    
+
     private boolean _conditional;
 
     /**
@@ -207,7 +207,8 @@ public class Transition implements Serializable
     }
 
     /**
-     * @param conditional the conditional to set
+     * @param conditional
+     *            the conditional to set
      */
     public void setConditional( boolean conditional )
     {

@@ -180,10 +180,11 @@ public class FormStepJspBean extends AbstractJspBean
 
         List<Step> listSteps = StepHome.getStepsListByForm( nIdForm );
         List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( nIdForm );
-        
+
         for ( Transition transition : listTransitions )
         {
-            transition.setConditional( CollectionUtils.isNotEmpty( ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION ) ) );
+            transition.setConditional(
+                    CollectionUtils.isNotEmpty( ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION ) ) );
         }
 
         listSteps = StepService.sortStepsWithTransitions( listSteps, listTransitions );

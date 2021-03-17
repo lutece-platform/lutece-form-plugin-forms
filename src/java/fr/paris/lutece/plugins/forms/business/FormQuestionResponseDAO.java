@@ -294,7 +294,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         {
             return list;
         }
-        
+
         String query = SQL_QUERY_SELECT_BY_LIST_RESPONSE_STEP
                 + listFormResponseStep.stream( ).map( frs -> " (  id_form_response = ? AND id_step = ? ) " ).collect( Collectors.joining( " OR " ) );
 

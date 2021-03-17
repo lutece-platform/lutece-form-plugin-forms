@@ -172,7 +172,8 @@ public class FormTransitionJspBean extends AbstractJspBean
         List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( nIdStep );
         for ( Transition transition : listTransition )
         {
-            transition.setConditional( CollectionUtils.isNotEmpty( ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION ) ) );
+            transition.setConditional(
+                    CollectionUtils.isNotEmpty( ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION ) ) );
         }
 
         model.put( MARK_TRANSITION_LIST, listTransition );

@@ -171,11 +171,11 @@ public class PdfFullFileGenerator extends AbstractFileGenerator
             if ( response.getFile( ) != null )
             {
                 fr.paris.lutece.portal.business.file.File coreFile = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
-                
-                String filename =  coreFile.getTitle( );
-                
-                long nbFiles = fileNames.stream( ).filter( s -> s.equals(  coreFile.getTitle( ) ) ).count( );
-                if ( nbFiles > 0)
+
+                String filename = coreFile.getTitle( );
+
+                long nbFiles = fileNames.stream( ).filter( s -> s.equals( coreFile.getTitle( ) ) ).count( );
+                if ( nbFiles > 0 )
                 {
                     StringBuilder fileSb = new StringBuilder( );
                     fileSb.append( FilenameUtils.removeExtension( filename ) );
@@ -186,7 +186,7 @@ public class PdfFullFileGenerator extends AbstractFileGenerator
                     filename = fileSb.toString( );
                 }
                 fileNames.add( coreFile.getTitle( ) );
-                
+
                 Path attachment = directoryFile.resolve( filename );
 
                 PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( coreFile.getPhysicalFile( ).getIdPhysicalFile( ) );

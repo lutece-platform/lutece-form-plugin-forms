@@ -67,7 +67,7 @@ public class FormsResourceIdService extends ResourceIdService
 
     /** Permission for copying a form */
     public static final String PERMISSION_COPY = "COPY";
-    
+
     /** Permission for publying a form */
     public static final String PERMISSION_PUBLISH = "PUBLISH";
 
@@ -143,7 +143,7 @@ public class FormsResourceIdService extends ResourceIdService
         permission.setPermissionKey( PERMISSION_MODIFY_PARAMS );
         permission.setPermissionTitleKey( PROPERTY_LABEL_EDIT_PARAMS );
         resourceType.registerPermission( permission );
-        
+
         permission = new Permission( );
         permission.setPermissionKey( PERMISSION_PUBLISH );
         permission.setPermissionTitleKey( PROPERTY_LABEL_PUBLISH );

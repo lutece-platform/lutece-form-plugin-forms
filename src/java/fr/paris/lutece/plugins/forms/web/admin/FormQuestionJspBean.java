@@ -848,9 +848,10 @@ public class FormQuestionJspBean extends AbstractJspBean
             Field fieldFile = _entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
             if ( fieldFile != null )
             {
-                FileDownloadData fileDownloadData = new FileDownloadData( _entry.getIdResource( ), Form.RESOURCE_TYPE, Integer.parseInt( fieldFile.getValue( ) ) );
+                FileDownloadData fileDownloadData = new FileDownloadData( _entry.getIdResource( ), Form.RESOURCE_TYPE,
+                        Integer.parseInt( fieldFile.getValue( ) ) );
                 IFileDownloadProvider provider = AbstractFileDownloadProvider.findProvider( FormsFileDownloadProvider.PROVIDER_NAME );
-                
+
                 model.put( EntryTypeCommentDisplayService.MARK_FILENAME, fieldFile.getTitle( ) );
                 model.put( EntryTypeCommentDisplayService.MARK_URL_DOWNLOAD_BO, provider.getDownloadUrl( fileDownloadData, true ) );
             }
@@ -1032,13 +1033,13 @@ public class FormQuestionJspBean extends AbstractJspBean
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
     }
-    
+
     @Action( value = ACTION_REMOVE_FILE )
     public String doRemoveFileComment( HttpServletRequest request )
     {
         String idEntry = request.getParameter( FormsConstants.PARAMETER_ID_ENTRY );
         int id = Integer.parseInt( idEntry );
-        
+
         Entry entry = EntryHome.findByPrimaryKey( id );
         Field oldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
         if ( oldFile != null )
@@ -1046,11 +1047,11 @@ public class FormQuestionJspBean extends AbstractJspBean
             FileHome.remove( Integer.parseInt( oldFile.getValue( ) ) );
             FieldHome.remove( oldFile.getIdField( ) );
         }
-        
+
         Map<String, String> additionalParameters = new HashMap<>( );
         additionalParameters.put( FormsConstants.PARAMETER_ID_STEP, String.valueOf( _step.getId( ) ) );
         additionalParameters.put( FormsConstants.PARAMETER_ID_QUESTION, String.valueOf( _question.getId( ) ) );
-        return redirect( request, VIEW_MODIFY_QUESTION, additionalParameters  );
+        return redirect( request, VIEW_MODIFY_QUESTION, additionalParameters );
     }
 
     /**

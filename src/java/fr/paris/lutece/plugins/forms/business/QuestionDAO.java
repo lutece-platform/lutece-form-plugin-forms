@@ -412,7 +412,7 @@ public final class QuestionDAO implements IQuestionDAO
         {
             return list;
         }
-        
+
         String query = SQL_QUERY_SELECT_IN + keyList.stream( ).distinct( ).map( i -> "?" ).collect( Collectors.joining( "," ) ) + " )";
         try ( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
         {
