@@ -62,12 +62,15 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.service.download.FormsFileDownloadProvider;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeText;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTextArea;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsDisplayUtils;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
+import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeCommentDisplayService;
 import fr.paris.lutece.plugins.forms.web.exception.CodeAlreadyExistsException;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
@@ -75,7 +78,11 @@ import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.download.AbstractFileDownloadProvider;
+import fr.paris.lutece.portal.service.download.FileDownloadData;
+import fr.paris.lutece.portal.service.download.IFileDownloadProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -142,6 +149,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String ACTION_MOVE_COMPOSITE = "moveComposite";
     private static final String ACTION_REMOVE_COMPOSITE = "removeComposite";
     private static final String ACTION_DUPLICATE_QUESTION = "duplicateQuestion";
+    private static final String ACTION_REMOVE_FILE = "removeFileComment";
 
     // Markers
     private static final String MARK_WEBAPP_URL = "webapp_url";
@@ -835,6 +843,18 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model ).getHtml( ) );
 
+        if ( entryTypeService instanceof EntryTypeComment )
+        {
+            Field fieldFile = _entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
+            if ( fieldFile != null )
+            {
+                FileDownloadData fileDownloadData = new FileDownloadData( _entry.getIdResource( ), Form.RESOURCE_TYPE, Integer.parseInt( fieldFile.getValue( ) ) );
+                IFileDownloadProvider provider = AbstractFileDownloadProvider.findProvider( FormsFileDownloadProvider.PROVIDER_NAME );
+                
+                model.put( EntryTypeCommentDisplayService.MARK_FILENAME, fieldFile.getTitle( ) );
+                model.put( EntryTypeCommentDisplayService.MARK_URL_DOWNLOAD_BO, provider.getDownloadUrl( fileDownloadData, true ) );
+            }
+        }
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -1011,6 +1031,26 @@ public class FormQuestionJspBean extends AbstractJspBean
             addInfo( INFO_QUESTION_DUPLICATED, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+    }
+    
+    @Action( value = ACTION_REMOVE_FILE )
+    public String doRemoveFileComment( HttpServletRequest request )
+    {
+        String idEntry = request.getParameter( FormsConstants.PARAMETER_ID_ENTRY );
+        int id = Integer.parseInt( idEntry );
+        
+        Entry entry = EntryHome.findByPrimaryKey( id );
+        Field oldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
+        if ( oldFile != null )
+        {
+            FileHome.remove( Integer.parseInt( oldFile.getValue( ) ) );
+            FieldHome.remove( oldFile.getIdField( ) );
+        }
+        
+        Map<String, String> additionalParameters = new HashMap<>( );
+        additionalParameters.put( FormsConstants.PARAMETER_ID_STEP, String.valueOf( _step.getId( ) ) );
+        additionalParameters.put( FormsConstants.PARAMETER_ID_QUESTION, String.valueOf( _question.getId( ) ) );
+        return redirect( request, VIEW_MODIFY_QUESTION, additionalParameters  );
     }
 
     /**

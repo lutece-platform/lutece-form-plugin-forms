@@ -6,7 +6,7 @@
 		<@box>
 			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
-				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp' params='enctype="multipart/form-data"'>
 					<@fieldSet legend='#i18n{forms.createEntry.titleComment} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<#if entry.fieldDepend?exists>
@@ -22,6 +22,9 @@
 						</@formGroup>
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}' mandatory=true>
 							<@input type='textarea' name='comment' id='comment' rows=5 richtext=true></@input>
+						</@formGroup>
+						<@formGroup labelFor='file' labelKey='#i18n{forms.createEntry.labelCommentFile}' helpKey='#i18n{forms.createEntry.labelCommentFileHelp}'>
+							<@input type='file' id='file' name='file' value='' />
 						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='' maxlength=255 />

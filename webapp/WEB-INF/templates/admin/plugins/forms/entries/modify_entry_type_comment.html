@@ -7,7 +7,7 @@
 		<@box color='primary'>
 			<@boxHeader title='#i18n{forms.modifyEntry.titleComment} : "${form.title}"' />
 			<@boxBody>
-				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'  params='enctype="multipart/form-data"'>
 					<@fieldSet legend='#i18n{forms.modifyEntry.titleComment} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
 						<@input type='hidden' name='id_step' value='${step.id}' />
@@ -20,6 +20,12 @@
 						</@formGroup>
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}' mandatory=true>
 							<@input type='textarea' name='comment' id='comment' rows=5 richtext=true >${entry.comment}</@input>
+						</@formGroup>
+						<@formGroup labelFor='file' labelKey='#i18n{forms.createEntry.labelCommentFile}' helpKey='#i18n{forms.createEntry.labelCommentFileHelp}'>
+							<@input type='file' id='file' name='file' value='' />
+							<#if url_download_bo??>
+								<a href="${url_download_bo}">${filename}</a><@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=removeFileComment&id_entry=${entry.idEntry}' hideTitle=['all'] color='danger' buttonIcon='times'  size='xs' />
+							</#if>
 						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
