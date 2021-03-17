@@ -3,6 +3,9 @@
 	    <label class="control-label col-xs-12 col-sm-3" for=""></label>
 	    <div class="col-xs-12 col-sm-9">
 	        <p class="help-block">${entry.comment}</p>
+	        <#if url_download_fo??>
+				<a href="${url_download_fo}">${filename}</a>
+			</#if>
 	    </div>		
 	</div>	
 </#if>

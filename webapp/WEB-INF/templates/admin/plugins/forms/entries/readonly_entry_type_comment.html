@@ -2,5 +2,8 @@
 <#if displayBo == 'true'>
 	<@formGroup labelKey='Commentaire'>
 		<@staticText>${entry.comment}</@staticText>
+		<#if url_donwload_bo??>
+			<a href="${url_donwload_bo}">${filename}</a>
+		</#if>
 	</@formGroup>
 </#if>

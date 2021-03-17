@@ -1,3 +1,6 @@
 <@formHelp class='${entry.CSSClass!}'> 
 	${entry.comment}
+	<#if url_download_bo??>
+		<a href="${url_download_bo}">${filename}</a>
+	</#if>
 </@formHelp>	
