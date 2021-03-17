@@ -129,7 +129,7 @@
 	<bean id="forms.entryTypeCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeCheckBox" />
 	</bean>
-	<bean id="forms.entryTypeCommentDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
+	<bean id="forms.entryTypeCommentDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeCommentDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeComment" />
 	</bean>
 	<bean id="forms.entryTypeDateDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDateDisplayService">
@@ -366,4 +366,6 @@
 	
 	<!-- Panels Display Factories -->
 	<bean id="forms.panelForms.panel.display.factory" class="fr.paris.lutece.plugins.forms.web.form.panel.display.factory.impl.FormPanelFormsDisplayFactory"/>
+    
+    <bean id="forms.formsFileDownloadProvider" class="fr.paris.lutece.plugins.forms.service.download.FormsFileDownloadProvider"/>
 </beans>
