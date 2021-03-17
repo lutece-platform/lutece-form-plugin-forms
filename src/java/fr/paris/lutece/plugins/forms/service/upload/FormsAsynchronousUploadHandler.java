@@ -68,7 +68,7 @@ public class FormsAsynchronousUploadHandler extends AbstractGenAttUploadHandler
     @Override
     public String getUploadSubmitPrefix( )
     {
-        return UPLOAD_SUBMIT_PREFIX;
+        return getUploadFormsSubmitPrefix( );
     }
 
     /**

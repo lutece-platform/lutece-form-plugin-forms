@@ -214,7 +214,6 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                     List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
                     for ( Integer nIdFormResponse : listFormResponsesId )
                     {
-                        // TODO IMPLEMENT A SQL IN( ..) instead
                         FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
                         if ( response != null )
                         {
@@ -330,7 +329,6 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
         for ( Integer nIdFormResponse : listIdsToAdd )
         {
-            // TODO IMPLEMENT A SQL IN( ..) instead
             FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
             if ( response != null )
             {
@@ -612,7 +610,6 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
                 for ( Response response : formQuestionResponse.getEntryResponse( ) )
                 {
-                    // TODO USE EXPORT MANAGER ?
                     fr.paris.lutece.plugins.genericattributes.business.Field responseField = response.getField( );
 
                     if ( !StringUtils.isEmpty( response.getResponseValue( ) ) )

@@ -44,7 +44,6 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
@@ -76,21 +75,6 @@ public class LuceneFormSearchFactory
     public Analyzer getAnalyzer( )
     {
         return _analyzer;
-    }
-
-    /**
-     * Return the IndexSearcher to use for the search
-     * 
-     * @deprecated
-     * @return the index searcher to use for the search
-     * @throws IOException
-     *             - if there is a low-level IO error
-     */
-    @Deprecated
-    public IndexSearcher getIndexSearcher( ) throws IOException
-    {
-        Directory luceneDirectory = getDirectory( );
-        return new IndexSearcher( DirectoryReader.open( luceneDirectory ) );
     }
 
     /**

@@ -216,7 +216,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
 
         IOcrProvider ocrProvider = getOcrProvider( strOcrKey );
 
-        ReferenceList refList = getEntryByStep( nIdStep, nIdQuestion, strOcrKey );
+        ReferenceList refList = getEntryByStep( nIdStep, nIdQuestion );
 
         return ocrProvider.getConfigHtmlCode( refList, nIdEntryQuestion, Form.RESOURCE_TYPE );
     }
@@ -258,7 +258,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
      *            the n id form
      * @return the steps list by form
      */
-    public ReferenceList getEntryByStep( int nIdStep, int nIdQuestion, String strKey )
+    private ReferenceList getEntryByStep( int nIdStep, int nIdQuestion )
     {
         ReferenceList refList = new ReferenceList( );
 

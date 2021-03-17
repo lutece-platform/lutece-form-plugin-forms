@@ -777,7 +777,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
 
-        if ( ( strIdStep != null ) && !strIdStep.equals( EMPTY_STRING ) )
+        if ( StringUtils.isNotEmpty( strIdStep ) )
         {
             int nIdStep = Integer.parseInt( strIdStep );
 
@@ -790,7 +790,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
         int nIdQuestion = INTEGER_MINUS_ONE;
 
-        if ( ( strIdQuestion != null ) && !strIdQuestion.equals( EMPTY_STRING ) )
+        if ( StringUtils.isNotEmpty( strIdQuestion ) )
         {
             nIdQuestion = Integer.parseInt( strIdQuestion );
         }
@@ -870,11 +870,10 @@ public class FormQuestionJspBean extends AbstractJspBean
      */
     public String processQuestionUpdate( HttpServletRequest request ) throws CodeAlreadyExistsException
     {
-
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
         int nIdStep = -INTEGER_MINUS_ONE;
 
-        if ( ( strIdStep != null ) && !strIdStep.equals( EMPTY_STRING ) )
+        if ( StringUtils.isNotEmpty( strIdStep ) )
         {
             nIdStep = Integer.parseInt( strIdStep );
         }
@@ -886,7 +885,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
         int nIdQuestion = INTEGER_MINUS_ONE;
 
-        if ( ( strIdQuestion != null ) && !strIdQuestion.equals( EMPTY_STRING ) )
+        if ( StringUtils.isNotEmpty( strIdQuestion ) )
         {
             nIdQuestion = Integer.parseInt( strIdQuestion );
         }
@@ -940,7 +939,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
         _question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED ) != null );
         String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
-        columnTitle = ( columnTitle == null || columnTitle.isEmpty( ) ) ? _question.getTitle( ) : columnTitle;
+        columnTitle = StringUtils.isEmpty( columnTitle ) ? _question.getTitle( ) : columnTitle;
         _question.setColumnTitle( columnTitle );
         _question.setTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
