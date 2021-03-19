@@ -48,7 +48,7 @@ public class FormPanelFormsInitializer extends AbstractFormPanelInitializer
     {
         return new FormPanelFormsInitializerQueryPart( );
     }
-    
+
     @Override
     public IFormPanelDisplayInitializer getFormPanelDisplayInitializer( )
     {

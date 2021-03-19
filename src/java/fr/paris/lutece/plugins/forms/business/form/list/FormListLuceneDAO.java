@@ -287,12 +287,13 @@ public class FormListLuceneDAO implements IFormListDAO
         {
             return null;
         }
-        IFormFilterQueryPart formFilterLuceneQueryPartResult = Optional.ofNullable( formFilter.getFormFilterConfiguration( ) ).map( IFormFilterConfiguration::getFormFilterQueryPart ).orElse( null );
+        IFormFilterQueryPart formFilterLuceneQueryPartResult = Optional.ofNullable( formFilter.getFormFilterConfiguration( ) )
+                .map( IFormFilterConfiguration::getFormFilterQueryPart ).orElse( null );
         if ( formFilterLuceneQueryPartResult != null )
         {
             FormParameters formParameters = formFilter.getFormParameters( );
             formFilterLuceneQueryPartResult.buildFormFilterQuery( formParameters );
-            
+
             List<String> listUsedParametersValue = formParameters.getListUsedParametersValue( );
             listQueryParametersPositionValue.addAll( listUsedParametersValue );
         }

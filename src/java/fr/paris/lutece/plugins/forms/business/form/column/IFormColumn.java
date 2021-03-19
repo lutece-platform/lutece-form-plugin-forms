@@ -84,15 +84,17 @@ public interface IFormColumn
     {
         return true;
     }
-    
+
     /**
      * Get an instance of an {@link IFormColumnQueryPart} associated to the FormColumn.
+     * 
      * @return
      */
     IFormColumnQueryPart getFormColumnQueryPart( );
-    
+
     /**
      * Get an instance of an {@link IFormColumnDisplay} associated to th FormColumn.
+     * 
      * @return
      */
     IFormColumnDisplay getFormColumnDisplay( );

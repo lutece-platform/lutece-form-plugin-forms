@@ -68,12 +68,14 @@ public interface IFormFilterConfiguration
 
     /**
      * Get an {@link IFormFilterQueryPart} associated with this IFormFilterConfiguration.
+     * 
      * @return
      */
     IFormFilterQueryPart getFormFilterQueryPart( );
-    
+
     /**
      * Get an {@link IFormFilterDisplay} associated with this IFormFilterConfiguration.
+     * 
      * @return
      */
     IFormFilterDisplay getFormFilterDisplay( FormFilter formFilter );

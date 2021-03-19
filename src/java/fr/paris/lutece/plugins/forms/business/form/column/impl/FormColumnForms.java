@@ -64,16 +64,16 @@ public class FormColumnForms extends AbstractFormColumn
     {
         return MultiviewConfig.getInstance( ).isDisplayFormsTitleColumn( );
     }
-    
+
     @Override
     public IFormColumnQueryPart getFormColumnQueryPart( )
     {
         return new FormColumnFormsQueryPart( );
     }
-    
+
     @Override
     public IFormColumnDisplay getFormColumnDisplay( )
-    { 
+    {
         FormColumnDisplayForms formColumnDisplayForms = new FormColumnDisplayForms( );
         formColumnDisplayForms.setFormColumn( this );
         return formColumnDisplayForms;

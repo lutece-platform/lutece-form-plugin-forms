@@ -111,13 +111,13 @@ public class FormColumnEntryGeolocation extends AbstractFormColumn
     {
         _listEntryCode.add( strEntryCode );
     }
-    
+
     @Override
     public IFormColumnQueryPart getFormColumnQueryPart( )
     {
         return new FormColumnEntryGeolocationQueryPart( );
     }
-    
+
     @Override
     public IFormColumnDisplay getFormColumnDisplay( )
     {
