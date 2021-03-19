@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.business.form.panel.initializer;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
+import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.IFormPanelDisplayInitializer;
 
 /**
  * Interface for a filter which are linked to a Panel object
@@ -61,4 +62,10 @@ public interface IFormPanelInitializer
      * @return
      */
     IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( );
+    
+    /**
+     * Get an {@link IFormPanelDisplayInitializer} associated with this IFormPanelInitializer.
+     * @return
+     */
+    IFormPanelDisplayInitializer getFormPanelDisplayInitializer( );
 }

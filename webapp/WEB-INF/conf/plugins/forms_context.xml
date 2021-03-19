@@ -304,10 +304,6 @@
 		<constructor-arg name="strFormFilterName" type="java.lang.String" value="workflow_state"/>
 	</bean>
 	
-	<!-- Panels Display Initializer Factories -->
-	<bean id="forms.formPanelInitializer.panelForms.display.factory" class="fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.factory.impl.FormPanelFormsDisplayInitializerFactory"/>
-	<bean id="forms.formPanelInitializer.panelFormResponse.display.factory" class="fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.factory.impl.FormPanelFormResponseDisplayInitializerFactory"/>
-	
 	<!-- Filters Factories -->
 	<bean id="forms.formResponseDateCreation.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormResponseDateFactory"/>
     <bean id="forms.formResponseDateUpdate.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormResponseDateFactory"/>

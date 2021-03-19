@@ -44,14 +44,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
-import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.IFormPanelDisplayInitializer;
-import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.factory.FormDisplayInitializerFactoryFacade;
-import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.factory.IFormPanelDisplayInitializerFactory;
 
 /**
  * Factory for FormPanel objects
@@ -181,48 +178,19 @@ public class FormPanelDisplayFactory
      */
     public void buildFormPanelDisplayInitializer( HttpServletRequest request, FormPanel formPanel )
     {
-        List<IFormPanelDisplayInitializerFactory> listFormPanelDisplayInitializerFactory = new FormDisplayInitializerFactoryFacade( )
-                .buildFormPanelDisplayInitializerList( );
-
-        if ( !CollectionUtils.isEmpty( listFormPanelDisplayInitializerFactory ) && formPanel != null )
+        if ( formPanel != null && formPanel.getFormPanelConfiguration( ) != null )
         {
-            IFormPanelConfiguration formPanelConfiguration = formPanel.getFormPanelConfiguration( );
-
-            if ( formPanelConfiguration != null )
+            List<IFormPanelInitializer> listFormPanelInitializer = formPanel.getListFormPanelInitializer( );
+            if ( !CollectionUtils.isEmpty( listFormPanelInitializer ) )
             {
-                for ( IFormPanelDisplayInitializerFactory formPanelDisplayInitializerFactory : listFormPanelDisplayInitializerFactory )
+                for ( IFormPanelInitializer formPanelInitializer : listFormPanelInitializer )
                 {
-                    List<IFormPanelInitializer> listFormPanelInitializer = formPanel.getListFormPanelInitializer( );
-
-                    buildPanelDisplayInitializerFormParameters( request, formPanelDisplayInitializerFactory, listFormPanelInitializer );
-                }
-            }
-        }
-    }
-
-    /**
-     * Build the FormPanelDisplayInitializer associated to the given IFormPanelDisplayInitializerFactory from the specified list of IFormPanelInitializer and
-     * build its FormParameters with the request
-     * 
-     * @param request
-     *            The request used to build the FormParameters of the FormPanelInitializer
-     * @param formPanelDisplayInitializerFactory
-     *            The IFormPanelDisplayInitializerFactory used to build the IFormPanelDisplayInitializer
-     * @param listFormPanelInitializer
-     *            The list of all FormPanelInitializer to retrieve those which is associated to the given IFormPanelDisplayInitializerFactory
-     */
-    private void buildPanelDisplayInitializerFormParameters( HttpServletRequest request, IFormPanelDisplayInitializerFactory formPanelDisplayInitializerFactory,
-            List<IFormPanelInitializer> listFormPanelInitializer )
-    {
-        if ( formPanelDisplayInitializerFactory != null && !CollectionUtils.isEmpty( listFormPanelInitializer ) )
-        {
-            for ( IFormPanelInitializer formPanelInitializer : listFormPanelInitializer )
-            {
-                IFormPanelDisplayInitializer formPanelDisplayInitializer = formPanelDisplayInitializerFactory.buildFormPanelDisplay( formPanelInitializer );
-                if ( formPanelDisplayInitializer != null )
-                {
-                    formPanelDisplayInitializer.setFormPanelInitializer( formPanelInitializer );
-                    formPanelDisplayInitializer.buildFormParameters( request );
+                    IFormPanelDisplayInitializer formPanelDisplayInitializer = formPanelInitializer.getFormPanelDisplayInitializer( );
+                    if ( formPanelDisplayInitializer != null )
+                    {
+                        formPanelDisplayInitializer.setFormPanelInitializer( formPanelInitializer );
+                        formPanelDisplayInitializer.buildFormParameters( request );
+                    }
                 }
             }
         }
