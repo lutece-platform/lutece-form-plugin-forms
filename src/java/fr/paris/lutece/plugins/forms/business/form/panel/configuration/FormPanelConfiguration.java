@@ -35,6 +35,10 @@ package fr.paris.lutece.plugins.forms.business.form.panel.configuration;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
+import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
+import fr.paris.lutece.plugins.forms.web.form.panel.display.impl.FormPanelFormsDisplay;
+
 /**
  * Configuration for a FormPanel
  */
@@ -88,5 +92,13 @@ public class FormPanelConfiguration implements IFormPanelConfiguration
     public List<String> getListFormPanelInitializerName( )
     {
         return _listFormPanelInitializerName;
+    }
+    
+    @Override
+    public IFormPanelDisplay getFormPanelDisplay( FormPanel formPanel )
+    {
+        FormPanelFormsDisplay formPanelFormsDisplay = new FormPanelFormsDisplay( );
+        formPanelFormsDisplay.setFormPanel( formPanel );
+        return formPanelFormsDisplay;
     }
 }

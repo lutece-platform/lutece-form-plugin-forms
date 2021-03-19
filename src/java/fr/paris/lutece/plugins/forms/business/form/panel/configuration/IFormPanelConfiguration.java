@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.forms.business.form.panel.configuration;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
+import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 
 /**
@@ -84,4 +86,10 @@ public interface IFormPanelConfiguration extends RBACResource
     {
         return getTechnicalCode( );
     }
+    
+    /**
+     * Get an {@link IFormPanelDisplay} associated with is IFormPanelConfiguration.
+     * @return
+     */
+    IFormPanelDisplay getFormPanelDisplay( FormPanel formPanel );
 }
