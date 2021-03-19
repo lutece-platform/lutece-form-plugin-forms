@@ -53,7 +53,7 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDisplayFactory;
+import fr.paris.lutece.plugins.forms.web.form.FormDisplayFactory;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -102,8 +102,7 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
             List<IFormColumn> listFormResponseColumn = _formColumnFactory.buildFormColumnList( null, request.getLocale( ) );
 
             // Rebuild all the FormPanelInitializer to reset the previous data
-            FormPanelDisplayFactory formPanelDisplayFactory = new FormPanelDisplayFactory( );
-            formPanelDisplayFactory.buildFormPanelDisplayInitializer( request, _formPanel );
+            FormDisplayFactory.buildFormPanelDisplayInitializer( request, _formPanel );
 
             List<FormFilter> listFormFilters = new ArrayList<>( );
             listFormFilters.add( buildFormResponseIdFilter( nIdFormResponse ) );

@@ -56,7 +56,6 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterFactory;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
@@ -66,16 +65,14 @@ import fr.paris.lutece.plugins.forms.service.FormPanelConfigIdService;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.web.form.column.display.FormColumnDisplayFactory;
+import fr.paris.lutece.plugins.forms.web.form.FormDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
-import fr.paris.lutece.plugins.forms.web.form.filter.display.FormFilterDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayForms;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListTemplateBuilder;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.MultiviewFormUtil;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
-import fr.paris.lutece.plugins.forms.web.form.panel.display.factory.FormPanelDisplayFactory;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -389,10 +386,10 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         }
 
         _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm, request.getLocale( ) );
-        List<FormFilter> listFormFilter = new FormFilterFactory( ).buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ) );
-        _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilter );
-        _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
-        _listFormPanelDisplay = new FormPanelDisplayFactory( ).createFormPanelDisplayList( request, listFormPanel, _formPanelDisplayActive );
+        List<FormFilter> listFormFilter = FormDisplayFactory.buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ) );
+        _listFormFilterDisplay = FormDisplayFactory.createFormFilterDisplayList( request, listFormFilter );
+        _listFormColumnDisplay = FormDisplayFactory.createFormColumnDisplayList( _listFormColumn );
+        _listFormPanelDisplay = FormDisplayFactory.createFormPanelDisplayList( request, listFormPanel, _formPanelDisplayActive );
         for ( IFormPanelDisplay formPanelDisplay : _listFormPanelDisplay )
         {
             if ( formPanelDisplay.isActive( ) )
@@ -581,7 +578,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                     _listFormColumn = formColumnFactory.buildFormColumnList( null, locale );
                 }
 
-                _listFormColumnDisplay = new FormColumnDisplayFactory( ).createFormColumnDisplayList( _listFormColumn );
+                _listFormColumnDisplay = FormDisplayFactory.createFormColumnDisplayList( _listFormColumn );
             }
         }
     }
@@ -594,10 +591,10 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             {
                 Integer nIdForm = ( (FormFilterForms) filter ).getSelectedIdForm( );
                 List<FormFilter> listFormFilterReloaded = ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
-                        ? new FormFilterFactory( ).buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ) )
-                        : new FormFilterFactory( ).buildFormFilterList( null, _listFormColumn, request.getLocale( ) );
+                        ? FormDisplayFactory.buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ) )
+                        : FormDisplayFactory.buildFormFilterList( null, _listFormColumn, request.getLocale( ) );
 
-                _listFormFilterDisplay = new FormFilterDisplayFactory( ).createFormFilterDisplayList( request, listFormFilterReloaded );
+                _listFormFilterDisplay = FormDisplayFactory.createFormFilterDisplayList( request, listFormFilterReloaded );
             }
         }
     }
