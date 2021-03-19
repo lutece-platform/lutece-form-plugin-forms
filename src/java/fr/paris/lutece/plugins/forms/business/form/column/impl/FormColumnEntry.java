@@ -36,6 +36,9 @@ package fr.paris.lutece.plugins.forms.business.form.column.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryQueryPart;
+
 /**
  * Implementation of the FormColumn for the Entry column
  */
@@ -98,5 +101,11 @@ public class FormColumnEntry extends AbstractFormColumn
     public void addEntryCode( String strEntryCode )
     {
         _listEntryCode.add( strEntryCode );
+    }
+    
+    @Override
+    public IFormColumnQueryPart getFormColumnQueryPart( )
+    {
+        return new FormColumnEntryQueryPart( );
     }
 }

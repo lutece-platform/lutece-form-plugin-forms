@@ -38,6 +38,7 @@ import java.util.Locale;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 
 /**
  * Mock implementation of the FormColumn for the FormColumnForms
@@ -96,5 +97,11 @@ public class FormColumnFormsMock implements IFormColumn
     public void setFormColumnTitle( String strFormColumnTitle )
     {
         _strFormColumnTitle = strFormColumnTitle;
+    }
+    
+    @Override
+    public IFormColumnQueryPart getFormColumnQueryPart( )
+    {
+        return null;
     }
 }

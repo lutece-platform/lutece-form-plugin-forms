@@ -43,7 +43,6 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.business.form.column.querypart.FormColumnQueryPartFacade;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.FormFilterQueryPartFacade;
@@ -235,14 +234,14 @@ public class FormListLuceneDAO implements IFormListDAO
      */
     private static IFormColumnQueryPart retrieveFormColumnQueryPart( IFormColumn formColumn )
     {
-        IFormColumnQueryPart fomColumnQueryPartResult = null;
+        IFormColumnQueryPart formColumnQueryPartResult = null;
 
         if ( formColumn != null )
         {
-            fomColumnQueryPartResult = new FormColumnQueryPartFacade( ).getFormFilterQueryPart( formColumn );
+            formColumnQueryPartResult = formColumn.getFormColumnQueryPart( );
         }
 
-        return fomColumnQueryPartResult;
+        return formColumnQueryPartResult;
     }
 
     /**
