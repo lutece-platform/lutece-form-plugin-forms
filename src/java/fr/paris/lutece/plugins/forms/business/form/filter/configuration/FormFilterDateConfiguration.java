@@ -33,6 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterFormResponseDateLuceneQueryPart;
+
 /**
  * Configuration for a FormFilter object
  */
@@ -41,5 +44,11 @@ public class FormFilterDateConfiguration extends AbstractFormFilterConfiguration
     public FormFilterDateConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName )
     {
         super( nPosition, strFormFilterLabel, strFormFilterName );
+    }
+    
+    @Override
+    public IFormFilterQueryPart getFormFilterQueryPart( )
+    {
+        return new FormFilterFormResponseDateLuceneQueryPart( );
     }
 }
