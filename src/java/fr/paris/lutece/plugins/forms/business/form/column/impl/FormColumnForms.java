@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.forms.business.form.column.impl;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormsQueryPart;
+import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
+import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisplayForms;
 
 /**
  * Implementation of the FormColumn for the column on the Forms
@@ -67,5 +69,13 @@ public class FormColumnForms extends AbstractFormColumn
     public IFormColumnQueryPart getFormColumnQueryPart( )
     {
         return new FormColumnFormsQueryPart( );
+    }
+    
+    @Override
+    public IFormColumnDisplay getFormColumnDisplay( )
+    { 
+        FormColumnDisplayForms formColumnDisplayForms = new FormColumnDisplayForms( );
+        formColumnDisplayForms.setFormColumn( this );
+        return formColumnDisplayForms;
     }
 }

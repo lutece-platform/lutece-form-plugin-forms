@@ -38,6 +38,8 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryGeolocationQueryPart;
+import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
+import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisplayEntryGeolocation;
 
 /**
  * Implementation of the FormColumn for the Geolocation Entry column
@@ -114,5 +116,13 @@ public class FormColumnEntryGeolocation extends AbstractFormColumn
     public IFormColumnQueryPart getFormColumnQueryPart( )
     {
         return new FormColumnEntryGeolocationQueryPart( );
+    }
+    
+    @Override
+    public IFormColumnDisplay getFormColumnDisplay( )
+    {
+        FormColumnDisplayEntryGeolocation formColumnDisplayEntryGeolocation = new FormColumnDisplayEntryGeolocation( );
+        formColumnDisplayEntryGeolocation.setFormColumn( this );
+        return formColumnDisplayEntryGeolocation;
     }
 }

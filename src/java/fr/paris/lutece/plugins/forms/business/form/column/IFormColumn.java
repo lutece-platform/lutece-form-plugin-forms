@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.business.form.column;
 import java.util.Locale;
 
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
 
 /**
  * Interface for a FormColumn object
@@ -89,4 +90,10 @@ public interface IFormColumn
      * @return
      */
     IFormColumnQueryPart getFormColumnQueryPart( );
+    
+    /**
+     * Get an instance of an {@link IFormColumnDisplay} associated to th FormColumn.
+     * @return
+     */
+    IFormColumnDisplay getFormColumnDisplay( );
 }

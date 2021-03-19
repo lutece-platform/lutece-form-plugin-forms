@@ -38,6 +38,8 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnEntryQueryPart;
+import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
+import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisplayEntry;
 
 /**
  * Implementation of the FormColumn for the Entry column
@@ -107,5 +109,13 @@ public class FormColumnEntry extends AbstractFormColumn
     public IFormColumnQueryPart getFormColumnQueryPart( )
     {
         return new FormColumnEntryQueryPart( );
+    }
+    
+    @Override
+    public IFormColumnDisplay getFormColumnDisplay( )
+    {
+        FormColumnDisplayEntry formColumnDisplayEntry = new FormColumnDisplayEntry( );
+        formColumnDisplayEntry.setFormColumn( this );
+        return formColumnDisplayEntry;
     }
 }

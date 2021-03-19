@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.forms.business.form.column.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnWorkflowStateQueryPart;
+import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
+import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisplayWorkflowState;
 
 /**
  * Implementation of the FormColumn for the column on the workfow state
@@ -60,5 +62,13 @@ public class FormColumnWorkflowState extends AbstractFormColumn
     public IFormColumnQueryPart getFormColumnQueryPart( )
     {
         return new FormColumnWorkflowStateQueryPart( );
+    }
+    
+    @Override
+    public IFormColumnDisplay getFormColumnDisplay( )
+    {
+        FormColumnDisplayWorkflowState formColumnDisplayWorkflowState = new FormColumnDisplayWorkflowState( );
+        formColumnDisplayWorkflowState.setFormColumn( this );
+        return formColumnDisplayWorkflowState;
     }
 }

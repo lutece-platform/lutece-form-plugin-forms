@@ -325,14 +325,6 @@
 		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="forms.column.state.title"/>
 	</bean>
 	 
-	<!-- Columns Factories -->
-	<bean id="forms.forms.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayFormsFactory"/>
-	<bean id="forms.formResponseDateCreation.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayFormResponseDateCreationFactory"/>
-    <bean id="forms.formResponseDateUpdate.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayFormResponseDateUpdateFactory"/>
-	<bean id="forms.entry.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayEntryFactory"/>
-	<bean id="forms.entrygeolocation.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayEntryGeolocationFactory"/>
-	<bean id="forms.workflowState.column.display.factory" class="fr.paris.lutece.plugins.forms.web.form.column.display.factory.impl.FormColumnDisplayWorkflowStateFactory"/>
-	
 	<!-- Panels Display Factories -->
 	<bean id="forms.panelForms.panel.display.factory" class="fr.paris.lutece.plugins.forms.web.form.panel.display.factory.impl.FormPanelFormsDisplayFactory"/>
     
