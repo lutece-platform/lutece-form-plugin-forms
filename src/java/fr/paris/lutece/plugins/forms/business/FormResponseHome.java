@@ -214,7 +214,6 @@ public final class FormResponseHome
         List<FormResponse> listFormResponses = _dao.selectFormResponseList( _plugin );
         for ( FormResponse formResponse : listFormResponses )
         {
-            // TODO IMPROVE PERF : complete multiple form response step instead of one to one
             completeWithSteps( formResponse );
         }
         return listFormResponses;

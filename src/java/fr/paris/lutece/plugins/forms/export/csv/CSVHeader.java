@@ -98,6 +98,6 @@ public class CSVHeader
      */
     public List<Question> getColumnToExport( )
     {
-        return _listQuestionColumn;
+        return new ArrayList<>( _listQuestionColumn );
     }
 }

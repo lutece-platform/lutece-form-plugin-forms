@@ -61,8 +61,11 @@ import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
  */
 public class FormListLuceneDAO implements IFormListDAO
 {
+
+    public static final String BEAN_NAME = "forms.formListDAO";
+
     @Inject
-    IFormSearchEngine _formSearchEngine;
+    private IFormSearchEngine _formSearchEngine;
 
     /**
      * {@inheritDoc}

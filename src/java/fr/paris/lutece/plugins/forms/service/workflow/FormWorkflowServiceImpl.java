@@ -50,6 +50,8 @@ import fr.paris.lutece.portal.service.workflow.WorkflowService;
  */
 public class FormWorkflowServiceImpl implements IFormWorkflowService
 {
+    public static final String BEAN_NAME = "forms.formWorkflowService";
+
     /**
      * {@inheritDoc}
      */

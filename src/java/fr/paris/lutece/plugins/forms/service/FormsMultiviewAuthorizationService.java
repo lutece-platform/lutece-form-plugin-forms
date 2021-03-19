@@ -63,6 +63,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthorizationService
 {
+    public static final String BEAN_NAME = "forms.formsMultiviewAuthorizationService";
+
     // Variables
     private FormPanel _formPanel;
     private final FormListFacade _formListFacade;

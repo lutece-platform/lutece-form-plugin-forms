@@ -53,6 +53,7 @@ import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilt
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
+import fr.paris.lutece.plugins.forms.business.form.list.FormListLuceneDAO;
 import fr.paris.lutece.plugins.forms.business.form.list.IFormListDAO;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
@@ -118,7 +119,7 @@ public final class MultiviewFormService
     public List<FormResponseItem> searchAllListFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormResponseItemSortConfig sortConfig )
     {
-        IFormListDAO formListDAO = SpringContextService.getBean( IFormListDAO.BEAN_NAME );
+        IFormListDAO formListDAO = SpringContextService.getBean( FormListLuceneDAO.BEAN_NAME );
         return formListDAO.searchAllFormResponseItem( formPanel, listFormColumn, listFormFilter, sortConfig );
     }
 

@@ -43,8 +43,6 @@ import fr.paris.lutece.portal.business.user.AdminUser;
  */
 public interface IFormWorkflowService
 {
-    String BEAN_NAME = "forms.formWorkflowService";
-
     /**
      * Processes the workflow action when a form is created
      * 

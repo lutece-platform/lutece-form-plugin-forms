@@ -67,6 +67,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.IFormsMultiviewAuthorizationService;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
@@ -147,7 +148,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     // Variables
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
     private final transient IFormsMultiviewAuthorizationService _formsMultiviewAuthorizationService = SpringContextService
-            .getBean( IFormsMultiviewAuthorizationService.BEAN_NAME );
+            .getBean( FormsMultiviewAuthorizationService.BEAN_NAME );
 
     /**
      * Return the page with the details of a form response

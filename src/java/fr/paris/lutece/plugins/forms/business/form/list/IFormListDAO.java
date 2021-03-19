@@ -46,9 +46,6 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
  */
 public interface IFormListDAO
 {
-    // Bean name
-    String BEAN_NAME = "forms.formListDAO";
-
     /**
      * Populate the FormPanel with the values returned by the SQL query results
      * 
