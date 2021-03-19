@@ -33,8 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterFormResponseDateLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayFormResponseDate;
 
 /**
  * Configuration for a FormFilter object
@@ -50,5 +53,13 @@ public class FormFilterDateConfiguration extends AbstractFormFilterConfiguration
     public IFormFilterQueryPart getFormFilterQueryPart( )
     {
         return new FormFilterFormResponseDateLuceneQueryPart( );
+    }
+    
+    @Override
+    public IFormFilterDisplay getFormFilterDisplay( FormFilter formFilter )
+    {
+        FormFilterDisplayFormResponseDate formFilterDisplayFormResponseDateCreation = new FormFilterDisplayFormResponseDate( );
+        formFilterDisplayFormResponseDateCreation.setFormFilter( formFilter );
+        return formFilterDisplayFormResponseDateCreation;
     }
 }
