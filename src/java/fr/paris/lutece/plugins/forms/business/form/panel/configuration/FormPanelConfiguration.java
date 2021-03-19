@@ -93,7 +93,7 @@ public class FormPanelConfiguration implements IFormPanelConfiguration
     {
         return _listFormPanelInitializerName;
     }
-    
+
     @Override
     public IFormPanelDisplay getFormPanelDisplay( FormPanel formPanel )
     {

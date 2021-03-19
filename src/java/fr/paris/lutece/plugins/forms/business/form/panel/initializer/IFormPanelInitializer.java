@@ -56,15 +56,17 @@ public interface IFormPanelInitializer
      *            The FormParameters to set to the FormPanel
      */
     void setFormParameters( FormParameters formParameters );
-    
+
     /**
      * Get an {@link IFormPanelInitializerQueryPart} associated with this IFormPanelInitializer.
+     * 
      * @return
      */
     IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( );
-    
+
     /**
      * Get an {@link IFormPanelDisplayInitializer} associated with this IFormPanelInitializer.
+     * 
      * @return
      */
     IFormPanelDisplayInitializer getFormPanelDisplayInitializer( );

@@ -63,13 +63,13 @@ public class FormPanelFormResponseInitializerMock implements IFormPanelInitializ
     {
         _formParameters = formParameters;
     }
-    
+
     @Override
     public IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( )
     {
         return null;
     }
-    
+
     @Override
     public IFormPanelDisplayInitializer getFormPanelDisplayInitializer( )
     {

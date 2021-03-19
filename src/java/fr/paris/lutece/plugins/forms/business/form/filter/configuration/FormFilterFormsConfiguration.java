@@ -55,7 +55,7 @@ public class FormFilterFormsConfiguration extends AbstractFormFilterConfiguratio
     {
         return new FormFilterFormsLuceneQueryPart( );
     }
-    
+
     @Override
     public IFormFilterDisplay getFormFilterDisplay( FormFilter formFilter )
     {

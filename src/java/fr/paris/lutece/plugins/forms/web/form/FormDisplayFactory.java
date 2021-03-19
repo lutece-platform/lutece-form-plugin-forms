@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2021, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.forms.web.form;
 
 import java.util.ArrayList;
@@ -32,11 +65,11 @@ public class FormDisplayFactory
 {
     // Constants
     private static final int INDEX_LIST_PANEL_FIRST_POSITION = NumberUtils.INTEGER_ZERO;
-    
+
     private FormDisplayFactory( )
     {
     }
-    
+
     /**
      * Return the list of all FormFilterDisplay ordered by their position
      * 
@@ -52,7 +85,7 @@ public class FormDisplayFactory
         {
             return new ArrayList<>( );
         }
-        
+
         List<IFormFilterDisplay> listFormFilterDisplay = new ArrayList<>( );
         for ( FormFilter formFilter : listFormFilter )
         {
@@ -62,7 +95,7 @@ public class FormDisplayFactory
                 IFormFilterDisplay formFilterDisplay = formFilterConfiguration.getFormFilterDisplay( formFilter );
                 formFilterDisplay.createFormParameters( request );
                 formFilterDisplay.setPosition( formFilterConfiguration.getPosition( ) );
-                
+
                 listFormFilterDisplay.add( formFilterDisplay );
             }
         }
@@ -70,7 +103,7 @@ public class FormDisplayFactory
         Collections.sort( listFormFilterDisplay, new FormListPositionComparator( ) );
         return listFormFilterDisplay;
     }
-    
+
     /**
      * Create the list of all FormColumnDisplay ordered by their position
      * 
@@ -84,7 +117,7 @@ public class FormDisplayFactory
         {
             return new ArrayList<>( );
         }
-        
+
         List<IFormColumnDisplay> listFormColumnDisplay = new ArrayList<>( );
         for ( IFormColumn formColumn : listFormColumn )
         {
@@ -99,7 +132,7 @@ public class FormDisplayFactory
         Collections.sort( listFormColumnDisplay, new FormListPositionComparator( ) );
         return listFormColumnDisplay;
     }
-    
+
     /**
      * Create the list of all FormPanelDisplay ordered by their position
      * 
@@ -130,12 +163,12 @@ public class FormDisplayFactory
         }
         // Sort the list by the position of each elements
         Collections.sort( listFormPanelDisplay, new FormListPositionComparator( ) );
-        
+
         // Manage the active FormDisplayPanel of the list
         manageActiveFormPanelDisplay( listFormPanelDisplay );
         return listFormPanelDisplay;
     }
-    
+
     /**
      * Build the list of all FormPanelDisplayInitializer of all FormPanelInitializer of the FormPänel
      * 
@@ -163,7 +196,7 @@ public class FormDisplayFactory
             }
         }
     }
-    
+
     /**
      * Build the list of all FormFilter
      * 
@@ -174,7 +207,7 @@ public class FormDisplayFactory
         return MultiviewFormService.getInstance( ).getFormFiltersList( nIdForm, listFormColumns, locale );
 
     }
-    
+
     /**
      * Configure the FormPanelDisplay by defining if its active or not and build all the FormPanelInitializer with their FormParameters from its FormPanel
      * 
@@ -191,7 +224,7 @@ public class FormDisplayFactory
 
         buildFormPanelDisplayInitializer( request, formPanelDisplay.getFormPanel( ) );
     }
-    
+
     /**
      * Check if there is an active FormDisplay Panel in the given list and if there is no one set the first element in the list (which is in first position) as
      * active
@@ -217,7 +250,7 @@ public class FormDisplayFactory
             listFormPanelDisplay.get( INDEX_LIST_PANEL_FIRST_POSITION ).setActive( true );
         }
     }
-    
+
     /**
      * Check if the panel is the selected panel or not. Activate the default panel if not found
      * 
@@ -227,7 +260,8 @@ public class FormDisplayFactory
      *            The name of the panel to analyze
      * @return true if the panel of the given name is the panel to analyze false otherwise
      */
-    private static boolean isSelectedPanel( HttpServletRequest request, String strPanelTechnicalCode, IFormPanelDisplay activeFormPanelDisplay, boolean bIsFirst )
+    private static boolean isSelectedPanel( HttpServletRequest request, String strPanelTechnicalCode, IFormPanelDisplay activeFormPanelDisplay,
+            boolean bIsFirst )
     {
         boolean bIsSelectedPanel = false;
 

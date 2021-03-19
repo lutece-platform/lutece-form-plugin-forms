@@ -99,13 +99,13 @@ public class FormColumnWorkflowStateMock implements IFormColumn
     {
         _strFormColumnTitle = strFormColumnTitle;
     }
-    
+
     @Override
     public IFormColumnQueryPart getFormColumnQueryPart( )
     {
         return null;
     }
-    
+
     @Override
     public IFormColumnDisplay getFormColumnDisplay( )
     {

@@ -104,13 +104,13 @@ public class FormColumnEntry extends AbstractFormColumn
     {
         _listEntryCode.add( strEntryCode );
     }
-    
+
     @Override
     public IFormColumnQueryPart getFormColumnQueryPart( )
     {
         return new FormColumnEntryQueryPart( );
     }
-    
+
     @Override
     public IFormColumnDisplay getFormColumnDisplay( )
     {

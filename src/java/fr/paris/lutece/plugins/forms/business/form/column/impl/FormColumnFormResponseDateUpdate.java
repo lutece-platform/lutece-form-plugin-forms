@@ -57,13 +57,13 @@ public class FormColumnFormResponseDateUpdate extends AbstractFormColumn
         setFormColumnPosition( nFormColumnPosition );
         setFormColumnTitle( strFormColumnTitle );
     }
-    
+
     @Override
     public IFormColumnQueryPart getFormColumnQueryPart( )
     {
         return new FormColumnFormResponseDateUpdateQueryPart( );
     }
-    
+
     @Override
     public IFormColumnDisplay getFormColumnDisplay( )
     {
