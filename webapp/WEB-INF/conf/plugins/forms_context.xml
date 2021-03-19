@@ -325,8 +325,5 @@
 		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="forms.column.state.title"/>
 	</bean>
 	 
-	<!-- Panels Display Factories -->
-	<bean id="forms.panelForms.panel.display.factory" class="fr.paris.lutece.plugins.forms.web.form.panel.display.factory.impl.FormPanelFormsDisplayFactory"/>
-    
     <bean id="forms.formsFileDownloadProvider" class="fr.paris.lutece.plugins.forms.service.download.FormsFileDownloadProvider"/>
 </beans>

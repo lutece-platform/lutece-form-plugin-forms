@@ -73,34 +73,25 @@ public class FormPanelDisplayFactory
             IFormPanelDisplay activeFormPanelDisplay )
     {
         List<IFormPanelDisplay> listFormPanelDisplay = new ArrayList<>( );
-        List<IFormPanelDisplayFactory> listFormPanelDisplayFactory = new FormPanelDisplayFactoryFacade( ).buildFormPanelDisplayFactoryList( );
-
-        if ( !CollectionUtils.isEmpty( listFormPanelDisplayFactory ) )
+        boolean bIsFirst = true;
+        for ( FormPanel formPanel : listFormPanel )
         {
-            IFormPanelDisplay formPanelDisplay = null;
-            boolean bIsFirst = true;
-            for ( FormPanel formPanel : listFormPanel )
+            if ( formPanel.getFormPanelConfiguration( ) != null )
             {
-                for ( IFormPanelDisplayFactory formPanelDisplayFactory : listFormPanelDisplayFactory )
+                IFormPanelDisplay formPanelDisplay = formPanel.getFormPanelConfiguration( ).getFormPanelDisplay( formPanel );
+                if ( formPanelDisplay != null )
                 {
-                    formPanelDisplay = formPanelDisplayFactory.buildFormPanelDisplay( formPanel );
-                    if ( formPanelDisplay != null )
-                    {
-                        configureFormPanelDisplay( request, formPanelDisplay, activeFormPanelDisplay, bIsFirst );
-                        bIsFirst = false;
-                        listFormPanelDisplay.add( formPanelDisplay );
-                        break;
-                    }
+                    configureFormPanelDisplay( request, formPanelDisplay, activeFormPanelDisplay, bIsFirst );
+                    bIsFirst = false;
+                    listFormPanelDisplay.add( formPanelDisplay );
                 }
             }
-
-            // Sort the list by the position of each elements
-            Collections.sort( listFormPanelDisplay, new FormListPositionComparator( ) );
-
-            // Manage the active FormDisplayPanel of the list
-            manageActiveFormPanelDisplay( listFormPanelDisplay );
         }
-
+        // Sort the list by the position of each elements
+        Collections.sort( listFormPanelDisplay, new FormListPositionComparator( ) );
+        
+        // Manage the active FormDisplayPanel of the list
+        manageActiveFormPanelDisplay( listFormPanelDisplay );
         return listFormPanelDisplay;
     }
 
