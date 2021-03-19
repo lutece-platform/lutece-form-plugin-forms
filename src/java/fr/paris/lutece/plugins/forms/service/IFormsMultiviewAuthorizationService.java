@@ -40,8 +40,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface IFormsMultiviewAuthorizationService
 {
-    // Bean name
-    String BEAN_NAME = "forms.formsMultiviewAuthorizationService";
 
     /**
      * Return the boolean which tell if the connected user is authorized to access the form response details or not
