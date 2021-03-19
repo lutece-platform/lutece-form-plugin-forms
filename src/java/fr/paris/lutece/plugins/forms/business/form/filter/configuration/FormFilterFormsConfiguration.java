@@ -33,6 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterFormsLuceneQueryPart;
+
 /**
  * Configuration for a FormFilter object
  */
@@ -44,4 +47,9 @@ public class FormFilterFormsConfiguration extends AbstractFormFilterConfiguratio
         super( nPosition, strFormFilterLabel, strFormFilterName );
     }
 
+    @Override
+    public IFormFilterQueryPart getFormFilterQueryPart( )
+    {
+        return new FormFilterFormsLuceneQueryPart( );
+    }
 }

@@ -258,13 +258,6 @@
     <!-- Factory -->
     <bean id="forms.formColumn.factory" class="fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory"/>
     
-    <!-- Filters QueryParts Factories -->    
-    <bean id="forms.formFilter.formResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormsQueryPartFactory"/>
-    <bean id="forms.formFilter.formResponseDateCreation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormResponseDateQueryPartFactory"/>
-    <bean id="forms.formFilter.entry.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterEntryQueryPartFactory"/>
-    <bean id="forms.formFilter.workflowState.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterWorkflowStateQueryPartFactory"/>
-    <bean id="forms.formFilter.idFormResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterIdFormResponseQueryPartFactory"/>
-	
 	<!-- Panels Configurations -->
 	<bean id="forms.formsPanel.panelConfiguration" class="fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration">
 		<constructor-arg name="strTechnicalCode" type="java.lang.String" value="forms"/>

@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.business.form.list;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -45,7 +46,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
-import fr.paris.lutece.plugins.forms.business.form.filter.querypart.FormFilterQueryPartFacade;
+import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
@@ -282,22 +283,19 @@ public class FormListLuceneDAO implements IFormListDAO
      */
     private static IFormFilterQueryPart retrieveFormFilterQueryPart( FormFilter formFilter, List<String> listQueryParametersPositionValue )
     {
-        IFormFilterQueryPart formFilterLuceneQueryPartResult = null;
-
-        if ( formFilter != null )
+        if ( formFilter == null )
         {
-            IFormFilterQueryPart formFilterQueryPart = new FormFilterQueryPartFacade( ).getFormFilterQueryPart( formFilter );
-            if ( formFilterQueryPart != null )
-            {
-                FormParameters formParameters = formFilter.getFormParameters( );
-                formFilterQueryPart.buildFormFilterQuery( formParameters );
-                formFilterLuceneQueryPartResult = formFilterQueryPart;
-
-                List<String> listUsedParametersValue = formParameters.getListUsedParametersValue( );
-                listQueryParametersPositionValue.addAll( listUsedParametersValue );
-            }
+            return null;
         }
-
+        IFormFilterQueryPart formFilterLuceneQueryPartResult = Optional.ofNullable( formFilter.getFormFilterConfiguration( ) ).map( IFormFilterConfiguration::getFormFilterQueryPart ).orElse( null );
+        if ( formFilterLuceneQueryPartResult != null )
+        {
+            FormParameters formParameters = formFilter.getFormParameters( );
+            formFilterLuceneQueryPartResult.buildFormFilterQuery( formParameters );
+            
+            List<String> listUsedParametersValue = formParameters.getListUsedParametersValue( );
+            listQueryParametersPositionValue.addAll( listUsedParametersValue );
+        }
         return formFilterLuceneQueryPartResult;
     }
 }

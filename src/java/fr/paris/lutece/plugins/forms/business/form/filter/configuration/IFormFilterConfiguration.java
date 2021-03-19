@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
 import java.util.Locale;
 
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+
 /**
  * Configuration for a FormFilter object
  */
@@ -62,4 +64,9 @@ public interface IFormFilterConfiguration
      */
     String getFormFilterName( );
 
+    /**
+     * Get an {@link IFormFilterQueryPart} associated with this IFormFilterConfiguration.
+     * @return
+     */
+    IFormFilterQueryPart getFormFilterQueryPart( );
 }

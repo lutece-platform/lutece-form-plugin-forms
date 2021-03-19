@@ -33,11 +33,20 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterIdFormResponseLuceneQueryPart;
+
 public class FormFilterFormResponseIdConfiguration extends AbstractFormFilterConfiguration
 {
 
     public FormFilterFormResponseIdConfiguration( int nPosition, String strFormFilterLabel, String strFormFilterName )
     {
         super( nPosition, strFormFilterLabel, strFormFilterName );
+    }
+    
+    @Override
+    public IFormFilterQueryPart getFormFilterQueryPart( )
+    {
+        return new FormFilterIdFormResponseLuceneQueryPart( );
     }
 }

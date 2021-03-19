@@ -42,7 +42,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 /**
  * Configuration for a FormFilter object
  */
-public class AbstractFormFilterConfiguration implements IFormFilterConfiguration
+public abstract class AbstractFormFilterConfiguration implements IFormFilterConfiguration
 {
     // Variables
     private final int _nPosition;
