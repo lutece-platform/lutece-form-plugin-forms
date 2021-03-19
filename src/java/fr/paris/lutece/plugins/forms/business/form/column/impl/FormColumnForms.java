@@ -34,6 +34,8 @@
 package fr.paris.lutece.plugins.forms.business.form.column.impl;
 
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormsQueryPart;
 
 /**
  * Implementation of the FormColumn for the column on the Forms
@@ -59,5 +61,11 @@ public class FormColumnForms extends AbstractFormColumn
     public boolean isDisplayed( )
     {
         return MultiviewConfig.getInstance( ).isDisplayFormsTitleColumn( );
+    }
+    
+    @Override
+    public IFormColumnQueryPart getFormColumnQueryPart( )
+    {
+        return new FormColumnFormsQueryPart( );
     }
 }
