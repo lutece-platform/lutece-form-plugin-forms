@@ -40,8 +40,6 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
-import fr.paris.lutece.plugins.forms.web.form.column.display.factory.FormColumnDisplayFactoryFacade;
-import fr.paris.lutece.plugins.forms.web.form.column.display.factory.IFormColumnDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
 import java.util.Collection;
 
@@ -59,30 +57,23 @@ public class FormColumnDisplayFactory
      */
     public List<IFormColumnDisplay> createFormColumnDisplayList( Collection<IFormColumn> listFormColumn )
     {
-        List<IFormColumnDisplay> listFormColumnDisplay = new ArrayList<>( );
-        List<IFormColumnDisplayFactory> listFormColumnDisplayFactory = new FormColumnDisplayFactoryFacade( ).buildFormColumnDisplayFactoryList( );
-
-        if ( !CollectionUtils.isEmpty( listFormColumn ) && !CollectionUtils.isEmpty( listFormColumnDisplayFactory ) )
+        if ( CollectionUtils.isEmpty( listFormColumn ) )
         {
-            for ( IFormColumn formColumn : listFormColumn )
-            {
-                IFormColumnDisplay formColumnDisplay = null;
-                for ( IFormColumnDisplayFactory formColumnDisplayFactory : listFormColumnDisplayFactory )
-                {
-                    formColumnDisplay = formColumnDisplayFactory.buildFormColumnDisplay( formColumn );
-                    if ( formColumnDisplay != null )
-                    {
-                        formColumnDisplay.setPosition( formColumn.getFormColumnPosition( ) );
-                        listFormColumnDisplay.add( formColumnDisplay );
-                        break;
-                    }
-                }
-            }
-
-            // Sort the list by the position of each elements
-            Collections.sort( listFormColumnDisplay, new FormListPositionComparator( ) );
+            return new ArrayList<>( );
         }
-
+        
+        List<IFormColumnDisplay> listFormColumnDisplay = new ArrayList<>( );
+        for ( IFormColumn formColumn : listFormColumn )
+        {
+            IFormColumnDisplay formColumnDisplay = formColumn.getFormColumnDisplay( );
+            if ( formColumnDisplay != null )
+            {
+                formColumnDisplay.setPosition( formColumn.getFormColumnPosition( ) );
+                listFormColumnDisplay.add( formColumnDisplay );
+            }
+        }
+        // Sort the list by the position of each elements
+        Collections.sort( listFormColumnDisplay, new FormListPositionComparator( ) );
         return listFormColumnDisplay;
     }
 }

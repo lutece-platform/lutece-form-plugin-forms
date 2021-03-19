@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.forms.business.form.column.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.impl.FormColumnFormResponseDateUpdateQueryPart;
+import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
+import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisplayFormResponseDateUpdate;
 
 /**
  * Implementation of the FormColumn for the column on the update date of form response
@@ -60,5 +62,13 @@ public class FormColumnFormResponseDateUpdate extends AbstractFormColumn
     public IFormColumnQueryPart getFormColumnQueryPart( )
     {
         return new FormColumnFormResponseDateUpdateQueryPart( );
+    }
+    
+    @Override
+    public IFormColumnDisplay getFormColumnDisplay( )
+    {
+        FormColumnDisplayFormResponseDateUpdate formColumnDisplayFormResponseDateUpdate = new FormColumnDisplayFormResponseDateUpdate( );
+        formColumnDisplayFormResponseDateUpdate.setFormColumn( this );
+        return formColumnDisplayFormResponseDateUpdate;
     }
 }
