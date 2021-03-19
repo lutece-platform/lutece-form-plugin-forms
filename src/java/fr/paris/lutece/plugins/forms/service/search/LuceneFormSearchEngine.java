@@ -69,7 +69,8 @@ import org.apache.lucene.store.Directory;
 
 public class LuceneFormSearchEngine implements IFormSearchEngine
 {
-
+    public static final String BEAN_NAME = "forms.luceneFormsSearchEngine";
+    
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
 

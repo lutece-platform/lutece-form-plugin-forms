@@ -304,14 +304,6 @@
 		<constructor-arg name="strFormFilterName" type="java.lang.String" value="workflow_state"/>
 	</bean>
 	
-	<!-- Filters Factories -->
-	<bean id="forms.formResponseDateCreation.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormResponseDateFactory"/>
-    <bean id="forms.formResponseDateUpdate.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormResponseDateFactory"/>
-	<bean id="forms.forms.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayFormsFactory"/>
-	<bean id="forms.entry.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayEntryFactory"/>
-	<bean id="forms.workflowState.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplayWorkflowStateFactory"/>
-	<bean id="forms.searchedText.filter.display.factory" class="fr.paris.lutece.plugins.forms.web.form.filter.display.factory.impl.FormFilterDisplaySearchedTextFactory"/>
-	
 	<!-- Columns -->
 	<bean id="forms.forms.column" class="fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnForms">
 		<constructor-arg name="nFormColumnPosition" type="int" value="1"/>

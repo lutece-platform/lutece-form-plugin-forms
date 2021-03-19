@@ -33,8 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterIdFormResponseLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
+import fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchEngine;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplaySearchedText;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 public class FormFilterFormResponseIdConfiguration extends AbstractFormFilterConfiguration
 {
@@ -48,5 +54,15 @@ public class FormFilterFormResponseIdConfiguration extends AbstractFormFilterCon
     public IFormFilterQueryPart getFormFilterQueryPart( )
     {
         return new FormFilterIdFormResponseLuceneQueryPart( );
+    }
+    
+    @Override
+    public IFormFilterDisplay getFormFilterDisplay( FormFilter formFilter )
+    {
+        IFormSearchEngine formSearchEngine = SpringContextService.getBean( LuceneFormSearchEngine.BEAN_NAME );
+        
+        FormFilterDisplaySearchedText formFilterDisplaySearchedText = new FormFilterDisplaySearchedText( formSearchEngine );
+        formFilterDisplaySearchedText.setFormFilter( formFilter );
+        return formFilterDisplaySearchedText;
     }
 }

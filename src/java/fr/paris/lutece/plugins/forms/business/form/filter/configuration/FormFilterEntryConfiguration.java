@@ -34,8 +34,11 @@
 package fr.paris.lutece.plugins.forms.business.form.filter.configuration;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterEntryLuceneQueryPart;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
+import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplayEntry;
 
 /**
  * Specific configuration for the Filter of an Entry
@@ -64,5 +67,13 @@ public class FormFilterEntryConfiguration extends AbstractFormFilterConfiguratio
     public IFormFilterQueryPart getFormFilterQueryPart( )
     {
         return new FormFilterEntryLuceneQueryPart( );
+    }
+    
+    @Override
+    public IFormFilterDisplay getFormFilterDisplay( FormFilter formFilter )
+    {
+        FormFilterDisplayEntry formFilterDisplayEntry = new FormFilterDisplayEntry( );
+        formFilterDisplayEntry.setFormFilter( formFilter );
+        return formFilterDisplayEntry;
     }
 }

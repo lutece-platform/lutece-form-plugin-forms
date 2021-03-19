@@ -43,8 +43,6 @@ import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
-import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.FormFilterDisplayFactoryFacade;
-import fr.paris.lutece.plugins.forms.web.form.filter.display.factory.IFormFilterDisplayFactory;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionComparator;
 
 /**
@@ -63,53 +61,26 @@ public class FormFilterDisplayFactory
      */
     public List<IFormFilterDisplay> createFormFilterDisplayList( HttpServletRequest request, List<FormFilter> listFormFilter )
     {
+        if ( CollectionUtils.isEmpty( listFormFilter ) )
+        {
+            return new ArrayList<>( );
+        }
+        
         List<IFormFilterDisplay> listFormFilterDisplay = new ArrayList<>( );
-        List<IFormFilterDisplayFactory> listFormFilterDisplayFactory = new FormFilterDisplayFactoryFacade( ).buildFormFilterDisplayFactoryList( );
-
-        if ( !CollectionUtils.isEmpty( listFormFilter ) && !CollectionUtils.isEmpty( listFormFilterDisplayFactory ) )
+        for ( FormFilter formFilter : listFormFilter )
         {
-            for ( FormFilter formFilter : listFormFilter )
+            IFormFilterConfiguration formFilterConfiguration = formFilter.getFormFilterConfiguration( );
+            if ( formFilterConfiguration != null )
             {
-                IFormFilterDisplay formFilterDisplay = null;
-                for ( IFormFilterDisplayFactory formFilterDisplayFactory : listFormFilterDisplayFactory )
-                {
-                    formFilterDisplay = formFilterDisplayFactory.buildFilterDisplay( formFilter );
-                    if ( formFilterDisplay != null )
-                    {
-                        manageFormFilterDisplay( request, formFilter, formFilterDisplay );
-
-                        listFormFilterDisplay.add( formFilterDisplay );
-                        break;
-                    }
-                }
+                IFormFilterDisplay formFilterDisplay = formFilterConfiguration.getFormFilterDisplay( formFilter );
+                formFilterDisplay.createFormParameters( request );
+                formFilterDisplay.setPosition( formFilterConfiguration.getPosition( ) );
+                
+                listFormFilterDisplay.add( formFilterDisplay );
             }
-
-            // Sort the list by the position of each elements
-            Collections.sort( listFormFilterDisplay, new FormListPositionComparator( ) );
         }
-
+        // Sort the list by the position of each elements
+        Collections.sort( listFormFilterDisplay, new FormListPositionComparator( ) );
         return listFormFilterDisplay;
-    }
-
-    /**
-     * Create the FormFilterItem for the given FormFilterDisplay and set is position from the given FormFilter
-     * 
-     * @param request
-     *            The request used to build the FormFilterItem of the FormFilterDisplay
-     * @param formFilter
-     *            The FormFilter used to retrieve the position of the FormFilterDisplay
-     * @param formFilterDisplay
-     *            The FormFilterDisplay from which the FormFilterItem must be created
-     */
-    private void manageFormFilterDisplay( HttpServletRequest request, FormFilter formFilter, IFormFilterDisplay formFilterDisplay )
-    {
-        formFilterDisplay.createFormParameters( request );
-
-        IFormFilterConfiguration formFilterConfiguration = formFilter.getFormFilterConfiguration( );
-
-        if ( formFilterConfiguration != null )
-        {
-            formFilterDisplay.setPosition( formFilterConfiguration.getPosition( ) );
-        }
     }
 }
