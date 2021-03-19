@@ -258,10 +258,6 @@
     <!-- Factory -->
     <bean id="forms.formColumn.factory" class="fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory"/>
     
-    <!-- Panels Initializer QueryParts Factories -->
-    <bean id="forms.formPanelInitializer.panelForms.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.factory.impl.FormPanelFormsInitializerQueryPartFactory"/>
-    <bean id="forms.formPanelInitializer.panelFormResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.factory.impl.FormPanelFormResponseInitializerQueryPartFactory"/>
-    
     <!-- Filters QueryParts Factories -->    
     <bean id="forms.formFilter.formResponse.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormsQueryPartFactory"/>
     <bean id="forms.formFilter.formResponseDateCreation.queryPart.factory" class="fr.paris.lutece.plugins.forms.business.form.filter.querypart.factory.impl.FormFilterFormResponseDateQueryPartFactory"/>

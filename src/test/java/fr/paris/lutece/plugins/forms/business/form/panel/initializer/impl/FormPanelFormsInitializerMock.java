@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
 
 /**
  * Mock for the FormPanelFormInitializer implementation
@@ -60,5 +61,11 @@ public class FormPanelFormsInitializerMock implements IFormPanelInitializer
     public void setFormParameters( FormParameters formParameters )
     {
         _formParameters = formParameters;
+    }
+    
+    @Override
+    public IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( )
+    {
+        return null;
     }
 }

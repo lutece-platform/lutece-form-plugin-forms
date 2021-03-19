@@ -50,7 +50,6 @@ import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQ
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
-import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.FormPanelInitializerQueryPartFacade;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import javax.inject.Inject;
@@ -183,7 +182,7 @@ public class FormListLuceneDAO implements IFormListDAO
 
         if ( formPanelInitializer != null )
         {
-            formPanelInitializerQueryPartResult = new FormPanelInitializerQueryPartFacade( ).getFormPanelInitializerQueryPart( formPanelInitializer );
+            formPanelInitializerQueryPartResult = formPanelInitializer.getIFormPanelInitializerQueryPart( );
 
             if ( formPanelInitializerQueryPartResult != null )
             {

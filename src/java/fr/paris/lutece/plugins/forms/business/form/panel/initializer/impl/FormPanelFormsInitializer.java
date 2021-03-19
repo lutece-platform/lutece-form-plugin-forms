@@ -33,10 +33,17 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl;
 
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl.FormPanelFormsInitializerQueryPart;
+
 /**
  * Implementation of the IFormPanelInitializer to allow the use of the FormResponse and Form for a Panel
  */
 public class FormPanelFormsInitializer extends AbstractFormPanelInitializer
 {
-
+    @Override
+    public IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( )
+    {
+        return new FormPanelFormsInitializerQueryPart( );
+    }
 }
