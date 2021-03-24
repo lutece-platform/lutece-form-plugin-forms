@@ -25,13 +25,12 @@
 	<@columns>
         <@box color='primary'>
 			<@boxHeader title='${form.title!}'>
-				<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' hideTitle=['all'] params='data-toggle="modal" data-target="#pubModal"' size='sm' />
+				<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' hideTitle=['all'] params='data-toggle="modal" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" data-target="#pubModal"' size='sm' />
 				<#if form.active>
 					<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' />
 					<@aButton href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label}' hideTitle=['all'] params='target="_blank"' buttonIcon='list-alt' size='sm' />
 					<@button type='button' id='toggleMap' title='Voir le graphique' hideTitle=['all'] buttonIcon='sitemap' size='sm' />
 				</#if>
-			
 			</@boxHeader>
             <@boxBody>
 				<@formBreadCrumb>
@@ -123,6 +122,7 @@
 
 <@toastr infos=infos warnings=warnings errors=errors msg=msg  />
 
+<#--
 <@formVisualize />
-
+-->
 <@scrollTopBtn />
