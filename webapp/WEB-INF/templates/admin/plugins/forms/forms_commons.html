@@ -470,11 +470,6 @@ $('#${id}').on('show.bs.modal', function (event) {
 		$("#renderNetwork").toggle();
 		$(".state-actions").toggle();
 		$(".state").nextAll().hide();
-		if( $('#hierarchical').hasClass('active') ){
-			$('#direction').show();
-		} else {
-			$('#direction').hide();
-		}
 	});
 
 	var base64Img = null;
@@ -511,7 +506,7 @@ $('#${id}').on('show.bs.modal', function (event) {
 	 	<#assign nTransitionCount = transition_list?size >
 		<#assign nIndex = 1>
 		<#assign rndDess = -0.2>
-		<#list transition_list as transition>
+		<#list transition_list?sort_by('fromStep') as transition>
 		 	{id: ${(transition.id)!''}, from: ${(transition.fromStep)!''}, to: ${(transition.nextStep)!''}, smooth: {type: 'curvedCW', roundness:0.2} , arrows:'to', label:"${(transition.controlTitle)!''}", title: "Priorité : ${(transition.priority)!''} : ${(transition.fromStepTitle)!''} / ${(transition.nextStepTitle)!''} / ${(transition.controlTitle)!''}", font:{align: 'top'}}<#if nIndex &lt; nTransitionCount>,</#if>
 		</#list>
 	]);
@@ -571,19 +566,11 @@ $('#${id}').on('show.bs.modal', function (event) {
       		enabled: false
     	},
 		layout: {
-		randomSeed: 1,
-		improvedLayout:true,
-		hierarchical: {
-			enabled:true,
-			levelSeparation: 100,
-			nodeSpacing: 400,
-			treeSpacing: 400,
-			blockShifting: true,
-			edgeMinimization: true,
-			parentCentralization: true,
-			direction: 'UD', // UD, DU, LR, RL
-			sortMethod: 'hubsize' // hubsize, directed
-		}
+			randomSeed: 1,
+			improvedLayout:true,
+			hierarchical: {
+				enabled:false,
+			}
 		},
 		// TODO : gérer les actions
 		manipulation: {
@@ -652,20 +639,6 @@ $('#${id}').on('show.bs.modal', function (event) {
         options.layout.hierarchical.direction=d;
         network = new vis.Network(container, data, options);
     }
-	
-	/* Bouton choix du type de graphique */
-	$("#hierarchical").click( function(){
-		$( this ).toggleClass('active');
-		if( $(this).hasClass('active') ){
-			$("#direction").show();
-			$( this ).html('<i class="fa fa-random"></i> Pr&eacute;sentation libre');
-			draw( true, 'UD' );
-		} else{
-			$("#direction").hide();
-			$( this ).html('<i class="fa fa-sitemap"></i> Pr&eacute;sentation hi&eacute;rarchique');
-			draw( false, 'UD' );
-		}
-	});
 	
 	/* Bouton choix de l'orientation pour une représentation hiérachique */
 	$( "#direction > select" ).change(function() {

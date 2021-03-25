@@ -34,71 +34,57 @@
 			</@boxHeader>
             <@boxBody>
 				<@formBreadCrumb>
-					<li class="active">${form.title!}</li>
+					<@li class="active">${form.title!}</@li>
 				</@formBreadCrumb>	
                 <@formTabs tab='steps' />
                 <@tabContent>
                     <@tabPanel id='tabpanel' active=true>
 						<@table id='list' class='table-striped'>
-							<tr>
-								<th>#i18n{forms.manage_steps.columnTitle}</th>
-								<th>#i18n{forms.manage_transitions.pageTitle}</th>
-								<th>#i18n{forms.manageForm.columnActions}</th>
-							</tr>
+							<@tr>
+								<@th>#i18n{forms.manage_steps.columnTitle}</@th>
+								<@th>#i18n{forms.manage_transitions.pageTitle}</@th>
+								<@th>#i18n{forms.manageForm.columnActions}</@th>
+							</@tr>
 							<#list step_list as step>
-								<tr>
-									<td>
+								<@tr>
+									<@td>
 										<@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='${step.title}'>${step.title}</@link>
 										<#if step.initial><@tag color='info'>#i18n{forms.manage_steps.columnInitial}</@tag> <#assign hasInitial=1 > </#if>
 										<#if step.final><@tag color='info'>#i18n{forms.manage_steps.columnFinal}</@tag> <#assign hasFinal=1 ></#if>
-									</td>
-									<td>
-										<#if transition_list??>
-											<#list transition_list as transition>
-												<#if transition.fromStep = step.id>
-													<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${transition.fromStep}' title='#i18n{forms.modify_transition.title} ${step.title}'>
-														<@icon style='chevron-right' />	${(transition.nextStepTitle)!''} ${(transition.controlTitle)!''}<#if transition.conditional> (<@icon style='question' />) </#if><@tag title='#i18n{forms.manage_transitions.columnPriority}'>${(transition.priority)!''}</@tag>
-													</@link>
-												</#if>	 
-											</#list>
-										</#if>	 
-									</td>
+									</@td>
+									<@td>
+									<#if transition_list??>
+										<#list transition_list as transition>
+											<#if transition.fromStep = step.id>
+												<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${transition.fromStep}' title='#i18n{forms.modify_transition.title} ${step.title}'>
+													<@icon style='chevron-right' />	${(transition.nextStepTitle)!''} ${(transition.controlTitle)!''}<#if transition.conditional> (<@icon style='question' />) </#if><@tag title='#i18n{forms.manage_transitions.columnPriority}'>${(transition.priority)!''}</@tag>
+												</@link>
+											</#if>	 
+										</#list>
+									</#if>	 
+									</@td>
 									<@td>
 										<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' title='#i18n{forms.manage_steps.action.modifyStep} ${step.title}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
 										<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.modify_step.tab.labelQuestions}' hideTitle=['all'] buttonIcon='list' size='sm' />
 										<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.removeStep}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' /> 
 									</@td>
-								</tr>
+								</@tr>
 							</#list>
-							<tr>
-								<td colspan="3">
+							<@tr>
+								<@td colspan=3 >
 									<@paginationAdmin paginator=paginator combo=1 showcount=0 />
-								</td>
-							</tr>
+								</@td>
+							</@tr>
 						</@table>
 						<@row id='renderNetwork'>
-							<@columns>
-								<@btnToolbar align='right'>
-									<@btnGroup size='sm'>
-										<@button type='button' id='downloadPDF' title='#i18n{forms.manage_steps.pdf.download}' hideTitle=['all'] buttonIcon='download' />
-										<@button type='button' id='previewPDF' buttonIcon='file-pdf' title='#i18n{forms.manage_steps.pdf.show}' hideTitle=['all'] />
-									</@btnGroup>
-									<@btnGroup size='sm'>
-										<@button type='button' id='hierarchical' buttonIcon='sitemap' title='#i18n{forms.manage_steps.overview}' hideTitle=['all'] />
-									</@btnGroup>
-									<@btnGroup id='direction' size='sm'>
-										<@select name='overview'>
-											<option value="UD">#i18n{forms.manage_steps.overview.up.down}</option>
-											<option value="DU">#i18n{forms.manage_steps.overview.down.up}</option>
-											<option value="LR">#i18n{forms.manage_steps.overview.left.right}</option>
-											<option value="RL">#i18n{forms.manage_steps.overview.right.left}</option>
-										</@select>	
-									</@btnGroup>
-									<@btnGroup size='sm'>
-										<@button type='button' id='save_network' buttonIcon='save' title='#i18n{forms.manage_steps.overview.save}' hideTitle=['all'] />
-									</@btnGroup>
-								</@btnToolbar>
-								<div id="mynetwork"></div>
+						<@columns>
+							<@btnToolbar align='right'>
+								<@btnGroup size='sm'>
+									<@button type='button' id='downloadPDF' title='#i18n{forms.manage_steps.pdf.download}' hideTitle=['all'] buttonIcon='download' />
+									<@button type='button' id='save_network' buttonIcon='save' title='#i18n{forms.manage_steps.overview.save}' hideTitle=['all'] />
+								</@btnGroup>
+							</@btnToolbar>
+								<@div id="mynetwork"></@div>
 							</@columns>
 						</@row>
 					</@tabPanel>
