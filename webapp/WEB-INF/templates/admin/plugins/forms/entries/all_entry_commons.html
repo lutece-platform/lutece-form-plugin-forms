@@ -66,9 +66,6 @@ changeVisilityConfirmFieldTitle();
             <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' showLabel=showCklabel rows=rows>
                 <@checkBox name='only_display_in_back' id='only_display_in_back' value='1' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
             </@formGroup>
-            <@formGroup labelFor='editable_back' labelKey='#i18n{forms.createEntry.labelEditableInBO}' showLabel=showCklabel rows=rows>
-                <@checkBox name='editable_back' id='editable_back' value='1' labelKey='#i18n{forms.createEntry.labelEditableInBO}' checked=entry.editableBack />
-            </@formGroup>
             <@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}' rows=rows>
                 <@input type='textarea' name='help_message' id='help_message' rows=rows>${entry.helpMessage}</@input>
             </@formGroup>
