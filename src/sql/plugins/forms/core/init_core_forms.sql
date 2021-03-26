@@ -35,3 +35,8 @@ INSERT INTO core_user_role (role_key,id_user) VALUES ('forms_manager',2);
 DELETE FROM core_admin_role_resource WHERE role_key = 'forms_manager';
  INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES 
  (1907,'forms_manager','FORMS_FORM','*','*');
+
+ --
+-- Init  table core_dashboard
+--
+INSERT INTO core_dashboard(dashboard_name, dashboard_column, dashboard_order) VALUES('FORMS', 3, 2);

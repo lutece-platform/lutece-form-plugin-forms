@@ -1,0 +1,55 @@
+<@box style='solid' color='primary' id='forms_dashboard_card'>
+	<@boxHeader titleLevel='h5' title='#i18n{forms.dashboard.formList}'>
+		<@button style='card-control collapse' buttonTargetId='#forms_dashboard_card_body' buttonIcon='minus' size='sm' />
+		<@button style='card-control remove' buttonTargetId='#forms_dashboard_card' buttonIcon='times' size='sm' />
+	</@boxHeader>
+	<@boxBody class='table-responsive no-padding' id='forms_dashboard_card_body'>
+		<@table striped=true condensed=true responsive=false hover=false >
+			<@tr>
+				<@th>#i18n{forms.dashboard.row_name}</@th>
+				<@th>#i18n{forms.dashboard.row_actions}</@th>
+				<@th>#i18n{forms.dashboard.row_responses}</@th>
+			</@tr>
+			<#list form_list as form>
+				<@tr>
+					<@td>
+						<strong>${form.title}</strong>
+						<#if !form.active>
+							<@icon style='times' class='fa-fw text-danger'  title='#i18n{portal.util.labelDisabled}' />
+						</#if>
+					</@td>
+					<@td>
+						<#if form.actions?exists>
+                            <#list form.actions as action>
+                                <#assign color='' />
+                                <#assign params='' />
+                                <#if action.permission=='DELETE'>
+                                    <#assign color = 'danger' />
+								<#else>
+									<#assign color = 'primary' />
+                                </#if>
+                                <#if action.permission=='PUBLISH'>
+                                	<#assign can_publish=true>
+                                    <#assign params='data-toggle="modal" data-target="#pubModal" data-url="${action.url}&id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"' />
+                                </#if>
+                                <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' hideTitle=['all'] color='${color}' class='${action.permission?lower_case}' buttonIcon=action.iconUrl params=params size='sm' />
+                            </#list>
+                        </#if>
+                        <#if form.active>
+                            <@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' color='success' />
+                        </#if>
+					</@td>
+					<@td align='right'>
+						<@staticText inForm=false>${form.currentNumberResponse}</@staticText>
+					</@td>
+				</@tr>
+			</#list>
+		</@table>
+	</@boxBody>
+	<@boxFooter align='center'>
+		<@link href='${url}'>
+			#i18n{forms.dashboard.formList}<@icon style='arrow-circle-right' />
+		</@link>
+	</@boxFooter>
+</@box>
+<@formModal id='pubModal' />

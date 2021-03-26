@@ -103,6 +103,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private int _nMaxNumberResponse;
     private boolean _bOneResponseByUser;
 
+    private int _nCurrentNumberResponse;
+
     /**
      * Returns the Id
      * 
@@ -474,4 +476,22 @@ public class Form implements AdminWorkgroupResource, RBACResource
     {
         _bOneResponseByUser = bOneResponseByUser;
     }
+
+    /**
+     * @return the nCurrentNumberResponse
+     */
+    public int getCurrentNumberResponse( )
+    {
+        return _nCurrentNumberResponse;
+    }
+
+    /**
+     * @param nCurrentNumberResponse
+     *            the nCurrentNumberResponse to set
+     */
+    public void setCurrentNumberResponse( int nCurrentNumberResponse )
+    {
+        _nCurrentNumberResponse = nCurrentNumberResponse;
+    }
+
 }
