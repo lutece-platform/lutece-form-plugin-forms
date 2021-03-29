@@ -10,16 +10,16 @@
 			<@boxHeader title='#i18n{forms.modifyEntry.titleGroup} : "${form.title}"' />
 			<@boxBody>
 				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
-					<fieldset>
-                    <input name="id_entry" value="${entry.idEntry}" type="hidden" />
-                    <input name="id_step" value="${step.id}" type="hidden" />
-                    <input name="id_question" value="${question.id}" type="hidden" />
+					<@fieldSet>
+	                    <@input name="id_entry" value="${entry.idEntry}" type="hidden" />
+	                    <@input name="id_step" value="${step.id}" type="hidden" />
+	                    <@input name="id_question" value="${question.id}" type="hidden" />
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' mandatory=true>
 							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
 						</@formGroup>
-                                                <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-                                                    <@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
-                                                </@formGroup>
+                        <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                            <@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
+                        </@formGroup>
 						<#assign iterationAddingLabel = getFieldValue(entry,"iteration_adding_label")>
 						<#assign nbIteration = getFieldValue(entry,"nb_iterations")>
 						<#assign nbIteration_minimum = getFieldValue(entry,"nb_iterations_minimum")>
@@ -37,26 +37,26 @@
 						<div id="iterationNumber" class="form-group" ${style}>
 							<label class="col-xs-12 col-sm-3 control-label" for="nb_iterations">
 								#i18n{forms.createEntry.labelNbIteration}
-								<i class="fa fa-asterisk" aria-hidden="true"></i>
+								<@icon style='asterisk' />
 							</label>
-							<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+							<@columns sm=9 md=6 lg=6>
 								<@input type='text' name='nb_iterations' value='${nbIteration}' maxlength=5 />
 								<span id="nb_iterations_help" class="help-block">
 									#i18n{forms.createEntry.labelHelpNbIteration}
 								</span>
-							</div>
+							</@columns>
 						</div>
 						<div id="iterationNumberMinimum" class="form-group" ${style}>
 							<label class="col-xs-12 col-sm-3 control-label" for="nb_iterations_minimum">
 								#i18n{forms.createEntry.labelNbMinimumIteration}
-								<i class="fa fa-asterisk" aria-hidden="true"></i>
+								<@icon style='asterisk' />
 							</label>
-							<div class="col-xs-12 col-sm-9 col-md-6 col-lg-6">
+							<@columns sm=9 md=6 lg=6>
 								<@input type='text' name='nb_iterations_minimum' value='${nbIteration_minimum}' maxlength=5 />
 								<span id="nb_iterations_help" class="help-block">
 									#i18n{forms.createEntry.labelHelpNbMinimumIteration}
 								</span>
-							</div>
+							</@columns>
 						</div>
 						<@formGroup id='iterationAddingLabel' labelFor='iteration_adding_label' labelKey='#i18n{forms.createEntry.labelIterationAddingLabel}' helpKey='#i18n{forms.createEntry.labelHelpIterationAddingLabel}' params=style >
 							<@input type='text' name='iteration_adding_label' value='${iterationAddingLabel}' maxlength=255 />
@@ -77,7 +77,7 @@
 							<@button type='submit' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false color='btn-primary' size='' />
 							<@button type='button' buttonIcon='close' title='#i18n{forms.modifyEntry.buttonCancel}' showTitleXs=false color='btn-default' params='onclick="javascript:window.history.back();"' size='' />
 						</@formGroup>
-					</fieldset>
+					</@fieldSet>
 				</@tform>
 			</@boxBody>
 		</@box>

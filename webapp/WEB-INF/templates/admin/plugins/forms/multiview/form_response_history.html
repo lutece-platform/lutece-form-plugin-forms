@@ -1,9 +1,9 @@
 <h2>#i18n{forms.multiviewForms.view_record_history.title}</h2>
 <#if resource_actions?has_content && history_information_list?has_content>
     <#assign defaultUserFrontId=5>
-    <ul class="timeline-form">
+    <@ul class="timeline-form">
     <#list history_information_list as history_information>
-        <li>
+        <@li>
             <h5 class="text-primary">${history_information.resource_history.action.description}
               <small class="pull-right">${history_information.resource_history.creationDate!}</small>
             </h5>
@@ -20,18 +20,17 @@
                 <#if adminAvatar>
                   <img class="fa direct-chat-img" src="servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId}" alt="Avatar" title="Avatar">
                 <#else>
-                  <i class="fa fa-user"></i>
+                	<@icon style='user' />
                 </#if>
               <#else>
-                #i18n{forms.multiviewForms.view_record_history.admin_user_undefined} <i class="fa fa-user-times"></i>
+                #i18n{forms.multiviewForms.view_record_history.admin_user_undefined} <@icon style='user-times' />
               </#if>
-            
-          </li>
+          </@li>
         </#list>
-      </ul>
+      </@ul>
   </div>
 <#else>
   <div class="alert alert-warning">
-    <i class="fa fa-warning fa-fw"></i>  #i18n{forms.multiviewForms.view_record_history.history_empty}
+  	<@icon style='warning' />  #i18n{forms.multiviewForms.view_record_history.history_empty}
   </div>
 </#if>
