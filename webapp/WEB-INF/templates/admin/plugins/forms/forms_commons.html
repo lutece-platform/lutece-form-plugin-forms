@@ -918,10 +918,10 @@ $( function(){
 <th data-field="${field}" class="th-header" id="sort${id!}_${attribute!}">
 	${title}
 	<div class="btn-sort-group" role="group" aria-label="Tri">
-		<@aButton showTitle=false color='' style="" class="btn-sort asc" href="${sort_url}true#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.asc}" >
+		<@aButton hideTitle=['all'] color='' style="" class="btn-sort asc" href="${sort_url}true#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.asc}" >
 			<@icon style='sort-up fa-fw' />
 		</@aButton>	
-		<@aButton showTitle=false color='' style="" class="btn-sort desc" href="${sort_url}false#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.desc}">	
+		<@aButton hideTitle=['all'] color='' style="" class="btn-sort desc" href="${sort_url}false#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.desc}">	
 			<@icon style='sort-down fa-fw' />
 		</@aButton>	
 	</div>
