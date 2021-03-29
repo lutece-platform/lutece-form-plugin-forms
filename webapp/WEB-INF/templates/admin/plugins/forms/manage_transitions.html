@@ -61,10 +61,8 @@
                                     <#list transition_list as transition>
                                     <tr>
                                         <@td sm=6>${transition.nextStepTitle!''}</@td>
-                                        <@td sm=1  align='center' valign='middle'><#if transition.conditional><@icon style='question' /></#if>
-                                            <@tag>${transition.priority!}</@tag>
-                                        </@td>
                                         <@td sm=1 align='center' hide=['xs']>
+                                        	<@tag>${transition.priority!}</@tag>
                                             <#if transition_index gt 0>
                                                 <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveUpPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveUpPriorityTransition}' hideTitle=['all'] buttonIcon='chevron-up' size='sm' />
                                             </#if>
@@ -72,6 +70,7 @@
                                                 <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveDownPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveDownPriorityTransition}' hideTitle=['all'] buttonIcon='chevron-down' size='sm' />
                                             </#if>
                                         </@td>
+                                        <@td sm=1 align='center' valign='middle'><#if transition.conditional><@icon style='question' /></#if></@td>
                                         <@td sm=4>
                                            <@button type='button' style='modal' class='btn-modal' buttonTargetId='#transitionModal' params='data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}" data-modal-title="#i18n{forms.modify_transition.title}"' buttonIcon='pencil' size='sm' />
 											<@button type='button' buttonTargetId='#transitionModal' style='modal' params='data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION"' title='#i18n{forms.manage_controls.action.modifyControl}' hideTitle=['all'] buttonIcon='cog' class='btn-modal' size='sm' />
