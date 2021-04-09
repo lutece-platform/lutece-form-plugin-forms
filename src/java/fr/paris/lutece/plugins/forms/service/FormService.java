@@ -399,7 +399,7 @@ public class FormService
     {
         FormResponseManager formResponseManager = null;
 
-        FormResponse formResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, form.getId( ) );
+        FormResponse formResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, form.getId( ), true );
 
         if ( formResponse != null )
         {

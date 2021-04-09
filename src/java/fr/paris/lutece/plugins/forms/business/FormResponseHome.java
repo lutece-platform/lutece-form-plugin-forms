@@ -262,11 +262,12 @@ public final class FormResponseHome
      *            The user Guid
      * @param nIdForm
      *            The form primary key
+     * @param fromBackup
      * @return the formResponse objects
      */
-    public static FormResponse getFormResponseByGuidAndForm( String strGuid, int nIdForm )
+    public static FormResponse getFormResponseByGuidAndForm( String strGuid, int nIdForm, boolean fromBackup )
     {
-        FormResponse formResponse = _dao.selectFormResponseForBackup( strGuid, nIdForm, _plugin );
+        FormResponse formResponse = _dao.selectFormResponseByUser( strGuid, nIdForm, fromBackup, _plugin );
         completeWithSteps( formResponse );
 
         return formResponse;
