@@ -46,7 +46,10 @@
 				}
 				var currentControl = "${question.id}_${question.iterationNumber}";
 				var currentInput = getInputElement(currentControl);
-				currentInput.change();
+				if ( currentInput[0].type != 'file' )
+				{
+					currentInput.change();
+				}
 			});
 			input${control.id}_${question.iterationNumber}.change();
 		});
