@@ -14,7 +14,7 @@ INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_use
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
 (106,'Zone de texte court',0,0,0,'forms.entryTypeText','file-alt','forms');
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
-(107,'Zone de texte long',0,0,0,'forms.entryTypeTextArea','file-alt','forms');
+(107,'Zone de texte long',0,0,0,'forms.entryTypeTextArea','sticky-note','forms');
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
 (108,'Fichier',0,0,0,'forms.entryTypeFile','file','forms');
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES

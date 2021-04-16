@@ -76,7 +76,7 @@ UPDATE genatt_entry_type SET icon_name='comment' WHERE id_type=103;
 UPDATE genatt_entry_type SET icon_name='calendar' WHERE id_type=104;
 UPDATE genatt_entry_type SET icon_name='list-alt' WHERE id_type=105;
 UPDATE genatt_entry_type SET icon_name='file-alt' WHERE id_type=106;
-UPDATE genatt_entry_type SET icon_name='file-alt' WHERE id_type=107;
+UPDATE genatt_entry_type SET icon_name='sticky-note' WHERE id_type=107;
 UPDATE genatt_entry_type SET icon_name='file' WHERE id_type=108;
 UPDATE genatt_entry_type SET icon_name='map-marked-alt' WHERE id_type=109;
 UPDATE genatt_entry_type SET icon_name='image' WHERE id_type=110;
