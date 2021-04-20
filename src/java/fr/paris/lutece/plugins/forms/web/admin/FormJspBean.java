@@ -55,6 +55,8 @@ import fr.paris.lutece.plugins.forms.web.breadcrumb.BreadcrumbManager;
 import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
+import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -114,6 +116,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_WORKFLOW_REF_LIST = "workflow_list";
     private static final String MARK_WEBAPP_URL = "webapp_url";
     private static final String MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN = "is_active_kibana_forms_plugin";
+    private static final String MARK_IS_ACTIVE_CAPTCHA = "is_active_captcha";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -162,6 +165,7 @@ public class FormJspBean extends AbstractJspBean
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
 
     /**
      * Build the Manage View
@@ -248,6 +252,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_FORM_MESSAGE, _formMessage );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
+        model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
 
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_CREATE_FORM, model );
     }
@@ -444,6 +449,7 @@ public class FormJspBean extends AbstractJspBean
             }
 
             model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
+            model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
 
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );
         }
