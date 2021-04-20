@@ -1,56 +1,76 @@
 
 <@box>
-<@boxHeader title='#i18n{forms.manageForm.pageTitle}' />
-<@boxBody>
-    <@tform method='post' name='create_step' id='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
-        <@input type='hidden' id='id_form' name='id_form" value="${step.idForm}' />
-        <@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true>
-             <@input type='text' name='title' value='${step.title!}' />
-        </@formGroup>
-        <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}' >
-             <@input type='textarea' name='description'>${step.description!}</@input>
-        </@formGroup>
-        <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' >
-            <@checkBox labelFor='initial' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
-        </@formGroup>
-        <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all']>
-            <@checkBox labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
-        </@formGroup>
-        <@formsButton okAction='createStep' viewAction='manageSteps' />
-    </@tform>
-</@boxBody>
+    <@boxHeader title='#i18n{forms.manageForm.pageTitle}' />
+    <@boxBody>
+        <@tform method='post' name='create_step' id='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
+            <@input type='hidden' id='id_form' name='id_form" value="${step.idForm}' />
+            <@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true>
+                 <@input type='text' name='title' value='${step.title!}' />
+            </@formGroup>
+            <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}' >
+                 <@input type='textarea' name='description'>${step.description!}</@input>
+            </@formGroup>
+            <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' hideLabel=['all']>
+                <@checkBox labelFor='initial'labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+            </@formGroup>
+            <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all']>
+                <@checkBox labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+            </@formGroup>
+            <@formsButton okAction='createStep' viewAction='manageSteps' />
+        </@tform>
+    </@boxBody>
 </@box>
 
 <script>
 // Function to check if a webpage is in iFrame
 function isIniFrame() {
-return window.self !== window.top ? true : false;
+    return window.self !== window.top ? true : false;
 }
 
 $( function() {
-if ( isIniFrame() ){
-    window.top.$("#modalIframe");
-    $('body').css('background-color', 'white');
-    $('.skipnav').hide();
-    $('nav').hide();
-    $('.container-fluid').css( 'padding', '0' );
-    $('.modal-body').css( 'padding', '24px' );
-    $('main').css( 'margin', '0' );
-    $('header').hide();
-    $('footer').hide();
-    $('#breadforms').remove();
-    $('#pubModal .content-header').hide();
-    $('#pubModal #admin-wrapper').css( 'margin', '0' );
-    
-    var formAction = $('#create_step'), btnAction = $('#action_createStep');
+    if ( isIniFrame() ){
+        window.top.$("#modalIframe");
+        $('body').css('background-color', 'white');
+        $('.skipnav').hide();
+        $('nav').hide();
+        $('.container-fluid').css( 'padding', '0' );
+        $('.modal-body').css( 'padding', '24px' );
+        $('main').css( 'margin', '0' );
+        $('header').hide();
+        $('footer').hide();
+        $('#breadforms').remove();
+        $('#pubModal .content-header').hide();
+        $('#pubModal #admin-wrapper').css( 'margin', '0' );
+        
+        var formAction = $('#create_step'), btnAction = $('#action_createStep');
 
-    btnAction.click( function(e){ 
-        formAction.submit( function(e){
-            formAction.attr('target','_top');
-            _this.unbind('submit').submit();
+        btnAction.click( function(e){ 
+            formAction.submit( function(e){
+                formAction.attr('target','_top');
+                _this.unbind('submit').submit();
+            });
         });
-    });
-} 
+    } else {
+        $('body').css('background-color', 'white');
+        $('.skipnav').hide();
+        $('nav').hide();
+        $('.container-fluid').css( 'padding', '0' );
+        $('.modal-body').css( 'padding', '24px' );
+        $('main').css( 'margin', '0' );
+        $('header').hide();
+        $('footer').hide();
+        $('#breadforms').remove();
+        $('#pubModal .content-header').hide();
+        $('#pubModal #admin-wrapper').css( 'margin', '0' );
+        var formAction = $('#create_step'), btnAction = $('#action_createStep');
+
+        btnAction.click( function(e){ 
+            formAction.submit( function(e){
+                formAction.attr('target','_top');
+                _this.unbind('submit').submit();
+            });
+        });
+    }
 });
 </script>
 
