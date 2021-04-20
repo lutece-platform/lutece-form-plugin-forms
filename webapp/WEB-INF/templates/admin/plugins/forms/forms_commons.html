@@ -488,6 +488,19 @@ $( function() {
 					</@formGroup>
 				</@fieldSet> 
 			</#if>
+			<#if is_active_captcha>
+				<@fieldSet legend='#i18n{forms.modify_form.captcha.label}'>
+					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' hideLabel=['all'] id='labelCaptchaStepInitial' helpKey='#i18n{forms.modify_form.labelCaptchaStepInitial.help}'  rows=2>
+						<@checkBox labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' labelFor='captchaStepInitial' name='captchaStepInitial' value='1' checked=(form?has_content && form.captchaStepInitial) />
+					</@formGroup>
+					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' hideLabel=['all'] id='labelCaptchaStepFinal' helpKey='#i18n{forms.modify_form.labelCaptchaStepFinal.help}'  rows=2>
+						<@checkBox labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' labelFor='captchaStepFinal' name='captchaStepFinal' value='1' checked=(form?has_content && form.captchaStepFinal) />
+					</@formGroup>
+					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' hideLabel=['all'] id='labelCaptchaRecap' helpKey='#i18n{forms.modify_form.labelCaptchaRecap.help}'  rows=2>
+						<@checkBox labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' labelFor='captchaRecap' name='captchaRecap' value='1' checked=(form?has_content && form.captchaRecap) />
+					</@formGroup>
+				</@fieldSet> 
+			</#if>
 		</@columns>
 	</@row>
 </#macro>
