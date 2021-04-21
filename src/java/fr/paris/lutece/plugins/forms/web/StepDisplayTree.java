@@ -57,6 +57,8 @@ import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
+import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -78,6 +80,8 @@ public class StepDisplayTree
 
     // Marks
     private static final String MARK_STEP_CONTENT = "stepContent";
+    private static final String MARK_DISPLAY_CAPTCHA = "display_captcha";
+    private static final String MARK_CAPTCHA = "captcha";
 
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
@@ -89,6 +93,7 @@ public class StepDisplayTree
     private final Map<Integer, List<Response>> _mapStepResponses = new HashMap<>( );
     private List<Control> _listDisplayControls = new ArrayList<>( );
     private final Map<String, Object> _model = new HashMap<>( );
+    private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
 
     /**
      * Constructor
@@ -250,7 +255,18 @@ public class StepDisplayTree
         _model.put( FormsConstants.MARK_STEP, _step );
         _model.put( FormsConstants.MARK_USER, user );
         _model.put( MARK_STEP_CONTENT, strBuilder.toString( ) );
-
+        
+        if ( displayType == DisplayType.EDITION_FRONTOFFICE )
+        {
+            boolean displayCaptcha = _captchaSecurityService.isAvailable( ) && ( ( _step.isInitial( ) && _form.isCaptchaStepInitial( ) ) || ( _step.isFinal( ) && _form.isCaptchaStepFinal( ) ) ); 
+            _model.put( MARK_DISPLAY_CAPTCHA, displayCaptcha );
+            
+            if ( displayCaptcha )
+            {
+                _model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
+            }
+        }
+        
         String strTemplate = findTemplateFor( displayType );
 
         return AppTemplateService.getTemplate( strTemplate, locale, _model ).getHtml( );

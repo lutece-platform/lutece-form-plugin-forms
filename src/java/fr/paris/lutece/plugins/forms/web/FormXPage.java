@@ -79,6 +79,8 @@ import fr.paris.lutece.plugins.forms.web.http.SynchronousHttpServletRequestWrapp
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
+import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -117,6 +119,7 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_LIST_FORMS_PAGETITLE = "forms.xpage.listForms.pagetitle";
     protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
     private static final String MESSAGE_WARNING_LOST_SESSION = "forms.warning.lost.session";
+    private static final String MESSAGE_WARNING_CAPTCHA = "portal.admin.message.wrongCaptcha";
     private static final String MESSAGE_ERROR_STEP_NOT_FINAL = "forms.error.step.isnot.final";
     private static final String MESSAGE_STEP_TITLE = "forms.step.title";
     private static final String MESSAGE_SUMMARY_TITLE = "forms.summary.title";
@@ -154,9 +157,13 @@ public class FormXPage extends MVCApplication
     private static final String STEP_HTML_MARKER = "stepContent";
     private static final String MARK_LIST_SUMMARY_STEP_DISPLAY = "list_summary_step_display";
     private static final String MARK_FORM_LIST = "form_list";
+    
+    // Parameters
+    private static final String PARAMETER_VALIDATE_CAPTCHA = "validate_captcha";
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
     private static Map<Integer, Integer> _responsePerFormMap = new HashMap<>( );
     private static ConcurrentMap<Integer, Object> _lockFormId = new ConcurrentHashMap<>( );
 
@@ -488,6 +495,11 @@ public class FormXPage extends MVCApplication
                 return redirectView( request, VIEW_STEP );
             }
             fillResponseManagerWithResponses( request, true );
+            if ( isCaptchaKO( request ) )
+            {
+                addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
+                return redirectView( request, VIEW_STEP );
+            }
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -579,10 +591,14 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
             }
-
             if ( !form.isDisplaySummary( ) )
             {
                 fillResponseManagerWithResponses( request, true );
+            }
+            if ( isCaptchaKO( request ) )
+            {
+                addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
+                return redirectView( request, VIEW_STEP );
             }
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -797,6 +813,11 @@ public class FormXPage extends MVCApplication
                 return redirectView( request, VIEW_STEP );
             }
             fillResponseManagerWithResponses( request, true );
+            if ( isCaptchaKO( request ) )
+            {
+                addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
+                return redirectView( request, VIEW_STEP );
+            }
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -815,6 +836,15 @@ public class FormXPage extends MVCApplication
             }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( VIEW_STEP ) );
         }
         return redirectView( request, VIEW_STEP );
+    }
+    
+    private boolean isCaptchaKO( HttpServletRequest request )
+    {
+        if ( request.getParameter( PARAMETER_VALIDATE_CAPTCHA ) == null )
+        {
+            return false;
+        }
+        return !_captchaSecurityService.validate( request );
     }
 
     /**

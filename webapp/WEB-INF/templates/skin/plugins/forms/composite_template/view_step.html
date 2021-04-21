@@ -4,6 +4,10 @@
   </div>
   <div id="step-content" class="panel-body">
     ${stepContent}
+    <#if display_captcha>
+    	<@input type='hidden' name='validate_captcha' value='1' />
+  		${captcha}
+  	</#if>
   </div>
   <div class="panel-footer">
 	<input name="page" value="forms" type="hidden">
