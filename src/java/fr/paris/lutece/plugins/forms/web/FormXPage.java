@@ -157,6 +157,8 @@ public class FormXPage extends MVCApplication
     private static final String STEP_HTML_MARKER = "stepContent";
     private static final String MARK_LIST_SUMMARY_STEP_DISPLAY = "list_summary_step_display";
     private static final String MARK_FORM_LIST = "form_list";
+    private static final String MARK_DISPLAY_CAPTCHA = "display_captcha";
+    private static final String MARK_CAPTCHA = "captcha";
     
     // Parameters
     private static final String PARAMETER_VALIDATE_CAPTCHA = "validate_captcha";
@@ -505,12 +507,25 @@ public class FormXPage extends MVCApplication
         {
             return redirectView( request, VIEW_STEP );
         }
-
+        
+        return getFormResponseSummaryPage( request );
+    }
+    
+    private XPage getFormResponseSummaryPage( HttpServletRequest request )
+    {
         String idForm = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
         Form form = FormHome.findByPrimaryKey( Integer.parseInt( idForm ) );
         Map<String, Object> model = buildModelForSummary( request );
         model.put( FormsConstants.MARK_ID_FORM, idForm );
         model.put( FormsConstants.MARK_FORM, form );
+        
+        boolean displayCaptcha = _captchaSecurityService.isAvailable( ) && form.isCaptchaRecap( ); 
+        model.put( MARK_DISPLAY_CAPTCHA, displayCaptcha );
+        
+        if ( displayCaptcha )
+        {
+            model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
+        }
 
         String strTitleForm = I18nService.getLocalizedString( MESSAGE_SUMMARY_TITLE, new String [ ] {
                 form.getTitle( )
@@ -532,7 +547,7 @@ public class FormXPage extends MVCApplication
      */
     private Map<String, Object> buildModelForSummary( HttpServletRequest request )
     {
-        Map<String, Object> mapFormResponseSummaryModel = new HashMap<>( );
+        Map<String, Object> mapFormResponseSummaryModel = getModel( );
 
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
@@ -598,7 +613,14 @@ public class FormXPage extends MVCApplication
             if ( isCaptchaKO( request ) )
             {
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                if ( !form.isDisplaySummary( ) )
+                {
+                    return redirectView( request, VIEW_STEP );
+                }
+                else
+                {
+                    return getFormResponseSummaryPage( request );
+                }
             }
         }
         catch( FormNotFoundException | QuestionValidationException exception )

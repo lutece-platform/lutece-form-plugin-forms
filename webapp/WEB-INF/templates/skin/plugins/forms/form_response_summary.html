@@ -1,3 +1,4 @@
+ <@messages warnings=warnings />
  <form class="form-horizontal" id="summary_validate" action="jsp/site/Portal.jsp?page=forms" method="post">
  <input name="id_form" value="${id_form}" type="hidden" />
   <div id="form-response-summary" class="box-body">
@@ -6,6 +7,10 @@
         ${summary_step_display}
       </#list>
     </#if>
+    <#if display_captcha>
+    	<@input type='hidden' name='validate_captcha' value='1' />
+  		${captcha}
+  	</#if>
   </div>
   <div class="panel-footer">
     <button type="submit" class="btn btn-primary btn-sm"  name="action_doSaveResponse" >
