@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.paris.lutece.api.user.User;
@@ -399,11 +400,11 @@ public class FormService
     {
         FormResponseManager formResponseManager = null;
 
-        FormResponse formResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, form.getId( ), true );
+        List<FormResponse> listFormResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, form.getId( ), true );
 
-        if ( formResponse != null )
+        if ( CollectionUtils.isNotEmpty( listFormResponse ) )
         {
-            formResponseManager = new FormResponseManager( formResponse );
+            formResponseManager = new FormResponseManager( listFormResponse.get( 0 ) );
         }
         else
         {

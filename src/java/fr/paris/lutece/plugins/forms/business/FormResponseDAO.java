@@ -214,24 +214,23 @@ public final class FormResponseDAO implements IFormResponseDAO
      * {@inheritDoc }
      */
     @Override
-    public FormResponse selectFormResponseByUser( String strGuid, int nIdForm, boolean fromBackup, Plugin plugin )
+    public List<FormResponse> selectFormResponseByUser( String strGuid, int nIdForm, boolean fromBackup, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FOR_BACKUP, plugin );
-        daoUtil.setString( 1, strGuid );
-        daoUtil.setInt( 2, nIdForm );
-        daoUtil.setBoolean( 3, fromBackup );
-        daoUtil.executeQuery( );
-
-        FormResponse formResponse = null;
-
-        if ( daoUtil.next( ) )
+        List<FormResponse> list = new ArrayList<>( );
+        
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FOR_BACKUP, plugin ) )
         {
-            formResponse = dataToObject( daoUtil );
+            daoUtil.setString( 1, strGuid );
+            daoUtil.setInt( 2, nIdForm );
+            daoUtil.setBoolean( 3, fromBackup );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                list.add( dataToObject( daoUtil ) ); 
+            }
         }
-
-        daoUtil.close( );
-
-        return formResponse;
+        return list;
     }
 
     /**

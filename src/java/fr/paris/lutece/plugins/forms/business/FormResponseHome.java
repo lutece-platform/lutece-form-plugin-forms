@@ -265,12 +265,14 @@ public final class FormResponseHome
      * @param fromBackup
      * @return the formResponse objects
      */
-    public static FormResponse getFormResponseByGuidAndForm( String strGuid, int nIdForm, boolean fromBackup )
+    public static List<FormResponse> getFormResponseByGuidAndForm( String strGuid, int nIdForm, boolean fromBackup )
     {
-        FormResponse formResponse = _dao.selectFormResponseByUser( strGuid, nIdForm, fromBackup, _plugin );
-        completeWithSteps( formResponse );
-
-        return formResponse;
+        List<FormResponse> listFormResponse = _dao.selectFormResponseByUser( strGuid, nIdForm, fromBackup, _plugin );
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            completeWithSteps( formResponse );
+        }
+        return listFormResponse;
     }
 
     /**

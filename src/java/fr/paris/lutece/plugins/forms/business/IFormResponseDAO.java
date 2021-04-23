@@ -124,7 +124,7 @@ public interface IFormResponseDAO
      *            the Plugin
      * @return The list which contains the data of all the FormResponse objects
      */
-    FormResponse selectFormResponseByUser( String strGuid, int nIdForm, boolean fromBackup, Plugin plugin );
+    List<FormResponse> selectFormResponseByUser( String strGuid, int nIdForm, boolean fromBackup, Plugin plugin );
 
     /**
      * Remove all the formResponse linked to a given Form
