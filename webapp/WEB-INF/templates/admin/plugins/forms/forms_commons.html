@@ -303,14 +303,14 @@ $( function(){
 
 <#macro formBreadCrumb>
 <@row>
-	<ol id="breadforms" class="breadcrumb" style="margin-bottom:1em; background-color:transparent;">
-		<li>
+	<@breadcrumbs id='breadforms' params=' style="margin-bottom:1em; background-color:transparent;"' >
+		<@breadcrumbItem>
 			<@link href='jsp/admin/plugins/forms/ManageForms.jsp' title='Retour liste des formulaires'>
 				<@icon style='home' />
 			</@link>
-		</li>
+		</@breadcrumbItem>
 		<#nested>
-	</ol>
+	</@breadcrumbs>
 </@row>
 </#macro>     
 
@@ -345,11 +345,59 @@ $('#${id}').on('show.bs.modal', function (event) {
 <#macro formsButton okAction='' viewAction='' rows=1>
 	<@formGroup rows=rows>
 		<@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
-			<#nested>
+		<#nested>
 		<#if viewAction !=''>
 			<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' />
 		</#if>
 	</@formGroup>
+</#macro>
+
+<#macro modalFrameScript formId actionId title modalId='qModal' iframeId='modalIframe' modalHeight=70 >
+<script>
+// Function to check if a webpage is in iFrame
+function isIniFrame() {
+ 	return window.self !== window.top ? true : false;
+}
+
+$( function() {
+    if ( isIniFrame() ){
+		$('body').css( 'overflow-x', 'hidden' ).css('background-color', 'white');
+        $('.skipnav').hide();
+		$('nav').hide();
+		$('.content-header').hide();
+		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
+		$('.container-fluid').css( 'padding', '0' );
+        $('.modal-body').css( 'padding', '24px' );
+        $('main').css( 'margin', '0' );
+		$('#breadforms').remove();
+		$('header').remove();
+		$('#footer').remove();
+		<#if title !=''>
+		var modalTitle = '${title}';
+		window.parent.$('#${modalId}').find('.modal-title').text(modalTitle);
+		$('#${modalId}').find('.modal-title').text(modalTitle);
+		</#if>
+		window.parent.$('#${iframeId}').css('height','${modalHeight!}vh');
+		$('#${iframeId}').css('height','${modalHeight!}vh');
+		
+		<#if formId !=''>
+		var formAction = $('#${formId}'), btnAction = $('#${actionId}');
+		btnAction.click( function(e){ 
+			formAction.submit( function(){
+				e.preventDefault();
+				formAction.attr( 'target', '_top' );
+				_this.unbind('submit').submit();
+			});
+		});
+		</#if>
+    }  else {
+        $('#${modalId} .content-header').hide();
+        $('#${modalId} #admin-wrapper').css( 'margin', '0' );
+        $('#${modalId} header').hide();
+        $('#${modalId} footer').hide();
+    }
+});
+</script>
 </#macro>
 
 <#macro formModel>
@@ -357,7 +405,7 @@ $('#${id}').on('show.bs.modal', function (event) {
 		<@columns md=7> 
 			<@fieldSet legend='#i18n{forms.modify_form.labelDescription}'>
 				<@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true rows=2>
-						<@input type='text' name='title' value='${form.title!}' />
+					<@input type='text' name='title' value='${form.title!}' />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
 						<@input type='textarea' name='description'>${form.description!}</@input>

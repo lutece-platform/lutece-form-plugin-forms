@@ -1,5 +1,4 @@
 <#include "/admin/plugins/forms/edit_step_tabs.html" />
-
 <@row>
     <@columns>
         <@box>
@@ -19,11 +18,10 @@
             <@boxBody>
 				<@formBreadCrumb>
 					<#if step.final && step.initial>   
-						<li class="active">${form.title}</li>
+                        <@breadcrumbItem class='active is-active'>${form.title} aa</@breadcrumbItem>
 					<#else>    
-						<li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link>
-						</li> 
-						<li class="active">${step.title}</li>
+                        <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem> 
+						<@breadcrumbItem class='active is-active'>${step.title} bb</@breadcrumbItem>
 					</#if> 
 				</@formBreadCrumb>
                 <@formStepTabs tab='questions' />
@@ -96,7 +94,7 @@
 													<@button type='button' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION"' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='check' size='sm' />
 													<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=duplicateQuestion&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}' class='btn-into'  title='#i18n{forms.manage_questions.action.copy}' buttonIcon='copy' size='sm' />
                                                 </#if>
-												<@button type='button' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}"' title='#i18n{forms.manage_questions.action.move}' hideTitle=['all'] buttonIcon='arrows-alt' size='sm' />
+												<@button type='button' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}"' title='#i18n{forms.manage_questions.action.move}' hideTitle=['all'] buttonIcon='sort' size='sm' />
 												<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' size='sm' /> 
 									        </@td>
                                             <@td sm=1><#if group><@icon style='minus-square' class='text-primary group-toggle' /></#if></@td>
