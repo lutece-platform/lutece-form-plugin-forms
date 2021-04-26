@@ -217,17 +217,17 @@ public final class FormResponseDAO implements IFormResponseDAO
     public List<FormResponse> selectFormResponseByUser( String strGuid, int nIdForm, boolean fromBackup, Plugin plugin )
     {
         List<FormResponse> list = new ArrayList<>( );
-        
+
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FOR_BACKUP, plugin ) )
         {
             daoUtil.setString( 1, strGuid );
             daoUtil.setInt( 2, nIdForm );
             daoUtil.setBoolean( 3, fromBackup );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
-                list.add( dataToObject( daoUtil ) ); 
+                list.add( dataToObject( daoUtil ) );
             }
         }
         return list;
