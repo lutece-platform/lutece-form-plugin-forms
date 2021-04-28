@@ -18,10 +18,10 @@
             <@boxBody>
 				<@formBreadCrumb>
 					<#if step.final && step.initial>   
-                        <@breadcrumbItem class='active is-active'>${form.title} aa</@breadcrumbItem>
+                        <@breadcrumbItem class='active is-active'>${form.title}</@breadcrumbItem>
 					<#else>    
                         <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem> 
-						<@breadcrumbItem class='active is-active'>${step.title} bb</@breadcrumbItem>
+						<@breadcrumbItem class='active is-active'>${step.title}</@breadcrumbItem>
 					</#if> 
 				</@formBreadCrumb>
                 <@formStepTabs tab='questions' />
