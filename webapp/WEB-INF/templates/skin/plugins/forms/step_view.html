@@ -59,6 +59,7 @@ function getFieldValue(elm)
 	</div>
 	</#if>
 	${formTopBreadcrumb!}
+	<#if form.countResponses>#i18n{forms.createEntry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
 	${stepContent!}
 	${formBottomBreadcrumb!}
 </form>

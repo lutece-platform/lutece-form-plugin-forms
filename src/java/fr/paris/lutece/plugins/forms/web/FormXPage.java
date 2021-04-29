@@ -185,6 +185,14 @@ public class FormXPage extends MVCApplication
     {
         Locale locale = getLocale( request );
         List<Form> listFormsAll = FormHome.getFormList( );
+        for ( Form form : listFormsAll )
+        {
+            if ( form.isCountResponses( ) )
+            {
+                form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
+            }
+        }
+        
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM_LIST, listFormsAll );
         XPage xPage = getXPage( TEMPLATE_LIST_FORMS, locale, model );
@@ -376,7 +384,12 @@ public class FormXPage extends MVCApplication
 
         Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
         _stepDisplayTree.addModel( modelForStep );
-
+        
+        if ( form.isCountResponses( ) )
+        {
+            form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
+        }
+        model.put( FormsConstants.MARK_FORM, form );
         model.put( STEP_HTML_MARKER,
                 _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( request ), DisplayType.EDITION_FRONTOFFICE ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
@@ -513,6 +526,11 @@ public class FormXPage extends MVCApplication
 
     private XPage getFormResponseSummaryPage( HttpServletRequest request, Form form )
     {
+        if ( form.isCountResponses( ) )
+        {
+            form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
+        }
+        
         Map<String, Object> model = buildModelForSummary( request );
         model.put( FormsConstants.MARK_ID_FORM, form.getId( ) );
         model.put( FormsConstants.MARK_FORM, form );

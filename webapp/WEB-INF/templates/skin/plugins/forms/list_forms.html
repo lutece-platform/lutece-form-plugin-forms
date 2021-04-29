@@ -3,7 +3,9 @@
 	<#list form_list as form>
 		<#if form.active>
 			 <ul>
-				<li><a href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" target="_blank">${form.title}</a> </li>
+				<li>
+					<a href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" target="_blank">${form.title}</a> <#if form.countResponses>(${form.currentNumberResponse})</#if>
+				</li>
 			</ul>
 		</#if>
 	</#list>
