@@ -23,6 +23,7 @@ return_url varchar(255) default '',
 captcha_step_initial SMALLINT default 0,
 captcha_step_final SMALLINT default 0,
 captcha_recap SMALLINT default 0,
+count_responses SMALLINT default 0,
 PRIMARY KEY (id_form)
 );
 

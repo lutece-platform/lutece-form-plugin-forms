@@ -108,6 +108,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private boolean _bCaptchaStepInitial;
     private boolean _bCaptchaStepFinal;
     private boolean _bCaptchaRecap;
+    
+    private boolean _bCountResponses;
 
     /**
      * Returns the Id
@@ -547,6 +549,22 @@ public class Form implements AdminWorkgroupResource, RBACResource
     public void setCaptchaRecap( boolean bCaptchaRecap )
     {
         _bCaptchaRecap = bCaptchaRecap;
+    }
+
+    /**
+     * @return the bCountResponse
+     */
+    public boolean isCountResponses( )
+    {
+        return _bCountResponses;
+    }
+
+    /**
+     * @param bCountResponse the bCountResponse to set
+     */
+    public void setCountResponses( boolean bCountResponse )
+    {
+        _bCountResponses = bCountResponse;
     }
 
 }
