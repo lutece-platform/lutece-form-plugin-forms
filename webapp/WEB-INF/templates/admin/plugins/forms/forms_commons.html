@@ -464,6 +464,13 @@ $( function() {
 						</@formGroup>
 					</@columns>
 				</@row>
+				<@row>
+					<@columns xs=12 sm=6>
+						<@formGroup labelKey='#i18n{forms.create_form.labelCountResponses}' helpKey='#i18n{forms.create_form.labelCountResponses.help}' hideLabel=['all'] rows=2>
+							<@checkBox labelFor='countResponses' labelKey='#i18n{forms.create_form.labelCountResponses}' name='countResponses' value='1' checked=(form?has_content && form.countResponses) />
+						</@formGroup>
+					</@columns>
+				</@row>
 			</@fieldSet>   
 		</@columns>
 		<@columns md=5>  
