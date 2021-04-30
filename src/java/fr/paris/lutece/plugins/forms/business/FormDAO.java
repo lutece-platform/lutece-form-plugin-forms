@@ -63,8 +63,7 @@ public final class FormDAO implements IFormDAO
     @Override
     public void insert( Form form, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setString( nIndex++, form.getTitle( ) );
@@ -91,11 +90,6 @@ public final class FormDAO implements IFormDAO
                 form.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.close( );
-
-        }
     }
 
     /**
@@ -104,18 +98,17 @@ public final class FormDAO implements IFormDAO
     @Override
     public Form load( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeQuery( );
         Form form = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-            form = dataToObject( daoUtil );
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                form = dataToObject( daoUtil );
+            }
         }
-
-        daoUtil.close( );
-
         return form;
     }
 
@@ -125,11 +118,11 @@ public final class FormDAO implements IFormDAO
     @Override
     public void delete( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
-
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -138,32 +131,33 @@ public final class FormDAO implements IFormDAO
     @Override
     public void store( Form form, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        int nIndex = 1;
-
-        daoUtil.setInt( nIndex++, form.getId( ) );
-        daoUtil.setString( nIndex++, form.getTitle( ) );
-        daoUtil.setString( nIndex++, form.getDescription( ) );
-        Timestamp tsUpdateDate = new Timestamp( Calendar.getInstance( ).getTimeInMillis( ) );
-        daoUtil.setTimestamp( nIndex++, tsUpdateDate );
-        daoUtil.setTimestamp( nIndex++, form.getAvailabilityStartDate( ) );
-        daoUtil.setTimestamp( nIndex++, form.getAvailabilityEndDate( ) );
-        daoUtil.setString( nIndex++, form.getWorkgroup( ) );
-        daoUtil.setInt( nIndex++, form.getIdWorkflow( ) );
-        daoUtil.setBoolean( nIndex++, form.isAuthentificationNeeded( ) );
-        daoUtil.setBoolean( nIndex++, form.isOneResponseByUser( ) );
-        daoUtil.setString( nIndex++, form.getBreadcrumbName( ) );
-        daoUtil.setBoolean( nIndex++, form.isDisplaySummary( ) );
-        daoUtil.setString( nIndex++, form.getReturnUrl( ) );
-        daoUtil.setInt( nIndex++, form.getMaxNumberResponse( ) );
-        daoUtil.setBoolean( nIndex++, form.isCaptchaStepInitial( ) );
-        daoUtil.setBoolean( nIndex++, form.isCaptchaStepFinal( ) );
-        daoUtil.setBoolean( nIndex++, form.isCaptchaRecap( ) );
-        
-        daoUtil.setInt( nIndex, form.getId( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
+        {
+            int nIndex = 1;
+    
+            daoUtil.setInt( nIndex++, form.getId( ) );
+            daoUtil.setString( nIndex++, form.getTitle( ) );
+            daoUtil.setString( nIndex++, form.getDescription( ) );
+            Timestamp tsUpdateDate = new Timestamp( Calendar.getInstance( ).getTimeInMillis( ) );
+            daoUtil.setTimestamp( nIndex++, tsUpdateDate );
+            daoUtil.setTimestamp( nIndex++, form.getAvailabilityStartDate( ) );
+            daoUtil.setTimestamp( nIndex++, form.getAvailabilityEndDate( ) );
+            daoUtil.setString( nIndex++, form.getWorkgroup( ) );
+            daoUtil.setInt( nIndex++, form.getIdWorkflow( ) );
+            daoUtil.setBoolean( nIndex++, form.isAuthentificationNeeded( ) );
+            daoUtil.setBoolean( nIndex++, form.isOneResponseByUser( ) );
+            daoUtil.setString( nIndex++, form.getBreadcrumbName( ) );
+            daoUtil.setBoolean( nIndex++, form.isDisplaySummary( ) );
+            daoUtil.setString( nIndex++, form.getReturnUrl( ) );
+            daoUtil.setInt( nIndex++, form.getMaxNumberResponse( ) );
+            daoUtil.setBoolean( nIndex++, form.isCaptchaStepInitial( ) );
+            daoUtil.setBoolean( nIndex++, form.isCaptchaStepFinal( ) );
+            daoUtil.setBoolean( nIndex++, form.isCaptchaRecap( ) );
+            
+            daoUtil.setInt( nIndex, form.getId( ) );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -173,16 +167,14 @@ public final class FormDAO implements IFormDAO
     public List<Form> selectFormsList( Plugin plugin )
     {
         List<Form> formList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-            formList.add( dataToObject( daoUtil ) );
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
+            {
+                formList.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
-
         return formList;
     }
 
@@ -193,15 +185,14 @@ public final class FormDAO implements IFormDAO
     public ReferenceList selectFormsReferenceList( Plugin plugin )
     {
         ReferenceList formList = new ReferenceList( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-            formList.addItem( daoUtil.getInt( "id_form" ), daoUtil.getString( "title" ) );
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
+            {
+                formList.addItem( daoUtil.getInt( "id_form" ), daoUtil.getString( "title" ) );
+            }
         }
-
-        daoUtil.close( );
         return formList;
     }
 
@@ -211,18 +202,16 @@ public final class FormDAO implements IFormDAO
     @Override
     public int countNumberOfResponseForms( int nIdForm )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_NUMBER_OF_RESPONSE );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeQuery( );
         int nCount = 0;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_NUMBER_OF_RESPONSE ) )
         {
-            nCount = daoUtil.getInt( 1 );
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeQuery( );
+            if ( daoUtil.next( ) )
+            {
+                nCount = daoUtil.getInt( 1 );
+            }
         }
-
-        daoUtil.close( );
-
         return nCount;
     }
 
@@ -232,19 +221,18 @@ public final class FormDAO implements IFormDAO
     @Override
     public int countNumberOfResponseFormByUser( int nIdForm, String strGuid )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_NUMBER_RESPONSE_USER );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.setString( 2, strGuid );
-        daoUtil.executeQuery( );
         int nCount = 0;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_COUNT_NUMBER_RESPONSE_USER ) )
         {
-            nCount = daoUtil.getInt( 1 );
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.setString( 2, strGuid );
+            daoUtil.executeQuery( );
+            
+            if ( daoUtil.next( ) )
+            {
+                nCount = daoUtil.getInt( 1 );
+            }
         }
-
-        daoUtil.close( );
-
         return nCount;
     }
 

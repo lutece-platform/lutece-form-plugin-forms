@@ -140,8 +140,6 @@ public class FormStepJspBean extends AbstractJspBean
     private Step _step;
 
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
-    private String _strCurrentPageIndex;
-    private int _nItemsPerPage;
 
     /**
      * Build the Manage View

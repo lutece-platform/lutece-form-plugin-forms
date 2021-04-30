@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -94,7 +95,7 @@ public class FormPanelConfigIdService extends ResourceIdService
         {
             _listFormPanelConfiguration = SpringContextService.getBeansOfType( IFormPanelConfiguration.class );
         }
-        return _listFormPanelConfiguration;
+        return new ArrayList<>( _listFormPanelConfiguration );
     }
 
     @Override
