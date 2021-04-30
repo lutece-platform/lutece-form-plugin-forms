@@ -255,18 +255,19 @@ public class StepDisplayTree
         _model.put( FormsConstants.MARK_STEP, _step );
         _model.put( FormsConstants.MARK_USER, user );
         _model.put( MARK_STEP_CONTENT, strBuilder.toString( ) );
-        
+
         if ( displayType == DisplayType.EDITION_FRONTOFFICE )
         {
-            boolean displayCaptcha = _captchaSecurityService.isAvailable( ) && ( ( _step.isInitial( ) && _form.isCaptchaStepInitial( ) ) || ( _step.isFinal( ) && _form.isCaptchaStepFinal( ) ) ); 
+            boolean displayCaptcha = _captchaSecurityService.isAvailable( )
+                    && ( ( _step.isInitial( ) && _form.isCaptchaStepInitial( ) ) || ( _step.isFinal( ) && _form.isCaptchaStepFinal( ) ) );
             _model.put( MARK_DISPLAY_CAPTCHA, displayCaptcha );
-            
+
             if ( displayCaptcha )
             {
                 _model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
             }
         }
-        
+
         String strTemplate = findTemplateFor( displayType );
 
         return AppTemplateService.getTemplate( strTemplate, locale, _model ).getHtml( );

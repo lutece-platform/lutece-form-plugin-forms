@@ -160,7 +160,7 @@ public class FormXPage extends MVCApplication
     private static final String MARK_FORM_LIST = "form_list";
     private static final String MARK_DISPLAY_CAPTCHA = "display_captcha";
     private static final String MARK_CAPTCHA = "captcha";
-    
+
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
@@ -507,19 +507,19 @@ public class FormXPage extends MVCApplication
         {
             return redirectView( request, VIEW_STEP );
         }
-        
+
         return getFormResponseSummaryPage( request, form );
     }
-    
+
     private XPage getFormResponseSummaryPage( HttpServletRequest request, Form form )
     {
         Map<String, Object> model = buildModelForSummary( request );
         model.put( FormsConstants.MARK_ID_FORM, form.getId( ) );
         model.put( FormsConstants.MARK_FORM, form );
-        
-        boolean displayCaptcha = _captchaSecurityService.isAvailable( ) && form.isCaptchaRecap( ); 
+
+        boolean displayCaptcha = _captchaSecurityService.isAvailable( ) && form.isCaptchaRecap( );
         model.put( MARK_DISPLAY_CAPTCHA, displayCaptcha );
-        
+
         if ( displayCaptcha )
         {
             model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
@@ -618,7 +618,7 @@ public class FormXPage extends MVCApplication
 
         return doSaveResponse( request, form );
     }
-    
+
     /**
      * 
      * @param request
@@ -657,7 +657,7 @@ public class FormXPage extends MVCApplication
 
         return doSaveResponse( request, form );
     }
-    
+
     private XPage doSaveResponse( HttpServletRequest request, Form form ) throws SiteMessageException
     {
         _currentStep = _formResponseManager.getCurrentStep( );
@@ -701,7 +701,7 @@ public class FormXPage extends MVCApplication
         xPage.setPathLabel( form.getTitle( ) );
         return xPage;
     }
-    
+
     /**
      * Finds the form from the specified request
      * 
@@ -867,7 +867,7 @@ public class FormXPage extends MVCApplication
                 return redirectView( request, VIEW_STEP );
             }
             fillResponseManagerWithResponses( request, true );
-            
+
             boolean needValidation = _currentStep.isInitial( ) && form.isCaptchaStepInitial( );
             if ( isCaptchaKO( request, needValidation ) )
             {
@@ -893,7 +893,7 @@ public class FormXPage extends MVCApplication
         }
         return redirectView( request, VIEW_STEP );
     }
-    
+
     private boolean isCaptchaKO( HttpServletRequest request, boolean needValidation )
     {
         if ( !needValidation )

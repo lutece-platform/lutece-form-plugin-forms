@@ -83,7 +83,7 @@ public final class FormDAO implements IFormDAO
             daoUtil.setBoolean( nIndex++, form.isCaptchaStepInitial( ) );
             daoUtil.setBoolean( nIndex++, form.isCaptchaStepFinal( ) );
             daoUtil.setBoolean( nIndex++, form.isCaptchaRecap( ) );
-            
+
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
             {
@@ -103,7 +103,7 @@ public final class FormDAO implements IFormDAO
         {
             daoUtil.setInt( 1, nKey );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 form = dataToObject( daoUtil );
@@ -134,7 +134,7 @@ public final class FormDAO implements IFormDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
         {
             int nIndex = 1;
-    
+
             daoUtil.setInt( nIndex++, form.getId( ) );
             daoUtil.setString( nIndex++, form.getTitle( ) );
             daoUtil.setString( nIndex++, form.getDescription( ) );
@@ -153,9 +153,9 @@ public final class FormDAO implements IFormDAO
             daoUtil.setBoolean( nIndex++, form.isCaptchaStepInitial( ) );
             daoUtil.setBoolean( nIndex++, form.isCaptchaStepFinal( ) );
             daoUtil.setBoolean( nIndex++, form.isCaptchaRecap( ) );
-            
+
             daoUtil.setInt( nIndex, form.getId( ) );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -227,7 +227,7 @@ public final class FormDAO implements IFormDAO
             daoUtil.setInt( 1, nIdForm );
             daoUtil.setString( 2, strGuid );
             daoUtil.executeQuery( );
-            
+
             if ( daoUtil.next( ) )
             {
                 nCount = daoUtil.getInt( 1 );
@@ -265,7 +265,7 @@ public final class FormDAO implements IFormDAO
         form.setCaptchaStepInitial( daoUtil.getBoolean( "captcha_step_initial" ) );
         form.setCaptchaStepFinal( daoUtil.getBoolean( "captcha_step_final" ) );
         form.setCaptchaRecap( daoUtil.getBoolean( "captcha_recap" ) );
-        
+
         return form;
     }
 
