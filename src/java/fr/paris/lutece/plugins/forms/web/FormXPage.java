@@ -133,6 +133,7 @@ public class FormXPage extends MVCApplication
 
     // Actions
     private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
+    private static final String ACTION_SAVE_FORM_RESPONSE_SUMMARY = "doSaveResponseSummary";
     private static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
     private static final String ACTION_SAVE_STEP = "doSaveStep";
     private static final String ACTION_UPLOAD = "doSynchronousUploadDocument";
@@ -160,9 +161,6 @@ public class FormXPage extends MVCApplication
     private static final String MARK_DISPLAY_CAPTCHA = "display_captcha";
     private static final String MARK_CAPTCHA = "captcha";
     
-    // Parameters
-    private static final String PARAMETER_VALIDATE_CAPTCHA = "validate_captcha";
-
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
@@ -487,17 +485,19 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_FORM_RESPONSE_SUMMARY )
     public XPage doFormResponseSummary( HttpServletRequest request ) throws SiteMessageException
     {
+        Form form = null;
         try
         {
             boolean bSessionLost = isSessionLost( );
-            findFormFrom( request );
+            form = findFormFrom( request );
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
             }
             fillResponseManagerWithResponses( request, true );
-            if ( isCaptchaKO( request ) )
+            boolean needValidation = form.isCaptchaStepFinal( );
+            if ( isCaptchaKO( request, needValidation ) )
             {
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
@@ -508,15 +508,13 @@ public class FormXPage extends MVCApplication
             return redirectView( request, VIEW_STEP );
         }
         
-        return getFormResponseSummaryPage( request );
+        return getFormResponseSummaryPage( request, form );
     }
     
-    private XPage getFormResponseSummaryPage( HttpServletRequest request )
+    private XPage getFormResponseSummaryPage( HttpServletRequest request, Form form )
     {
-        String idForm = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
-        Form form = FormHome.findByPrimaryKey( Integer.parseInt( idForm ) );
         Map<String, Object> model = buildModelForSummary( request );
-        model.put( FormsConstants.MARK_ID_FORM, idForm );
+        model.put( FormsConstants.MARK_ID_FORM, form.getId( ) );
         model.put( FormsConstants.MARK_FORM, form );
         
         boolean displayCaptcha = _captchaSecurityService.isAvailable( ) && form.isCaptchaRecap( ); 
@@ -596,7 +594,6 @@ public class FormXPage extends MVCApplication
     public synchronized XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         Form form = null;
-
         try
         {
             boolean bSessionLost = isSessionLost( );
@@ -606,21 +603,12 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
             }
-            if ( !form.isDisplaySummary( ) )
-            {
-                fillResponseManagerWithResponses( request, true );
-            }
-            if ( isCaptchaKO( request ) )
+            fillResponseManagerWithResponses( request, true );
+            boolean needValidation = form.isCaptchaStepFinal( );
+            if ( isCaptchaKO( request, needValidation ) )
             {
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
-                if ( !form.isDisplaySummary( ) )
-                {
-                    return redirectView( request, VIEW_STEP );
-                }
-                else
-                {
-                    return getFormResponseSummaryPage( request );
-                }
+                return redirectView( request, VIEW_STEP );
             }
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -628,6 +616,50 @@ public class FormXPage extends MVCApplication
             return redirectView( request, VIEW_STEP );
         }
 
+        return doSaveResponse( request, form );
+    }
+    
+    /**
+     * 
+     * @param request
+     *            The Http request
+     * @return the XPage
+     * 
+     * @throws SiteMessageException
+     *             Exception
+     * @throws UserNotSignedException
+     *             Exception
+     */
+    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY )
+    public synchronized XPage doSaveFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
+        Form form = null;
+        try
+        {
+            boolean bSessionLost = isSessionLost( );
+            form = findFormFrom( request );
+            if ( bSessionLost )
+            {
+                addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
+                return redirectView( request, VIEW_STEP );
+            }
+            boolean needValidation = form.isCaptchaRecap( );
+            if ( isCaptchaKO( request, needValidation ) )
+            {
+                addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
+                return getFormResponseSummaryPage( request, form );
+            }
+        }
+        catch( FormNotFoundException exception )
+        {
+            return redirectView( request, VIEW_STEP );
+        }
+
+        return doSaveResponse( request, form );
+    }
+    
+    private XPage doSaveResponse( HttpServletRequest request, Form form ) throws SiteMessageException
+    {
         _currentStep = _formResponseManager.getCurrentStep( );
         if ( !_formResponseManager.validateFormResponses( ) )
         {
@@ -669,7 +701,7 @@ public class FormXPage extends MVCApplication
         xPage.setPathLabel( form.getTitle( ) );
         return xPage;
     }
-
+    
     /**
      * Finds the form from the specified request
      * 
@@ -828,14 +860,16 @@ public class FormXPage extends MVCApplication
         try
         {
             boolean bSessionLost = isSessionLost( );
-            findFormFrom( request );
+            Form form = findFormFrom( request );
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
             }
             fillResponseManagerWithResponses( request, true );
-            if ( isCaptchaKO( request ) )
+            
+            boolean needValidation = _currentStep.isInitial( ) && form.isCaptchaStepInitial( );
+            if ( isCaptchaKO( request, needValidation ) )
             {
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
                 return redirectView( request, VIEW_STEP );
@@ -860,9 +894,9 @@ public class FormXPage extends MVCApplication
         return redirectView( request, VIEW_STEP );
     }
     
-    private boolean isCaptchaKO( HttpServletRequest request )
+    private boolean isCaptchaKO( HttpServletRequest request, boolean needValidation )
     {
-        if ( request.getParameter( PARAMETER_VALIDATE_CAPTCHA ) == null )
+        if ( !needValidation )
         {
             return false;
         }
