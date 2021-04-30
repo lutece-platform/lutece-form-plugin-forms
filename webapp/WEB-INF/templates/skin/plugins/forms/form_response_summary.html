@@ -8,12 +8,11 @@
       </#list>
     </#if>
     <#if display_captcha>
-    	<@input type='hidden' name='validate_captcha' value='1' />
   		${captcha}
   	</#if>
   </div>
   <div class="panel-footer">
-    <button type="submit" class="btn btn-primary btn-sm"  name="action_doSaveResponse" >
+    <button type="submit" class="btn btn-primary btn-sm"  name="action_doSaveResponseSummary" >
       <i class="glyphicon glyphicon-ok"></i>&nbsp;#i18n{forms.summary.validate}
     </button>
 	<a class="btn btn-default btn-sm" href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${id_form}" title="#i18n{forms.summary.step.previous}">
