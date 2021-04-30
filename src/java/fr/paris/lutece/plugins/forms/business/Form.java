@@ -104,6 +104,10 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private boolean _bOneResponseByUser;
 
     private int _nCurrentNumberResponse;
+    
+    private boolean _bCaptchaStepInitial;
+    private boolean _bCaptchaStepFinal;
+    private boolean _bCaptchaRecap;
 
     /**
      * Returns the Id
@@ -492,6 +496,54 @@ public class Form implements AdminWorkgroupResource, RBACResource
     public void setCurrentNumberResponse( int nCurrentNumberResponse )
     {
         _nCurrentNumberResponse = nCurrentNumberResponse;
+    }
+
+    /**
+     * @return the bCaptchaStepInitial
+     */
+    public boolean isCaptchaStepInitial( )
+    {
+        return _bCaptchaStepInitial;
+    }
+
+    /**
+     * @param bCaptchaStepInitial the bCaptchaStepInitial to set
+     */
+    public void setCaptchaStepInitial( boolean bCaptchaStepInitial )
+    {
+        _bCaptchaStepInitial = bCaptchaStepInitial;
+    }
+
+    /**
+     * @return the bCaptchaStepFinal
+     */
+    public boolean isCaptchaStepFinal( )
+    {
+        return _bCaptchaStepFinal;
+    }
+
+    /**
+     * @param bCaptchaStepFinal the bCaptchaStepFinel to set
+     */
+    public void setCaptchaStepFinal( boolean bCaptchaStepFinal )
+    {
+        _bCaptchaStepFinal = bCaptchaStepFinal;
+    }
+
+    /**
+     * @return the bCaptchaRecap
+     */
+    public boolean isCaptchaRecap( )
+    {
+        return _bCaptchaRecap;
+    }
+
+    /**
+     * @param bCaptchaRecap the bCaptchaRecap to set
+     */
+    public void setCaptchaRecap( boolean bCaptchaRecap )
+    {
+        _bCaptchaRecap = bCaptchaRecap;
     }
 
 }

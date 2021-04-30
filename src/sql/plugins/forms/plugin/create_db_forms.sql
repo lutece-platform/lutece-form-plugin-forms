@@ -20,6 +20,9 @@ one_response_by_user SMALLINT default 0,
 breadcrumb_name varchar(255) default '' NOT NULL,
 display_summary SMALLINT default 0 NOT NULL,
 return_url varchar(255) default '',
+captcha_step_initial SMALLINT default 0,
+captcha_step_final SMALLINT default 0,
+captcha_recap SMALLINT default 0,
 PRIMARY KEY (id_form)
 );
 
