@@ -104,7 +104,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private boolean _bOneResponseByUser;
 
     private int _nCurrentNumberResponse;
-    
+
     private boolean _bCaptchaStepInitial;
     private boolean _bCaptchaStepFinal;
     private boolean _bCaptchaRecap;
@@ -507,7 +507,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     }
 
     /**
-     * @param bCaptchaStepInitial the bCaptchaStepInitial to set
+     * @param bCaptchaStepInitial
+     *            the bCaptchaStepInitial to set
      */
     public void setCaptchaStepInitial( boolean bCaptchaStepInitial )
     {
@@ -523,7 +524,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     }
 
     /**
-     * @param bCaptchaStepFinal the bCaptchaStepFinel to set
+     * @param bCaptchaStepFinal
+     *            the bCaptchaStepFinel to set
      */
     public void setCaptchaStepFinal( boolean bCaptchaStepFinal )
     {
@@ -539,7 +541,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     }
 
     /**
-     * @param bCaptchaRecap the bCaptchaRecap to set
+     * @param bCaptchaRecap
+     *            the bCaptchaRecap to set
      */
     public void setCaptchaRecap( boolean bCaptchaRecap )
     {
