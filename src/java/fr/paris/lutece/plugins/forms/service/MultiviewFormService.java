@@ -304,41 +304,39 @@ public final class MultiviewFormService
 
         for ( Question question : listFiltrableQuestions )
         {
-            question = QuestionHome.findByPrimaryKey( question.getId( ) );
+            Question currentQuestion = QuestionHome.findByPrimaryKey( question.getId( ) );
 
-            if ( mapFilters.keySet( ).contains( question.getCode( ) ) )
+            if ( mapFilters.keySet( ).contains( currentQuestion.getCode( ) ) )
             {
                 continue;
             }
 
-            IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
+            IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( currentQuestion.getEntry( ).getEntryType( ) );
 
             if ( displayService instanceof EntryTypeDateDisplayService )
             {
                 FormFilter formFilter = new FormFilter( );
-                IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++, question.getTitle( ),
-                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0"
+                IFormFilterConfiguration formFilterConfiguration = new FormFilterDateConfiguration( nPosition++, currentQuestion.getTitle( ),
+                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + currentQuestion.getCode( ) + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0"
                                 + FormResponseSearchItem.FIELD_DATE_SUFFIX );
 
                 formFilter.setFormFilterConfiguration( formFilterConfiguration );
-                mapFilters.put( question.getCode( ), formFilter );
+                mapFilters.put( currentQuestion.getCode( ), formFilter );
             }
             if ( displayService instanceof EntryTypeDefaultDisplayService )
             {
                 FormFilter formFilter = new FormFilter( );
 
-                List<IFormColumn> listFormColumnsEntry = listFormColumns.stream( ).filter( c -> c instanceof FormColumnEntry ).collect( Collectors.toList( ) );
+                List<IFormColumn> listFormColumnsEntry = listFormColumns.stream( ).filter( c -> c instanceof FormColumnEntry )
+                        .filter( c -> c.getFormColumnTitle( locale ).equals( currentQuestion.getColumnTitle( ) ) ).collect( Collectors.toList( ) );
 
                 for ( IFormColumn column : listFormColumnsEntry )
                 {
-                    if ( column.getFormColumnTitle( locale ).equals( question.getColumnTitle( ) ) )
-                    {
-                        IFormFilterConfiguration formFilterConfiguration = new FormFilterEntryConfiguration( nPosition++, question.getTitle( ),
-                                FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + question.getCode( ), column );
+                    IFormFilterConfiguration formFilterConfiguration = new FormFilterEntryConfiguration( nPosition++, currentQuestion.getTitle( ),
+                            FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + currentQuestion.getCode( ), column );
 
-                        formFilter.setFormFilterConfiguration( formFilterConfiguration );
-                        mapFilters.put( question.getCode( ), formFilter );
-                    }
+                    formFilter.setFormFilterConfiguration( formFilterConfiguration );
+                    mapFilters.put( currentQuestion.getCode( ), formFilter );
                 }
 
             }
