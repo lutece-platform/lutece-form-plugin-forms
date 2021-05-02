@@ -124,6 +124,7 @@
 	<bean id="forms.entryTypeArray" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeArray" />
     <bean id="forms.entryTypeTermsOfService" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService" />
     <bean id="forms.entryTypeAutomaticFileReading" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading" />
+    <bean id="forms.entryTypeTelephoneNumber" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTelephoneNumber" />
 
 	<!-- DisplayService -->
 	<bean id="forms.entryTypeCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
@@ -173,6 +174,9 @@
     </bean>
     <bean id="forms.entryTypeAutomaticFileReadingDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileReadingDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
+	</bean>
+	<bean id="forms.entryTypeTelephoneNumberDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeTelephoneNumber" />
 	</bean>
 	
 	<!-- DataService -->
@@ -226,6 +230,9 @@
     </bean>
     <bean id="forms.entryTypeAutomaticFileReadingDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
+	</bean>
+	<bean id="forms.entryTypeTelephoneNumberDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeTelephoneNumber" />
 	</bean>
 		
 	<bean id="forms.asynchronousUploadHandler" class="fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler" />

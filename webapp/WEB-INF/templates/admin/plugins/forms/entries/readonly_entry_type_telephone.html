@@ -1,0 +1,7 @@
+<@formGroup labelKey='${entry.title!\'\'}'>
+    <#if list_responses?has_content>
+        <#list list_responses as response>
+            <@staticText>${response.toStringValueResponse!''}</@staticText>
+        </#list>
+    </#if>
+</@formGroup>

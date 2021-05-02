@@ -1,0 +1,91 @@
+<#include "all_entry_commons.html" />
+
+<@breadforms title=entry.entryType.title />
+<@row>
+	<@columns>
+		<@box>
+			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
+			<@boxBody>
+				<@tform method="post" name="manage_entries" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
+					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
+						<!--  <@input type='hidden' name='width' id='width' value='0' /> -->
+						<#if entry.fieldDepend?exists>
+							<@input type='hidden' name='id_field' value='${entry.fieldDepend.idField}' />
+						</#if>
+						<@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
+						<@input type='hidden' name='id_step' value='${step.id!"0"}' />
+						<@input type='hidden' name='id_question' value='${question.id}' />
+
+						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
+						</@formGroup>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}'  maxlength=100 />
+						</@formGroup>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
+							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
+						</@formGroup>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
+							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
+						</@formGroup>
+						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.createEntry.labelAutocomplete}' helpKey='#i18n{forms.createEntry.labelHelpMessageAutocomplete}'>
+							<#assign field = getFieldByCode( entry, "autocomplete" ) >
+							<@input type='text' name='autocomplete' id='autocomplete' value="${field.value?if_exists}" params=' list="autocompleteList"' />
+							<datalist id="autocompleteList"><option value="tel"><option value="tel-national"></datalist>
+						</@formGroup>
+						<@formGroup labelFor='defaultRegion' labelKey='#i18n{forms.createEntry.labelDefaultRegion}' helpKey='#i18n{forms.createEntry.labelHelpMessageDefaultRegion}'>
+							<#assign field = getFieldByCode( entry, "defaultRegion" ) >
+							<@select name="defaultRegion" id="defaultRegion">
+							<#list entryTypeService.supportedRegionCodes as region>
+								<#if region == field.value>
+									<#assign selectedRegion="selected">
+								<#else>
+									<#assign selectedRegion="">
+								</#if>
+								<option ${selectedRegion!}>${region?html}</option>
+							</#list>
+							</@select>
+						</@formGroup>
+						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
+							<@checkBox name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
+						</@formGroup>
+						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}'>
+							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
+						</@formGroup>
+						<@formGroup>
+							<@checkBox labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
+						</@formGroup>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+							<@checkBox labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+							<@checkBox labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
+							<@checkBox labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' name='exportable' id='exportable' value='1' checked=entry.exportable />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportablePdfComment}'>
+							<@checkBox labelFor='exportable_pdf' labelKey='#i18n{forms.createEntry.labelResponsesExportablePdf}' name='exportable_pdf' id='exportable_pdf' value='1' checked=entry.exportablePdf />
+						</@formGroup>
+						${question_modify_template!}
+						<@formGroup>
+							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
+							<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' hideTitle=['xs'] />
+							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' />
+						</@formGroup>
+					</@fieldSet>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
