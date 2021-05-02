@@ -126,6 +126,7 @@
     <bean id="forms.entryTypeTermsOfService" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService" />
     <bean id="forms.entryTypeAutomaticFileReading" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading" />
     <bean id="forms.entryTypeCamera" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCamera" />
+    <bean id="forms.entryTypeTelephoneNumber" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTelephoneNumber" />
 
 	<!-- DisplayService -->
 	<bean id="forms.entryTypeCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
@@ -179,6 +180,9 @@
     <bean id="forms.entryTypeCameraDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeCamera" />
     </bean>
+	<bean id="forms.entryTypeTelephoneNumberDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeTelephoneNumber" />
+	</bean>
 	
 	<!-- DataService -->
 	<bean id="forms.entryTypeCheckBoxDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
@@ -231,6 +235,9 @@
     </bean>
     <bean id="forms.entryTypeAutomaticFileReadingDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
+	</bean>
+	<bean id="forms.entryTypeTelephoneNumberDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeTelephoneNumber" />
 	</bean>
     <bean id="forms.entryTypeCameraDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeCamera" />
