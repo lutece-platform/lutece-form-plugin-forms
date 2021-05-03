@@ -57,6 +57,7 @@ body, .wrapper{ height: 100%; overflow: visible; }
 #form-response-details .form-group label + div{	min-height: 34px; padding-top: 7px;	padding-bottom: 7px; margin-bottom: 0; }
 #form-response-details .form-response-details-label{  margin-bottom: 0;	}
 #form-response-details .button-workflow{ background-color: #fff; display: inline-block; padding:0 5px 3px 5px; border-radius: 50% }
+#form-response-details .form-group-value-content .form-control-static{ padding-top: 0 }
 
 /* Multiview - Main list  */
 #multi-form-list th{ text-transform: lowercase }
