@@ -34,7 +34,19 @@
 package fr.paris.lutece.plugins.forms.export;
 
 import java.util.List;
+import java.util.Locale;
 
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
+import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUserAttribute;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeText;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
 
@@ -43,6 +55,10 @@ import fr.paris.lutece.util.ReferenceList;
  */
 public final class ExportServiceManager
 {
+    private static final String FORM_NAME_KEY = "form_name";
+    private static final String FORM_NAME_TITLE_KEY = "forms.modify_form.export.form.title.key";
+    private static final String ID_TECH_KEY = "id_tech";
+    private static final String ID_TECH_TITLE_KEY = "forms.modify_form.export.id.title.key";
     private final List<IFormatExport> _listFormatExport;
 
     /**
@@ -107,5 +123,51 @@ public final class ExportServiceManager
     private static class EntryServiceManagerHolder
     {
         private static ExportServiceManager _instance = new ExportServiceManager( );
+    }
+    
+    public ReferenceList createReferenceListExportConfigOption( Form form, Locale locale )
+    {
+        ReferenceList referenceList = new ReferenceList( );
+        referenceList.addItem( FORM_NAME_KEY, I18nService.getLocalizedString( FORM_NAME_TITLE_KEY, locale ) );
+        referenceList.addItem( ID_TECH_KEY, I18nService.getLocalizedString( ID_TECH_TITLE_KEY, locale ) );
+        
+        List<Question> questionList = QuestionHome.getListQuestionByIdForm( form.getId( ) );
+        
+        for ( Question question : questionList )
+        {
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) );
+            
+            if ( entryTypeService instanceof EntryTypeText || entryTypeService instanceof EntryTypeNumbering || entryTypeService instanceof EntryTypeMyLuteceUserAttribute )
+            {
+                referenceList.addItem( question.getId( ), question.getTitle( ) );
+            }
+        }
+        
+        return referenceList;
+    }
+    
+    public List<FormExportConfig> createReferenceListExportConfig( Form form, Locale locale )
+    {
+        List<FormExportConfig> configList = FormExportConfigHome.findByForm( form.getId( ) );
+        for ( FormExportConfig config : configList )
+        {
+            if ( config.getField( ).equals( FORM_NAME_KEY ) )
+            {
+                config.setFieldTitle( I18nService.getLocalizedString( FORM_NAME_TITLE_KEY, locale ) );
+            }
+            else if ( config.getField( ).equals( ID_TECH_KEY ) )
+            {
+                config.setFieldTitle( I18nService.getLocalizedString( ID_TECH_TITLE_KEY, locale ) );
+            }
+            else
+            {
+                Question question = QuestionHome.findByPrimaryKey( Integer.parseInt( config.getField( ) ) );
+                if ( question != null )
+                {
+                    config.setFieldTitle( question.getTitle( ) );
+                }
+            }
+        }
+        return configList;
     }
 }

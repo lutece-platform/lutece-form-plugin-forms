@@ -5,6 +5,7 @@ public class FormExportConfig
     private int _nId;
     private int _nIdForm;
     private String _strField;
+    private String _strFieldTitle;
     private int _nOrder;
     
     /**
@@ -63,4 +64,19 @@ public class FormExportConfig
     {
         _nOrder = nOrder;
     }
+    /**
+     * @return the strFieldTitle
+     */
+    public String getFieldTitle( )
+    {
+        return _strFieldTitle;
+    }
+    /**
+     * @param strFieldTitle the strFieldTitle to set
+     */
+    public void setFieldTitle( String strFieldTitle )
+    {
+        _strFieldTitle = strFieldTitle;
+    }
+    
 }

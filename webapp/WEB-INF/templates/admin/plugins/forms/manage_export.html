@@ -1,0 +1,57 @@
+<#include "/admin/plugins/forms/edit_form_tabs.html" />
+
+<@formBreadCrumb>
+    <li class="active">${form.title!}</li>
+</@formBreadCrumb>
+<@row>
+	<@columns>
+		<@box color='primary'>
+			<@boxHeader title='${form.title!}' />
+			<@boxBody>
+				<@formTabs tab="export" />
+				<@staticText>#i18n{forms.modify_form.export.config.text1}</@staticText>
+				<@staticText>#i18n{forms.modify_form.export.config.text2}</@staticText>
+				<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageForms.jsp'>
+					<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+					<@row>
+						<@columns xs=12 sm=6> 
+							<@formGroup labelKey='#i18n{forms.modify_form.labelExportOption}' mandatory=true rows=2>
+								<@select name='export_config' items=export_list default_value='' />
+								<@button type='submit' name='action_createExportConfig' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['all'] />
+							</@formGroup>
+						</@columns>
+					</@row>
+					<hr />
+					<@row>
+						<@columns xs=12 sm=6>
+							<@table id='export_config'>
+								<@tr>
+									<@th>#i18n{forms.modify_form.labelExportOption}</@th>
+									<@th>#i18n{forms.modify_form.labelOrder}</@th>
+									<@th>#i18n{forms.manageForm.columnActions}</@th>
+								</@tr>
+								<#list export_config_list as config>
+									<@tr>
+										<@td>${config.fieldTitle}</@td>
+										<@td>${config.order}</@td>
+										<@td>
+											<#if export_config_list?size gt 1>
+												<#if config.order gt 1>
+													<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?action=doMoveUpExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveUpExportConfig}' hideTitle=['all'] buttonIcon='chevron-up' size='sm' />
+												</#if>
+												<#if config.order lt export_config_list?size>
+													<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?action=doMoveDownExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveDownExportConfig}' hideTitle=['all'] buttonIcon='chevron-down' size='sm' />
+												</#if>
+											</#if>
+											<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=confirmRemoveExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.removeExportConfig}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
+										</@td>
+									</@tr>
+								</#list>
+							</@table>
+						</@columns>
+					</@row>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>

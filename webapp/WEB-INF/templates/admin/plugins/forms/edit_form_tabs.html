@@ -6,13 +6,9 @@
 			
 			<#if tab='general'><#assign active = true /><#else><#assign active = false /></#if>
 			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelGeneral}' />
-        <!-- 
-            <li <#if tab="publication">class="active"</#if>>
-                <a href="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&id_form=${form.id}" title="#i18n{forms.modify_form.tab.labelPublication}" data-toggle="modal" data-target="#pubModal">
-                    <i class="fa fa-calendar"></i> #i18n{forms.modify_form.tab.labelPublication}
-                </a>
-            </li> 
-        -->
+			
+			<#if tab='export'><#assign active = true /><#else><#assign active = false /></#if>
+			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=manageExport&id_form=${form.id}' tabIcon='file-export' title='#i18n{forms.modify_form.tab.labelExport}' />
 		</@tabList>
 		<#nested>
 	</@tabs>

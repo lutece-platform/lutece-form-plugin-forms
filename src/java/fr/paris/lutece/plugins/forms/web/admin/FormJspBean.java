@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -48,6 +49,9 @@ import fr.paris.lutece.plugins.forms.business.FormActionHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormMessage;
 import fr.paris.lutece.plugins.forms.business.FormMessageHome;
+import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
+import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
+import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -96,9 +100,12 @@ public class FormJspBean extends AbstractJspBean
     private static final String TEMPLATE_MANAGE_FORMS = "/admin/plugins/forms/manage_forms.html";
     private static final String TEMPLATE_CREATE_FORM = "/admin/plugins/forms/create_form.html";
     private static final String TEMPLATE_MODIFY_FORM = "/admin/plugins/forms/modify_form.html";
+    private static final String TEMPLATE_MANAGE_EXPORT = "/admin/plugins/forms/manage_export.html";
     private static final String TEMPLATE_MODIFY_FORM_PUBLICATION = "/admin/plugins/forms/modify_publication.html";
 
     private static final String PARAMETER_PAGE_INDEX = "page_index";
+    private static final String PARAMETER_ID_CONFIG = "id_config";
+    private static final String PARAMETER_EXPORT_CONFIG = "export_config";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_FORM = "forms.modify_form.pageTitle";
@@ -117,6 +124,8 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_WEBAPP_URL = "webapp_url";
     private static final String MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN = "is_active_kibana_forms_plugin";
     private static final String MARK_IS_ACTIVE_CAPTCHA = "is_active_captcha";
+    private static final String MARK_EXPORT_LIST = "export_list";
+    private static final String MARK_EXPORT_CONFIG_LIST = "export_config_list";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -135,18 +144,25 @@ public class FormJspBean extends AbstractJspBean
     private static final String VIEW_MODIFY_FORM = "modifyForm";
     private static final String VIEW_MODIFY_PUBLICATION = "modifyPublication";
     private static final String VIEW_CONFIRM_REMOVE_FORM = "confirmRemoveForm";
+    private static final String VIEW_MANAGE_EXPORT = "manageExport";
+    private static final String VIEW_CONFIG_REMOVE_EXPORT_CONFIG = "confirmRemoveExportConfig";
 
     // Actions
     private static final String ACTION_CREATE_FORM = "createForm";
     private static final String ACTION_MODIFY_FORM = "modifyForm";
     private static final String ACTION_REMOVE_FORM = "removeForm";
     private static final String ACTION_DUPLICATE_FORM = "duplicateForm";
+    private static final String ACTION_CREATE_EXPORT_CONFIG = "createExportConfig";
+    private static final String ACTION_DELETE_EXPORT_CONFIG = "deleteExportConfig";
+    private static final String ACTION_MOVE_UP_EXPORT_CONFIG = "doMoveUpExportConfig";
+    private static final String ACTION_MOVE_DOWN_EXPORT_CONFIG = "doMoveDownExportConfig";
 
     // Infos
     private static final String INFO_FORM_CREATED = "forms.info.form.created";
     private static final String INFO_FORM_UPDATED = "forms.info.form.updated";
     private static final String INFO_FORM_REMOVED = "forms.info.form.removed";
     private static final String INFO_FORM_COPIED = "forms.info.form.copied";
+    private static final String MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG = "forms.modify_form.message.confirmRemoveExportConfig";
 
     // Errors
     private static final String ERROR_FORM_NOT_UPDATED = "forms.error.form.notUpdated";
@@ -455,6 +471,199 @@ public class FormJspBean extends AbstractJspBean
         }
 
         return redirectView( request, VIEW_MANAGE_FORMS );
+    }
+    
+    @View( VIEW_MANAGE_EXPORT )
+    public String getManageExport( HttpServletRequest request ) throws AccessDeniedException
+    {
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+        
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
+
+        Form formToBeModified = FormHome.findByPrimaryKey( nId );
+
+        if ( formToBeModified == null )
+        {
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+        
+        Map<String, Object> model = getModel( );
+        model.put( MARK_FORM, formToBeModified );
+        model.put( MARK_EXPORT_LIST,  ExportServiceManager.getInstance( ).createReferenceListExportConfigOption( formToBeModified, getLocale( ) ) );
+        model.put( MARK_EXPORT_CONFIG_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) ) );
+        
+        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
+    }
+    
+    @Action( ACTION_CREATE_EXPORT_CONFIG )
+    public String doCreateExportConfig( HttpServletRequest request )
+    {
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+        
+        String field = request.getParameter( PARAMETER_EXPORT_CONFIG );
+        
+        Form formToBeModified = FormHome.findByPrimaryKey( nId );
+
+        if ( formToBeModified == null )
+        {
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+        
+        List<FormExportConfig> existingList = ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) );
+
+        FormExportConfig config = new FormExportConfig( );
+        config.setIdForm( nId );
+        config.setField( field );
+        config.setOrder( existingList.size( ) + 1 );
+        
+        FormExportConfigHome.create( config );
+        
+        Map<String, String> mapParameters = new LinkedHashMap<>( );
+        mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nId ) );
+        
+        return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
+    }
+    
+    @View( VIEW_CONFIG_REMOVE_EXPORT_CONFIG )
+    public String getConfirmRemoveExportConfig( HttpServletRequest request )
+    {
+        int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
+        int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            Map<String, String> mapParameters = new LinkedHashMap<>( );
+            mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
+            
+            return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
+        }
+
+        UrlItem url = new UrlItem( getActionUrl( ACTION_DELETE_EXPORT_CONFIG ) );
+        url.addParameter( PARAMETER_ID_CONFIG , idConfig );
+        url.addParameter(  FormsConstants.PARAMETER_ID_FORM , idForm );
+        
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+
+        return redirect( request, strMessageUrl );
+
+    }
+    
+    @Action( ACTION_DELETE_EXPORT_CONFIG )
+    public String doDeleteExportConfig( HttpServletRequest request )
+    {
+        int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
+        int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            Map<String, String> mapParameters = new LinkedHashMap<>( );
+            mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
+            
+            return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
+        }
+        
+        List<FormExportConfig> existingConfigList = FormExportConfigHome.findByForm( idForm );
+        int newOrder = 0;
+        FormExportConfigHome.removeByForm( idForm );
+        for ( FormExportConfig config : existingConfigList )
+        {
+          if ( config.getId( ) != idConfig )
+          {
+              config.setOrder( ++newOrder );
+              FormExportConfigHome.create( config );
+          }
+        }
+        
+        Map<String, String> mapParameters = new LinkedHashMap<>( );
+        mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
+        
+        return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
+    }
+    
+    @Action( ACTION_MOVE_UP_EXPORT_CONFIG )
+    public String doMoveUpExportConfig( HttpServletRequest request )
+    {
+        int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
+        int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            Map<String, String> mapParameters = new LinkedHashMap<>( );
+            mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
+            
+            return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
+        }
+        
+        List<FormExportConfig> existingConfigList = FormExportConfigHome.findByForm( idForm );
+        
+        FormExportConfig configMovedUp = FormExportConfigHome.findByPrimaryKey( idConfig );
+        int orderMovedUp = configMovedUp.getOrder( );
+        
+        for ( FormExportConfig config : existingConfigList )
+        {
+            if ( config.getOrder( ) == orderMovedUp - 1 )
+            {
+                config.setOrder( orderMovedUp );
+                FormExportConfigHome.update( config );
+                break;
+            }
+        }
+        configMovedUp.setOrder( orderMovedUp - 1 );
+        
+        FormExportConfigHome.update( configMovedUp );
+        
+        Map<String, String> mapParameters = new LinkedHashMap<>( );
+        mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
+        
+        return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
+    }
+    
+    @Action( ACTION_MOVE_DOWN_EXPORT_CONFIG )
+    public String doMoveDownExportConfig( HttpServletRequest request )
+    {
+        int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
+        int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            Map<String, String> mapParameters = new LinkedHashMap<>( );
+            mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
+            
+            return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
+        }
+        
+        List<FormExportConfig> existingConfigList = FormExportConfigHome.findByForm( idForm );
+        
+        FormExportConfig configMovedDown = FormExportConfigHome.findByPrimaryKey( idConfig );
+        int orderMovedDown = configMovedDown.getOrder( );
+        
+        for ( FormExportConfig config : existingConfigList )
+        {
+            if ( config.getOrder( ) == orderMovedDown + 1 )
+            {
+                config.setOrder( orderMovedDown );
+                FormExportConfigHome.update( config );
+                break;
+            }
+        }
+        
+        configMovedDown.setOrder( orderMovedDown + 1 );
+        FormExportConfigHome.update( configMovedDown );
+        
+        Map<String, String> mapParameters = new LinkedHashMap<>( );
+        mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
+        
+        return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
     }
 
     /**
