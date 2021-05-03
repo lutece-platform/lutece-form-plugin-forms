@@ -250,3 +250,12 @@ CREATE TABLE forms_indexer_action (
 );
 CREATE INDEX idx_fia_id_form_response on forms_indexer_action  ( id_form_response );
 CREATE INDEX idx_fia_id_task on forms_indexer_action  ( id_task );
+
+DROP TABLE IF EXISTS forms_export_config;
+CREATE TABLE forms_export_config (
+	id int AUTO_INCREMENT,
+	id_form int, 
+	field varchar(255),
+	display_order int,
+	PRIMARY KEY (id)
+);
