@@ -129,7 +129,9 @@ public class PdfFullFileGenerator extends AbstractFileGenerator
         for ( FormResponseItem responseItem : listFormResponseItems )
         {
             FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-            Path pdfFile = directoryFile.resolve( formResponse.getId( ) + ".pdf" );
+            String generatedName = generateFileName( formResponse );
+            
+            Path pdfFile = directoryFile.resolve( generatedName + ".pdf" );
             try ( OutputStream outputStream = Files.newOutputStream( pdfFile ) )
             {
                 export.buildPdfExport( formResponse, outputStream );
@@ -140,7 +142,7 @@ public class PdfFullFileGenerator extends AbstractFileGenerator
             Path [ ] filesToZip = listAttachments.toArray( new Path [ listAttachments.size( ) + 1] );
             filesToZip [listAttachments.size( )] = pdfFile;
 
-            Path zipfile = directoryFile.resolve( formResponse.getId( ) + FileUtil.EXTENSION_ZIP );
+            Path zipfile = directoryFile.resolve( generatedName + FileUtil.EXTENSION_ZIP );
             FileUtil.zipFiles( zipfile, filesToZip );
 
             for ( Path file : filesToZip )

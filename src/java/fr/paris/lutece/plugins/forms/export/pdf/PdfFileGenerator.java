@@ -125,7 +125,7 @@ public class PdfFileGenerator extends AbstractFileGenerator
         for ( FormResponseItem responseItem : listFormResponseItems )
         {
             FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-            try ( OutputStream outputStream = Files.newOutputStream( directoryFile.resolve( formResponse.getId( ) + ".pdf" ) ) )
+            try ( OutputStream outputStream = Files.newOutputStream( directoryFile.resolve( generateFileName( formResponse ) + ".pdf" ) ) )
             {
                 export.buildPdfExport( formResponse, outputStream );
             }

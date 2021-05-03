@@ -33,10 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.export;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
@@ -169,5 +173,38 @@ public final class ExportServiceManager
             }
         }
         return configList;
+    }
+    
+    public List<String> generateNameComponents( Form form, FormResponse response, List<FormExportConfig> configList )
+    {
+        List<String> valueList = new ArrayList<>( );
+        
+        for ( FormExportConfig config : configList )
+        {
+            if ( config.getField( ).equals( FORM_NAME_KEY ) )
+            {
+                valueList.add( form.getTitle( ) );
+            }
+            else if ( config.getField( ).equals( ID_TECH_KEY ) )
+            {
+                valueList.add( String.valueOf( response.getId( ) ) );
+            }
+            else
+            {
+                for ( FormResponseStep step : response.getSteps( ) )
+                {
+                    FormQuestionResponse formQuestionResponse = step.getQuestions( ).stream( ).filter( fqr -> fqr.getQuestion( ).getId( ) == Integer.parseInt( config.getField( ) ) )
+                            .findFirst( ).orElse( null );
+                    if ( formQuestionResponse != null )
+                    {
+                        IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( formQuestionResponse.getQuestion( ).getEntry( ) );
+                        valueList.add( entryTypeService.getResponseValueForExport( formQuestionResponse.getQuestion( ).getEntry( ), null, formQuestionResponse.getEntryResponse( ).get( 0 ), null ) );
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return valueList;
     }
 }

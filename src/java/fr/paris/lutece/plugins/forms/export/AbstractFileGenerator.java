@@ -35,8 +35,16 @@ package fr.paris.lutece.plugins.forms.export;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
+import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -52,6 +60,9 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     protected final FormResponseItemSortConfig _sortConfig;
     protected final String _fileName;
     protected final String _fileDescription;
+    
+    private List<FormExportConfig> _configList = null;
+    private Form _form;
 
     /**
      * Constructor
@@ -73,5 +84,21 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     public String getDescription( )
     {
         return _fileDescription;
+    }
+    
+    protected String generateFileName( FormResponse response )
+    {
+        if ( CollectionUtils.isEmpty( _configList ) )
+        {
+            _configList = FormExportConfigHome.findByForm( response.getFormId( ) );
+            _form = FormHome.findByPrimaryKey( response.getFormId( ) );
+        }
+        
+        List<String> nameValues = ExportServiceManager.getInstance( ).generateNameComponents( _form, response, _configList );
+        if ( CollectionUtils.isEmpty( nameValues ) )
+        {
+            nameValues.add( String.valueOf( response.getId( ) ) );
+        }
+        return nameValues.stream( ).collect( Collectors.joining( "_" ) );
     }
 }
