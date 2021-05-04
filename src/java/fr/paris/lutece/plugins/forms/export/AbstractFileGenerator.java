@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.export;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,7 +74,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     protected AbstractFileGenerator( String fileName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormResponseItemSortConfig sortConfig, String fileDescription )
     {
-        _fileName = fileName;
+        _fileName = fileName + "_" + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( "yyyy-MM-dd-HH-mm-ss" ) );
         _formPanel = formPanel;
         _listFormColumn = new ArrayList<>( listFormColumn );
         _listFormFilter = new ArrayList<>( listFormFilter );
