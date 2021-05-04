@@ -108,7 +108,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private boolean _bCaptchaStepInitial;
     private boolean _bCaptchaStepFinal;
     private boolean _bCaptchaRecap;
-    
+
     private boolean _bCountResponses;
 
     /**
@@ -560,7 +560,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     }
 
     /**
-     * @param bCountResponse the bCountResponse to set
+     * @param bCountResponse
+     *            the bCountResponse to set
      */
     public void setCountResponses( boolean bCountResponse )
     {
