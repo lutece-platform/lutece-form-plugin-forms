@@ -62,7 +62,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     protected final FormResponseItemSortConfig _sortConfig;
     protected final String _fileName;
     protected final String _fileDescription;
-    
+
     private List<FormExportConfig> _configList = null;
     private Form _form;
 
@@ -87,7 +87,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     {
         return _fileDescription;
     }
-    
+
     protected String generateFileName( FormResponse response )
     {
         if ( CollectionUtils.isEmpty( _configList ) )
@@ -95,7 +95,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
             _configList = FormExportConfigHome.findByForm( response.getFormId( ) );
             _form = FormHome.findByPrimaryKey( response.getFormId( ) );
         }
-        
+
         List<String> nameValues = ExportServiceManager.getInstance( ).generateNameComponents( _form, response, _configList );
         if ( CollectionUtils.isEmpty( nameValues ) )
         {

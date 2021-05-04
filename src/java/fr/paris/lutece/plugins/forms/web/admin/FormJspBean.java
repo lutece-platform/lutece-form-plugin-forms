@@ -472,7 +472,7 @@ public class FormJspBean extends AbstractJspBean
 
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
-    
+
     @View( VIEW_MANAGE_EXPORT )
     public String getManageExport( HttpServletRequest request ) throws AccessDeniedException
     {
@@ -482,7 +482,7 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
+
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
@@ -491,15 +491,15 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
+
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
-        model.put( MARK_EXPORT_LIST,  ExportServiceManager.getInstance( ).createReferenceListExportConfigOption( formToBeModified, getLocale( ) ) );
+        model.put( MARK_EXPORT_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfigOption( formToBeModified, getLocale( ) ) );
         model.put( MARK_EXPORT_CONFIG_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) ) );
-        
+
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
     }
-    
+
     @Action( ACTION_CREATE_EXPORT_CONFIG )
     public String doCreateExportConfig( HttpServletRequest request )
     {
@@ -509,31 +509,31 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
+
         String field = request.getParameter( PARAMETER_EXPORT_CONFIG );
-        
+
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
         if ( formToBeModified == null )
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
+
         List<FormExportConfig> existingList = ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) );
 
         FormExportConfig config = new FormExportConfig( );
         config.setIdForm( nId );
         config.setField( field );
         config.setOrder( existingList.size( ) + 1 );
-        
+
         FormExportConfigHome.create( config );
-        
+
         Map<String, String> mapParameters = new LinkedHashMap<>( );
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nId ) );
-        
+
         return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
     }
-    
+
     @View( VIEW_CONFIG_REMOVE_EXPORT_CONFIG )
     public String getConfirmRemoveExportConfig( HttpServletRequest request )
     {
@@ -544,20 +544,21 @@ public class FormJspBean extends AbstractJspBean
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );
             mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
-            
+
             return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
         }
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_DELETE_EXPORT_CONFIG ) );
-        url.addParameter( PARAMETER_ID_CONFIG , idConfig );
-        url.addParameter(  FormsConstants.PARAMETER_ID_FORM , idForm );
-        
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        url.addParameter( PARAMETER_ID_CONFIG, idConfig );
+        url.addParameter( FormsConstants.PARAMETER_ID_FORM, idForm );
+
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG, url.getUrl( ),
+                AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
 
     }
-    
+
     @Action( ACTION_DELETE_EXPORT_CONFIG )
     public String doDeleteExportConfig( HttpServletRequest request )
     {
@@ -568,28 +569,28 @@ public class FormJspBean extends AbstractJspBean
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );
             mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
-            
+
             return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
         }
-        
+
         List<FormExportConfig> existingConfigList = FormExportConfigHome.findByForm( idForm );
         int newOrder = 0;
         FormExportConfigHome.removeByForm( idForm );
         for ( FormExportConfig config : existingConfigList )
         {
-          if ( config.getId( ) != idConfig )
-          {
-              config.setOrder( ++newOrder );
-              FormExportConfigHome.create( config );
-          }
+            if ( config.getId( ) != idConfig )
+            {
+                config.setOrder( ++newOrder );
+                FormExportConfigHome.create( config );
+            }
         }
-        
+
         Map<String, String> mapParameters = new LinkedHashMap<>( );
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
-        
+
         return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
     }
-    
+
     @Action( ACTION_MOVE_UP_EXPORT_CONFIG )
     public String doMoveUpExportConfig( HttpServletRequest request )
     {
@@ -600,15 +601,15 @@ public class FormJspBean extends AbstractJspBean
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );
             mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
-            
+
             return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
         }
-        
+
         List<FormExportConfig> existingConfigList = FormExportConfigHome.findByForm( idForm );
-        
+
         FormExportConfig configMovedUp = FormExportConfigHome.findByPrimaryKey( idConfig );
         int orderMovedUp = configMovedUp.getOrder( );
-        
+
         for ( FormExportConfig config : existingConfigList )
         {
             if ( config.getOrder( ) == orderMovedUp - 1 )
@@ -619,15 +620,15 @@ public class FormJspBean extends AbstractJspBean
             }
         }
         configMovedUp.setOrder( orderMovedUp - 1 );
-        
+
         FormExportConfigHome.update( configMovedUp );
-        
+
         Map<String, String> mapParameters = new LinkedHashMap<>( );
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
-        
+
         return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
     }
-    
+
     @Action( ACTION_MOVE_DOWN_EXPORT_CONFIG )
     public String doMoveDownExportConfig( HttpServletRequest request )
     {
@@ -638,15 +639,15 @@ public class FormJspBean extends AbstractJspBean
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );
             mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
-            
+
             return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
         }
-        
+
         List<FormExportConfig> existingConfigList = FormExportConfigHome.findByForm( idForm );
-        
+
         FormExportConfig configMovedDown = FormExportConfigHome.findByPrimaryKey( idConfig );
         int orderMovedDown = configMovedDown.getOrder( );
-        
+
         for ( FormExportConfig config : existingConfigList )
         {
             if ( config.getOrder( ) == orderMovedDown + 1 )
@@ -656,13 +657,13 @@ public class FormJspBean extends AbstractJspBean
                 break;
             }
         }
-        
+
         configMovedDown.setOrder( orderMovedDown + 1 );
         FormExportConfigHome.update( configMovedDown );
-        
+
         Map<String, String> mapParameters = new LinkedHashMap<>( );
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
-        
+
         return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
     }
 

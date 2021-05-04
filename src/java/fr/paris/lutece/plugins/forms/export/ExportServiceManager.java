@@ -128,28 +128,29 @@ public final class ExportServiceManager
     {
         private static ExportServiceManager _instance = new ExportServiceManager( );
     }
-    
+
     public ReferenceList createReferenceListExportConfigOption( Form form, Locale locale )
     {
         ReferenceList referenceList = new ReferenceList( );
         referenceList.addItem( FORM_NAME_KEY, I18nService.getLocalizedString( FORM_NAME_TITLE_KEY, locale ) );
         referenceList.addItem( ID_TECH_KEY, I18nService.getLocalizedString( ID_TECH_TITLE_KEY, locale ) );
-        
+
         List<Question> questionList = QuestionHome.getListQuestionByIdForm( form.getId( ) );
-        
+
         for ( Question question : questionList )
         {
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) );
-            
-            if ( entryTypeService instanceof EntryTypeText || entryTypeService instanceof EntryTypeNumbering || entryTypeService instanceof EntryTypeMyLuteceUserAttribute )
+
+            if ( entryTypeService instanceof EntryTypeText || entryTypeService instanceof EntryTypeNumbering
+                    || entryTypeService instanceof EntryTypeMyLuteceUserAttribute )
             {
                 referenceList.addItem( question.getId( ), question.getTitle( ) );
             }
         }
-        
+
         return referenceList;
     }
-    
+
     public List<FormExportConfig> createReferenceListExportConfig( Form form, Locale locale )
     {
         List<FormExportConfig> configList = FormExportConfigHome.findByForm( form.getId( ) );
@@ -159,52 +160,55 @@ public final class ExportServiceManager
             {
                 config.setFieldTitle( I18nService.getLocalizedString( FORM_NAME_TITLE_KEY, locale ) );
             }
-            else if ( config.getField( ).equals( ID_TECH_KEY ) )
-            {
-                config.setFieldTitle( I18nService.getLocalizedString( ID_TECH_TITLE_KEY, locale ) );
-            }
             else
-            {
-                Question question = QuestionHome.findByPrimaryKey( Integer.parseInt( config.getField( ) ) );
-                if ( question != null )
+                if ( config.getField( ).equals( ID_TECH_KEY ) )
                 {
-                    config.setFieldTitle( question.getTitle( ) );
+                    config.setFieldTitle( I18nService.getLocalizedString( ID_TECH_TITLE_KEY, locale ) );
                 }
-            }
+                else
+                {
+                    Question question = QuestionHome.findByPrimaryKey( Integer.parseInt( config.getField( ) ) );
+                    if ( question != null )
+                    {
+                        config.setFieldTitle( question.getTitle( ) );
+                    }
+                }
         }
         return configList;
     }
-    
+
     public List<String> generateNameComponents( Form form, FormResponse response, List<FormExportConfig> configList )
     {
         List<String> valueList = new ArrayList<>( );
-        
+
         for ( FormExportConfig config : configList )
         {
             if ( config.getField( ).equals( FORM_NAME_KEY ) )
             {
                 valueList.add( form.getTitle( ) );
             }
-            else if ( config.getField( ).equals( ID_TECH_KEY ) )
-            {
-                valueList.add( String.valueOf( response.getId( ) ) );
-            }
             else
-            {
-                for ( FormResponseStep step : response.getSteps( ) )
+                if ( config.getField( ).equals( ID_TECH_KEY ) )
                 {
-                    FormQuestionResponse formQuestionResponse = step.getQuestions( ).stream( ).filter( fqr -> fqr.getQuestion( ).getId( ) == Integer.parseInt( config.getField( ) ) )
-                            .findFirst( ).orElse( null );
-                    if ( formQuestionResponse != null )
+                    valueList.add( String.valueOf( response.getId( ) ) );
+                }
+                else
+                {
+                    for ( FormResponseStep step : response.getSteps( ) )
                     {
-                        IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( formQuestionResponse.getQuestion( ).getEntry( ) );
-                        valueList.add( entryTypeService.getResponseValueForExport( formQuestionResponse.getQuestion( ).getEntry( ), null, formQuestionResponse.getEntryResponse( ).get( 0 ), null ) );
-                        break;
+                        FormQuestionResponse formQuestionResponse = step.getQuestions( ).stream( )
+                                .filter( fqr -> fqr.getQuestion( ).getId( ) == Integer.parseInt( config.getField( ) ) ).findFirst( ).orElse( null );
+                        if ( formQuestionResponse != null )
+                        {
+                            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( formQuestionResponse.getQuestion( ).getEntry( ) );
+                            valueList.add( entryTypeService.getResponseValueForExport( formQuestionResponse.getQuestion( ).getEntry( ), null,
+                                    formQuestionResponse.getEntryResponse( ).get( 0 ), null ) );
+                            break;
+                        }
                     }
                 }
-            }
         }
-        
+
         return valueList;
     }
 }
