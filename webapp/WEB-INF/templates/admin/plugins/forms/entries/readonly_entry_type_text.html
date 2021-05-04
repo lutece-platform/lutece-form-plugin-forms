@@ -1,9 +1,13 @@
 <@formGroup labelKey='${entry.title!\'\'}'>
-<#if response.toStringValueResponse?matches("((http|https)://)(www.)?[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)")>
-    <@staticText>
-        <@link href=response.toStringValueResponse! class='url' title='${response.toStringValueResponse!} - #i18n{portal.site.portal_footer.newWindow}' target='_blank'>${response.toStringValueResponse!''}</@link>
-    </@staticText>
-<#else>
-    <@staticText>${response.toStringValueResponse!''}</@staticText>
+<#if list_responses?has_content>
+    <#list list_responses as response>
+        <#if response.toStringValueResponse?matches("((http|https)://)(www.)?[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)")>
+            <@staticText>
+                <@link href=response.toStringValueResponse! class='url' title='${response.toStringValueResponse!} - #i18n{portal.site.portal_footer.newWindow}' target='_blank'>${response.toStringValueResponse!''}</@link>
+            </@staticText>
+        <#else>
+            <@staticText>${response.toStringValueResponse!''}</@staticText>
+        </#if>
+    <#list>
 </#if>
 </@formGroup>
