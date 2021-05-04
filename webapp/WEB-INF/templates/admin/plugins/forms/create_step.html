@@ -16,6 +16,9 @@
             <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all']>
                 <@checkBox labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
             </@formGroup>
+            <@formGroup labelFor='previousStep' labelKey='#i18n{forms.create_step.labelPreviousStep}' helpKey='#i18n{forms.create_step.labelPreviousStep.help}' rows=2 >
+            	<@select name='previousStep' items=step_list default_value='' />
+            </@formGroup>
             <@formsButton okAction='createStep' viewAction='manageSteps' />
         </@tform>
     </@boxBody>

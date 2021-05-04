@@ -66,6 +66,8 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
+import fr.paris.lutece.util.ReferenceItem;
+import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
@@ -88,6 +90,7 @@ public class FormStepJspBean extends AbstractJspBean
 
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";
+    private static final String PARAMETER_PREVIOUS_STEP = "previousStep";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_STEP = "forms.modify_step.pageTitle";
@@ -238,6 +241,19 @@ public class FormStepJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
 
+        ReferenceList stepRefList = new ReferenceList( );
+        stepRefList.addItem( -1, "" );
+
+        List<Step> stepList = StepHome.getStepsListByForm( nIdForm );
+        for ( Step step : stepList )
+        {
+            if ( !step.isFinal( ) )
+            {
+                stepRefList.addItem( step.getId( ), step.getTitle( ) );
+            }
+        }
+
+        model.put( MARK_STEP_LIST, stepRefList );
         return getPage( PROPERTY_PAGE_TITLE_CREATE_STEP, TEMPLATE_CREATE_STEP, model );
     }
 
@@ -260,6 +276,15 @@ public class FormStepJspBean extends AbstractJspBean
 
         StepHome.create( _step );
         addInfo( INFO_STEP_CREATED, getLocale( ) );
+
+        int previousStep = Integer.parseInt( request.getParameter( PARAMETER_PREVIOUS_STEP ) );
+        if ( previousStep != -1 )
+        {
+            Transition transition = new Transition( );
+            transition.setFromStep( previousStep );
+            transition.setNextStep( _step.getId( ) );
+            TransitionHome.create( transition );
+        }
 
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.MARK_ID_FORM, _step.getIdForm( ) );
     }
