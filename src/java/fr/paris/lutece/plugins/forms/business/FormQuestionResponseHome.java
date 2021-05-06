@@ -233,7 +233,7 @@ public final class FormQuestionResponseHome
      */
     public static List<FormQuestionResponse> getFormQuestionResponseListByFormResponseList( List<Integer> listIdFormResponse )
     {
-        List<FormQuestionResponse> listFormQuestionResponse = _dao.selectFormQuestionResponseListByFormResponseByList( listIdFormResponse, _plugin );
+        List<FormQuestionResponse> listFormQuestionResponse = _dao.selectFormQuestionResponseListByFormResponseIdList( listIdFormResponse, _plugin );
         _dao.completeListWithEntryResponses( listFormQuestionResponse, _plugin );
 
         return listFormQuestionResponse;
