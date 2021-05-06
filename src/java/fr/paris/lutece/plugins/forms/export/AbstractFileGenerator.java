@@ -51,6 +51,7 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
+import fr.paris.lutece.util.file.FileUtil;
 
 public abstract class AbstractFileGenerator implements IFileGenerator
 {
@@ -101,6 +102,6 @@ public abstract class AbstractFileGenerator implements IFileGenerator
         {
             nameValues.add( String.valueOf( response.getId( ) ) );
         }
-        return nameValues.stream( ).collect( Collectors.joining( "_" ) );
+        return FileUtil.normalizeFileName( nameValues.stream( ).collect( Collectors.joining( "_" ) ) );
     }
 }

@@ -153,7 +153,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String ACTION_REMOVE_FORM = "removeForm";
     private static final String ACTION_DUPLICATE_FORM = "duplicateForm";
     private static final String ACTION_CREATE_EXPORT_CONFIG = "createExportConfig";
-    private static final String ACTION_DELETE_EXPORT_CONFIG = "deleteExportConfig";
+    private static final String ACTION_REMOVE_EXPORT_CONFIG = "removeExportConfig";
     private static final String ACTION_MOVE_UP_EXPORT_CONFIG = "doMoveUpExportConfig";
     private static final String ACTION_MOVE_DOWN_EXPORT_CONFIG = "doMoveDownExportConfig";
 
@@ -540,6 +540,11 @@ public class FormJspBean extends AbstractJspBean
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
         int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
+        if ( idForm == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+        
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );
@@ -548,7 +553,7 @@ public class FormJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
         }
 
-        UrlItem url = new UrlItem( getActionUrl( ACTION_DELETE_EXPORT_CONFIG ) );
+        UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_EXPORT_CONFIG ) );
         url.addParameter( PARAMETER_ID_CONFIG, idConfig );
         url.addParameter( FormsConstants.PARAMETER_ID_FORM, idForm );
 
@@ -559,12 +564,17 @@ public class FormJspBean extends AbstractJspBean
 
     }
 
-    @Action( ACTION_DELETE_EXPORT_CONFIG )
-    public String doDeleteExportConfig( HttpServletRequest request )
+    @Action( ACTION_REMOVE_EXPORT_CONFIG )
+    public String doRemoveExportConfig( HttpServletRequest request )
     {
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
         int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
+        if ( idForm == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+        
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );
@@ -572,7 +582,7 @@ public class FormJspBean extends AbstractJspBean
 
             return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
         }
-
+        
         List<FormExportConfig> existingConfigList = FormExportConfigHome.findByForm( idForm );
         int newOrder = 0;
         FormExportConfigHome.removeByForm( idForm );
@@ -616,12 +626,12 @@ public class FormJspBean extends AbstractJspBean
             {
                 config.setOrder( orderMovedUp );
                 FormExportConfigHome.update( config );
+                
+                configMovedUp.setOrder( orderMovedUp - 1 );
+                FormExportConfigHome.update( configMovedUp );
                 break;
             }
         }
-        configMovedUp.setOrder( orderMovedUp - 1 );
-
-        FormExportConfigHome.update( configMovedUp );
 
         Map<String, String> mapParameters = new LinkedHashMap<>( );
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
@@ -654,12 +664,12 @@ public class FormJspBean extends AbstractJspBean
             {
                 config.setOrder( orderMovedDown );
                 FormExportConfigHome.update( config );
+                
+                configMovedDown.setOrder( orderMovedDown + 1 );
+                FormExportConfigHome.update( configMovedDown );
                 break;
             }
         }
-
-        configMovedDown.setOrder( orderMovedDown + 1 );
-        FormExportConfigHome.update( configMovedDown );
 
         Map<String, String> mapParameters = new LinkedHashMap<>( );
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
