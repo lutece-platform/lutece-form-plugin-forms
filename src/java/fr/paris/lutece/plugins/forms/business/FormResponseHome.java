@@ -276,6 +276,19 @@ public final class FormResponseHome
     }
 
     /**
+     * Load the data of all formResponses Objects for a given list of formResponses identifiers
+     * 
+     * @param listIdFormResponse
+     *            The list of formResponses identifiers
+     * @return the formResponse objects
+     */
+    public static List<FormResponse> getFormResponseUncompleteByPrimaryKeyList( List<Integer> listIdFormResponse ) 
+    {
+        List<FormResponse> listFormResponse = _dao.selectFormResponseByPrimaryKeyList( listIdFormResponse, _plugin );
+        return listFormResponse;
+    }
+
+    /**
      * Remove all the formResponse linked to a given Form
      * 
      * @param nIdForm

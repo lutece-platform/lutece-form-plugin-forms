@@ -225,6 +225,21 @@ public final class FormQuestionResponseHome
     }
 
     /**
+     * Load the data of all the formQuestionResponse objects for saving and returns them as a list
+     * 
+     * @param listIdFormResponse
+     *            The list of identifiers of the FormResponses
+     * @return the list which contains the data of all the formQuestionResponse objects
+     */
+    public static List<FormQuestionResponse> getFormQuestionResponseListByFormResponseList( List<Integer> listIdFormResponse )
+    {
+        List<FormQuestionResponse> listFormQuestionResponse = _dao.selectFormQuestionResponseListByFormResponseByList( listIdFormResponse, _plugin );
+        _dao.completeListWithEntryResponses( listFormQuestionResponse, _plugin );
+
+        return listFormQuestionResponse;
+    }
+
+    /**
      * Retrieves the list of form question responses associated to the specified question.
      * 
      * @param nIdQuestion

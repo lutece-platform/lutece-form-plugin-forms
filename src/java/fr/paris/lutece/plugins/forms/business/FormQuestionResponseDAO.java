@@ -65,6 +65,9 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP = SQL_QUERY_SELECTALL
             + " WHERE id_form_response = ? AND id_step = ? ORDER BY id_question_response ASC";
     private static final String SQL_QUERY_SELECT_BY_LIST_RESPONSE_STEP = SQL_QUERY_SELECTALL + " WHERE ";
+    private static final String SQL_QUERY_SELECT_BY_LIST_FORM_RESPONSE = SQL_QUERY_SELECTALL + " WHERE id_form_response IN (?";
+    private static final String SQL_CLOSE_PARENTHESIS = " ) ";
+    private static final String SQL_ADITIONAL_PARAMETER = ",?";
 
     private static final FormQuestionEntryResponseDAO _formQuestionEntryResponseDAO = new FormQuestionEntryResponseDAO( );
 
@@ -370,6 +373,45 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         }
 
         return listFormQuestionResponse;
+    }
+ 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FormQuestionResponse> selectFormQuestionResponseListByFormResponseByList( List<Integer> listIdFormResponse, Plugin plugin )
+    {
+        List<FormQuestionResponse> list = new ArrayList<>( );
+        int nlistIdFormResponseSize = listIdFormResponse.size( );
+
+        if ( nlistIdFormResponseSize > 0 )
+        {
+            StringBuilder sbSQL = new StringBuilder( SQL_QUERY_SELECT_BY_LIST_FORM_RESPONSE );
+
+            for ( int i = 1; i < nlistIdFormResponseSize; i++ )
+            {
+                sbSQL.append( SQL_ADITIONAL_PARAMETER );
+            }
+
+            sbSQL.append( SQL_CLOSE_PARENTHESIS );
+
+            try ( DAOUtil daoUtil = new DAOUtil( sbSQL.toString( ), plugin ) )
+            {
+
+                for ( int i = 0; i < nlistIdFormResponseSize; i++ )
+                {
+                    daoUtil.setInt( i + 1, listIdFormResponse.get( i ) );
+                }
+
+                daoUtil.executeQuery( );
+
+                while ( daoUtil.next( ) )
+                {
+                    list.add( dataToObject( daoUtil ) );
+                }
+            }
+        }
+        return list;
     }
 
     /**
