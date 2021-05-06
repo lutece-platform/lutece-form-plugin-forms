@@ -133,6 +133,17 @@ public interface IFormQuestionResponseDAO
     List<FormQuestionResponse> selectFormQuestionResponseListByFormResponse( int nIdFormResponse, Plugin plugin );
 
     /**
+     * Load the data of all the FormQuestionResponse objects for saving and returns them as a list
+     * 
+     * @param listIdFormResponse
+     *            The identifier of the FormResponse
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the FormQuestionResponse objects
+     */
+    List<FormQuestionResponse> selectFormQuestionResponseListByFormResponseByList( List<Integer> listIdFormResponse, Plugin plugin );
+
+    /**
      * Retrieves the form question responses associated to the specified question.
      * 
      * @param nIdQuestion

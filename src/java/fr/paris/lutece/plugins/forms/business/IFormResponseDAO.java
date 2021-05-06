@@ -127,6 +127,17 @@ public interface IFormResponseDAO
     List<FormResponse> selectFormResponseByUser( String strGuid, int nIdForm, boolean fromBackup, Plugin plugin );
 
     /**
+     * Load the data of all formResponses Objects for a given list of formResponses identifiers
+     * 
+     * @param listIdFormResponse
+     *            the list of formResponses identifiers
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the FormResponse objects
+     */
+    List<FormResponse> selectFormResponseByPrimaryKeyList( List<Integer> listIdFormResponse, Plugin plugin );
+
+    /**
      * Remove all the formResponse linked to a given Form
      * 
      * @param nIdForm
