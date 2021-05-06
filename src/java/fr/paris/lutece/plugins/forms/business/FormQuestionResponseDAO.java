@@ -379,7 +379,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
      * {@inheritDoc }
      */
     @Override
-    public List<FormQuestionResponse> selectFormQuestionResponseListByFormResponseByList( List<Integer> listIdFormResponse, Plugin plugin )
+    public List<FormQuestionResponse> selectFormQuestionResponseListByFormResponseIdList( List<Integer> listIdFormResponse, Plugin plugin )
     {
         List<FormQuestionResponse> list = new ArrayList<>( );
         int nlistIdFormResponseSize = listIdFormResponse.size( );
