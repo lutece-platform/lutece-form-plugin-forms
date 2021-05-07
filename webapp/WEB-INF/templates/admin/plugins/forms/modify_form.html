@@ -1,13 +1,10 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
-
-<@formBreadCrumb>
-    <li class="active">${form.title!}</li>
-</@formBreadCrumb>
 <@row>
 	<@columns>
 		<@box color='primary'>
 			<@boxHeader title='${form.title!}' />
 			<@boxBody>
+				<@formBreadCrumb><@li class='active'>${form.title!}</@li></@formBreadCrumb>	
 				<@formTabs tab="general" />
 				<@tform class='form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
 					<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
@@ -26,7 +23,6 @@
 	</@columns>
 </@row>
 
-
 <@formEditor />
 
 <@toastr infos=infos warnings=warnings errors=errors />
@@ -43,6 +39,5 @@ $( function(){
     $('#labelEndMessage').change( function(){
         $('#endMessage').toggle();
     });
-
 });
 </script>

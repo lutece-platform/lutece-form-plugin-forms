@@ -8,14 +8,14 @@
             </@boxHeader>
 			<@boxBody>
                 <@table>
-                    <tr>
-                        <th>#i18n{forms.manageForm.columnTitle}</th>
-                        <th>#i18n{forms.manageForm.columnActions}</th>
+                    <@tr>
+                        <@th>#i18n{forms.manageForm.columnTitle}</@th>
+                        <@th>#i18n{forms.manageForm.columnActions}</@th>
                         <@th hide=['xs']>#i18n{forms.manageForm.columnPeriodDisponibility}</@th>
-                    </tr>
+                    </@tr>
                     <#list form_list as form>
                     	<#assign can_publish=false>
-                        <tr id="form_${form.id}">
+                        <@tr id="form_${form.id}">
                             <@td>
                                 <#assign hasAction=false />
                                 <#if form.actions?exists>
@@ -28,7 +28,6 @@
 								<#else>
 									${form.title}
                                 </#if>
-								
                                 <@div hide=['sm','md','lg','xl']>
                                     #i18n{forms.manageForm.columnPeriodDisponibility} : 
                                     <#setting locale=locale.language>
@@ -44,7 +43,7 @@
                                         </#if>
                                     <#else>
                                         <#if form.availabilityStartDate?? && form.availabilityStartDate &gt; .now?datetime>
-                                            <span class='text-danger'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}</span>
+                                            <@span class='text-danger'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}</@span>
                                         <#else>    
                                             <@tag color='danger'>#i18n{forms.manageForm.unavailable}</@tag>
                                         </#if> 
@@ -80,7 +79,7 @@
 	                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' params='data-toggle="modal" data-target="#pubModal" data-url="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"'>
 	                                    <#setting locale=locale.language>
 	                                    <#if form.active>
-	                                        <@icon style='check' class='text-success' />&nbsp;
+	                                        <@icon style='check' class='text-success' /> 
 	                                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
 	                                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
 	                                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
@@ -92,7 +91,7 @@
 	                                        </#if>
 	                                    <#else>
 	                                        <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?datetime>
-	                                            <@icon style='clock-o' class='text-info' /> <span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </span>
+	                                            <@icon style='clock-o' class='text-info' /> <@span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}</@span>
 	                                        <#else>    
 	                                            <@icon style='close' class='text-danger' /> <@tag color='danger' >#i18n{forms.manageForm.unavailable}</@tag>
 	                                        </#if> 
@@ -101,7 +100,7 @@
 	                             <#else>
 	                             	<#setting locale=locale.language>
 	                                    <#if form.active>
-	                                        <@icon style='check' class='text-success' />&nbsp;
+	                                        <@icon style='check' class='text-success' /> 
 	                                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
 	                                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
 	                                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
@@ -113,14 +112,14 @@
 	                                        </#if>
 	                                    <#else>
 	                                        <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?datetime>
-	                                            <@icon style='clock-o' class='text-info' /> <span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </span>
+	                                            <@icon style='clock-o' class='text-info' /> <@span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </@span>
 	                                        <#else>    
 	                                            <@icon style='close' class='text-danger' /> <@tag color='danger' >#i18n{forms.manageForm.unavailable}</@tag>
 	                                        </#if> 
 	                                    </#if>
 	                             </#if>   
                             </@td>
-                        </tr>
+                        </@tr>
                     </#list>
                 </@table>
                 <@paginationAdmin paginator=paginator combo=1 showcount=0 />
