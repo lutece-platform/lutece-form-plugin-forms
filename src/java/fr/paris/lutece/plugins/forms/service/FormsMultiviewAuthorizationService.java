@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +55,8 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanelFactory;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.FormDisplayFactory;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
+
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
@@ -101,7 +104,7 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
         {
             _formPanel = new FormPanelFactory( ).buildFormPanel( _formPanel.getFormPanelConfiguration( ) );
 
-            List<IFormColumn> listFormResponseColumn = _formColumnFactory.buildFormColumnList( null, request.getLocale( ) );
+            List<IFormColumn> listFormResponseColumn = _formColumnFactory.buildFormColumnList( null, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
 
             // Rebuild all the FormPanelInitializer to reset the previous data
             FormDisplayFactory.buildFormPanelDisplayInitializer( request, _formPanel );

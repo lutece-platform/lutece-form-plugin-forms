@@ -63,6 +63,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
 {
     // Templates
     private static final String FORM_FORMS_FILTER_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/record_form_filter.html";
+    private static final String FORM_FORMS_FILTER_UNIQUE_TEMPLATE_NAME = "admin/plugins/forms/multiview/filter/record_form_filter_unique.html";
 
     // Constants
     private static final String FORM_CODE_ATTRIBUTE = "id";
@@ -133,7 +134,17 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
         ReferenceList refListForms = createReferenceList( user );
         String strTemplateResult = StringUtils.EMPTY;
 
-        if ( refListForms.size( ) > 2 )
+        if ( refListForms.size( ) == 2 )
+        {
+            Map<String, Object> model = new LinkedHashMap<>( );
+            model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM, refListForms.get( 0 ).getCode( ) );
+            HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( FORM_FORMS_FILTER_UNIQUE_TEMPLATE_NAME, request.getLocale( ), model );
+            if ( htmlTemplate != null )
+            {
+                strTemplateResult = htmlTemplate.getHtml( );
+            }
+        }
+        else if ( refListForms.size( ) > 2 )
         {
 
             Map<String, Object> model = new LinkedHashMap<>( );
@@ -150,7 +161,6 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
                 strTemplateResult = htmlTemplate.getHtml( );
             }
 
-            setTemplate( strTemplateResult );
         }
         setTemplate( strTemplateResult );
     }

@@ -33,6 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
@@ -62,6 +65,7 @@ import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDateDisplayService;
 import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -164,7 +168,7 @@ public final class MultiviewFormService
      * @param nIdForm
      * @return the form columns list
      */
-    public List<IFormColumn> getFormColumnsList( Integer nIdForm, Locale locale )
+    public List<IFormColumn> getFormColumnsList( Integer nIdForm, Locale locale, User user )
     {
         Map<String, IFormColumn> mapFormColumns = new LinkedHashMap<>( );
 
@@ -173,6 +177,18 @@ public final class MultiviewFormService
 
         Collections.sort( listFormColumns, new FormColumnComparator( ) ); // sort by position
         listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( locale ), column ) );
+        
+        if ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            List<Form> listForm = FormHome.getFormList( );
+            listForm.removeIf( f -> !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ),
+                    FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, user ) );
+            
+            if ( listForm.size( ) == 1 )
+            {
+                nIdForm = listForm.get( 0 ).getId( );
+            }
+        }
 
         // Then add global columns from config questions
         List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
@@ -205,7 +221,7 @@ public final class MultiviewFormService
      * @param nIdForm
      * @return the form columns list
      */
-    public List<FormFilter> getFormFiltersList( Integer nIdForm, List<IFormColumn> listFormColumn, Locale locale )
+    public List<FormFilter> getFormFiltersList( Integer nIdForm, List<IFormColumn> listFormColumn, Locale locale , User user )
     {
         Map<String, FormFilter> mapFormFilter = new HashMap<>( );
 
@@ -224,13 +240,25 @@ public final class MultiviewFormService
             formFilter.setFormFilterConfiguration( formFilterConfiguration );
             mapFormFilter.put( formFilter.getFormFilterConfiguration( ).getFormFilterName( ), formFilter );
         }
+        
+        if ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            List<Form> listForm = FormHome.getFormList( );
+            listForm.removeIf( f -> !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ),
+                    FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, user ) );
+            
+            if ( listForm.size( ) == 1 )
+            {
+                nIdForm = listForm.get( 0 ).getId( );
+            }
+        }
 
         // Then add the global question-based for Filters
         List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
                 : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
 
         addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, true, locale );
-
+        
         if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )
         {
             // Then add specific columns from config questions

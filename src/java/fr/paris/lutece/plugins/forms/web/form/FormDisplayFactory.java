@@ -45,6 +45,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
@@ -202,9 +203,9 @@ public class FormDisplayFactory
      * 
      * @return the list of all FormFilter
      */
-    public static List<FormFilter> buildFormFilterList( Integer nIdForm, List<IFormColumn> listFormColumns, Locale locale )
+    public static List<FormFilter> buildFormFilterList( Integer nIdForm, List<IFormColumn> listFormColumns, Locale locale, User user )
     {
-        return MultiviewFormService.getInstance( ).getFormFiltersList( nIdForm, listFormColumns, locale );
+        return MultiviewFormService.getInstance( ).getFormFiltersList( nIdForm, listFormColumns, locale, user );
 
     }
 

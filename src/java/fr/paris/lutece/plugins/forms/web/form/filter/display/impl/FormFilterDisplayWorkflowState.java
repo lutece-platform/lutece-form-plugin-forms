@@ -47,11 +47,13 @@ import org.apache.commons.lang3.math.NumberUtils;
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewFormsNameConstants;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
 import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.ReferenceList;
 
@@ -118,6 +120,19 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
         if ( nIdForm != DEFAULT_FORM_VALUE )
         {
             referenceList = createReferenceList( request, nIdForm );
+        }
+        else
+        {
+            List<Form> formList = FormHome.getFormList( );
+            
+            formList.removeIf( f -> !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ),
+                    FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) AdminUserService.getAdminUser( request ) ) );
+            
+            if ( formList.size( ) == 1 )
+            {
+                nIdForm = formList.get( 0 ).getId( );
+                referenceList = createReferenceList( request, nIdForm );
+            }
         }
 
         manageFilterTemplate( request, referenceList, PARAMETER_ID_WORKFLOW_STATE );
