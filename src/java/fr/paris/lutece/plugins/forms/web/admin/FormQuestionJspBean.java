@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -63,9 +64,11 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.download.FormsFileDownloadProvider;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeText;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTextArea;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsDisplayUtils;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
@@ -108,6 +111,9 @@ import fr.paris.lutece.util.url.UrlItem;
 public class FormQuestionJspBean extends AbstractJspBean
 {
 
+    private static final Class<?>[] FILTERABLE = { EntryTypeCheckBox.class, EntryTypeRadioButton.class, 
+            EntryTypeSelect.class, EntryTypeDate.class };
+    
     private static final long serialVersionUID = 7515975782241863390L;
     private static final String ERROR_CODE_EXISTS = " Provided code already exists ";
 
@@ -308,7 +314,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             setPageTitleProperty( PROPERTY_CREATE_QUESTION_TITLE );
         }
 
-        boolean canBeFiltered = !( entryTypeService instanceof EntryTypeText || entryTypeService instanceof EntryTypeTextArea );
+        boolean canBeFiltered = Arrays.asList( FILTERABLE ).contains( entryTypeService.getClass( ) );
 
         model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
         model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE,
@@ -837,7 +843,7 @@ public class FormQuestionJspBean extends AbstractJspBean
             setPageTitleProperty( PROPERTY_MODIFY_QUESTION_TITLE );
         }
 
-        boolean canBeFiltered = !( entryTypeService instanceof EntryTypeText || entryTypeService instanceof EntryTypeTextArea );
+        boolean canBeFiltered = Arrays.asList( FILTERABLE ).contains( entryTypeService.getClass( ) );
 
         model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
         model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,

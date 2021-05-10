@@ -35,7 +35,6 @@
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
 							<@checkBox labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=false />
 						</@formGroup>
-						${question_create_template!}
 						<@formGroup>
 							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
 							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' color='default' hideTitle=['xs'] />
