@@ -124,10 +124,10 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
         else
         {
             List<Form> formList = FormHome.getFormList( );
-            
+
             formList.removeIf( f -> !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ),
                     FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) AdminUserService.getAdminUser( request ) ) );
-            
+
             if ( formList.size( ) == 1 )
             {
                 nIdForm = formList.get( 0 ).getId( );

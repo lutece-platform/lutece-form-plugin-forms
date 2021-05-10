@@ -544,7 +544,7 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
+
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );
@@ -574,7 +574,7 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
+
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );
@@ -582,7 +582,7 @@ public class FormJspBean extends AbstractJspBean
 
             return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
         }
-        
+
         List<FormExportConfig> existingConfigList = FormExportConfigHome.findByForm( idForm );
         int newOrder = 0;
         FormExportConfigHome.removeByForm( idForm );
@@ -626,7 +626,7 @@ public class FormJspBean extends AbstractJspBean
             {
                 config.setOrder( orderMovedUp );
                 FormExportConfigHome.update( config );
-                
+
                 configMovedUp.setOrder( orderMovedUp - 1 );
                 FormExportConfigHome.update( configMovedUp );
                 break;
@@ -664,7 +664,7 @@ public class FormJspBean extends AbstractJspBean
             {
                 config.setOrder( orderMovedDown );
                 FormExportConfigHome.update( config );
-                
+
                 configMovedDown.setOrder( orderMovedDown + 1 );
                 FormExportConfigHome.update( configMovedDown );
                 break;

@@ -242,7 +242,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     @Override
     public List<FormResponse> selectFormResponseByPrimaryKeyList( List<Integer> listIdFormResponse, Plugin plugin )
     {
-    	List<FormResponse> list = new ArrayList<>( );
+        List<FormResponse> list = new ArrayList<>( );
         int nlistIdFormResponseSize = listIdFormResponse.size( );
 
         if ( nlistIdFormResponseSize > 0 )

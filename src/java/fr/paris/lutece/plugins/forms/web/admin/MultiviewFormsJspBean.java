@@ -386,7 +386,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         }
 
         _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
-        List<FormFilter> listFormFilter = FormDisplayFactory.buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
+        List<FormFilter> listFormFilter = FormDisplayFactory.buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ),
+                (User) AdminUserService.getAdminUser( request ) );
         _listFormFilterDisplay = FormDisplayFactory.createFormFilterDisplayList( request, listFormFilter );
         _listFormColumnDisplay = FormDisplayFactory.createFormColumnDisplayList( _listFormColumn );
         _listFormPanelDisplay = FormDisplayFactory.createFormPanelDisplayList( request, listFormPanel, _formPanelDisplayActive );
@@ -591,8 +592,10 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             {
                 Integer nIdForm = ( (FormFilterForms) filter ).getSelectedIdForm( );
                 List<FormFilter> listFormFilterReloaded = ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
-                        ? FormDisplayFactory.buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) )
-                        : FormDisplayFactory.buildFormFilterList( null, _listFormColumn, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
+                        ? FormDisplayFactory.buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ),
+                                (User) AdminUserService.getAdminUser( request ) )
+                        : FormDisplayFactory.buildFormFilterList( null, _listFormColumn, request.getLocale( ),
+                                (User) AdminUserService.getAdminUser( request ) );
 
                 _listFormFilterDisplay = FormDisplayFactory.createFormFilterDisplayList( request, listFormFilterReloaded );
             }

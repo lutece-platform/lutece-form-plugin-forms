@@ -111,9 +111,10 @@ import fr.paris.lutece.util.url.UrlItem;
 public class FormQuestionJspBean extends AbstractJspBean
 {
 
-    private static final Class<?>[] FILTERABLE = { EntryTypeCheckBox.class, EntryTypeRadioButton.class, 
-            EntryTypeSelect.class, EntryTypeDate.class };
-    
+    private static final Class<?> [ ] FILTERABLE = {
+            EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeDate.class
+    };
+
     private static final long serialVersionUID = 7515975782241863390L;
     private static final String ERROR_CODE_EXISTS = " Provided code already exists ";
 

@@ -282,7 +282,7 @@ public final class FormResponseHome
      *            The list of formResponses identifiers
      * @return the formResponse objects
      */
-    public static List<FormResponse> getFormResponseUncompleteByPrimaryKeyList( List<Integer> listIdFormResponse ) 
+    public static List<FormResponse> getFormResponseUncompleteByPrimaryKeyList( List<Integer> listIdFormResponse )
     {
         List<FormResponse> listFormResponse = _dao.selectFormResponseByPrimaryKeyList( listIdFormResponse, _plugin );
         return listFormResponse;

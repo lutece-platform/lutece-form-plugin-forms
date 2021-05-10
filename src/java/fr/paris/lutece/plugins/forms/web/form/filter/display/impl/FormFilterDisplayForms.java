@@ -144,24 +144,26 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
                 strTemplateResult = htmlTemplate.getHtml( );
             }
         }
-        else if ( refListForms.size( ) > 2 )
-        {
-
-            Map<String, Object> model = new LinkedHashMap<>( );
-            model.put( MARK_FILTER_LIST, refListForms );
-            model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
-            model.put( MARK_FILTER_NAME, FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
-            model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
-            model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( request.getLocale( ) ) );
-            model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM, request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ) );
-
-            HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
-            if ( htmlTemplate != null )
+        else
+            if ( refListForms.size( ) > 2 )
             {
-                strTemplateResult = htmlTemplate.getHtml( );
-            }
 
-        }
+                Map<String, Object> model = new LinkedHashMap<>( );
+                model.put( MARK_FILTER_LIST, refListForms );
+                model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
+                model.put( MARK_FILTER_NAME, FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
+                model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
+                model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( request.getLocale( ) ) );
+                model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM,
+                        request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ) );
+
+                HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
+                if ( htmlTemplate != null )
+                {
+                    strTemplateResult = htmlTemplate.getHtml( );
+                }
+
+            }
         setTemplate( strTemplateResult );
     }
 

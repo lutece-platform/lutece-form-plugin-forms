@@ -177,13 +177,13 @@ public final class MultiviewFormService
 
         Collections.sort( listFormColumns, new FormColumnComparator( ) ); // sort by position
         listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( locale ), column ) );
-        
+
         if ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE )
         {
             List<Form> listForm = FormHome.getFormList( );
             listForm.removeIf( f -> !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ),
                     FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, user ) );
-            
+
             if ( listForm.size( ) == 1 )
             {
                 nIdForm = listForm.get( 0 ).getId( );
@@ -221,7 +221,7 @@ public final class MultiviewFormService
      * @param nIdForm
      * @return the form columns list
      */
-    public List<FormFilter> getFormFiltersList( Integer nIdForm, List<IFormColumn> listFormColumn, Locale locale , User user )
+    public List<FormFilter> getFormFiltersList( Integer nIdForm, List<IFormColumn> listFormColumn, Locale locale, User user )
     {
         Map<String, FormFilter> mapFormFilter = new HashMap<>( );
 
@@ -240,13 +240,13 @@ public final class MultiviewFormService
             formFilter.setFormFilterConfiguration( formFilterConfiguration );
             mapFormFilter.put( formFilter.getFormFilterConfiguration( ).getFormFilterName( ), formFilter );
         }
-        
+
         if ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE )
         {
             List<Form> listForm = FormHome.getFormList( );
             listForm.removeIf( f -> !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ),
                     FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, user ) );
-            
+
             if ( listForm.size( ) == 1 )
             {
                 nIdForm = listForm.get( 0 ).getId( );
@@ -258,7 +258,7 @@ public final class MultiviewFormService
                 : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
 
         addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, true, locale );
-        
+
         if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )
         {
             // Then add specific columns from config questions
