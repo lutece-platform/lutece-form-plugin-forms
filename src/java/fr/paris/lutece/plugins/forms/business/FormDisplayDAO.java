@@ -50,6 +50,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     private static final String SQL_QUERY_SELECTALL = "SELECT id_display, id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth FROM forms_display";
 
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_display = ?";
+    private static final String SQL_QUERY_SELECT_BY_FORM = SQL_QUERY_SELECTALL + " WHERE id_form = ?";
     private static final String SQL_QUERY_SELECT_BY_PARENT = SQL_QUERY_SELECTALL + " WHERE id_step = ? AND id_parent = ? ORDER BY display_order ASC";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_display ( id_form, id_step, id_composite, id_parent, display_order, composite_type, display_depth ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_display WHERE id_display = ? ";
@@ -261,6 +262,23 @@ public final class FormDisplayDAO implements IFormDisplayDAO
         daoUtil.close( );
 
         return formDisplay;
+    }
+    
+    @Override
+    public List<FormDisplay> selectFormDisplayListByForm( int nIdForm, Plugin plugin )
+    {
+        List<FormDisplay> list = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FORM, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                list.add( dataToObject( daoUtil ) );
+            }
+        }
+        return list;
     }
 
     /**

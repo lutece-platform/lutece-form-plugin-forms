@@ -202,4 +202,15 @@ public final class FormDisplayHome
         }
     }
 
+    /**
+     * Return the FormDisplay associated to the given parameters
+     * 
+     * @param nIdForm
+     *            The identifier of the Form to match
+     * @return the formDisplay associated to the given parameters
+     */
+    public static List<FormDisplay> getFormDisplayByForm( int nIdForm )
+    {
+        return _dao.selectFormDisplayListByForm( nIdForm, _plugin );
+    }
 }
