@@ -41,7 +41,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
-import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -131,7 +132,6 @@ public class FormJspBean extends AbstractJspBean
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
-    private static final String PROPERTY_COPY_FORM_TITLE = "forms.copyForm.title";
 
     // Messages
     private static final String MESSAGE_CONFIRM_REMOVE_FORM = "forms.message.confirmRemoveForm";
@@ -165,6 +165,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String INFO_FORM_UPDATED = "forms.info.form.updated";
     private static final String INFO_FORM_REMOVED = "forms.info.form.removed";
     private static final String INFO_FORM_COPIED = "forms.info.form.copied";
+    private static final String ERROR_FORM_NOT_COPIED = "forms.error.form.not.copied";
     private static final String MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG = "forms.modify_form.message.confirmRemoveExportConfig";
 
     // Errors
@@ -352,6 +353,7 @@ public class FormJspBean extends AbstractJspBean
     @Action( ACTION_DUPLICATE_FORM )
     public String doDuplicateForm( HttpServletRequest request )
     {
+        
         int nId = -1;
         String strIdForm;
 
@@ -363,29 +365,22 @@ public class FormJspBean extends AbstractJspBean
         catch( NumberFormatException ne )
         {
             AppLogService.error( ne );
-
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        if ( ( nId != -1 ) && RBACService.isAuthorized( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, (User) getUser( ) ) )
+        if ( nId != FormsConstants.DEFAULT_ID_VALUE && RBACService.isAuthorized( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, (User) getUser( ) ) )
         {
-            Form formToBeCopied = FormHome.findByPrimaryKey( nId );
-
-            if ( formToBeCopied != null )
+            
+            try
             {
-
-                Object [ ] tabFormTitleCopy = {
-                        formToBeCopied.getTitle( ),
-                };
-                String strTitleCopyForm = I18nService.getLocalizedString( PROPERTY_COPY_FORM_TITLE, tabFormTitleCopy, getLocale( ) );
-
-                if ( strTitleCopyForm != null )
-                {
-                    formToBeCopied.setTitle( strTitleCopyForm );
-                }
-
-                FormHome.create( formToBeCopied );
+                String json = FormJsonService.getInstance( ).jsonExportForm( nId );
+                FormJsonService.getInstance( ).jsonImportForm( json, getLocale() );
                 addInfo( INFO_FORM_COPIED, getLocale( ) );
+            }
+            catch( JsonProcessingException e )
+            {
+                AppLogService.debug( e.getMessage( ) );
+                addError( ERROR_FORM_NOT_COPIED, getLocale( ) );
             }
         }
 
@@ -831,8 +826,16 @@ public class FormJspBean extends AbstractJspBean
             return;
         }
         
-        JSONObject jsonObject = FormJsonService.getInstance( ).jsonExportForm( nId );
-        String content = jsonObject.toString( 4 );
-        download( content.getBytes( ), "export.json", "application/json" );
+        String content;
+        try
+        {
+            content = FormJsonService.getInstance( ).jsonExportForm( nId );
+            download( content.getBytes( ), "export.json", "application/json" );
+        }
+        catch( JsonProcessingException e )
+        {
+            AppLogService.debug( e.getMessage( ) );
+            addError( ERROR_FORM_NOT_COPIED, getLocale( ) );
+        }
     }
 }

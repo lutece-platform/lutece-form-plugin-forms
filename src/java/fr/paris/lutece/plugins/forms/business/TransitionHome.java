@@ -74,6 +74,19 @@ public final class TransitionHome
 
         return transition;
     }
+    
+    /**
+     * Create an instance of the transition class
+     * 
+     * @param transition
+     *            The instance of the Transition which contains the informations to store
+     * @return The instance of transition which has been created with its primary key.
+     */
+    public static Transition createWithoutPriorityCalculation( Transition transition )
+    {
+        _dao.insert( transition, _plugin );
+        return transition;
+    }
 
     /**
      * Update of the transition which is specified in parameter
