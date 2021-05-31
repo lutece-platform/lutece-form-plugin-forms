@@ -112,4 +112,13 @@ public interface IGroupDAO
      * @return The referenceList which contains the data of all the group objects
      */
     ReferenceList selectGroupsReferenceList( Plugin plugin );
+    
+    /**
+     * Load the data of all the group objects and returns them as a list
+     * 
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the group objects
+     */
+    List<Group> selectGroupsListByListIdStep( List<Integer> idSteplist, Plugin plugin );
 }

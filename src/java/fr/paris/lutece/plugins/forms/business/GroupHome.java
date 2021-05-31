@@ -136,4 +136,15 @@ public final class GroupHome
     {
         return _dao.selectGroupsReferenceList( _plugin );
     }
+    
+    /**
+     * Load the data of all the group objects and returns them as a list
+     * 
+     * @param idStepList
+     * @return the list which contains the data of all the group objects
+     */
+    public static List<Group> getGroupsListByIdStepList( List<Integer> idStepList )
+    {
+        return _dao.selectGroupsListByListIdStep( idStepList, _plugin );
+    }
 }
