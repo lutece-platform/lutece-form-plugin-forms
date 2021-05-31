@@ -230,4 +230,13 @@ public interface IControlDAO
      */
     ReferenceList selectMappingControlReferenceList( int nIdControl, Plugin plugin );
 
+
+    /**
+     * Load the data of all the control mapping and returns them as a List
+     * 
+     * @param plugin
+     *            the Plugin
+     * @return The referenceList which contains the data of all the control mapping object
+     */
+    List<ControlMapping> selectMappingControlList( int nIdControl, Plugin plugin );
 }

@@ -253,9 +253,20 @@ public final class ControlHome
      *            the Control id
      * @return the referenceList which contains the data of all the control objects
      */
-
     public static ReferenceList getCtrlMappingListByIdControl( int nIdControl )
     {
         return _dao.selectMappingControlReferenceList( nIdControl, _plugin );
+    }
+    
+    /**
+     * Load the data of all the control objects and returns them as a list
+     * 
+     * @param nIdControl
+     *            the Control id
+     * @return the referenceList which contains the data of all the control objects
+     */
+    public static List<ControlMapping> getControlMappingListByIdControl( int nIdControl )
+    {
+        return _dao.selectMappingControlList( nIdControl, _plugin );
     }
 }

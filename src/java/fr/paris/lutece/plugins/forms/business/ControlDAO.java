@@ -406,4 +406,25 @@ public final class ControlDAO implements IControlDAO
         daoUtil.close( );
         return controlList;
     }
+    
+    @Override
+    public List<ControlMapping> selectMappingControlList( int nIdControl, Plugin plugin )
+    {
+        List<ControlMapping> list = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_CONTROL_MAPPING_BY_IDCONTROL, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdControl );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                ControlMapping mapping = new ControlMapping( );
+                mapping.setIdControl( nIdControl );
+                mapping.setIdQuestion( daoUtil.getInt( "id_question" ) );
+                mapping.setValue( daoUtil.getString( PARAMETER_VALUE ) );
+                list.add( mapping );
+            }
+        }
+        return list;
+    }
 }
