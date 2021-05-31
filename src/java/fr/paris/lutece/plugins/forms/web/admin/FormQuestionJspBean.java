@@ -729,7 +729,6 @@ public class FormQuestionJspBean extends AbstractJspBean
         Entry duplicatedEntry = EntryHome.copy( _question.getEntry( ) );
         duplicatedEntry.setTitle( "Copie de " + duplicatedEntry.getTitle( ) );
         duplicatedEntry.setCode( "question_" + duplicatedEntry.getIdEntry( ) );
-        duplicatedEntry.setPosition( duplicatedEntry.getPosition( ) + 1 );
 
         EntryHome.update( duplicatedEntry );
 
