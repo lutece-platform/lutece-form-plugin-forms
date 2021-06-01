@@ -12,6 +12,7 @@ import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.Transition;
+import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 
 public class FormJsonData
 {
@@ -25,6 +26,7 @@ public class FormJsonData
     private List<FormDisplay> _formDisplayList;
     private List<Control> _controlList;
     private List<ControlMapping> _controlMappingList;
+    private List<FormExportConfig> _formExportConfigList;
 
     /**
      * @return the form
@@ -168,6 +170,22 @@ public class FormJsonData
     public void setControlMappingList( List<ControlMapping> controlMappingList )
     {
         _controlMappingList = new ArrayList<>( controlMappingList );
+    }
+
+    /**
+     * @return the formExportConfigList
+     */
+    public List<FormExportConfig> getFormExportConfigList( )
+    {
+        return new ArrayList<>( _formExportConfigList );
+    }
+
+    /**
+     * @param formExportConfigList the formExportConfigList to set
+     */
+    public void setFormExportConfigList( List<FormExportConfig> formExportConfigList )
+    {
+        _formExportConfigList = new ArrayList<>( formExportConfigList );
     }
     
 }

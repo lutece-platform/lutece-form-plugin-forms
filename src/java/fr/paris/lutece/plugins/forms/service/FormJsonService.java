@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -36,6 +37,8 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
+import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.util.FormJsonData;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.TimestampDeserializer;
@@ -106,6 +109,8 @@ public class FormJsonService
         jsonData.setFormMessage( FormMessageHome.findByForm( idForm ) );
         jsonData.setFormDisplayList( FormDisplayHome.getFormDisplayByForm( idForm ) );
         
+        jsonData.setFormExportConfigList( FormExportConfigHome.findByForm( idForm ) );
+        
         return _objectMapper.writeValueAsString( jsonData );
     }
     
@@ -119,6 +124,8 @@ public class FormJsonService
         FormJsonData jsonData = _objectMapper.readValue( json, FormJsonData.class );
         
         int newIdForm = importForm( jsonData.getForm( ), jsonData.getFormMessage( ), locale );
+        
+        List<FormExportConfig> formExportConfigList = jsonData.getFormExportConfigList( );
         List<Step> stepList = jsonData.getStepList( );
         List<Group> groupList = jsonData.getGroupList( );
         List<Transition> transitionList = jsonData.getTransitionList( );
@@ -128,11 +135,12 @@ public class FormJsonService
         List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
         
         importSteps( newIdForm, stepList, groupList, transitionList, questionList, formDisplayList );
-        importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList );
+        importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList );
         importGroups( groupList, formDisplayList );
         importFormDisplay( newIdForm, formDisplayList, controlList );
         importTransitions( transitionList, controlList );
         importControls( controlList, controlMappingList );
+        importFormExportConfig( newIdForm, formExportConfigList  );
     }
     
     private int importForm( Form form, FormMessage formMessage, Locale locale )
@@ -154,6 +162,15 @@ public class FormJsonService
         FormMessageHome.create( formMessage );
         
         return newIdForm;
+    }
+    
+    private void importFormExportConfig( int newIdForm, List<FormExportConfig> formExportConfigList )
+    {
+        for ( FormExportConfig config : formExportConfigList )
+        {
+            config.setIdForm( newIdForm );
+            FormExportConfigHome.create( config );
+        }
     }
     
     private void importControls( List<Control> controlList, List<ControlMapping> controlMappingList )
@@ -263,7 +280,7 @@ public class FormJsonService
         }
     }
     
-    private void importQuestions( int newIdForm, List<Question> questionList, List<Control> controlList, List<ControlMapping> controlMappingList, List<FormDisplay> formDisplayList )
+    private void importQuestions( int newIdForm, List<Question> questionList, List<Control> controlList, List<ControlMapping> controlMappingList, List<FormDisplay> formDisplayList, List<FormExportConfig> formExportConfigList )
     {
         Map<Integer, Integer> mapIdQuestions = new HashMap<>( );
         for ( Question question : questionList )
@@ -290,6 +307,19 @@ public class FormJsonService
         }
         updateControlWithNewQuestion( controlMappingList, controlList, mapIdQuestions );
         updateFormDisplayWithNewQuestion( formDisplayList, mapIdQuestions );
+        updateExportConfigWithNewQuestion( formExportConfigList, mapIdQuestions );
+    }
+    
+    private void updateExportConfigWithNewQuestion( List<FormExportConfig> formExportConfigList, Map<Integer, Integer> mapIdQuestions )
+    {
+        for ( FormExportConfig config : formExportConfigList )
+        {
+            int idQuestion = NumberUtils.toInt( config.getField( ), -1 );
+            if ( idQuestion != -1 )
+            {
+                config.setField( String.valueOf( mapIdQuestions.get( idQuestion ) ) ); 
+            }
+        }
     }
     
     private void updateControlWithNewQuestion( List<ControlMapping> controlMappingList, List<Control> controlList, Map<Integer, Integer> mapIdQuestions )
