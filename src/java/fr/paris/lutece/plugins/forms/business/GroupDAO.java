@@ -206,16 +206,16 @@ public final class GroupDAO implements IGroupDAO
         }
         return groupList;
     }
-    
+
     @Override
     public List<Group> selectGroupsListByListIdStep( List<Integer> idSteplist, Plugin plugin )
     {
         List<Group> groupList = new ArrayList<>( );
-        
+
         String query = SQL_QUERY_SELECTALL + " WHERE id_step IN ( ";
         query += idSteplist.stream( ).map( i -> "?" ).collect( Collectors.joining( "," ) );
         query += " )";
-        
+
         try ( DAOUtil daoUtil = new DAOUtil( query, plugin ) )
         {
             int index = 0;
@@ -224,7 +224,7 @@ public final class GroupDAO implements IGroupDAO
                 daoUtil.setInt( ++index, id );
             }
             daoUtil.executeQuery( );
-            
+
             while ( daoUtil.next( ) )
             {
                 groupList.add( dataToObject( daoUtil ) );

@@ -358,7 +358,7 @@ public class FormJspBean extends AbstractJspBean
     @Action( ACTION_DUPLICATE_FORM )
     public String doDuplicateForm( HttpServletRequest request )
     {
-        
+
         int nId = -1;
         String strIdForm;
 
@@ -373,13 +373,14 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        if ( nId != FormsConstants.DEFAULT_ID_VALUE && RBACService.isAuthorized( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, (User) getUser( ) ) )
+        if ( nId != FormsConstants.DEFAULT_ID_VALUE
+                && RBACService.isAuthorized( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, (User) getUser( ) ) )
         {
-            
+
             try
             {
                 String json = FormJsonService.getInstance( ).jsonExportForm( nId );
-                FormJsonService.getInstance( ).jsonImportForm( json, getLocale() );
+                FormJsonService.getInstance( ).jsonImportForm( json, getLocale( ) );
                 addInfo( INFO_FORM_COPIED, getLocale( ) );
             }
             catch( JsonProcessingException e )
@@ -830,7 +831,7 @@ public class FormJspBean extends AbstractJspBean
         {
             return;
         }
-        
+
         String content;
         try
         {
@@ -843,7 +844,7 @@ public class FormJspBean extends AbstractJspBean
             addError( ERROR_FORM_NOT_COPIED, getLocale( ) );
         }
     }
-    
+
     @Action( ACTION_IMPORT_FORM )
     public String doImportJson( HttpServletRequest request )
     {

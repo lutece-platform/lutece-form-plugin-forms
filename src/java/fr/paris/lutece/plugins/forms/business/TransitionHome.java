@@ -74,7 +74,7 @@ public final class TransitionHome
 
         return transition;
     }
-    
+
     /**
      * Create an instance of the transition class
      * 

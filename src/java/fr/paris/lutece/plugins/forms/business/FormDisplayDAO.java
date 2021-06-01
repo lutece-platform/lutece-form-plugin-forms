@@ -263,7 +263,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
 
         return formDisplay;
     }
-    
+
     @Override
     public List<FormDisplay> selectFormDisplayListByForm( int nIdForm, Plugin plugin )
     {
@@ -272,7 +272,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
         {
             daoUtil.setInt( 1, nIdForm );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 list.add( dataToObject( daoUtil ) );

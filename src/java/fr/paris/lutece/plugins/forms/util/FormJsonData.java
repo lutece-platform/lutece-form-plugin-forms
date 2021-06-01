@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2021, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.forms.util;
 
 import java.util.ArrayList;
@@ -37,7 +70,8 @@ public class FormJsonData
     }
 
     /**
-     * @param form the form to set
+     * @param form
+     *            the form to set
      */
     public void setForm( Form form )
     {
@@ -53,7 +87,8 @@ public class FormJsonData
     }
 
     /**
-     * @param stepList the stepList to set
+     * @param stepList
+     *            the stepList to set
      */
     public void setStepList( List<Step> stepList )
     {
@@ -69,7 +104,8 @@ public class FormJsonData
     }
 
     /**
-     * @param questionList the questionList to set
+     * @param questionList
+     *            the questionList to set
      */
     public void setQuestionList( List<Question> questionList )
     {
@@ -85,7 +121,8 @@ public class FormJsonData
     }
 
     /**
-     * @param transitionList the transitionList to set
+     * @param transitionList
+     *            the transitionList to set
      */
     public void setTransitionList( List<Transition> transitionList )
     {
@@ -101,7 +138,8 @@ public class FormJsonData
     }
 
     /**
-     * @param formMessage the formMessage to set
+     * @param formMessage
+     *            the formMessage to set
      */
     public void setFormMessage( FormMessage formMessage )
     {
@@ -117,7 +155,8 @@ public class FormJsonData
     }
 
     /**
-     * @param formDisplayList the formDisplayList to set
+     * @param formDisplayList
+     *            the formDisplayList to set
      */
     public void setFormDisplayList( List<FormDisplay> formDisplayList )
     {
@@ -133,7 +172,8 @@ public class FormJsonData
     }
 
     /**
-     * @param groupList the groupList to set
+     * @param groupList
+     *            the groupList to set
      */
     public void setGroupList( List<Group> groupList )
     {
@@ -149,7 +189,8 @@ public class FormJsonData
     }
 
     /**
-     * @param controlList the controlQuestionList to set
+     * @param controlList
+     *            the controlQuestionList to set
      */
     public void setControlList( List<Control> controlList )
     {
@@ -165,7 +206,8 @@ public class FormJsonData
     }
 
     /**
-     * @param controlMappingList the controlMappingList to set
+     * @param controlMappingList
+     *            the controlMappingList to set
      */
     public void setControlMappingList( List<ControlMapping> controlMappingList )
     {
@@ -181,11 +223,12 @@ public class FormJsonData
     }
 
     /**
-     * @param formExportConfigList the formExportConfigList to set
+     * @param formExportConfigList
+     *            the formExportConfigList to set
      */
     public void setFormExportConfigList( List<FormExportConfig> formExportConfigList )
     {
         _formExportConfigList = new ArrayList<>( formExportConfigList );
     }
-    
+
 }

@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2021, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.forms.service;
 
 import java.sql.Timestamp;
@@ -50,46 +83,45 @@ import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
- *  Json service to handle import/export
+ * Json service to handle import/export
  */
 public class FormJsonService
 {
     private static final String PROPERTY_COPY_FORM_TITLE = "forms.copyForm.title";
-    
+
     public static final FormJsonService INSTANCE = new FormJsonService( );
-    
+
     private ObjectMapper _objectMapper;
-    
+
     private FormJsonService( )
     {
-        SimpleModule timestampModule = new SimpleModule("TimestampModule");
-        timestampModule.addSerializer(Timestamp.class, new TimestampSerializer( ) );
+        SimpleModule timestampModule = new SimpleModule( "TimestampModule" );
+        timestampModule.addSerializer( Timestamp.class, new TimestampSerializer( ) );
         timestampModule.addDeserializer( Timestamp.class, new TimestampDeserializer( ) );
-        
-        _objectMapper = new ObjectMapper()
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .registerModule( timestampModule );
+
+        _objectMapper = new ObjectMapper( ).configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false ).registerModule( timestampModule );
     }
-    
+
     public static FormJsonService getInstance( )
     {
         return INSTANCE;
     }
-    
+
     /**
      * Export the form as a Json Object.
+     * 
      * @return
-     * @throws JsonProcessingException 
+     * @throws JsonProcessingException
      */
     public String jsonExportForm( int idForm ) throws JsonProcessingException
     {
         FormJsonData jsonData = new FormJsonData( );
         jsonData.setForm( FormHome.findByPrimaryKey( idForm ) );
-        
+
         List<Step> stepList = StepHome.getStepsListByForm( idForm );
         jsonData.setStepList( stepList );
         jsonData.setGroupList( GroupHome.getGroupsListByIdStepList( stepList.stream( ).map( Step::getId ).collect( Collectors.toList( ) ) ) );
-        
+
         List<Control> controlList = new ArrayList<>( );
         List<Question> questionList = QuestionHome.getListQuestionByIdForm( idForm );
         for ( Question question : questionList )
@@ -104,27 +136,28 @@ public class FormJsonService
         jsonData.setQuestionList( questionList );
         jsonData.setControlList( controlList );
         jsonData.setControlMappingList( controlMappingList );
-        
+
         jsonData.setTransitionList( TransitionHome.getTransitionsListFromForm( idForm ) );
         jsonData.setFormMessage( FormMessageHome.findByForm( idForm ) );
         jsonData.setFormDisplayList( FormDisplayHome.getFormDisplayByForm( idForm ) );
-        
+
         jsonData.setFormExportConfigList( FormExportConfigHome.findByForm( idForm ) );
-        
+
         return _objectMapper.writeValueAsString( jsonData );
     }
-    
+
     /**
      * Import the form from a Json Object.
+     * 
      * @return
      */
     @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
     public void jsonImportForm( String json, Locale locale ) throws JsonProcessingException
     {
         FormJsonData jsonData = _objectMapper.readValue( json, FormJsonData.class );
-        
+
         int newIdForm = importForm( jsonData.getForm( ), jsonData.getFormMessage( ), locale );
-        
+
         List<FormExportConfig> formExportConfigList = jsonData.getFormExportConfigList( );
         List<Step> stepList = jsonData.getStepList( );
         List<Group> groupList = jsonData.getGroupList( );
@@ -133,16 +166,16 @@ public class FormJsonService
         List<FormDisplay> formDisplayList = jsonData.getFormDisplayList( );
         List<Control> controlList = jsonData.getControlList( );
         List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
-        
+
         importSteps( newIdForm, stepList, groupList, transitionList, questionList, formDisplayList );
         importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList );
         importGroups( groupList, formDisplayList );
         importFormDisplay( newIdForm, formDisplayList, controlList );
         importTransitions( transitionList, controlList );
         importControls( controlList, controlMappingList );
-        importFormExportConfig( newIdForm, formExportConfigList  );
+        importFormExportConfig( newIdForm, formExportConfigList );
     }
-    
+
     private int importForm( Form form, FormMessage formMessage, Locale locale )
     {
         Object [ ] tabFormTitleCopy = {
@@ -155,15 +188,15 @@ public class FormJsonService
         }
         form.setIdWorkflow( 0 );
         FormHome.create( form );
-        
+
         int newIdForm = form.getId( );
-        
+
         formMessage.setIdForm( newIdForm );
         FormMessageHome.create( formMessage );
-        
+
         return newIdForm;
     }
-    
+
     private void importFormExportConfig( int newIdForm, List<FormExportConfig> formExportConfigList )
     {
         for ( FormExportConfig config : formExportConfigList )
@@ -172,7 +205,7 @@ public class FormJsonService
             FormExportConfigHome.create( config );
         }
     }
-    
+
     private void importControls( List<Control> controlList, List<ControlMapping> controlMappingList )
     {
         Map<Integer, Integer> mapIdControls = new HashMap<>( );
@@ -181,16 +214,17 @@ public class FormJsonService
             int oldId = control.getId( );
             ControlHome.create( control );
             int newId = control.getId( );
-            
+
             mapIdControls.put( oldId, newId );
         }
-        
+
         for ( ControlMapping controlMapping : controlMappingList )
         {
-            ControlHome.createMappingControl( mapIdControls.get( controlMapping.getIdControl( ) ), controlMapping.getIdQuestion( ), controlMapping.getValue( ) );
+            ControlHome.createMappingControl( mapIdControls.get( controlMapping.getIdControl( ) ), controlMapping.getIdQuestion( ),
+                    controlMapping.getValue( ) );
         }
     }
-    
+
     private void importTransitions( List<Transition> transitionList, List<Control> controlList )
     {
         Map<Integer, Integer> mapIdTransitions = new HashMap<>( );
@@ -198,14 +232,14 @@ public class FormJsonService
         {
             int oldId = transition.getId( );
             TransitionHome.createWithoutPriorityCalculation( transition );
-            
+
             int newId = transition.getId( );
-            
+
             mapIdTransitions.put( oldId, newId );
         }
         updateControlWithNewTransition( controlList, mapIdTransitions );
     }
-    
+
     private void updateControlWithNewTransition( List<Control> controlList, Map<Integer, Integer> mapIdTransitions )
     {
         for ( Control control : controlList )
@@ -216,7 +250,7 @@ public class FormJsonService
             }
         }
     }
-    
+
     private void importFormDisplay( int newIdForm, List<FormDisplay> formDisplayList, List<Control> controlList )
     {
         Map<Integer, Integer> mapIdFormDisplay = new HashMap<>( );
@@ -225,9 +259,9 @@ public class FormJsonService
             int oldId = formDisplay.getId( );
             formDisplay.setFormId( newIdForm );
             FormDisplayHome.create( formDisplay );
-            
+
             int newId = formDisplay.getId( );
-            
+
             mapIdFormDisplay.put( oldId, newId );
         }
         for ( FormDisplay formDisplay : formDisplayList )
@@ -239,9 +273,9 @@ public class FormJsonService
             // Update id parent and display order
             FormDisplayHome.update( formDisplay );
         }
-        updateControlWithFormDisplay( controlList , mapIdFormDisplay );
+        updateControlWithFormDisplay( controlList, mapIdFormDisplay );
     }
-    
+
     private void updateControlWithFormDisplay( List<Control> controlList, Map<Integer, Integer> mapIdFormDisplay )
     {
         for ( Control control : controlList )
@@ -252,64 +286,65 @@ public class FormJsonService
             }
         }
     }
-    
+
     private void importGroups( List<Group> groupList, List<FormDisplay> formDisplayList )
     {
         Map<Integer, Integer> mapIdGroups = new HashMap<>( );
         for ( Group group : groupList )
         {
             int oldId = group.getId( );
-            
+
             GroupHome.create( group );
-            
+
             int newId = group.getId( );
-            
+
             mapIdGroups.put( oldId, newId );
         }
         updateFormDisplayWithNewGroup( formDisplayList, mapIdGroups );
     }
-    
+
     private void updateFormDisplayWithNewGroup( List<FormDisplay> formDisplayList, Map<Integer, Integer> mapIdGroup )
     {
         for ( FormDisplay formDisplay : formDisplayList )
         {
-            if (  CompositeDisplayType.GROUP.getLabel( ).equals( formDisplay.getCompositeType( ) ) )
+            if ( CompositeDisplayType.GROUP.getLabel( ).equals( formDisplay.getCompositeType( ) ) )
             {
                 formDisplay.setCompositeId( mapIdGroup.get( formDisplay.getCompositeId( ) ) );
             }
         }
     }
-    
-    private void importQuestions( int newIdForm, List<Question> questionList, List<Control> controlList, List<ControlMapping> controlMappingList, List<FormDisplay> formDisplayList, List<FormExportConfig> formExportConfigList )
+
+    private void importQuestions( int newIdForm, List<Question> questionList, List<Control> controlList, List<ControlMapping> controlMappingList,
+            List<FormDisplay> formDisplayList, List<FormExportConfig> formExportConfigList )
     {
         Map<Integer, Integer> mapIdQuestions = new HashMap<>( );
         for ( Question question : questionList )
         {
             int oldIdQuestion = question.getId( );
-            
+
             Entry entry = question.getEntry( );
             entry.setIdResource( newIdForm );
             EntryHome.create( entry );
             question.setIdEntry( entry.getIdEntry( ) );
-            
+
             List<Field> fieldList = entry.getFields( );
             for ( Field field : fieldList )
             {
                 field.setParentEntry( entry );
                 FieldHome.create( field );
             }
-            
+
             QuestionHome.create( question );
-            
+
             int newIdQuestion = question.getId( );
-            
+
             mapIdQuestions.put( oldIdQuestion, newIdQuestion );
         }
         updateControlWithNewQuestion( controlMappingList, controlList, mapIdQuestions );
         updateFormDisplayWithNewQuestion( formDisplayList, mapIdQuestions );
         updateExportConfigWithNewQuestion( formExportConfigList, mapIdQuestions );
     }
-    
+
     private void updateExportConfigWithNewQuestion( List<FormExportConfig> formExportConfigList, Map<Integer, Integer> mapIdQuestions )
     {
         for ( FormExportConfig config : formExportConfigList )
@@ -317,24 +352,24 @@ public class FormJsonService
             int idQuestion = NumberUtils.toInt( config.getField( ), -1 );
             if ( idQuestion != -1 )
             {
-                config.setField( String.valueOf( mapIdQuestions.get( idQuestion ) ) ); 
+                config.setField( String.valueOf( mapIdQuestions.get( idQuestion ) ) );
             }
         }
     }
-    
+
     private void updateControlWithNewQuestion( List<ControlMapping> controlMappingList, List<Control> controlList, Map<Integer, Integer> mapIdQuestions )
     {
         for ( Control control : controlList )
         {
             Set<Integer> newSetId = new HashSet<>( );
             Set<Integer> oldSetId = control.getListIdQuestion( );
-            
+
             for ( Integer oldId : oldSetId )
             {
                 newSetId.add( mapIdQuestions.get( oldId ) );
             }
             control.setListIdQuestion( newSetId );
-            
+
             if ( ControlType.VALIDATION.getLabel( ).equals( control.getControlType( ) ) )
             {
                 control.setIdControlTarget( mapIdQuestions.get( control.getIdControlTarget( ) ) );
@@ -345,38 +380,39 @@ public class FormJsonService
             controlMapping.setIdQuestion( mapIdQuestions.get( controlMapping.getIdQuestion( ) ) );
         }
     }
-    
+
     private void updateFormDisplayWithNewQuestion( List<FormDisplay> formDisplayList, Map<Integer, Integer> mapIdQuestions )
     {
         for ( FormDisplay formDisplay : formDisplayList )
         {
-            if (  CompositeDisplayType.QUESTION.getLabel( ).equals( formDisplay.getCompositeType( ) ) )
+            if ( CompositeDisplayType.QUESTION.getLabel( ).equals( formDisplay.getCompositeType( ) ) )
             {
                 formDisplay.setCompositeId( mapIdQuestions.get( formDisplay.getCompositeId( ) ) );
             }
         }
     }
-    
-    private void importSteps( int newIdForm, List<Step> stepList, List<Group> groupList, List<Transition> transitionList, List<Question> questionList, List<FormDisplay> formDisplayList )
+
+    private void importSteps( int newIdForm, List<Step> stepList, List<Group> groupList, List<Transition> transitionList, List<Question> questionList,
+            List<FormDisplay> formDisplayList )
     {
         Map<Integer, Integer> mapIdSteps = new HashMap<>( );
         for ( Step step : stepList )
         {
             int oldStepId = step.getId( );
             step.setIdForm( newIdForm );
-            
+
             StepHome.create( step );
             int newStepId = step.getId( );
-            
+
             mapIdSteps.put( oldStepId, newStepId );
         }
-        
+
         updateTransitionWithNewStep( transitionList, mapIdSteps );
         updateGroupWithNewStep( groupList, mapIdSteps );
         updateQuestionWithNewStep( questionList, mapIdSteps );
         updateFormDisplayWithNewStep( formDisplayList, mapIdSteps );
     }
-    
+
     private void updateTransitionWithNewStep( List<Transition> transitionList, Map<Integer, Integer> mapIdSteps )
     {
         for ( Transition transition : transitionList )
@@ -385,7 +421,7 @@ public class FormJsonService
             transition.setNextStep( mapIdSteps.get( transition.getNextStep( ) ) );
         }
     }
-    
+
     private void updateGroupWithNewStep( List<Group> groupList, Map<Integer, Integer> mapIdSteps )
     {
         for ( Group group : groupList )
@@ -393,7 +429,7 @@ public class FormJsonService
             group.setIdStep( mapIdSteps.get( group.getIdStep( ) ) );
         }
     }
-    
+
     private void updateQuestionWithNewStep( List<Question> questionList, Map<Integer, Integer> mapIdSteps )
     {
         for ( Question question : questionList )
@@ -401,7 +437,7 @@ public class FormJsonService
             question.setIdStep( mapIdSteps.get( question.getIdStep( ) ) );
         }
     }
-    
+
     private void updateFormDisplayWithNewStep( List<FormDisplay> formDisplayList, Map<Integer, Integer> mapIdSteps )
     {
         for ( FormDisplay formDisplay : formDisplayList )

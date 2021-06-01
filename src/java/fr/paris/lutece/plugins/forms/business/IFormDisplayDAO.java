@@ -134,7 +134,7 @@ public interface IFormDisplayDAO
      * @return the FormDisplay associated to the given parameter
      */
     FormDisplay selectFormdisplayByFormStepAndComposite( int nIdForm, int nIdStep, int nIdComposite, Plugin plugin );
-    
+
     /**
      * Load the data of all the FormDisplay for a form and returns them as a list
      * 
