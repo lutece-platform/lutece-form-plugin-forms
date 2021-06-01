@@ -1,0 +1,39 @@
+<#if getError( list_responses, entry )?? >
+  <#assign error = getError( list_responses, entry ) >
+</#if>
+<#if getResponse( list_responses, entry )?? >
+  <#assign response = getResponse( list_responses, entry ) >
+</#if>
+
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign field = getFieldByCode( entry, "autocomplete" ) >
+<#if field?? && field.value??>
+	<#assign autocomplete = "autocomplete=${field.value}" />
+<#else>
+	<#assign autocomplete = "" />
+</#if>
+<#if error??><#assign groupStyle = 'error' /><#else><#assign groupStyle = '' /></#if>
+<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+	<#assign helpKey = entry.helpMessage />
+<#else>
+	<#assign helpKey = '' />
+</#if>
+
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory>
+    <@input type='tel' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=(response.toStringValueResponse)! params=autocomplete />
+</@formGroup>
+
+<#if list_responses??>
+	<#list list_responses as response>
+		<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+			<@alert color='danger'>
+				<#assign error = response.entry.error />
+				<#if error.mandatoryError>
+					#i18n{forms.message.mandatory.entry}
+				<#else>
+					${error.errorMessage}
+				</#if>
+			</@alert>
+		</#if>
+	</#list>
+</#if>
