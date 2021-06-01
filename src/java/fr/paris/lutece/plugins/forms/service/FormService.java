@@ -56,6 +56,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.service.workflow.IFormWorkflowService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
@@ -313,6 +314,7 @@ public class FormService
 
         FormResponseHome.removeByForm( nIdForm );
         FormMessageHome.removeByForm( nIdForm );
+        FormExportConfigHome.removeByForm( nIdForm );
 
         Form form = FormHome.findByPrimaryKey( nIdForm );
         int nIdWorkflow = form.getIdWorkflow( );
