@@ -40,6 +40,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -80,6 +81,7 @@ import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.AbstractPaginator;
@@ -109,6 +111,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_ID_CONFIG = "id_config";
     private static final String PARAMETER_EXPORT_CONFIG = "export_config";
+    private static final String PARAMETER_JSON_FILE = "json_file";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_FORM = "forms.modify_form.pageTitle";
@@ -159,6 +162,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String ACTION_MOVE_UP_EXPORT_CONFIG = "doMoveUpExportConfig";
     private static final String ACTION_MOVE_DOWN_EXPORT_CONFIG = "doMoveDownExportConfig";
     private static final String ACTION_EXPORT_FORM = "doExportJson";
+    private static final String ACTION_IMPORT_FORM = "doImportJson";
 
     // Infos
     private static final String INFO_FORM_CREATED = "forms.info.form.created";
@@ -166,6 +170,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String INFO_FORM_REMOVED = "forms.info.form.removed";
     private static final String INFO_FORM_COPIED = "forms.info.form.copied";
     private static final String ERROR_FORM_NOT_COPIED = "forms.error.form.not.copied";
+    private static final String ERROR_FORM_NOT_IMPORTED = "forms.error.form.not.imported";
     private static final String MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG = "forms.modify_form.message.confirmRemoveExportConfig";
 
     // Errors
@@ -837,5 +842,23 @@ public class FormJspBean extends AbstractJspBean
             AppLogService.debug( e.getMessage( ) );
             addError( ERROR_FORM_NOT_COPIED, getLocale( ) );
         }
+    }
+    
+    @Action( ACTION_IMPORT_FORM )
+    public String doImportJson( HttpServletRequest request )
+    {
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
+        try
+        {
+            FormJsonService.getInstance( ).jsonImportForm( new String( fileItem.get( ) ), getLocale( ) );
+            addInfo( INFO_FORM_CREATED, getLocale( ) );
+        }
+        catch( JsonProcessingException e )
+        {
+            AppLogService.error( e.getMessage( ) );
+            addError( ERROR_FORM_NOT_IMPORTED, getLocale( ) );
+        }
+        return redirectView( request, VIEW_MANAGE_FORMS );
     }
 }
