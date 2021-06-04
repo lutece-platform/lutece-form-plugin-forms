@@ -15,9 +15,13 @@
 	<#if !step.initial ><button class="btn btn-primary btn-sm" name="action_doReturnStep"  type="submit" >#i18n{forms.step.previous}</button></#if>
 	<#if step.final >
       <#if form.displaySummary >
-        <button class="btn btn-primary btn-sm" name="action_formResponseSummary"  type="submit">#i18n{forms.step.save}</button>
+        <button class="btn btn-primary btn-sm" name="action_formResponseSummary"  type="submit">#i18n{forms.step.see.summary}</button>
       <#else>
-        <button class="btn btn-primary btn-sm" name="action_doSaveResponse"  type="submit">#i18n{forms.step.save}</button>
+      	<#assign label_button="#i18n{forms.step.save}" />
+      	<#if form.labelFinalButton?has_content>
+      		<#assign label_button=form.labelFinalButton />
+      	</#if>
+        <button class="btn btn-primary btn-sm" name="action_doSaveResponse"  type="submit">${label_button}</button>
       </#if>
 	<#else>
 	  <button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit">#i18n{forms.step.next}</button>
