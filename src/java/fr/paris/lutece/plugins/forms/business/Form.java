@@ -110,6 +110,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private boolean _bCaptchaRecap;
 
     private boolean _bCountResponses;
+    
+    private String _labelFinalButton;
 
     /**
      * Returns the Id
@@ -568,4 +570,19 @@ public class Form implements AdminWorkgroupResource, RBACResource
         _bCountResponses = bCountResponse;
     }
 
+    /**
+     * @return the labelFinalButton
+     */
+    public String getLabelFinalButton( )
+    {
+        return _labelFinalButton;
+    }
+
+    /**
+     * @param labelFinalButton the labelFinalButton to set
+     */
+    public void setLabelFinalButton( String labelFinalButton )
+    {
+        _labelFinalButton = labelFinalButton;
+    }
 }
