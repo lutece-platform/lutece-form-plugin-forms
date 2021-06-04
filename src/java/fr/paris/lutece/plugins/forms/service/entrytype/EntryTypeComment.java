@@ -35,9 +35,12 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeComment;
+import fr.paris.lutece.portal.service.file.FileService;
+import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 
 /**
  *
@@ -106,5 +109,11 @@ public class EntryTypeComment extends AbstractEntryTypeComment implements IRespo
     public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
     {
         return false;
+    }
+    
+    @Override
+    protected IFileStoreServiceProvider getFileStoreServiceProvider( )
+    {
+        return FileService.getInstance( ).getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
     }
 }

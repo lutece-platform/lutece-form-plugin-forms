@@ -51,7 +51,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
-import fr.paris.lutece.plugins.forms.service.download.FormsFileDownloadProvider;
+import fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.admin.MultiviewFormResponseDetailsJspBean;
@@ -62,9 +62,8 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.service.provider.IProvider;
 import fr.paris.lutece.plugins.workflowcore.service.provider.InfoMarker;
-import fr.paris.lutece.portal.service.download.AbstractFileDownloadProvider;
-import fr.paris.lutece.portal.service.download.FileDownloadData;
-import fr.paris.lutece.portal.service.download.IFileDownloadProvider;
+import fr.paris.lutece.portal.service.file.FileService;
+import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -128,10 +127,14 @@ public abstract class GenericFormsProvider implements IProvider
                 Field fieldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
                 if ( fieldFile != null )
                 {
-                    FileDownloadData fileDownloadData = new FileDownloadData( entry.getIdResource( ), Form.RESOURCE_TYPE,
-                            Integer.parseInt( fieldFile.getValue( ) ) );
-                    IFileDownloadProvider provider = AbstractFileDownloadProvider.findProvider( FormsFileDownloadProvider.PROVIDER_NAME );
-                    value = provider.getDownloadUrl( fileDownloadData, false );
+                    IFileStoreServiceProvider fileStoreprovider = FileService.getInstance( ).getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
+                    
+                    Map<String, String> additionnalData = new HashMap<>( );
+                    additionnalData.put( FileService.PARAMETER_RESOURCE_ID, String.valueOf( entry.getIdResource( ) ) );
+                    additionnalData.put( FileService.PARAMETER_RESOURCE_TYPE, Form.RESOURCE_TYPE );
+                    additionnalData.put( FileService.PARAMETER_PROVIDER, fileStoreprovider.getName( ) );
+                    
+                    value = fileStoreprovider.getFileDownloadUrlFO( fieldFile.getValue( ), additionnalData );
                 }
             }
             else

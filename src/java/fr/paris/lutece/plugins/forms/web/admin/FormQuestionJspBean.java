@@ -63,7 +63,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
-import fr.paris.lutece.plugins.forms.service.download.FormsFileDownloadProvider;
+import fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
@@ -81,11 +81,9 @@ import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.download.AbstractFileDownloadProvider;
-import fr.paris.lutece.portal.service.download.FileDownloadData;
-import fr.paris.lutece.portal.service.download.IFileDownloadProvider;
+import fr.paris.lutece.portal.service.file.FileService;
+import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -206,7 +204,8 @@ public class FormQuestionJspBean extends AbstractJspBean
 
     private static final FormDisplayService _formDisplayService = SpringContextService.getBean( FormDisplayService.BEAN_NAME );
     private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
-
+    private IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( ).getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
+    
     private Step _step;
     private Form _form;
     private Entry _entry;
@@ -856,12 +855,13 @@ public class FormQuestionJspBean extends AbstractJspBean
             Field fieldFile = _entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
             if ( fieldFile != null )
             {
-                FileDownloadData fileDownloadData = new FileDownloadData( _entry.getIdResource( ), Form.RESOURCE_TYPE,
-                        Integer.parseInt( fieldFile.getValue( ) ) );
-                IFileDownloadProvider provider = AbstractFileDownloadProvider.findProvider( FormsFileDownloadProvider.PROVIDER_NAME );
+                Map<String, String> additionnalData = new HashMap<>( );
+                additionnalData.put( FileService.PARAMETER_RESOURCE_ID, String.valueOf( _entry.getIdResource( ) ) );
+                additionnalData.put( FileService.PARAMETER_RESOURCE_TYPE, Form.RESOURCE_TYPE );
+                additionnalData.put( FileService.PARAMETER_PROVIDER, _fileStoreProvider.getName( ) );
 
                 model.put( EntryTypeCommentDisplayService.MARK_FILENAME, fieldFile.getTitle( ) );
-                model.put( EntryTypeCommentDisplayService.MARK_URL_DOWNLOAD_BO, provider.getDownloadUrl( fileDownloadData, true ) );
+                model.put( EntryTypeCommentDisplayService.MARK_URL_DOWNLOAD_BO, _fileStoreProvider.getFileDownloadUrlBO( fieldFile.getValue( ), additionnalData ) );
             }
         }
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
@@ -1052,7 +1052,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         Field oldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
         if ( oldFile != null )
         {
-            FileHome.remove( Integer.parseInt( oldFile.getValue( ) ) );
+            _fileStoreProvider.delete( oldFile.getValue( ) );
             FieldHome.remove( oldFile.getIdField( ) );
         }
 

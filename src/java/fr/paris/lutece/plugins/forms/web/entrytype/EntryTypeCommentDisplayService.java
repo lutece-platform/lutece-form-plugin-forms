@@ -33,19 +33,19 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.service.download.FormsFileDownloadProvider;
+import fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.portal.service.download.AbstractFileDownloadProvider;
-import fr.paris.lutece.portal.service.download.FileDownloadData;
-import fr.paris.lutece.portal.service.download.IFileDownloadProvider;
+import fr.paris.lutece.portal.service.file.FileService;
+import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 
 public class EntryTypeCommentDisplayService extends EntryTypeDefaultDisplayService
 {
@@ -64,12 +64,16 @@ public class EntryTypeCommentDisplayService extends EntryTypeDefaultDisplayServi
         Field fieldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
         if ( fieldFile != null )
         {
-            FileDownloadData fileDownloadData = new FileDownloadData( entry.getIdResource( ), Form.RESOURCE_TYPE, Integer.parseInt( fieldFile.getValue( ) ) );
-            IFileDownloadProvider provider = AbstractFileDownloadProvider.findProvider( FormsFileDownloadProvider.PROVIDER_NAME );
+            IFileStoreServiceProvider fileStoreprovider = FileService.getInstance( ).getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
+            
+            Map<String, String> additionnalData = new HashMap<>( );
+            additionnalData.put( FileService.PARAMETER_RESOURCE_ID, String.valueOf( entry.getIdResource( ) ) );
+            additionnalData.put( FileService.PARAMETER_RESOURCE_TYPE, Form.RESOURCE_TYPE );
+            additionnalData.put( FileService.PARAMETER_PROVIDER, fileStoreprovider.getName( ) );
 
             model.put( MARK_FILENAME, fieldFile.getTitle( ) );
-            model.put( MARK_URL_DOWNLOAD_BO, provider.getDownloadUrl( fileDownloadData, true ) );
-            model.put( MARK_URL_DOWNLOAD_FO, provider.getDownloadUrl( fileDownloadData, false ) );
+            model.put( MARK_URL_DOWNLOAD_BO, fileStoreprovider.getFileDownloadUrlBO( fieldFile.getValue( ), additionnalData ) );
+            model.put( MARK_URL_DOWNLOAD_FO, fileStoreprovider.getFileDownloadUrlFO( fieldFile.getValue( ), additionnalData ) );
         }
         return super.getEntryTemplateDisplay( request, entry, locale, model, displayType );
     }

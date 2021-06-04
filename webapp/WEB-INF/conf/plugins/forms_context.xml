@@ -326,5 +326,12 @@
 		<constructor-arg name="strFormColumnTitle" type="java.lang.String" value="forms.column.state.title"/>
 	</bean>
 	 
-    <bean id="forms.formsFileDownloadProvider" class="fr.paris.lutece.plugins.forms.service.download.FormsFileDownloadProvider"/>
+    <bean id="forms.formsFileDownloadUrlService" class="fr.paris.lutece.plugins.forms.service.download.FormsFileDownloadService" />
+    <bean id="forms.formsFileRBACService" class="fr.paris.lutece.plugins.forms.service.download.FormsFileRBACService" />
+    
+    <bean id="forms.formsDatabaseFileService" class="fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService" >
+        <constructor-arg ref="forms.formsFileDownloadUrlService" />
+        <constructor-arg ref="forms.formsFileRBACService" />
+        <property name="default" value="false" />
+    </bean>
 </beans>
