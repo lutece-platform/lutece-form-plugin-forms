@@ -7,6 +7,9 @@
 <@formGroup labelFor='column_title' labelKey='#i18n{forms.create_question.labelColumnTitle}' helpKey='#i18n{forms.create_question.labelColumnTitle.help}'>
     <@input type='text' name='column_title' value='' />
 </@formGroup>
+<@formGroup labelFor='multiview_column_order' labelKey='#i18n{forms.create_question.labelColumnOrderTitle}' helpKey='#i18n{forms.create_question.labelColumnOrderTitle.help}'>
+    <@input type='number' name='multiview_column_order' min=0 />
+</@formGroup>
 <#if can_be_filtered>
 	<@formGroup labelKey='#i18n{forms.create_question.labelFilterableMultiviewGlobal}' hideLabel=['all'] helpKey='#i18n{forms.create_question.labelFilterableMultiviewGlobal.help}'>
 	    <@checkBox labelFor='is_filterable_multiview_global' labelKey='#i18n{forms.create_question.labelFilterableMultiviewGlobal}' name='is_filterable_multiview_global' id='is_filterable_multiview_global' value='1' />
