@@ -69,7 +69,7 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import java.util.ArrayList;
 import java.util.Collections;
-
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -193,6 +193,9 @@ public final class MultiviewFormService
         // Then add global columns from config questions
         List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
                 : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
+        
+        // Sort questions by multiview order
+        listQuestions.sort( Comparator.comparing( Question::getMultiviewColumnOrder ) );
 
         addColumnFromConfig( mapFormColumns, listQuestions, true, locale );
 
@@ -256,7 +259,7 @@ public final class MultiviewFormService
         // Then add the global question-based for Filters
         List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
                 : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
-
+        
         addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, true, locale );
 
         if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )
