@@ -4,21 +4,21 @@
     <@ul class="timeline-form">
     <#list history_information_list as history_information>
         <@li>
-            <h5 class="text-primary">${history_information.resource_history.action.description}
+            <h5 class="text-primary">${history_information.resource_history.action.description!}
               <small class="pull-right">${history_information.resource_history.creationDate!}</small>
             </h5>
             <#if history_information.task_information_list?size gt 0>
               <#list history_information.task_information_list as task_information>
-              <p>${task_information}</p>
+              <p>${task_information!}</p>
               </#list>
             <#else>
               <p>#i18n{forms.multiviewForms.view_record_history.no_information}</p>
             </#if>
             <p class="text-right">
               <#if history_information.user_history?exists>
-                <em>${history_information.user_history.firstName} ${history_information.user_history.lastName}</em>
+                <em>${history_information.user_history.firstName!} ${history_information.user_history.lastName!}</em>
                 <#if adminAvatar>
-                  <img class="fa direct-chat-img" src="servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId}" alt="Avatar" title="Avatar">
+                  <img class="fa direct-chat-img" src="servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId!}" alt="Avatar" title="Avatar">
                 <#else>
                 	<@icon style='user' />
                 </#if>
