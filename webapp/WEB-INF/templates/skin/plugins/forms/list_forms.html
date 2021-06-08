@@ -4,7 +4,7 @@
 		<#if form.active>
 			 <ul>
 				<li>
-					<a href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" target="_blank">${form.title}</a> <#if form.countResponses>(${form.currentNumberResponse})</#if>
+					<a href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" target="_blank">${form.title}</a> <#if form.countResponses>(${form.currentNumberResponse} #i18n{form.xpage.response.label})</#if>
 				</li>
 			</ul>
 		</#if>
