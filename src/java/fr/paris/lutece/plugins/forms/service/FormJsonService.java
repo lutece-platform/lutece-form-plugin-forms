@@ -187,6 +187,8 @@ public class FormJsonService
             form.setTitle( strTitleCopyForm );
         }
         form.setIdWorkflow( 0 );
+        form.setAvailabilityStartDate( null );
+        form.setAvailabilityEndDate( null );
         FormHome.create( form );
 
         int newIdForm = form.getId( );
