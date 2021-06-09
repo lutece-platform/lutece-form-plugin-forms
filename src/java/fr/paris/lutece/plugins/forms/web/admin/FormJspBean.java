@@ -84,6 +84,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.file.FileUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
@@ -836,7 +837,8 @@ public class FormJspBean extends AbstractJspBean
         try
         {
             content = FormJsonService.getInstance( ).jsonExportForm( nId );
-            download( content.getBytes( ), "export.json", "application/json" );
+            Form form = FormHome.findByPrimaryKey( nId );
+            download( content.getBytes( ), FileUtil.normalizeFileName( form.getTitle( ) ) + ".json", "application/json" );
         }
         catch( JsonProcessingException e )
         {
