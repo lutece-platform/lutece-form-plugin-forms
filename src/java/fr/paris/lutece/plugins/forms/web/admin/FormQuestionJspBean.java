@@ -204,8 +204,9 @@ public class FormQuestionJspBean extends AbstractJspBean
 
     private static final FormDisplayService _formDisplayService = SpringContextService.getBean( FormDisplayService.BEAN_NAME );
     private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
-    private IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( ).getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
-    
+    private IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( )
+            .getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
+
     private Step _step;
     private Form _form;
     private Entry _entry;
@@ -667,7 +668,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
         columnTitle = ( columnTitle == null || columnTitle.isEmpty( ) ) ? _question.getTitle( ) : columnTitle;
         _question.setColumnTitle( columnTitle );
-        _question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER ), 0) );
+        _question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER ), 0 ) );
         QuestionHome.create( _question );
 
         int nDisplayDepth = FormsDisplayUtils.getDisplayDepthFromParent( nParentGroup );
@@ -861,7 +862,8 @@ public class FormQuestionJspBean extends AbstractJspBean
                 additionnalData.put( FileService.PARAMETER_PROVIDER, _fileStoreProvider.getName( ) );
 
                 model.put( EntryTypeCommentDisplayService.MARK_FILENAME, fieldFile.getTitle( ) );
-                model.put( EntryTypeCommentDisplayService.MARK_URL_DOWNLOAD_BO, _fileStoreProvider.getFileDownloadUrlBO( fieldFile.getValue( ), additionnalData ) );
+                model.put( EntryTypeCommentDisplayService.MARK_URL_DOWNLOAD_BO,
+                        _fileStoreProvider.getFileDownloadUrlBO( fieldFile.getValue( ), additionnalData ) );
             }
         }
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
@@ -952,7 +954,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         _question.setTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
         _question.setDescription( _entry.getComment( ) );
-        _question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER ), 0) );
+        _question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER ), 0 ) );
         QuestionHome.update( _question );
 
         return null;

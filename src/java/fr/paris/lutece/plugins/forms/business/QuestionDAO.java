@@ -186,7 +186,7 @@ public final class QuestionDAO implements IQuestionDAO
         daoUtil.setBoolean( nIndex++, question.isFiltrableMultiviewGlobal( ) );
         daoUtil.setBoolean( nIndex++, question.isFiltrableMultiviewFormSelected( ) );
         daoUtil.setInt( nIndex++, question.getMultiviewColumnOrder( ) );
-        
+
         daoUtil.setInt( nIndex, question.getId( ) );
 
         daoUtil.executeUpdate( );
@@ -456,7 +456,7 @@ public final class QuestionDAO implements IQuestionDAO
         question.setFiltrableMultiviewGlobal( daoUtil.getBoolean( "is_filterable_multiview_global" ) );
         question.setFiltrableMultiviewFormSelected( daoUtil.getBoolean( "is_filterable_multiview_form_selected" ) );
         question.setMultiviewColumnOrder( daoUtil.getInt( "multiview_column_order" ) );
-        
+
         return question;
     }
 }

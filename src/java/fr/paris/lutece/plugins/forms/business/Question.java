@@ -83,7 +83,7 @@ public class Question implements Serializable, Cloneable
     private boolean _bIsFiltrableMultiviewGlobal;
 
     private boolean _bIsFiltrableMultiviewFormSelected;
-    
+
     private int _nMultiviewColumnOrder;
 
     /**
@@ -446,7 +446,8 @@ public class Question implements Serializable, Cloneable
     }
 
     /**
-     * @param nMultiviewColumnOrder the nMultiviewColumnOrder to set
+     * @param nMultiviewColumnOrder
+     *            the nMultiviewColumnOrder to set
      */
     public void setMultiviewColumnOrder( int nMultiviewColumnOrder )
     {

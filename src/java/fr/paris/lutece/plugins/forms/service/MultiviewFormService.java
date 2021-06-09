@@ -193,7 +193,7 @@ public final class MultiviewFormService
         // Then add global columns from config questions
         List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
                 : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
-        
+
         // Sort questions by multiview order
         listQuestions.sort( Comparator.comparing( Question::getMultiviewColumnOrder ) );
 
@@ -259,7 +259,7 @@ public final class MultiviewFormService
         // Then add the global question-based for Filters
         List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
                 : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
-        
+
         addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, true, locale );
 
         if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )

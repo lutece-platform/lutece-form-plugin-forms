@@ -110,7 +110,7 @@ public class EntryTypeComment extends AbstractEntryTypeComment implements IRespo
     {
         return false;
     }
-    
+
     @Override
     protected IFileStoreServiceProvider getFileStoreServiceProvider( )
     {

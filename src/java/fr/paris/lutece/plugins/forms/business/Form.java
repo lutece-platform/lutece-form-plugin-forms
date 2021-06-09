@@ -110,7 +110,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private boolean _bCaptchaRecap;
 
     private boolean _bCountResponses;
-    
+
     private String _labelFinalButton;
 
     /**
@@ -579,7 +579,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     }
 
     /**
-     * @param labelFinalButton the labelFinalButton to set
+     * @param labelFinalButton
+     *            the labelFinalButton to set
      */
     public void setLabelFinalButton( String labelFinalButton )
     {

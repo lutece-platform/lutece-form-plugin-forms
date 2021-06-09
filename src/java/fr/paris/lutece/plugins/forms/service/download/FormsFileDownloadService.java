@@ -63,27 +63,27 @@ public class FormsFileDownloadService extends DefaultFileDownloadService
     {
         return VALIDITY_DURATION;
     }
-    
+
     @Override
-    public String getFileDownloadUrlBO(String strFileKey, Map<String,String> additionnalData, String strFileStorageServiceProviderName) 
+    public String getFileDownloadUrlBO( String strFileKey, Map<String, String> additionnalData, String strFileStorageServiceProviderName )
     {
         StringBuilder sbUrl = new StringBuilder( );
 
         sbUrl.append( AppPathService.getBaseUrl( null ) );
         sbUrl.append( URL_BO );
-        
+
         if ( additionnalData == null )
         {
-            additionnalData = new HashMap<>();
+            additionnalData = new HashMap<>( );
         }
         additionnalData.put( FileService.PARAMETER_FILE_ID, strFileKey );
         additionnalData.put( FileService.PARAMETER_BO, String.valueOf( true ) );
-        
+
         return getEncryptedUrl( sbUrl.toString( ), getDataToEncryptForms( additionnalData ), strFileStorageServiceProviderName );
     }
-    
+
     @Override
-    public String getFileDownloadUrlFO(String strFileKey, Map<String, String> additionnalData, String strFileStorageServiceProviderName) 
+    public String getFileDownloadUrlFO( String strFileKey, Map<String, String> additionnalData, String strFileStorageServiceProviderName )
     {
         StringBuilder sbUrl = new StringBuilder( );
 
@@ -92,39 +92,39 @@ public class FormsFileDownloadService extends DefaultFileDownloadService
 
         if ( additionnalData == null )
         {
-            additionnalData = new HashMap<>();
+            additionnalData = new HashMap<>( );
         }
         additionnalData.put( FileService.PARAMETER_FILE_ID, strFileKey );
         additionnalData.put( FileService.PARAMETER_BO, String.valueOf( false ) );
-        
+
         return getEncryptedUrl( sbUrl.toString( ), getDataToEncryptForms( additionnalData ), strFileStorageServiceProviderName );
     }
-    
+
     /**
      * get data to encrypt
      * 
      * @param fileDownloadData
      * @return the map of datas to encrypt in the url
-     */    
-    private String getDataToEncryptForms( Map<String,String> additionnalData )
+     */
+    private String getDataToEncryptForms( Map<String, String> additionnalData )
     {
         StringBuilder sb = new StringBuilder( );
-        sb.append( StringUtils.defaultIfEmpty( additionnalData.get( FileService.PARAMETER_FILE_ID ),"") ).append( SEPARATOR );
-        sb.append( StringUtils.defaultIfEmpty( additionnalData.get( FileService.PARAMETER_RESOURCE_ID ),"" ) ).append( SEPARATOR );
+        sb.append( StringUtils.defaultIfEmpty( additionnalData.get( FileService.PARAMETER_FILE_ID ), "" ) ).append( SEPARATOR );
+        sb.append( StringUtils.defaultIfEmpty( additionnalData.get( FileService.PARAMETER_RESOURCE_ID ), "" ) ).append( SEPARATOR );
         sb.append( StringUtils.defaultIfEmpty( additionnalData.get( FileService.PARAMETER_RESOURCE_TYPE ), "" ) ).append( SEPARATOR );
         sb.append( StringUtils.defaultIfEmpty( additionnalData.get( FileService.PARAMETER_BO ), "" ) ).append( SEPARATOR );
         sb.append( calculateEndValidity( ) );
-        
+
         return sb.toString( );
     }
-    
+
     @Override
-    protected Map<String,String> getDecryptedData( String strData )
+    protected Map<String, String> getDecryptedData( String strData )
     {
-        String[ ] data = strData.split( SEPARATOR );
-        Map<String,String> fileData = buildAdditionnalDatas(data[0] , data[1], data[2] );
-        fileData.put(FileService.PARAMETER_BO, data[3] );
-        fileData.put(FileService.PARAMETER_VALIDITY_TIME, data[4] );
+        String [ ] data = strData.split( SEPARATOR );
+        Map<String, String> fileData = buildAdditionnalDatas( data [0], data [1], data [2] );
+        fileData.put( FileService.PARAMETER_BO, data [3] );
+        fileData.put( FileService.PARAMETER_VALIDITY_TIME, data [4] );
 
         return fileData;
     }
