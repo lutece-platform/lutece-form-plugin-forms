@@ -382,7 +382,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     {
 
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        int nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
+        int nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), 0 );
 
         if ( ( _step == null ) || nIdStep != _step.getId( ) )
         {
