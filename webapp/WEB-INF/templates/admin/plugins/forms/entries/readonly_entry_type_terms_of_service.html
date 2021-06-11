@@ -1,15 +1,16 @@
-<@formGroup labelKey='${entry.title!\'\'}'>
-
-	<#if getResponseContainingTheFieldWithCode( list_responses, "tos" )?? >
-		<#assign responseTos = getResponseContainingTheFieldWithCode( list_responses, "tos" ) >
-	</#if>
-	<#if getResponseContainingTheFieldWithCode( list_responses, "agreement" )?? >
-		<#assign responseAgreement = getResponseContainingTheFieldWithCode( list_responses, "agreement" ) >
-	</#if>
-  
-    <#if responseAgreement?? && responseAgreement.toStringValueResponse == "true">
-      <@link href='jsp/site/RunStandaloneApp.jsp?page=formsTermsOfService&view=acceptedTermsOfService&id_response=${(responseTos.idResponse)!}' params='onclick="javascript:openFormsTermsOfService(this.href); return false;" target="_blank"'>#i18n{forms.entryType.termsOfService.readOnly.link}</@link>
-    <#else>
-      <@tag color='warning'><@icon style='exclamation-triangle' /></@tag>&nbsp;#i18n{forms.entryType.termsOfService.readOnly.unknown}
-    </#if>
-</@formGroup>
+<@row>
+    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+    <@columns sm=9>
+		<#if getResponseContainingTheFieldWithCode( list_responses, "tos" )?? >
+			<#assign responseTos = getResponseContainingTheFieldWithCode( list_responses, "tos" ) >
+		</#if>
+		<#if getResponseContainingTheFieldWithCode( list_responses, "agreement" )?? >
+			<#assign responseAgreement = getResponseContainingTheFieldWithCode( list_responses, "agreement" ) >
+		</#if>
+		<#if responseAgreement?? && responseAgreement.toStringValueResponse == "true">
+		<@link href='jsp/site/RunStandaloneApp.jsp?page=formsTermsOfService&view=acceptedTermsOfService&id_response=${(responseTos.idResponse)!}' params='onclick="javascript:openFormsTermsOfService(this.href); return false;" target="_blank"'>#i18n{forms.entryType.termsOfService.readOnly.link}</@link>
+		<#else>
+		<@tag color='warning'><@icon style='exclamation-triangle' /></@tag>&nbsp;#i18n{forms.entryType.termsOfService.readOnly.unknown}
+		</#if>
+	</@columns>
+</@row>

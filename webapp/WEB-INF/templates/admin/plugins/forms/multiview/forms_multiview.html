@@ -7,30 +7,27 @@
 					<#include "includes/include_manage_multiview_forms_header.html">
 				</@tform>
 				<#if table_template?has_content>
-					<div id="multi-form-list">
+					<@div id="multi-form-list">
 						${table_template}
 						<@paginationAdmin paginator=paginator combo=1 showcount=0 form=0 />
-					</div>
+					</@div>
 				<#else>
-					<div id="multiview-no-forms">
-						<div class="panel">
-							<div class="panel-body">
-								<h2 class="text-muted text-center">#i18n{forms.multiviewForms.noFormResponses}</h2>
-								<img class="img-responsive" src="images/admin/skin/plugins/forms/multiview/no_form_responses.jpg" alt="#i18n{forms.multiviewForms.noFormResponses}" title="">
-							</div>
-						</div>
-					</div>
+					<@div id="multiview-no-forms">
+						<@card>
+							<h2 class="text-muted text-center">#i18n{forms.multiviewForms.noFormResponses}</h2>
+							<@img url='images/admin/skin/plugins/forms/multiview/no_form_responses.jpg' alt='#i18n{forms.multiviewForms.noFormResponses}' title='#i18n{forms.multiviewForms.noFormResponses}' params=' aria-hidden="true"' />	
+						</@card>
+					</@div>
 				</#if>
 			</@boxBody>
 		</@box>
 	</@columns>
 </@row>
-<script src="js/plugins/forms/multiview/forms-multiview.js"></script>
+<script src="js/admin/plugins/forms/multiview/forms-multiview.js"></script>
 <script>
-	var formTitle = $("#id_form option:selected").text();
-	$("#multiviewFormsHeader > *").text($("#multiviewFormsHeader > *").text() + " : " + formTitle);
+var formTitle = $("#id_form option:selected").text();
+$("#multiviewFormsHeader > *").text($("#multiviewFormsHeader > *").text() + " : " + formTitle);
 </script>
-
-<@dateFilterJs  />
+<@dateFilterJs />
 <@scrollTopBtn />
 <@jsHeaderSort />

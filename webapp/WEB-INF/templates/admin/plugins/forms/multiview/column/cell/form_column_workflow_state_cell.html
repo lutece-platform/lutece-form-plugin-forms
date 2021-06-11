@@ -1,7 +1,1 @@
-<td>
-    <#if workflow_state_name?has_content>
-        <@tag color='info' class='unread'>
-            ${workflow_state_name!''}
-        </@tag>
-    </#if>
-</td>
+<@td><#if workflow_state_name?has_content><@tag color='info' class='unread'> ${workflow_state_name!''}</@tag></#if></@td>

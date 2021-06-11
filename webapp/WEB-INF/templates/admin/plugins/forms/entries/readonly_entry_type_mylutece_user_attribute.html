@@ -1,19 +1,24 @@
 <#if mylutece_user_login?? && mylutece_user_infos_list?has_content>
-    <@fieldSet>
-		<@formGroup labelKey='#i18n{forms.entryType.myLuteceUser.labelLogin}'>
-			<@staticText>${mylutece_user_login}</@staticText>
-		</@formGroup>
-        <#list mylutece_user_infos_list as user_info>
-			<@formGroup labelKey='#i18n{portal.security.${user_info.code}}'>
-				<@staticText>${user_info.name}</@staticText>
-		</@formGroup>
-        </#list>
-    </@fieldSet>
+    <@row>
+		<@columns sm=3><@p class='text-right font-weight-bold'>#i18n{forms.entryType.myLuteceUser.labelLogin}</@p></@columns>
+		<@columns sm=9>
+			<#list mylutece_user_infos_list as user_info>
+				<@row>
+					<@columns sm=3><@p class='text-right font-weight-bold'>#i18n{portal.security.${user_info.code}}</@p></@columns>
+					<@columns sm=9>
+						<@p>${user_info.name}</@p>
+					</@columns>
+				</@row>
+			</#list>
+		</@columns>
+    </@row>
 <#else>
-    <@formGroup labelKey='${entry.title!\'\'}'>
+	<@row>
+		<@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+		<@columns sm=9>
 		<#if list_responses?has_content>
 			<#list list_responses as response>
-				<@staticText>
+				<@p>
 					<#if form_response?? && response.entry??>
 						<@link href='jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}'>
 							${response.toStringValueResponse!''}
@@ -21,8 +26,9 @@
 					<#else>
 						${response.toStringValueResponse!''}
 					</#if>
-				</@staticText>
+				</@p>
 			</#list>
-		</#if>
-	</@formGroup>
+		</#if>    
+		</@columns>
+	</@row>
 </#if>

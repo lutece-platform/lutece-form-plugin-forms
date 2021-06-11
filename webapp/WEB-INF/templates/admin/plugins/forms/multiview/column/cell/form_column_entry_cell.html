@@ -1,8 +1,1 @@
-<td>
-    <#list entry_values as entry_value>
-        <#if entry_value?index gte 1>
-            <br/>
-        </#if>
-        ${entry_value!''}
-    </#list>
-</td>
+<@td><#list entry_values as entry_value><#if entry_value?index gte 1><br/> </#if>${entry_value!''}</#list></@td>

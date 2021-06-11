@@ -1,9 +1,6 @@
-<@formGroup labelKey='${entry.title!\'\'}'>
-    <#if list_responses?has_content>
-        <#list list_responses as response>
-            <@staticText>
-                <#if response.field??>${response.field.title!''}</#if>
-			</@staticText>
-        </#list>
-    </#if>
-</@formGroup>
+<@row>
+    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+    <@columns sm=9>
+        <#if list_responses?has_content><#list list_responses as response><@p><#if response.field??>${response.field.title!''}</#if></@p></#list></#if>
+    </@columns>
+</@row>
