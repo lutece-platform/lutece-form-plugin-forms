@@ -1,0 +1,150 @@
+<#assign width= 320>
+<#assign height= 261>
+<div class="form-group">
+	<#assign idName = 'attribute' + entry.idEntry>
+	<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
+		<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
+	</#if>
+	<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+		<#assign field_image_type=getFieldByCode( entry, "image_type")>
+		<#if field_image_type?? >
+			<#assign imageType= field_image_type.value>
+		<#else>
+			<#assign imageType= "png">
+		</#if>
+		
+		<#assign field_width=getFieldValueByCode( entry, "width")>
+		<#if field_width?number &gt; 0> 
+			<#assign width= field_width?number>
+		</#if>
+		<#assign field_height=getFieldValueByCode( entry, "height")>
+		<#if field_height?number &gt; 0> 
+			<#assign height= field_height?number>
+		</#if>
+	
+		<div id="row1"  class="row">
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+				<video id="video" width="0" height="0" autoplay ></video>
+				<button align="left" type="button" id="snap${entry.idEntry}" class="btn btn-primary btn-sm" ><i class="glyphicon glyphicon-camera" ></i> #i18n{form.snapPhoto}</button>
+				<button align="left" type="button" id="clear${entry.idEntry}" class="btn btn-primary btn-sm" ><i class="glyphicon glyphicon-remove-circle" ></i> Clear</button>							
+				<canvas id="canvas${entry.idEntry}" width="${width}" height="${height}" class="camera" ></canvas>
+				<input type="hidden"  id="${idName}" name="${idName}" width="${width}" height="${height}" 
+				<#if list_responses??>
+					<#list list_responses as response>
+					<#if response.entry.idEntry == entry.idEntry>
+						<#if response.toStringValueResponse??>
+							value="${response.toStringValueResponse}"
+						</#if>
+						<#if response.entry.error??>
+							class="error"
+						</#if>
+						</#if>
+					</#list>
+				<#else>
+						 value="" 
+				</#if>
+				class="${entry.CSSClass!} "	/>
+	        </div>
+		</div>
+		<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+			<span class="help-block">${entry.helpMessage}</span>
+		</#if>
+	</div>
+</div>
+
+	<#if list_responses??>
+		<#list list_responses as response>
+			<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+				<#assign error = response.entry.error>
+				<div class="alert alert-danger"><#if error.mandatoryError>#i18n{form.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
+			</#if>
+		</#list>
+	</#if>
+
+
+<script>
+	    
+	// Put event listeners into place
+    window.addEventListener("DOMContentLoaded", function() {
+	   // Grab elements, create settings, etc.
+        var canvas${entry.idEntry} = document.getElementById('canvas${entry.idEntry}');
+        var context${entry.idEntry} = canvas${entry.idEntry}.getContext('2d'); 
+	   
+	    var video = document.getElementById('video');
+	    var	photo${entry.idEntry} = document.querySelector('#attribute${entry.idEntry}');
+	    var img = new Image();
+	    img.src = photo${entry.idEntry}.value;
+	    img.onload = function() {
+	    	context${entry.idEntry}.drawImage(img, 0, 0, ${width}, ${height});
+	    }	   
+
+        var mediaConfig${entry.idEntry} =  { video: true };
+	    var camActive= false;
+	  
+        var errBack = function(e) {
+            console.log('An error has occurred!', e)
+         };
+	
+		// Put video listeners into place
+         if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+              navigator.mediaDevices.getUserMedia(mediaConfig${entry.idEntry}).then(function(stream) {
+                    video.srcObject = stream;
+		    		video.setAttribute('width',${width});
+	            	video.setAttribute('height',${height});
+                    video.play();
+
+               });
+          }
+
+         /* Legacy code below! */
+            else if(navigator.getUserMedia) { // Standard
+			navigator.getUserMedia(mediaConfig${entry.idEntry}, function(stream) {
+	 		video.src = stream;
+			video.setAttribute('width',${width});
+  			video.setAttribute('height',${height});
+			video.play();
+
+		}, errBack);
+	    } else if(navigator.webkitGetUserMedia) { // WebKit-prefixed
+		navigator.webkitGetUserMedia(mediaConfig${entry.idEntry}, function(stream){
+			video.src = window.webkitURL.createObjectURL(stream);
+			video.setAttribute('width',${width});
+	        	video.setAttribute('height',${height});
+			video.play();
+		}, errBack);
+	    } else if(navigator.mozGetUserMedia) { // Mozilla-prefixed
+		navigator.mozGetUserMedia(mediaConfig${entry.idEntry}, function(stream){
+			video.src = window.URL.createObjectURL(stream);
+			video.setAttribute('width',${width});
+	      		video.setAttribute('height',${height});
+			video.play();
+
+		}, errBack);
+	    }
+
+	    // Trigger photo take
+   	    document.getElementById('snap${entry.idEntry}').addEventListener('click', function(ev) {
+		context${entry.idEntry}.drawImage(video, 0, 0, ${width}, ${height});
+		var data${entry.idEntry} = canvas${entry.idEntry}.toDataURL('image/${imageType}',1);
+		if(video.src != null && video.src !="" ){
+			 photo${entry.idEntry}.setAttribute('value', data${entry.idEntry});
+		}
+		if ( video.srcObject != null)
+		{
+			photo${entry.idEntry}.setAttribute('value', data${entry.idEntry});
+		}
+		
+			ev.preventDefault();
+            });
+	   
+	   // Trigger photo remove
+   	    document.getElementById('clear${entry.idEntry}').addEventListener('click', function(ev) {
+		context${entry.idEntry}.clearRect( 0, 0, ${width}, ${height});
+		photo${entry.idEntry}.setAttribute('value', "");
+		ev.preventDefault();
+            });
+
+		
+	}, false);
+</script>

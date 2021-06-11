@@ -125,6 +125,7 @@
 	<bean id="forms.entryTypeArray" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeArray" />
     <bean id="forms.entryTypeTermsOfService" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService" />
     <bean id="forms.entryTypeAutomaticFileReading" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading" />
+    <bean id="forms.entryTypeCamera" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCamera" />
 
 	<!-- DisplayService -->
 	<bean id="forms.entryTypeCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
@@ -175,6 +176,9 @@
     <bean id="forms.entryTypeAutomaticFileReadingDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileReadingDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
 	</bean>
+    <bean id="forms.entryTypeCameraDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">
+        <constructor-arg  type="java.lang.String" value="forms.entryTypeCamera" />
+    </bean>
 	
 	<!-- DataService -->
 	<bean id="forms.entryTypeCheckBoxDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
@@ -228,6 +232,9 @@
     <bean id="forms.entryTypeAutomaticFileReadingDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeAutomaticFileReading" />
 	</bean>
+    <bean id="forms.entryTypeCameraDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
+        <constructor-arg  type="java.lang.String" value="forms.entryTypeCamera" />
+    </bean>
 		
 	<bean id="forms.asynchronousUploadHandler" class="fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler" />
 	

@@ -35,3 +35,5 @@ INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_use
 ('116', 'Conditions d''utilisation', 0, 0, 0, 'forms.entryTypeTermsOfService', 'gavel', 'forms');
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
 ('117', 'Lecture automatique fichier (OCR)', 0, 0, 0, 'forms.entryTypeAutomaticFileReading', 'file', 'forms');
+INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
+('118', 'Camera', 0, 0, 0, 'forms.entryTypeCamera', 'camera', 'forms');

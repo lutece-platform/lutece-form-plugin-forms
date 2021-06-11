@@ -1,0 +1,86 @@
+<#include "all_entry_commons.html" />
+
+<@breadforms title=entry.entryType.title />
+<@row>
+	<@columns>
+		<@box>
+			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
+			<@boxBody>
+				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
+						<@input type='hidden' name='id_step' value='${step.id}' />
+						<@input type='hidden' name='id_question' value='${question.id}' />
+						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
+						</@formGroup>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+						</@formGroup>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
+							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
+						</@formGroup>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
+							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
+						</@formGroup>
+						<@formGroup>
+							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
+						</@formGroup>
+						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}'>
+							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
+						</@formGroup>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidthImage}'>
+							<#assign width=getFieldValueByCode( entry, "width")>
+							<@input type='text' name='width' id='width' value=width />
+						</@formGroup>
+						<@formGroup labelFor='height' labelKey='#i18n{forms.createEntry.labelHeightImage}'>
+							<#assign height=getFieldValueByCode( entry, "height")>
+							<@input type='text' name='height' id='height' value=height />
+						</@formGroup>
+						<@formGroup labelFor='maxImageSize' labelKey='#i18n{forms.createEntry.labelImageSize}'>
+							<#assign max_image_size=getFieldValueByCode( entry, "max_size")>
+							<@input type='text' name='maxImageSize' id='maxImageSize' value=max_image_size />
+						</@formGroup>
+							<@formGroup labelFor='imageType' labelKey='#i18n{forms.createEntry.labelImageType}'>
+							<#assign field_image_type=getFieldByCode( entry, "image_type")>
+							<@select name='image_type'>
+									<#if field_image_type?? && field_image_type.value="jpeg" >
+										<option value="png" > png </option> 
+										<option value="jpeg" selected> jpeg </option>
+									<#else>
+										<option value="png" selected> png </option> 
+										<option value="jpeg" > jpeg </option>
+									</#if>
+								</@select>
+						</@formGroup>
+                        <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
+	                    	<@checkBox labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
+	                    </@formGroup>
+	                    <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
+							<@checkBox labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
+							<@checkBox labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}'  name='exportable' id='exportable' value='1' checked=entry.exportable />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportablePdfComment}'>
+							<@checkBox labelFor='exportable_pdf' labelKey='#i18n{forms.createEntry.labelResponsesExportablePdf}' name='exportable_pdf' id='exportable_pdf' value='1' checked=entry.exportablePdf />
+						</@formGroup>
+						<@formGroup>
+							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
+							<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' hideTitle=['xs'] />
+							<@button type='submit' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' />
+						</@formGroup>
+					</@fieldSet>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
+<#include "/admin/util/editor/editor.html" />
+<@initEditor />
