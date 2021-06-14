@@ -53,7 +53,7 @@ ul.timeline-form > li:before {content: ' ';background: white;display: inline-blo
 /* Multiview - Step TOC*/
 #toc-box{ position: fixed; top: 72px; left: 15px; height: 75vh; width:16%; } 
 #toc-compress-toggle{  position: absolute; top: 5px; right: 0;}
-#toc-expand-toggle{  position: fixed; z-index: 99; top: 155px; left: 0; padding: 5px; border: 1px solid #DDD; border-left: 0;  border-bottom-right-radius: 3px; border-top-right-radius: 3px;}
+#toc-expand-toggle{  position: fixed; z-index: 99; top: 80px; left: 0; padding: 5px 2px; border: 1px solid #DDD; border-left: 0;  border-bottom-right-radius: 3px; border-top-right-radius: 3px;}
 #toc-expand-toggle:hover{ cursor: pointer; }
 
 #step-toc{ -ms-overflow-style: none;  /* IE and Edge */ scrollbar-width: none;  /* Firefox */; height: 75vh; padding: 0 5px; position: relative; overflow-y: scroll;   }
