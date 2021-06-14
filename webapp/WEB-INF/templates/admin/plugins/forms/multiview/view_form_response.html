@@ -21,41 +21,39 @@
 </#if>
 </#macro>
 
-<@row id='form-response-details'>
-
-    <@columns>
-        <@messages errors=errors />
-		<@box id='form-detail-header'>
-			<@boxBody>
-			<@icon style='list' id='toc-expand-toggle' title='#i18n{forms.multiviewForms.responseDetails.show.steps}' params=' role="button"' />
-			<@row>
-				<@columns sm=2 id='toc'>
-					<@box id='toc-box'>
-					<#assign boxHeaderTitle>${form.title} <@icon style='hashtag' title='#i18n{forms.multiviewForms.responseDetails.response.number}' /> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}"'>${form_response.id}</strong></#assign>
-					<@boxHeader id='toc-box-header' title=boxHeaderTitle boxTools=true>
-						<@icon style='times' id='toc-compress-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=' role="button"' />
-					</@boxHeader>
-					<@boxBody>
-						<nav class="navbar" id="step-toc">
-							<nav class="nav nav-pills">
-								<div class="spinner-border" role="status">
-									<span class="sr-only">Chargement...</span>
-								</div>
-							</nav>
+<@div id='form-response-details'>
+	<@messages errors=errors />
+	<@box id='form-detail-header'>
+		<@boxBody>
+		<@icon style='list' id='toc-expand-toggle' title='#i18n{forms.multiviewForms.responseDetails.show.steps}' params=' role="button"' />
+		<@row>
+			<@columns sm=2 id='toc'>
+				<@box id='toc-box'>
+				<#assign boxHeaderTitle>${form.title} <@icon style='hashtag' title='#i18n{forms.multiviewForms.responseDetails.response.number}' /> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}"'>${form_response.id}</strong></#assign>
+				<@boxHeader id='toc-box-header' title=boxHeaderTitle boxTools=true>
+					<@icon style='times' id='toc-compress-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=' role="button"' />
+				</@boxHeader>
+				<@boxBody>
+					<nav class="navbar" id="step-toc">
+						<nav class="nav nav-pills">
+							<div class="spinner-border" role="status">
+								<span class="sr-only">Chargement...</span>
+							</div>
 						</nav>
-					</@boxBody>
-				</@box>
-				</@columns>
-				<@columns sm=7 id='steps-content'>
-					<#if list_multiview_step_display?has_content>
-						<#list list_multiview_step_display as multiview_step_display>
-							${multiview_step_display}
-						</#list>
-					</#if>
-				</@columns>
-				<@columns sm=3>
-					<@box  id='info-right'>
-						<@boxBody>
+					</nav>
+				</@boxBody>
+			</@box>
+			</@columns>
+			<@columns sm=7 id='steps-content'>
+				<#if list_multiview_step_display?has_content>
+					<#list list_multiview_step_display as multiview_step_display>
+						${multiview_step_display}
+					</#list>
+				</#if>
+			</@columns>
+			<@columns sm=3>
+				<@box id='info-right'>
+					<@boxHeader id='info-box-header' title='' boxTools=true>
 						<@tform method='get' id='form-response-detail-header' type='inline' action='jsp/admin/plugins/forms/MultiviewForms.jsp'>
 						<@input type='hidden' name='page' value='form' />
 						<@input type='hidden' name='session' value='session' />
@@ -66,25 +64,34 @@
 								<@input type='hidden' name='${filter_values.code}' value='${filter_values.name}' />		
 							</#list>
 						</#if>
-						<@button type='submit' buttonIcon='arrow-left' title='#i18n{portal.util.labelBack}' size='' class='btn-block' />
+						<@button type='submit' buttonIcon='list' title='#i18n{portal.util.labelBack}' size='' />
 						</@tform>
-							<h2>#i18n{forms.multiviewForms.view_record_history.information}</h2>
-							<@p>${form.title} <@icon style='hashtag' title='#i18n{forms.multiviewForms.responseDetails.response.number}' /> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}">${form_response.id}</strong></@p>
-							<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} : <strong>${form_response.creation}</strong></@p>
-							<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong>	</@p>
-							<#if resource_actions?exists && resource_actions.workflow_state?exists>
-								<@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.state} : <strong >${resource_actions.workflow_state.name}</strong> </span></@p>
-							</#if>
-							<@display_actions resource_actions! />
-							${resource_history!}
-						</@boxBody>
-					</@box>
-				</@columns>
-			</@row>
-			</@boxBody>
-		</@box>
-    </@columns>
-</@row>
+					</@boxHeader>
+					<@boxBody>
+						<h2>#i18n{forms.multiviewForms.view_record_history.information}</h2>
+						<@p>${form.title} <@icon style='hashtag' title='#i18n{forms.multiviewForms.responseDetails.response.number}' /> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}">${form_response.id}</strong></@p>
+						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} : <strong>${form_response.creation}</strong></@p>
+						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong>	</@p>
+						<#if resource_actions?exists && resource_actions.workflow_state?exists>
+							<@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.state} : <strong >${resource_actions.workflow_state.name}</strong> </span></@p>
+						</#if>
+						<@display_actions resource_actions! />
+						${resource_history!}
+					</@boxBody>
+				</@box>
+			</@columns>
+		</@row>
+		</@boxBody>
+	</@box>
+</@div>
 <!-- END  -->
 <@scrollTopBtn />
 <script src="js/admin/plugins/forms/multiview/forms-multiview.js"></script>
+<script>
+$( function() {	
+	$('.content-header').hide();
+	$('#form-detail-header').css('border-top', 0 );
+	setNavButtons( '${form_response.id}', '<i class="fas fa-arrow-left"></i> #i18n{portal.util.labelPrevious}', '#i18n{portal.util.labelNext} <i class="fas fa-arrow-right"></i> ')		
+});
+</script>
+

@@ -18,6 +18,23 @@ function resetForm( ){
 	$("#searchForm").submit();
 }
 
+function setNavButtons( idResp, labelPrev, labelNext ){
+	const respUrl=sessionStorage.getItem('multiview_base_url') + '&id_form_response=';
+	const item_list=sessionStorage.getItem('multiview_current_list'), boxTool=$('#info-box-header .box-tools');
+	var response_list=item_list.split(','), maxIdx=response_list.length - 1, currentIdx=response_list.indexOf(idResp);
+	var nNext=currentIdx+1, nPrev=currentIdx-1;
+	if( currentIdx > -1 ){
+		if( currentIdx > 0 ){
+			nPrev=response_list[nPrev];
+			boxTool.append( '<a class="btn btn-primary btn-flat" href="' + respUrl + nPrev  + '">'+labelPrev+'</a>' );
+		}
+		if( currentIdx != maxIdx ){
+			nNext=response_list[nNext];
+			boxTool.append( '<a class="btn btn-primary btn-flat" href="' + respUrl + nNext  + '">'+labelNext+'</a>' );
+		}
+	}
+}
+
 function setStepsIndex(){
 	var stepList=$('.step-group'), stepLinks='<ul class="list-unstyled">', active=true;
     stepList.each( function( ){
@@ -40,7 +57,7 @@ function setStepsIndex(){
 		e.preventDefault();
 		var elTarget=$(this).attr( 'href' );
 		$( elTarget ).addClass('step-active');
-		$('html, body').animate( {scrollTop:( $(elTarget).offset().top - 80 )}, 500);
+		$('html, body').animate( {scrollTop:( $(elTarget).offset().top - 30 )}, 500);
 	});
 }
 
