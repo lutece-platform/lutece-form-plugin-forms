@@ -9,7 +9,7 @@
     <h2>#i18n{forms.multiviewForms.view_record_history.actions}</h2>
     <#if resource_actions.workflow_action_list?has_content>
         <#list resource_actions.workflow_action_list as action>
-            <@link class='btn btn-block' href='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}'>
+            <@link class='btn btn-block' href='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}' >
                 <@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title=action.name alt=action.name /> ${action.name}  
             </@link>
         </#list>
@@ -52,7 +52,7 @@
 				</#if>
 			</@columns>
 			<@columns sm=3>
-				<@box id='info-right'>
+				<@box id='response-right'>
 					<@boxHeader id='info-box-header' title='' boxTools=true>
 						<@tform method='get' id='form-response-detail-header' type='inline' action='jsp/admin/plugins/forms/MultiviewForms.jsp'>
 						<@input type='hidden' name='page' value='form' />
