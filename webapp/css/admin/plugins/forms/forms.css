@@ -15,18 +15,6 @@ body, .wrapper{ height: 100%; overflow: visible; }
 .filter-forms{ margin-bottom: 5px; display:flex; justify-content: space-between; }
 .filter-forms #id_form{ max-width: 32rem }
 .filter-forms .forms-filter label .form-control, #multi-form-list table.table-hover tbody tr:hover { cursor: pointer }
-/* .filter-forms select { font-weight:normal; margin: 0; background:#fff; outline:none; display:inline-block; -webkit-appearance:none; -moz-appearance:none; appearance:none; cursor:pointer;} */
-/* .filter-forms select::-ms-expand { display: none } */
-/* .filter-forms .form-inline .form-group { vertical-align: top } */
-/* .filter-forms .form-group .input-group .btn-info{ border: 1px solid #1d98f6 } */
-/* .filter-forms .form-group .input-group .btn-danger{ border: 1px solid #d73925 } */
-/* .filter-forms .caret{ color:#000; } */
-/* .filter-forms label { position:relative; margin-bottom: 0; } */
-/* .filter-forms #search-text label.sr-only { position: absolute; } */
-/* .filter-forms label:last-of-type { margin-right:0; } */
-/* .filter-forms label:after { content: '\f107'; font-family:'FontAwesome'; font-size:18px; right: 5px; top: 5px; position:absolute; pointer-events:none;color:#000; } */
-/* .filter-forms .form-group:last-child { margin-left: 15px; } */
-/* .filter-forms #forms_id_form{ max-width: 360px } */
 
 /* MutliView - table header sort */
 .btn-sort-group{ display:flex; flex-direction: column; justify-content:center; float: right; margin-right: 15px }
@@ -43,26 +31,15 @@ body, .wrapper{ height: 100%; overflow: visible; }
 #multiview-no-forms { height:70vh; display:flex; justify-content:center; align-items:start; width:100%;}
 
 /* Multiview - Detail view */
-#form-response-detail-header button{ margin-top: 5px }
-#form-response-detail-header h1{ margin: 0 }
+#form-response-details { font-family:'Montserrat-Light','Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif; }
+#form-response-details .box.step-group:hover{ background-color: #f0f0f0}
 
-#form-response-details { font-family:'Montserrat-Light','Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif }
-#form-response-details .panel-body{	padding: 0 15px; }
-#form-response-details .panel .panel-body h3{ border-bottom: 1px solid #555; }
 #form-response-details legend { font-weight:400; font-size:130%; border-bottom:1px solid #1d98f6; color:#1d98f6; }
-#form-response-details .control-label {	padding-top: 7px; margin-bottom: 0;	text-align: right; }
-#form-response-details .form-group{ margin-right: -15px; margin-left: -15px; }
-#form-response-details .form-group::before, #form-response-details .form-group::after { display: table; content: " "; clear: both; }
-#form-response-details .form-group:hover{ color: #1d98f6; }
-#form-response-details .form-group label + div{	min-height: 34px; padding-top: 7px;	padding-bottom: 7px; margin-bottom: 0; }
-#form-response-details .form-response-details-label{  margin-bottom: 0;	}
-#form-response-details .button-workflow{ background-color: #fff; display: inline-block; padding:0 5px 3px 5px; border-radius: 50% }
-#form-response-details .form-group-value-content .form-control-static{ padding-top: 0 }
+#form-response-details .fieldset-group .row:hover{ color: #1d98f6; }
 
 /* Multiview - Main list  */
 #multi-form-list th{ text-transform: lowercase }
 #multi-form-list th::first-letter{ text-transform: uppercase }
-
 
 /* Multiview - Aside - timeline */
 ul.timeline-form { list-style-type: none; position: relative; }
@@ -74,7 +51,6 @@ ul.timeline-form > li:before {content: ' ';background: white;display: inline-blo
 #scroll { position:fixed; right:60px; bottom: 60px; cursor:pointer; width:50px; height:50px; background-color:#1d98f6; text-indent:-9999px; display:none; -webkit-border-radius:60px;-moz-border-radius:60px; border-radius:60px}
 #scroll span { position:absolute; top:50%;left:50%; margin-left:-8px;margin-top:-12px; height:0; width:0; border:8px solid transparent; border-bottom-color:#fff; }
 #scroll:hover { background-color:#e74c3c; opacity:1;filter:"alpha(opacity=100)"; -ms-filter:"alpha(opacity=100)" }
-
 
 /* Multiview - TOC  											*/
 #response-right{ position: fixed; top: 72px; width:23% }

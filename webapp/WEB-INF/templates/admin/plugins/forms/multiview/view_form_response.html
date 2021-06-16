@@ -34,13 +34,9 @@
 					<@icon style='times' id='toc-compress-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=' role="button"' />
 				</@boxHeader>
 				<@boxBody>
-					<nav class="navbar" id="step-toc">
-						<nav class="nav nav-pills">
-							<div class="spinner-border" role="status">
-								<span class="sr-only">Chargement...</span>
-							</div>
-						</nav>
-					</nav>
+					<@navBar id='step-toc'>
+						<@nav type='pills'></@nav>
+					</@navBar>
 				</@boxBody>
 			</@box>
 			</@columns>

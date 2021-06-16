@@ -67,19 +67,27 @@ $( function() {
 		setStepsIndex();
 	}
 
-	$('#toc-compress-toggle').click( function(){
-		$('#toc').toggle();
+	if( $('#toc-compress-toggle').length > 0 ){
+		const tocState=sessionStorage.getItem('toc_multiview_state');
 		$('#toc-expand-toggle').toggle();
-		$('#steps-content').toggleClass('col-sm-7').toggleClass('col-sm-9');
-	});
+		$('#toc-compress-toggle').click( function(){
+			$('#toc').toggle();
+			$('#toc-expand-toggle').toggle();
+			
+			$('#steps-content').toggleClass('col-sm-7').toggleClass('col-sm-9');
+			sessionStorage.setItem('toc_multiview_state', 'expand' );
+		});
 
-	$('#toc-expand-toggle').click( function(){
-		$('#steps-content').toggleClass('col-sm-9').toggleClass('col-sm-7');
-		$('#toc').toggle();
-		$(this).toggle();
-	});
+		$('#toc-expand-toggle').click( function(){
+			$('#steps-content').toggleClass('col-sm-9').toggleClass('col-sm-7');
+			$('#toc').toggle();
+			$(this).toggle();
+			sessionStorage.setItem('toc_multiview_state', 'compress' );
+		});
 
-	$('#toc-expand-toggle').toggle();
+		if( tocState ==='expand' ){ $('#toc-compress-toggle').click() } ;
+		
+	}
 
 	// Set link on whole tr
 	$("#multi-form-list tbody > tr").on( 'click', function(e){
