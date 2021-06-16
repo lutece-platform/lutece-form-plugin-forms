@@ -28,30 +28,28 @@
                 <@tabContent>
                 <@tform class='forms-questions' method='post' name='manage_questions' action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
                     <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
-                    <div class="radio">
-						<label>
-							<input type="radio" id="parent_step" name="id_parent" value="0" <#if id_parent=0>checked</#if>>
-							<span class="group-radio-label"> #i18n{forms.manage_questions.type.step.label} "${step.title}"</span>
-						</label>
-					</div>
                     <@row>
-                        <@columns md=9>
-                            <div class="tab-pane active">
+                        <@columns sm=9 md=10>
+                            <div class="radio">
+                                <label>
+                                    <input type="radio" id="parent_step" name="id_parent" value="0" <#if id_parent=0>checked</#if>>
+                                    <span class="group-radio-label"> #i18n{forms.manage_questions.type.step.label} "${step.title}"</span>
+                                </label>
+                            </div>
+                            <@tabPanel id='panel-question' active=true>
                                  <@table class='forms-questions'>
-                                   <thead>
-                                       <tr>
-                                           <@th sm=1 hide=['xs']></@th>
-                                           <@th sm=5 hide=['xs']>#i18n{forms.manage_questions.columnTitle}</@th>
-                                           <@th sm=1 title='#i18n{forms.manage_questions.columnCondition}' hide=['xs']><@icon style='question'/></@th>
-                                           <@th sm=4 hide=['xs']>#i18n{forms.manage_questions.columnAction}</@th>
-                                           <@th sm=1></@th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
+                                    <@tr>
+                                        <@th sm=1 hide=['xs']></@th>
+                                        <@th sm=5 hide=['xs']>#i18n{forms.manage_questions.columnTitle}</@th>
+                                        <@th sm=1 title='#i18n{forms.manage_questions.columnCondition}' hide=['xs']><@icon style='question'/></@th>
+                                        <@th sm=4 hide=['xs']>#i18n{forms.manage_questions.columnAction}</@th>
+                                        <@th sm=1></@th>
+                                    </@tr>
+                                    <@tableHeadBodySeparator />
                                     <#list composite_list as composite>
                                     	<#assign group=composite.type == 'group' />
-										<#if group><#assign trClass='tr-group' /><#else><#assign trClass='' /></#if>
-                                        <tr <#if group>class="group ${trClass!}"</#if>>
+										<#if group><#assign trClass='group tr-group' /><#else><#assign trClass='' /></#if>
+                                        <@tr class=trClass>
                                             <@input type='hidden' name='own_display_id_parent' value='${composite.formDisplay.parentId}' />
                                             <@input type='hidden' name='own_display_id_composite' value='${composite.formDisplay.id}' />
                                             <@td sm=1>
@@ -98,21 +96,20 @@
 												<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' size='sm' /> 
 									        </@td>
                                             <@td sm=1><#if group><@icon style='minus-square' class='text-primary group-toggle' /></#if></@td>
-                                        </tr>
+                                        </@tr>
                                     </#list>
-                                    </tbody>
                                 </@table>
-                            </div>
+                            </@tabPanel>
                         </@columns>
-                        <@columns md=3 id='sticky-container'>
+                        <@columns sm=3 md=2 id='sticky-container'>
                             <@listGroup id='info-right'>
-                                <li>
+                                <@li>
                                     <@button type='submit' class='btn-add-entry' style='btn-block' color='primary' name='view_createGroup' value='' title='#i18n{forms.manage_questions.buttonAdd} #i18n{forms.manage_questions.action.creategroup.label}' buttonNested=true buttonIcon='indent'>#i18n{forms.manage_questions.action.creategroup.label}</@button>
-								</li>
+								</@li>
                                 <#list entry_type_list?sort_by('title') as item>
-                                    <li>
+                                    <@li>
                                         <@button type='submit' class='btn-add-entry' style='btn-block' color='primary'  name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName}'>${item.title}</@button>
-                                    </li>
+                                    </@li>
                                 </#list>
                             </@listGroup>
                         </@columns>
