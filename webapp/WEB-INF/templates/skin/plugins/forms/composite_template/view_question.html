@@ -1,8 +1,6 @@
 <div class="row <#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if>" displayControl="${question.id}_${question.iterationNumber}">${questionContent}</div>
-
 <#if validator??>
 	<input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='' hidden />
-
 	<#if other_step_validation??>
 		<script>
 		$(function() {
@@ -16,7 +14,7 @@
 		});
 		</script>
     <#else>
-    <script>
+    	<script>
 		$(function() {
 			<#assign validNames = [] />
 			<#if !validNames?seq_contains(validator.validatorBeanName)>
@@ -46,7 +44,7 @@
 				}
 				var currentControl = "${question.id}_${question.iterationNumber}";
 				var currentInput = getInputElement(currentControl);
-				if ( currentInput[0].type != 'file' )
+				if ( currentInput[0] != undefined && currentInput[0].type != 'file' )
 				{
 					currentInput.change();
 				}
