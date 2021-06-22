@@ -346,7 +346,8 @@ public class FormService
             Entry entryResponse = EntryHome.findByPrimaryKey( response.getEntry( ).getIdEntry( ) );
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entryResponse );
 
-            if ( ( entryTypeService instanceof AbstractEntryTypeFile || entryTypeService instanceof AbstractEntryTypeImage ) && Form.RESOURCE_TYPE.equals( entryResponse.getResourceType( ) ) )
+            if ( ( entryTypeService instanceof AbstractEntryTypeFile || entryTypeService instanceof AbstractEntryTypeImage )
+                    && Form.RESOURCE_TYPE.equals( entryResponse.getResourceType( ) ) )
             {
                 bFileAccessAuthorized = canUserAccessFile( request, entryResponse.getIdResource( ) );
             }
