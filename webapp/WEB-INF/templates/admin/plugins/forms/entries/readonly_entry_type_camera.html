@@ -1,10 +1,17 @@
 <@formGroup labelKey='${entry.title!\'\'}'>
     <#if list_responses?has_content>
         <#list list_responses as response>
-            <@staticText>
+            <@staticText color='black cssbox' id='#cssbox-${entry.code}' >
             <#if response.file?exists && entry?exists >
-                <@link href='jsp/admin/plugins/forms/FormsDownloadFile.jsp?id_file=${response.file.idFile}&id_response=${response.idResponse}'>
-                    <img src="image?resource_type=forms_entry_img&id=${response.file.idFile}&id_response=${response.idResponse}" width="100px" height="100px"/>
+                <@link href='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?view=view_form_response_details&filter_id_form=${entry.idResource}&selected_panel=forms&column_position=-1&sorted_attribute_name=null&asc_sort=true&id_form_response=${response.idResponse}#camera_${entry.code}' id='camera_${entry.code}' >
+                    <@img url='image?resource_type=forms_entry_img&id=${response.file.idFile}&id_response=${response.idResponse}' alt='${entry.title!\'\'}' title='#i18n{portal.util.labelDownload} ${entry.title!\'\'}' class='thumblist-lg' />
+                    <@span class="cssbox-lightbox">
+                        <@img url="image?resource_type=forms_entry_img&id=${response.file.idFile}&id_response=${response.idResponse}" alt='' title='${entry.title!\'\'}' />
+                    </@span>
+                </@link>
+                <@link class="cssbox_close" href="jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?view=view_form_response_details&filter_id_form=${entry.idResource}&selected_panel=forms&column_position=-1&sorted_attribute_name=null&asc_sort=true&id_form_response=${response.idResponse}#cssbox-${entry.code}" />
+                <@link href='jsp/admin/plugins/forms/FormsDownloadFile.jsp?id_file=${response.file.idFile}&id_response=${response.idResponse}' class="btn-download">
+                    <@icon style='download' />
                 </@link>
             </#if>
             </@staticText>

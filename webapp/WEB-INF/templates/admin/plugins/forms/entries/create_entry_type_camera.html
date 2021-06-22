@@ -31,13 +31,13 @@
 						<@formGroup>
 							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
 						</@formGroup>
-						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{form.createEntry.labelMandatoryErrorMessageHelp}'>
+						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{form.createEntry.labelMandatoryErrorMessageHelp}' >
 							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2></@input>
 						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
-						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidthImage}'>
+						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidthImage}' mandatory=true >
 							<@input type='text' name='width' id='width' value=getName('width_text',list_param_default_values) />
 						</@formGroup>
 						<@formGroup labelFor='height' labelKey='#i18n{forms.createEntry.labelHeightImage}'>
@@ -77,4 +77,3 @@
 </@row>
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
- 

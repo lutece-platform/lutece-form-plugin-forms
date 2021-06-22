@@ -35,7 +35,7 @@
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
-						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidthImage}'>
+						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidthImage}' mandatory=true>
 							<#assign width=getFieldValueByCode( entry, "width")>
 							<@input type='text' name='width' id='width' value=width />
 						</@formGroup>
@@ -50,14 +50,14 @@
 							<@formGroup labelFor='imageType' labelKey='#i18n{forms.createEntry.labelImageType}'>
 							<#assign field_image_type=getFieldByCode( entry, "image_type")>
 							<@select name='image_type'>
-									<#if field_image_type?? && field_image_type.value="jpeg" >
-										<option value="png" > png </option> 
-										<option value="jpeg" selected> jpeg </option>
-									<#else>
-										<option value="png" selected> png </option> 
-										<option value="jpeg" > jpeg </option>
-									</#if>
-								</@select>
+								<#if field_image_type?? && field_image_type.value="jpeg" >
+									<option value="png" > png </option> 
+									<option value="jpeg" selected> jpeg </option>
+								<#else>
+									<option value="png" selected> png </option> 
+									<option value="jpeg" > jpeg </option>
+								</#if>
+							</@select>
 						</@formGroup>
                         <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
 	                    	<@checkBox labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
