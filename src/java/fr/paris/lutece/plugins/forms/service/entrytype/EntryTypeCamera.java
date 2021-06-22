@@ -12,7 +12,7 @@ public class EntryTypeCamera extends AbstractEntryTypeCamera
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_camera.html";
     private static final String TEMPLATE_HTML_CODE = "skin/plugins/forms/entries/fill_entry_type_camera.html";
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_camera.html";
-    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_image.html";
+    private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_camera.html";
     
     @Override
     public String getTemplateCreate( Entry entry, boolean bDisplayFront )
