@@ -142,7 +142,7 @@ public final class FormsEntryUtils
 
         for ( EntryType entryType : listRefEntryType )
         {
-            if ( Boolean.FALSE.equals( entryType.getGroup( ) ) && Boolean.FALSE.equals( entryType.getMyLuteceUser( ) ) )
+            if ( !entryType.isInactive( ) )
             {
                 listEntryType.add( entryType );
             }
