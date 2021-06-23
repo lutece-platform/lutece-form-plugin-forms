@@ -66,6 +66,7 @@
     <!-- Specific plugin JAVASCRIPT -->
     <javascript-files>
         <javascript-files-scope>portal</javascript-files-scope>
+        <javascript-file>forms/forms.js</javascript-file>
         <javascript-file>forms/terms-of-service.js</javascript-file>
     </javascript-files>
 
