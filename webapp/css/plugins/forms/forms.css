@@ -2,3 +2,6 @@
 #step-content .step-group-value-content { margin-left: 35px;}
 #current_step fieldset{ position: relative;}
 #current_step fieldset legend .btn-danger{ position: absolute; right: 0 }
+
+.cam-wrapper{ position: relative; border: 1px dotted #000; display: flex; justify-content: center;}
+.btn-cam{  position: absolute !important; bottom:15px; right:15px; }

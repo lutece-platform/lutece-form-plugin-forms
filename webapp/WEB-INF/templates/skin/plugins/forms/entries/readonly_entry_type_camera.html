@@ -10,11 +10,19 @@
 	            <#else>
 	                <div class="col-xs-12 col-sm-9 col-sm-offset-3">
 	            </#if>
-	            <#if response.file?exists>
-                <img src="image?resource_type=forms_entry_img&id=${response.file.idFile}&id_response=${response.idResponse}" alt="" title="${entry.title!''}" class="img-fluid img-thumbnail" style="max-with:100%">
-	            </#if>
-	            </div>
+					<#if response.file?exists>
+						<img src="" id="img${entry.idEntry}" alt="" title="${entry.title!''}" class="img-fluid img-responsive img-thumbnail" >
+					</#if>
+	            	</div>
 	        </#list>
 	    </#if>
 	</div>
 </#if>
+<script>
+$( function(){
+	var dataImg = sessionStorage.getItem('data${entry.idEntry}' );
+	if( dataImg != null && dataImg !="" ){
+		img${entry.idEntry}.setAttribute('src', dataImg );
+	}
+});
+</script>
