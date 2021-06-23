@@ -3,47 +3,38 @@
 <script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
 <script>
 function getInputElement(displayControl){
-	var types = ['input','select','textarea'];
-	var elm = null;
-	for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++)
-	{
-		elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
-	}
-	
-	if(elm.is('input'))
-	{
-		elm = $('input[name=' + elm.attr('name') + ']');
-	}
-	return elm;
+var types = ['input','select','textarea'];
+var elm = null;
+for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++){
+	elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
 }
 
-function getFieldValue(elm)
+if(elm.is('input')){
+	elm = $('input[name="' + elm.attr('name') + '"]');
+}
+return elm;
+}
+
+function getFieldValue(elm){
+if(elm.is(':radio'))
 {
-	if(elm.is(':radio'))
-	{
-		var input = $('input[name=' + elm.attr('name') + ']:checked');
-		return input.val();
-	}
-	else if (elm.is(':checkbox'))
-	{
-		var resultChecked = [];
-		for(var i=0;i< elm.length;i++)
-		{
-			if (elm [i].checked)
-			{
-				resultChecked.push(elm[i].value);
-			}
+	var input = $('input[name="' + elm.attr('name') + '"]:checked');
+	return input.val();
+} else if (elm.is(':checkbox')){
+	var resultChecked = [];
+	for(var i=0;i< elm.length;i++){
+		if (elm [i].checked){
+			resultChecked.push(elm[i].value);
 		}
-		return resultChecked;
 	}
-	else if (elm.is('select')) {
-		return elm[0].options[elm[0].selectedIndex].value;
-	}
-	//add other specific implementations here
-	else
-	{
-		return elm.val();
-	}
+	return resultChecked;
+} else if (elm.is('select')) {
+	return elm[0].options[elm[0].selectedIndex].value;
+}
+//add other specific implementations here
+else {
+	return elm.val();
+}
 }
 </script>
 
