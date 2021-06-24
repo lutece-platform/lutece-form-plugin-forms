@@ -10,11 +10,10 @@
 						<@input type='hidden' name='id_step' value='${question.idStep}' />
 						<@input type='hidden' name='id_question' value='${question.id}' />
 						<@input type='hidden' name='id_entry' value='${id_entry}' />
-						
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
 							<@input type='text' name='title' id='title' value='' maxlength=255 />
 						</@formGroup>
-						<@formGroup labelFor='value' labelKey='#i18n{forms.createField.labelValue}' mandatory=true>
+						<@formGroup labelFor='value' labelKey='#i18n{forms.createField.labelValue}' helpKey='#i18n{forms.createField.labelValue.help}'>
 							<@input type='text' name='value' id='value' value='' />
 						</@formGroup>
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createField.labelComment}'>

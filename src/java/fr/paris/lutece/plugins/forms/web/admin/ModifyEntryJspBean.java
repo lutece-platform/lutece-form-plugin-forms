@@ -67,6 +67,7 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
+import fr.paris.lutece.util.file.FileUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
 import fr.paris.lutece.util.url.UrlItem;
@@ -97,7 +98,6 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private static final String MESSAGE_MANDATORY_FIELD = "forms.message.mandatory.field";
     private static final String MESSAGE_FIELD_VALUE_FIELD = "forms.message.field_value_field";
     private static final String FIELD_TITLE_FIELD = "forms.createField.labelTitle";
-    private static final String FIELD_VALUE_FIELD = "forms.createField.labelValue";
 
     // properties
     private static final String PROPERTY_CREATE_FIELD_TITLE = "forms.createField.title";
@@ -531,13 +531,12 @@ public class ModifyEntryJspBean extends AbstractJspBean
         else
             if ( StringUtils.isBlank( strValue ) )
             {
-                strFieldError = FIELD_VALUE_FIELD;
+                strValue = FileUtil.normalizeFileName( strTitle );
             }
-            else
-                if ( !StringUtil.checkCodeKey( strValue ) )
-                {
-                    return AdminMessageService.getMessageUrl( request, MESSAGE_FIELD_VALUE_FIELD, AdminMessage.TYPE_STOP );
-                }
+        if ( !StringUtil.checkCodeKey( strValue ) )
+        {
+            return AdminMessageService.getMessageUrl( request, MESSAGE_FIELD_VALUE_FIELD, AdminMessage.TYPE_STOP );
+        }
 
         if ( !strFieldError.equals( EMPTY_STRING ) )
         {

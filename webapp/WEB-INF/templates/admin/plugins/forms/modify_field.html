@@ -12,7 +12,7 @@
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
 							<@input type='text' name='title' id='title' inputSize=80 value='${field.title}' maxlength=255 />
 						</@formGroup>
-						<@formGroup labelFor='value' labelKey='#i18n{forms.createField.labelValue}' mandatory=true>
+						<@formGroup labelFor='value' labelKey='#i18n{forms.createField.labelValue}' helpKey='#i18n{forms.createField.labelValue.help}'>
 							<@input type='text' name='value' id='value' inputSize=80 value='${field.value}' />
 						</@formGroup>
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createField.labelComment}'>
