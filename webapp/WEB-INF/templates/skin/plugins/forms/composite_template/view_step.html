@@ -36,6 +36,7 @@
       var count_field = $(this).find( '.form-group').length,
         count_cond =  $(this).find( 'div[class*="display_field_"]' ).length,
         count_cond_visible = $(this).find( 'div[class*="display_field_"]:visible' ).length;
+       
       if( count_field == count_cond &&  count_cond > 0 &&  count_cond_visible==0 ){
         $(this).toggle();
         $(this).addClass('step-group-collapsible');
