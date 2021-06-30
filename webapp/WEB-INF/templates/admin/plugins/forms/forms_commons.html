@@ -343,13 +343,11 @@ $('#${id}').on('show.bs.modal', function (event) {
 </#macro>
 
 <#macro formsButton okAction='' viewAction='' rows=1>
-	<@formGroup rows=rows>
-		<@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
-		<#nested>
-		<#if viewAction !=''>
-			<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' />
-		</#if>
-	</@formGroup>
+<@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
+<#nested>
+<#if viewAction !=''>
+	<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' />
+</#if>
 </#macro>
 
 <#macro modalFrameScript formId actionId title modalId='qModal' iframeId='modalIframe' modalHeight=70 >

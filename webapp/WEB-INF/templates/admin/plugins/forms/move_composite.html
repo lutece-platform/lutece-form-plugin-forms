@@ -50,17 +50,12 @@ function isIniFrame() {
 }
 $( function() {
     if ( isIniFrame() ){
-        window.top.$("#modalIframe");
-        $('body').css('background-color', 'white');
-        $('.skipnav').hide();
-		$('nav').hide();
-        $('#pubModal .content-header').hide();
-        $('.container-fluid').css( 'padding', '0px' );
-        $('.modal-body').css( 'padding', '24px' );
-        $('main').css( 'margin', '0' );
-        $('header').hide();
-        $('footer').hide();
+		$('body').css( 'overflow-x', 'hidden' ).css( 'padding-bottom', '0' );
+		$('.content-header').hide();
+		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
+		$('header').remove();
 		$('#breadforms').remove();
+		$('#footer').remove();
 
 		var formAction = $('#modify_form'), btnAction = $('#action_moveComposite');
 		btnAction.click( function(e){ 

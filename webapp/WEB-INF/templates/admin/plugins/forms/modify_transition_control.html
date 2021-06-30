@@ -31,7 +31,9 @@
                     <#list control.listIdQuestion as question >
                         <#list listQuestion as q >
                             <#if question == q.code?number>
-                                <@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}' title='remove'><@icon style='trash' /> ${q.name!}</@link>
+                                <@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}' title='#i18n{portal.util.labelDelete} ${q.name!}' class='btn btn-xs btn-danger truncate'>
+                                    <@icon style='times fa-fw' /> ${q.name!} 
+                                </@link>
                             </#if>
                         </#list>
                     </#list>	
