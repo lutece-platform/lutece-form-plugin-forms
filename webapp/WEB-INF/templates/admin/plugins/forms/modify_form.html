@@ -1,4 +1,5 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
+<@tform class='form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
 <@row>
 	<@columns>
 		<@box color='primary'>
@@ -13,7 +14,6 @@
 			<@boxBody>
 				<@formBreadCrumb><@li class='active'>${form.title!}</@li></@formBreadCrumb>	
 				<@formTabs tab="general" />
-				<@tform class='form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
 					<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 					<@tabContent>
 						<@tabPanel id='' active=true>
@@ -23,11 +23,11 @@
 					<@formGroup rows=2>
 						<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
 					</@formGroup>
-				</@tform>
 			</@boxBody>
 		</@box>
 	</@columns>
 </@row>
+</@tform>
 
 <@formEditor />
 
