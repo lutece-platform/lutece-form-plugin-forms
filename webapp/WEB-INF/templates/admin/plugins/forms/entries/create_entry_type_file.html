@@ -73,5 +73,19 @@
 </@row>
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
+<script>
+<#noparse>
 
+</#noparse>
+$( function(){
+	var byteSize = $('#file_max_size').val();
+		byteSize = prettySize( byteSize );
+		$('#file_max_size_pretty').html( byteSize );
+	$('#file_max_size').on('keyup', function(){
+		var byteSize = $(this).val();
+		byteSize = prettySize( byteSize );
+		$('#file_max_size_pretty').html( byteSize );
+	});
+});
+</script>
  

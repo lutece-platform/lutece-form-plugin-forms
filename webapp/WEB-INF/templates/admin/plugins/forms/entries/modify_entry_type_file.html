@@ -31,7 +31,10 @@
 							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
 						</@formGroup>
 						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.createEntry.labelFileMaxSize}' mandatory=true>
-							<@input type='text' name='file_max_size' id='file_max_size' value=getFileMaxSize(entry) />
+							<@inputGroup>
+								<@input type='text' name='file_max_size' id='file_max_size' value=getFileMaxSize(entry) />
+								<@inputGroupItem id='file_max_size_pretty' type='text'></@inputGroupItem>
+							</@inputGroup>
 						</@formGroup>
 						<@formGroup labelFor='max_files' labelKey='#i18n{forms.createEntry.labelMaxFiles}' mandatory=true>
 							<@input type='text' name='max_files' id='max_files' value=getMaxFiles(entry) maxlength=2 />
@@ -69,4 +72,16 @@
 		</@box>
 	</@columns>
 </@row>
- <@initEditor />
+<@initEditor />
+<script>
+$( function(){
+	var byteSize = $('#file_max_size').val();
+		byteSize = prettySize( byteSize );
+		$('#file_max_size_pretty').html( byteSize );
+	$('#file_max_size').on('keyup', function(){
+		var byteSize = $(this).val();
+		byteSize = prettySize( byteSize );
+		$('#file_max_size_pretty').html( byteSize );
+	});
+});
+</script>
