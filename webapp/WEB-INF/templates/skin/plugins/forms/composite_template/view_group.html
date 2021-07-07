@@ -1,9 +1,9 @@
 <#assign indexGroup=-1>
 <#assign indexIteration=0>
 <#assign nbIterationMin=group.iterationMin>
-<div class="row">
-	<div class="col-xs-12 col-sm-12">
-		<hr>			
+<div class="row step-group">
+	<div class="col-sm-12">
+	<hr>			
 	<#list groupContent as childrenHtml>
 		<#assign indexIteration = ( childrenHtml?index / nbBaseChildren )?int />
 		<#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />

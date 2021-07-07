@@ -25,27 +25,36 @@
 				}
 			</#if>
 
-			var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber};
-			var input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
+			var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+			input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
 			input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
-				console.log('change ${control.id}_${question.iterationNumber}');
-				var inputValue = getFieldValue(input${control.id}_${question.iterationNumber});
+				var inputValue = getFieldValue(input${control.id}_${question.iterationNumber}), 
+					hasCollapse=false, 
+					toCollapse=null,
+					stepGroup = $('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').parentsUntil('.step-content');
+				// Check if conditionnal field is in a collapsed group
+				stepGroup.each( function(){
+					if( $(this).hasClass('step-group-collapsible') ){
+						hasCollapse=true, 
+						toCollapse=$(this);
+					}
+				});
+				
 				if(!$("div[displayControl='${control.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid") && validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
-			    {
+				{
 					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').removeClass("control_invalid");
 					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').show();
+					if( hasCollapse ){ toCollapse.show() }; // Show parent group if is in a collapse step-group
 					$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
-				}
-				else
-				{
+				} else {
 					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').addClass("control_invalid");
 					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').hide();
+					if( hasCollapse ){ toCollapse.hide(); } // Hide parent group if is in a collapse step-group
 					$('#${question.id}_${question.iterationNumber}').val('');
 				}
 				var currentControl = "${question.id}_${question.iterationNumber}";
 				var currentInput = getInputElement(currentControl);
-				if ( currentInput[0] != undefined && currentInput[0].type != 'file' )
-				{
+				if ( currentInput[0] != undefined && currentInput[0].type != 'file' ){
 					currentInput.change();
 				}
 			});
