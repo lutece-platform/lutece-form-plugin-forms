@@ -1,36 +1,38 @@
 <@input type='hidden' name='current_selected_panel' value='${current_selected_panel!""}' />
-
-<#if form_filter_list?has_content>
-	<#list form_filter_list as form_filter>
-		${form_filter.template!''}
-	</#list>
-</#if>
-<#if multiviewExportAction?? >
-	<@formGroup formStyle='inline' labelFor='format_export' labelKey='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' hideLabel=['all']>
-		<@inputGroup>
-			<@select name='format_export' id='format_export' default_value='' items=format_export_list title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content size='sm' />
-			<@inputGroupItem>
-				<@button type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' hideTitle=['all'] disabled=!table_template?has_content buttonIcon='download' size='sm' />
-			</@inputGroupItem>
-		</@inputGroup>
-	</@formGroup>
-</#if>
-<#if multiviewConfigAction?? >
-	<@formGroup formStyle='inline' labelFor='config_multiview'>
-		<@aButton name='btn_multiview_config' id='btn_multiview_config' href='${multiviewConfigAction.url!}' params='' title='${multiviewConfigAction.name}' hideTitle=['all'] buttonIcon='${multiviewConfigAction.iconUrl}' size='sm' />
-	</@formGroup>
-</#if>
-
-<@tabs params='style="margin-top:30px;"'>
-	<@tabList>
-		<#list form_panel_list as form_panel>
-			<#if form_panel.template??>
-				${form_panel.template}
-			</#if>
-		</#list>
-	</@tabList>
-</@tabs>
-
-<link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
-<script src="js/jquery/plugins/toastr/toastr.min.js"></script>
-<@toastr infos=infos warnings=warnings errors=errors />
+<#if multiviewConfigAction??><@link href='${multiviewConfigAction.url!}' class='btn btn-primary btn-flat btn-config-multiview' title='${multiviewConfigAction.name}' ><@icon style='${multiviewConfigAction.iconUrl}'/> ${multiviewConfigAction.name}</@link></#if>
+<@row>
+	<@columns sm=10>
+		<@ul class='filter-list'>
+		<#if form_filter_list?has_content>
+			<#list form_filter_list as form_filter>
+				<@li>${form_filter.template!''}</@li>
+			</#list>
+		</#if>
+		</@ul>
+	</@columns>
+	<@columns sm=2>
+		<#if multiviewExportAction??>
+		<@formGroup rows=2>
+			<@inputGroup>
+				<@select name='format_export' id='format_export' default_value='' items=format_export_list title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content  />
+				<@inputGroupItem>
+					<@button type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' hideTitle=['all'] disabled=!table_template?has_content buttonIcon='download'/>
+				</@inputGroupItem>
+			</@inputGroup>
+		</@formGroup>
+		</#if>
+	</@columns>
+</@row>
+<@row>
+	<@columns>
+		<@tabs>
+			<@tabList>
+				<#list form_panel_list as form_panel>
+					<#if form_panel.template??>
+						${form_panel.template}
+					</#if>
+				</#list>
+			</@tabList>
+		</@tabs>
+	</@columns>
+</@row>

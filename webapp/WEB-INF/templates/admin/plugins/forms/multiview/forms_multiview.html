@@ -3,7 +3,7 @@
 		<@box>
 			<@boxHeader id='multiviewFormsHeader' title='#i18n{forms.multiviewForms.boxTitle}' />
 			<@boxBody>
-				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='inline'>
+				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='form'>
 					<#include "includes/include_manage_multiview_forms_header.html">
 				</@tform>
 				<#if table_template?has_content>
@@ -31,3 +31,9 @@ $("#multiviewFormsHeader > *").text($("#multiviewFormsHeader > *").text() + " : 
 <@dateFilterJs />
 <@scrollTopBtn />
 <@jsHeaderSort />
+<#-- Files moved to CORE -->
+<#--
+<link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
+<script src="js/jquery/plugins/toastr/toastr.min.js"></script>
+-->
+<@toastr infos=infos warnings=warnings errors=errors />

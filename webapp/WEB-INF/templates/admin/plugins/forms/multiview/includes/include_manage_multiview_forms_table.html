@@ -22,11 +22,7 @@ ${multiviewmap!''}
 <#if form_response_geojson_point_list?has_content>
 <script id="geojson_points" type="application/json">{
 	"type" : "FeatureCollection",
-	"features" : [
-<#list form_response_geojson_point_list as point>${point?replace("</","<\\/")}<#if point_has_next>,
-</#if>
-</#list>
-]
+	"features" : [<#list form_response_geojson_point_list as point>${point?replace("</","<\\/")}<#if point_has_next>,</#if></#list>]
 }
 </script>
 </#if>
