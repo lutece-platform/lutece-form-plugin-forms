@@ -112,6 +112,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private boolean _bCountResponses;
 
     private String _labelFinalButton;
+    
+    private String _strUnavailableMessage;
 
     /**
      * Returns the Id
@@ -585,5 +587,21 @@ public class Form implements AdminWorkgroupResource, RBACResource
     public void setLabelFinalButton( String labelFinalButton )
     {
         _labelFinalButton = labelFinalButton;
+    }
+
+    /**
+     * @return the strUnavailableMessage
+     */
+    public String getUnavailableMessage( )
+    {
+        return _strUnavailableMessage;
+    }
+
+    /**
+     * @param strUnavailableMessage the strUnavailableMessage to set
+     */
+    public void setUnavailableMessage( String strUnavailableMessage )
+    {
+        _strUnavailableMessage = strUnavailableMessage;
     }
 }
