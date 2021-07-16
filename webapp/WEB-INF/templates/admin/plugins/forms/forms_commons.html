@@ -432,7 +432,14 @@ $( function() {
 									</@inputGroupItem>
 							</@inputGroup>
 						</@formGroup>
-					</@columns>            
+					</@columns>    
+				</@row>
+				<@row>
+					<@columns xs=12 sm=12>
+						<@formGroup labelKey='#i18n{forms.modify_form.labelUnavailableMessage}' helpKey='#i18n{forms.modify_form.labelUnavailableMessage.help}' rows=2>
+								<@input type='textarea' name='unavailableMessage'>${form.unavailableMessage!}</@input>
+						</@formGroup>
+					</@columns>
 				</@row>
 			</@fieldSet>
 			<@fieldSet legend='#i18n{forms.create_form.display.labelRestrictions}'>
@@ -469,9 +476,9 @@ $( function() {
 						</@formGroup>
 					</@columns>
 				</@row>
-			</@fieldSet>   
+			</@fieldSet>
 		</@columns>
-		<@columns md=5>  
+		<@columns md=5>
 			<@fieldSet legend='#i18n{forms.create_form.labelDisplaySummary}'>
 				<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
 					<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
