@@ -329,7 +329,14 @@ public class FormXPage extends MVCApplication
             }
             else
             {
-                SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+                if ( StringUtils.isNotEmpty( form.getUnavailableMessage( ) ) )
+                {
+                    SiteMessageService.setCustomMessage( request, form.getUnavailableMessage( ), SiteMessage.TYPE_ERROR );
+                }
+                else
+                {
+                    SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+                }
             }
         }
 
@@ -762,7 +769,14 @@ public class FormXPage extends MVCApplication
 
         if ( !form.isActive( ) )
         {
-            SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+            if ( StringUtils.isNotEmpty( form.getUnavailableMessage( ) ) )
+            {
+                SiteMessageService.setCustomMessage( request, form.getUnavailableMessage( ), SiteMessage.TYPE_ERROR );
+            }
+            else
+            {
+                SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+            }
         }
         return form;
     }
