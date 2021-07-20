@@ -121,6 +121,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String PARAMETER_FORMAT_EXPORT = "format_export";
     private static final String PARAMETER_DISPLAY_FORMS_TITLE_COLUMN = "display_forms_title_column";
     private static final String PARAMETER_DISPLAY_ASSIGNEE_COLUMN = "display_assignee_column";
+    private static final String PARAMETER_CHANGE_PANEL = "change_panel";
 
     // Marks
     private static final String MARK_LOCALE = "locale";
@@ -163,7 +164,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                 .filter( fpd -> RBACService.isAuthorized( fpd.getFormPanel( ).getFormPanelConfiguration( ), FormPanelConfigIdService.PERMISSION_VIEW,
                         (User) AdminUserService.getAdminUser( request ) ) )
                 .collect( Collectors.toList( ) );
-
+        
         // Build the Column for the Panel and save their values for the active panel
         initiatePaginatorProperties( request );
         buildFormResponseItemComparatorConfiguration( request );
@@ -384,12 +385,17 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         {
             // Nothing to do
         }
-
-        _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
-        List<FormFilter> listFormFilter = FormDisplayFactory.buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ),
-                (User) AdminUserService.getAdminUser( request ) );
-        _listFormFilterDisplay = FormDisplayFactory.createFormFilterDisplayList( request, listFormFilter );
-        _listFormColumnDisplay = FormDisplayFactory.createFormColumnDisplayList( _listFormColumn );
+        
+        boolean changePanel = Boolean.parseBoolean( request.getParameter( PARAMETER_CHANGE_PANEL ) );
+        if ( CollectionUtils.isEmpty( _listFormFilterDisplay ) || !changePanel )
+        {
+            _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
+            List<FormFilter> listFormFilter = FormDisplayFactory.buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ),
+                    (User) AdminUserService.getAdminUser( request ) );
+            _listFormFilterDisplay = FormDisplayFactory.createFormFilterDisplayList( request, listFormFilter );
+            _listFormColumnDisplay = FormDisplayFactory.createFormColumnDisplayList( _listFormColumn );
+        }
+        
         _listFormPanelDisplay = FormDisplayFactory.createFormPanelDisplayList( request, listFormPanel, _formPanelDisplayActive );
         for ( IFormPanelDisplay formPanelDisplay : _listFormPanelDisplay )
         {
@@ -454,7 +460,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             // Build the template of the form list panel
             formPanelDisplay.buildTemplate( getLocale( ) );
         }
-
     }
 
     /**
