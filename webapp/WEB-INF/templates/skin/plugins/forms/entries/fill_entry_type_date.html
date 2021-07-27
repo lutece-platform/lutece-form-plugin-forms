@@ -37,8 +37,8 @@
     </#list>
   </#if>
  
-  <@getDatePickerBootstrap idField="${idName}" language=locale.language />
-	
+  <@getDatePickerBootstrap idField="${idName}" language=locale.language />	
+  <script type="text/javascript" src="js/jquery/plugins/moment.min.js"></script>
   <script type="text/javascript">
     $( document ).ready(function() {
       $("#attribute${idName}").on('changeDate', function(ev){

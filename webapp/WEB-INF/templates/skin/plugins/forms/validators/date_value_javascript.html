@@ -1,0 +1,28 @@
+if(inputValue !== undefined && inputValue !== '')
+{
+	var lang = window.navigator.language;
+	var dateControl = moment(controlValue);
+	
+	moment.locale(lang);
+	if(Array.isArray(inputValue))
+	{
+		for(var i=0;i<inputValue.length;i++)
+		{
+			var dateInput = moment(inputValue[i], 'L');
+			if ( !(dateInput.getTime() ${operation} dateControl.getTime() ) )
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	else
+	{
+		var dateInput = moment(inputValue, 'L');
+		return dateInput ${operation} dateControl;
+	}
+}
+else
+{
+	return false;
+}

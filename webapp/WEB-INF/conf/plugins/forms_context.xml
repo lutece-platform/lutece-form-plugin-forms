@@ -91,11 +91,27 @@
 			<list>
 				<value type="java.lang.String">forms.entryTypeText</value>
 				<value type="java.lang.String">forms.entryTypeMyLuteceUserattribute</value>
-			
 			</list>
 		</constructor-arg>
-
 	</bean>
+    <bean id="forms.dateInferiorValidator" class="fr.paris.lutece.plugins.forms.validation.DateInferiorValidator">
+        <constructor-arg type="java.lang.String" index="0" value="forms.dateInferiorValidator" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.validator.date.inf.name" />
+        <constructor-arg index="2" >
+            <list>
+                <value type="java.lang.String">forms.entryTypeDate</value>
+            </list>
+        </constructor-arg>
+    </bean>
+    <bean id="forms.dateSuperiorValidator" class="fr.paris.lutece.plugins.forms.validation.DateSuperiorValidator">
+        <constructor-arg type="java.lang.String" index="0" value="forms.dateSuperiorValidator" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.validator.date.sup.name" />
+        <constructor-arg index="2" >
+            <list>
+                <value type="java.lang.String">forms.entryTypeDate</value>
+            </list>
+        </constructor-arg>
+    </bean>
 	
 	
 	<!-- Breadcrumb -->
