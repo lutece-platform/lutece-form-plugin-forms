@@ -42,6 +42,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -51,11 +53,11 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.service.FormJsonService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -66,7 +68,6 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
-import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -105,7 +106,6 @@ public class FormStepJspBean extends AbstractJspBean
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
-    private static final String PROPERTY_COPY_FORM_TITLE = "forms.copyStep.title";
 
     // Messages
     private static final String MESSAGE_CONFIRM_REMOVE_STEP = "forms.message.confirmRemoveStep";
@@ -351,35 +351,31 @@ public class FormStepJspBean extends AbstractJspBean
         catch( NumberFormatException ne )
         {
             AppLogService.error( ne );
-
             return redirectToViewManageForm( request );
         }
 
         int nIdForm = -1;
 
-        if ( ( nIdStep != -1 ) )
+        if ( nIdStep != -1 )
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
 
             if ( _step != null )
             {
-
                 nIdForm = _step.getIdForm( );
-                Object [ ] tabSTepTitleCopy = {
-                        _step.getTitle( ),
-                };
-                String strTitleCopyStep = I18nService.getLocalizedString( PROPERTY_COPY_FORM_TITLE, tabSTepTitleCopy, getLocale( ) );
 
-                if ( strTitleCopyStep != null )
+                try
                 {
-                    _step.setTitle( strTitleCopyStep );
+                    String json = FormJsonService.getInstance( ).jsonExportStep( nIdForm, nIdStep );
+                    FormJsonService.getInstance( ).jsonImportStep( nIdForm, json, getLocale( ) );
+                    addInfo( INFO_STEP_COPIED, getLocale( ) );
                 }
-
-                StepHome.create( _step );
-                addInfo( INFO_STEP_COPIED, getLocale( ) );
+                catch( JsonProcessingException e )
+                {
+                    AppLogService.error( "Error while copying step", e );
+                }
             }
         }
-
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
     }
 

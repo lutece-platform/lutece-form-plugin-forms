@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.service;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,6 +76,7 @@ import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.util.FormJsonData;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.StepJsonData;
 import fr.paris.lutece.plugins.forms.util.TimestampDeserializer;
 import fr.paris.lutece.plugins.forms.util.TimestampSerializer;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -88,6 +91,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public class FormJsonService
 {
     private static final String PROPERTY_COPY_FORM_TITLE = "forms.copyForm.title";
+    private static final String PROPERTY_COPY_STEP_TITLE = "forms.copyStep.title";
 
     public static final FormJsonService INSTANCE = new FormJsonService( );
 
@@ -135,6 +139,7 @@ public class FormJsonService
         }
         jsonData.setQuestionList( questionList );
         jsonData.setControlList( controlList );
+
         jsonData.setControlMappingList( controlMappingList );
 
         jsonData.setTransitionList( TransitionHome.getTransitionsListFromForm( idForm ) );
@@ -174,6 +179,74 @@ public class FormJsonService
         importTransitions( transitionList, controlList );
         importControls( controlList, controlMappingList );
         importFormExportConfig( newIdForm, formExportConfigList );
+    }
+
+    /**
+     * Export the step as a Json Object.
+     * 
+     * @return
+     * @throws JsonProcessingException
+     */
+    public String jsonExportStep( int idForm, int idStep ) throws JsonProcessingException
+    {
+        StepJsonData jsonData = new StepJsonData( );
+
+        jsonData.setStep( StepHome.findByPrimaryKey( idStep ) );
+        jsonData.setGroupList( GroupHome.getGroupsListByIdStepList( Collections.singletonList( idStep ) ) );
+
+        List<Control> controlList = new ArrayList<>( );
+        List<Question> questionList = QuestionHome.getQuestionsListByStep( idStep );
+        for ( Question question : questionList )
+        {
+            controlList.addAll( ControlHome.getControlByQuestion( question.getId( ) ) );
+        }
+        List<ControlMapping> controlMappingList = new ArrayList<>( );
+        for ( Control control : controlList )
+        {
+            controlMappingList.addAll( ControlHome.getControlMappingListByIdControl( control.getId( ) ) );
+        }
+        jsonData.setQuestionList( questionList );
+        jsonData.setControlList( controlList );
+        jsonData.setControlMappingList( controlMappingList );
+
+        List<FormDisplay> formDisplayList = FormDisplayHome.getFormDisplayByForm( idForm );
+        jsonData.setFormDisplayList( formDisplayList.stream( ).filter( fd -> fd.getStepId( ) == idStep ).collect( Collectors.toList( ) ) );
+
+        return _objectMapper.writeValueAsString( jsonData );
+    }
+
+    /**
+     * Import the step from a Json Object.
+     * 
+     * @return
+     */
+    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    public void jsonImportStep( int idForm, String json, Locale locale ) throws JsonProcessingException
+    {
+        StepJsonData jsonData = _objectMapper.readValue( json, StepJsonData.class );
+
+        Step step = jsonData.getStep( );
+        List<Group> groupList = jsonData.getGroupList( );
+        List<Question> questionList = jsonData.getQuestionList( );
+        List<Control> controlList = jsonData.getControlList( );
+        List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
+        List<FormDisplay> formDisplayList = jsonData.getFormDisplayList( );
+
+        Object [ ] tabSTepTitleCopy = {
+                step.getTitle( ),
+        };
+        String strTitleCopyStep = I18nService.getLocalizedString( PROPERTY_COPY_STEP_TITLE, tabSTepTitleCopy, locale );
+
+        if ( strTitleCopyStep != null )
+        {
+            step.setTitle( strTitleCopyStep );
+        }
+
+        importSteps( idForm, Collections.singletonList( step ), groupList, null, questionList, formDisplayList );
+        importQuestions( idForm, questionList, controlList, controlMappingList, formDisplayList, null );
+        importGroups( groupList, formDisplayList );
+        importFormDisplay( idForm, formDisplayList, controlList );
+        importControls( controlList, controlMappingList );
     }
 
     private int importForm( Form form, FormMessage formMessage, Locale locale )
@@ -282,7 +355,7 @@ public class FormJsonService
     {
         for ( Control control : controlList )
         {
-            if ( ControlType.CONDITIONAL.getLabel( ).equals( control.getControlType( ) ) )
+            if ( ControlType.CONDITIONAL.getLabel( ).equals( control.getControlType( ) ) && mapIdFormDisplay.containsKey( control.getIdControlTarget( ) ) )
             {
                 control.setIdControlTarget( mapIdFormDisplay.get( control.getIdControlTarget( ) ) );
             }
@@ -344,7 +417,10 @@ public class FormJsonService
         }
         updateControlWithNewQuestion( controlMappingList, controlList, mapIdQuestions );
         updateFormDisplayWithNewQuestion( formDisplayList, mapIdQuestions );
-        updateExportConfigWithNewQuestion( formExportConfigList, mapIdQuestions );
+        if ( CollectionUtils.isNotEmpty( formExportConfigList ) )
+        {
+            updateExportConfigWithNewQuestion( formExportConfigList, mapIdQuestions );
+        }
     }
 
     private void updateExportConfigWithNewQuestion( List<FormExportConfig> formExportConfigList, Map<Integer, Integer> mapIdQuestions )
@@ -409,7 +485,10 @@ public class FormJsonService
             mapIdSteps.put( oldStepId, newStepId );
         }
 
-        updateTransitionWithNewStep( transitionList, mapIdSteps );
+        if ( CollectionUtils.isNotEmpty( transitionList ) )
+        {
+            updateTransitionWithNewStep( transitionList, mapIdSteps );
+        }
         updateGroupWithNewStep( groupList, mapIdSteps );
         updateQuestionWithNewStep( questionList, mapIdSteps );
         updateFormDisplayWithNewStep( formDisplayList, mapIdSteps );
