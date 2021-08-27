@@ -69,6 +69,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.file.FileUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
@@ -125,6 +126,7 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String ACTION_MODIFY_STEP = "modifyStep";
     private static final String ACTION_REMOVE_STEP = "removeStep";
     private static final String ACTION_DUPLICATE_STEP = "duplicateStep";
+    private static final String ACTION_EXPORT_STEP = "doExportJson";
 
     // Infos
     private static final String INFO_STEP_CREATED = "forms.info.step.created";
@@ -134,6 +136,7 @@ public class FormStepJspBean extends AbstractJspBean
 
     // Errors
     private static final String ERROR_STEP_NOT_UPDATED = "forms.error.form.notUpdated";
+    private static final String ERROR_STEP_NOT_COPIED = "forms.error.step.not.copied";
 
     // Others
     private static final StepService _stepService = SpringContextService.getBean( StepService.BEAN_NAME );
@@ -518,4 +521,34 @@ public class FormStepJspBean extends AbstractJspBean
 
     }
 
+    @Action( ACTION_EXPORT_STEP )
+    public void doExportJson( HttpServletRequest request )
+    {
+        int nIdStep = -1;
+        try
+        {
+            nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+        }
+        catch( NumberFormatException ne )
+        {
+            AppLogService.error( ne );
+            return;
+        }
+        
+        try
+        {
+            Step step = StepHome.findByPrimaryKey( nIdStep );
+            if ( step == null )
+            {
+                return;
+            }
+            String content = FormJsonService.getInstance( ).jsonExportStep( step.getIdForm( ), step.getId( ) );
+            download( content.getBytes( ), FileUtil.normalizeFileName( step.getTitle( ) ) + ".json", "application/json" );
+        }
+        catch( JsonProcessingException e )
+        {
+            AppLogService.debug( e.getMessage( ) );
+            addError( ERROR_STEP_NOT_COPIED, getLocale( ) );
+        }
+    }
 }
