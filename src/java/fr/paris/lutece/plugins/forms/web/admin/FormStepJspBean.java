@@ -40,6 +40,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -67,6 +68,7 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.file.FileUtil;
@@ -93,6 +95,7 @@ public class FormStepJspBean extends AbstractJspBean
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_PREVIOUS_STEP = "previousStep";
+    private static final String PARAMETER_JSON_FILE = "json_file";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_STEP = "forms.modify_step.pageTitle";
@@ -127,6 +130,7 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String ACTION_REMOVE_STEP = "removeStep";
     private static final String ACTION_DUPLICATE_STEP = "duplicateStep";
     private static final String ACTION_EXPORT_STEP = "doExportJson";
+    private static final String ACTION_IMPORT_STEP = "doImportJson";
 
     // Infos
     private static final String INFO_STEP_CREATED = "forms.info.step.created";
@@ -137,6 +141,7 @@ public class FormStepJspBean extends AbstractJspBean
     // Errors
     private static final String ERROR_STEP_NOT_UPDATED = "forms.error.form.notUpdated";
     private static final String ERROR_STEP_NOT_COPIED = "forms.error.step.not.copied";
+    private static final String ERROR_STEP_NOT_IMPORTED = "forms.error.step.not.imported";
 
     // Others
     private static final StepService _stepService = SpringContextService.getBean( StepService.BEAN_NAME );
@@ -550,5 +555,26 @@ public class FormStepJspBean extends AbstractJspBean
             AppLogService.debug( e.getMessage( ) );
             addError( ERROR_STEP_NOT_COPIED, getLocale( ) );
         }
+    }
+    
+    @Action( ACTION_IMPORT_STEP )
+    public String doImportJson( HttpServletRequest request )
+    {
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
+        
+        int nIdForm = -1;
+        try
+        {
+            nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+            FormJsonService.getInstance( ).jsonImportStep( nIdForm, new String( fileItem.get( ) ), getLocale( ) );
+            addInfo( INFO_STEP_CREATED, getLocale( ) );
+        }
+        catch( JsonProcessingException e )
+        {
+            AppLogService.error( e.getMessage( ) );
+            addError( ERROR_STEP_NOT_IMPORTED, getLocale( ) );
+        }
+        return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
     }
 }
