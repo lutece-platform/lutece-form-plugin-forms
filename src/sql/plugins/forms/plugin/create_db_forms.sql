@@ -26,6 +26,7 @@ captcha_recap SMALLINT default 0,
 count_responses SMALLINT default 0,
 label_final_button VARCHAR(255),
 unavailable_message VARCHAR(255),
+id_logo INT NOT NULL DEFAULT 0,
 PRIMARY KEY (id_form)
 );
 

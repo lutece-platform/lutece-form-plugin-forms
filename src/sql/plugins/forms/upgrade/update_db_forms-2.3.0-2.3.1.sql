@@ -16,3 +16,5 @@ UPDATE genatt_entry_type set display_order = 17 WHERE id_type = 109;
 UPDATE genatt_entry_type set display_order = 18 WHERE id_type = 114;
 UPDATE genatt_entry_type set display_order = 19 WHERE id_type = 117;
 UPDATE genatt_entry_type set display_order = 20 WHERE id_type = 119;
+
+ALTER TABLE forms_form ADD COLUMN id_logo INT NOT NULL DEFAULT 0;

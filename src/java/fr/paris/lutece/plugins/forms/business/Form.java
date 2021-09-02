@@ -38,6 +38,7 @@ import javax.validation.constraints.Size;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
 
@@ -114,6 +115,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private String _labelFinalButton;
     
     private String _strUnavailableMessage;
+    
+    private File _logo;
 
     /**
      * Returns the Id
@@ -603,5 +606,21 @@ public class Form implements AdminWorkgroupResource, RBACResource
     public void setUnavailableMessage( String strUnavailableMessage )
     {
         _strUnavailableMessage = strUnavailableMessage;
+    }
+
+    /**
+     * @return the logo
+     */
+    public File getLogo( )
+    {
+        return _logo;
+    }
+
+    /**
+     * @param logo the logo to set
+     */
+    public void setLogo( File logo )
+    {
+        _logo = logo;
     }
 }

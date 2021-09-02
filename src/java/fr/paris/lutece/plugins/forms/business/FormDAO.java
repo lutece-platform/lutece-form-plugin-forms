@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
@@ -49,11 +50,11 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormDAO implements IFormDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, one_response_by_user, breadcrumb_name, display_summary, return_url, max_number_response,captcha_step_initial,captcha_step_final,captcha_recap,count_responses,label_final_button,unavailable_message FROM forms_form";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_form, title, description, creation_date,update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, one_response_by_user, breadcrumb_name, display_summary, return_url, max_number_response,captcha_step_initial,captcha_step_final,captcha_recap,count_responses,label_final_button,unavailable_message, id_logo FROM forms_form";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_form = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, one_response_by_user, breadcrumb_name, display_summary, return_url, max_number_response, captcha_step_initial, captcha_step_final, captcha_recap,count_responses, label_final_button,unavailable_message ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_form ( title, description, update_date, availability_start_date, availability_end_date, workgroup, id_workflow, authentification_needed, one_response_by_user, breadcrumb_name, display_summary, return_url, max_number_response, captcha_step_initial, captcha_step_final, captcha_recap,count_responses, label_final_button,unavailable_message, id_logo ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_form WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, one_response_by_user = ?, breadcrumb_name = ?, display_summary = ?, return_url = ?, max_number_response = ?, captcha_step_initial = ?, captcha_step_final = ?, captcha_recap = ?, count_responses = ?, label_final_button = ?, unavailable_message = ? WHERE id_form = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, one_response_by_user = ?, breadcrumb_name = ?, display_summary = ?, return_url = ?, max_number_response = ?, captcha_step_initial = ?, captcha_step_final = ?, captcha_recap = ?, count_responses = ?, label_final_button = ?, unavailable_message = ?, id_logo = ? WHERE id_form = ?";
     private static final String SQL_QUERY_COUNT_NUMBER_OF_RESPONSE = "SELECT count(id_form) FROM forms_response WHERE id_form = ? and from_save = 0";
     private static final String SQL_QUERY_COUNT_NUMBER_RESPONSE_USER = "SELECT count(id_form) FROM forms_response WHERE id_form=? and guid= ? AND from_save = 0 ";
 
@@ -86,7 +87,15 @@ public final class FormDAO implements IFormDAO
             daoUtil.setBoolean( nIndex++, form.isCountResponses( ) );
             daoUtil.setString( nIndex++, form.getLabelFinalButton( ) );
             daoUtil.setString( nIndex++, form.getUnavailableMessage( ) );
-
+            if ( form.getLogo( ) != null )
+            {
+                daoUtil.setInt( nIndex++, form.getLogo( ).getIdFile( ) );
+            }
+            else
+            {
+                daoUtil.setInt( nIndex++, 0 );
+            }
+            
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
             {
@@ -159,7 +168,15 @@ public final class FormDAO implements IFormDAO
             daoUtil.setBoolean( nIndex++, form.isCountResponses( ) );
             daoUtil.setString( nIndex++, form.getLabelFinalButton( ) );
             daoUtil.setString( nIndex++, form.getUnavailableMessage( ) );
-
+            if ( form.getLogo( ) != null )
+            {
+                daoUtil.setInt( nIndex++, form.getLogo( ).getIdFile( ) );
+            }
+            else
+            {
+                daoUtil.setInt( nIndex++, 0 );
+            }
+            
             daoUtil.setInt( nIndex, form.getId( ) );
 
             daoUtil.executeUpdate( );
@@ -274,6 +291,14 @@ public final class FormDAO implements IFormDAO
         form.setCountResponses( daoUtil.getBoolean( "count_responses" ) );
         form.setLabelFinalButton( daoUtil.getString( "label_final_button" ) );
         form.setUnavailableMessage( daoUtil.getString( "unavailable_message" ) );
+        
+        int idLogo = daoUtil.getInt( "id_logo" );
+        if ( idLogo > 0 )
+        {
+            File logo = new File( );
+            logo.setIdFile( idLogo );
+            form.setLogo( logo );
+        }
         return form;
     }
 
