@@ -143,6 +143,7 @@
     <bean id="forms.entryTypeAutomaticFileReading" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading" />
     <bean id="forms.entryTypeCamera" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCamera" />
     <bean id="forms.entryTypeTelephoneNumber" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTelephoneNumber" />
+    <bean id="forms.entryTypeNumber" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumber" />
 
 	<!-- DisplayService -->
 	<bean id="forms.entryTypeCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
@@ -178,6 +179,9 @@
 	<bean id="forms.entryTypeTextDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeText" />
 	</bean>
+    <bean id="forms.entryTypeNumberDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
+        <constructor-arg  type="java.lang.String" value="forms.entryTypeNumber" />
+    </bean>
 	<bean id="forms.entryTypeTextAreaDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeTextArea" />
 	</bean>
@@ -237,6 +241,9 @@
 	<bean id="forms.entryTypeTextDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeText" />
 	</bean>
+    <bean id="forms.entryTypeNumberDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
+        <constructor-arg  type="java.lang.String" value="forms.entryTypeNumber" />
+    </bean>
 	<bean id="forms.entryTypeTextAreaDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeTextArea" />
 	</bean>

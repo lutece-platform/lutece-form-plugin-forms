@@ -1,0 +1,43 @@
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign field=getFieldByCode( entry, "text_config")>
+<#assign field_min=getFieldByCode( entry, "min")>
+<#assign field_max=getFieldByCode( entry, "max")>
+
+<#if list_responses?has_content>
+	<#list list_responses as response>
+		<#if response.entry.idEntry == entry.idEntry>
+			<#if response.toStringValueResponse??>
+				<#assign inputValue = response.toStringValueResponse />
+			</#if>
+			<#if response.entry.error??>
+				<#assign groupStyle = 'error' />
+			</#if>
+		</#if>
+	</#list>
+<#else>
+	<#if field.value?exists>
+		<#assign inputValue = field.value />
+	<#else>
+		<#assign inputValue = '' />
+	</#if>
+</#if>
+<#assign min=0 />
+<#assign max=0 />
+<#if field_min.value??>
+	<#assign min=field_min.value?number />
+</#if>
+<#if field_max.value??>
+	<#assign max=field_max.value?number />
+</#if>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
+	<@input type='number' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue min=min max=max/>
+</@formGroup>
+
+<#if list_responses??>
+  <#list list_responses as response>
+    <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+      <#assign error = response.entry.error>
+      <@alert color='danger'><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></@alert>
+    </#if>
+  </#list>
+</#if>

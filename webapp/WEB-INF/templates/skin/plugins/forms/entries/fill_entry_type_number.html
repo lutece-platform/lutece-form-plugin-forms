@@ -1,0 +1,50 @@
+<#if !entry.onlyDisplayInBack || is_completeness_bo>
+	<div class="form-group">
+		<#assign idName = buildEntryName( entry, entry_iteration_number )>
+			<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+				<#assign field=getFieldByCode( entry, "text_config")>
+					<input type="number" class="form-control input-sm" name="${idName}" id="${idName}"
+					<#if list_responses?has_content>
+						<#list list_responses as response>
+						<#if response.entry.idEntry == entry.idEntry>
+							<#if response.toStringValueResponse??>
+								value="${response.toStringValueResponse}"
+							</#if>
+							<#if response.entry.error??>
+								class="error"
+							</#if>
+							</#if>
+						</#list>
+					<#else>
+						<#if field.value??>
+							value="${field.value}" 
+						<#else>
+							 value="" 
+						</#if>
+					</#if>
+					<#assign field_min=getFieldByCode( entry, "min")>
+					<#if field_min.value??>
+						min="${field_min.value?number}"
+					</#if>
+					<#assign field_max=getFieldByCode( entry, "max")>
+					<#if field_max.value??>
+						min="${field_max.value?number}"
+					</#if>
+				class="${entry.CSSClass!} "	/>
+					
+				<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+					<span class="help-block">${entry.helpMessage}</span>
+				</#if>
+			</div>
+	</div>
+
+	<#if list_responses??>
+		<#list list_responses as response>
+			<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+				<#assign error = response.entry.error>
+				<div class="alert alert-danger"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
+			</#if>
+		</#list>
+	</#if>
+</#if>
