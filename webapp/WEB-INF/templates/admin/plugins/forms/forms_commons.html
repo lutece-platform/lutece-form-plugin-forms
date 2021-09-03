@@ -399,6 +399,20 @@ $( function() {
 </#macro>
 
 <#macro formModel>
+	<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
+	<@addRequiredJsFiles />
+	<script type="text/javascript" src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${uploadHandler.handlerName}" ></script>
+	<@row>
+		<@columns> 
+			<@formGroup labelKey='#i18n{forms.modify_form.labelLogo}' helpKey='#i18n{forms.modify_form.labelLogo.help}'>
+				<@addFileInput fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' cssClass='' multiple=true />
+				<#if !listFiles??><#assign listFiles = ''></#if>
+				<div id="listUpload">
+					<@addUploadedFilesBox fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' listFiles=listFiles />
+				</div>
+			</@formGroup>
+		</@columns>
+	</@row>
 	<@row> 
 		<@columns md=7> 
 			<@fieldSet legend='#i18n{forms.modify_form.labelDescription}'>

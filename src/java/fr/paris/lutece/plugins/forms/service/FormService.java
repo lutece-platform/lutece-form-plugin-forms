@@ -75,6 +75,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntry
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.business.event.ResourceEvent;
+import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.event.ResourceEventManager;
@@ -319,6 +320,10 @@ public class FormService
 
         Form form = FormHome.findByPrimaryKey( nIdForm );
         int nIdWorkflow = form.getIdWorkflow( );
+        if ( form.getLogo( ) != null )
+        {
+            FileHome.remove( form.getLogo( ).getIdFile( ) );
+        }
 
         FormHome.remove( nIdForm );
 

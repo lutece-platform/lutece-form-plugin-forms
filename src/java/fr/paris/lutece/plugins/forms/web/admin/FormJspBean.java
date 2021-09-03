@@ -46,6 +46,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadHandler;
+import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.plugins.forms.business.FormActionHome;
@@ -60,6 +62,11 @@ import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.BreadcrumbManager;
+import fr.paris.lutece.plugins.genericattributes.business.GenAttFileItem;
+import fr.paris.lutece.portal.business.file.File;
+import fr.paris.lutece.portal.business.file.FileHome;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
@@ -85,6 +92,7 @@ import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.file.FileUtil;
+import fr.paris.lutece.util.filesystem.FileSystemUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
@@ -113,6 +121,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String PARAMETER_ID_CONFIG = "id_config";
     private static final String PARAMETER_EXPORT_CONFIG = "export_config";
     private static final String PARAMETER_JSON_FILE = "json_file";
+    private static final String PARAMETER_LOGO = "upload_logo";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_FORM = "forms.modify_form.pageTitle";
@@ -133,7 +142,8 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_IS_ACTIVE_CAPTCHA = "is_active_captcha";
     private static final String MARK_EXPORT_LIST = "export_list";
     private static final String MARK_EXPORT_CONFIG_LIST = "export_config_list";
-
+    private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
+    
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
 
@@ -192,6 +202,7 @@ public class FormJspBean extends AbstractJspBean
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
+    private IAsyncUploadHandler _uploadHandler = AsynchronousUploadHandler.getHandler( );
 
     /**
      * Build the Manage View
@@ -259,6 +270,7 @@ public class FormJspBean extends AbstractJspBean
     {
         checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request );
 
+        _uploadHandler.removeSessionFiles( request.getSession( ) );
         _form = ( _form != null ) ? _form : new Form( );
         _formMessage = ( _formMessage != null ) ? _formMessage : new FormMessage( );
 
@@ -279,6 +291,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
+        model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
 
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_CREATE_FORM, model );
     }
@@ -301,6 +314,11 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_CREATE_FORM );
         }
 
+        _form.setLogo( getLogoFromRequest( request ) );
+        if ( _form.getLogo( ) != null )
+        {
+            FileHome.create( _form.getLogo( ) );
+        }
         FormHome.create( _form );
 
         _formMessage.setIdForm( _form.getId( ) );
@@ -453,6 +471,7 @@ public class FormJspBean extends AbstractJspBean
 
         if ( formToBeModified != null )
         {
+            _uploadHandler.removeSessionFiles( request.getSession( ) );
             setFormResponseMessage( formToBeModified.getId( ) );
 
             AdminUser adminUser = getUser( );
@@ -462,6 +481,15 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_FORM_MESSAGE, _formMessage );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
             model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
+            model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
+            
+            if ( formToBeModified.getLogo( ) != null )
+            {
+                File logo = FileHome.findByPrimaryKey( formToBeModified.getLogo( ).getIdFile( ) );
+                PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( logo.getPhysicalFile( ).getIdPhysicalFile( ) );
+                FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), logo.getTitle( ) );
+                _uploadHandler.addFileItemToUploadedFilesList( fileItem, PARAMETER_LOGO, request );
+            }
 
             if ( WorkflowService.getInstance( ).isAvailable( ) )
             {
@@ -773,6 +801,12 @@ public class FormJspBean extends AbstractJspBean
         }
 
         _formMessage = FormMessageHome.findByForm( _form.getId( ) );
+        
+        if ( _form.getLogo( ) != null )
+        {
+            FileHome.remove( _form.getLogo( ).getIdFile( ) );
+            _form.setLogo( null );
+        }
 
         populate( _form, request, request.getLocale( ) );
         populate( _formMessage, request, request.getLocale( ) );
@@ -780,6 +814,12 @@ public class FormJspBean extends AbstractJspBean
         if ( !validateForm( _form ) || !validateBean( _formMessage, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
             return redirect( request, VIEW_MODIFY_FORM, FormsConstants.PARAMETER_ID_FORM, _form.getId( ) );
+        }
+        
+        _form.setLogo( getLogoFromRequest( request ) );
+        if ( _form.getLogo( ) != null )
+        {
+            FileHome.create( _form.getLogo( ) );
         }
 
         FormHome.update( _form );
@@ -797,6 +837,25 @@ public class FormJspBean extends AbstractJspBean
         addInfo( INFO_FORM_UPDATED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_FORMS );
+    }
+    
+    private File getLogoFromRequest( HttpServletRequest request )
+    {
+        _uploadHandler.addFilesUploadedSynchronously( request, PARAMETER_LOGO );
+        List<FileItem> listUploadedFileItems = _uploadHandler.getListUploadedFiles( PARAMETER_LOGO, request.getSession( ) ); 
+        for ( FileItem fileItem : listUploadedFileItems )
+        {
+            File file = new File( );
+            file.setTitle( fileItem.getName( ) );
+            file.setSize( ( fileItem.getSize( ) < Integer.MAX_VALUE ) ? (int) fileItem.getSize( ) : Integer.MAX_VALUE );
+            file.setMimeType( FileSystemUtil.getMIMEType( file.getTitle( ) ) );
+
+            PhysicalFile physicalFile = new PhysicalFile( );
+            physicalFile.setValue( fileItem.get( ) );
+            file.setPhysicalFile( physicalFile );
+            return file;
+        }
+        return null;
     }
 
     /**
