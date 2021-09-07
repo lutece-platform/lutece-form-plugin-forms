@@ -79,6 +79,8 @@ import fr.paris.lutece.plugins.forms.web.http.SynchronousHttpServletRequestWrapp
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.business.file.FileHome;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
 import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -190,6 +192,11 @@ public class FormXPage extends MVCApplication
             if ( form.isCountResponses( ) )
             {
                 form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
+            }
+            if ( form.getLogo( ) != null )
+            {
+                form.setLogo( FileHome.findByPrimaryKey( form.getLogo( ).getIdFile( ) ) );
+                form.getLogo( ).setPhysicalFile( PhysicalFileHome.findByPrimaryKey( form.getLogo( ).getPhysicalFile( ).getIdPhysicalFile( ) ) );
             }
         }
 
@@ -395,6 +402,11 @@ public class FormXPage extends MVCApplication
         if ( form.isCountResponses( ) )
         {
             form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
+        }
+        if ( form.getLogo( ) != null )
+        {
+            form.setLogo( FileHome.findByPrimaryKey( form.getLogo( ).getIdFile( ) ) );
+            form.getLogo( ).setPhysicalFile( PhysicalFileHome.findByPrimaryKey( form.getLogo( ).getPhysicalFile( ).getIdPhysicalFile( ) ) );
         }
         model.put( FormsConstants.MARK_FORM, form );
         model.put( STEP_HTML_MARKER,

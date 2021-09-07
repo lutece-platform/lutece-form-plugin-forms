@@ -39,6 +39,9 @@ else {
 </script>
 
 <form class="form-horizontal" id="form-validate" action="jsp/site/Portal.jsp?page=forms" method="post" enctype="multipart/form-data">
+	<#if form.logo??>
+		<img id="form_logo" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt=""/>
+	</#if>
 	<@messages warnings=warnings />
 	<#if messageInfo?? >
 	<div class="alert alert-info" role="alert">

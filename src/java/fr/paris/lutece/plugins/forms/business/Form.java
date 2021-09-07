@@ -44,6 +44,7 @@ import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -622,5 +623,18 @@ public class Form implements AdminWorkgroupResource, RBACResource
     public void setLogo( File logo )
     {
         _logo = logo;
+    }
+    
+    /**
+     * Get the content of the logo as base64
+     * @return
+     */
+    public String getLogoBase64( )
+    {
+        if ( _logo == null || _logo.getPhysicalFile( ) == null )
+        {
+            return null;
+        }
+        return Base64.getEncoder().encodeToString( _logo.getPhysicalFile( ).getValue( ) );
     }
 }
