@@ -121,6 +121,7 @@ public class FormJsonService
     {
         FormJsonData jsonData = new FormJsonData( );
         jsonData.setForm( FormHome.findByPrimaryKey( idForm ) );
+        jsonData.getForm( ).setLogo( null );
 
         List<Step> stepList = StepHome.getStepsListByForm( idForm );
         jsonData.setStepList( stepList );
@@ -262,6 +263,7 @@ public class FormJsonService
         form.setIdWorkflow( 0 );
         form.setAvailabilityStartDate( null );
         form.setAvailabilityEndDate( null );
+        form.setLogo( null );
         FormHome.create( form );
 
         int newIdForm = form.getId( );
