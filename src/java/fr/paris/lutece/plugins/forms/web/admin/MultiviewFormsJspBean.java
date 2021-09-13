@@ -164,7 +164,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                 .filter( fpd -> RBACService.isAuthorized( fpd.getFormPanel( ).getFormPanelConfiguration( ), FormPanelConfigIdService.PERMISSION_VIEW,
                         (User) AdminUserService.getAdminUser( request ) ) )
                 .collect( Collectors.toList( ) );
-        
+
         // Build the Column for the Panel and save their values for the active panel
         initiatePaginatorProperties( request );
         buildFormResponseItemComparatorConfiguration( request );
@@ -385,7 +385,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         {
             // Nothing to do
         }
-        
+
         boolean changePanel = Boolean.parseBoolean( request.getParameter( PARAMETER_CHANGE_PANEL ) );
         if ( CollectionUtils.isEmpty( _listFormFilterDisplay ) || !changePanel )
         {
@@ -395,7 +395,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             _listFormFilterDisplay = FormDisplayFactory.createFormFilterDisplayList( request, listFormFilter );
             _listFormColumnDisplay = FormDisplayFactory.createFormColumnDisplayList( _listFormColumn );
         }
-        
+
         _listFormPanelDisplay = FormDisplayFactory.createFormPanelDisplayList( request, listFormPanel, _formPanelDisplayActive );
         for ( IFormPanelDisplay formPanelDisplay : _listFormPanelDisplay )
         {

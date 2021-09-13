@@ -29,6 +29,13 @@
 							<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
 								<@input type='textarea' name='comment' id='comment'></@input>
 							</@formGroup>
+							<@formGroup>
+								<@checkBox labelFor='use_ref_list' labelKey='#i18n{forms.createEntry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' params='onchange="javascript:changeVisibilityRefListSelect();"' />
+							</@formGroup>
+							<@formGroup labelFor='select_ref_list' id="use_ref_list_group" labelKey='#i18n{forms.createEntry.labelUseRefListSelect}' >
+								<@select name='select_ref_list' items=ref_list_select />
+							</@formGroup>
+							<@refListSelect />
 							<@formGroup labelFor='field_in_line' labelKey='#i18n{forms.createEntry.labelPresentation}'>
 								<#assign presentation_type = getName('field_in_line',list_param_default_values)!1>
 								<@select name='field_in_line' id='field_in_line'>

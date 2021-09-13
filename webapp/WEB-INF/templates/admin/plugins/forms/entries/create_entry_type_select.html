@@ -32,6 +32,13 @@
 							<@input type='textarea' name='comment' id='comment' rows=2></@input>
 						</@formGroup>
 						<@formGroup>
+							<@checkBox labelFor='use_ref_list' labelKey='#i18n{forms.createEntry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' params='onchange="javascript:changeVisibilityRefListSelect();"' />
+						</@formGroup>
+						<@formGroup labelFor='select_ref_list' id="use_ref_list_group" labelKey='#i18n{forms.createEntry.labelUseRefListSelect}' >
+							<@select name='select_ref_list' items=ref_list_select />
+						</@formGroup>
+						<@refListSelect />
+						<@formGroup>
 							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
 						</@formGroup>
 						<@formGroup>

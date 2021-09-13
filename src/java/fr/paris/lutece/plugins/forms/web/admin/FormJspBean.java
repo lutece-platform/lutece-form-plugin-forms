@@ -143,7 +143,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_EXPORT_LIST = "export_list";
     private static final String MARK_EXPORT_CONFIG_LIST = "export_config_list";
     private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
-    
+
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
 
@@ -482,7 +482,7 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
             model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
             model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
-            
+
             if ( formToBeModified.getLogo( ) != null )
             {
                 File logo = FileHome.findByPrimaryKey( formToBeModified.getLogo( ).getIdFile( ) );
@@ -801,7 +801,7 @@ public class FormJspBean extends AbstractJspBean
         }
 
         _formMessage = FormMessageHome.findByForm( _form.getId( ) );
-        
+
         if ( _form.getLogo( ) != null )
         {
             FileHome.remove( _form.getLogo( ).getIdFile( ) );
@@ -815,7 +815,7 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirect( request, VIEW_MODIFY_FORM, FormsConstants.PARAMETER_ID_FORM, _form.getId( ) );
         }
-        
+
         _form.setLogo( getLogoFromRequest( request ) );
         if ( _form.getLogo( ) != null )
         {
@@ -838,11 +838,11 @@ public class FormJspBean extends AbstractJspBean
 
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
-    
+
     private File getLogoFromRequest( HttpServletRequest request )
     {
         _uploadHandler.addFilesUploadedSynchronously( request, PARAMETER_LOGO );
-        List<FileItem> listUploadedFileItems = _uploadHandler.getListUploadedFiles( PARAMETER_LOGO, request.getSession( ) ); 
+        List<FileItem> listUploadedFileItems = _uploadHandler.getListUploadedFiles( PARAMETER_LOGO, request.getSession( ) );
         for ( FileItem fileItem : listUploadedFileItems )
         {
             File file = new File( );

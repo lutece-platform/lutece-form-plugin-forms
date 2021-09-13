@@ -95,7 +95,7 @@ public final class FormDAO implements IFormDAO
             {
                 daoUtil.setInt( nIndex++, 0 );
             }
-            
+
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
             {
@@ -176,7 +176,7 @@ public final class FormDAO implements IFormDAO
             {
                 daoUtil.setInt( nIndex++, 0 );
             }
-            
+
             daoUtil.setInt( nIndex, form.getId( ) );
 
             daoUtil.executeUpdate( );
@@ -291,7 +291,7 @@ public final class FormDAO implements IFormDAO
         form.setCountResponses( daoUtil.getBoolean( "count_responses" ) );
         form.setLabelFinalButton( daoUtil.getString( "label_final_button" ) );
         form.setUnavailableMessage( daoUtil.getString( "unavailable_message" ) );
-        
+
         int idLogo = daoUtil.getInt( "id_logo" );
         if ( idLogo > 0 )
         {

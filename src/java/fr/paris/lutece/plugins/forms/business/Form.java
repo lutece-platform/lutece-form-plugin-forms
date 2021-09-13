@@ -114,9 +114,9 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private boolean _bCountResponses;
 
     private String _labelFinalButton;
-    
+
     private String _strUnavailableMessage;
-    
+
     private File _logo;
 
     /**
@@ -602,7 +602,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     }
 
     /**
-     * @param strUnavailableMessage the strUnavailableMessage to set
+     * @param strUnavailableMessage
+     *            the strUnavailableMessage to set
      */
     public void setUnavailableMessage( String strUnavailableMessage )
     {
@@ -618,15 +619,17 @@ public class Form implements AdminWorkgroupResource, RBACResource
     }
 
     /**
-     * @param logo the logo to set
+     * @param logo
+     *            the logo to set
      */
     public void setLogo( File logo )
     {
         _logo = logo;
     }
-    
+
     /**
      * Get the content of the logo as base64
+     * 
      * @return
      */
     public String getLogoBase64( )
@@ -635,6 +638,6 @@ public class Form implements AdminWorkgroupResource, RBACResource
         {
             return null;
         }
-        return Base64.getEncoder().encodeToString( _logo.getPhysicalFile( ).getValue( ) );
+        return Base64.getEncoder( ).encodeToString( _logo.getPhysicalFile( ).getValue( ) );
     }
 }

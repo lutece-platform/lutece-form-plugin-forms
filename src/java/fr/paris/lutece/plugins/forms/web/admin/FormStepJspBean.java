@@ -539,7 +539,7 @@ public class FormStepJspBean extends AbstractJspBean
             AppLogService.error( ne );
             return;
         }
-        
+
         try
         {
             Step step = StepHome.findByPrimaryKey( nIdStep );
@@ -556,13 +556,13 @@ public class FormStepJspBean extends AbstractJspBean
             addError( ERROR_STEP_NOT_COPIED, getLocale( ) );
         }
     }
-    
+
     @Action( ACTION_IMPORT_STEP )
     public String doImportJson( HttpServletRequest request )
     {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
-        
+
         int nIdForm = -1;
         try
         {

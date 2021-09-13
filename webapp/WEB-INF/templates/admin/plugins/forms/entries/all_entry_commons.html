@@ -31,6 +31,19 @@ changeVisilityConfirmFieldTitle();
 </script>
 </#macro>
 
+<#macro refListSelect>
+<script type="text/javascript">
+function changeVisibilityRefListSelect(){
+    if( document.getElementById( "use_ref_list" ).checked ){
+    	$('#use_ref_list_group').show();
+    } else {
+        $('#use_ref_list_group').hide();
+    }
+} 
+changeVisibilityRefListSelect();
+</script>
+</#macro>
+
 <#--- MACRO formBox --->
 <#macro formBox entry stepid questionid title='' action='jsp/admin/plugins/forms/ManageQuestions.jsp' editable=true display=true rows=2>
 <@box>

@@ -81,6 +81,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.plugins.referencelist.service.ReferenceListService;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
@@ -108,6 +109,10 @@ import fr.paris.lutece.util.url.UrlItem;
 @Controller( controllerJsp = "ManageQuestions.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormQuestionJspBean extends AbstractJspBean
 {
+
+    private static final Class<?> [ ] ENTRY_TYPE_USER_REF_LIT = {
+            EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class
+    };
 
     private static final Class<?> [ ] FILTERABLE = {
             EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeDate.class
@@ -321,8 +326,12 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model ).getHtml( ) );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( EntryTypeServiceManager.getEntryTypeService( _entry ).getTemplateCreate( _entry, false ),
-                getLocale( ), model );
+        if ( Arrays.asList( ENTRY_TYPE_USER_REF_LIT ).contains( entryTypeService.getClass( ) ) )
+        {
+            model.put( FormsConstants.MARK_REFERENCE_LIST_SELECT, ReferenceListService.getInstance( ).getReferencesList( ) );
+        }
+
+        HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateCreate( _entry, false ), getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
     }
@@ -601,7 +610,6 @@ public class FormQuestionJspBean extends AbstractJspBean
      */
     private String processQuestionCreation( HttpServletRequest request ) throws CodeAlreadyExistsException
     {
-
         int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         int nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
         int nIdType = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) );
@@ -628,7 +636,7 @@ public class FormQuestionJspBean extends AbstractJspBean
 
         _entry.setIdResource( _step.getIdForm( ) );
         _entry.setResourceType( Form.RESOURCE_TYPE );
-        _entry.setIdEntry( EntryHome.create( _entry ) );
+        EntryHome.create( _entry );
 
         // If the entry code is empty, provide a new one
         if ( StringUtils.isEmpty( _entry.getCode( ) ) )
@@ -685,7 +693,6 @@ public class FormQuestionJspBean extends AbstractJspBean
             FormDisplayHome.create( formDisplay );
         }
         return null;
-
     }
 
     /**
@@ -865,6 +872,10 @@ public class FormQuestionJspBean extends AbstractJspBean
                         _fileStoreProvider.getFileDownloadUrlBO( fieldFile.getValue( ), additionnalData ) );
             }
         }
+        if ( Arrays.asList( ENTRY_TYPE_USER_REF_LIT ).contains( entryTypeService.getClass( ) ) )
+        {
+            model.put( FormsConstants.MARK_REFERENCE_LIST_SELECT, ReferenceListService.getInstance( ).getReferencesList( ) );
+        }
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
 
         return getAdminPage( template.getHtml( ) );
@@ -877,7 +888,7 @@ public class FormQuestionJspBean extends AbstractJspBean
      *            The HTTP request
      * @return The URL to go after performing the action
      */
-    public String processQuestionUpdate( HttpServletRequest request ) throws CodeAlreadyExistsException
+    private String processQuestionUpdate( HttpServletRequest request ) throws CodeAlreadyExistsException
     {
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
         int nIdStep = -INTEGER_MINUS_ONE;
@@ -940,7 +951,6 @@ public class FormQuestionJspBean extends AbstractJspBean
                 }
             }
         }
-
         String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
                 : _entry.getTitle( );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );

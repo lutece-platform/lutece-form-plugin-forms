@@ -83,6 +83,8 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
+import fr.paris.lutece.plugins.genericattributes.business.ReferenceItemFieldHome;
+import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
@@ -131,6 +133,14 @@ public class FormJsonService
         List<Question> questionList = QuestionHome.getListQuestionByIdForm( idForm );
         for ( Question question : questionList )
         {
+            for ( Field field : question.getEntry( ).getFields( ) )
+            {
+                Integer idItem = ReferenceItemFieldHome.findIdItemByIdField( field.getIdField( ) );
+                if ( idItem > 0 )
+                {
+                    field.setLinkedItem( ReferenceItemHome.findByPrimaryKey( idItem ) );
+                }
+            }
             controlList.addAll( ControlHome.getControlByQuestion( question.getId( ) ) );
         }
         List<ControlMapping> controlMappingList = new ArrayList<>( );
@@ -199,6 +209,14 @@ public class FormJsonService
         List<Question> questionList = QuestionHome.getQuestionsListByStep( idStep );
         for ( Question question : questionList )
         {
+            for ( Field field : question.getEntry( ).getFields( ) )
+            {
+                Integer idItem = ReferenceItemFieldHome.findIdItemByIdField( field.getIdField( ) );
+                if ( idItem > 0 )
+                {
+                    field.setLinkedItem( ReferenceItemHome.findByPrimaryKey( idItem ) );
+                }
+            }
             controlList.addAll( ControlHome.getControlByQuestion( question.getId( ) ) );
         }
         List<ControlMapping> controlMappingList = new ArrayList<>( );
