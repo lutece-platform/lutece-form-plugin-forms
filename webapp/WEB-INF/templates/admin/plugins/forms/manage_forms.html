@@ -18,8 +18,8 @@
                     	<#assign can_publish=false>
                         <@tr id="form_${form.id}">
                             <@td>
-                                <#assign hasAction=false />
-                                <#if form.actions?exists>
+                                <#assign hasActionUpdate = form.actions?seq_contains('MODIFY') >
+                                <#if form.actions?exists && hasActionUpdate>
                                     <#list form.actions as action>
                                         <#if action.permission=='MODIFY'>
                                             <@link href='${action.url}&id_form=${form.id}' title='${form.title}'>${form.title}</@link>
