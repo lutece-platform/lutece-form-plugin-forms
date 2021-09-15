@@ -497,13 +497,20 @@
     <bean id="forms.formIdAnonymizationType" class="fr.paris.lutece.plugins.genericattributes.service.anonymization.EntryAnonymizationType">
         <constructor-arg type="java.lang.String" index="0" value="%f" />
         <constructor-arg type="java.lang.String" index="1" value="forms.anonymization.form.help" />
+        <constructor-arg type="java.lang.String" index="2" value="forms.formIdAnonymizationService" />
     </bean>
     <bean id="forms.questionTitleAnonymizationType" class="fr.paris.lutece.plugins.genericattributes.service.anonymization.EntryAnonymizationType">
         <constructor-arg type="java.lang.String" index="0" value="%q" />
         <constructor-arg type="java.lang.String" index="1" value="forms.anonymization.question.help" />
+        <constructor-arg type="java.lang.String" index="2" value="forms.questionTitleAnonymizationService" />
     </bean>
     <bean id="forms.stepIdAnonymizationType" class="fr.paris.lutece.plugins.genericattributes.service.anonymization.EntryAnonymizationType">
         <constructor-arg type="java.lang.String" index="0" value="%s" />
         <constructor-arg type="java.lang.String" index="1" value="forms.anonymization.step.help" />
+        <constructor-arg type="java.lang.String" index="2" value="forms.stepIdAnonymizationService" />
     </bean>
+
+    <bean id="forms.formIdAnonymizationService" class="fr.paris.lutece.plugins.forms.service.anonymization.FormIdAnonymizationService" />
+    <bean id="forms.questionTitleAnonymizationService" class="fr.paris.lutece.plugins.forms.service.anonymization.QuestionTitleAnonymizationService" />
+    <bean id="forms.stepIdAnonymizationService" class="fr.paris.lutece.plugins.forms.service.anonymization.StepIdAnonymizationService" />
 </beans>
