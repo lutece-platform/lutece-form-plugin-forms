@@ -85,6 +85,23 @@
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
 							<@checkBox labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
 						</@formGroup>
+						<@formGroup>
+							<#assign anonymizable=getFieldByCode( entry, "anonymizable")>
+							<#if anonymizable.value?boolean>
+								<#assign checkedValue = true />
+								<#assign anonPattern = anonymizable.title />
+							<#else>
+								<#assign checkedValue = false />
+								<#assign anonPattern ="" />
+							</#if>
+							<@checkBox labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
+						</@formGroup>
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.createEntry.labelConfirmFieldTitle}'>
+							<@input type='text' name='confirm_field_title' id='confirm_field_title' value='${confirmFieldTitle!}'  maxlength=255 />
+						</@formGroup>
 						${question_modify_template!}
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
@@ -98,4 +115,5 @@
 	</@columns>
 </@row>
 <@confirmField />
+<@anonymPattern />
 <@initEditor />

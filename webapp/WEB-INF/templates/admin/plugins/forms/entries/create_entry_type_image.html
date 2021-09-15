@@ -64,6 +64,12 @@
 							<@checkBox labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
 						</@formGroup>
 						<@formGroup>
+							<@checkBox labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
+						</@formGroup>
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
+						</@formGroup>
+						<@formGroup>
 							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
 							<@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.creatyEntry.buttonApply}' hideTitle=['xs'] />
 							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' />
@@ -77,4 +83,5 @@
 
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
+ <@anonymPattern />
  

@@ -37,6 +37,12 @@
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
+						<@formGroup>
+							<@checkBox labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
+						</@formGroup>
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
+						</@formGroup>
 						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidthImage}' mandatory=true >
 							<@input type='text' name='width' id='width' value=getName('width_text',list_param_default_values) />
 						</@formGroup>
@@ -77,3 +83,4 @@
 </@row>
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
+<@anonymPattern />

@@ -32,6 +32,12 @@
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelArrayTitle}' helpKey='#i18n{forms.createEntry.labelArrayTitleHelp}'>
 							<@input type='text' name='comment' id='comment' value='' maxlength=255 />
 						</@formGroup>
+						<@formGroup>
+							<@checkBox labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
+						</@formGroup>
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
+						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
 							<@checkBox labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=false />
 						</@formGroup>
@@ -57,5 +63,6 @@
 </@row>
 
 <#include "/admin/util/editor/editor.html" />
+<@anonymPattern />
 <@initEditor />
  

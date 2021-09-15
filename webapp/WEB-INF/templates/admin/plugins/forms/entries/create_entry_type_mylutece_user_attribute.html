@@ -46,6 +46,12 @@
 				<@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
 					<@checkBox name='is_indexed' id='is_indexed' value='1' checked=true />
 				</@formGroup>
+				<@formGroup>
+					<@checkBox labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
+				</@formGroup>
+				<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+					<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
+				</@formGroup>
 				${question_create_template!}
 				<@formGroup>
 					<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] size='' />
@@ -56,3 +62,4 @@
 		</@tform>
 	</@boxBody>
 </@box>
+<@anonymPattern />

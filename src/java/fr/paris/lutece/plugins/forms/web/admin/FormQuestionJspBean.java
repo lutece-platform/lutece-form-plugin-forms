@@ -325,7 +325,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
         model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model ).getHtml( ) );
-
+        model.put( FormsConstants.MARK_ANONYMIZATION_HELP, entryTypeService.getAnonymizationHelpMessage( request.getLocale( ) ) );
+        
         if ( Arrays.asList( ENTRY_TYPE_USER_REF_LIT ).contains( entryTypeService.getClass( ) ) )
         {
             model.put( FormsConstants.MARK_REFERENCE_LIST_SELECT, ReferenceListService.getInstance( ).getReferencesList( ) );
@@ -856,7 +857,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
         model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model ).getHtml( ) );
-
+        model.put( FormsConstants.MARK_ANONYMIZATION_HELP, entryTypeService.getAnonymizationHelpMessage( request.getLocale( ) ) );
+        
         if ( entryTypeService instanceof EntryTypeComment )
         {
             Field fieldFile = _entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );

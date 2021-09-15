@@ -127,23 +127,144 @@
     <!-- EntryType -->
     <bean id="forms.entryTypeCheckBox" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox" />
 	<bean id="forms.entryTypeComment" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment" />
-	<bean id="forms.entryTypeDate" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate" />
-	<bean id="forms.entryTypeFile" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeFile" />
-	<bean id="forms.entryTypeGeolocation" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeGeolocation" />
-	<bean id="forms.entryTypeImage" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage" />
-	<bean id="forms.entryTypeMyLuteceUser" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUser" />
+	<bean id="forms.entryTypeDate" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate">
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.date0AnonymizationType" />
+                <ref bean="genericattributes.defaultDateAnonymizationType" />
+                <ref bean="genericattributes.emptyDateAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+	<bean id="forms.entryTypeFile" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeFile" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.fileDeleteAnonymizationType" />
+                <ref bean="genericattributes.fileReplaceAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+	<bean id="forms.entryTypeGeolocation" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeGeolocation" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.defaultGeolocAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+	<bean id="forms.entryTypeImage" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.fileDeleteAnonymizationType" />
+                <ref bean="genericattributes.fileReplaceAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+	<bean id="forms.entryTypeMyLuteceUser" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUser">
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.entryIdAnonymizationType" />
+                <ref bean="genericattributes.entryCodeAnonymizationType" />
+                <ref bean="genericattributes.responseIdAnonymizationType" />
+                <ref bean="forms.formIdAnonymizationType" />
+                <ref bean="forms.stepIdAnonymizationType" />
+                <ref bean="forms.questionTitleAnonymizationType" />
+                <ref bean="genericattributes.randomGuidAnonymizationType" />
+                <ref bean="genericattributes.randomNumberAnonymizationType" />
+            </list>
+        </property>
+    </bean>
 	<bean id="forms.entryTypeNumbering" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering" />
 	<bean id="forms.entryTypeRadioButton" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton" />
 	<bean id="forms.entryTypeSelect" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect" />
-	<bean id="forms.entryTypeText" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeText" />
-	<bean id="forms.entryTypeTextArea" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTextArea" />
-	<bean id="forms.entryTypeMyLuteceUserattribute" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUserAttribute" />
-	<bean id="forms.entryTypeArray" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeArray" />
+	<bean id="forms.entryTypeText" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeText" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.entryIdAnonymizationType" />
+                <ref bean="genericattributes.entryCodeAnonymizationType" />
+                <ref bean="genericattributes.responseIdAnonymizationType" />
+                <ref bean="forms.formIdAnonymizationType" />
+                <ref bean="forms.stepIdAnonymizationType" />
+                <ref bean="forms.questionTitleAnonymizationType" />
+                <ref bean="genericattributes.randomGuidAnonymizationType" />
+                <ref bean="genericattributes.randomNumberAnonymizationType" />
+                <ref bean="genericattributes.defaultValueAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+	<bean id="forms.entryTypeTextArea" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTextArea" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.entryIdAnonymizationType" />
+                <ref bean="genericattributes.entryCodeAnonymizationType" />
+                <ref bean="genericattributes.responseIdAnonymizationType" />
+                <ref bean="forms.formIdAnonymizationType" />
+                <ref bean="forms.stepIdAnonymizationType" />
+                <ref bean="forms.questionTitleAnonymizationType" />
+                <ref bean="genericattributes.randomGuidAnonymizationType" />
+                <ref bean="genericattributes.randomNumberAnonymizationType" />
+                <ref bean="genericattributes.defaultValueAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+	<bean id="forms.entryTypeMyLuteceUserattribute" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUserAttribute" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.entryIdAnonymizationType" />
+                <ref bean="genericattributes.entryCodeAnonymizationType" />
+                <ref bean="genericattributes.responseIdAnonymizationType" />
+                <ref bean="forms.formIdAnonymizationType" />
+                <ref bean="forms.stepIdAnonymizationType" />
+                <ref bean="forms.questionTitleAnonymizationType" />
+                <ref bean="genericattributes.randomGuidAnonymizationType" />
+                <ref bean="genericattributes.randomNumberAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+	<bean id="forms.entryTypeArray" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeArray" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.entryIdAnonymizationType" />
+                <ref bean="genericattributes.entryCodeAnonymizationType" />
+                <ref bean="genericattributes.responseIdAnonymizationType" />
+                <ref bean="forms.formIdAnonymizationType" />
+                <ref bean="forms.stepIdAnonymizationType" />
+                <ref bean="forms.questionTitleAnonymizationType" />
+                <ref bean="genericattributes.randomGuidAnonymizationType" />
+                <ref bean="genericattributes.randomNumberAnonymizationType" />
+            </list>
+        </property>
+    </bean>
     <bean id="forms.entryTypeTermsOfService" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService" />
-    <bean id="forms.entryTypeAutomaticFileReading" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading" />
-    <bean id="forms.entryTypeCamera" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCamera" />
-    <bean id="forms.entryTypeTelephoneNumber" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTelephoneNumber" />
-    <bean id="forms.entryTypeNumber" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumber" />
+    <bean id="forms.entryTypeAutomaticFileReading" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.fileDeleteAnonymizationType" />
+                <ref bean="genericattributes.fileReplaceAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+    <bean id="forms.entryTypeCamera" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCamera" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.fileDeleteAnonymizationType" />
+                <ref bean="genericattributes.fileReplaceAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+    <bean id="forms.entryTypeTelephoneNumber" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTelephoneNumber" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.defaultTelephoneAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+    <bean id="forms.entryTypeNumber" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumber" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.randomNumberAnonymizationType" />
+            </list>
+        </property>
+    </bean>
 
 	<!-- DisplayService -->
 	<bean id="forms.entryTypeCheckBoxDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
@@ -370,5 +491,19 @@
         <constructor-arg ref="forms.formsFileDownloadUrlService" />
         <constructor-arg ref="forms.formsFileRBACService" />
         <property name="default" value="false" />
+    </bean>
+    
+    <!-- Anonymization -->
+    <bean id="forms.formIdAnonymizationType" class="fr.paris.lutece.plugins.genericattributes.service.anonymization.EntryAnonymizationType">
+        <constructor-arg type="java.lang.String" index="0" value="%f" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.anonymization.form.help" />
+    </bean>
+    <bean id="forms.questionTitleAnonymizationType" class="fr.paris.lutece.plugins.genericattributes.service.anonymization.EntryAnonymizationType">
+        <constructor-arg type="java.lang.String" index="0" value="%q" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.anonymization.question.help" />
+    </bean>
+    <bean id="forms.stepIdAnonymizationType" class="fr.paris.lutece.plugins.genericattributes.service.anonymization.EntryAnonymizationType">
+        <constructor-arg type="java.lang.String" index="0" value="%s" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.anonymization.step.help" />
     </bean>
 </beans>
