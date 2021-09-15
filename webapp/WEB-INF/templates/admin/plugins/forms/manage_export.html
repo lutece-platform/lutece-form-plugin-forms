@@ -22,9 +22,9 @@
 				<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageForms.jsp'>
 					<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 					<@row>
-						<@columns xs=12 sm=4 offsetSm=1> 
-							<@formGroup labelKey='#i18n{forms.modify_form.labelExportOption}' mandatory=true rows=2>
-								<@inputGroup>
+						<@columns sm=4 offsetSm=1> 
+							<@formGroup labelKey='#i18n{forms.modify_form.labelExportOption}' mandatory=true rows=2 class='has-addons'>
+								<@inputGroup class=''>
 									<@select name='export_config' items=export_list default_value='' />
 									<@inputGroupItem>
 										<@button type='submit' name='action_createExportConfig' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['all'] />
@@ -32,7 +32,7 @@
 								</@inputGroup>
 							</@formGroup>
 						</@columns>
-						<@columns xs=12 sm=4> 
+						<@columns sm=4> 
 							<@callOut color='warning' title='#i18n{forms.modify_form.export.config.text2}' titleLevel='strong' callOutIcon='exclamation' />
 						</@columns>
 					</@row>

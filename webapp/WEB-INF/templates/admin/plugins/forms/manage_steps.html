@@ -24,7 +24,7 @@
 <@row>
 	<@columns>
         <@box color='primary'>
-			<@boxHeader title='${form.title!}'>
+			<@boxHeader title='${form.title!}' class='is-align-content-center'>
 				<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' hideTitle=['xs'] params='data-toggle="modal" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" data-target="#pubModal"'  />
 				<@aButton title='#i18n{forms.manage_steps.buttonImport}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] />
 				<#if form.active>
@@ -38,7 +38,7 @@
                 <@formTabs tab='steps' />
                 <@tabContent>
                     <@tabPanel id='tabpanel' active=true>
-						<@table id='list' class='table-striped'>
+						<@table id='list' class='table-striped is-fullwidth'>
 							<@tr>
 								<@th>#i18n{forms.manage_steps.columnTitle}</@th>
 								<@th>#i18n{forms.manage_transitions.pageTitle}</@th>

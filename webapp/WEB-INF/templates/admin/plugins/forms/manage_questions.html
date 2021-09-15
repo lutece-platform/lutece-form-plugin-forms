@@ -29,7 +29,7 @@
                 <@tform class='forms-questions' method='post' name='manage_questions' action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
                     <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
                     <@row>
-                        <@columns sm=9 md=10>
+                        <@columns sm=10 >
                             <div class="radio">
                                 <label>
                                     <input type="radio" id="parent_step" name="id_parent" value="0" <#if id_parent=0>checked</#if>>
@@ -37,7 +37,7 @@
                                 </label>
                             </div>
                             <@tabPanel id='panel-question' active=true>
-                                 <@table class='forms-questions'>
+                                 <@table class='forms-questions is-fullwidth'>
                                     <@tr>
                                         <@th sm=1 hide=['xs']></@th>
                                         <@th sm=5 hide=['xs']>#i18n{forms.manage_questions.columnTitle}</@th>
@@ -101,8 +101,8 @@
                                 </@table>
                             </@tabPanel>
                         </@columns>
-                        <@columns sm=3 md=2 id='sticky-container'>
-                            <@listGroup id='info-right'>
+                        <@columns sm=2 id='sticky-container'>
+                            <@ul class='list-group unstyled' id='info-right'>
                                 <#list entry_type_list as item>
                                 	<@li>
 	                                	<#if item.group>
@@ -112,7 +112,7 @@
 	                                    </#if>
                                     </@li>
                                 </#list>
-                            </@listGroup>
+                            </@ul>
                         </@columns>
                     </@row>
                     </@tform>

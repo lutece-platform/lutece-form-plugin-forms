@@ -14,27 +14,24 @@
 			<@boxBody>
 				<@formBreadCrumb><@li class='active'>${form.title!}</@li></@formBreadCrumb>	
 				<@formTabs tab="general" />
-					<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-					<@tabContent>
-						<@tabPanel id='' active=true>
-							<@formModel />
-						</@tabPanel>
-					</@tabContent>
-					<@formGroup rows=2>
-						<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
-					</@formGroup>
+				<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+				<@tabContent>
+					<@tabPanel id='' active=true>
+						<@formModel />
+					</@tabPanel>
+				</@tabContent>
+				<@formGroup rows=2>
+					<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
+				</@formGroup>
+				
 			</@boxBody>
 		</@box>
 	</@columns>
 </@row>
 </@tform>
-
 <@formEditor />
-
 <@toastr infos=infos warnings=warnings errors=errors />
-
 <@formModal />
-
 <script>
 $( function(){
     $('#endMessage').toggle();
