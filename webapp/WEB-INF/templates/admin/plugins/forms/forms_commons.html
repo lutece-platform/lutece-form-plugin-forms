@@ -402,17 +402,6 @@ $( function() {
 	<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
 	<@addRequiredJsFiles />
 	<script type="text/javascript" src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${uploadHandler.handlerName}" ></script>
-	<@row>
-		<@columns> 
-			<@formGroup labelKey='#i18n{forms.modify_form.labelLogo}' helpKey='#i18n{forms.modify_form.labelLogo.help}'>
-				<@addFileInput fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' cssClass='' multiple=true />
-				<#if !listFiles??><#assign listFiles = ''></#if>
-				<div id="listUpload">
-					<@addUploadedFilesBox fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' listFiles=listFiles />
-				</div>
-			</@formGroup>
-		</@columns>
-	</@row>
 	<@row> 
 		<@columns md=7> 
 			<@fieldSet legend='#i18n{forms.modify_form.labelDescription}'>
@@ -421,6 +410,13 @@ $( function() {
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
 						<@input type='textarea' name='description'>${form.description!}</@input>
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.modify_form.labelLogo}' helpKey='#i18n{forms.modify_form.labelLogo.help}' rows=2>
+					<@addFileInput fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' cssClass='' multiple=true />
+					<#if !listFiles??><#assign listFiles = ''></#if>
+					<div id="listUpload">
+						<@addUploadedFilesBox fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' listFiles=listFiles />
+					</div>
 				</@formGroup>
 			</@fieldSet>
 			<@fieldSet legend='#i18n{forms.create_form.labelDates}'>  
