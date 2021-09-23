@@ -2,8 +2,8 @@
 <@table striped=true condensed=true responsive=false hover=false >
 	<@tr>
 		<@th>#i18n{forms.dashboard.row_name}</@th>
-		<@th>#i18n{forms.dashboard.row_actions}</@th>
 		<@th>#i18n{forms.dashboard.row_responses}</@th>
+		<@th>#i18n{forms.dashboard.row_actions}</@th>
 	</@tr>
 	<#list form_list as form>
 		<@tr>
@@ -12,6 +12,9 @@
 				<#if !form.active>
 					<@icon style='times' class='fa-fw text-danger'  title='#i18n{portal.util.labelDisabled}' />
 				</#if>
+			</@td>
+			<@td align='center'>
+				<@staticText inForm=false>${form.currentNumberResponse}</@staticText>
 			</@td>
 			<@td>
 				<#if form.actions?exists>
@@ -34,9 +37,7 @@
 					<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' color='success' />
 				</#if>
 			</@td>
-			<@td align='right'>
-				<@staticText inForm=false>${form.currentNumberResponse}</@staticText>
-			</@td>
+			
 		</@tr>
 	</#list>
 </@table>
