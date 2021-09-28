@@ -301,11 +301,11 @@ $( function(){
 </script>
 </#macro>
 
-<#macro formBreadCrumb>
+<#macro formBreadCrumb home='jsp/admin/plugins/forms/ManageForms.jsp'>
 <@row>
-	<@breadcrumbs id='breadforms' params=' style="margin-bottom:1em; background-color:transparent;"' >
+	<@breadcrumbs id='breadforms' params=' style="margin-bottom:1em; background-color:transparent;"'>
 		<@breadcrumbItem>
-			<@link href='jsp/admin/plugins/forms/ManageForms.jsp' title='Retour liste des formulaires'>
+			<@link href=home title='Retour liste des formulaires'>
 				<@icon style='home' />
 			</@link>
 		</@breadcrumbItem>
