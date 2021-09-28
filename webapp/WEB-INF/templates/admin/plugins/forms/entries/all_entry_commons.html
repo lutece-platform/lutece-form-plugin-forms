@@ -1,16 +1,3 @@
-<#--- MACRO breadforms --->
-<#macro breadforms title=''>
-	<@formBreadCrumb>
-		<#if step.final && step.initial>   
-	        <@breadcrumbItem class='active is-active'>${form.title}</@breadcrumbItem>
-		<#else>    
-	        <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem> 
-			<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='Liste des questions'>${step.title}</@link></@breadcrumbItem>
-		</#if> 
-		<@breadcrumbItem class='active is-active'>${title}</@breadcrumbItem>
-	</@formBreadCrumb>
-</#macro>
-
 <#macro confirmField>
 <script type="text/javascript">
 function changeVisilityConfirmFieldTitle(){

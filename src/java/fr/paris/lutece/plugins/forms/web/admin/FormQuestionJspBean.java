@@ -130,6 +130,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String TEMPLATE_MOVE_COMPOSITE = "/admin/plugins/forms/move_composite.html";
     private static final String TEMPLATE_CREATE_QUESTION = "/admin/plugins/forms/create_question.html";
     private static final String TEMPLATE_MODIFY_QUESTION = "/admin/plugins/forms/modify_question.html";
+    private static final String TEMPLATE_BREADCRUMBS = "/admin/plugins/forms/entries/all_entry_breadcrumbs.html";
 
     // Properties
     private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.create_Question.titleComment";
@@ -169,7 +170,8 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String MARK_LIST = "list";
     private static final String MARK_GROUP_VALIDATED = "groupValidated";
     private static final String MARK_STEP_VALIDATED = "stepValidated";
-    private static final String MARK_ACTION = "action"; 
+    private static final String MARK_ACTION = "action";
+    private static final String MARK_BREADCRUMBS = "breadcrumbs";
 
     // Parameters
     private static final String PARAMETER_VALUE_VALIDATE_STEP = "validateStep";
@@ -325,6 +327,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         boolean canBeFiltered = Arrays.asList( FILTERABLE ).contains( entryTypeService.getClass( ) );
 
         model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
+        model.put( MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
         model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model ).getHtml( ) );
         model.put( FormsConstants.MARK_ANONYMIZATION_HELP, entryTypeService.getAnonymizationHelpMessage( request.getLocale( ) ) );
@@ -858,6 +861,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         boolean canBeFiltered = Arrays.asList( FILTERABLE ).contains( entryTypeService.getClass( ) );
 
         model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
+        model.put( MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
         model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model ).getHtml( ) );
         model.put( FormsConstants.MARK_ANONYMIZATION_HELP, entryTypeService.getAnonymizationHelpMessage( request.getLocale( ) ) );
