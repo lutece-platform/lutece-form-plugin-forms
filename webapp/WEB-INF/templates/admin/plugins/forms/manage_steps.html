@@ -34,7 +34,7 @@
 				</#if>
 			</@boxHeader>
             <@boxBody>
-				<@formBreadCrumb><@li class='active'>${form.title!}</@li></@formBreadCrumb>	
+				<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>	
                 <@formTabs tab='steps' />
                 <@tabContent>
                     <@tabPanel id='tabpanel' active=true>

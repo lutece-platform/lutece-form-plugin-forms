@@ -12,7 +12,7 @@
 				</#if>
 			</@boxHeader>
 			<@boxBody>
-				<@formBreadCrumb><@li class='active'>${form.title!}</@li></@formBreadCrumb>	
+				<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
 				<@formTabs tab="general" />
 				<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 				<@tabContent>

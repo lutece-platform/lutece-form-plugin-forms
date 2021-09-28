@@ -1,7 +1,7 @@
 <@formBreadCrumb>
-    <li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
-    <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
-    <li class="active">#i18n{forms.create_group.title}</li>
+	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>${form.title}</@link></@breadcrumbItem>
+	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></@breadcrumbItem>
+	<@breadcrumbItem class='active is-active'>#i18n{forms.create_group.title}</@breadcrumbItem>
 </@formBreadCrumb>
 <@row>
 	<@columns>

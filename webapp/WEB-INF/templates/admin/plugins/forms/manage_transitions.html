@@ -15,8 +15,8 @@
 			<@boxHeader title='${form.title}' />
             <@boxBody>
                 <@formBreadCrumb>
-                    <@li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@li>
-                    <@li class='active'>${step.title}</@li>
+                    <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem>
+                    <@breadcrumbItem>${step.title}</@breadcrumbItem>
                 </@formBreadCrumb>
                 <@tabs color='clearfix'>
                     <@formStepTabs tab="transitions" />
