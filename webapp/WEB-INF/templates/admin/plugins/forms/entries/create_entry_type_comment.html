@@ -6,7 +6,7 @@
 		<@box>
 			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
-				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp' params='enctype="multipart/form-data"'>
+				<@tform action="${action}" params='enctype="multipart/form-data"'>
 					<@fieldSet legend='#i18n{forms.createEntry.titleComment} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<#if entry.fieldDepend?exists>

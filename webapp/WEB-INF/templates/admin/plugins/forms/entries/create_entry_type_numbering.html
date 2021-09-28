@@ -6,7 +6,7 @@
 		<@box>
 			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}' />
 			<@boxBody>
-				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+				<@tform action="${action}">
 					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<#if entry.fieldDepend?exists>

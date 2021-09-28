@@ -6,7 +6,7 @@
 		<@box>
 			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
-				<@tform method="post" name="manage_entries" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
+				<@tform method="post" name="manage_entries" action="${action}">
 					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<@input type='hidden' name='width' id='width' value='0' />

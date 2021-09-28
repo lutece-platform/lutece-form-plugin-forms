@@ -169,6 +169,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String MARK_LIST = "list";
     private static final String MARK_GROUP_VALIDATED = "groupValidated";
     private static final String MARK_STEP_VALIDATED = "stepValidated";
+    private static final String MARK_ACTION = "action"; 
 
     // Parameters
     private static final String PARAMETER_VALUE_VALIDATE_STEP = "validateStep";
@@ -310,6 +311,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_LIST_PARAM_DEFAULT_VALUES, listParamDefaultValues );
         model.put( MARK_ENTRY_TYPE_SERVICE, entryTypeService );
+        model.put( MARK_ACTION, "jsp/admin/plugins/forms/ManageQuestions.jsp" );
 
         if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
