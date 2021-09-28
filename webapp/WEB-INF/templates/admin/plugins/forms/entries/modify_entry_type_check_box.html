@@ -10,7 +10,7 @@
 				<@button type='button' style='card-control collapse' buttonTargetId='#modifyEntryForm' buttonIcon='plus' size='sm' />
 			</@boxHeader>
 			<@boxBody>
-				<@tform id='modifyEntryForm' action='jsp/admin/plugins/forms/ManageQuestions.jsp' collapsed=true>
+				<@tform id='modifyEntryForm' action="${action}" collapsed=true>
 					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
 						<@input type='hidden' name='id_step' value='${step.id}' />

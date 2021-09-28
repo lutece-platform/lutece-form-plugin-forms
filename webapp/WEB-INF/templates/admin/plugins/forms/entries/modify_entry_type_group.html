@@ -9,7 +9,7 @@
 		<@box color='primary'>
 			<@boxHeader title='#i18n{forms.modifyEntry.titleGroup} : "${form.title}"' />
 			<@boxBody>
-				<@tform action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+				<@tform action="${action}">
 					<@fieldSet>
 	                    <@input name="id_entry" value="${entry.idEntry}" type="hidden" />
 	                    <@input name="id_step" value="${step.id}" type="hidden" />

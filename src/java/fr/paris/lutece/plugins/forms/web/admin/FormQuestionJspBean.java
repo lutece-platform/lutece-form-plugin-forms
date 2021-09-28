@@ -844,7 +844,8 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
-
+        model.put( MARK_ACTION, "jsp/admin/plugins/forms/ManageQuestions.jsp" );
+        
         if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
             setPageTitleProperty( PROPERTY_MODIFY_COMMENT_TITLE );
