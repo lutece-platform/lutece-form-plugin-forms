@@ -67,7 +67,7 @@ ${breadcrumb_template}
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] size='' />
 							<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.createEntry.buttonApplyAndManageVerification}' hideTitle=['xs'] size='' />
-							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] size='' color='btn-secondary' />
+							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' />
 						</@formGroup>
 					</@fieldSet>
 				</@tform>
