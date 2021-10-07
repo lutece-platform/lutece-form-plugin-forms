@@ -97,7 +97,7 @@ public final class FormDisplayService
                 {
                     ControlHome.remove( control.getId( ) );
                 }
-                ControlHome.removeByControlTarget( formDisplayCompositeId, ControlType.CONDITIONAL );
+                ControlHome.removeByControlTarget( formDisplayToDelete.getId( ), ControlType.CONDITIONAL );
 
                 // Delete the Question and its Entry
                 QuestionHome.remove( formDisplayCompositeId );
