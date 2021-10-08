@@ -24,6 +24,9 @@
     <bean id="forms.indexerActionDAO" class="fr.paris.lutece.plugins.forms.business.form.search.IndexerActionDAO" />
     <bean id="forms.formExportConfigDao" class="fr.paris.lutece.plugins.forms.business.export.FormExportConfigDao" />
     
+    <!-- Services -->
+    <bean id="forms.formDatabaseService" class="fr.paris.lutece.plugins.forms.service.FormDatabaseService" />
+    
     <!-- Export -->
     <bean id="forms.csvExport" class="fr.paris.lutece.plugins.forms.export.csv.CSVExport">
     	<constructor-arg type="java.lang.String" index="0" value="forms.csvExport" />

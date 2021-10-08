@@ -33,14 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -49,31 +45,21 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
-import fr.paris.lutece.plugins.forms.business.Control;
-import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
-import fr.paris.lutece.plugins.forms.business.Group;
-import fr.paris.lutece.plugins.forms.business.GroupHome;
-import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
 import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
+import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
+import fr.paris.lutece.plugins.forms.service.IFormDisplayService;
 import fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.util.FormsDisplayUtils;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
-import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeCommentDisplayService;
 import fr.paris.lutece.plugins.forms.web.exception.CodeAlreadyExistsException;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
@@ -81,17 +67,13 @@ import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.plugins.referencelist.service.ReferenceListService;
-import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -103,25 +85,10 @@ import fr.paris.lutece.util.url.UrlItem;
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
 
-// TODO : Move get MoveComposite() and doMoveComposite( ) to a another dedicated
-// controller
-
 @Controller( controllerJsp = "ManageQuestions.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
-public class FormQuestionJspBean extends AbstractJspBean
+public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 {
-
-    private static final Class<?> [ ] ENTRY_TYPE_USER_REF_LIT = {
-            EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class
-    };
-
-    private static final Class<?> [ ] FILTERABLE = {
-            EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeDate.class
-    };
-
     private static final long serialVersionUID = 7515975782241863390L;
-    private static final String ERROR_CODE_EXISTS = " Provided code already exists ";
-
-    private static final String EMPTY_STRING = "";
 
     // Templates
     private static final String TEMPLATE_MANAGE_QUESTIONS = "/admin/plugins/forms/manage_questions.html";
@@ -133,99 +100,24 @@ public class FormQuestionJspBean extends AbstractJspBean
     private static final String TEMPLATE_BREADCRUMBS = "/admin/plugins/forms/entries/all_entry_breadcrumbs.html";
 
     // Properties
-    private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.create_Question.titleComment";
-    private static final String PROPERTY_CREATE_QUESTION_TITLE = "forms.create_Question.titleQuestion";
     private static final String PROPERTY_CREATE_GROUP_TITLE = "forms.create_group.title";
-    private static final String PROPERTY_MODIFY_COMMENT_TITLE = "forms.modifyEntry.titleComment";
-    private static final String PROPERTY_MODIFY_QUESTION_TITLE = "forms.modifyEntry.titleQuestion";
-    private static final String PROPERTY_MOVE_GROUP_TITLE = "forms.moveComposite.group.title";
-    private static final String PROPERTY_MOVE_QUESTION_TITLE = "forms.moveComposite.question.title";
 
     // Views
     private static final String VIEW_MANAGE_QUESTIONS = "manageQuestions";
-    private static final String VIEW_CREATE_QUESTION = "createQuestion";
-    private static final String VIEW_MODIFY_QUESTION = "modifyQuestion";
-    private static final String VIEW_CREATE_GROUP = "createGroup";
-    private static final String VIEW_MODIFY_GROUP = "modifyGroup";
-    private static final String VIEW_MOVE_COMPOSITE = "moveComposite";
-    private static final String VIEW_CONFIRM_REMOVE_COMPOSITE = "getConfirmRemoveComposite";
 
     // Actions
-    private static final String ACTION_CREATE_QUESTION = "createQuestion";
-    private static final String ACTION_CREATE_QUESTION_AND_MANAGE_ENTRIES = "createQuestionAndManageEntries";
-    private static final String ACTION_MODIFY_QUESTION = "modifyQuestion";
     private static final String ACTION_SAVE_QUESTION = "saveQuestion";
-    private static final String ACTION_CREATE_GROUP = "createGroup";
-    private static final String ACTION_MODIFY_GROUP = "modifyGroup";
-    private static final String ACTION_MOVE_COMPOSITE = "moveComposite";
-    private static final String ACTION_REMOVE_COMPOSITE = "removeComposite";
-    private static final String ACTION_DUPLICATE_QUESTION = "duplicateQuestion";
     private static final String ACTION_REMOVE_FILE = "removeFileComment";
 
-    // Markers
-    private static final String MARK_WEBAPP_URL = "webapp_url";
-    private static final String MARK_LOCALE = "locale";
-    private static final String MARK_ENTRY_TYPE_SERVICE = "entryTypeService";
-    private static final String MARK_LIST_PARAM_DEFAULT_VALUES = "list_param_default_values";
-    private static final String MARK_LIST = "list";
-    private static final String MARK_GROUP_VALIDATED = "groupValidated";
-    private static final String MARK_STEP_VALIDATED = "stepValidated";
-    private static final String MARK_ACTION = "action";
-    
-    // Parameters
-    private static final String PARAMETER_VALUE_VALIDATE_STEP = "validateStep";
-    private static final String PARAMETER_VALUE_VALIDATE_GROUP = "validateGroup";
-
-    // Error messages
-    private static final String ERROR_QUESTION_NOT_CREATED = "forms.error.question.notCreated";
-    private static final String ERROR_GROUP_NOT_CREATED = "forms.error.group.notCreated";
-    private static final String ERROR_GROUP_NOT_UPDATED = "forms.error.group.notUpdated";
-    private static final String ERROR_STEP_OR_GROUP_NOT_VALIDATED = "forms.error.moveComposite.stepOrGroup.notvalidated";
-    private static final String ERROR_OCCURED_MOVING_COMPOSITE = "forms.error.moveComposite.notCompleted";
-    private static final String ERROR_ITERATION_NUMBER = "forms.error.group.iterationNumber";
-    private static final String ERROR_QUESTION_CODE_ALREADY_EXISTS = "forms.error.question.codeAlreadyExists";
-
-    // Infos messages
-    private static final String INFO_QUESTION_CREATED = "forms.info.question.created";
-    private static final String INFO_QUESTION_UPDATED = "forms.info.question.updated";
-    private static final String INFO_GROUP_UPDATED = "forms.info.group.updated";
-    private static final String INFO_GROUP_CREATED = "forms.info.group.created";
-    private static final String INFO_MOVE_COMPOSITE_SUCCESSFUL = "forms.info.moveComposite.successful";
-    private static final String INFO_DELETE_COMPOSITE_SUCCESSFUL = "forms.info.deleteComposite.successful";
-    private static final String INFO_QUESTION_DUPLICATED = "forms.info.question.duplicated";
-    private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
-
     // Warning messages
-    private static final String WARNING_CONFIRM_REMOVE_QUESTION = "forms.warning.deleteComposite.confirmRemoveQuestion";
-    private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS = "forms.warning.deleteComposite.confirmRemoveGroup";
     private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
     private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveGroup.formActive";
 
-    // Validations
-    private static final String GROUP_VALIDATION_ATTRIBUTES_PREFIX = "forms.model.entity.group.attribute.";
-
-    // Others
-    private static final int INTEGER_MINUS_ONE = -1;
-
-    private static final int DEFAULT_PARENT = 0;
-
-    private static final FormDisplayService _formDisplayService = SpringContextService.getBean( FormDisplayService.BEAN_NAME );
     private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     private IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( )
             .getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
 
-    private Step _step;
     private Form _form;
-    private Entry _entry;
-    private Question _question;
-    private Group _group;
-    private FormDisplay _formDisplay;
-
-    private int _nIdStepTarget;
-
-    private int _nIdParentTarget;
-
-    private int _nIdParentSelected = DEFAULT_PARENT;
 
     /**
      * Build the Manage View
@@ -260,7 +152,7 @@ public class FormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
 
-        setPageTitleProperty( EMPTY_STRING );
+        setPageTitleProperty( StringUtils.EMPTY );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_QUESTIONS, locale, model );
 
         return getAdminPage( templateList.getHtml( ) );
@@ -276,68 +168,22 @@ public class FormQuestionJspBean extends AbstractJspBean
     @View( value = VIEW_CREATE_QUESTION )
     public String getCreateQuestion( HttpServletRequest request )
     {
-
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        int nIdTypeEntry = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY ) );
-        _nIdParentSelected = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
-
-        _step = StepHome.findByPrimaryKey( nIdStep );
-        if ( ( _step == null ) )
+        Map<String, Object> model = initCreateQuestionModel( request );
+        if ( model == null )
         {
             return redirectToViewManageForm( request );
         }
-
-        _entry = FormsEntryUtils.createEntryByType( nIdTypeEntry );
-
-        if ( ( _entry == null ) )
-        {
-            return redirectToViewManageForm( request );
-        }
-
-        _entry.setIdResource( _step.getIdForm( ) );
-        _entry.setResourceType( Form.RESOURCE_TYPE );
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
-
-        ReferenceList listParamDefaultValues = new ReferenceList( );
-
-        IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
-
-        Map<String, Object> model = new HashMap<>( );
-        model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_FORM, _form );
-        model.put( FormsConstants.MARK_STEP, _step );
-        model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
-        model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
-        model.put( MARK_LIST_PARAM_DEFAULT_VALUES, listParamDefaultValues );
-        model.put( MARK_ENTRY_TYPE_SERVICE, entryTypeService );
+        model.put( MARK_ADD_FILE_COMMENT, true );
         model.put( MARK_ACTION, "jsp/admin/plugins/forms/ManageQuestions.jsp" );
-
-        if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
-        {
-            setPageTitleProperty( PROPERTY_CREATE_COMMENT_TITLE );
-        }
-        else
-        {
-            setPageTitleProperty( PROPERTY_CREATE_QUESTION_TITLE );
-        }
-
-        boolean canBeFiltered = Arrays.asList( FILTERABLE ).contains( entryTypeService.getClass( ) );
-
-        model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
         model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
         model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model ).getHtml( ) );
-        model.put( FormsConstants.MARK_ANONYMIZATION_HELP, entryTypeService.getAnonymizationHelpMessage( request.getLocale( ) ) );
-
-        if ( Arrays.asList( ENTRY_TYPE_USER_REF_LIT ).contains( entryTypeService.getClass( ) ) )
-        {
-            model.put( FormsConstants.MARK_REFERENCE_LIST_SELECT, ReferenceListService.getInstance( ).getReferencesList( ) );
-        }
-
+        
+        IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateCreate( _entry, false ), getLocale( ), model );
-
         return getAdminPage( template.getHtml( ) );
     }
 
@@ -352,35 +198,16 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String getCreateGroup( HttpServletRequest request )
     {
 
-        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        _nIdParentSelected = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), FormsConstants.DEFAULT_ID_VALUE );
-
-        if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
-        {
-            _step = StepHome.findByPrimaryKey( nIdStep );
-        }
-
-        if ( ( _step == null ) )
+        Map<String, Object> model = initCreateGroupModel( request );
+        if ( model == null )
         {
             return redirectToViewManageForm( request );
         }
-
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
-
-        _group = new Group( );
-        _group.setIterationMin( NumberUtils.INTEGER_ONE );
-        _group.setIterationMax( NumberUtils.INTEGER_ONE );
-
-        Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM, _form );
-        model.put( FormsConstants.MARK_STEP, _step );
-        model.put( FormsConstants.MARK_GROUP, _group );
-        model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
 
         setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
-
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_GROUP, getLocale( ), model );
-
         return getAdminPage( template.getHtml( ) );
     }
 
@@ -394,51 +221,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_GROUP )
     public String doCreateGroup( HttpServletRequest request )
     {
-
-        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        int nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), 0 );
-
-        if ( ( _step == null ) || nIdStep != _step.getId( ) )
-        {
-            _step = StepHome.findByPrimaryKey( nIdStep );
-        }
-
-        _group = ( _group != null ) ? _group : new Group( );
-        populate( _group, request );
-
-        if ( !validateGroup( ) )
-        {
-            return redirect( request, VIEW_CREATE_GROUP, FormsConstants.PARAMETER_ID_DISPLAY_PARENT, nParentGroup );
-        }
-
-        GroupHome.create( _group );
-
-        int nDisplayDepth = FormsDisplayUtils.getDisplayDepthFromParent( nParentGroup );
-
-        if ( _group.getId( ) != -1 )
-        {
-            FormDisplay formDisplay = new FormDisplay( );
-            formDisplay.setFormId( _step.getIdForm( ) );
-            formDisplay.setStepId( nIdStep );
-            formDisplay.setParentId( nParentGroup );
-            formDisplay.setCompositeId( _group.getId( ) );
-            formDisplay.setCompositeType( CompositeDisplayType.GROUP.getLabel( ) );
-            formDisplay.setDepth( nDisplayDepth );
-            FormDisplayHome.create( formDisplay );
-
-            if ( formDisplay.getId( ) == -1 )
-            {
-                addError( ERROR_GROUP_NOT_CREATED, getLocale( ) );
-            }
-        }
-        else
-        {
-            addError( ERROR_GROUP_NOT_CREATED, getLocale( ) );
-        }
-
-        addInfo( INFO_GROUP_CREATED, getLocale( ) );
-        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
-
+        return createGroup( request, VIEW_MANAGE_QUESTIONS );
     }
 
     /**
@@ -451,36 +234,17 @@ public class FormQuestionJspBean extends AbstractJspBean
     @View( value = VIEW_MODIFY_GROUP )
     public String getModifyGroup( HttpServletRequest request )
     {
-
-        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-        int nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_GROUP ), FormsConstants.DEFAULT_ID_VALUE );
-
-        if ( ( _step == null ) || ( nIdStep != FormsConstants.DEFAULT_ID_VALUE && nIdStep != _step.getId( ) ) )
-        {
-            _step = StepHome.findByPrimaryKey( nIdStep );
-        }
-
-        if ( ( _step == null ) )
+        Map<String, Object> model = initModifyGroupModel( request );
+        if ( model == null )
         {
             return redirectToViewManageForm( request );
         }
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
-
-        if ( _group == null || ( nIdGroup != FormsConstants.DEFAULT_ID_VALUE && _group.getId( ) != nIdGroup ) )
-        {
-            _group = GroupHome.findByPrimaryKey( nIdGroup );
-        }
-
-        Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM, _form );
-        model.put( FormsConstants.MARK_STEP, _step );
-        model.put( FormsConstants.MARK_GROUP, _group );
 
         setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
-
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_GROUP, getLocale( ), model );
-
         return getAdminPage( template.getHtml( ) );
     }
 
@@ -494,58 +258,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     @Action( ACTION_MODIFY_GROUP )
     public String doModifyGroup( HttpServletRequest request )
     {
-
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-
-        if ( ( _step == null ) || nIdStep != _step.getId( ) )
-        {
-            _step = StepHome.findByPrimaryKey( nIdStep );
-        }
-
-        _group = ( _group != null ) ? _group : new Group( );
-        populate( _group, request );
-
-        if ( !validateGroup( ) )
-        {
-            return redirectView( request, VIEW_MODIFY_GROUP );
-        }
-
-        GroupHome.update( _group );
-
-        if ( _group.getId( ) == INTEGER_MINUS_ONE )
-        {
-            addError( ERROR_GROUP_NOT_UPDATED, getLocale( ) );
-        }
-        else
-        {
-            addInfo( INFO_GROUP_UPDATED, getLocale( ) );
-        }
-
-        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
-
-    }
-
-    /**
-     * Perform the group bean validation
-     * 
-     * @return The boolean which indicate if a group is valid
-     */
-    private boolean validateGroup( )
-    {
-        boolean bValidGroup = true;
-
-        if ( _group.getIterationMax( ) != 0 && _group.getIterationMin( ) > _group.getIterationMax( ) )
-        {
-            bValidGroup = false;
-            addError( ERROR_ITERATION_NUMBER, getLocale( ) );
-        }
-
-        if ( !validateBean( _group, GROUP_VALIDATION_ATTRIBUTES_PREFIX ) )
-        {
-            bValidGroup = false;
-        }
-
-        return bValidGroup;
+        return modifyGroup( request, VIEW_MANAGE_QUESTIONS );
     }
 
     /**
@@ -560,7 +273,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     {
         try
         {
-            String strReturnUrl = processQuestionCreation( request );
+            String strReturnUrl = processQuestionCreation( request, VIEW_MANAGE_QUESTIONS );
 
             if ( strReturnUrl != null )
             {
@@ -592,7 +305,7 @@ public class FormQuestionJspBean extends AbstractJspBean
     {
         try
         {
-            String strReturnUrl = processQuestionCreation( request );
+            String strReturnUrl = processQuestionCreation( request, VIEW_MANAGE_QUESTIONS );
             return strReturnUrl != null ? strReturnUrl
                     : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
                             _question.getId( ) );
@@ -607,183 +320,6 @@ public class FormQuestionJspBean extends AbstractJspBean
     }
 
     /**
-     * Perform the Question creation with its Entry
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL to display error message after performing the action or null if no error occurred
-     */
-    private String processQuestionCreation( HttpServletRequest request ) throws CodeAlreadyExistsException
-    {
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        int nParentGroup = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
-        int nIdType = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) );
-
-        if ( ( _step == null ) || nIdStep != _step.getId( ) )
-        {
-            _step = StepHome.findByPrimaryKey( nIdStep );
-        }
-
-        _entry = FormsEntryUtils.createEntryByType( nIdType );
-
-        if ( _entry == null )
-        {
-            addError( ERROR_QUESTION_NOT_CREATED, getLocale( ) );
-            return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, nIdStep );
-        }
-
-        String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ) );
-
-        if ( strError != null )
-        {
-            return strError;
-        }
-
-        _entry.setIdResource( _step.getIdForm( ) );
-        _entry.setResourceType( Form.RESOURCE_TYPE );
-        EntryHome.create( _entry );
-
-        // If the entry code is empty, provide a new one
-        if ( StringUtils.isEmpty( _entry.getCode( ) ) )
-        {
-            _entry.setCode( "question_" + _entry.getIdEntry( ) );
-        }
-
-        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getIdForm( ), _entry.getIdEntry( ) ) )
-        {
-            throw new CodeAlreadyExistsException( _entry.getCode( ) );
-        }
-
-        EntryHome.update( _entry );
-
-        if ( _entry.getFields( ) != null )
-        {
-            for ( Field field : _entry.getFields( ) )
-            {
-                field.setParentEntry( _entry );
-                FieldHome.create( field );
-            }
-        }
-
-        _question = new Question( );
-        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
-                : _entry.getTitle( );
-        _question.setTitle( strTitle );
-        _question.setCode( _entry.getCode( ) );
-        _question.setDescription( _entry.getComment( ) );
-        _question.setIdEntry( _entry.getIdEntry( ) );
-        _question.setIdStep( nIdStep );
-        _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
-        _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
-        _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
-        _question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED ) != null );
-
-        String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
-        columnTitle = ( columnTitle == null || columnTitle.isEmpty( ) ) ? _question.getTitle( ) : columnTitle;
-        _question.setColumnTitle( columnTitle );
-        _question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER ), 0 ) );
-        QuestionHome.create( _question );
-
-        int nDisplayDepth = FormsDisplayUtils.getDisplayDepthFromParent( nParentGroup );
-
-        if ( _question.getId( ) != INTEGER_MINUS_ONE )
-        {
-            FormDisplay formDisplay = new FormDisplay( );
-            formDisplay.setFormId( _step.getIdForm( ) );
-            formDisplay.setStepId( nIdStep );
-            formDisplay.setParentId( nParentGroup );
-            formDisplay.setCompositeId( _question.getId( ) );
-            formDisplay.setCompositeType( CompositeDisplayType.QUESTION.getLabel( ) );
-            formDisplay.setDepth( nDisplayDepth );
-            FormDisplayHome.create( formDisplay );
-        }
-        return null;
-    }
-
-    /**
-     * Perform the Question creation with its Entry
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL to display error message after performing the action or null if no error occurred
-     */
-    private String processQuestionDuplication( HttpServletRequest request )
-    {
-        int nIdQuestion = INTEGER_MINUS_ONE;
-
-        String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_TARGET );
-        int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-        Question questionToCopy = new Question( );
-
-        if ( ( _step == null ) || nIdStep != _step.getId( ) )
-        {
-            _step = StepHome.findByPrimaryKey( nIdStep );
-        }
-
-        if ( ( strIdQuestion != null ) && !strIdQuestion.equals( EMPTY_STRING ) )
-        {
-            nIdQuestion = Integer.parseInt( strIdQuestion );
-        }
-
-        // Get the question to copy and clone it
-        try
-        {
-            _question = QuestionHome.findByPrimaryKey( nIdQuestion );
-            questionToCopy = _question.clone( );
-            questionToCopy.setEntry( _question.getEntry( ) );
-        }
-        catch( CloneNotSupportedException e )
-        {
-            AppLogService.error( "Unable to clone question with id " + nIdQuestion, e );
-        }
-
-        // Create a duplicated entry
-        Entry duplicatedEntry = EntryHome.copy( _question.getEntry( ) );
-        duplicatedEntry.setTitle( "Copie de " + duplicatedEntry.getTitle( ) );
-        duplicatedEntry.setCode( "question_" + duplicatedEntry.getIdEntry( ) );
-
-        EntryHome.update( duplicatedEntry );
-
-        // Get the question controls
-        List<Control> listControlsToDuplicate = ControlHome.getControlByQuestion( _question.getId( ) );
-
-        FormDisplay formDisplayToCopy = FormDisplayHome.getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ), _question.getId( ) );
-
-        questionToCopy.setEntry( duplicatedEntry );
-        questionToCopy.setIdEntry( duplicatedEntry.getIdEntry( ) );
-        questionToCopy.setTitle( "Copie de " + questionToCopy.getTitle( ) );
-        questionToCopy.setCode( duplicatedEntry.getCode( ) );
-
-        QuestionHome.create( questionToCopy );
-
-        // Duplicates the controls of the question
-        for ( Control control : listControlsToDuplicate )
-        {
-
-            Set<Integer> listQuestion = new HashSet<>( );
-            listQuestion.add( questionToCopy.getId( ) );
-            control.setListIdQuestion( listQuestion );
-            control.setIdControlTarget( questionToCopy.getId( ) );
-            ControlHome.create( control );
-        }
-
-        if ( questionToCopy.getId( ) != INTEGER_MINUS_ONE )
-        {
-            FormDisplay formDisplay = new FormDisplay( );
-            formDisplay.setDisplayOrder( formDisplayToCopy.getDisplayOrder( ) + 1 );
-            formDisplay.setFormId( _step.getIdForm( ) );
-            formDisplay.setStepId( questionToCopy.getIdStep( ) );
-            formDisplay.setParentId( formDisplayToCopy.getParentId( ) );
-            formDisplay.setCompositeId( questionToCopy.getId( ) );
-            formDisplay.setCompositeType( CompositeDisplayType.QUESTION.getLabel( ) );
-            formDisplay.setDepth( formDisplayToCopy.getDepth( ) );
-            FormDisplayHome.create( formDisplay );
-        }
-
-        return null;
-    }
-
-    /**
      * Gets the Question entry modification page
      * 
      * @param request
@@ -793,189 +329,22 @@ public class FormQuestionJspBean extends AbstractJspBean
     @View( value = VIEW_MODIFY_QUESTION )
     public String getModifyQuestion( HttpServletRequest request )
     {
-
-        String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
-
-        if ( StringUtils.isNotEmpty( strIdStep ) )
-        {
-            int nIdStep = Integer.parseInt( strIdStep );
-
-            if ( ( _step == null ) || ( _step.getId( ) != nIdStep ) )
-            {
-                _step = StepHome.findByPrimaryKey( nIdStep );
-            }
-        }
-
-        String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
-        int nIdQuestion = INTEGER_MINUS_ONE;
-
-        if ( StringUtils.isNotEmpty( strIdQuestion ) )
-        {
-            nIdQuestion = Integer.parseInt( strIdQuestion );
-        }
-
-        _question = QuestionHome.findByPrimaryKey( nIdQuestion );
-
-        _entry = EntryHome.findByPrimaryKey( _question.getIdEntry( ) );
-
-        List<Field> listField = new ArrayList<>( _entry.getFields( ).size( ) );
-
-        for ( Field field : _entry.getFields( ) )
-        {
-            field = FieldHome.findByPrimaryKey( field.getIdField( ) );
-            listField.add( field );
-        }
-
-        _entry.setFields( listField );
-
+        Map<String, Object> model = initModifyQuestionModel( request );
+        
         if ( ( _form == null ) || ( _form.getId( ) != _entry.getIdResource( ) ) )
         {
             _form = FormHome.findByPrimaryKey( _entry.getIdResource( ) );
         }
-
-        IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
-
-        Map<String, Object> model = new HashMap<>( );
-        model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_FORM, _form );
-        model.put( FormsConstants.MARK_STEP, _step );
-        model.put( FormsConstants.MARK_QUESTION, _question );
-
-        model.put( MARK_LIST, _entry.getFields( ) );
-
-        model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-        model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
-        model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
+        model.put( MARK_ADD_FILE_COMMENT, true );
         model.put( MARK_ACTION, "jsp/admin/plugins/forms/ManageQuestions.jsp" );
-        
-        if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
-        {
-            setPageTitleProperty( PROPERTY_MODIFY_COMMENT_TITLE );
-        }
-        else
-        {
-            setPageTitleProperty( PROPERTY_MODIFY_QUESTION_TITLE );
-        }
-
-        boolean canBeFiltered = Arrays.asList( FILTERABLE ).contains( entryTypeService.getClass( ) );
-
-        model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
         model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
         model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model ).getHtml( ) );
-        model.put( FormsConstants.MARK_ANONYMIZATION_HELP, entryTypeService.getAnonymizationHelpMessage( request.getLocale( ) ) );
-
-        if ( entryTypeService instanceof EntryTypeComment )
-        {
-            Field fieldFile = _entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
-            if ( fieldFile != null )
-            {
-                Map<String, String> additionnalData = new HashMap<>( );
-                additionnalData.put( FileService.PARAMETER_RESOURCE_ID, String.valueOf( _entry.getIdResource( ) ) );
-                additionnalData.put( FileService.PARAMETER_RESOURCE_TYPE, Form.RESOURCE_TYPE );
-                additionnalData.put( FileService.PARAMETER_PROVIDER, _fileStoreProvider.getName( ) );
-
-                model.put( EntryTypeCommentDisplayService.MARK_FILENAME, fieldFile.getTitle( ) );
-                model.put( EntryTypeCommentDisplayService.MARK_URL_DOWNLOAD_BO,
-                        _fileStoreProvider.getFileDownloadUrlBO( fieldFile.getValue( ), additionnalData ) );
-            }
-        }
-        if ( Arrays.asList( ENTRY_TYPE_USER_REF_LIT ).contains( entryTypeService.getClass( ) ) )
-        {
-            model.put( FormsConstants.MARK_REFERENCE_LIST_SELECT, ReferenceListService.getInstance( ).getReferencesList( ) );
-        }
+        
+        IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
-
         return getAdminPage( template.getHtml( ) );
-    }
-
-    /**
-     * Perform the entry modification
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL to go after performing the action
-     */
-    private String processQuestionUpdate( HttpServletRequest request ) throws CodeAlreadyExistsException
-    {
-        String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
-        int nIdStep = -INTEGER_MINUS_ONE;
-
-        if ( StringUtils.isNotEmpty( strIdStep ) )
-        {
-            nIdStep = Integer.parseInt( strIdStep );
-        }
-        if ( ( _step == null ) || ( _step.getId( ) != nIdStep ) )
-        {
-            _step = StepHome.findByPrimaryKey( nIdStep );
-        }
-
-        String strIdQuestion = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION );
-        int nIdQuestion = INTEGER_MINUS_ONE;
-
-        if ( StringUtils.isNotEmpty( strIdQuestion ) )
-        {
-            nIdQuestion = Integer.parseInt( strIdQuestion );
-        }
-
-        if ( ( _question == null ) || ( _question.getId( ) != nIdQuestion ) )
-        {
-            _question = QuestionHome.findByPrimaryKey( nIdQuestion );
-        }
-
-        int nIdEntry = _question.getIdEntry( );
-        _entry = EntryHome.findByPrimaryKey( nIdEntry );
-
-        String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ) );
-
-        if ( strError != null )
-        {
-            return strError;
-        }
-
-        if ( checkCodeAlreadyExists( _entry.getCode( ), _step.getIdForm( ), _entry.getIdEntry( ) ) )
-        {
-            throw new CodeAlreadyExistsException( _entry.getCode( ) );
-        }
-
-        EntryHome.update( _entry );
-
-        if ( _entry.getFields( ) != null )
-        {
-            for ( Field field : _entry.getFields( ) )
-            {
-                // Check if the field already exists in the database
-                Field fieldStored = FieldHome.findByPrimaryKey( field.getIdField( ) );
-
-                if ( fieldStored != null )
-                {
-                    // If it exists, update
-                    FieldHome.update( field );
-                }
-                else
-                {
-                    // If it does not exist, create
-                    FieldHome.create( field );
-                }
-            }
-        }
-        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
-                : _entry.getTitle( );
-        _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
-        _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
-        _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
-        _question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED ) != null );
-        String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
-        columnTitle = StringUtils.isEmpty( columnTitle ) ? _question.getTitle( ) : columnTitle;
-        _question.setColumnTitle( columnTitle );
-        _question.setTitle( strTitle );
-        _question.setCode( _entry.getCode( ) );
-        _question.setDescription( _entry.getComment( ) );
-        _question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER ), 0 ) );
-        QuestionHome.update( _question );
-
-        return null;
-
     }
 
     /**
@@ -1174,23 +543,21 @@ public class FormQuestionJspBean extends AbstractJspBean
     public String doRemoveComposite( HttpServletRequest request )
     {
 
-        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
-
-        if ( nIdDisplay == INTEGER_MINUS_ONE )
-        {
-            redirectToViewManageForm( request );
-        }
-
+        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), -1 );
         if ( _formDisplay == null || _formDisplay.getId( ) != nIdDisplay )
         {
             _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
 
-        _formDisplayService.deleteDisplayAndDescendants( nIdDisplay );
+        if ( _formDisplay == null )
+        {
+            redirectToViewManageForm( request );
+        }
 
-        List<FormDisplay> listFormDisplaySibling = FormDisplayHome.getFormDisplayListByParent( _formDisplay.getStepId( ), _formDisplay.getParentId( ) );
-        _formDisplayService.rebuildDisplayPositionSequence( listFormDisplaySibling );
+        getFormDisplayService( ).deleteDisplayAndDescendants( nIdDisplay );
 
+        List<FormDisplay> listFormDisplaySibling = getFormDatabaseService( ).getFormDisplayListByParent( _formDisplay.getStepId( ), _formDisplay.getParentId( ) );
+        getFormDisplayService( ).rebuildDisplayPositionSequence( listFormDisplaySibling );
         addInfo( INFO_DELETE_COMPOSITE_SUCCESSFUL, getLocale( ) );
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _formDisplay.getStepId( ) );
     }
@@ -1205,126 +572,17 @@ public class FormQuestionJspBean extends AbstractJspBean
     @View( value = VIEW_MOVE_COMPOSITE )
     public String getMoveComposite( HttpServletRequest request )
     {
-        Step stepTarget = new Step( );
-        boolean bStepValidated = false;
-        boolean bGroupValidated = false;
-
-        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
-
-        if ( nIdDisplay == INTEGER_MINUS_ONE )
+        Map<String, Object> model = initMoveCompositeModel( request );
+        if ( model == null )
         {
-            redirectToViewManageForm( request );
+            return redirectToViewManageForm( request );
         }
-
-        if ( _formDisplay == null || _formDisplay.getId( ) != nIdDisplay )
-        {
-            _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
-        }
-        int nTargetPosition = _formDisplay.getDisplayOrder( );
-
-        String strIsStepValidated = request.getParameter( FormsConstants.PARAMETER_STEP_VALIDATED );
-        if ( StringUtils.isNotBlank( strIsStepValidated ) )
-        {
-            bStepValidated = BooleanUtils.toBoolean( strIsStepValidated );
-        }
-
-        String strIsGroupValidated = request.getParameter( FormsConstants.PARAMETER_GROUP_VALIDATED );
-        if ( StringUtils.isNotBlank( strIsGroupValidated ) )
-        {
-            bGroupValidated = BooleanUtils.toBoolean( strIsGroupValidated );
-        }
-
-        String strValidateButtonValue = request.getParameter( "view_moveComposite" );
-        boolean bIsValidationButtonUsed = StringUtils.isNotBlank( strValidateButtonValue );
-
-        if ( bIsValidationButtonUsed )
-        {
-
-            if ( PARAMETER_VALUE_VALIDATE_STEP.equals( strValidateButtonValue ) )
-            {
-                bStepValidated = true;
-                bGroupValidated = false;
-            }
-            else
-                if ( PARAMETER_VALUE_VALIDATE_GROUP.equals( strValidateButtonValue ) && bStepValidated )
-                {
-                    bGroupValidated = true;
-                }
-        }
-        else
-        {
-            bStepValidated = true;
-            bGroupValidated = true;
-        }
-
-        int nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), -1 );
-        if ( bStepValidated )
-        {
-            if ( nIdStepTarget == INTEGER_MINUS_ONE )
-            {
-                nIdStepTarget = _formDisplay.getStepId( );
-            }
-            _nIdStepTarget = nIdStepTarget;
-        }
-
-        if ( nIdStepTarget != INTEGER_MINUS_ONE )
-        {
-            stepTarget = StepHome.findByPrimaryKey( nIdStepTarget );
-        }
-        else
-        {
-            redirectToViewManageForm( request );
-        }
-
-        int nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), -1 );
-        if ( bGroupValidated )
-        {
-            if ( nIdParentTarget == INTEGER_MINUS_ONE )
-            {
-                nIdParentTarget = _formDisplay.getParentId( );
-            }
-            _nIdParentTarget = nIdParentTarget;
-        }
-
+        
+        Step stepTarget = StepHome.findByPrimaryKey( (int) model.get( FormsConstants.MARK_ID_STEP ) );
         ReferenceList listFormSteps = StepHome.getStepReferenceListByForm( stepTarget.getIdForm( ) );
-
-        ReferenceList listStepGroups = FormsDisplayUtils.getTargetGroupDisplayListByStep( nIdStepTarget, _formDisplay, getLocale( ) );
-
-        boolean bMoveToDifferentGroup = ( ( _formDisplay.getParentId( ) != nIdParentTarget ) || ( _formDisplay.getStepId( ) != nIdStepTarget ) );
-        ReferenceList listAvailablePositionsInParentGroup = FormsDisplayUtils.getlistAvailablePositionsInGroup( nIdStepTarget, nIdParentTarget,
-                bMoveToDifferentGroup, getLocale( ) );
-
-        if ( bIsValidationButtonUsed )
-        {
-            nTargetPosition = listAvailablePositionsInParentGroup.size( );
-        }
-
-        Map<String, Object> model = getModel( );
-
-        model.put( FormsConstants.MARK_STEP, _step );
-        model.put( FormsConstants.MARK_DISPLAY, _formDisplay );
-        model.put( FormsConstants.MARK_DISPLAY_TITLE, FormsDisplayUtils.getDisplayTitle( _formDisplay ) );
         model.put( FormsConstants.MARK_LIST_STEPS, listFormSteps );
-        model.put( FormsConstants.MARK_LIST_GROUPS, listStepGroups );
-        model.put( FormsConstants.MARK_LIST_AVAILABLE_POSITIONS, listAvailablePositionsInParentGroup );
-        model.put( FormsConstants.MARK_ID_STEP, bStepValidated ? nIdStepTarget : _formDisplay.getStepId( ) );
-        model.put( FormsConstants.MARK_ID_PARENT, bGroupValidated ? nIdParentTarget : 0 );
-        model.put( FormsConstants.MARK_DISPLAY_ORDER, nTargetPosition );
-        model.put( MARK_STEP_VALIDATED, bStepValidated );
-        model.put( MARK_GROUP_VALIDATED, bGroupValidated );
-
-        if ( _formDisplay.getCompositeType( ).equalsIgnoreCase( CompositeDisplayType.GROUP.getLabel( ) ) )
-        {
-            setPageTitleProperty( PROPERTY_MOVE_GROUP_TITLE );
-        }
-        else
-            if ( _formDisplay.getCompositeType( ).equalsIgnoreCase( CompositeDisplayType.QUESTION.getLabel( ) ) )
-            {
-                setPageTitleProperty( PROPERTY_MOVE_QUESTION_TITLE );
-            }
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MOVE_COMPOSITE, getLocale( ), model );
-
         return getAdminPage( template.getHtml( ) );
     }
 
@@ -1399,81 +657,15 @@ public class FormQuestionJspBean extends AbstractJspBean
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, nIdStepTarget );
     }
 
-    /**
-     * Process the FormDisplay move: Update the idParent, idStep and depth of the display and all its descendants Rebuild the Position values of the Display and
-     * all its sibling inside Parent If move to a different group, rebuild the positions sequence within the origin group
-     * 
-     * @param formDisplayToMove
-     *            the FormDisplay to be moved
-     * 
-     * @param nIdStepTarget
-     *            the target Step identifier
-     * 
-     * @param nIdParentTarget
-     *            the target Parent Display identifier (0 if root level of the step )
-     * 
-     * @param nDisplayOrderTarget
-     *            the target position within parent
-     */
-    private void moveDisplay( FormDisplay formDisplayToMove, int nIdStepTarget, int nIdParentTarget, int nDisplayOrderTarget )
+    @Override
+    protected IFormDatabaseService initFormDatabaseService( )
     {
-        int nIdOriginStep = _formDisplay.getStepId( );
-        int nIdOriginParent = _formDisplay.getParentId( );
-        int nOriginDisplayOrder = _formDisplay.getDisplayOrder( );
-
-        List<FormDisplay> listDisplayInTargetGroup = FormDisplayHome.getFormDisplayListByParent( nIdStepTarget, nIdParentTarget );
-
-        formDisplayToMove.setParentId( nIdParentTarget );
-
-        int nTargetDepth = FormsDisplayUtils.getDisplayDepthFromParent( nIdParentTarget );
-        // update the idStep and depth of the display and all its descendants
-        _formDisplayService.setChildrenDisplayDepthAndStep( formDisplayToMove, nTargetDepth, nIdStepTarget );
-
-        // Rebuild the Position values of the Display and all its sibling inside
-        // Parent
-        if ( !listDisplayInTargetGroup.isEmpty( ) )
-        {
-            // If move inside same group, first remove the Display from the list
-            // before adding it at the right index
-            if ( ( nIdOriginStep == nIdStepTarget && nIdOriginParent == nIdParentTarget ) )
-            {
-                listDisplayInTargetGroup.remove( nOriginDisplayOrder - 1 );
-            }
-            listDisplayInTargetGroup.add( nDisplayOrderTarget - 1, formDisplayToMove );
-
-            _formDisplayService.rebuildDisplayPositionSequence( listDisplayInTargetGroup );
-        }
-
-        // If move to a different group, rebuild the positions sequence within
-        // the origin group
-        if ( ( nIdOriginParent != nIdParentTarget ) || ( nIdOriginStep != nIdStepTarget ) )
-        {
-            List<FormDisplay> listDisplayInOriginGroup = FormDisplayHome.getFormDisplayListByParent( nIdOriginStep, nIdOriginParent );
-            _formDisplayService.rebuildDisplayPositionSequence( listDisplayInOriginGroup );
-        }
+        return SpringContextService.getBean( FormDatabaseService.BEAN_NAME );
     }
-
-    /**
-     * Check if the question code already exists or not
-     * 
-     * @param strCode
-     *            The question code
-     * @param nIdForm
-     *            The id of the form
-     * @return true if the code already exists; false otherwise
-     */
-    private boolean checkCodeAlreadyExists( String strCode, int nIdForm, int nIdEntry )
+    
+    @Override
+    protected IFormDisplayService initFormDisplayService( )
     {
-        List<Question> listQuestionOfForm = QuestionHome.getListQuestionByIdForm( nIdForm );
-
-        for ( Question question : listQuestionOfForm )
-        {
-            if ( question.getCode( ).equals( strCode ) && nIdEntry != question.getIdEntry( ) )
-            {
-                return true;
-            }
-        }
-        return false;
+        return SpringContextService.getBean( FormDisplayService.BEAN_NAME );
     }
-
 }

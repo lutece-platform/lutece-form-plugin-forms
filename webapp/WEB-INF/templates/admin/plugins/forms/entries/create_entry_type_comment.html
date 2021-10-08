@@ -23,9 +23,11 @@ ${breadcrumb_template}
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}' mandatory=true>
 							<@input type='textarea' name='comment' id='comment' rows=5 richtext=true></@input>
 						</@formGroup>
-						<@formGroup labelFor='file' labelKey='#i18n{forms.createEntry.labelCommentFile}' helpKey='#i18n{forms.createEntry.labelCommentFileHelp}'>
-							<@input type='file' id='file' name='file' value='' />
-						</@formGroup>
+						<#if canAddFile>
+							<@formGroup labelFor='file' labelKey='#i18n{forms.createEntry.labelCommentFile}' helpKey='#i18n{forms.createEntry.labelCommentFileHelp}'>
+								<@input type='file' id='file' name='file' value='' />
+							</@formGroup>
+						</#if>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='' maxlength=255 />
 						</@formGroup>

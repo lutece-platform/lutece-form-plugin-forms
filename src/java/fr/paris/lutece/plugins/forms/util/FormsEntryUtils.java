@@ -72,14 +72,9 @@ public final class FormsEntryUtils
             return null;
         }
 
-        Entry entry = null;
-        EntryType entryType;
-
-        entryType = EntryTypeHome.findByPrimaryKey( nIdType );
-
-        entry = new Entry( );
+        Entry entry = new Entry( );
+        EntryType entryType = EntryTypeHome.findByPrimaryKey( nIdType );
         entry.setEntryType( entryType );
-
         return entry;
     }
 

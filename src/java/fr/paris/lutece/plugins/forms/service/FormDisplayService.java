@@ -42,25 +42,18 @@ import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
-import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
-import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.util.ReferenceList;
 
 /**
  * Service dedicated to management of formDisplay
  */
-public final class FormDisplayService
+public class FormDisplayService extends AbstractFormDisplayService
 {
 
     public static final String BEAN_NAME = "forms.formDisplayService";
-
-    /**
-     * Constructor
-     */
-    private FormDisplayService( )
-    {
-    }
 
     /**
      * Remove the formDisplay whose identifier is specified in parameter. The responses, group/question associated to this display will be deleted. All the
@@ -118,67 +111,21 @@ public final class FormDisplayService
 
     }
 
-    /**
-     * Rebuild the position sequence of a given FormDisplay list and update the objects in database. The list indexes will be used to set the displayOrder
-     * values.
-     * 
-     * @param listDisplay
-     *            The List of FormDisplay to update
-     */
-    public void rebuildDisplayPositionSequence( List<FormDisplay> listDisplay )
+    @Override
+    protected List<FormDisplay> getFormDisplayListByParent( int nIdStep, int nIdParent )
     {
-        int nUpdatedPosition = 0;
-        for ( FormDisplay displayToUpdate : listDisplay )
-        {
-            nUpdatedPosition++;
-            displayToUpdate.setDisplayOrder( nUpdatedPosition );
-            FormDisplayHome.update( displayToUpdate );
-        }
+        return FormDisplayHome.getFormDisplayListByParent( nIdStep, nIdParent );
     }
-
-    /**
-     * Update a given FormDisplay, and all its descendants by setting the provided depth and idStep values. Value of a children Depth is parent depth plus one.
-     * Value of a children idStep is same as parent idStep.
-     * 
-     * @param formDisplayParent
-     *            the parent Display
-     * 
-     * @param nDepth
-     *            the parent depth value to set
-     * 
-     * @param nIdStep
-     *            the parent idStep value to set
-     * 
-     */
-    public void setChildrenDisplayDepthAndStep( FormDisplay formDisplayParent, int nDepth, int nIdStep )
+    
+    @Override
+    protected ReferenceList getGroupDisplayReferenceListByStep( int nIdStep )
     {
-        int nOldIdStep = formDisplayParent.getStepId( );
-        String strCompositeType = formDisplayParent.getCompositeType( );
-
-        formDisplayParent.setStepId( nIdStep );
-        formDisplayParent.setDepth( nDepth );
-        FormDisplayHome.update( formDisplayParent );
-
-        if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( strCompositeType ) )
-        {
-            Question question = QuestionHome.findByPrimaryKey( formDisplayParent.getCompositeId( ) );
-            question.setIdStep( nIdStep );
-            QuestionHome.update( question );
-        }
-
-        if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( strCompositeType ) )
-        {
-            Group group = GroupHome.findByPrimaryKey( formDisplayParent.getCompositeId( ) );
-            group.setIdStep( nIdStep );
-            GroupHome.update( group );
-        }
-
-        List<FormDisplay> listChildDisplay = FormDisplayHome.getFormDisplayListByParent( nOldIdStep, formDisplayParent.getId( ) );
-
-        for ( FormDisplay childDisplay : listChildDisplay )
-        {
-            setChildrenDisplayDepthAndStep( childDisplay, formDisplayParent.getDepth( ) + 1, nIdStep );
-        }
+        return FormDisplayHome.getGroupDisplayReferenceListByStep( nIdStep );
     }
-
+    
+    @Override
+    protected IFormDatabaseService initFormDatabaseService( )
+    {
+        return SpringContextService.getBean( FormDatabaseService.BEAN_NAME );
+    }
 }
