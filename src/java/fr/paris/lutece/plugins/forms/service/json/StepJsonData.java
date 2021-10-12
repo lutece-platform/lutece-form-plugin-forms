@@ -31,68 +31,43 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.util;
+package fr.paris.lutece.plugins.forms.service.json;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlMapping;
-import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
-import fr.paris.lutece.plugins.forms.business.FormMessage;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
-import fr.paris.lutece.plugins.forms.business.Transition;
-import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 
-public class FormJsonData
+public class StepJsonData
 {
 
-    private Form _form;
-    private FormMessage _formMessage;
-    private List<Step> _stepList;
+    private Step _step;
     private List<Group> _groupList;
     private List<Question> _questionList;
-    private List<Transition> _transitionList;
     private List<FormDisplay> _formDisplayList;
     private List<Control> _controlList;
     private List<ControlMapping> _controlMappingList;
-    private List<FormExportConfig> _formExportConfigList;
 
     /**
-     * @return the form
+     * @return the step
      */
-    public Form getForm( )
+    public Step getStep( )
     {
-        return _form;
+        return _step;
     }
 
     /**
-     * @param form
-     *            the form to set
+     * @param step
+     *            the step to set
      */
-    public void setForm( Form form )
+    public void setStep( Step step )
     {
-        _form = form;
-    }
-
-    /**
-     * @return the stepList
-     */
-    public List<Step> getStepList( )
-    {
-        return new ArrayList<>( _stepList );
-    }
-
-    /**
-     * @param stepList
-     *            the stepList to set
-     */
-    public void setStepList( List<Step> stepList )
-    {
-        _stepList = new ArrayList<>( stepList );
+        _step = step;
     }
 
     /**
@@ -110,40 +85,6 @@ public class FormJsonData
     public void setQuestionList( List<Question> questionList )
     {
         _questionList = new ArrayList<>( questionList );
-    }
-
-    /**
-     * @return the transitionList
-     */
-    public List<Transition> getTransitionList( )
-    {
-        return new ArrayList<>( _transitionList );
-    }
-
-    /**
-     * @param transitionList
-     *            the transitionList to set
-     */
-    public void setTransitionList( List<Transition> transitionList )
-    {
-        _transitionList = new ArrayList<>( transitionList );
-    }
-
-    /**
-     * @return the formMessage
-     */
-    public FormMessage getFormMessage( )
-    {
-        return _formMessage;
-    }
-
-    /**
-     * @param formMessage
-     *            the formMessage to set
-     */
-    public void setFormMessage( FormMessage formMessage )
-    {
-        _formMessage = formMessage;
     }
 
     /**
@@ -213,22 +154,4 @@ public class FormJsonData
     {
         _controlMappingList = new ArrayList<>( controlMappingList );
     }
-
-    /**
-     * @return the formExportConfigList
-     */
-    public List<FormExportConfig> getFormExportConfigList( )
-    {
-        return new ArrayList<>( _formExportConfigList );
-    }
-
-    /**
-     * @param formExportConfigList
-     *            the formExportConfigList to set
-     */
-    public void setFormExportConfigList( List<FormExportConfig> formExportConfigList )
-    {
-        _formExportConfigList = new ArrayList<>( formExportConfigList );
-    }
-
 }

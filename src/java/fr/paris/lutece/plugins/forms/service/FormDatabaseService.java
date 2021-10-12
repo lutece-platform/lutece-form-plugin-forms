@@ -4,6 +4,7 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.Group;
@@ -16,6 +17,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
+import fr.paris.lutece.plugins.genericattributes.business.ReferenceItemFieldHome;
 
 public class FormDatabaseService implements IFormDatabaseService
 {
@@ -151,5 +153,41 @@ public class FormDatabaseService implements IFormDatabaseService
     public void createControl( Control control )
     {
         ControlHome.create( control );
+    }
+    
+    @Override
+    public List<Group> getGroupsListByIdStepList( List<Integer> idStepList )
+    {
+        return GroupHome.getGroupsListByIdStepList( idStepList );
+    }
+    
+    @Override
+    public List<Question> getQuestionsListByStep( int nIdStep )
+    {
+        return QuestionHome.getQuestionsListByStep( nIdStep );
+    }
+    
+    @Override
+    public Integer findIdReferenceItemByIdField( int idField )
+    {
+        return ReferenceItemFieldHome.findIdItemByIdField( idField );
+    }
+    
+    @Override
+    public List<ControlMapping> getControlMappingListByIdControl( int nIdControl )
+    {
+        return ControlHome.getControlMappingListByIdControl( nIdControl );
+    }
+    
+    @Override
+    public void createStep( Step step )
+    {
+        StepHome.create( step );
+    }
+    
+    @Override
+    public void createMappingControl( int nIdcontrol, int nIdQuestion, String strValue )
+    {
+        ControlHome.createMappingControl( nIdcontrol, nIdQuestion, strValue );
     }
 }

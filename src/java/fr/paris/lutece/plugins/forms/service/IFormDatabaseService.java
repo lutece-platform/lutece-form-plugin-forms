@@ -3,6 +3,7 @@ package fr.paris.lutece.plugins.forms.service;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -78,6 +79,12 @@ public interface IFormDatabaseService
      * @param field
      */
     void createField( Field field );
+    
+    /**
+     *  Create a step
+     * @param step
+     */
+    void createStep( Step step );
     
     /**
      * Create a question
@@ -166,4 +173,40 @@ public interface IFormDatabaseService
      * @return the formDisplay associated to the given parameters
      */
     FormDisplay getFormDisplayByFormStepAndComposite( int nIdForm, int nIdStep, int nIdComposite );
+    
+    /**
+     * Load the data of all the group objects and returns them as a list
+     * 
+     * @param idStepList
+     * @return the list which contains the data of all the group objects
+     */
+   List<Group> getGroupsListByIdStepList( List<Integer> idStepList );
+   
+   /**
+    * Load the data of all the question objects and returns them as a list
+    * 
+    * @param nIdStep
+    *            The step primary key
+    * @return the list which contains the data of all the question objects
+    */
+   List<Question> getQuestionsListByStep( int nIdStep );
+   
+   /**
+    * Loads records form the database.
+    * 
+    * @param idField
+    * @return
+    */
+   Integer findIdReferenceItemByIdField( int idField );
+   
+   /**
+    * Load the data of all the control objects and returns them as a list
+    * 
+    * @param nIdControl
+    *            the Control id
+    * @return the referenceList which contains the data of all the control objects
+    */
+   List<ControlMapping> getControlMappingListByIdControl( int nIdControl );
+   
+   void createMappingControl( int nIdcontrol, int nIdQuestion, String strValue );
 }

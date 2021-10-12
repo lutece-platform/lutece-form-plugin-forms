@@ -31,7 +31,7 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.util;
+package fr.paris.lutece.plugins.forms.service.json;
 
 import java.io.IOException;
 import java.sql.Timestamp;
