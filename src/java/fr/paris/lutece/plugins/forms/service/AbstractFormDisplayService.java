@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2021, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.forms.service;
 
 import java.util.List;
@@ -18,9 +51,9 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
 {
     private static final String PROPERTY_ROOT_LEVEL_POSITION_LABEL = "forms.moveComposite.rootLevel.label";
     private static final String PROPERTY_POSITION_LABEL = "forms.moveComposite.position.label";
-    
+
     private IFormDatabaseService _formDatabaseService = null;
-    
+
     @Override
     public String getDisplayTitle( FormDisplay formDisplayToMove )
     {
@@ -45,7 +78,7 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
             }
         return strDisplayTitle;
     }
-    
+
     @Override
     public ReferenceList getTargetGroupDisplayListByStep( int nIdStep, FormDisplay formDisplayToMove, Locale locale )
     {
@@ -73,7 +106,7 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
 
         return listGroupDisplay;
     }
-    
+
     /**
      * Return true if the provided FormDisplay identifier A is a descendant (a child, grandchild, great-grandchild, etc.) of the second FormDisplay parameter
      * 
@@ -106,7 +139,7 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
         }
         return bIsChild;
     }
-    
+
     @Override
     public ReferenceList getlistAvailablePositionsInGroup( int nIdStep, int nIdDisplayGroup, boolean bAddPosition, Locale locale )
     {
@@ -125,7 +158,7 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
 
         return listAvailablePositions;
     }
-    
+
     @Override
     public int getDisplayDepthFromParent( int parentGroup )
     {
@@ -140,7 +173,7 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
         }
         return nDisplayDepth;
     }
-    
+
     @Override
     public void setChildrenDisplayDepthAndStep( FormDisplay formDisplayParent, int nDepth, int nIdStep )
     {
@@ -149,7 +182,8 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
 
         formDisplayParent.setStepId( nIdStep );
         formDisplayParent.setDepth( nDepth );
-        getFormDatabaseService( ).updateFormDisplay( formDisplayParent );;
+        getFormDatabaseService( ).updateFormDisplay( formDisplayParent );
+        ;
 
         if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( strCompositeType ) )
         {
@@ -172,7 +206,7 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
             setChildrenDisplayDepthAndStep( childDisplay, formDisplayParent.getDepth( ) + 1, nIdStep );
         }
     }
-    
+
     @Override
     public void rebuildDisplayPositionSequence( List<FormDisplay> listDisplay )
     {
@@ -184,7 +218,7 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
             getFormDatabaseService( ).updateFormDisplay( displayToUpdate );
         }
     }
-    
+
     /**
      * Load the data of all the FormDisplay objects of type "Group" linked to a given FormStep and returns them as a referenceList
      * 
@@ -193,7 +227,7 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
      * @return the referenceList which contains the data of all the Display objects of group type
      */
     protected abstract ReferenceList getGroupDisplayReferenceListByStep( int nIdStep );
-    
+
     /**
      * Load the data of all the formDisplay that are direct children of a given parent and returns them as a list
      * 
@@ -204,7 +238,7 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
      * @return the list which contains the data of all the formDisplay objects by parent
      */
     protected abstract List<FormDisplay> getFormDisplayListByParent( int nIdStep, int nIdParent );
-    
+
     protected IFormDatabaseService getFormDatabaseService( )
     {
         if ( _formDatabaseService == null )
@@ -213,6 +247,6 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
         }
         return _formDatabaseService;
     }
-    
+
     protected abstract IFormDatabaseService initFormDatabaseService( );
 }

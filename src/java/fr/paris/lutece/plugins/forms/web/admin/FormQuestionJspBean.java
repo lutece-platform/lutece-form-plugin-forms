@@ -181,7 +181,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
         model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model ).getHtml( ) );
-        
+
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateCreate( _entry, false ), getLocale( ), model );
         return getAdminPage( template.getHtml( ) );
@@ -330,7 +330,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     public String getModifyQuestion( HttpServletRequest request )
     {
         Map<String, Object> model = initModifyQuestionModel( request );
-        
+
         if ( ( _form == null ) || ( _form.getId( ) != _entry.getIdResource( ) ) )
         {
             _form = FormHome.findByPrimaryKey( _entry.getIdResource( ) );
@@ -341,7 +341,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
         model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model ).getHtml( ) );
-        
+
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
         return getAdminPage( template.getHtml( ) );
@@ -556,7 +556,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 
         getFormDisplayService( ).deleteDisplayAndDescendants( nIdDisplay );
 
-        List<FormDisplay> listFormDisplaySibling = getFormDatabaseService( ).getFormDisplayListByParent( _formDisplay.getStepId( ), _formDisplay.getParentId( ) );
+        List<FormDisplay> listFormDisplaySibling = getFormDatabaseService( ).getFormDisplayListByParent( _formDisplay.getStepId( ),
+                _formDisplay.getParentId( ) );
         getFormDisplayService( ).rebuildDisplayPositionSequence( listFormDisplaySibling );
         addInfo( INFO_DELETE_COMPOSITE_SUCCESSFUL, getLocale( ) );
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, _formDisplay.getStepId( ) );
@@ -577,7 +578,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         {
             return redirectToViewManageForm( request );
         }
-        
+
         Step stepTarget = StepHome.findByPrimaryKey( (int) model.get( FormsConstants.MARK_ID_STEP ) );
         ReferenceList listFormSteps = StepHome.getStepReferenceListByForm( stepTarget.getIdForm( ) );
         model.put( FormsConstants.MARK_LIST_STEPS, listFormSteps );
@@ -662,7 +663,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     {
         return SpringContextService.getBean( FormDatabaseService.BEAN_NAME );
     }
-    
+
     @Override
     protected IFormDisplayService initFormDisplayService( )
     {

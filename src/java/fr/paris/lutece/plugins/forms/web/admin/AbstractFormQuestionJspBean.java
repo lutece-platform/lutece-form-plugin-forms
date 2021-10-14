@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2021, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
@@ -49,7 +82,7 @@ import fr.paris.lutece.util.ReferenceList;
 public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 {
     private static final long serialVersionUID = -8828358457153413756L;
-    
+
     private static final Class<?> [ ] ENTRY_TYPE_USER_REF_LIT = {
             EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class
     };
@@ -57,7 +90,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     private static final Class<?> [ ] FILTERABLE = {
             EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeDate.class
     };
-    
+
     // Actions
     protected static final String ACTION_CREATE_QUESTION = "createQuestion";
     protected static final String ACTION_CREATE_QUESTION_AND_MANAGE_ENTRIES = "createQuestionAndManageEntries";
@@ -67,7 +100,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     protected static final String ACTION_CREATE_GROUP = "createGroup";
     protected static final String ACTION_MODIFY_GROUP = "modifyGroup";
     protected static final String ACTION_DUPLICATE_QUESTION = "duplicateQuestion";
-    
+
     // Views
     protected static final String VIEW_CREATE_GROUP = "createGroup";
     protected static final String VIEW_MODIFY_GROUP = "modifyGroup";
@@ -86,11 +119,11 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     private static final String MARK_GROUP_VALIDATED = "groupValidated";
     private static final String MARK_STEP_VALIDATED = "stepValidated";
     protected static final String MARK_ADD_FILE_COMMENT = "canAddFile";
-    
+
     // Parameters
     private static final String PARAMETER_VALUE_VALIDATE_STEP = "validateStep";
     private static final String PARAMETER_VALUE_VALIDATE_GROUP = "validateGroup";
-    
+
     // Errors Messages
     private static final String ERROR_ITERATION_NUMBER = "forms.error.group.iterationNumber";
     private static final String ERROR_QUESTION_NOT_CREATED = "forms.error.question.notCreated";
@@ -100,11 +133,11 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     protected static final String ERROR_OCCURED_MOVING_COMPOSITE = "forms.error.moveComposite.notCompleted";
     protected static final String ERROR_QUESTION_CODE_ALREADY_EXISTS = "forms.error.question.codeAlreadyExists";
     protected static final String ERROR_CODE_EXISTS = " Provided code already exists ";
-    
+
     // Warning messages
     protected static final String WARNING_CONFIRM_REMOVE_QUESTION = "forms.warning.deleteComposite.confirmRemoveQuestion";
     protected static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS = "forms.warning.deleteComposite.confirmRemoveGroup";
-    
+
     // Infos Messages
     protected static final String INFO_QUESTION_DUPLICATED = "forms.info.question.duplicated";
     private static final String INFO_GROUP_UPDATED = "forms.info.group.updated";
@@ -121,19 +154,19 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     private static final String PROPERTY_MODIFY_QUESTION_TITLE = "forms.modifyEntry.titleQuestion";
     private static final String PROPERTY_MOVE_GROUP_TITLE = "forms.moveComposite.group.title";
     private static final String PROPERTY_MOVE_QUESTION_TITLE = "forms.moveComposite.question.title";
-    
+
     private static final String GROUP_VALIDATION_ATTRIBUTES_PREFIX = "forms.model.entity.group.attribute.";
     private static final String ENTRY_COMMENT_TITLE = "forms.manage_questions.type.comment.title";
-    
+
     // Others
     protected static final int INTEGER_MINUS_ONE = -1;
-    
+
     private IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( )
             .getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
-    
+
     private IFormDatabaseService _formDatabaseService;
     private IFormDisplayService _formDisplayService;
-    
+
     protected Group _group;
     protected Step _step;
     protected Entry _entry;
@@ -236,7 +269,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         }
         return null;
     }
-    
+
     /**
      * Perform the entry modification
      * 
@@ -297,7 +330,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
                 }
             }
         }
-        
+
         String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
                 : _entry.getTitle( );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
@@ -315,7 +348,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         return null;
 
     }
-    
+
     protected String createGroup( HttpServletRequest request, String viewReturnOk )
     {
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
@@ -362,7 +395,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         addInfo( INFO_GROUP_CREATED, getLocale( ) );
         return redirect( request, viewReturnOk, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
     }
-    
+
     protected String modifyGroup( HttpServletRequest request, String viewReturnOk )
     {
         int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
@@ -393,7 +426,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         return redirect( request, viewReturnOk, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
     }
-    
+
     protected Map<String, Object> initCreateGroupModel( HttpServletRequest request )
     {
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
@@ -417,10 +450,10 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_GROUP, _group );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
-        
+
         return model;
     }
-    
+
     protected Map<String, Object> initModifyGroupModel( HttpServletRequest request )
     {
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
@@ -435,7 +468,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         {
             return null;
         }
-        
+
         if ( _group == null || ( nIdGroup != FormsConstants.DEFAULT_ID_VALUE && _group.getId( ) != nIdGroup ) )
         {
             _group = getFormDatabaseService( ).findGroupByPrimaryKey( nIdGroup );
@@ -444,10 +477,10 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_GROUP, _group );
-        
+
         return model;
     }
-    
+
     protected Map<String, Object> initCreateQuestionModel( HttpServletRequest request )
     {
         int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
@@ -503,7 +536,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         }
         return model;
     }
-    
+
     protected Map<String, Object> initModifyQuestionModel( HttpServletRequest request )
     {
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
@@ -551,7 +584,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_LOCALE, AdminUserService.getLocale( request ).getLanguage( ) );
         model.put( MARK_ENTRY_TYPE_SERVICE, EntryTypeServiceManager.getEntryTypeService( _entry ) );
-        
+
         if ( Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) )
         {
             setPageTitleProperty( PROPERTY_MODIFY_COMMENT_TITLE );
@@ -584,14 +617,14 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         {
             model.put( FormsConstants.MARK_REFERENCE_LIST_SELECT, ReferenceListService.getInstance( ).getReferencesList( ) );
         }
-        
+
         return model;
     }
-    
+
     protected Map<String, Object> initMoveCompositeModel( HttpServletRequest request )
     {
         Map<String, Object> model = getModel( );
-        
+
         int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
         if ( nIdDisplay == INTEGER_MINUS_ONE )
         {
@@ -602,7 +635,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         {
             _formDisplay = getFormDatabaseService( ).findDisplayByPrimaryKey( nIdDisplay );
         }
-        
+
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_DISPLAY, _formDisplay );
         model.put( FormsConstants.MARK_DISPLAY_TITLE, getFormDisplayService( ).getDisplayTitle( _formDisplay ) );
@@ -615,7 +648,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             {
                 setPageTitleProperty( PROPERTY_MOVE_QUESTION_TITLE );
             }
-        
+
         boolean bStepValidated = false;
         boolean bGroupValidated = false;
         String strIsStepValidated = request.getParameter( FormsConstants.PARAMETER_STEP_VALIDATED );
@@ -652,7 +685,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             bStepValidated = true;
             bGroupValidated = true;
         }
-        
+
         int nIdStepTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), -1 );
         if ( bStepValidated )
         {
@@ -666,9 +699,9 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         if ( nIdStepTarget == INTEGER_MINUS_ONE )
         {
             return null;
-            
+
         }
-        
+
         int nTargetPosition = _formDisplay.getDisplayOrder( );
         int nIdParentTarget = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_PARENT ), -1 );
         if ( bGroupValidated )
@@ -679,7 +712,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             }
             _nIdParentTarget = nIdParentTarget;
         }
-        
+
         ReferenceList listStepGroups = getFormDisplayService( ).getTargetGroupDisplayListByStep( nIdStepTarget, _formDisplay, getLocale( ) );
 
         boolean bMoveToDifferentGroup = ( ( _formDisplay.getParentId( ) != nIdParentTarget ) || ( _formDisplay.getStepId( ) != nIdStepTarget ) );
@@ -690,7 +723,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         {
             nTargetPosition = listAvailablePositionsInParentGroup.size( );
         }
-        
+
         model.put( FormsConstants.MARK_ID_STEP, bStepValidated ? nIdStepTarget : _formDisplay.getStepId( ) );
         model.put( FormsConstants.MARK_LIST_GROUPS, listStepGroups );
         model.put( FormsConstants.MARK_LIST_AVAILABLE_POSITIONS, listAvailablePositionsInParentGroup );
@@ -699,7 +732,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_DISPLAY_ORDER, nTargetPosition );
         model.put( FormsConstants.MARK_ID_STEP, bStepValidated ? nIdStepTarget : _formDisplay.getStepId( ) );
         model.put( FormsConstants.MARK_ID_PARENT, bGroupValidated ? nIdParentTarget : 0 );
-        
+
         return model;
     }
 
@@ -725,7 +758,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         return bValidGroup;
     }
-    
+
     /**
      * Process the FormDisplay move: Update the idParent, idStep and depth of the display and all its descendants Rebuild the Position values of the Display and
      * all its sibling inside Parent If move to a different group, rebuild the positions sequence within the origin group
@@ -779,7 +812,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             getFormDisplayService( ).rebuildDisplayPositionSequence( listDisplayInOriginGroup );
         }
     }
-    
+
     /**
      * Perform the Question creation with its Entry
      * 
@@ -828,7 +861,8 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         // Get the question controls
         List<Control> listControlsToDuplicate = getFormDatabaseService( ).getControlByQuestion( _question.getId( ) );
 
-        FormDisplay formDisplayToCopy = getFormDatabaseService( ).getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ), _question.getId( ) );
+        FormDisplay formDisplayToCopy = getFormDatabaseService( ).getFormDisplayByFormStepAndComposite( _step.getIdForm( ), _step.getId( ),
+                _question.getId( ) );
 
         questionToCopy.setEntry( duplicatedEntry );
         questionToCopy.setIdEntry( duplicatedEntry.getIdEntry( ) );
@@ -863,7 +897,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         return null;
     }
-    
+
     /**
      * Check if the question code already exists or not
      * 
@@ -886,7 +920,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         }
         return false;
     }
-    
+
     protected IFormDisplayService getFormDisplayService( )
     {
         if ( _formDisplayService == null )
@@ -895,9 +929,9 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         }
         return _formDisplayService;
     }
-    
+
     protected abstract IFormDisplayService initFormDisplayService( );
-    
+
     protected IFormDatabaseService getFormDatabaseService( )
     {
         if ( _formDatabaseService == null )
@@ -906,6 +940,6 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         }
         return _formDatabaseService;
     }
-    
+
     protected abstract IFormDatabaseService initFormDatabaseService( );
 }

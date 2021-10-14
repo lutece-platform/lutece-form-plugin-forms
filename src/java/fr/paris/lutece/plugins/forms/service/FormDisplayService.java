@@ -116,13 +116,13 @@ public class FormDisplayService extends AbstractFormDisplayService
     {
         return FormDisplayHome.getFormDisplayListByParent( nIdStep, nIdParent );
     }
-    
+
     @Override
     protected ReferenceList getGroupDisplayReferenceListByStep( int nIdStep )
     {
         return FormDisplayHome.getGroupDisplayReferenceListByStep( nIdStep );
     }
-    
+
     @Override
     protected IFormDatabaseService initFormDatabaseService( )
     {

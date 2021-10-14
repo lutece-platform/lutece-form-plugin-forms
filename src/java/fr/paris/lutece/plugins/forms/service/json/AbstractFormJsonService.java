@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2021, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.forms.service.json;
 
 import java.sql.Timestamp;
@@ -41,10 +74,10 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 public abstract class AbstractFormJsonService
 {
     private static final String PROPERTY_COPY_STEP_TITLE = "forms.copyStep.title";
-    
+
     protected final IFormDatabaseService _formDatabaseService;
     protected ObjectMapper _objectMapper;
-    
+
     protected AbstractFormJsonService( IFormDatabaseService formDatabaseService )
     {
         _formDatabaseService = formDatabaseService;
@@ -54,7 +87,7 @@ public abstract class AbstractFormJsonService
 
         _objectMapper = new ObjectMapper( ).configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false ).registerModule( timestampModule );
     }
-    
+
     /**
      * Export the step as a Json Object.
      * 
@@ -96,7 +129,7 @@ public abstract class AbstractFormJsonService
 
         return _objectMapper.writeValueAsString( jsonData );
     }
-    
+
     /**
      * Import the step from a Json Object.
      * 
@@ -130,7 +163,7 @@ public abstract class AbstractFormJsonService
         importFormDisplay( idForm, formDisplayList, controlList );
         importControls( controlList, controlMappingList );
     }
-    
+
     protected void importSteps( int newIdForm, List<Step> stepList, List<Group> groupList, List<Transition> transitionList, List<Question> questionList,
             List<FormDisplay> formDisplayList )
     {
@@ -154,7 +187,7 @@ public abstract class AbstractFormJsonService
         updateQuestionWithNewStep( questionList, mapIdSteps );
         updateFormDisplayWithNewStep( formDisplayList, mapIdSteps );
     }
-    
+
     protected void importQuestions( int newIdForm, List<Question> questionList, List<Control> controlList, List<ControlMapping> controlMappingList,
             List<FormDisplay> formDisplayList, List<FormExportConfig> formExportConfigList )
     {
@@ -189,7 +222,7 @@ public abstract class AbstractFormJsonService
             updateExportConfigWithNewQuestion( formExportConfigList, mapIdQuestions );
         }
     }
-    
+
     protected void importGroups( List<Group> groupList, List<FormDisplay> formDisplayList )
     {
         Map<Integer, Integer> mapIdGroups = new HashMap<>( );
@@ -205,7 +238,7 @@ public abstract class AbstractFormJsonService
         }
         updateFormDisplayWithNewGroup( formDisplayList, mapIdGroups );
     }
-    
+
     protected void importFormDisplay( int newIdForm, List<FormDisplay> formDisplayList, List<Control> controlList )
     {
         Map<Integer, Integer> mapIdFormDisplay = new HashMap<>( );
@@ -230,7 +263,7 @@ public abstract class AbstractFormJsonService
         }
         updateControlWithFormDisplay( controlList, mapIdFormDisplay );
     }
-    
+
     protected void importControls( List<Control> controlList, List<ControlMapping> controlMappingList )
     {
         Map<Integer, Integer> mapIdControls = new HashMap<>( );
@@ -249,7 +282,7 @@ public abstract class AbstractFormJsonService
                     controlMapping.getValue( ) );
         }
     }
-    
+
     private void updateGroupWithNewStep( List<Group> groupList, Map<Integer, Integer> mapIdSteps )
     {
         for ( Group group : groupList )
@@ -273,7 +306,7 @@ public abstract class AbstractFormJsonService
             formDisplay.setStepId( mapIdSteps.get( formDisplay.getStepId( ) ) );
         }
     }
-    
+
     private void updateExportConfigWithNewQuestion( List<FormExportConfig> formExportConfigList, Map<Integer, Integer> mapIdQuestions )
     {
         for ( FormExportConfig config : formExportConfigList )
@@ -320,7 +353,7 @@ public abstract class AbstractFormJsonService
             }
         }
     }
-    
+
     private void updateFormDisplayWithNewGroup( List<FormDisplay> formDisplayList, Map<Integer, Integer> mapIdGroup )
     {
         for ( FormDisplay formDisplay : formDisplayList )
@@ -331,7 +364,7 @@ public abstract class AbstractFormJsonService
             }
         }
     }
-    
+
     private void updateControlWithFormDisplay( List<Control> controlList, Map<Integer, Integer> mapIdFormDisplay )
     {
         for ( Control control : controlList )
@@ -342,7 +375,7 @@ public abstract class AbstractFormJsonService
             }
         }
     }
-    
+
     private void updateTransitionWithNewStep( List<Transition> transitionList, Map<Integer, Integer> mapIdSteps )
     {
         for ( Transition transition : transitionList )
@@ -351,6 +384,6 @@ public abstract class AbstractFormJsonService
             transition.setNextStep( mapIdSteps.get( transition.getNextStep( ) ) );
         }
     }
-    
+
     protected abstract List<FormDisplay> getAllFormDisplays( int idForm, int idStep );
 }
