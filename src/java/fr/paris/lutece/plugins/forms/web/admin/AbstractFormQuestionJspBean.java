@@ -56,7 +56,6 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.forms.service.IFormDisplayService;
-import fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
@@ -161,8 +160,8 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     // Others
     protected static final int INTEGER_MINUS_ONE = -1;
 
-    private IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( )
-            .getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
+    protected IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( )
+            .getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
 
     private IFormDatabaseService _formDatabaseService;
     private IFormDisplayService _formDisplayService;

@@ -490,10 +490,11 @@
     <bean id="forms.formsFileDownloadUrlService" class="fr.paris.lutece.plugins.forms.service.download.FormsFileDownloadService" />
     <bean id="forms.formsFileRBACService" class="fr.paris.lutece.plugins.forms.service.download.FormsFileRBACService" />
     
-    <bean id="forms.formsDatabaseFileService" class="fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService" >
+    <bean id="forms.formsDatabaseFileService" class="fr.paris.lutece.portal.service.file.implementation.LocalDatabaseFileService" >
         <constructor-arg ref="forms.formsFileDownloadUrlService" />
         <constructor-arg ref="forms.formsFileRBACService" />
         <property name="default" value="false" />
+        <property name="name" value="formsDatabaseFileStoreProvider" />
     </bean>
     
     <!-- Anonymization -->

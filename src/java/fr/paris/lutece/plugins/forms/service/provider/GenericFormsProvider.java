@@ -51,7 +51,6 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
-import fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.admin.MultiviewFormResponseDetailsJspBean;
@@ -128,7 +127,7 @@ public abstract class GenericFormsProvider implements IProvider
                 if ( fieldFile != null )
                 {
                     IFileStoreServiceProvider fileStoreprovider = FileService.getInstance( )
-                            .getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
+                            .getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
 
                     Map<String, String> additionnalData = new HashMap<>( );
                     additionnalData.put( FileService.PARAMETER_RESOURCE_ID, String.valueOf( entry.getIdResource( ) ) );

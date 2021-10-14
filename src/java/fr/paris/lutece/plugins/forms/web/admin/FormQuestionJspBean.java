@@ -56,7 +56,6 @@ import fr.paris.lutece.plugins.forms.service.FormDisplayService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.forms.service.IFormDisplayService;
-import fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
@@ -114,8 +113,6 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveGroup.formActive";
 
     private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
-    private IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( )
-            .getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
 
     private Form _form;
 

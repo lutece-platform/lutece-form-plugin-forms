@@ -40,7 +40,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
@@ -65,7 +64,7 @@ public class EntryTypeCommentDisplayService extends EntryTypeDefaultDisplayServi
         if ( fieldFile != null )
         {
             IFileStoreServiceProvider fileStoreprovider = FileService.getInstance( )
-                    .getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
+                    .getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
 
             Map<String, String> additionnalData = new HashMap<>( );
             additionnalData.put( FileService.PARAMETER_RESOURCE_ID, String.valueOf( entry.getIdResource( ) ) );

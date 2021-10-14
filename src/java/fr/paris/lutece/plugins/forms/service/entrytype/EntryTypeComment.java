@@ -35,7 +35,6 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 
 import java.util.List;
 
-import fr.paris.lutece.plugins.forms.service.download.FormDatabaseFileService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeComment;
@@ -114,6 +113,6 @@ public class EntryTypeComment extends AbstractEntryTypeComment implements IRespo
     @Override
     protected IFileStoreServiceProvider getFileStoreServiceProvider( )
     {
-        return FileService.getInstance( ).getFileStoreServiceProvider( FormDatabaseFileService.FILE_STORE_PROVIDER_NAME );
+        return FileService.getInstance( ).getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
     }
 }
