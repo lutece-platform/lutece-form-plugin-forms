@@ -63,8 +63,8 @@ public final class PdfUtil
      */
     public static void drawTable( PDPage page, PDPageContentStream contentStream, double y, double margin, List<PdfCell> listContent ) throws IOException
     {
-        final PDType1Font font = PDType1Font.HELVETICA_BOLD;
-        final int fontSize = 12;
+        final PDType1Font font = PDType1Font.HELVETICA;
+        final int fontSize = 10;
         final double rowHeight = 20D;
         final double tableWidth = page.findMediaBox( ).getWidth( ) - ( 2 * margin );
         final double cellMargin = 5D;
@@ -73,7 +73,6 @@ public final class PdfUtil
         contentStream.setFont( font, fontSize );
 
         double textx = margin + cellMargin;
-        double nexty = y;
         double texty = y - 15;
 
         Set<String> writtenGroup = new HashSet<>( );
@@ -82,39 +81,28 @@ public final class PdfUtil
             String group = cell.getGroup( );
             int nbLines = 1;
 
-            int currentNbCols = 2;
-            double currentColWidth = tableWidth / 2;
-            boolean fullTopBorder = true;
+            double coldWidthTitle = tableWidth / 5; 
+            double currentColWidth = tableWidth - coldWidthTitle;
+            
             if ( group != null )
             {
-                currentNbCols = 3;
-                currentColWidth = tableWidth / currentNbCols;
+                String [ ] wrappedGroup = getWrappedText( font, fontSize, coldWidthTitle, group );
+                currentColWidth = tableWidth - 2 * coldWidthTitle;
                 if ( writtenGroup.add( group ) )
                 {
-                    contentStream.beginText( );
-                    contentStream.moveTextPositionByAmount( (float) textx, (float) texty );
-                    contentStream.drawString( group );
-                    contentStream.endText( );
+                    for ( int k = 0; k < wrappedGroup.length; k++ )
+                    {
+                        contentStream.beginText( );
+                        contentStream.moveTextPositionByAmount( (float) textx, (float) ( texty - ( k * rowHeight ) ) );
+                        contentStream.drawString( wrappedGroup [k] );
+                        contentStream.endText( );
+                    }
                 }
-                else
-                {
-                    fullTopBorder = false;
-                }
-                textx += currentColWidth;
-            }
-
-            // Top row Border
-            if ( fullTopBorder )
-            {
-                contentStream.drawLine( (float) margin, (float) nexty, (float) ( margin + tableWidth ), (float) nexty );
-            }
-            else
-            {
-                contentStream.drawLine( (float) ( margin + currentColWidth ), (float) nexty, (float) ( margin + tableWidth ), (float) nexty );
+                textx += coldWidthTitle;
             }
 
             String text = cell.getTitle( );
-            String [ ] wrapped = getWrappedText( font, fontSize, currentColWidth, text );
+            String [ ] wrapped = getWrappedText( font, fontSize, coldWidthTitle, text );
             for ( int k = 0; k < wrapped.length; k++ )
             {
                 contentStream.beginText( );
@@ -123,7 +111,7 @@ public final class PdfUtil
                 contentStream.endText( );
             }
             nbLines = Math.max( nbLines, wrapped.length );
-            textx += currentColWidth;
+            textx += coldWidthTitle;
 
             text = cell.getValue( );
             wrapped = getWrappedText( font, fontSize, currentColWidth, text );
@@ -135,23 +123,9 @@ public final class PdfUtil
                 contentStream.endText( );
             }
             nbLines = Math.max( nbLines, wrapped.length );
-
-            // Left borders
-            for ( int j = 0; j < currentNbCols; j++ )
-            {
-                contentStream.drawLine( (float) ( margin + j * currentColWidth ), (float) nexty, (float) ( margin + j * currentColWidth ),
-                        (float) ( nexty - nbLines * rowHeight ) );
-            }
-
-            // Right border
-            contentStream.drawLine( (float) ( margin + tableWidth ), (float) nexty, (float) ( margin + tableWidth ), (float) ( nexty - nbLines * rowHeight ) );
-
             texty -= nbLines * rowHeight;
-            nexty -= nbLines * rowHeight;
             textx = margin + cellMargin;
         }
-        // Bottom table border
-        contentStream.drawLine( (float) margin, (float) nexty, (float) ( margin + tableWidth ), (float) nexty );
     }
 
     private static String [ ] getWrappedText( PDFont font, int fontSize, double colWidth, String text ) throws IOException
