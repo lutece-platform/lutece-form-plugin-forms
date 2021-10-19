@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -142,6 +143,7 @@ public abstract class GenericFormsProvider implements IProvider
                 {
                     value = formQuestionResponse.getEntryResponse( ).stream( ).map(
                             response -> entryTypeService.getResponseValueForRecap( formQuestionResponse.getQuestion( ).getEntry( ), _request, response, null ) )
+                            .filter( StringUtils::isNotEmpty )
                             .collect( Collectors.joining( ", " ) );
                 }
             if ( notifyMarker.getValue( ) == null )
