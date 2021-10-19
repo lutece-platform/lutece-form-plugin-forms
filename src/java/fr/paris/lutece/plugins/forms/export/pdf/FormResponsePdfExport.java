@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -183,7 +184,7 @@ public class FormResponsePdfExport
             {
                 PdfCell cell = new PdfCell( );
                 cell.setTitle( key );
-                cell.setValue( listResponseValue.stream( ).collect( Collectors.joining( ";" ) ) );
+                cell.setValue( listResponseValue.stream( ).filter( StringUtils::isNotEmpty ).collect( Collectors.joining( ";" ) ) );
                 if ( group != null )
                 {
                     String groupName = group.getTitle( );
