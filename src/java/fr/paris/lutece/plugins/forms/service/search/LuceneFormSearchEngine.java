@@ -46,12 +46,14 @@ import fr.paris.lutece.portal.service.search.SearchItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -101,10 +103,12 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
             qpDateUpdate.setDefaultOperator( QueryParser.Operator.AND );
             qpGuid.setDefaultOperator( QueryParser.Operator.AND );
 
-            Query queryContent = qpContent.parse( formSearchConfig.getSearchedText( ) );
-            Query queryDateCreation = qpDateCreation.parse( formSearchConfig.getSearchedText( ) );
-            Query queryDateUpdate = qpDateUpdate.parse( formSearchConfig.getSearchedText( ) );
-            Query queryGuid = qpGuid.parse( formSearchConfig.getSearchedText( ) );
+            String searchedText = normalizeSearchText( formSearchConfig.getSearchedText( ) );
+            
+            Query queryContent = qpContent.parse( searchedText );
+            Query queryDateCreation = qpDateCreation.parse( searchedText );
+            Query queryDateUpdate = qpDateUpdate.parse( searchedText );
+            Query queryGuid = qpGuid.parse( searchedText );
 
             queries.add( queryContent.toString( ) );
             queries.add( queryDateCreation.toString( ) );
@@ -143,6 +147,15 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         return listResults;
     }
 
+    private String normalizeSearchText( String text )
+    {
+        if ( StringUtils.isEmpty( text ) )
+        {
+            return text;
+        }
+        return Normalizer.normalize( text, Normalizer.Form.NFD ).replaceAll("\\p{M}", "");
+    }
+    
     /**
      * {@inheritDoc }
      */
