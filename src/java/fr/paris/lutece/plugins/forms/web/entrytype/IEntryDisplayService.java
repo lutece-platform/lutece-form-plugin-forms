@@ -34,12 +34,20 @@
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.MapUtils;
+
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * Interface for the entry display services
@@ -76,4 +84,34 @@ public interface IEntryDisplayService
      * @return the column corresponding the the current entryDisplayService
      */
     IFormColumn getFormColumn( int nFormColumnPosition, String strColumnTitle );
+    
+    /**
+     * Return from the given map the list of Response of the model
+     * 
+     * @param model
+     *            The model on which to retrieve the list of all Response
+     * @return the list of Response form the given model or an empty collection if its missing or if an error occurred
+     */
+    @SuppressWarnings( "unchecked" )
+    default List<Response> retrieveResponseListFromModel( Map<String, Object> model )
+    {
+        List<Response> listResponse = new ArrayList<>( );
+
+        if ( !MapUtils.isEmpty( model ) && model.containsKey( FormsConstants.MARK_QUESTION_LIST_RESPONSES ) )
+        {
+            try
+            {
+                listResponse = (List<Response>) model.get( FormsConstants.MARK_QUESTION_LIST_RESPONSES );
+            }
+            catch( ClassCastException exception )
+            {
+                AppLogService.error( "The object associated to the list of Responses doesn't have the good format !" );
+
+                // Erase the value to avoid future errors
+                model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, new ArrayList<>( ) );
+            }
+        }
+
+        return listResponse;
+    }
 }

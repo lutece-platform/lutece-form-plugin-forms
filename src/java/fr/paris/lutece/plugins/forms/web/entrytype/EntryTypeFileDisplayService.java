@@ -42,7 +42,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
@@ -58,7 +57,6 @@ import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * The display service for entry type file
@@ -66,9 +64,6 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 public class EntryTypeFileDisplayService implements IEntryDisplayService
 {
     protected static final String MARK_UPLOAD_HANDLER = "uploadHandler";
-
-    private static final String LIST_RESPONSES = "list_responses";
-
     private String _strEntryServiceName = StringUtils.EMPTY;
 
     /**
@@ -143,6 +138,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     {
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
         List<Response> listResponse = retrieveResponseListFromModel( model );
+        List<FileItem> listFiles = new ArrayList<>( );
         for ( Response response : listResponse )
         {
             if ( ( response.getFile( ) != null ) && ( response.getFile( ).getIdFile( ) > 0 ) )
@@ -153,8 +149,10 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
                 ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
                         + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
                         request );
+                listFiles.add( fileItem );
             }
         }
+        model.put( "listFiles", listFiles );
         return AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, service, model ) )
                 .getHtml( );
     }
@@ -191,36 +189,6 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
 
         return AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, service, model ) )
                 .getHtml( );
-    }
-
-    /**
-     * Return from the given map the list of Response of the model
-     * 
-     * @param model
-     *            The model on which to retrieve the list of all Response
-     * @return the list of Response form the given model or an empty collection if its missing or if an error occurred
-     */
-    @SuppressWarnings( "unchecked" )
-    private List<Response> retrieveResponseListFromModel( Map<String, Object> model )
-    {
-        List<Response> listResponse = new ArrayList<>( );
-
-        if ( !MapUtils.isEmpty( model ) && model.containsKey( LIST_RESPONSES ) )
-        {
-            try
-            {
-                listResponse = (List<Response>) model.get( LIST_RESPONSES );
-            }
-            catch( ClassCastException exception )
-            {
-                AppLogService.error( "The object associated to the list of Responses doesn't have the good format !" );
-
-                // Erase the value to avoid future errors
-                model.put( LIST_RESPONSES, new ArrayList<>( ) );
-            }
-        }
-
-        return listResponse;
     }
 
     @Override
