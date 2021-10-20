@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -44,9 +46,11 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.date.DateUtil;
 
 /**
  * The display service for entry type date
@@ -98,7 +102,16 @@ public class EntryTypeDateDisplayService implements IEntryDisplayService
     {
         String strEntryHtml = StringUtils.EMPTY;
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
-
+        List<Response> listResponse = retrieveResponseListFromModel( model );
+        for ( Response response : listResponse )
+        {
+            String strValueEntry = response.getResponseValue( );
+            if ( StringUtils.isNotEmpty( strValueEntry ) )
+            {
+                Date tDateValue = new Date( Long.parseLong( strValueEntry ) );
+                response.setToStringValueResponse( DateUtil.getDateString( tDateValue, locale ) );
+            }
+        }
         switch( displayType.getMode( ) )
         {
             case EDITION:
