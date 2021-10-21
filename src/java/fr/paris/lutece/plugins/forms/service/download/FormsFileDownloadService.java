@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.service.download;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.implementation.DefaultFileDownloadService;

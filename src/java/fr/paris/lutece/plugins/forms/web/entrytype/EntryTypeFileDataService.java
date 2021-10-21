@@ -42,7 +42,7 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.web.http.IterationMultipartHttpServletRequestWrapper;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
