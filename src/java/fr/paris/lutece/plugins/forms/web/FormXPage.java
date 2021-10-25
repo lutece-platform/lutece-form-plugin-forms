@@ -291,9 +291,7 @@ public class FormXPage extends MVCApplication
         {
             init( request );
         }
-        Map<String, Object> model = getModel( );
-        String strTitleForm = StringUtils.EMPTY;
-        String strPathForm = StringUtils.EMPTY;
+
         int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE && ( _currentStep == null || nIdForm != _currentStep.getIdForm( ) ) )
@@ -303,47 +301,48 @@ public class FormXPage extends MVCApplication
 
         if ( _currentStep == null )
         {
+            // Throws Exception
             SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+            return null;
+        }
+        
+        Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
+        checkAuthentication( form, request );
+
+        if ( form.isOneResponseByUser( ) || form.getMaxNumberResponse( ) != 0 )
+        {
+            Object lock = getLockOnForm( form );
+            synchronized( lock )
+            {
+                checkIfUserResponseForm( form, request );
+                checkNumberMaxResponseForm( form, request );
+            }
+        }
+
+        String strTitleForm = I18nService.getLocalizedString( MESSAGE_STEP_TITLE, new String [ ] {
+                form.getTitle( ), _currentStep.getTitle( )
+        }, getLocale( request ) );
+        String strPathForm = form.getTitle( );
+
+        Map<String, Object> model = getModel( );
+        if ( form.isActive( ) )
+        {
+            if ( _breadcrumb == null )
+            {
+                _breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
+            }
+
+            getFormStepModel( form, request, model );
         }
         else
         {
-            Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
-            checkAuthentication( form, request );
-
-            if ( form.isOneResponseByUser( ) || form.getMaxNumberResponse( ) != 0 )
+            if ( StringUtils.isNotEmpty( form.getUnavailableMessage( ) ) )
             {
-                Object lock = getLockOnForm( form );
-                synchronized( lock )
-                {
-                    checkIfUserResponseForm( form, request );
-                    checkNumberMaxResponseForm( form, request );
-                }
-            }
-
-            strTitleForm = I18nService.getLocalizedString( MESSAGE_STEP_TITLE, new String [ ] {
-                    form.getTitle( ), _currentStep.getTitle( )
-            }, getLocale( request ) );
-            strPathForm = form.getTitle( );
-
-            if ( form.isActive( ) )
-            {
-                if ( _breadcrumb == null )
-                {
-                    _breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
-                }
-
-                getFormStepModel( form, request, model );
+                SiteMessageService.setCustomMessage( request, form.getUnavailableMessage( ), SiteMessage.TYPE_ERROR );
             }
             else
             {
-                if ( StringUtils.isNotEmpty( form.getUnavailableMessage( ) ) )
-                {
-                    SiteMessageService.setCustomMessage( request, form.getUnavailableMessage( ), SiteMessage.TYPE_ERROR );
-                }
-                else
-                {
-                    SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
-                }
+                SiteMessageService.setMessage( request, MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
             }
         }
 

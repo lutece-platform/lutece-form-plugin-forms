@@ -183,7 +183,6 @@ public abstract class AbstractFormDisplayService implements IFormDisplayService
         formDisplayParent.setStepId( nIdStep );
         formDisplayParent.setDepth( nDepth );
         getFormDatabaseService( ).updateFormDisplay( formDisplayParent );
-        ;
 
         if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( strCompositeType ) )
         {

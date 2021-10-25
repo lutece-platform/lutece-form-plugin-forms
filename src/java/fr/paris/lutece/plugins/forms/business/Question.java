@@ -33,8 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.portal.service.util.AppLogService;

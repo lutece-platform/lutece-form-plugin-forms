@@ -34,8 +34,8 @@
 package fr.paris.lutece.plugins.forms.business;
 
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-import org.hibernate.validator.constraints.NotEmpty;
 import java.io.Serializable;
 
 /**

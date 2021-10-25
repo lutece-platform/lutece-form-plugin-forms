@@ -71,28 +71,28 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
     private static final FormQuestionEntryResponseDAO _formQuestionEntryResponseDAO = new FormQuestionEntryResponseDAO( );
 
+    private static final String PARAMETER_QUESTION_RESPONSE_ID =  "id_question_response";
     /**
      * {@inheritDoc }
      */
     @Override
     public void insert( FormQuestionResponse formQuestionResponse, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
-
-        int nIndex = 0;
-        daoUtil.setInt( ++nIndex, formQuestionResponse.getIdFormResponse( ) );
-        daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getId( ) );
-        daoUtil.setInt( ++nIndex, formQuestionResponse.getIdStep( ) );
-        daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
-
-        daoUtil.executeUpdate( );
-
-        if ( daoUtil.nextGeneratedKey( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
-            formQuestionResponse.setId( daoUtil.getGeneratedKeyInt( 1 ) );
+            int nIndex = 0;
+            daoUtil.setInt( ++nIndex, formQuestionResponse.getIdFormResponse( ) );
+            daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getId( ) );
+            daoUtil.setInt( ++nIndex, formQuestionResponse.getIdStep( ) );
+            daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
+    
+            daoUtil.executeUpdate( );
+    
+            if ( daoUtil.nextGeneratedKey( ) )
+            {
+                formQuestionResponse.setId( daoUtil.getGeneratedKeyInt( 1 ) );
+            }
         }
-
-        daoUtil.close( );
 
         for ( Response response : formQuestionResponse.getEntryResponse( ) )
         {
@@ -110,21 +110,18 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     @Override
     public FormQuestionResponse load( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeQuery( );
-
         FormQuestionResponse formQuestionResponse = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-            formQuestionResponse = dataToObject( daoUtil );
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                formQuestionResponse = dataToObject( daoUtil );
+            }
         }
-
-        daoUtil.close( );
-
         completeWithEntryResponses( formQuestionResponse, plugin );
-
         return formQuestionResponse;
     }
 
@@ -142,10 +139,11 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             _formQuestionEntryResponseDAO.delete( formQuestionEntryResponse, plugin );
         }
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, formQuestionResponse.getId( ) );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+            daoUtil.setInt( 1, formQuestionResponse.getId( ) );
+            daoUtil.executeUpdate( );
+        }
 
     }
 
@@ -157,19 +155,18 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         List<FormQuestionResponse> formQuestionResponseList = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_QUESTION, plugin );
-        daoUtil.setInt( 1, nIdQuestion );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_QUESTION, plugin ) )
         {
-            formQuestionResponseList.add( dataToObject( daoUtil ) );
+            daoUtil.setInt( 1, nIdQuestion );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                formQuestionResponseList.add( dataToObject( daoUtil ) );
+            }
+
         }
-
-        daoUtil.close( );
-
         completeWithEntryResponses( formQuestionResponseList, plugin );
-
         return formQuestionResponseList;
     }
 
@@ -194,22 +191,19 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         FormQuestionResponse formQuestionResponseSaved = load( formQuestionResponse.getId( ), plugin );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, Statement.RETURN_GENERATED_KEYS, plugin );
-
-        int nIndex = 0;
-        daoUtil.setInt( ++nIndex, formQuestionResponse.getIdFormResponse( ) );
-        daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getId( ) );
-        daoUtil.setInt( ++nIndex, formQuestionResponse.getIdStep( ) );
-        daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
-
-        daoUtil.setInt( ++nIndex, formQuestionResponse.getId( ) );
-
-        daoUtil.executeUpdate( );
-
-        daoUtil.close( );
-
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, Statement.RETURN_GENERATED_KEYS, plugin ) )
+        {
+            int nIndex = 0;
+            daoUtil.setInt( ++nIndex, formQuestionResponse.getIdFormResponse( ) );
+            daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getId( ) );
+            daoUtil.setInt( ++nIndex, formQuestionResponse.getIdStep( ) );
+            daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
+    
+            daoUtil.setInt( ++nIndex, formQuestionResponse.getId( ) );
+    
+            daoUtil.executeUpdate( );
+        }
         storeResponses( formQuestionResponseSaved, formQuestionResponse, plugin );
-
     }
 
     /**
@@ -250,17 +244,15 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     public List<FormQuestionResponse> selectFormQuestionResponseList( Plugin plugin )
     {
         List<FormQuestionResponse> formQuestionResponseList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery( );
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-            formQuestionResponseList.add( dataToObject( daoUtil ) );
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
+            {
+                formQuestionResponseList.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
-
         completeWithEntryResponses( formQuestionResponseList, plugin );
-
         return formQuestionResponseList;
     }
 
@@ -272,20 +264,18 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         List<FormQuestionResponse> formQuestionResponseList = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP, plugin );
-        daoUtil.setInt( 1, nIdFormResponse );
-        daoUtil.setInt( 2, nIdStep );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP, plugin ) )
         {
-            formQuestionResponseList.add( dataToObject( daoUtil ) );
+            daoUtil.setInt( 1, nIdFormResponse );
+            daoUtil.setInt( 2, nIdStep );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                formQuestionResponseList.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
-
         completeWithEntryResponses( formQuestionResponseList, plugin );
-
         return formQuestionResponseList;
     }
 
@@ -327,19 +317,17 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         List<FormQuestionResponse> formQuestionResponseList = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FORM_RESPONSE, plugin );
-        daoUtil.setInt( 1, nIdFormResponse );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FORM_RESPONSE, plugin ) )
         {
-            formQuestionResponseList.add( dataToObject( daoUtil ) );
+            daoUtil.setInt( 1, nIdFormResponse );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                formQuestionResponseList.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
-
         completeWithEntryResponses( formQuestionResponseList, plugin );
-
         return formQuestionResponseList;
     }
 
@@ -351,9 +339,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         List<FormQuestionResponse> listFormQuestionResponse = new ArrayList<>( );
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION, plugin );
-
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION, plugin ) )
         {
             daoUtil.setInt( 1, nIdFormResponse );
             daoUtil.setInt( 2, nIdQuestion );
@@ -366,10 +352,6 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
                 listFormQuestionResponse.add( formQuestionResponse );
             }
-        }
-        finally
-        {
-            daoUtil.close( );
         }
 
         return listFormQuestionResponse;
@@ -498,7 +480,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     {
         FormQuestionResponse formQuestionResponse = new FormQuestionResponse( );
 
-        formQuestionResponse.setId( daoUtil.getInt( "id_question_response" ) );
+        formQuestionResponse.setId( daoUtil.getInt( PARAMETER_QUESTION_RESPONSE_ID ) );
         formQuestionResponse.setIdFormResponse( daoUtil.getInt( "id_form_response" ) );
 
         Question question = new Question( );
@@ -551,10 +533,8 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
          */
         private List<FormQuestionEntryResponse> selectByFormQuestionResponse( FormQuestionResponse formQuestionResponse, Plugin plugin )
         {
-            DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_QUESTION, plugin );
             List<FormQuestionEntryResponse> listFormQuestionEntryResponse = new ArrayList<>( );
-
-            try
+            try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ENTRY_RESPONSE_BY_QUESTION, plugin ) )
             {
                 daoUtil.setInt( 1, formQuestionResponse.getId( ) );
                 daoUtil.executeQuery( );
@@ -564,11 +544,6 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
                     listFormQuestionEntryResponse.add( dataToObject( daoUtil ) );
                 }
             }
-            finally
-            {
-                daoUtil.close( );
-            }
-
             return listFormQuestionEntryResponse;
 
         }
@@ -656,15 +631,14 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         {
             ResponseHome.create( formQuestionEntryResponse._response );
 
-            DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_ENTRY_RESPONSE, Statement.RETURN_GENERATED_KEYS, plugin );
-
-            int nIndex = 0;
-            daoUtil.setInt( ++nIndex, formQuestionEntryResponse._nIdQuestionResponse );
-            daoUtil.setInt( ++nIndex, formQuestionEntryResponse._response.getIdResponse( ) );
-
-            daoUtil.executeUpdate( );
-
-            daoUtil.close( );
+            try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT_ENTRY_RESPONSE, Statement.RETURN_GENERATED_KEYS, plugin ) )
+            {
+                int nIndex = 0;
+                daoUtil.setInt( ++nIndex, formQuestionEntryResponse._nIdQuestionResponse );
+                daoUtil.setInt( ++nIndex, formQuestionEntryResponse._response.getIdResponse( ) );
+    
+                daoUtil.executeUpdate( );
+            }
         }
 
         /**
@@ -677,12 +651,11 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
          */
         private void delete( FormQuestionEntryResponse formQuestionEntryResponse, Plugin plugin )
         {
-            DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_QUESTION_ENTRY_RESPONSE, plugin );
-
-            daoUtil.setInt( 1, formQuestionEntryResponse._nId );
-            daoUtil.executeUpdate( );
-
-            daoUtil.close( );
+            try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_QUESTION_ENTRY_RESPONSE, plugin ) )
+            {
+                daoUtil.setInt( 1, formQuestionEntryResponse._nId );
+                daoUtil.executeUpdate( );
+            }
 
             if ( formQuestionEntryResponse._response != null )
             {
@@ -701,7 +674,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         {
             FormQuestionEntryResponse formQuestionEntryResponse = new FormQuestionEntryResponse( );
             formQuestionEntryResponse._nId = daoUtil.getInt( "id_question_entry_response" );
-            formQuestionEntryResponse._nIdQuestionResponse = daoUtil.getInt( "id_question_response" );
+            formQuestionEntryResponse._nIdQuestionResponse = daoUtil.getInt( PARAMETER_QUESTION_RESPONSE_ID );
             formQuestionEntryResponse._response = ResponseHome.findByPrimaryKey( daoUtil.getInt( "id_entry_response" ) );
 
             return formQuestionEntryResponse;
@@ -718,7 +691,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         {
             FormQuestionEntryResponse formQuestionEntryResponse = new FormQuestionEntryResponse( );
             formQuestionEntryResponse._nId = daoUtil.getInt( "id_question_entry_response" );
-            formQuestionEntryResponse._nIdQuestionResponse = daoUtil.getInt( "id_question_response" );
+            formQuestionEntryResponse._nIdQuestionResponse = daoUtil.getInt( PARAMETER_QUESTION_RESPONSE_ID );
             formQuestionEntryResponse._response = new Response( );
             formQuestionEntryResponse._response.setIdResponse( daoUtil.getInt( "id_entry_response" ) );
 

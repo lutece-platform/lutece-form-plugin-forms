@@ -284,8 +284,7 @@ public final class FormResponseHome
      */
     public static List<FormResponse> getFormResponseUncompleteByPrimaryKeyList( List<Integer> listIdFormResponse )
     {
-        List<FormResponse> listFormResponse = _dao.selectFormResponseByPrimaryKeyList( listIdFormResponse, _plugin );
-        return listFormResponse;
+        return _dao.selectFormResponseByPrimaryKeyList( listIdFormResponse, _plugin );
     }
 
     /**

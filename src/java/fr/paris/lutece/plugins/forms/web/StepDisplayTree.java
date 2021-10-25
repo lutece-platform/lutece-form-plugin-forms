@@ -258,13 +258,19 @@ public class StepDisplayTree
 
         if ( displayType == DisplayType.EDITION_FRONTOFFICE )
         {
-            boolean displayCaptcha = _captchaSecurityService.isAvailable( )
-                    && ( ( _step.isInitial( ) && _form.isCaptchaStepInitial( ) ) || ( _step.isFinal( ) && _form.isCaptchaStepFinal( ) ) );
-            _model.put( MARK_DISPLAY_CAPTCHA, displayCaptcha );
-
-            if ( displayCaptcha )
+            if ( !_captchaSecurityService.isAvailable( ) )
             {
-                _model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
+                _model.put( MARK_DISPLAY_CAPTCHA, false );
+            }
+            else
+            {
+                boolean displayCaptcha = ( _step.isInitial( ) && _form.isCaptchaStepInitial( ) ) || ( _step.isFinal( ) && _form.isCaptchaStepFinal( ) );
+                _model.put( MARK_DISPLAY_CAPTCHA, displayCaptcha );
+
+                if ( displayCaptcha )
+                {
+                    _model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
+                }
             }
         }
 

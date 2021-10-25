@@ -33,12 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
-import java.util.List;
 import java.util.Set;
 
-import javax.validation.constraints.Min;
-
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 
 import fr.paris.lutece.portal.service.util.AppLogService;
 

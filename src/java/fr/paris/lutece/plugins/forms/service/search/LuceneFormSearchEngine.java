@@ -153,7 +153,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         {
             return text;
         }
-        return Normalizer.normalize( text, Normalizer.Form.NFD ).replaceAll("\\p{M}", "");
+        return Normalizer.normalize( text, Normalizer.Form.NFD ).replaceAll( "\\p{M}", "" );
     }
     
     /**

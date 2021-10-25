@@ -38,6 +38,7 @@ package fr.paris.lutece.plugins.forms.web.exception;
  */
 public class CodeAlreadyExistsException extends Exception
 {
+    private static final long serialVersionUID = 8819864348404766892L;
     private final String _strCode;
 
     public CodeAlreadyExistsException( String strCode )

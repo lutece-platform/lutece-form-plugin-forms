@@ -33,10 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.rbac.RBACResource;

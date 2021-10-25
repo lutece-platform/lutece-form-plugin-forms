@@ -66,8 +66,6 @@ import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.portal.service.file.FileService;
-import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -457,12 +455,10 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     @View( value = VIEW_CONFIRM_REMOVE_COMPOSITE )
     public String getConfirmRemoveComposite( HttpServletRequest request )
     {
-
-        String strMessage = StringUtils.EMPTY;
-
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
-
-        if ( nIdStep == INTEGER_MINUS_ONE )
+        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
+        
+        if ( nIdStep == INTEGER_MINUS_ONE || nIdDisplay == INTEGER_MINUS_ONE )
         {
             redirectToViewManageForm( request );
         }
@@ -484,21 +480,26 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
         }
 
-        int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
-
-        if ( nIdDisplay == INTEGER_MINUS_ONE )
-        {
-            redirectToViewManageForm( request );
-        }
-
         if ( _formDisplay == null || _formDisplay.getId( ) != nIdDisplay )
         {
             _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
 
-        if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) ) )
+        String strMessage = getConfirmMessageRemoveQuestion( _form, _formDisplay );
+        UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_COMPOSITE ) );
+        url.addParameter( FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
+
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, strMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+
+        return redirect( request, strMessageUrl );
+    }
+    
+    private String getConfirmMessageRemoveQuestion( Form form , FormDisplay formDisplay)
+    {
+        String strMessage = StringUtils.EMPTY;
+        if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) )
         {
-            if ( _form.isActive( ) )
+            if ( form.isActive( ) )
             {
                 strMessage = WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE;
             }
@@ -507,26 +508,20 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
                 strMessage = WARNING_CONFIRM_REMOVE_QUESTION;
             }
         }
-
-        if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) ) )
-        {
-            if ( _form.isActive( ) )
+        else
+            if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) )
             {
-                strMessage = WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE;
+                if ( form.isActive( ) )
+                {
+                    strMessage = WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE;
+                }
+                else
+                {
+                    strMessage = WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS;
+                }
+    
             }
-            else
-            {
-                strMessage = WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS;
-            }
-
-        }
-
-        UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_COMPOSITE ) );
-        url.addParameter( FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
-
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, strMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
-
-        return redirect( request, strMessageUrl );
+        return strMessage;
     }
 
     /**
