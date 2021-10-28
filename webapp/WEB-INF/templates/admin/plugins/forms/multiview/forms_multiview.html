@@ -1,11 +1,20 @@
 <@row>
 	<@columns>
 		<@box>
-			<@boxHeader id='multiviewFormsHeader' title='#i18n{forms.multiviewForms.boxTitle}' />
+			<@boxHeader id='multiviewFormsHeader' title='#i18n{forms.multiviewForms.boxTitle}' skipHeader=true />
 			<@boxBody>
 				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='inline'>
 					<#include "includes/include_manage_multiview_forms_header.html">
 				</@tform>
+				<@tabs class='mt-3'>
+					<@tabList>
+						<#list form_panel_list as form_panel>
+							<#if form_panel.template??>
+								${form_panel.template}
+							</#if>
+						</#list>
+					</@tabList>
+				</@tabs>
 				<#if table_template?has_content>
 					<@div id="multi-form-list">
 						${table_template}
