@@ -84,7 +84,7 @@ public interface IEntryDisplayService
      * @return the column corresponding the the current entryDisplayService
      */
     IFormColumn getFormColumn( int nFormColumnPosition, String strColumnTitle );
-    
+
     /**
      * Return from the given map the list of Response of the model
      * 

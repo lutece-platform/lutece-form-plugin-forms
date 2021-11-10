@@ -104,7 +104,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
             qpGuid.setDefaultOperator( QueryParser.Operator.AND );
 
             String searchedText = normalizeSearchText( formSearchConfig.getSearchedText( ) );
-            
+
             Query queryContent = qpContent.parse( searchedText );
             Query queryDateCreation = qpDateCreation.parse( searchedText );
             Query queryDateUpdate = qpDateUpdate.parse( searchedText );
@@ -155,7 +155,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         }
         return Normalizer.normalize( text, Normalizer.Form.NFD ).replaceAll( "\\p{M}", "" );
     }
-    
+
     /**
      * {@inheritDoc }
      */

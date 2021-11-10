@@ -81,9 +81,9 @@ public final class PdfUtil
             String group = cell.getGroup( );
             int nbLines = 1;
 
-            double coldWidthTitle = tableWidth / 5; 
+            double coldWidthTitle = tableWidth / 5;
             double currentColWidth = tableWidth - coldWidthTitle;
-            
+
             if ( group != null )
             {
                 String [ ] wrappedGroup = getWrappedText( font, fontSize, coldWidthTitle, group );

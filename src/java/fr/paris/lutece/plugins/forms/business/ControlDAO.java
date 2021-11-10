@@ -111,7 +111,7 @@ public final class ControlDAO implements IControlDAO
             int nIndex = 1;
             daoUtil.setInt( nIndex++, nIdControl );
             daoUtil.setInt( nIndex, nIdQuestion );
-    
+
             daoUtil.executeUpdate( );
         }
 
@@ -129,7 +129,7 @@ public final class ControlDAO implements IControlDAO
             daoUtil.setInt( nIndex++, nIdControl );
             daoUtil.setInt( nIndex++, nIdQuestion );
             daoUtil.setString( nIndex, strValue );
-    
+
             daoUtil.executeUpdate( );
         }
 
@@ -146,7 +146,7 @@ public final class ControlDAO implements IControlDAO
         {
             daoUtil.setInt( 1, nKey );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 control = dataToObject( daoUtil );
@@ -166,7 +166,7 @@ public final class ControlDAO implements IControlDAO
         {
             daoUtil.setInt( 1, nIdControl );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 listQuestion.add( daoUtil.getInt( PARAMETER_QUESTION_ID ) );
@@ -237,16 +237,16 @@ public final class ControlDAO implements IControlDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
         {
             int nIndex = 1;
-    
+
             daoUtil.setInt( nIndex++, control.getId( ) );
             daoUtil.setString( nIndex++, control.getValue( ) );
             daoUtil.setString( nIndex++, control.getErrorMessage( ) );
             daoUtil.setString( nIndex++, control.getValidatorName( ) );
             daoUtil.setString( nIndex++, control.getControlType( ) );
             daoUtil.setInt( nIndex++, control.getIdControlTarget( ) );
-    
+
             daoUtil.setInt( nIndex, control.getId( ) );
-    
+
             daoUtil.executeUpdate( );
         }
     }
@@ -261,7 +261,7 @@ public final class ControlDAO implements IControlDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 controlList.add( dataToObject( daoUtil ) );
@@ -280,7 +280,7 @@ public final class ControlDAO implements IControlDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 controlList.add( daoUtil.getInt( PARAMETER_CONTROL_ID ) );
@@ -299,7 +299,7 @@ public final class ControlDAO implements IControlDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 controlList.addItem( daoUtil.getInt( PARAMETER_CONTROL_ID ), daoUtil.getString( PARAMETER_VALUE ) );
@@ -317,7 +317,7 @@ public final class ControlDAO implements IControlDAO
             daoUtil.setInt( 1, nIdControlTarget );
             daoUtil.setString( 2, controlType.getLabel( ) );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 listControl.add( dataToObject( daoUtil ) );
@@ -335,7 +335,7 @@ public final class ControlDAO implements IControlDAO
             daoUtil.setInt( 1, nIdQuestion );
             daoUtil.setString( 2, strControlType );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 listControl.add( dataToObject( daoUtil ) );
@@ -376,7 +376,7 @@ public final class ControlDAO implements IControlDAO
         {
             daoUtil.setInt( 1, nIdQuestion );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 controlList.add( dataToObject( daoUtil ) );
@@ -396,7 +396,7 @@ public final class ControlDAO implements IControlDAO
         {
             daoUtil.setInt( 1, nIdControl );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 controlList.addItem( daoUtil.getInt( PARAMETER_QUESTION_ID ), daoUtil.getString( PARAMETER_VALUE ) );

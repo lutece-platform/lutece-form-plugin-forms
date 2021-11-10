@@ -305,7 +305,7 @@ public class FormXPage extends MVCApplication
             SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
             return null;
         }
-        
+
         Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
         checkAuthentication( form, request );
 

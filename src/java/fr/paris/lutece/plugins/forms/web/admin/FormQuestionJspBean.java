@@ -457,7 +457,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     {
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
         int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
-        
+
         if ( nIdStep == INTEGER_MINUS_ONE || nIdDisplay == INTEGER_MINUS_ONE )
         {
             redirectToViewManageForm( request );
@@ -493,8 +493,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 
         return redirect( request, strMessageUrl );
     }
-    
-    private String getConfirmMessageRemoveQuestion( Form form , FormDisplay formDisplay)
+
+    private String getConfirmMessageRemoveQuestion( Form form, FormDisplay formDisplay )
     {
         String strMessage = StringUtils.EMPTY;
         if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) )
@@ -519,7 +519,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
                 {
                     strMessage = WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS;
                 }
-    
+
             }
         return strMessage;
     }

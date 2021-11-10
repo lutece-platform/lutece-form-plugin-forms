@@ -127,8 +127,7 @@ public abstract class GenericFormsProvider implements IProvider
                 Field fieldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
                 if ( fieldFile != null )
                 {
-                    IFileStoreServiceProvider fileStoreprovider = FileService.getInstance( )
-                            .getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
+                    IFileStoreServiceProvider fileStoreprovider = FileService.getInstance( ).getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
 
                     Map<String, String> additionnalData = new HashMap<>( );
                     additionnalData.put( FileService.PARAMETER_RESOURCE_ID, String.valueOf( entry.getIdResource( ) ) );
@@ -143,8 +142,7 @@ public abstract class GenericFormsProvider implements IProvider
                 {
                     value = formQuestionResponse.getEntryResponse( ).stream( ).map(
                             response -> entryTypeService.getResponseValueForRecap( formQuestionResponse.getQuestion( ).getEntry( ), _request, response, null ) )
-                            .filter( StringUtils::isNotEmpty )
-                            .collect( Collectors.joining( ", " ) );
+                            .filter( StringUtils::isNotEmpty ).collect( Collectors.joining( ", " ) );
                 }
             if ( notifyMarker.getValue( ) == null )
             {

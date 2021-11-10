@@ -71,7 +71,8 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 
     private static final FormQuestionEntryResponseDAO _formQuestionEntryResponseDAO = new FormQuestionEntryResponseDAO( );
 
-    private static final String PARAMETER_QUESTION_RESPONSE_ID =  "id_question_response";
+    private static final String PARAMETER_QUESTION_RESPONSE_ID = "id_question_response";
+
     /**
      * {@inheritDoc }
      */
@@ -85,9 +86,9 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getId( ) );
             daoUtil.setInt( ++nIndex, formQuestionResponse.getIdStep( ) );
             daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
-    
+
             daoUtil.executeUpdate( );
-    
+
             if ( daoUtil.nextGeneratedKey( ) )
             {
                 formQuestionResponse.setId( daoUtil.getGeneratedKeyInt( 1 ) );
@@ -115,7 +116,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         {
             daoUtil.setInt( 1, nKey );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 formQuestionResponse = dataToObject( daoUtil );
@@ -159,7 +160,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         {
             daoUtil.setInt( 1, nIdQuestion );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 formQuestionResponseList.add( dataToObject( daoUtil ) );
@@ -198,9 +199,9 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getId( ) );
             daoUtil.setInt( ++nIndex, formQuestionResponse.getIdStep( ) );
             daoUtil.setInt( ++nIndex, formQuestionResponse.getQuestion( ).getIterationNumber( ) );
-    
+
             daoUtil.setInt( ++nIndex, formQuestionResponse.getId( ) );
-    
+
             daoUtil.executeUpdate( );
         }
         storeResponses( formQuestionResponseSaved, formQuestionResponse, plugin );
@@ -269,7 +270,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
             daoUtil.setInt( 1, nIdFormResponse );
             daoUtil.setInt( 2, nIdStep );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 formQuestionResponseList.add( dataToObject( daoUtil ) );
@@ -321,7 +322,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         {
             daoUtil.setInt( 1, nIdFormResponse );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 formQuestionResponseList.add( dataToObject( daoUtil ) );
@@ -636,7 +637,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
                 int nIndex = 0;
                 daoUtil.setInt( ++nIndex, formQuestionEntryResponse._nIdQuestionResponse );
                 daoUtil.setInt( ++nIndex, formQuestionEntryResponse._response.getIdResponse( ) );
-    
+
                 daoUtil.executeUpdate( );
             }
         }
