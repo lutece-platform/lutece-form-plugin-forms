@@ -40,15 +40,15 @@
             <feature-level>1</feature-level>
             <feature-url>jsp/admin/plugins/forms/ManageForms.jsp</feature-url>
             <feature-icon-url/>
-      </admin-feature>
-      <admin-feature>
+        </admin-feature>
+        <admin-feature>
             <feature-id>FORMS_MULTIVIEW</feature-id>
             <feature-title>forms.adminFeature.multiviewForms.name</feature-title>
             <feature-description>forms.adminFeature.multiviewForms.description</feature-description>
             <feature-level>2</feature-level>
             <feature-url>jsp/admin/plugins/forms/MultiviewForms.jsp</feature-url>
             <feature-icon-url/>
-      </admin-feature>
+        </admin-feature>
     </admin-features>
 
     <!-- XPages parameters -->
@@ -64,6 +64,10 @@
         <application>
             <application-id>formsResponse</application-id>
             <application-class>fr.paris.lutece.plugins.forms.web.FormResponseXPage</application-class>
+        </application>
+        <application>
+            <application-id>formresponseslist</application-id>
+            <application-class>fr.paris.lutece.plugins.forms.web.FormResponsesListXPage</application-class>
         </application>
     </applications>
 
