@@ -42,6 +42,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+
 /**
  * This class provides Data Access methods for Group objects
  */
@@ -211,6 +213,10 @@ public final class GroupDAO implements IGroupDAO
     public List<Group> selectGroupsListByListIdStep( List<Integer> idSteplist, Plugin plugin )
     {
         List<Group> groupList = new ArrayList<>( );
+        if ( CollectionUtils.isEmpty( idSteplist ) )
+        {
+            return groupList;
+        }
 
         String query = SQL_QUERY_SELECTALL + " WHERE id_step IN ( ";
         query += idSteplist.stream( ).map( i -> "?" ).collect( Collectors.joining( "," ) );

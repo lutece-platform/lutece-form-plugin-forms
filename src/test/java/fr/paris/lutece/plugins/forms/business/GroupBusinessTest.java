@@ -33,6 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections4.CollectionUtils;
+
 import fr.paris.lutece.test.LuteceTestCase;
 
 /**
@@ -82,8 +87,17 @@ public class GroupBusinessTest extends LuteceTestCase
         assertEquals( groupStored.getIterationMin( ), group.getIterationMin( ) );
 
         // List test
-        GroupHome.getGroupsList( );
-
+        List<Group> list = GroupHome.getGroupsList( );
+        assertEquals( 1, list.size( ) );
+        
+        List<Integer> idStepList = new ArrayList<>( );
+        list = GroupHome.getGroupsListByIdStepList( idStepList );
+        assertEquals( 0, list.size( ) );
+        
+        idStepList.add( IDSTEP2 );
+        list = GroupHome.getGroupsListByIdStepList( idStepList );
+        assertEquals( 1, list.size( ) );
+        
         // Delete test
         GroupHome.remove( group.getId( ) );
         groupStored = GroupHome.findByPrimaryKey( group.getId( ) );
