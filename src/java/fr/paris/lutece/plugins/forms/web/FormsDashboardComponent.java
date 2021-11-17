@@ -34,9 +34,11 @@
 package fr.paris.lutece.plugins.forms.web;
 
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -47,6 +49,8 @@ import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.plugins.forms.business.FormActionHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.right.RightHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -105,10 +109,15 @@ public class FormsDashboardComponent extends DashboardComponent
             List<FormAction> listAuthorisedActions = (List<FormAction>) RBACService.getAuthorizedActionsCollection( listFormActions, form, (User) user );
             form.setActions( listAuthorisedActions );
         }
+        String strTimespamp = Long.toString( new Date( ).getTime( ) );
+        Map<String, String> formIdToToken = displayList.stream( ).filter( f -> !f.isActive( ) )
+                .collect( Collectors.toMap( f -> Integer.toString(  f.getId( ) ), f -> FormsUtils.getInactiveBypassToken( f, strTimespamp ) ) );
 
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_FORM_LIST, displayList );
         model.put( MARK_URL, url.getUrl( ) );
+        model.put( FormsConstants.MARK_TIMESTAMP, strTimespamp );
+        model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
 
         HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_DASHBOARD, user.getLocale( ), model );
 

@@ -90,6 +90,9 @@ public final class FormsConstants
     public static final String MARK_ANONYMIZATION_HELP = "anonymization_help_message";
     public static final String MARK_BREADCRUMBS = "breadcrumb_template";
     public static final String VALUE_VALIDATOR_LISTEQUESTION_NAME = "forms_listQuestionValidator";
+    public static final String MARK_TIMESTAMP = "timestamp";
+    public static final String MARK_INACTIVEBYPASSTOKENS = "inactiveBypassTokens";
+
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -137,6 +140,8 @@ public final class FormsConstants
     public static final String PARAMETER_DISPLAYED_QUESTIONS = "displayed_questions";
     public static final String PARAMETER_INIT = "init";
     public static final String PARAMETER_ID_QUESTION_TO_REMOVE = "id_rm_question";
+    public static final String PARAMETER_TIMESTAMP = "ts";
+    public static final String PARAMETER_TOKEN = "token";
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";
@@ -166,6 +171,7 @@ public final class FormsConstants
     public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "entrytype.myluteceuserattribute.attributes.list";
     public static final String CONSTANT_MYLUTECE_ATTRIBUTE_I18N_PREFIX = "forms.entrytype.myluteceuserattribute.attribute.";
     public static final String PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT = "forms.export.formResponse.form.date.creation.format";
+    public static final String PROPERTY_INACTIVE_BYPASS_DURATION_MILLISECONDS = "forms.inactive.bypass.duration.milliseconds";
 
     // Constants
     public static final int DEFAULT_FILTER_VALUE = NumberUtils.INTEGER_MINUS_ONE;
