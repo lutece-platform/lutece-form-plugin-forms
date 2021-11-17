@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -71,6 +72,7 @@ import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
@@ -91,6 +93,7 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
@@ -125,6 +128,7 @@ public class FormXPage extends MVCApplication
     private static final String MESSAGE_ERROR_STEP_NOT_FINAL = "forms.error.step.isnot.final";
     private static final String MESSAGE_STEP_TITLE = "forms.step.title";
     private static final String MESSAGE_SUMMARY_TITLE = "forms.summary.title";
+    private static final String MESSAGE_WARNING_INACTIVE_STATE_BYPASSED = "forms.warning.inactive.state.bypassed";
     /**
      * Generated serial id
      */
@@ -174,6 +178,7 @@ public class FormXPage extends MVCApplication
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
     private IBreadcrumb _breadcrumb;
+    private boolean _bInactiveStateBypassed;
 
     /**
      * Return the default XPage with the list of all available Form
@@ -325,7 +330,7 @@ public class FormXPage extends MVCApplication
         String strPathForm = form.getTitle( );
 
         Map<String, Object> model = getModel( );
-        if ( form.isActive( ) )
+        if ( form.isActive( ) || bypassInactiveState( form, request ) )
         {
             if ( _breadcrumb == null )
             {
@@ -351,6 +356,53 @@ public class FormXPage extends MVCApplication
         xPage.setPathLabel( strPathForm );
 
         return xPage;
+    }
+
+    /**
+     * Does the request contain parameters to bypass the inactive state of the
+     * form
+     * 
+     * @param form
+     *            the forme
+     * @param request
+     *            thre request
+     * @return <code>true</code> if the request contains valid bypass
+     *         parameters, <code>false</code> otherwise
+     */
+    private boolean bypassInactiveState( Form form, HttpServletRequest request )
+    {
+        if ( _bInactiveStateBypassed )
+        {
+            return true;
+        }
+        String strTimestamp = request.getParameter( FormsConstants.PARAMETER_TIMESTAMP );
+        String strToken = request.getParameter( FormsConstants.PARAMETER_TOKEN );
+        if ( StringUtils.isBlank( strToken ) || !StringUtils.isNumeric( strTimestamp ) )
+        {
+            return false;
+        }
+        String refToken = FormsUtils.getInactiveBypassToken( form, strTimestamp );
+        if ( !refToken.equals( strToken ) )
+        {
+            return false;
+        }
+        long now = new Date( ).getTime( );
+        long timestampAge = now - Long.parseLong( strTimestamp );
+        if ( timestampAge < 0 )
+        {
+            return false;
+        }
+        long lBypassDuration = AppPropertiesService
+                .getPropertyLong( FormsConstants.PROPERTY_INACTIVE_BYPASS_DURATION_MILLISECONDS, 1000L * 60 * 30 ); // Half
+                                                                                                                    // hour
+                                                                                                                    // in
+                                                                                                                    // milliseconds
+        if ( timestampAge <= lBypassDuration )
+        {
+            _bInactiveStateBypassed = true;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -412,6 +464,11 @@ public class FormXPage extends MVCApplication
                 _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( request ), DisplayType.EDITION_FRONTOFFICE ) );
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
+        if ( bypassInactiveState( form, request ) )
+        {
+            addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
+        }
+        fillCommons( model );
     }
 
     /**
@@ -549,7 +606,7 @@ public class FormXPage extends MVCApplication
             form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
         }
 
-        Map<String, Object> model = buildModelForSummary( request );
+        Map<String, Object> model = buildModelForSummary( form, request );
         model.put( FormsConstants.MARK_ID_FORM, form.getId( ) );
         model.put( FormsConstants.MARK_FORM, form );
 
@@ -579,7 +636,7 @@ public class FormXPage extends MVCApplication
      *            the request
      * @return the model
      */
-    private Map<String, Object> buildModelForSummary( HttpServletRequest request )
+    private Map<String, Object> buildModelForSummary( Form form, HttpServletRequest request )
     {
         Map<String, Object> mapFormResponseSummaryModel = getModel( );
 
@@ -587,7 +644,11 @@ public class FormXPage extends MVCApplication
 
         List<String> listStepHtml = buildStepsHtml( request, listValidatedStep );
         mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, listStepHtml );
-
+        if ( bypassInactiveState( form, request ) )
+        {
+            addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
+        }
+        fillCommons( mapFormResponseSummaryModel );
         return mapFormResponseSummaryModel;
     }
 
@@ -714,6 +775,10 @@ public class FormXPage extends MVCApplication
         Map<String, Object> model = getModel( );
 
         model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
+        if ( bypassInactiveState( form, request ) )
+        {
+            addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
+        }
 
         init( request );
 
@@ -731,6 +796,7 @@ public class FormXPage extends MVCApplication
         }
 
         model.put( FormsConstants.PARAMETER_BACK_URL, strBackUrl );
+        fillCommons( model );
 
         XPage xPage = getXPage( TEMPLATE_FORM_SUBMITTED, getLocale( request ), model );
         xPage.setTitle( form.getTitle( ) );
@@ -778,7 +844,7 @@ public class FormXPage extends MVCApplication
             form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
         }
 
-        if ( !form.isActive( ) )
+        if ( !form.isActive( ) && !bypassInactiveState( form, request ) )
         {
             if ( StringUtils.isNotEmpty( form.getUnavailableMessage( ) ) )
             {
@@ -1271,6 +1337,10 @@ public class FormXPage extends MVCApplication
      */
     private void saveFormResponse( Form form, HttpServletRequest request ) throws SiteMessageException
     {
+        if ( _bInactiveStateBypassed )
+        {
+            return; // form was in testing mode; do not save response
+        }
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         if ( form.isAuthentificationNeeded( ) )
         {
@@ -1370,6 +1440,7 @@ public class FormXPage extends MVCApplication
         _currentStep = null;
         _stepDisplayTree = null;
         _breadcrumb = null;
+        _bInactiveStateBypassed = false;
         FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
     }
 

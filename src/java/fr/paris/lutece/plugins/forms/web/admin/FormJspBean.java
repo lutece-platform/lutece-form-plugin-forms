@@ -33,10 +33,12 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -61,6 +63,7 @@ import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.json.FormJsonService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.BreadcrumbManager;
 import fr.paris.lutece.plugins.genericattributes.business.GenAttFileItem;
 import fr.paris.lutece.portal.business.file.File;
@@ -240,6 +243,10 @@ public class FormJspBean extends AbstractJspBean
 
         }
 
+        String strTimespamp = Long.toString( new Date( ).getTime( ) );
+        Map<String, String> formIdToToken = paginator.getPageItems( ).stream( ).filter( f -> !f.isActive( ) )
+                .collect( Collectors.toMap( f -> Integer.toString(  f.getId( ) ), f -> FormsUtils.getInactiveBypassToken( f, strTimespamp ) ) );
+
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, EMPTY_STRING + _nItemsPerPage );
 
@@ -248,6 +255,8 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_PERMISSION_CREATE_FORMS,
                 RBACService.isAuthorized( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, (User) adminUser ) );
         model.put( MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN, PluginService.isPluginEnable( KIBANA_FORMS_PLUGIN_NAME ) );
+        model.put( FormsConstants.MARK_TIMESTAMP, strTimespamp );
+        model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
 
         setPageTitleProperty( EMPTY_STRING );
 

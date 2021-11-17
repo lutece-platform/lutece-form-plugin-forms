@@ -71,8 +71,13 @@
                                     </#list>
                                 </#if>
                                 <#if form.active>
-                                    <@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' color='success' />
+                                	<#assign inactiveBypass=''>
+                                	<#assign color='success'>
+                                <#else>
+                                	<#assign inactiveBypass='&ts='+timestamp+'&token='+inactiveBypassTokens[form.id?string]>
+                                	<#assign color='warning'>
                                 </#if>
+                                <@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' color=color />
                                 <#if is_active_kibana_forms_plugin>
                                 	<@aButton href='jsp/admin/plugins/kibana/KibanaDashboard.jsp?view=dashboard&tab=FormsDataSource_${form.id}' title='#i18n{forms.manageForm.stats.label}' hideTitle=['all'] params='target="_blank"' buttonIcon='chart-area' size='sm' color='info' />
                                 </#if>
