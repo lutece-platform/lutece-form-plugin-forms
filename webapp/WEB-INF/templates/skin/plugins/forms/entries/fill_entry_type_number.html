@@ -29,7 +29,7 @@
 					</#if>
 					<#assign field_max=getFieldByCode( entry, "max")>
 					<#if field_max.value??>
-						min="${field_max.value?number}"
+						max="${field_max.value?number}"
 					</#if>
 				class="${entry.CSSClass!} "	/>
 					
