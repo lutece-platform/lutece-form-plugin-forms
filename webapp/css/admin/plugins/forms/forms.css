@@ -203,8 +203,3 @@ body, .wrapper{ height: 100%; overflow: visible; }
 @media ( min-width: 992px ) { 
 	#modalIframe{ height: 55vh }
 }
-
-
-@media ( min-width: 1201px ) { 
-	#modalIframe{ height: 35vh }
-}
