@@ -25,6 +25,9 @@ ${breadcrumb_template}
 						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
 							<@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
 						</@formGroup>
+						<@formGroup labelFor='suffix' labelKey='#i18n{forms.createEntry.labelSuffix}' helpKey='#i18n{forms.createEntry.labelSuffixComment}'>
+							<@input type='text' name='suffix' id='suffix' value='' maxlength=255 />
+						</@formGroup>
 						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
 							<@input type='textarea' name='help_message' id='help_message' rows=2></@input>
 						</@formGroup>

@@ -24,6 +24,12 @@ ${breadcrumb_template}
 						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
 							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
 						</@formGroup>
+						<#if entry.fields?? && entry.fields?has_content>
+							<#assign suffix = getFieldValueByCode( entry, 'suffix') >
+							<@formGroup labelFor='suffix' labelKey='#i18n{forms.createEntry.labelSuffix}' helpKey='#i18n{forms.createEntry.labelSuffixComment}'>
+								<@input type='text' name='suffix' value=suffix maxlength=255 />
+							</@formGroup>
+						</#if>
 						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}'>
 							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
 						</@formGroup>
