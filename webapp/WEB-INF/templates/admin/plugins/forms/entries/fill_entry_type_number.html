@@ -2,7 +2,11 @@
 <#assign field=getFieldByCode( entry, "text_config")>
 <#assign field_min=getFieldByCode( entry, "min")>
 <#assign field_max=getFieldByCode( entry, "max")>
-
+<#assign suffix = '' >
+<#if entry.fields?? && entry.fields?has_content>
+	<#assign suffix = getFieldValueByCode( entry, 'suffix') >
+</#if>
+	
 <#if list_responses?has_content>
 	<#list list_responses as response>
 		<#if response.entry.idEntry == entry.idEntry>
@@ -30,7 +34,12 @@
 	<#assign max=field_max.value?number />
 </#if>
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
-	<@input type='number' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue min=min max=max/>
+	<@inputGroup>
+		<@input type='number' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue min=min max=max/>
+		<#if suffix!=''>
+			<@inputGroupItem type='text'>${suffix}</@inputGroupItem>
+		</#if>
+	</@inputGroup>
 </@formGroup>
 
 <#if list_responses??>
