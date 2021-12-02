@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
@@ -112,15 +113,19 @@ public abstract class AbstractPatternValidator extends AbstractValidator
         if ( regularExpression != null )
         {
             IRegularExpressionService service = SpringContextService.getBean( BEAN_NAME_REGULAR_EXPRESSION );
+            if ( CollectionUtils.isEmpty( questionResponse.getEntryResponse( ) ) )
+            {
+                return !questionResponse.getQuestion( ).getEntry( ).isMandatory( );
+            }
             for ( Response response : questionResponse.getEntryResponse( ) )
             {
                 String toValidate = getValueToValidate( response );
-                if ( StringUtils.isNotEmpty( toValidate ) )
+                if ( StringUtils.isNotEmpty( toValidate ) && !service.isMatches( toValidate, regularExpression ) )
                 {
-                    return service.isMatches( toValidate, regularExpression );
+                    return false;
                 }
             }
-            return !questionResponse.getQuestion( ).getEntry( ).isMandatory( );
+            return true;
         }
         return false;
     }
