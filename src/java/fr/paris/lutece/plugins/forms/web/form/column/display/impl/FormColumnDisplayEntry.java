@@ -33,8 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.column.display.impl;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -54,7 +52,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.util.date.DateUtil;
 
 /**
  * Implementation of the IFormColumnDisplay for the Entry column
@@ -71,9 +69,6 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
     private static final String MARK_ENTRY_VALUES = "entry_values";
     private static final String MARK_COLUMN_SORT_ATTRIBUTE = "column_sort_attribute";
     private static final String MARK_SORT_URL = "sort_url";
-
-    private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy" );
-    private final DateFormat _dateFormat = new SimpleDateFormat( FILTER_DATE_FORMAT );
 
     /**
      * {@inheritDoc}
@@ -138,7 +133,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
                     {
                         Long convertedLong = Long.parseLong( stringToConvert );
                         Date date = new Date( convertedLong );
-                        String strDate = _dateFormat.format( date );
+                        String strDate = DateUtil.getDateString( date, locale );
 
                         listEntryValues.add( strDate );
                     }

@@ -37,7 +37,12 @@
     </#list>
   </#if>
  
-  <@getDatePickerBootstrap idField="${idName}" language=locale.language />	
+<#assign default=''>
+<#if field.valueTypeDate?? >
+	<#assign default=field.valueTypeDate?iso_local>
+</#if>
+								
+  <@getDate idField="${idName}" language=locale.language defaultDate=default/>	
   <script type="text/javascript" src="js/jquery/plugins/moment.min.js"></script>
   <script type="text/javascript">
     $( document ).ready(function() {

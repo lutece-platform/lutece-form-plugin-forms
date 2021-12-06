@@ -3,7 +3,9 @@
     <@columns sm=9>
     <#if list_responses?has_content>
         <#list list_responses as response>
-            <@p>${response.toStringValueResponse!''}</@p>
+        	<#if response.responseValue??>
+            	<@p>${response.responseValue?number?number_to_date}</@p>
+            </#if>
         </#list>
     </#if>
     </@columns>

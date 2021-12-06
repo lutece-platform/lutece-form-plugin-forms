@@ -16,7 +16,13 @@
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory>
     <@inputGroup>
 		<#assign field = getFieldByCode( entry, "default_date_value" )>
-		<@input type='date' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=(response.toStringValueResponse)!(field.valueTypeDate)! />
+		<#assign default=''>
+		<#if response?? && response.responseValue??>
+			<#assign default=response.responseValue>
+		<#elseif field.valueTypeDate?? >
+			<#assign default=field.valueTypeDate?iso_local>
+		</#if>
+		<@input type='date' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=(response.toStringValueResponse)!(default)! />
 		<@inputGroupItem type='text'>
 			<@icon style='calendar' />
 		</@inputGroupItem>
