@@ -41,6 +41,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
+import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -48,7 +49,6 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.service.StepService;
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 /**
@@ -58,14 +58,20 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class FormResponseCsvExport
 {
-    private static final String SEPARATOR = FormsConstants.SEPARATOR_SEMICOLON;
+    
     private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
     private static final String MESSAGE_EXPORT_FORM_STATE = "forms.export.formResponse.form.state";
     private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
     private static final String MESSAGE_EXPORT_FORM_DATE_UPDATE = "forms.export.formResponse.form.date.update";
 
     private final CSVHeader _csvHeader = new CSVHeader( );
+    private String _csvSeparator;
 
+    public FormResponseCsvExport( )
+    {
+        _csvSeparator = MultiviewConfig.getInstance( ).getCsvSeparator( );
+    }
+    
     /**
      * Build the CSV string for column line
      */
@@ -91,17 +97,17 @@ public class FormResponseCsvExport
         StringBuilder sbCsvColumn = new StringBuilder( );
 
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ) ) ) );
-        sbCsvColumn.append( SEPARATOR );
+        sbCsvColumn.append( _csvSeparator );
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_CREATION, I18nService.getDefaultLocale( ) ) ) );
-        sbCsvColumn.append( SEPARATOR );
+        sbCsvColumn.append( _csvSeparator );
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_DATE_UPDATE, I18nService.getDefaultLocale( ) ) ) );
-        sbCsvColumn.append( SEPARATOR );
+        sbCsvColumn.append( _csvSeparator );
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_STATE, I18nService.getDefaultLocale( ) ) ) );
-        sbCsvColumn.append( SEPARATOR );
+        sbCsvColumn.append( _csvSeparator );
 
         for ( Question question : _csvHeader.getColumnToExport( ) )
         {
-            sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question ) ) ).append( SEPARATOR );
+            sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question ) ) ).append( _csvSeparator );
         }
 
         return sbCsvColumn.toString( );
@@ -112,7 +118,7 @@ public class FormResponseCsvExport
      */
     public String buildCsvDataToExport( FormResponse formResponse, String state )
     {
-        CSVDataLine csvDataLine = new CSVDataLine( formResponse, state );
+        CSVDataLine csvDataLine = new CSVDataLine( formResponse, state, _csvSeparator );
 
         for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
         {
@@ -132,7 +138,7 @@ public class FormResponseCsvExport
 
         for ( Question question : _csvHeader.getColumnToExport( ) )
         {
-            sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append( SEPARATOR );
+            sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append( _csvSeparator );
         }
 
         sbCsvData.append( sbRecordContent.toString( ) );
