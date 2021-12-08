@@ -22,3 +22,6 @@ INSERT INTO forms_global_action (id_action, code, name_key, description_key, act
 --
 DELETE FROM core_datastore WHERE entity_key='forms.display.form.columnTitle';
 INSERT INTO core_datastore ( entity_key, entity_value ) VALUES( 'forms.display.form.columnTitle', 'true' );
+
+DELETE FROM core_datastore WHERE entity_key='forms.display.form.csv.separator';
+INSERT INTO core_datastore ( entity_key, entity_value ) VALUES( 'forms.display.form.csv.separator', ';' );

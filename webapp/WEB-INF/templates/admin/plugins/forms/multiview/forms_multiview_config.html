@@ -5,6 +5,9 @@
             <@boxBody>
 				<@tform method='post' name='save_multiview_config' action='jsp/admin/plugins/forms/MultiviewForms.jsp'>
 					<@messages errors=errors />
+					<@formGroup labelKey='#i18n{forms.multiview_config.labelDisplayColumnCsvSeparator}' helpKey='#i18n{forms.multiview_config.labelDisplayColumnCsvSeparator.help}' >
+						<@input type='text' name='csv_separator' id='csv_separator' value=multiview_config.csvSeparator />
+					</@formGroup>
 					<@formGroup labelFor='display_forms_title_column' helpKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle.help}' >
 						<@checkBox labelFor='display_forms_title_column' labelKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle}' name='display_forms_title_column' id='display_forms_title_column' value='1' checked=multiview_config.displayFormsTitleColumn />
 					</@formGroup>

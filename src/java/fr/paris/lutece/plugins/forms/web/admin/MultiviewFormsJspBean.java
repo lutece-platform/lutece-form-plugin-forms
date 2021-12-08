@@ -120,6 +120,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_FORMAT_EXPORT = "format_export";
     private static final String PARAMETER_DISPLAY_FORMS_TITLE_COLUMN = "display_forms_title_column";
+    private static final String PARAMETER_DISPLAY_FORMS_CSV_SEPARATOR = "csv_separator";
     private static final String PARAMETER_DISPLAY_ASSIGNEE_COLUMN = "display_assignee_column";
     private static final String PARAMETER_CHANGE_PANEL = "change_panel";
 
@@ -328,6 +329,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         }
 
         MultiviewConfig config = MultiviewConfig.getInstance( );
+
+        config.setCsvSeparator( request.getParameter( PARAMETER_DISPLAY_FORMS_CSV_SEPARATOR ) );
 
         String strDisplayFormColumnTitle = request.getParameter( PARAMETER_DISPLAY_FORMS_TITLE_COLUMN );
         config.setDisplayFormsTitleColumn( strDisplayFormColumnTitle != null );
