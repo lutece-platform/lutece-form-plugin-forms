@@ -30,6 +30,10 @@
 					<#if field_max_size?number!=-1>
 						maxlength="${field_max_size?number}"
 					</#if>
+					<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+					<#if placeholder!=''> 
+						placeholder='${placeholder}'
+					</#if>
 				class="${entry.CSSClass!} "	/>
 					
 				<#if entry.helpMessage?exists&&entry.helpMessage!=''>

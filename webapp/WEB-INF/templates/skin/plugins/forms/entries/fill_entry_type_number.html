@@ -36,6 +36,10 @@
 					<#if field_max.value??>
 						max="${field_max.value?number}"
 					</#if>
+					<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+					<#if placeholder!=''>
+						placeholder='${placeholder}'
+					</#if>
 				class="${entry.CSSClass!} "	/>
 				<#if suffix!=''>
 					<span class="input-group-addon">${suffix}</span>

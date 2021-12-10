@@ -1,4 +1,3 @@
-<#assign field = getFieldByCode(entry, "text_config") />
 <#assign field_width=getFieldValueByCode( entry, "width") />
 <#assign field_height=getFieldValueByCode( entry, "height") />
 <#assign idName = buildEntryName( entry, entry_iteration_number ) />
@@ -18,6 +17,7 @@
 		</#if>
 	</#list>
 	<#else>
+	<#assign field = getFieldByCode(entry, "text_config") />
 	<#if field.value?exists>
 		<#assign responseContent=field.value />
 	<#else>
@@ -27,7 +27,8 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number ) />
 
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
-	<@input type='textarea' name='${idName}' id='${idName}' cols=field_width?number rows=field_height?number class='${entry.CSSClass!}' richtext=richtext>${responseContent}</@input>	
+	<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+	<@input type='textarea' name='${idName}' id='${idName}' cols=field_width?number rows=field_height?number class='${entry.CSSClass!}' richtext=richtext placeHolder=placeholder>${responseContent}</@input>	
 </@formGroup>
 
 <#if list_responses??>

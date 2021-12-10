@@ -35,7 +35,8 @@
 </#if>
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
 	<@inputGroup>
-		<@input type='number' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue min=min max=max/>
+		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+		<@input type='number' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue min=min max=max placeHolder=placeholder/>
 		<#if suffix!=''>
 			<@inputGroupItem type='text'>${suffix}</@inputGroupItem>
 		</#if>

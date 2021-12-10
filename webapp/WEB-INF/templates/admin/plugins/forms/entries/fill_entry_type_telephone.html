@@ -20,7 +20,8 @@
 </#if>
 
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory>
-    <@input type='tel' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=(response.toStringValueResponse)! params=autocomplete />
+    <#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+    <@input type='tel' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=(response.toStringValueResponse)! params=autocomplete placeHolder=placeholder />
 </@formGroup>
 
 <#if list_responses??>

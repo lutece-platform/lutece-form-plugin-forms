@@ -12,7 +12,8 @@
 	<div class="form-group">
 		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory><span aria-hidden="true"> *</span></#if></label>	
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-			<input type="tel" name="${idName}" id="${idName}" <#if entry.mandatory>required</#if> class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>" value="${(response.toStringValueResponse)!}" <#if field??>autocomplete="${field.value!}"</#if>>
+			<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+			<input type="tel" name="${idName}" id="${idName}" <#if entry.mandatory>required</#if> class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>" value="${(response.toStringValueResponse)!}" <#if field??>autocomplete="${field.value!}"</#if> <#if placeholder!=''> placeholder='${placeholder}' </#if>>
         <#if entry.helpMessage?exists&&entry.helpMessage!=''>
 			<span class="help-block">${entry.helpMessage}</span>
         </#if>

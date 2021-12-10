@@ -22,7 +22,8 @@
 		<#elseif field.valueTypeDate?? >
 			<#assign default=field.valueTypeDate?iso_local>
 		</#if>
-		<@input type='date' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=(response.toStringValueResponse)!(default)! />
+		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+		<@input type='date' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=(response.toStringValueResponse)!(default)! placeHolder=placeholder />
 		<@inputGroupItem type='text'>
 			<@icon style='calendar' />
 		</@inputGroupItem>

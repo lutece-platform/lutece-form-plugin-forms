@@ -33,6 +33,9 @@ ${breadcrumb_template}
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
 							<@input type='textarea' name='comment' id='comment' rows=2></@input>
 						</@formGroup>
+						<@formGroup labelFor='placeholder' labelKey='#i18n{forms.createEntry.labelPlaceholder}'>
+							<@input type='text' name='placeholder' id='placeholder' value='' maxlength=100 />
+						</@formGroup>
 						<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
 							<@input type='textarea' name='value' id='value'></@input>
 						</@formGroup>

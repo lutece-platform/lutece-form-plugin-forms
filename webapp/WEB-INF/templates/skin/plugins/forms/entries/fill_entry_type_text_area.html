@@ -5,10 +5,11 @@
 		<#assign field_height=getFieldValueByCode( entry, "height")>
 		<#assign field_width=getFieldValueByCode( entry, "width")>
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
+		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 		<#if has_error>
-			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="alert alert-danger form-control">${responseContent}</textarea>
+			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="alert alert-danger form-control" <#if placeholder!=''> placeholder='${placeholder}' </#if>>${responseContent}</textarea>
 		<#else>
-			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="${entry.CSSClass!} form-control">${responseContent}</textarea>
+			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="${entry.CSSClass!} form-control" <#if placeholder!=''> placeholder='${placeholder}' </#if>>${responseContent}</textarea>
 		</#if>
 	</#macro>
 	

@@ -27,7 +27,8 @@
 </#if>
 
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
-	<@input type='text' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue />
+	<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+	<@input type='text' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue placeHolder=placeholder/>
 </@formGroup>
 
 <#if list_responses??>

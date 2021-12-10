@@ -30,6 +30,9 @@ ${breadcrumb_template}
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
 							<@input type='textarea' name='comment' id='comment' rows=2></@input>
 						</@formGroup>
+						<@formGroup labelFor='placeholder' labelKey='#i18n{forms.createEntry.labelPlaceholder}'>
+							<@input type='text' name='placeholder' id='placeholder' value='' maxlength=100 />
+						</@formGroup>
 						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.createEntry.labelAutocomplete}' helpKey='#i18n{forms.createEntry.labelHelpMessageAutocomplete}'>
 							<@input type='text' name='autocomplete' id='autocomplete' params=' list="autocompleteList"' />
 							<datalist id="autocompleteList"><option value="tel"><option value="tel-national"></datalist>

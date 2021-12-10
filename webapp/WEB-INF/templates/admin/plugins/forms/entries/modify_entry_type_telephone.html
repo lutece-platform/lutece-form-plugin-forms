@@ -31,6 +31,10 @@ ${breadcrumb_template}
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
 							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
 						</@formGroup>
+						<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+						<@formGroup labelFor='placeholder' labelKey='#i18n{forms.createEntry.labelPlaceholder}'>
+							<@input type='text' name='placeholder' id='placeholder' value=placeholder maxlength=100 />
+						</@formGroup>
 						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.createEntry.labelAutocomplete}' helpKey='#i18n{forms.createEntry.labelHelpMessageAutocomplete}'>
 							<#assign field = getFieldByCode( entry, "autocomplete" ) >
 							<@input type='text' name='autocomplete' id='autocomplete' value="${field.value?if_exists}" params=' list="autocompleteList"' />
