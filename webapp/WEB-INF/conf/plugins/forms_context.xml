@@ -324,7 +324,7 @@
     <bean id="forms.entryTypeCameraDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeCamera" />
     </bean>
-	<bean id="forms.entryTypeTelephoneNumberDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
+	<bean id="forms.entryTypeTelephoneNumberDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeTelephoneDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeTelephoneNumber" />
 	</bean>
 	
