@@ -18,12 +18,12 @@
 		<#assign field = getFieldByCode( entry, "default_date_value" )>
 		<#assign default=''>
 		<#if response?? && response.responseValue??>
-			<#assign default=response.responseValue>
+			<#assign default=response.responseValue?number?number_to_date?iso_local>
 		<#elseif field.valueTypeDate?? >
 			<#assign default=field.valueTypeDate?iso_local>
 		</#if>
 		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-		<@input type='date' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=(response.toStringValueResponse)!(default)! placeHolder=placeholder />
+		<@input type='date' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' defaultDate=default placeHolder=placeholder />
 		<@inputGroupItem type='text'>
 			<@icon style='calendar' />
 		</@inputGroupItem>
