@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +54,7 @@ public class MultiviewConfig
 
         String strDisplayFormColumnAssignee = DatastoreService.getDataValue( FormsConstants.DS_KEY_FORM_ASSIGNEE_COLUMN, "false" );
         _bDisplayFormsAssigneeColumn = Boolean.parseBoolean( strDisplayFormColumnAssignee );
-        
+
         _strCsvSeparator = DatastoreService.getDataValue( FormsConstants.DS_KEY_FORM_CSV_SEPARATOR, ";" );
     }
 
@@ -119,7 +119,8 @@ public class MultiviewConfig
     }
 
     /**
-     * @param strCsvSeparator the strCsvSeparator to set
+     * @param strCsvSeparator
+     *            the strCsvSeparator to set
      */
     public void setCsvSeparator( String strCsvSeparator )
     {

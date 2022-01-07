@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -83,7 +83,7 @@ public class EntryTypeTelephoneDisplayService implements IEntryDisplayService
     {
         model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
         model.put( LOCALE_MARKER, locale );
-        
+
         return model;
     }
 
@@ -108,13 +108,13 @@ public class EntryTypeTelephoneDisplayService implements IEntryDisplayService
         switch( displayType.getMode( ) )
         {
             case EDITION:
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, locale, model ) )
-                        .getHtml( );
+                strEntryHtml = AppTemplateService
+                        .getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, locale, model ) ).getHtml( );
                 break;
             case READONLY:
                 model.put( MARK_ENTRY_TYPE_SERVICE, service );
-                strEntryHtml = AppTemplateService.getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, locale, model ) )
-                        .getHtml( );
+                strEntryHtml = AppTemplateService
+                        .getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, locale, model ) ).getHtml( );
                 break;
             default: // Nothing to do
         }

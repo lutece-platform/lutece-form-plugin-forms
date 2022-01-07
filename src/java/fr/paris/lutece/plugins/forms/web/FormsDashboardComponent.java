@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -111,7 +111,7 @@ public class FormsDashboardComponent extends DashboardComponent
         }
         String strTimespamp = Long.toString( new Date( ).getTime( ) );
         Map<String, String> formIdToToken = displayList.stream( ).filter( f -> !f.isActive( ) )
-                .collect( Collectors.toMap( f -> Integer.toString(  f.getId( ) ), f -> FormsUtils.getInactiveBypassToken( f, strTimespamp ) ) );
+                .collect( Collectors.toMap( f -> Integer.toString( f.getId( ) ), f -> FormsUtils.getInactiveBypassToken( f, strTimespamp ) ) );
 
         Map<String, Object> model = new HashMap<>( );
         model.put( MARK_FORM_LIST, displayList );

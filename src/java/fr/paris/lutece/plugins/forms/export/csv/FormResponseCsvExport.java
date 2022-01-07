@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
  */
 public class FormResponseCsvExport
 {
-    
+
     private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
     private static final String MESSAGE_EXPORT_FORM_STATE = "forms.export.formResponse.form.state";
     private static final String MESSAGE_EXPORT_FORM_DATE_CREATION = "forms.export.formResponse.form.date.creation";
@@ -71,7 +71,7 @@ public class FormResponseCsvExport
     {
         _csvSeparator = MultiviewConfig.getInstance( ).getCsvSeparator( );
     }
-    
+
     /**
      * Build the CSV string for column line
      */
@@ -138,7 +138,8 @@ public class FormResponseCsvExport
 
         for ( Question question : _csvHeader.getColumnToExport( ) )
         {
-            sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) ).append( _csvSeparator );
+            sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) )
+                    .append( _csvSeparator );
         }
 
         sbCsvData.append( sbRecordContent.toString( ) );

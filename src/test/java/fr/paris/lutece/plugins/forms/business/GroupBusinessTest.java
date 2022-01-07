@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -89,15 +89,15 @@ public class GroupBusinessTest extends LuteceTestCase
         // List test
         List<Group> list = GroupHome.getGroupsList( );
         assertEquals( 1, list.size( ) );
-        
+
         List<Integer> idStepList = new ArrayList<>( );
         list = GroupHome.getGroupsListByIdStepList( idStepList );
         assertEquals( 0, list.size( ) );
-        
+
         idStepList.add( IDSTEP2 );
         list = GroupHome.getGroupsListByIdStepList( idStepList );
         assertEquals( 1, list.size( ) );
-        
+
         // Delete test
         GroupHome.remove( group.getId( ) );
         groupStored = GroupHome.findByPrimaryKey( group.getId( ) );

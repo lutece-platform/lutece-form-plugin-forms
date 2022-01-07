@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -359,15 +359,13 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * Does the request contain parameters to bypass the inactive state of the
-     * form
+     * Does the request contain parameters to bypass the inactive state of the form
      * 
      * @param form
      *            the forme
      * @param request
      *            thre request
-     * @return <code>true</code> if the request contains valid bypass
-     *         parameters, <code>false</code> otherwise
+     * @return <code>true</code> if the request contains valid bypass parameters, <code>false</code> otherwise
      */
     private boolean bypassInactiveState( Form form, HttpServletRequest request )
     {
@@ -392,11 +390,10 @@ public class FormXPage extends MVCApplication
         {
             return false;
         }
-        long lBypassDuration = AppPropertiesService
-                .getPropertyLong( FormsConstants.PROPERTY_INACTIVE_BYPASS_DURATION_MILLISECONDS, 1000L * 60 * 30 ); // Half
-                                                                                                                    // hour
-                                                                                                                    // in
-                                                                                                                    // milliseconds
+        long lBypassDuration = AppPropertiesService.getPropertyLong( FormsConstants.PROPERTY_INACTIVE_BYPASS_DURATION_MILLISECONDS, 1000L * 60 * 30 ); // Half
+                                                                                                                                                       // hour
+                                                                                                                                                       // in
+                                                                                                                                                       // milliseconds
         if ( timestampAge <= lBypassDuration )
         {
             _bInactiveStateBypassed = true;

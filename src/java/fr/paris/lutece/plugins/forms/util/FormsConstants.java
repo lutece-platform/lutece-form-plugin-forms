@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -92,7 +92,6 @@ public final class FormsConstants
     public static final String VALUE_VALIDATOR_LISTEQUESTION_NAME = "forms_listQuestionValidator";
     public static final String MARK_TIMESTAMP = "timestamp";
     public static final String MARK_INACTIVEBYPASSTOKENS = "inactiveBypassTokens";
-
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
