@@ -36,10 +36,12 @@ package fr.paris.lutece.plugins.forms.business;
 import java.sql.Timestamp;
 import java.util.List;
 
+import fr.paris.lutece.portal.service.resource.IExtendableResource;
+
 /**
  * This is the business class for the object FormResponse
  */
-public class FormResponse
+public class FormResponse implements IExtendableResource
 {
     /**
      * Form response resource type
@@ -182,5 +184,35 @@ public class FormResponse
     {
         _listFormResponseStep = listFormResponseStep;
     }
+
+	@Override
+	public String getExtendableResourceDescription()
+	{
+		return null;
+	}
+
+	@Override
+	public String getExtendableResourceImageUrl()
+	{
+		return null;
+	}
+
+	@Override
+	public String getExtendableResourceName()
+	{
+		return null;
+	}
+
+	@Override
+	public String getExtendableResourceType()
+	{
+		return RESOURCE_TYPE;
+	}
+
+	@Override
+	public String getIdExtendableResource()
+	{
+		return Integer.toString( _nId );
+	}
 
 }

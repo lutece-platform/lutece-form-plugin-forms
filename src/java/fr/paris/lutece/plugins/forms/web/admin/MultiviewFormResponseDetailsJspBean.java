@@ -87,6 +87,7 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
+import fr.paris.lutece.portal.web.resource.ExtendableResourcePluginActionManager;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.url.UrlItem;
@@ -162,7 +163,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     @View( value = VIEW_FORM_RESPONSE_DETAILS, defaultView = true )
     public String getResponseDetails( HttpServletRequest request ) throws AccessDeniedException
     {
-        int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
+    	String strIdFormResponse = request.getParameter( PARAMETER_ID_FORM_RESPONSE );
+        int nIdFormResponse = NumberUtils.toInt( strIdFormResponse, NumberUtils.INTEGER_MINUS_ONE );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
         if ( formResponse == null )
         {
@@ -200,6 +202,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             _mapFilterValues = fillFilterMapValues( request );
         }
         populateModelWithFilterValues( _mapFilterValues, model );
+        
+        ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model, strIdFormResponse, FormResponse.RESOURCE_TYPE );
 
         return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_VIEW_FORM_RESPONSE, model );
     }
