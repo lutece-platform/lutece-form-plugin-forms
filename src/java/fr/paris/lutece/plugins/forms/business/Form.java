@@ -40,6 +40,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
+import fr.paris.lutece.portal.service.resource.IExtendableResource;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
 
 import java.sql.Date;
@@ -50,7 +51,7 @@ import java.util.List;
 /**
  * This is the business class for the object Form
  */
-public class Form implements AdminWorkgroupResource, RBACResource
+public class Form implements AdminWorkgroupResource, RBACResource, IExtendableResource
 {
 
     /**
@@ -640,4 +641,34 @@ public class Form implements AdminWorkgroupResource, RBACResource
         }
         return Base64.getEncoder( ).encodeToString( _logo.getPhysicalFile( ).getValue( ) );
     }
+
+	@Override
+	public String getExtendableResourceDescription()
+	{
+		return getDescription();
+	}
+
+	@Override
+	public String getExtendableResourceImageUrl()
+	{
+		return null;
+	}
+
+	@Override
+	public String getExtendableResourceName()
+	{
+		return getTitle();
+	}
+
+	@Override
+	public String getExtendableResourceType()
+	{
+		return RESOURCE_TYPE;
+	}
+
+	@Override
+	public String getIdExtendableResource()
+	{
+		return Integer.toString( _nId );
+	}
 }

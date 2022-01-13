@@ -13,7 +13,7 @@ import fr.paris.lutece.portal.service.resource.IExtendableResourceService;
 public class FormResponseExtendableResourceService implements IExtendableResourceService
 {
 
-	private static final String MESSAGE_FORMS_RESOURCE_TYPE_DESCRIPTION = "forms.resource.resourceTypeDescription";
+	private static final String MESSAGE_FORM_RESPONSE_RESOURCE_TYPE_DESCRIPTION = "forms.response.resource.resourceTypeDescription";
 
 	@Override
 	public IExtendableResource getResource(String strIdResource, String strResourceType )
@@ -35,7 +35,7 @@ public class FormResponseExtendableResourceService implements IExtendableResourc
 	@Override
 	public String getResourceTypeDescription(Locale locale)
 	{
-		return I18nService.getLocalizedString( MESSAGE_FORMS_RESOURCE_TYPE_DESCRIPTION, locale );
+		return I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_RESOURCE_TYPE_DESCRIPTION, locale );
 	}
 
 	@Override

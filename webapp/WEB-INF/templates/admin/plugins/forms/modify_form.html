@@ -1,5 +1,8 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
 <@tform class='form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
+<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>
+	${extendableResourceActionsHtml!}
+</#if>
 <@row>
 	<@columns>
 		<@box color='primary'>
