@@ -41,10 +41,9 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
@@ -76,9 +75,8 @@ public class FormResponsePdfExport
 
     public void buildPdfExport( FormResponse formResponse, OutputStream outputStream )
     {
-        try
+        try ( PDDocument pdDocument = new PDDocument( ) )
         {
-            PDDocument pdDocument = new PDDocument( );
             Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
 
             // Filters the FormResponseStep with at least one question exportable in pdf
@@ -97,7 +95,7 @@ public class FormResponsePdfExport
             }
             pdDocument.save( outputStream );
         }
-        catch( IOException | COSVisitorException e )
+        catch( IOException e )
         {
             AppLogService.error( "Error generating pdf for response " + formResponse.getId( ), e );
         }
