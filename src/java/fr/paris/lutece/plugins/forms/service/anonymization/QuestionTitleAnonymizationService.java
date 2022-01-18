@@ -47,7 +47,7 @@ public class QuestionTitleAnonymizationService extends AbstractTextAnonymization
     @Override
     protected String getAnonymisedValue( Entry entry, Response response )
     {
-        return QuestionHome.findByCode( entry.getCode( ) ).getTitle( );
+        return QuestionHome.findByCodeAndEntry( entry.getCode( ), entry.getIdEntry( ) ).getTitle( );
     }
 
 }

@@ -56,6 +56,7 @@ public final class QuestionDAO implements IQuestionDAO
     private static final String SQL_QUERY_SELECT_ALL = "SELECT id_question, title, code, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title, is_filterable_multiview_global, is_filterable_multiview_form_selected, multiview_column_order FROM forms_question";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECT_ALL + " WHERE id_question = ?";
     private static final String SQL_QUERY_SELECT_BY_CODE = SQL_QUERY_SELECT_ALL + " WHERE code = ?";
+    private static final String SQL_QUERY_SELECT_BY_CODE_AND_ENTRY_ID = SQL_QUERY_SELECT_BY_CODE + " AND id_entry = ? ";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question ( title, code, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title, is_filterable_multiview_global, is_filterable_multiview_form_selected,multiview_column_order ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question WHERE id_question = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_question SET id_question = ?, title = ?, code = ?, description = ?, id_entry = ?, id_step = ?, is_visible_multiview_global = ?, is_visible_multiview_form_selected = ?, column_title = ?, is_filterable_multiview_global = ?, is_filterable_multiview_form_selected = ?, multiview_column_order = ? WHERE id_question = ?";
@@ -130,27 +131,41 @@ public final class QuestionDAO implements IQuestionDAO
      * {@inheritDoc }
      */
     @Override
-    public Question loadByCode( String strCode, Plugin plugin )
+    public List<Question> loadByCode( String strCode, Plugin plugin )
     {
+        List<Question> questionList = new ArrayList<>( );
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_CODE, plugin ) )
         {
             daoUtil.setString( 1, strCode );
             daoUtil.executeQuery( );
-            Question question = null;
 
+            while ( daoUtil.next( ) )
+            {
+                Question question = dataToObject( daoUtil );
+                question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
+                questionList.add( question );
+            }
+            return questionList;
+        }
+    }
+    
+    @Override
+    public Question loadByCodeAndEntry( String strCode, int idEntry, Plugin plugin )
+    {
+        Question question = null;
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_CODE_AND_ENTRY_ID, plugin ) )
+        {
+            daoUtil.setString( 1, strCode );
+            daoUtil.setInt( 2, idEntry );
+            daoUtil.executeQuery( );
+            
             if ( daoUtil.next( ) )
             {
                 question = dataToObject( daoUtil );
-            }
-
-            if ( question != null )
-            {
-
                 question.setEntry( getQuestionEntry( question.getIdEntry( ) ) );
             }
-
-            return question;
         }
+        return question;
     }
 
     /**

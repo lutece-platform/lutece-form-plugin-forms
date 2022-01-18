@@ -88,7 +88,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
             String strAttributeSort = FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + columSort + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0";
 
             String strEntryCode = column.getListEntryCode( ).get( 0 );
-            Question question = QuestionHome.findByCode( strEntryCode );
+            Question question = QuestionHome.findByCode( strEntryCode ).get( 0 );
             Entry entry = question.getEntry( );
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
             if ( entryTypeService instanceof EntryTypeNumbering )

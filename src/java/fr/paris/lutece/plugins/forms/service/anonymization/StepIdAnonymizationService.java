@@ -47,7 +47,7 @@ public class StepIdAnonymizationService extends AbstractTextAnonymizationService
     @Override
     protected String getAnonymisedValue( Entry entry, Response response )
     {
-        return String.valueOf( QuestionHome.findByCode( entry.getCode( ) ).getIdStep( ) );
+        return String.valueOf( QuestionHome.findByCodeAndEntry( entry.getCode( ), entry.getIdEntry( ) ).getIdStep( ) );
     }
 
 }
