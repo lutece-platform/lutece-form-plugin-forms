@@ -40,7 +40,7 @@ import java.util.Set;
 
 import org.apache.commons.text.WordUtils;
 import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
@@ -66,7 +66,7 @@ public final class PdfUtil
         final PDType1Font font = PDType1Font.HELVETICA;
         final int fontSize = 10;
         final double rowHeight = 20D;
-        final double tableWidth = page.findMediaBox( ).getWidth( ) - ( 2 * margin );
+        final double tableWidth = page.getMediaBox( ).getWidth( ) - ( 2 * margin );
         final double cellMargin = 5D;
 
         // now add the text
@@ -93,8 +93,8 @@ public final class PdfUtil
                     for ( int k = 0; k < wrappedGroup.length; k++ )
                     {
                         contentStream.beginText( );
-                        contentStream.moveTextPositionByAmount( (float) textx, (float) ( texty - ( k * rowHeight ) ) );
-                        contentStream.drawString( wrappedGroup [k] );
+                        contentStream.newLineAtOffset( (float) textx, (float) ( texty - ( k * rowHeight ) ) );
+                        contentStream.showText( wrappedGroup [k] );
                         contentStream.endText( );
                     }
                 }
@@ -106,8 +106,8 @@ public final class PdfUtil
             for ( int k = 0; k < wrapped.length; k++ )
             {
                 contentStream.beginText( );
-                contentStream.moveTextPositionByAmount( (float) textx, (float) ( texty - ( k * rowHeight ) ) );
-                contentStream.drawString( wrapped [k] );
+                contentStream.newLineAtOffset( (float) textx, (float) ( texty - ( k * rowHeight ) ) );
+                contentStream.showText( wrapped [k] );
                 contentStream.endText( );
             }
             nbLines = Math.max( nbLines, wrapped.length );
@@ -118,8 +118,8 @@ public final class PdfUtil
             for ( int k = 0; k < wrapped.length; k++ )
             {
                 contentStream.beginText( );
-                contentStream.moveTextPositionByAmount( (float) textx, (float) ( texty - ( k * rowHeight ) ) );
-                contentStream.drawString( wrapped [k] );
+                contentStream.newLineAtOffset( (float) textx, (float) ( texty - ( k * rowHeight ) ) );
+                contentStream.showText( wrapped [k] );
                 contentStream.endText( );
             }
             nbLines = Math.max( nbLines, wrapped.length );
@@ -156,8 +156,8 @@ public final class PdfUtil
         double titley = (double) page.getMediaBox( ).getHeight( ) - marginTop - titleHeight;
         stream.beginText( );
         stream.setFont( font, fontSize );
-        stream.moveTextPositionByAmount( (float) titlex, (float) titley );
-        stream.drawString( text );
+        stream.newLineAtOffset( (float) titlex, (float) titley );
+        stream.showText( text );
         stream.endText( );
     }
 }
