@@ -47,7 +47,7 @@ public class FormResponseExtendableResourceService implements IExtendableResourc
 	@Override
 	public boolean isInvoked(String strResourceType )
 	{
-		return FormResponse.RESOURCE_TYPE.equals(strResourceType );
+		return FormResponse.RESOURCE_TYPE.startsWith(strResourceType );
 	}
 
 }
