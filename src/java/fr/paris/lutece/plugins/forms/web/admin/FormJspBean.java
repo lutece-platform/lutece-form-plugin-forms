@@ -511,7 +511,7 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
             model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
             
-            ExtendableResourcePluginActionManager.fillModel(request, getUser(), model, "*", FormResponse.RESOURCE_TYPE);
+            ExtendableResourcePluginActionManager.fillModel(request, getUser(), model, "*", FormResponse.RESOURCE_TYPE+ "_" + nId);
 
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );
         }
