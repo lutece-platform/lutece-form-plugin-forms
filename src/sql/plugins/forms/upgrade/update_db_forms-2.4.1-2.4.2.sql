@@ -1,0 +1,1 @@
+ALTER TABLE forms_response ADD status SMALLINT default 0 NOT NULL;

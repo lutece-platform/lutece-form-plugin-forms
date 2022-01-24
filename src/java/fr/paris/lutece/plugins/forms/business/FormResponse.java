@@ -59,6 +59,8 @@ public class FormResponse implements IExtendableResource
     private Timestamp _dateUpdate;
 
     private boolean _bFromSave;
+    
+    private boolean _bPublished;
 
     private List<FormResponseStep> _listFormResponseStep;
 
@@ -162,6 +164,23 @@ public class FormResponse implements IExtendableResource
     public void setFromSave( boolean bFromSave )
     {
         this._bFromSave = bFromSave;
+    }
+    
+    /**
+     * @return the _bPublished
+     */
+    public boolean isPublished( )
+    {
+        return _bPublished;
+    }
+
+    /**
+     * @param bPublished
+     *            the bPublished to set
+     */
+    public void setPublished( boolean bPublished )
+    {
+        this._bPublished = bPublished;
     }
 
     /**

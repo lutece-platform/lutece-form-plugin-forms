@@ -49,14 +49,14 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormResponseDAO implements IFormResponseDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save FROM forms_response";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save, status FROM forms_response";
     private static final String SQL_QUERY_SELECT_ID = "SELECT id_response FROM forms_response";
     private static final String SQL_QUERY_SELECTALL_BY_ID_FORM = SQL_QUERY_SELECTALL + " WHERE id_form = ? ";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save ) VALUES ( ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save, status ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id_response = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ? WHERE id_response = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ?, status = ?, WHERE id_response = ?";
     private static final String SQL_QUERY_SELECT_FOR_BACKUP = SQL_QUERY_SELECTALL + " WHERE guid = ? AND id_form = ? AND from_save = ? ";
     private static final String SQL_QUERY_SELECT_BY_LIST_FORM_RESPONSE = SQL_QUERY_SELECTALL + " WHERE id_response IN (?";
     private static final String SQL_CLOSE_PARENTHESIS = " ) ";
@@ -80,6 +80,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
+            daoUtil.setBoolean( nIndex++, formResponse.isPublished( ) );
             daoUtil.executeUpdate( );
 
             if ( daoUtil.nextGeneratedKey( ) )
@@ -145,6 +146,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             Timestamp timestampCurrentTime = new Timestamp( System.currentTimeMillis( ) );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
+            daoUtil.setBoolean( nIndex++, formResponse.isPublished( ) );
             daoUtil.setInt( nIndex++, formResponse.getId( ) );
 
             daoUtil.executeUpdate( );
@@ -301,6 +303,7 @@ public final class FormResponseDAO implements IFormResponseDAO
         formResponse.setFormId( daoUtil.getInt( "id_form" ) );
         formResponse.setGuid( daoUtil.getString( "guid" ) );
         formResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
+        formResponse.setPublished( daoUtil.getBoolean( "status" ) );
 
         Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
         formResponse.setDateCreation( timestampCreationDate );
