@@ -207,7 +207,7 @@ public class FormResponse implements IExtendableResource
 	@Override
 	public String getExtendableResourceDescription()
 	{
-		return null;
+		return RESOURCE_TYPE+"_"+_nFormId;
 	}
 
 	@Override
