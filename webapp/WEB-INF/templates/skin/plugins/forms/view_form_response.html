@@ -3,10 +3,12 @@
       <h3 class="panel-title">${formResponse.id}</h3>
     </div>
 </div>
-<#list formQuestionResponseList as formQuestionResponse>
-    ${formQuestionResponse.question.title} : 
-    <#list formQuestionResponse.entryResponse as response>
-    	${response.responseValue!}
+<#list formResponse.steps as formQuestionResponseSteps>
+	<#list formQuestionResponseSteps.questions as questionResponse>
+		${questionResponse.question.title} : 
+    	<#list questionResponse.entryResponse as response>
+    		${response.responseValue!}
+    	</#list>
+    	</br>
     </#list>
-    </br>
 </#list>
