@@ -83,6 +83,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
+import fr.paris.lutece.portal.service.accesscontrol.AccessControlService;
 import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
 import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -336,6 +337,16 @@ public class FormXPage extends MVCApplication
             {
                 _breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
             }
+            
+            initFormResponseManager( request, form );
+            if ( !_formResponseManager.getFormResponse( ).isFromSave( ) && !bypassInactiveState( form, request ) )
+            {
+                XPage accessControlPage = AccessControlService.getInstance( ).doExecuteAccessControl( request, nIdForm, Form.RESOURCE_TYPE );
+                if ( accessControlPage != null )
+                {
+                    return accessControlPage;
+                }
+            }
 
             getFormStepModel( form, request, model );
         }
@@ -356,6 +367,23 @@ public class FormXPage extends MVCApplication
         xPage.setPathLabel( strPathForm );
 
         return xPage;
+    }
+    
+    private void initFormResponseManager( HttpServletRequest request, Form form )
+    {
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+
+        if ( _formResponseManager == null )
+        {
+            if ( user != null )
+            {
+                _formResponseManager = _formService.createFormResponseManagerFromBackUp( form, user.getName( ) );
+            }
+            else
+            {
+                _formResponseManager = new FormResponseManager( form );
+            }
+        }
     }
 
     /**
@@ -412,32 +440,18 @@ public class FormXPage extends MVCApplication
      */
     private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model )
     {
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-
-        if ( _formResponseManager == null )
+        if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
         {
-            if ( user != null )
-            {
-                _formResponseManager = _formService.createFormResponseManagerFromBackUp( form, user.getName( ) );
+            _currentStep = _formResponseManager.getCurrentStep( );
+            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
 
-                if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
-                {
-                    _currentStep = _formResponseManager.getCurrentStep( );
-                    _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+            Object [ ] args = {
+                    _formResponseManager.getFormResponse( ).getUpdate( ),
+            };
 
-                    Object [ ] args = {
-                            _formResponseManager.getFormResponse( ).getUpdate( ),
-                    };
-
-                    model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, getLocale( request ) ) );
-                }
-            }
-            else
-            {
-                _formResponseManager = new FormResponseManager( form );
-            }
+            model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, getLocale( request ) ) );
         }
-
+        
         if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
         {
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
@@ -1360,7 +1374,8 @@ public class FormXPage extends MVCApplication
         {
             _formService.saveForm( form, formResponse );
         }
-
+        AccessControlService.getInstance( ).cleanSessionData( request, form.getId( ), Form.RESOURCE_TYPE );
+        
         _formService.processFormAction( form, formResponse );
     }
 

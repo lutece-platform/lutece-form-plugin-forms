@@ -73,6 +73,7 @@ import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.accesscontrol.AccessControlService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
 import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
@@ -127,6 +128,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String PARAMETER_EXPORT_CONFIG = "export_config";
     private static final String PARAMETER_JSON_FILE = "json_file";
     private static final String PARAMETER_LOGO = "upload_logo";
+    private static final String PARAMETER_ID_ACCESS_CONTROL = "id_accesscontrol";
 
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_FORM = "forms.modify_form.pageTitle";
@@ -148,6 +150,8 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_EXPORT_LIST = "export_list";
     private static final String MARK_EXPORT_CONFIG_LIST = "export_config_list";
     private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
+    private static final String MARK_ACCESSCONTROL_REF_LIST = "accesscontrol_list";
+    private static final String MARK_ACCESSCONTROL_ID = "accesscontrol_id";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -295,6 +299,13 @@ public class FormJspBean extends AbstractJspBean
             ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( (User) adminUser, getLocale( ) );
             model.put( MARK_WORKFLOW_REF_LIST, referenceList );
         }
+        
+        if ( AccessControlService.getInstance( ).isAvailable( ) )
+        {
+            AdminUser adminUser = getUser( );
+            ReferenceList referenceList = AccessControlService.getInstance( ).getAccessControlsEnabled( adminUser, getLocale() );
+            model.put( MARK_ACCESSCONTROL_REF_LIST, referenceList );
+        }
 
         model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
         model.put( MARK_FORM, _form );
@@ -334,6 +345,12 @@ public class FormJspBean extends AbstractJspBean
 
         _formMessage.setIdForm( _form.getId( ) );
         FormMessageHome.create( _formMessage );
+        
+        if ( AccessControlService.getInstance( ).isAvailable( ) )
+        {
+            int idAccessControl = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACCESS_CONTROL ), -1 );
+            AccessControlService.getInstance( ).linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, idAccessControl );
+        }
 
         addInfo( INFO_FORM_CREATED, getLocale( ) );
 
@@ -449,6 +466,12 @@ public class FormJspBean extends AbstractJspBean
 
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request );
 
+        if ( AccessControlService.getInstance( ).isAvailable( ) )
+        {
+            // This will delete the remove the link between resource & access control.
+            AccessControlService.getInstance( ).linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, -1 );
+        }
+        
         FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
         formService.removeForm( nId, getUser( ) );
 
@@ -507,12 +530,19 @@ public class FormJspBean extends AbstractJspBean
                 ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( (User) adminUser, getLocale( ) );
                 model.put( MARK_WORKFLOW_REF_LIST, referenceList );
             }
+            
+            if ( AccessControlService.getInstance( ).isAvailable( ) )
+            {
+                ReferenceList referenceList = AccessControlService.getInstance( ).getAccessControlsEnabled( adminUser, getLocale() );
+                model.put( MARK_ACCESSCONTROL_REF_LIST, referenceList );
+                model.put( MARK_ACCESSCONTROL_ID, AccessControlService.getInstance( ).findAccessControlForResource( formToBeModified.getId( ), Form.RESOURCE_TYPE ) );
+            }
 
             model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
             model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
             
             ExtendableResourcePluginActionManager.fillModel(request, getUser(), model, "*", FormResponse.RESOURCE_TYPE+ "_" + nId);
-
+            
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );
         }
 
@@ -845,6 +875,12 @@ public class FormJspBean extends AbstractJspBean
         else
         {
             FormMessageHome.update( _formMessage );
+        }
+        
+        if ( AccessControlService.getInstance( ).isAvailable( ) )
+        {
+            int idAccessControl = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACCESS_CONTROL ), -1 );
+            AccessControlService.getInstance( ).linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, idAccessControl );
         }
 
         addInfo( INFO_FORM_UPDATED, getLocale( ) );

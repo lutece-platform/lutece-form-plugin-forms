@@ -513,6 +513,13 @@ $( function() {
 					</@formGroup>
 				</@fieldSet> 
 			</#if>
+			<#if accesscontrol_list?has_content && accesscontrol_list?size gt 1>
+				<@fieldSet legend='#i18n{forms.modify_form.accesscontrol.label}'>
+					<@formGroup labelKey='#i18n{forms.modify_form.accesscontrol.label}' rows=2>
+						<@select name='id_accesscontrol' items=accesscontrol_list default_value='${accesscontrol_id!}' />
+					</@formGroup>
+				</@fieldSet> 
+			</#if>
 			<#if is_active_captcha>
 				<@fieldSet legend='#i18n{forms.modify_form.captcha.label}'>
 					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' hideLabel=['all'] id='labelCaptchaStepInitial' helpKey='#i18n{forms.modify_form.labelCaptchaStepInitial.help}'  rows=2>
