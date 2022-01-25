@@ -92,6 +92,7 @@ public final class FormsConstants
     public static final String VALUE_VALIDATOR_LISTEQUESTION_NAME = "forms_listQuestionValidator";
     public static final String MARK_TIMESTAMP = "timestamp";
     public static final String MARK_INACTIVEBYPASSTOKENS = "inactiveBypassTokens";
+    public static final String MARK_FORM_RESPONSE = "formResponse";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
