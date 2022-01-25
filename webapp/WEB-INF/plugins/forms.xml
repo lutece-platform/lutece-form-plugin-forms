@@ -61,6 +61,10 @@
             <application-id>formsTermsOfService</application-id>
             <application-class>fr.paris.lutece.plugins.forms.web.TermsOfServiceXPage</application-class>
         </application>
+        <application>
+            <application-id>formsResponse</application-id>
+            <application-class>fr.paris.lutece.plugins.forms.web.FormResponseXPage</application-class>
+        </application>
     </applications>
 
     <!-- Specific plugin JAVASCRIPT -->

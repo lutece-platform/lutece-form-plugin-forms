@@ -1,0 +1,12 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">${formResponse.id}</h3>
+    </div>
+</div>
+<#list formQuestionResponseList as formQuestionResponse>
+    ${formQuestionResponse.question.title} : 
+    <#list formQuestionResponse.entryResponse as response>
+    	${response.responseValue!}
+    </#list>
+    </br>
+</#list>
