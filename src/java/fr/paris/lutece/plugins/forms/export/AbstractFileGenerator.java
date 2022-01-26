@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -55,6 +56,10 @@ import fr.paris.lutece.util.file.FileUtil;
 
 public abstract class AbstractFileGenerator implements IFileGenerator
 {
+    private static final String PATTERN_TIMESTAMP = "_yyyy-MM-dd-HH-mm-ss";
+    
+    // 4: size for file extension (.pdf, .zip, .csv)
+    private static final int MAX_NAME_LENGTH = 250 - PATTERN_TIMESTAMP.length( );
     protected static final String TMP_DIR = System.getProperty( "java.io.tmpdir" );
 
     protected final FormPanel _formPanel;
@@ -75,7 +80,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     protected AbstractFileGenerator( String fileName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormResponseItemSortConfig sortConfig, String fileDescription )
     {
-        _fileName = fileName + "_" + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( "yyyy-MM-dd-HH-mm-ss" ) );
+        _fileName = StringUtils.substring( fileName, 0, MAX_NAME_LENGTH ) + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_TIMESTAMP ) );
         _formPanel = formPanel;
         _listFormColumn = new ArrayList<>( listFormColumn );
         _listFormFilter = new ArrayList<>( listFormFilter );
