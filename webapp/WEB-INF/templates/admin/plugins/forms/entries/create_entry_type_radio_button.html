@@ -32,7 +32,7 @@ ${breadcrumb_template}
 							<@input type='textarea' name='comment'></@input>
 						</@formGroup>
 						<@formGroup>
-							<@checkBox labelFor='use_ref_list' labelKey='#i18n{forms.createEntry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' params='onchange="javascript:changeVisibilityRefListSelect();"' />
+							<@checkBox orientation='switch' labelFor='use_ref_list' labelKey='#i18n{forms.createEntry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' params='onchange="javascript:changeVisibilityRefListSelect();"' />
 						</@formGroup>
 						<@formGroup labelFor='select_ref_list' id="use_ref_list_group" labelKey='#i18n{forms.createEntry.labelUseRefListSelect}' >
 							<@select name='select_ref_list' items=ref_list_select />
@@ -46,22 +46,22 @@ ${breadcrumb_template}
 							</@select>
 						</@formGroup>
 						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
-							<@checkBox name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
+							<@checkBox orientation='switch' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
 						</@formGroup>
 						<@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
-							<@checkBox name='only_display_in_back' id='only_display_in_back' value='1' />
+							<@checkBox orientation='switch' name='only_display_in_back' id='only_display_in_back' value='1' />
 						</@formGroup>
 						<@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
-							<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=false />
+							<@checkBox orientation='switch' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=false />
 						</@formGroup>
 						<@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
-							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=false />
+							<@checkBox orientation='switch' name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=false />
 						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
-							<@checkBox labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' name='exportable' id='exportable' value='1' checked=false />
+							<@checkBox orientation='switch' labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' name='exportable' id='exportable' value='1' checked=false />
 						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportablePdfComment}'>
-							<@checkBox labelFor='exportable_pdf' labelKey='#i18n{forms.createEntry.labelResponsesExportablePdf}' name='exportable_pdf' id='exportable_pdf' value='1' checked=false />
+							<@checkBox orientation='switch' labelFor='exportable_pdf' labelKey='#i18n{forms.createEntry.labelResponsesExportablePdf}' name='exportable_pdf' id='exportable_pdf' value='1' checked=false />
 						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' value='' maxlength=255 />

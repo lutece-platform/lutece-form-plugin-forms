@@ -32,7 +32,7 @@ ${breadcrumb_template}
 							<#assign style = 'style="display:none;"' />
 						</#if>
 						<@formGroup labelFor='is_iterable' labelKey='#i18n{forms.createEntry.labelIteration}'>
-							<@checkBox id='checkbox_is_iterable' name='is_iterable' value='true' checked=checked params='onclick="javascript:displayHideIteration();"' />
+							<@checkBox orientation='switch' id='checkbox_is_iterable' name='is_iterable' value='true' checked=checked params='onclick="javascript:displayHideIteration();"' />
 						</@formGroup>
 						<div id="iterationNumber" class="form-group" ${style}>
 							<label class="col-xs-12 col-sm-3 control-label" for="nb_iterations">
@@ -62,13 +62,13 @@ ${breadcrumb_template}
 							<@input type='text' name='iteration_adding_label' value='${iterationAddingLabel}' maxlength=255 />
 						</@formGroup>
                         <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
-                            <@checkBox name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
+                            <@checkBox orientation='switch' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
                         </@formGroup>
                         <@formGroup labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
-	                    	<@checkBox name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
+	                    	<@checkBox orientation='switch' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
 	                    </@formGroup>
 	                    <@formGroup labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
-							<@checkBox name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+							<@checkBox orientation='switch' name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
 						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' >
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />

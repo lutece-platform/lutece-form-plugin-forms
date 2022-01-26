@@ -28,7 +28,7 @@ ${breadcrumb_template}
 							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
 						</@formGroup>
 						<@formGroup>
-							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
+							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
 						</@formGroup>
 						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.createEntry.labelFileMaxSize}' mandatory=true>
 							<@inputGroup>
@@ -40,17 +40,17 @@ ${breadcrumb_template}
 							<@input type='text' name='max_files' id='max_files' value=getMaxFiles(entry) maxlength=2 />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox labelFor='export_binary' labelKey='#i18n{forms.createEntry.labelExportBinary}' labelKey='#i18n{forms.createEntry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
+							<@checkBox orientation='switch' labelFor='export_binary' labelKey='#i18n{forms.createEntry.labelExportBinary}' labelKey='#i18n{forms.createEntry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
 							<@tag color='warning'>#i18n{forms.createEntry.labelExportBinaryWarning}</@tag>
 						</@formGroup>
                     	<@formGroup>
-                        	<@checkBox labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
+                        	<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
                     	</@formGroup>
                         <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
-	                    	<@checkBox labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
+	                    	<@checkBox orientation='switch' labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
 	                    </@formGroup>
 	                    <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
-							<@checkBox labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
+							<@checkBox orientation='switch' labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
 						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
@@ -64,16 +64,16 @@ ${breadcrumb_template}
 								<#assign checkedValue = false />
 								<#assign anonPattern ="" />
 							</#if>
-							<@checkBox labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
+							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
 						</@formGroup>
 						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
 						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
-							<@checkBox labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}'  name='exportable' id='exportable' value='1' checked=entry.exportable />
+							<@checkBox orientation='switch' labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}'  name='exportable' id='exportable' value='1' checked=entry.exportable />
 						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportablePdfComment}'>
-							<@checkBox labelFor='exportable_pdf' labelKey='#i18n{forms.createEntry.labelResponsesExportablePdf}' name='exportable_pdf' id='exportable_pdf' value='1' checked=entry.exportablePdf />
+							<@checkBox orientation='switch' labelFor='exportable_pdf' labelKey='#i18n{forms.createEntry.labelResponsesExportablePdf}' name='exportable_pdf' id='exportable_pdf' value='1' checked=entry.exportablePdf />
 						</@formGroup>
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />

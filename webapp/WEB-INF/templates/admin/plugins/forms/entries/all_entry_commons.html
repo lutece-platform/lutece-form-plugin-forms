@@ -10,7 +10,6 @@ function changeVisilityConfirmFieldTitle(){
 changeVisilityConfirmFieldTitle();
 </script>
 </#macro>
-
 <#macro refListSelect>
 <script type="text/javascript">
 function changeVisibilityRefListSelect(){
@@ -35,7 +34,6 @@ function changeVisilityAnonymizePattern(){
 changeVisilityAnonymizePattern();
 </script>
 </#macro>
-
 <#--- MACRO formBox --->
 <#macro formBox entry stepid questionid title='' action='jsp/admin/plugins/forms/ManageQuestions.jsp' editable=true display=true rows=2>
 <@box>
@@ -66,10 +64,10 @@ changeVisilityAnonymizePattern();
                 <#else>
                     <#assign checked = false>
                 </#if>
-                <@checkBox name='mandatory' value='1' checked=checked labelKey='#i18n{forms.createEntry.labelMandatory}' />
+                <@checkBox orientation='switch' name='mandatory' value='1' checked=checked labelKey='#i18n{forms.createEntry.labelMandatory}' />
             </@formGroup>
             <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' showLabel=showCklabel rows=rows>
-                <@checkBox name='only_display_in_back' id='only_display_in_back' value='1' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
+                <@checkBox orientation='switch' name='only_display_in_back' id='only_display_in_back' value='1' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
             </@formGroup>
             <@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}' rows=rows>
                 <@input type='textarea' name='help_message' id='help_message' rows=rows>${entry.helpMessage}</@input>
@@ -81,7 +79,7 @@ changeVisilityAnonymizePattern();
                 <@input type='text' name='css_class' value='${entry.CSSClass!}' maxlength=255 />
             </@formGroup>
             <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-                <@checkBox name='is_indexed' id='is_indexed' value='1' checked=true />
+                <@checkBox orientation='switch' name='is_indexed' id='is_indexed' value='1' checked=true />
             </@formGroup>
             ${question_create_template!}
             <@formGroup rows=rows>
@@ -93,7 +91,6 @@ changeVisilityAnonymizePattern();
     </@boxBody>
 </@box>
 </#macro>
-
 <#--- MACRO optionBox --->
 <#macro optionBox questionid title='' action='jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true' >
 <@box color='primary'>
@@ -104,23 +101,23 @@ changeVisilityAnonymizePattern();
         </@tform>
     </@boxHeader>
     <@boxBody>
-		<a name="list" id="list"></a>
-        <@table>
-            <tr> 
-                <th>#i18n{forms.createEntry.manageField.rowTitle}</th>
-                <th>#i18n{forms.createEntry.manageField.rowValue}</th>
-                <th><@icon style='question-circle' title='#i18n{forms.createEntry.manageField.rowConditionalQuestion}' /></th>
-                <th>#i18n{forms.createEntry.manageField.rowActions}</th>
-            </tr>
+        <@table headBody=true id='list'>
+            <@tr> 
+                <@th>#i18n{forms.createEntry.manageField.rowTitle}</@th>
+                <@th>#i18n{forms.createEntry.manageField.rowValue}</@th>
+                <@th><@icon style='question-circle' title='#i18n{forms.createEntry.manageField.rowConditionalQuestion}' /></@th>
+                <@th>#i18n{forms.createEntry.manageField.rowActions}</@th>
+            </@tr>
+            <@tableHeadBodySeparator />
             <#assign cpt=0>
             <#list list as field>
 			<#assign cpt=cpt+1>
-			<tr>
-				<td>${field.title}</td>
-				<td>${field.value}</td>
-                <td><#if field.defaultValue><@icon style='check' class='text-success' title='#i18n{forms.createEntry.manageField.rowDefaultValue}' /></#if></td>
+			<@tr>
+				<@td>${field.title}</@td>
+				<@td>${field.value}</@td>
+                <@td><#if field.defaultValue><@icon style='check' class='text-success' title='#i18n{forms.createEntry.manageField.rowDefaultValue}' /></#if></@td>
                 <#nested>
-				<td>                       
+				<@td>                       
                     <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' title='#i18n{portal.util.labelModify}' buttonIcon='pencil' hideTitle=['all'] size='sm' />
                     <#if cpt!=1>
                         <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all'] size='sm' />
@@ -129,8 +126,8 @@ changeVisilityAnonymizePattern();
                         <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveDown}' buttonIcon='chevron-down' hideTitle=['all'] size='sm' />
                     </#if>
                     <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' buttonIcon='trash' hideTitle=['all'] color='danger' size='sm' />
-                </td>
-			</tr>
+                </@td>
+			</@tr>
 			</#list> 
 		</@table>
     </@boxBody>

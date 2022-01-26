@@ -34,10 +34,10 @@ ${breadcrumb_template}
 						</@formGroup>
 						<#assign displayBo=getFieldValueByCode( entry, "display_in_bo") == 'true'>
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesDisplayBoComment}'>
-							<@checkBox labelFor='display_in_bo' labelKey='#i18n{forms.createEntry.labelResponsesDisplayBo}' name='display_in_bo' id='display_in_bo' value='1' checked=displayBo />
+							<@checkBox orientation='switch' labelFor='display_in_bo' labelKey='#i18n{forms.createEntry.labelResponsesDisplayBo}' name='display_in_bo' id='display_in_bo' value='1' checked=displayBo />
 						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-							<@checkBox labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
 						</@formGroup>
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.createEntry.buttonSave}' hideTitle=['xs'] />
