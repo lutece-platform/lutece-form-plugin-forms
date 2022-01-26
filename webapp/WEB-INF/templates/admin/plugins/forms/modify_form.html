@@ -1,18 +1,18 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
 <@tform class='form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
-<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>
-	${extendableResourceActionsHtml!}
-</#if>
 <@row>
 	<@columns>
 		<@box color='primary'>
-			<@boxHeader title='${form.title!}'>
-				<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' hideTitle=['xs'] params='data-toggle="modal" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" data-target="#pubModal"' hideTitle=['all']  />
+			<@boxHeader title='${form.title!}' boxTools=true >
 				<#if form.active>
-					<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' />
-					<@aButton href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='list-alt' />
+					<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>
+					${extendableResourceActionsHtml!}
+					</#if>
+					<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['xs'] params='target="_blank"' buttonIcon='external-link' />
+					<@aButton href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['xs'] params='target="_blank"' buttonIcon='list-alt' />
 					<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
 				</#if>
+				<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' params='data-toggle="modal" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" data-target="#pubModal"' hideTitle=['xs']  />
 			</@boxHeader>
 			<@boxBody>
 				<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
@@ -26,7 +26,6 @@
 				<@formGroup rows=2>
 					<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
 				</@formGroup>
-				
 			</@boxBody>
 		</@box>
 	</@columns>
@@ -41,7 +40,6 @@ $( function(){
     if ( $('#endMessageDisplay').prop("checked" ) ){
         $('#endMessage').toggle();  
     }
-
     $('#labelEndMessage').change( function(){
         $('#endMessage').toggle();
     });
