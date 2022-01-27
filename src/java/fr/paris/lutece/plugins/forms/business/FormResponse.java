@@ -219,7 +219,7 @@ public class FormResponse implements IExtendableResource
 	@Override
 	public String getExtendableResourceName()
 	{
-		return null;
+		return RESOURCE_TYPE + "_" + _nId;
 	}
 
 	@Override

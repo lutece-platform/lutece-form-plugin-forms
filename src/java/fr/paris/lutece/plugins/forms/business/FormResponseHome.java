@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.resource.ExtendableResourceRemovalListenerService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 /**
@@ -96,8 +97,13 @@ public final class FormResponseHome
      *            The formResponse Id
      */
     public static void remove( int nKey )
-    {
+    {        
+        FormResponse formResponse = _dao.load( nKey, _plugin );
         _dao.delete( nKey, _plugin );
+        if( formResponse!= null ) 
+        {
+        	ExtendableResourceRemovalListenerService.doRemoveResourceExtentions( FormResponse.RESOURCE_TYPE+"_"+formResponse.getFormId( ), Integer.toString( formResponse.getId() ) );
+        }
     }
 
     /**
