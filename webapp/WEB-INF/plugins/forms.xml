@@ -66,8 +66,8 @@
             <application-class>fr.paris.lutece.plugins.forms.web.FormResponseXPage</application-class>
         </application>
         <application>
-            <application-id>formresponseslist</application-id>
-            <application-class>fr.paris.lutece.plugins.forms.web.FormResponsesListXPage</application-class>
+            <application-id>myformresponses</application-id>
+            <application-class>fr.paris.lutece.plugins.forms.web.MyFormResponsesXPage</application-class>
         </application>
     </applications>
 

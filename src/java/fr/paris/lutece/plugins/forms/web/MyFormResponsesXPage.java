@@ -55,19 +55,19 @@ import fr.paris.lutece.portal.web.xpages.XPage;
  * Controller for form reponses display
  *
  */
-@Controller( xpageName = FormResponsesListXPage.XPAGE_NAME, pageTitleI18nKey = FormResponsesListXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = FormResponsesListXPage.MESSAGE_PATH )
+@Controller( xpageName = MyFormResponsesXPage.XPAGE_NAME, pageTitleI18nKey = MyFormResponsesXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = MyFormResponsesXPage.MESSAGE_PATH )
 
-public class FormResponsesListXPage extends MVCApplication
+public class MyFormResponsesXPage extends MVCApplication
 {
     private static final long serialVersionUID = 3045035844703500479L;
 
-    protected static final String XPAGE_NAME = "formresponseslist";
+    protected static final String XPAGE_NAME = "myformresponses";
 
     // Messages
-    protected static final String MESSAGE_PAGE_TITLE = "forms.xpage.formresponseslist.view.pageTitle";
-    protected static final String MESSAGE_PATH = "forms.xpage.formresponseslist.view.pagePathLabel";
-    private static final String MESSAGE_LIST_FORMRESPONSES_PAGETITLE = "forms.xpage.formresponseslist.pagetitle";
-    private static final String MESSAGE_LIST_FORMRESPONSES_PATHLABEL = "forms.xpage.formresponseslist.pathlabel";
+    protected static final String MESSAGE_PAGE_TITLE = "forms.xpage.myformresponses.view.pageTitle";
+    protected static final String MESSAGE_PATH = "forms.xpage.myformresponses.view.pagePathLabel";
+    private static final String MESSAGE_LIST_FORMRESPONSES_PAGETITLE = "forms.xpage.myformresponses.pagetitle";
+    private static final String MESSAGE_LIST_FORMRESPONSES_PATHLABEL = "forms.xpage.myformresponses.pathlabel";
 
     // Views
     private static final String VIEW_LIST_FORM_RESPONSES = "listFormResponses";
