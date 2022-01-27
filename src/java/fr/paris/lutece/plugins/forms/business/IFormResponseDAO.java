@@ -125,6 +125,17 @@ public interface IFormResponseDAO
      * @return The list which contains the data of all the FormResponse objects
      */
     List<FormResponse> selectFormResponseByUser( String strGuid, int nIdForm, boolean fromBackup, Plugin plugin );
+    
+    /**
+     * Load the data of all the FormResponse objects and returns them as a list
+     * 
+     * @param strGuid
+     *            the given guid
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the FormResponse objects
+     */
+    List<FormResponse> selectAllCompletedFormResponseByUser( String strGuid, Plugin plugin );
 
     /**
      * Load the data of all formResponses Objects for a given list of formResponses identifiers

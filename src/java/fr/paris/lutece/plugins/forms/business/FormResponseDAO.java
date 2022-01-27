@@ -58,6 +58,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ?, status = ?, WHERE id_response = ?";
     private static final String SQL_QUERY_SELECT_FOR_BACKUP = SQL_QUERY_SELECTALL + " WHERE guid = ? AND id_form = ? AND from_save = ? ";
+    private static final String SQL_QUERY_SELECT_ALL_BY_USER = SQL_QUERY_SELECTALL + " WHERE guid = ? AND from_save = 0 ";
     private static final String SQL_QUERY_SELECT_BY_LIST_FORM_RESPONSE = SQL_QUERY_SELECTALL + " WHERE id_response IN (?";
     private static final String SQL_CLOSE_PARENTHESIS = " ) ";
     private static final String SQL_ADITIONAL_PARAMETER = ",?";
@@ -228,6 +229,24 @@ public final class FormResponseDAO implements IFormResponseDAO
             daoUtil.setString( 1, strGuid );
             daoUtil.setInt( 2, nIdForm );
             daoUtil.setBoolean( 3, fromBackup );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                list.add( dataToObject( daoUtil ) );
+            }
+        }
+        return list;
+    }
+    
+    @Override
+    public List<FormResponse> selectAllCompletedFormResponseByUser( String strGuid, Plugin plugin )
+    {
+        List<FormResponse> list = new ArrayList<>( );
+
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_BY_USER, plugin ) )
+        {
+            daoUtil.setString( 1, strGuid );
             daoUtil.executeQuery( );
 
             while ( daoUtil.next( ) )

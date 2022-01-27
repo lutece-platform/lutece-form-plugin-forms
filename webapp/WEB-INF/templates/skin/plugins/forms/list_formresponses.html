@@ -1,0 +1,23 @@
+<h2>#i18n{forms.xpage.formresponseslist.view.pageTitle}</h2>
+<div class="table-responsive">
+	<table class="table table-striped">
+		<thead>
+			<th>#i18n{forms.xpage.formresponseslist.view.labelForm}</th>
+			<th>#i18n{forms.xpage.formresponseslist.view.labelDateUpdate}</th>
+			<th>#i18n{forms.xpage.formresponseslist.view.labelState}</th>
+			<th>#i18n{forms.xpage.formresponseslist.view.labelActions}</th>
+		</thead>
+		<tbody>
+			<#list response_list as response>
+				<tr>
+					<td>${response.formTitle}</td>
+					<td>${response.dateUpdate?date}</td>
+					<td>${response.workflowState!}</td>
+					<td>
+						<@aButton href="jsp/site/Portal.jsp?page=formsResponse&id_response=${response.idFormResponse}" type="button" title="#i18n{forms.xpage.formresponseslist.view.labelView}" buttonIcon="eye" hideTitle=["all"] />
+					</td>
+				</tr>
+			</#list>
+		</tbody>
+	</table>
+</div>	

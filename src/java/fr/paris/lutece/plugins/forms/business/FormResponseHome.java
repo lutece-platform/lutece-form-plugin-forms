@@ -280,6 +280,23 @@ public final class FormResponseHome
         }
         return listFormResponse;
     }
+    
+    /**
+     * Load the data of all the formResponse objects and returns them as a list
+     * 
+     * @param strGuid
+     *            The user Guid
+     * @return the formResponse objects
+     */
+    public static List<FormResponse> getFormResponseByGuid( String strGuid )
+    {
+        List<FormResponse> listFormResponse = _dao.selectAllCompletedFormResponseByUser( strGuid, _plugin );
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            completeWithSteps( formResponse );
+        }
+        return listFormResponse;
+    }
 
     /**
      * Load the data of all formResponses Objects for a given list of formResponses identifiers
