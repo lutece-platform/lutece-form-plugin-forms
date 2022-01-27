@@ -14,6 +14,8 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
@@ -48,26 +50,14 @@ public class FormResponseXPage extends MVCApplication
 	// Templates
     private static final String TEMPLATE_VIEW_FORM_RESPONSE = "/skin/plugins/forms/view_form_response.html";
 
-    @View( value = VIEW_FORM_RESPONSE )
+    @View( value = VIEW_FORM_RESPONSE, defaultView=true )
     public XPage getFormResponseView( HttpServletRequest request ) throws SiteMessageException
     {
     	Locale locale = getLocale( request );
     	FormResponse formResponse = findFormResponseFrom(request);
     	
     	Map<String, Object> model = getModel( );
-    	
-    	if ( formResponse == null  )
-    	{
-    		SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_FOUND_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
-    	}
-    	else if ( formResponse.isPublished( )  )
-        {
-    		model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
-        }
-        else
-        {
-        	SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_PUBLISHED_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
-        }
+		model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
     	
     	XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE, getLocale( request ), model );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
@@ -107,7 +97,12 @@ public class FormResponseXPage extends MVCApplication
         }
         else if ( !formResponse.isPublished() )
         {
-        	SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_PUBLISHED_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
+            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+            boolean userOwnsReponse = user != null && user.getName( ).equals( formResponse.getGuid( ) );
+            if ( !userOwnsReponse )
+            {
+                SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_PUBLISHED_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
+            }
         }
         
         return formResponse;
