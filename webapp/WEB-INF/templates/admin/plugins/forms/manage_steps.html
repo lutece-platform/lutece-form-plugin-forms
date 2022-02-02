@@ -27,6 +27,9 @@
 			<@boxHeader title='${form.title!}' class='is-align-content-center'>
 				<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' hideTitle=['xs'] params='data-toggle="modal" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" data-target="#pubModal"'  />
 				<@aButton title='#i18n{forms.manage_steps.buttonImport}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] />
+				<#if template_provider??>
+					<@aButton title='#i18n{forms.manage_steps.buttonImportTemplate}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importTemplateModal" ' hideTitle=['xs','sm'] />
+				</#if>
 				<#if form.active>
 					<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' />
 					<@aButton href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='list-alt' />
@@ -126,4 +129,21 @@
 		</@tform>
 	</@modalBody>
 </@modal>
+<#if template_provider??>
+	<@modal id='importTemplateModal'>
+		<@modalHeader modalTitle='#i18n{forms.manage_steps.buttonImportTemplate}' />
+		<@modalBody>
+			<@tform class='form' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
+				<@input type='hidden' name='id_form' value='${form.id}' />
+				<@formGroup labelKey='#i18n{forms.manageForm.labelStepTemplates}'>
+					<@select name='id_template' items=template_provider.stepTemplateList />
+				</@formGroup>
+				<@formGroup>
+					<@button type='submit' name='action_doImportTemplate' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
+					<@button type='cancel' name='action_doCancelImport' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' cancel=true />
+				</@formGroup>
+			</@tform>
+		</@modalBody>
+	</@modal>
+</#if>
 <@scrollTopBtn />
