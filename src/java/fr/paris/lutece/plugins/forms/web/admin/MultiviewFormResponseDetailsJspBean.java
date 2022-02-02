@@ -87,7 +87,6 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
-import fr.paris.lutece.portal.web.resource.ExtendableResourcePluginActionManager;
 import fr.paris.lutece.util.ReferenceItem;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.url.UrlItem;
@@ -203,8 +202,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         }
         populateModelWithFilterValues( _mapFilterValues, model );
         
-        ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model, strIdFormResponse, FormResponse.RESOURCE_TYPE );
-
         return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_VIEW_FORM_RESPONSE, model );
     }
 
@@ -460,9 +457,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
                 workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale,
                         bIsAutomaticAction, getUser( ) );
-
-                // Update Form response modification date
-                FormResponseHome.update( formResponse );
             }
             else
             {
