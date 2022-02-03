@@ -96,6 +96,18 @@ public abstract class AbstractFormJsonService
      */
     public String jsonExportStep( int idForm, int idStep ) throws JsonProcessingException
     {
+        StepJsonData jsonData = jsonExportStepAsData( idForm, idStep );
+        return _objectMapper.writeValueAsString( jsonData );
+    }
+    
+    /**
+     * Export the step as a StepJsonData Object.
+     * 
+     * @return
+     * @throws JsonProcessingException
+     */
+    public StepJsonData jsonExportStepAsData( int idForm, int idStep ) throws JsonProcessingException
+    {
         StepJsonData jsonData = new StepJsonData( );
 
         jsonData.setStep( _formDatabaseService.findStepByPrimaryKey( idStep ) );
@@ -127,7 +139,7 @@ public abstract class AbstractFormJsonService
         List<FormDisplay> formDisplayList = getAllFormDisplays( idForm, idStep );
         jsonData.setFormDisplayList( formDisplayList.stream( ).filter( fd -> fd.getStepId( ) == idStep ).collect( Collectors.toList( ) ) );
 
-        return _objectMapper.writeValueAsString( jsonData );
+        return jsonData;
     }
 
     /**
@@ -135,11 +147,16 @@ public abstract class AbstractFormJsonService
      * 
      * @return
      */
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
     public void jsonImportStep( int idForm, String json, Locale locale ) throws JsonProcessingException
     {
         StepJsonData jsonData = _objectMapper.readValue( json, StepJsonData.class );
 
+        jsonImportStep( idForm, jsonData, locale );
+    }
+    
+    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    public void jsonImportStep( int idForm, StepJsonData jsonData, Locale locale ) throws JsonProcessingException
+    {
         Step step = jsonData.getStep( );
         List<Group> groupList = jsonData.getGroupList( );
         List<Question> questionList = jsonData.getQuestionList( );

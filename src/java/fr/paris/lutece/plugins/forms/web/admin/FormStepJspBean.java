@@ -57,6 +57,7 @@ import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.plugins.forms.service.json.FormJsonService;
+import fr.paris.lutece.plugins.forms.service.json.StepJsonData;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -96,7 +97,8 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_PREVIOUS_STEP = "previousStep";
     private static final String PARAMETER_JSON_FILE = "json_file";
-
+    private static final String PARAMETER_ID_TEMPLATE = "id_template";
+    
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_STEP = "forms.modify_step.pageTitle";
     private static final String PROPERTY_PAGE_TITLE_CREATE_STEP = "forms.create_step.pageTitle";
@@ -106,6 +108,7 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     private static final String MARK_LOCALE = "locale";
+    private static final String MARK_TEMPLATE_PROVIDER = "template_provider";
     private static final String MARK_TRANSITIONS = "transition_list";
 
     // Properties
@@ -131,6 +134,7 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String ACTION_DUPLICATE_STEP = "duplicateStep";
     private static final String ACTION_EXPORT_STEP = "doExportJson";
     private static final String ACTION_IMPORT_STEP = "doImportJson";
+    private static final String ACTION_IMPORT_TEMPLATE = "doImportTemplate";
 
     // Infos
     private static final String INFO_STEP_CREATED = "forms.info.step.created";
@@ -207,7 +211,8 @@ public class FormStepJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_FORM, formParent );
         model.put( MARK_STEP_LIST, paginator.getPageItems( ) );
         model.put( MARK_LOCALE, request.getLocale( ) );
-
+        
+        model.put( MARK_TEMPLATE_PROVIDER, _stepService.getStepTemplateProvider( ) );
         setPageTitleProperty( EMPTY_STRING );
 
         Locale locale = getLocale( );
@@ -569,6 +574,31 @@ public class FormStepJspBean extends AbstractJspBean
             nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
             FormJsonService.getInstance( ).jsonImportStep( nIdForm, new String( fileItem.get( ) ), getLocale( ) );
             addInfo( INFO_STEP_CREATED, getLocale( ) );
+        }
+        catch( JsonProcessingException e )
+        {
+            AppLogService.error( e.getMessage( ) );
+            addError( ERROR_STEP_NOT_IMPORTED, getLocale( ) );
+        }
+        return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
+    }
+    
+    @Action( ACTION_IMPORT_TEMPLATE )
+    public String doImportTemplate( HttpServletRequest request )
+    {
+
+        int nIdForm = -1;
+        int nIdTemplate = -1;
+        try
+        {
+            nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+            nIdTemplate = Integer.parseInt( request.getParameter( PARAMETER_ID_TEMPLATE ) );
+            StepJsonData template = _stepService.getStepTemplateData( nIdTemplate );
+            if ( template != null )
+            {
+                FormJsonService.getInstance( ).jsonImportStep( nIdForm, template, getLocale( ) );
+                addInfo( INFO_STEP_CREATED, getLocale( ) );
+            }
         }
         catch( JsonProcessingException e )
         {

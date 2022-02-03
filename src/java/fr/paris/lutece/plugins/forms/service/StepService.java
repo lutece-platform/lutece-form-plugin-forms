@@ -38,6 +38,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
@@ -46,6 +48,8 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.service.json.IStepTemplateProvider;
+import fr.paris.lutece.plugins.forms.service.json.StepJsonData;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 /**
@@ -56,6 +60,9 @@ public final class StepService
     public static final String BEAN_NAME = "forms.stepService";
 
     private static final int DISPLAY_ROOT_PARENT_ID = 0;
+    
+    @Autowired( required = false )
+    private IStepTemplateProvider _provider;
 
     /**
      * Constructor
@@ -162,5 +169,19 @@ public final class StepService
             }
         }
         return listIdNextSteps;
+    }
+    
+    public IStepTemplateProvider getStepTemplateProvider( )
+    {
+        return _provider;
+    }
+    
+    public StepJsonData getStepTemplateData( int idTemplate )
+    {
+        if ( _provider == null )
+        {
+            return null ;
+        }
+        return _provider.getStepTemplateData( idTemplate );
     }
 }
