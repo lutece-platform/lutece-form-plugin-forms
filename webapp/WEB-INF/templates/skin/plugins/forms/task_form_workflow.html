@@ -1,0 +1,18 @@
+<@row>
+	<@columns>
+		<@box>
+			<@boxHeader title='#i18n{forms.tasks_form_workflow.title}' />
+			<@boxBody>
+				<@tform action='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp' method='post' params='enctype="multipart/form-data"'>
+					<@input type='hidden' name='id_action' value='${id_action}' />
+					<@input type='hidden' name='id_form_response' value='${id_form_response}' />
+					${tasks_form}
+					<@formGroup>
+						<@button type='submit' name='action_doSaveTaskForm' buttonIcon='check' title='#i18n{workflow.tasks_form_test_workflow.button_save}' />
+						<@button type='submit' name='action_doCancelTaskForm' buttonIcon='times' title='#i18n{workflow.tasks_form_test_workflow.button_cancel}' cancel=true />
+					</@formGroup>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
