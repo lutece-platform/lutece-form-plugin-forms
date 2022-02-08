@@ -1,26 +1,7 @@
 
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
-
-<#assign isOnlyOneStep=0>
 <#assign hasInitial=0>
 <#assign hasFinal=0>
-<#assign stepId=0>
-<#if step_list?size = 1>
-	<#list step_list as step>
-		<#assign stepId=step.id>
-		<#if step.initial>
-			<#assign isOnlyOneStep=isOnlyOneStep+1>
-		</#if>
-		<#if step.final>
-			<#assign isOnlyOneStep=isOnlyOneStep+1>
-		</#if>
-	</#list>
-</#if>
-		
-<#if isOnlyOneStep=2>
-<script>document.location.replace("jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${stepId}");</script>
-</#if>
-
 <@row>
 	<@columns>
         <@box color='primary'>
