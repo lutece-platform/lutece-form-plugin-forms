@@ -62,6 +62,8 @@ public class FormResponse implements IExtendableResource
     
     private boolean _bPublished;
 
+    private Timestamp _dateUpdateStatus;
+
     private List<FormResponseStep> _listFormResponseStep;
 
     /**
@@ -181,6 +183,23 @@ public class FormResponse implements IExtendableResource
     public void setPublished( boolean bPublished )
     {
         this._bPublished = bPublished;
+    }
+    
+    /**
+     * @return the _dateUpdate
+     */
+    public Timestamp getUpdateStatus( )
+    {
+        return _dateUpdateStatus;
+    }
+
+    /**
+     * @param dateUpdate
+     *            the dateUpdate to set
+     */
+    public void setUpdateStatus( Timestamp dateUpdateStatus )
+    {
+        this._dateUpdateStatus = dateUpdateStatus;
     }
 
     /**
