@@ -49,14 +49,14 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormResponseDAO implements IFormResponseDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save, status FROM forms_response";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save, status, update_date_status FROM forms_response";
     private static final String SQL_QUERY_SELECT_ID = "SELECT id_response FROM forms_response";
     private static final String SQL_QUERY_SELECTALL_BY_ID_FORM = SQL_QUERY_SELECTALL + " WHERE id_form = ? ";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save, status ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save, status, update_date_status ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id_response = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ?, status = ? WHERE id_response = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ?, status = ?, update_date_status = ? WHERE id_response = ?";
     private static final String SQL_QUERY_SELECT_FOR_BACKUP = SQL_QUERY_SELECTALL + " WHERE guid = ? AND id_form = ? AND from_save = ? ";
     private static final String SQL_QUERY_SELECT_ALL_BY_USER = SQL_QUERY_SELECTALL + " WHERE guid = ? AND from_save = 0 ";
     private static final String SQL_QUERY_SELECT_BY_LIST_FORM_RESPONSE = SQL_QUERY_SELECTALL + " WHERE id_response IN (?";
@@ -82,6 +82,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
             daoUtil.setBoolean( nIndex++, formResponse.isPublished( ) );
+            daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.executeUpdate( );
 
             if ( daoUtil.nextGeneratedKey( ) )
@@ -148,6 +149,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
             daoUtil.setBoolean( nIndex++, formResponse.isPublished( ) );
+            daoUtil.setTimestamp( nIndex++, formResponse.getUpdateStatus() );
             daoUtil.setInt( nIndex++, formResponse.getId( ) );
 
             daoUtil.executeUpdate( );
@@ -326,6 +328,7 @@ public final class FormResponseDAO implements IFormResponseDAO
 
         Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
         formResponse.setDateCreation( timestampCreationDate );
+        formResponse.setUpdateStatus( daoUtil.getTimestamp( "update_date_status" ) );
         try
         {
             formResponse.setUpdate( daoUtil.getTimestamp( "update_date" ) );

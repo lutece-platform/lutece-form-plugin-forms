@@ -231,6 +231,7 @@ CREATE TABLE IF NOT EXISTS forms_response (
   update_date timestamp default '1980-01-01 00:00' NOT NULL,
   from_save SMALLINT default 0,
   status SMALLINT default 0 NOT NULL,
+  update_date_status timestamp default CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id_response)
 );
 CREATE INDEX idx_fr_id_form on forms_response  ( id_form );
