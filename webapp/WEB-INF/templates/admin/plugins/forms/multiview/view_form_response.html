@@ -20,7 +20,6 @@
     </#if>
 </#if>
 </#macro>
-
 <@div id='form-response-details'>
 	<@messages errors=errors />
 	<@box id='form-detail-header'>
@@ -29,16 +28,15 @@
 		<@row>
 			<@columns sm=2 id='toc'>
 				<@box id='toc-box'>
-				<#assign boxHeaderTitle>${form.title} <@icon style='hashtag' title='#i18n{forms.multiviewForms.responseDetails.response.number}' /> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}"'>${form_response.id}</strong></#assign>
-				<@boxHeader id='toc-box-header' title=boxHeaderTitle boxTools=true>
-					<@icon style='times' id='toc-compress-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=' role="button"' />
-				</@boxHeader>
-				<@boxBody>
-					<@navBar id='step-toc'>
-						<@nav type='pills'></@nav>
-					</@navBar>
-				</@boxBody>
-			</@box>
+					<@boxHeader id='toc-box-header' title=form.title boxTools=true>
+						<@icon style='times' id='toc-compress-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=' role="button"' />
+					</@boxHeader>
+					<@boxBody>
+						<@navBar id='step-toc'>
+							<@nav type='pills'></@nav>
+						</@navBar>
+					</@boxBody>
+				</@box>
 			</@columns>
 			<@columns sm=7 id='steps-content'>
 				<#if list_multiview_step_display?has_content>
@@ -65,7 +63,6 @@
 					</@boxHeader>
 					<@boxBody>
 						<h2>#i18n{forms.multiviewForms.view_record_history.information}</h2>
-						<@p>${form.title} <@icon style='hashtag' title='#i18n{forms.multiviewForms.responseDetails.response.number}' /> <strong title="#i18n{forms.multiviewForms.responseDetails.response.number}">${form_response.id}</strong></@p>
 						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} : <strong>${form_response.creation}</strong></@p>
 						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong>	</@p>
 						<@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.status} : <strong >${form_response.published?string('Oui', 'Non')}</strong> </span></@p>
