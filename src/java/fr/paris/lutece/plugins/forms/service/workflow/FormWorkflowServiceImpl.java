@@ -65,8 +65,6 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
         if ( nIdWorkflow > 0 && workflowService.isAvailable( ) )
         {
             workflowService.getState( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdWorkflow, form.getId( ) );
-            WorkflowService.getInstance( ).executeActionAutomatic( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdWorkflow, Integer.valueOf( nIdFormResponse ),
-                    null );
         }
     }
 
