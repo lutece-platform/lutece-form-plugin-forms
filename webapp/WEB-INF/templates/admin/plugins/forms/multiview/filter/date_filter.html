@@ -1,10 +1,10 @@
-<@formGroup formStyle='inline' labelClass='sr-only' labelKey=filter_label!'' labelFor=filter_config.getFormFilterName()!''>
+<@formGroup formStyle='inline' groupStyle='addons' labelClass='sr-only' labelKey=filter_label!'' labelFor=filter_config.getFormFilterName()!''>
     <@input type='hidden' name='forms_previous_id_form' value='${forms_previous_id_form!-1}' />
     <@input type='hidden' id='${filter_config.getFormFilterName()!""}_from' name='${filter_config.getFormFilterName()!""}_from' value='${filter_list_value_from!""}' />
     <@input type='hidden' id='${filter_config.getFormFilterName()!""}_to' name='${filter_config.getFormFilterName()!""}_to' value='${filter_list_value_to!""}' />
     <@input type='hidden' name='formsFilterDate' value='${filter_config.getFormFilterName()!""}' />
 	<@inputGroup>
-        <@input type='text' name=filter_config.getFormFilterName()!'' id=filter_config.getFormFilterName()!'' value=filter_list_value!'' placeHolder=filter_label  />
+        <@input type='text' size='sm' name=filter_config.getFormFilterName()!'' id=filter_config.getFormFilterName()!'' value=filter_list_value!'' placeHolder=filter_label  />
         <@inputGroupItem>
             <@button buttonIcon='calendar' color='primary' />
 		</@inputGroupItem>    

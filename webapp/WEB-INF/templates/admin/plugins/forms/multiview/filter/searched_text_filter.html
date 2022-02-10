@@ -1,7 +1,10 @@
 <#if searched_text??><#assign previous_searched_text=searched_text><#else><#assign previous_searched_text=''></#if>
-<@formGroup formStyle='inline' groupStyle='addons' labelClass='sr-only'  id='search-text' helpKey='<i class="fas fa-question-circle" data-toggle="tooltip" data-bs-html="true" data-bs-toggle="tooltip" title="#i18n{forms.multiviewForms.labelFilter.searchText.tooltip}"></i>' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}' labelFor='searched_text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}'>
+<@formGroup formStyle='inline' groupStyle='addons' labelClass='sr-only'  id='search-text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}' labelFor='searched_text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}'>
     <@inputGroup>
-        <@input name='searched_text' id='searched_text' value=previous_searched_text placeHolder='#i18n{forms.multiviewForms.labelFilter.searchText}' />
+        <@input name='searched_text' id='searched_text' size='sm' value=previous_searched_text placeHolder='#i18n{forms.multiviewForms.labelFilter.searchText}' />
+        <@inputGroupItem>
+            <@formHelp style=''>#i18n{forms.multiviewForms.labelFilter.searchText.tooltip}</@formHelp>
+        </@inputGroupItem>   
         <@inputGroupItem>
             <@button type='submit' id='btn_search' buttonIcon='search' title='#i18n{forms.multiviewForms.labelFilter.searchText}' hideTitle=['all']  />
         </@inputGroupItem>   
