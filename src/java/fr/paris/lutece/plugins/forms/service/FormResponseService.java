@@ -56,4 +56,15 @@ public class FormResponseService implements IFormResponseService
         return dataList;
     }
     
+    /**
+     * Saves the form response
+     * 
+     * @param formResponse
+     *            the form response to save
+     */
+    public static void saveFormResponse( FormResponse formResponse )
+    {
+    	FormResponseHome.update( formResponse );
+    }
+    
 }
