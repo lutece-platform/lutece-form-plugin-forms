@@ -14,9 +14,15 @@
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
       <div class="input-group">
         <span class="input-group-addon"><i class="fa fa-calendar fa-lg"></i></span>
-        <#assign field = getFieldByCode( entry, "default_date_value" ) >
+        <#assign field_default = getFieldByCode( entry, "default_date_value" ) >
         <#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-        <input type="text" name="${idName}" id="${idName}" class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>" value="${(response.toStringValueResponse)!(field.valueTypeDate)!}" <#if placeholder!=''> placeholder='${placeholder}' </#if>/>
+        <#assign default=''>
+		<#if response?? && response.responseValue??>
+			<#assign default=response.responseValue?number?number_to_date?iso_local>
+		<#elseif field_default.valueTypeDate?? >
+			<#assign default=field_default.valueTypeDate?iso_local>
+		</#if>
+        <input type="text" name="${idName}" id="${idName}" class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>" value="${default}" <#if placeholder!=''> placeholder='${placeholder}' </#if>/>
         <#if entry.helpMessage?exists&&entry.helpMessage!=''>
           <span class="help-block">${entry.helpMessage}</span>
         </#if>  
