@@ -8,8 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.web.FormResponseData;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
@@ -54,6 +57,17 @@ public class FormResponseService implements IFormResponseService
             dataList.add( data );
         }
         return dataList;
+    }
+    
+    /**
+     * Saves the form response
+     * 
+     * @param formResponse
+     *            the form response to save
+     */
+    public static void saveFormResponse( FormResponse formResponse )
+    {
+    	FormResponseHome.update( formResponse );
     }
     
 }
