@@ -3,16 +3,17 @@
 -- @param resource_actions the actions to display
 -- @return the HTML code of the actions
 -->
-
 <#macro display_actions resource_actions >
 <#if resource_actions.workflow_action_list?exists>
     <h2>#i18n{forms.multiviewForms.view_record_history.actions}</h2>
     <#if resource_actions.workflow_action_list?has_content>
-        <#list resource_actions.workflow_action_list as action>
-            <@link class='btn btn-block btn-default' href='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}' >
-                <@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title=action.name alt=action.name /> ${action.name}  
-            </@link>
-        </#list>
+		<@div class="d-grid gap-2 position-relative mt-3">
+			<#list resource_actions.workflow_action_list as action>
+				<@aButton class='btn-block is-fullwidth my-1' href='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}' >
+					<@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title=action.name alt=action.name /> ${action.name}  
+				</@aButton>
+			</#list>
+		</@div>
     <#else>
 		<@alert color='warning'>
             <@icon style='exclamation-triangle' /> #i18n{forms.multiviewForms.view_record_history.history_empty}
@@ -43,6 +44,48 @@
 					<#list list_multiview_step_display as multiview_step_display>
 						${multiview_step_display}
 					</#list>
+				</#if>
+				<#if comment??>
+					<@box color='primary' class='step-group' id='step-comment' params=' tabindex=0 data-title="Commentaires"'>
+						<@boxHeader title='Commentaires - ${form.title}' boxTools=true>
+							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-comment" aria-expanded="false" aria-controls="box-step-content-comment">
+								<i class="fa fa-minus-square"></i>
+							</button>
+						</@boxHeader>
+						<@boxBody id='box-step-content-comment' class='collapse show'>
+							<@fieldSet class='fieldset-group' legend='Commentaires' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
+							${comment!}
+							</@fieldSet>
+						</@boxBody>
+					</@box>
+				</#if>
+				<#if rating??>
+					<@box color='primary' class='step-group' id='step-rating' params=' tabindex=0 data-title="Vote"'>
+						<@boxHeader title='Vote  - ${form.title}' boxTools=true>
+							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-rating" aria-expanded="false" aria-controls="box-step-content-rating">
+								<i class="fa fa-minus-square"></i>
+							</button>
+						</@boxHeader>
+						<@boxBody id='box-step-content-rating' class='collapse show'>
+						<@fieldSet class='fieldset-group' legend='Vote' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
+							${rating!}
+						</@fieldSet>
+						</@boxBody>
+					</@box>
+				</#if>
+				<#if follow??>
+					<@box color='primary' class='step-group' id='step-follow' params=' tabindex=0 data-title="Suivre"'>
+						<@boxHeader title='Suivre - ${form.title}' boxTools=true>
+							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-follow" aria-expanded="false" aria-controls="box-step-content-follow">
+								<i class="fa fa-minus-square"></i>
+							</button>
+						</@boxHeader>
+						<@boxBody id='box-step-content-follow' class='collapse show'>
+							<@fieldSet class='fieldset-group' legend='Suivre' fieldsetId='group-favorite' fieldsetParams=' tabindex=0'>
+								${follow!}
+							</@fieldSet>
+						</@boxBody>
+					</@box>
 				</#if>
 			</@columns>
 			<@columns sm=3>
@@ -83,9 +126,10 @@
 <script src="js/admin/plugins/forms/multiview/forms-multiview.js"></script>
 <script>
 $( function() {	
-	$('.content-header').hide();
-	$('#form-detail-header').css('border-top', 0 );
-	setNavButtons( '${form_response.id}', '<i class="fas fa-arrow-left"></i> #i18n{portal.util.labelPrevious}', '#i18n{portal.util.labelNext} <i class="fas fa-arrow-right"></i> ')		
+	$( '.content-header' ).hide();
+	$( '#form-detail-header' ).css( 'border-top', 0 );
+	setNavButtons( '${form_response.id}', '<i class="fas fa-arrow-left"></i> #i18n{portal.util.labelPrevious}', '#i18n{portal.util.labelNext} <i class="fas fa-arrow-right"></i>')	;
+	// $('.back-forms').remove();
 });
 </script>
 
