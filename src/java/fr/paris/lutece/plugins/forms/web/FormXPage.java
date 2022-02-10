@@ -339,9 +339,27 @@ public class FormXPage extends MVCApplication
             }
             
             initFormResponseManager( request, form );
+            if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
+            {
+                _currentStep = _formResponseManager.getCurrentStep( );
+                _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+
+                Object [ ] args = {
+                        _formResponseManager.getFormResponse( ).getUpdate( ),
+                };
+
+                model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, getLocale( request ) ) );
+            }
+            
+            if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
+            {
+                _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+                _formResponseManager.add( _currentStep );
+            }
+            
             if ( !_formResponseManager.getFormResponse( ).isFromSave( ) && !bypassInactiveState( form, request ) )
             {
-                XPage accessControlPage = AccessControlService.getInstance( ).doExecuteAccessControl( request, nIdForm, Form.RESOURCE_TYPE );
+                XPage accessControlPage = AccessControlService.getInstance( ).doExecuteAccessControl( request, form.getId( ), Form.RESOURCE_TYPE, _formResponseManager );
                 if ( accessControlPage != null )
                 {
                     return accessControlPage;
@@ -440,24 +458,6 @@ public class FormXPage extends MVCApplication
      */
     private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model )
     {
-        if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
-        {
-            _currentStep = _formResponseManager.getCurrentStep( );
-            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-
-            Object [ ] args = {
-                    _formResponseManager.getFormResponse( ).getUpdate( ),
-            };
-
-            model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, getLocale( request ) ) );
-        }
-        
-        if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
-        {
-            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-            _formResponseManager.add( _currentStep );
-        }
-
         Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
         _stepDisplayTree.addModel( modelForStep );
 
