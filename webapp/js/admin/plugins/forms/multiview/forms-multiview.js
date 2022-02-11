@@ -36,7 +36,7 @@ function setNavButtons( idResp, labelPrev, labelNext ){
 }
 
 function setStepsIndex(){
-	var stepList=$('.step-group'), stepLinks='<ul class="list-unstyled">', active=true;
+	var stepList=$('.step-group'), stepLinks='<ul class="list-unstyled flex-grow-1">', active=true;
     stepList.each( function( ){
 		var pId = $(this).attr('id'), 
 		t=  $(this).data('title');
