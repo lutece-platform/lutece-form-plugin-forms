@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -553,7 +554,7 @@ public class FormStepJspBean extends AbstractJspBean
                 return;
             }
             String content = FormJsonService.getInstance( ).jsonExportStep( step.getIdForm( ), step.getId( ) );
-            download( content.getBytes( ), FileUtil.normalizeFileName( step.getTitle( ) ) + ".json", "application/json" );
+            download( content.getBytes( StandardCharsets.UTF_8 ), FileUtil.normalizeFileName( step.getTitle( ) ) + ".json", "application/json" );
         }
         catch( JsonProcessingException e )
         {
@@ -572,7 +573,7 @@ public class FormStepJspBean extends AbstractJspBean
         try
         {
             nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
-            FormJsonService.getInstance( ).jsonImportStep( nIdForm, new String( fileItem.get( ) ), getLocale( ) );
+            FormJsonService.getInstance( ).jsonImportStep( nIdForm, new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
             addInfo( INFO_STEP_CREATED, getLocale( ) );
         }
         catch( JsonProcessingException e )

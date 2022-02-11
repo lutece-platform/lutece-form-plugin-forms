@@ -147,6 +147,7 @@ public abstract class AbstractFormJsonService
      * 
      * @return
      */
+    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
     public void jsonImportStep( int idForm, String json, Locale locale ) throws JsonProcessingException
     {
         StepJsonData jsonData = _objectMapper.readValue( json, StepJsonData.class );

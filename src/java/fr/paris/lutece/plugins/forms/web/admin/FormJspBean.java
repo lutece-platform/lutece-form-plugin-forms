@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -946,7 +947,7 @@ public class FormJspBean extends AbstractJspBean
         {
             content = FormJsonService.getInstance( ).jsonExportForm( nId );
             Form form = FormHome.findByPrimaryKey( nId );
-            download( content.getBytes( ), FileUtil.normalizeFileName( form.getTitle( ) ) + ".json", "application/json" );
+            download( content.getBytes( StandardCharsets.UTF_8 ), FileUtil.normalizeFileName( form.getTitle( ) ) + ".json", "application/json" );
         }
         catch( JsonProcessingException e )
         {
@@ -962,7 +963,7 @@ public class FormJspBean extends AbstractJspBean
         FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
         try
         {
-            FormJsonService.getInstance( ).jsonImportForm( new String( fileItem.get( ) ), getLocale( ) );
+            FormJsonService.getInstance( ).jsonImportForm( new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
             addInfo( INFO_FORM_CREATED, getLocale( ) );
         }
         catch( JsonProcessingException e )
