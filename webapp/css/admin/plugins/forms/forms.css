@@ -32,17 +32,18 @@ body, .wrapper{ height: 100%; overflow: visible; }
 .th-active, .th-active a{ color: #fff }
 
 /* Multiview - No answers 														*/
-#multiview-no-forms { height:70vh; display:flex; justify-content:center; align-items:start; width:100%;}
+#multiview-no-forms{ height:70vh; display:flex; justify-content:center; align-items:start; width:100%;}
 
 /* Multiview - Detail view 														*/
-#form-response-details { font-family:'Montserrat-Light','Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif; }
+#form-response-details{ font-family:'Montserrat-Light','Source Sans Pro','Helvetica Neue',Helvetica,Arial,sans-serif; }
 #form-response-details .box.step-group:hover{ background-color: #f0f0f0}
-#form-response-details legend { font-weight:400; font-size:130%; border-bottom:1px solid #1d98f6; color:#1d98f6; }
+#form-response-details legend { font-weight:400; font-size:130%; border-bottom:1px solid #1d98f6; color:#1d98f6;width: 100%; }
 #form-response-details .fieldset-group .row:hover{ color: #1d98f6; }
 
 /* Multiview - Main list  														*/
 #multi-form-list th{ text-transform: lowercase }
 #multi-form-list th::first-letter{ text-transform: uppercase }
+#multi-form-list tr:hover{ cursor: pointer; color: var( --info ) }
 
 /* Multiview - Aside - timeline 												*/
 .timeline-form { list-style-type: none; position: relative; }
@@ -51,28 +52,28 @@ body, .wrapper{ height: 100%; overflow: visible; }
 .timeline-form > li:before {content: ' ';background: white;display: inline-block; position: absolute; border-radius: 50%; border: 3px solid #22c0e8; left: 20px; width: 20px; height: 20px; z-index: 400;}
 
 /* Multiview - Aside - Scroll 													*/
-#scroll { position: fixed; right:60px; bottom: 60px; cursor:pointer; width:50px; height:50px; background-color:#1d98f6; text-indent:-9999px; display:none; -webkit-border-radius:60px;-moz-border-radius:60px; border-radius:60px}
+#scroll { position: fixed; right: 60px; bottom: 60px; cursor:pointer; width:50px; height:50px; background-color:#1d98f6; text-indent:-9999px; display:none; -webkit-border-radius:60px;-moz-border-radius:60px; border-radius:60px}
 #scroll span { position:absolute; top:50%;left:50%; margin-left:-8px;margin-top:-12px; height:0; width:0; border:8px solid transparent; border-bottom-color:#fff; }
 #scroll:hover { background-color:#e74c3c; opacity:1;filter:"alpha(opacity=100)"; -ms-filter:"alpha(opacity=100)" }
 
 /* Multiview - TOC  															*/
-#response-right{ position: fixed; top: 70px; width: 25vw; overflow-y: auto; height: 90vh; padding-bottom: 10vh; }
+#response-right{ position: sticky; top: 15px; overflow-y: auto; height: auto; padding-bottom: 10vh; }
 #response-right h2{ font-size: 140%; color:#1d98f6; border-bottom: 1px solid #555 }
 #response-right .img-action{ position: absolute; left: 16px; width: 16px }
 
 /* Multiview - Step TOC  														*/
-#toc-box{ position: fixed; top: 70px; left: 15px; overflow-y: auto; height: auto; width: 15vw; } 
+#toc-box{ position: sticky; top: 15px; left: 15px; overflow-y: auto; height: auto; width: 15vw; } 
 #toc-box .card-header{ padding: .55rem } 
 #toc-box .card-body{ padding: 0 } 
 #toc-compress-toggle{ position: absolute; top: 10px; right: 10px; }
-#toc-expand-toggle{ position: fixed; z-index: 99; top: 80px; left: 0; padding: 5px 2px; border: 1px solid #DDD; border-left: 0; border-bottom-right-radius: 3px; border-top-right-radius: 3px; }
+#toc-expand-toggle{ position: sticky; z-index: 99; top: 15px;  transform: translate(-40px,40px); background-color: #fff; padding: 5px 2px; border: 1px solid #DDD; border-left: 0; border-bottom-right-radius: 3px; border-top-right-radius: 3px; }
 #toc-expand-toggle:hover{ cursor: pointer; }
 
 #step-toc{ -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none;  /* Firefox */; height: 75vh; padding: 0 5px; position: relative; overflow-y: scroll; }
 #step-toc::-webkit-scrollbar {	display: none;  }
-#step-toc .nav-pills{  position: absolute; top: 10px; left: 0; padding: 5px; height: auto; z-index: 1000 }
+#step-toc .nav-pills{  position: absolute; top: 10px; left: 0; padding: 5px; height: auto; z-index: 1000; width: 100% }
 #step-toc .nav-pills:hover{ cursor: pointer; outline: 1px dotted #000 }
-#step-toc .nav-pills span{ color: #071F32; text-decoration: none; text-overflow: ellipsis; width: 120px; display: block; white-space: nowrap; 	overflow: hidden;}
+#step-toc .nav-pills span{ color: #071F32; text-decoration: none; text-overflow: ellipsis; width: 95%; display: block; white-space: nowrap; 	overflow: hidden;}
 #step-toc .nav-pills li a:hover span{ color: #7b7b7b; outline: 1px dotted #000 }
 #step-toc .nav-pills .active > .nav-link > span{ color: #1d98f6 } 
 
@@ -80,7 +81,7 @@ body, .wrapper{ height: 100%; overflow: visible; }
 
 /**
  * ----------------------------------------
- * animation heartbeat
+ * Animation heartbeat
  * ----------------------------------------
  */
 @-webkit-keyframes heartbeat {
@@ -98,7 +99,6 @@ body, .wrapper{ height: 100%; overflow: visible; }
 		-webkit-animation-timing-function: ease-in;
 				animation-timing-function: ease-in;
 	}
-
 	45% {
 		-webkit-transform: scale(1);
 				transform: scale(1);
@@ -122,7 +122,6 @@ body, .wrapper{ height: 100%; overflow: visible; }
 	  -webkit-animation-timing-function: ease-in;
 			  animation-timing-function: ease-in;
 	}
-	
 	45% {
 	  -webkit-transform: scale(1);
 			  transform: scale(1);
