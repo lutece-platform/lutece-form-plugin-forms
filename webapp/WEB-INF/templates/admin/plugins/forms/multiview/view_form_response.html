@@ -47,13 +47,13 @@
 				</#if>
 				<#if comment??>
 					<@box color='primary' class='step-group' id='step-comment' params=' tabindex=0 data-title="Commentaires"'>
-						<@boxHeader title='Commentaires - ${form.title}' boxTools=true>
+						<@boxHeader title='Commentaires' boxTools=true>
 							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-comment" aria-expanded="false" aria-controls="box-step-content-comment">
 								<i class="fa fa-minus-square"></i>
 							</button>
 						</@boxHeader>
 						<@boxBody id='box-step-content-comment' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='Commentaires' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
+							<@fieldSet class='fieldset-group' legend='Commentaires' legendClass='sr-only' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
 							${comment!}
 							</@fieldSet>
 						</@boxBody>
@@ -61,13 +61,13 @@
 				</#if>
 				<#if rating??>
 					<@box color='primary' class='step-group' id='step-rating' params=' tabindex=0 data-title="Vote"'>
-						<@boxHeader title='Vote  - ${form.title}' boxTools=true>
+						<@boxHeader title='Vote' boxTools=true>
 							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-rating" aria-expanded="false" aria-controls="box-step-content-rating">
 								<i class="fa fa-minus-square"></i>
 							</button>
 						</@boxHeader>
 						<@boxBody id='box-step-content-rating' class='collapse show'>
-						<@fieldSet class='fieldset-group' legend='Vote' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
+						<@fieldSet class='fieldset-group' legend='Vote' legendClass='sr-only' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
 							${rating!}
 						</@fieldSet>
 						</@boxBody>
@@ -75,14 +75,28 @@
 				</#if>
 				<#if follow??>
 					<@box color='primary' class='step-group' id='step-follow' params=' tabindex=0 data-title="Suivre"'>
-						<@boxHeader title='Suivre - ${form.title}' boxTools=true>
+						<@boxHeader title='Suivre' boxTools=true>
 							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-follow" aria-expanded="false" aria-controls="box-step-content-follow">
 								<i class="fa fa-minus-square"></i>
 							</button>
 						</@boxHeader>
 						<@boxBody id='box-step-content-follow' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='Suivre' fieldsetId='group-favorite' fieldsetParams=' tabindex=0'>
+							<@fieldSet class='fieldset-group' legend='Suivre' legendClass='sr-only' fieldsetId='group-follow' fieldsetParams=' tabindex=0'>
 								${follow!}
+							</@fieldSet>
+						</@boxBody>
+					</@box>
+				</#if>
+				<#if feedback??>
+					<@box color='primary' class='step-group' id='step-feedback' params=' tabindex=0 data-title="Signalement"'>
+						<@boxHeader title='Signalement' boxTools=true>
+							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-feedback" aria-expanded="false" aria-controls="box-step-content-feedback">
+								<i class="fa fa-minus-square"></i>
+							</button>
+						</@boxHeader>
+						<@boxBody id='box-step-content-feedback' class='collapse show'>
+							<@fieldSet class='fieldset-group' legend='Signalement' legendClass='sr-only' fieldsetId='group-feedback' fieldsetParams=' tabindex=0'>
+								${feedback!}
 							</@fieldSet>
 						</@boxBody>
 					</@box>
