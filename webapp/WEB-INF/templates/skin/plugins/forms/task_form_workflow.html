@@ -1,18 +1,20 @@
-<@row>
-	<@columns>
-		<@box>
-			<@boxHeader title='#i18n{forms.tasks_form_workflow.title}' />
-			<@boxBody>
-				<@tform action='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp' method='post' params='enctype="multipart/form-data"'>
-					<@input type='hidden' name='id_action' value='${id_action}' />
-					<@input type='hidden' name='id_form_response' value='${id_form_response}' />
-					${tasks_form}
-					<@formGroup>
-						<@button type='submit' name='action_doSaveTaskForm' buttonIcon='check' title='#i18n{workflow.tasks_form_test_workflow.button_save}' />
-						<@button type='submit' name='action_doCancelTaskForm' buttonIcon='times' title='#i18n{workflow.tasks_form_test_workflow.button_cancel}' cancel=true />
-					</@formGroup>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<div class="row" >
+	<div>
+		<div class="box" >
+			<div class="box-header with-border" >
+				<h2 class="box-title">#i18n{forms.tasks_form_workflow.title}</h2>
+				<div class="box-body">
+					<form class="form-horizontal" id="form-validate"  action='jsp/site/Portal.jsp?page=formsResponse' method='post' params='enctype="multipart/form-data"'>
+						<input type='hidden' name='id_action' value='${id_action}' />
+						<input type='hidden' name='id_response' value='${id_form_response}' />
+						${tasks_form}
+						<div class="form-group">
+							<button class="btn btn-primary btn-sm" name="action_doSaveTaskForm"  type="submit" >#i18n{workflow.tasks_form_test_workflow.button_save}</button>
+							<button class="btn btn-primary btn-sm" name="action_doCancelTaskForm"  type="submit" formnovalidate >#i18n{workflow.tasks_form_test_workflow.button_cancel}</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
