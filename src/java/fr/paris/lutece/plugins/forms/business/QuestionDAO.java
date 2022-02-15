@@ -53,16 +53,16 @@ public final class QuestionDAO implements IQuestionDAO
 {
     // Constants
 
-    private static final String SQL_QUERY_SELECT_ALL = "SELECT id_question, title, code, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title, is_filterable_multiview_global, is_filterable_multiview_form_selected, multiview_column_order FROM forms_question";
+    private static final String SQL_QUERY_SELECT_ALL = "SELECT id_question, title, code, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title, is_filterable_multiview_global, is_filterable_multiview_form_selected, multiview_column_order, status FROM forms_question";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECT_ALL + " WHERE id_question = ?";
     private static final String SQL_QUERY_SELECT_BY_CODE = SQL_QUERY_SELECT_ALL + " WHERE code = ?";
     private static final String SQL_QUERY_SELECT_BY_CODE_AND_ENTRY_ID = SQL_QUERY_SELECT_BY_CODE + " AND id_entry = ? ";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question ( title, code, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title, is_filterable_multiview_global, is_filterable_multiview_form_selected,multiview_column_order ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_question ( title, code, description, id_entry, id_step, is_visible_multiview_global, is_visible_multiview_form_selected, column_title, is_filterable_multiview_global, is_filterable_multiview_form_selected,multiview_column_order, status ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question WHERE id_question = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_question SET id_question = ?, title = ?, code = ?, description = ?, id_entry = ?, id_step = ?, is_visible_multiview_global = ?, is_visible_multiview_form_selected = ?, column_title = ?, is_filterable_multiview_global = ?, is_filterable_multiview_form_selected = ?, multiview_column_order = ? WHERE id_question = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_question SET id_question = ?, title = ?, code = ?, description = ?, id_entry = ?, id_step = ?, is_visible_multiview_global = ?, is_visible_multiview_form_selected = ?, column_title = ?, is_filterable_multiview_global = ?, is_filterable_multiview_form_selected = ?, multiview_column_order = ?, status = ? WHERE id_question = ?";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_question FROM forms_question";
     private static final String SQL_QUERY_SELECT_BY_STEP = SQL_QUERY_SELECT_ALL + " WHERE id_step = ?";
-    private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title, fq.code, fq.description, fq.id_entry, fq.id_step, fq.is_visible_multiview_global, fq.is_visible_multiview_form_selected , fq.column_title, fq.is_filterable_multiview_global, fq.is_filterable_multiview_form_selected,fq.multiview_column_order FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
+    private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title, fq.code, fq.description, fq.id_entry, fq.id_step, fq.is_visible_multiview_global, fq.is_visible_multiview_form_selected , fq.column_title, fq.is_filterable_multiview_global, fq.is_filterable_multiview_form_selected,fq.multiview_column_order, fq.status FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
     private static final String SQL_QUERY_SELECT_IN = SQL_QUERY_SELECT_ALL + " WHERE id_question IN ( ";
 
     /**
@@ -86,6 +86,7 @@ public final class QuestionDAO implements IQuestionDAO
             daoUtil.setBoolean( nIndex++, question.isFiltrableMultiviewGlobal( ) );
             daoUtil.setBoolean( nIndex++, question.isFiltrableMultiviewFormSelected( ) );
             daoUtil.setInt( nIndex++, question.getMultiviewColumnOrder( ) );
+            daoUtil.setBoolean( nIndex++, question.isPublished( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -201,6 +202,7 @@ public final class QuestionDAO implements IQuestionDAO
         daoUtil.setBoolean( nIndex++, question.isFiltrableMultiviewGlobal( ) );
         daoUtil.setBoolean( nIndex++, question.isFiltrableMultiviewFormSelected( ) );
         daoUtil.setInt( nIndex++, question.getMultiviewColumnOrder( ) );
+        daoUtil.setBoolean( nIndex++, question.isPublished( ) );
 
         daoUtil.setInt( nIndex, question.getId( ) );
 
@@ -419,6 +421,7 @@ public final class QuestionDAO implements IQuestionDAO
         question.setFiltrableMultiviewFormSelected( daoUtil.getBoolean( "is_filterable_multiview_form_selected" ) );
         question.setMultiviewColumnOrder( daoUtil.getInt( "multiview_column_order" ) );
         question.setStep( getQuestionStep( question.getIdStep( ) ) );
+        question.setPublished( daoUtil.getBoolean( "status" ) );
 
         return question;
     }
@@ -471,6 +474,7 @@ public final class QuestionDAO implements IQuestionDAO
         question.setFiltrableMultiviewGlobal( daoUtil.getBoolean( "is_filterable_multiview_global" ) );
         question.setFiltrableMultiviewFormSelected( daoUtil.getBoolean( "is_filterable_multiview_form_selected" ) );
         question.setMultiviewColumnOrder( daoUtil.getInt( "multiview_column_order" ) );
+        question.setPublished( daoUtil.getBoolean( "status" ) );
 
         return question;
     }

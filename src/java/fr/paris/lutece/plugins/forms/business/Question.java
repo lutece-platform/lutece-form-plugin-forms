@@ -85,6 +85,8 @@ public class Question implements Serializable, Cloneable
     private boolean _bIsFiltrableMultiviewFormSelected;
 
     private int _nMultiviewColumnOrder;
+    
+    private boolean _bIsPublished;
 
     /**
      * Returns the Id
@@ -453,4 +455,22 @@ public class Question implements Serializable, Cloneable
     {
         _nMultiviewColumnOrder = nMultiviewColumnOrder;
     }
+
+    /**
+     * Set the published boolean
+     * 
+     * @param bIsPublished
+     *            the published boolean
+     */
+    public void setPublished( boolean bIsPublished )
+    {
+        _bIsPublished = bIsPublished;
+    }
+    
+    /**
+     * @return the boolean published
+     */
+	public boolean isPublished() {
+		return _bIsPublished;
+	}
 }

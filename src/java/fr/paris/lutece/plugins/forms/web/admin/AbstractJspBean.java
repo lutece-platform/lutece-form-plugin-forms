@@ -171,6 +171,18 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     {
         return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_FORMS;
     }
+    
+    /**
+     * Return the URL of the JSP manage forms questions
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL of the JSP manage forms questions
+     */
+    protected String getJspManageFormsQuestions( HttpServletRequest request )
+    {
+        return AppPathService.getBaseUrl( request ) + FormsConstants.JSP_MANAGE_FORMS_QUESTIONS;
+    }
 
     /**
      * Redirect to the URL of view manage form
@@ -182,6 +194,18 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected String redirectToViewManageForm( HttpServletRequest request )
     {
         return redirect( request, getJspManageForm( request ) );
+    }
+    
+    /**
+     * Redirect to the URL of view manage forms questions
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL of the JSP manage forms questions
+     */
+    protected String redirectToViewManageFormsQuestions( HttpServletRequest request )
+    {
+        return redirect( request, getJspManageFormsQuestions( request ) );
     }
 
     /**

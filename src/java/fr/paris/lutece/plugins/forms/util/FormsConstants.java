@@ -166,6 +166,7 @@ public final class FormsConstants
     public static final String JSP_MANAGE_QUESTIONS = "jsp/admin/plugins/forms/ManageQuestions.jsp";
     public static final String JSP_MANAGE_TRANSITIONS = "jsp/admin/plugins/forms/ManageTransitions.jsp";
     public static final String JSP_MANAGE_CONTROLS = "jsp/admin/plugins/forms/ManageControls.jsp";
+    public static final String JSP_MANAGE_FORMS_QUESTIONS = "jsp/admin/plugins/forms/ManageFormsQuestions.jsp";
 
     // Properties
     public static final String PROPERTY_MY_LUTECE_ATTRIBUTES_LIST = "entrytype.myluteceuserattribute.attributes.list";
