@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -58,6 +59,8 @@ import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormMessage;
 import fr.paris.lutece.plugins.forms.business.FormMessageHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.export.ExportServiceManager;
@@ -67,7 +70,11 @@ import fr.paris.lutece.plugins.forms.service.json.FormJsonService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.BreadcrumbManager;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.GenAttFileItem;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
@@ -123,6 +130,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String TEMPLATE_MODIFY_FORM = "/admin/plugins/forms/modify_form.html";
     private static final String TEMPLATE_MANAGE_EXPORT = "/admin/plugins/forms/manage_export.html";
     private static final String TEMPLATE_MODIFY_FORM_PUBLICATION = "/admin/plugins/forms/modify_publication.html";
+    private static final String TEMPLATE_MANAGE_QUESTION_PUBLICATION = "/admin/plugins/forms/manage_forms_questions_publication.html";
 
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_ID_CONFIG = "id_config";
@@ -153,6 +161,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_UPLOAD_HANDLER = "uploadHandler";
     private static final String MARK_ACCESSCONTROL_REF_LIST = "accesscontrol_list";
     private static final String MARK_ACCESSCONTROL_ID = "accesscontrol_id";
+    private static final String MARK_QUESTIONLIST = "questionList";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -172,6 +181,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String VIEW_CONFIRM_REMOVE_FORM = "confirmRemoveForm";
     private static final String VIEW_MANAGE_EXPORT = "manageExport";
     private static final String VIEW_CONFIG_REMOVE_EXPORT_CONFIG = "confirmRemoveExportConfig";
+    private static final String VIEW_MANAGE_QUESTION_PUBLICATION = "manageQuestionPublication";
 
     // Actions
     private static final String ACTION_CREATE_FORM = "createForm";
@@ -184,6 +194,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String ACTION_MOVE_DOWN_EXPORT_CONFIG = "doMoveDownExportConfig";
     private static final String ACTION_EXPORT_FORM = "doExportJson";
     private static final String ACTION_IMPORT_FORM = "doImportJson";
+    private static final String ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION = "modifyFormQuestions";
 
     // Infos
     private static final String INFO_FORM_CREATED = "forms.info.form.created";
@@ -576,6 +587,34 @@ public class FormJspBean extends AbstractJspBean
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
     }
+    
+    @View( VIEW_MANAGE_QUESTION_PUBLICATION )
+    public String getManageQuestion( HttpServletRequest request ) throws AccessDeniedException
+    {
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
+
+        Form formToBeModified = FormHome.findByPrimaryKey( nId );
+
+        if ( formToBeModified == null )
+        {
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+        
+        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId() );
+
+        Map<String, Object> model = getModel( );
+        model.put( MARK_FORM, formToBeModified );
+        model.put( MARK_QUESTIONLIST, questionList );
+        model.put( MARK_FORM_MESSAGE, _formMessage );
+        return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_QUESTION_PUBLICATION, model );
+    }
 
     @Action( ACTION_CREATE_EXPORT_CONFIG )
     public String doCreateExportConfig( HttpServletRequest request )
@@ -885,6 +924,43 @@ public class FormJspBean extends AbstractJspBean
         }
 
         addInfo( INFO_FORM_UPDATED, getLocale( ) );
+
+        return redirectView( request, VIEW_MANAGE_FORMS );
+    }
+    
+    /**
+     * Process the change of publication statut of a form question
+     *
+     * @param request
+     *            The Http request
+     * @return The Jsp URL of the process result
+     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     *             AccessDeniedException if the user isn'y authorized to process the modification of params of a form
+     */
+    @Action( ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION )
+    public String doModifyFormQuestions( HttpServletRequest request ) throws AccessDeniedException
+    {
+    	int nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+        
+        Form formToBeModified = FormHome.findByPrimaryKey( nId );
+
+        if ( formToBeModified == null )
+        {
+            return redirectView( request, VIEW_MANAGE_FORMS );
+        }
+        
+        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId() );
+        
+        String[] questionPublished = request.getParameterValues( "questionPublished" ) ;
+        
+        for (Question question : questionList)
+        {
+        	Entry entry = question.getEntry();
+        	if (entry.getFieldByCode(IEntryTypeService.FIELD_PUBLISHED) == null )
+        		FieldHome.create(GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf(Arrays.asList(questionPublished).contains(String.valueOf(question.getId())))));
+        	else
+        		FieldHome.update(GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf(Arrays.asList(questionPublished).contains(String.valueOf(question.getId())))));
+        }
 
         return redirectView( request, VIEW_MANAGE_FORMS );
     }

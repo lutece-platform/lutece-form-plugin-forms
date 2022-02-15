@@ -9,6 +9,9 @@
 			
 			<#if tab='export'><#assign active = true /><#else><#assign active = false /></#if>
 			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=manageExport&id_form=${form.id}' tabIcon='file-export' title='#i18n{forms.modify_form.tab.labelExport}' />
+			
+			<#if tab='questions'><#assign active = true /><#else><#assign active = false /></#if>
+			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=manageQuestionPublication&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelQuestion}' />
 		</@tabList>
 		<#nested>
 	</@tabs>
