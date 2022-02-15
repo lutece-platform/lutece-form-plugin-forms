@@ -333,6 +333,16 @@ public class Question implements Serializable, Cloneable
     {
         return _entry.isExportable( );
     }
+    
+    /**
+     * Return the responses published boolean
+     * 
+     * @return true if the responses of this question are published, false otherwise
+     */
+    public boolean isPublished( )
+    {
+        return _entry.isPublished( );
+    }
 
     /**
      * Get the is visible Multiview Global boolean

@@ -1,0 +1,50 @@
+<#include "/admin/plugins/forms/edit_form_tabs.html" />
+<@tform class='form' method='post' name='modify_forms_questions' action='jsp/admin/plugins/forms/ManageFormsQuestions.jsp'>
+	<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+	<@row>
+		<@columns>
+			<@box color='primary'>
+				<@boxHeader title='${form.title!}'>
+					<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' hideTitle=['xs'] params='data-toggle="modal" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" data-target="#pubModal"' hideTitle=['all']  />
+					<#if form.active>
+						<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' />
+						<@aButton href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='list-alt' />
+					</#if>
+				</@boxHeader>
+				<@boxBody>
+					<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
+					<@formTabs tab="questions" />
+					<@tabContent>
+	                    <@tabPanel id='tabpanel' active=true>
+							<@table id='list' class='table-striped is-fullwidth'>
+								<@tr>
+									<@th>#i18n{forms.manage_question_response.step}</@th>
+									<@th>#i18n{forms.manage_question_response.columnTitle}</@th>
+									<@th>#i18n{forms.manage_question_response.status}</@th>
+								</@tr>
+								<#list questionList as question>
+									<@tr>
+										<@td>
+											${question.step.title!}
+										</@td>
+										<@td>
+											${question.title!}
+										</@td>
+										<@td>
+											<@formGroup labelFor='published'>
+	                							<@checkBox name='questionPublished' id='${question.id}' value='${question.id}' checked=(question?has_content && question.published!) />
+	            							</@formGroup>
+										</@td>
+									</@tr>
+								</#list>
+							</@table>
+						</@tabPanel>
+	                </@tabContent>
+	                <@formGroup rows=2>
+						<@headerButton name='action_modifyFormQuestions' label='forms.modify_form.buttonValidate' /> 
+					</@formGroup>
+				</@boxBody>
+			</@box>
+		</@columns>
+	</@row>
+</@tform>
