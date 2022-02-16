@@ -957,9 +957,13 @@ public class FormJspBean extends AbstractJspBean
         {
         	Entry entry = question.getEntry();
         	if (entry.getFieldByCode(IEntryTypeService.FIELD_PUBLISHED) == null )
+        	{
         		FieldHome.create(GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf(Arrays.asList(questionPublished).contains(String.valueOf(question.getId())))));
+        	}
         	else
+        	{
         		FieldHome.update(GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf(Arrays.asList(questionPublished).contains(String.valueOf(question.getId())))));
+        	}
         }
 
         return redirectView( request, VIEW_MANAGE_FORMS );
