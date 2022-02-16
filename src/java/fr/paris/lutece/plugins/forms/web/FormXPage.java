@@ -84,6 +84,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.accesscontrol.AccessControlService;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
 import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -92,6 +93,7 @@ import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -112,7 +114,8 @@ import fr.paris.lutece.util.url.UrlItem;
 public class FormXPage extends MVCApplication
 {
     protected static final String XPAGE_NAME = "forms";
-
+    private static final long serialVersionUID = -8380962697376893817L;
+    
     // Messages
     protected static final String MESSAGE_PAGE_TITLE = "forms.xpage.form.view.pageTitle";
     protected static final String MESSAGE_PATH = "forms.xpage.form.view.pagePathLabel";
@@ -130,10 +133,8 @@ public class FormXPage extends MVCApplication
     private static final String MESSAGE_STEP_TITLE = "forms.step.title";
     private static final String MESSAGE_SUMMARY_TITLE = "forms.summary.title";
     private static final String MESSAGE_WARNING_INACTIVE_STATE_BYPASSED = "forms.warning.inactive.state.bypassed";
-    /**
-     * Generated serial id
-     */
-    private static final long serialVersionUID = -8380962697376893817L;
+    private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
+    
     // Views
     private static final String VIEW_STEP = "stepView";
     private static final String VIEW_LIST_FORM = "listForm";
@@ -459,6 +460,7 @@ public class FormXPage extends MVCApplication
     private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model )
     {
         Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
+        modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
         _stepDisplayTree.addModel( modelForStep );
 
         if ( form.isCountResponses( ) )
@@ -628,7 +630,7 @@ public class FormXPage extends MVCApplication
         {
             model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
         }
-
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
         String strTitleForm = I18nService.getLocalizedString( MESSAGE_SUMMARY_TITLE, new String [ ] {
                 form.getTitle( )
         }, getLocale( request ) );
@@ -697,10 +699,16 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      *             Exception
+     * @throws AccessDeniedException 
      */
     @Action( value = ACTION_SAVE_FORM_RESPONSE )
-    public synchronized XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         Form form = null;
         try
         {
@@ -737,10 +745,17 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      *             Exception
+     * @throws AccessDeniedException 
      */
     @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY )
-    public synchronized XPage doSaveFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doSaveFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+        
         Form form = null;
         try
         {
@@ -973,10 +988,17 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      *             Exception
+     * @throws AccessDeniedException 
      */
     @Action( value = ACTION_SAVE_STEP )
-    public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+        
         try
         {
             boolean bSessionLost = isSessionLost( );
@@ -1077,14 +1099,21 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      *             Exception
+     * @throws AccessDeniedException 
      */
     @Action( value = ACTION_SAVE_FOR_BACKUP )
-    public XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+        
         Form form = null;
-
         try
         {
+            
             boolean bSessionLost = isSessionLost( );
             form = findFormFrom( request );
             if ( bSessionLost )
@@ -1130,12 +1159,18 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      *             Exception
+     * @throws AccessDeniedException 
      */
     @Action( value = ACTION_RESET_BACKUP )
-    public XPage doResetBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public XPage doResetBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         Form form = null;
-
+        
         try
         {
             form = findFormFrom( request );

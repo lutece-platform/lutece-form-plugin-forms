@@ -14,9 +14,10 @@
   </div>
   <div class="panel-footer">
   	<#assign label_button="#i18n{forms.summary.validate}" />
-      	<#if form.labelFinalButton?has_content>
-      		<#assign label_button=form.labelFinalButton />
-      	</#if>
+  	<#if form.labelFinalButton?has_content>
+  		<#assign label_button=form.labelFinalButton />
+  	</#if>
+  	<input type="hidden" name="token" value = "${token}">
     <button type="submit" class="btn btn-primary btn-sm"  name="action_doSaveResponseSummary" >
       <i class="glyphicon glyphicon-ok"></i>&nbsp;${label_button}
     </button>
