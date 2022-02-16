@@ -18,12 +18,14 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
@@ -55,7 +57,8 @@ public class FormResponseXPage extends MVCApplication
     protected static final String MESSAGE_FORM_RESPONSE_PAGETITLE = "forms.xpage.response.pagetitle";
     protected static final String MESSAGE_FORM_RESPONSE_PATHLABEL = "forms.xpage.response.pathlabel";
     private static final String MESSAGE_ACTION_ERROR = "forms.xpage.response.action.error";
-    
+    private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
+
     // Views
     private static final String VIEW_FORM_RESPONSE = "formResponseView";
     
@@ -87,6 +90,7 @@ public class FormResponseXPage extends MVCApplication
     	Map<String, Object> model = getModel( );
 		model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
 		model.put( MARK_WORKFLOW_ACTION_LIST, actionsList );
+		model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_PROCESS_ACTION ) );
 		
     	XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE, getLocale( request ), model );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
@@ -96,8 +100,13 @@ public class FormResponseXPage extends MVCApplication
     }
     
     @fr.paris.lutece.portal.util.mvc.commons.annotations.Action( value = ACTION_PROCESS_ACTION )
-    public XPage doProcessAction( HttpServletRequest request )
+    public XPage doProcessAction( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_PROCESS_ACTION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         // Get parameters from request
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
@@ -123,7 +132,8 @@ public class FormResponseXPage extends MVCApplication
             model.put( MARK_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
             model.put( MARK_ID_ACTION, String.valueOf( nIdAction ) );
             model.put( MARK_TASK_FORM, strHtmlTasksForm );
-
+            model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_TASK_FORM ) );
+            
             XPage xPage = getXPage( TEMPLATE_TASK_FORM_RESPONSE, locale, model );
             xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
             xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );
@@ -150,9 +160,10 @@ public class FormResponseXPage extends MVCApplication
      * @param request
      *            The Http request
      * @return The Jsp URL of the process result
+     * @throws AccessDeniedException 
      */
     @fr.paris.lutece.portal.util.mvc.commons.annotations.Action( value = ACTION_SAVE_TASK_FORM )
-    public XPage doSaveTaskForm( HttpServletRequest request )
+    public XPage doSaveTaskForm( HttpServletRequest request ) throws AccessDeniedException
     {
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
@@ -163,6 +174,12 @@ public class FormResponseXPage extends MVCApplication
         if ( user == null || formResponse == null || formResponse.getGuid( ) == null || !formResponse.getGuid( ).equals( user.getName( ) ) )
         {
             return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
+        }
+
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_TASK_FORM ) )
+        {
+            throw new AccessDeniedException( "Invalid security token" );
         }
         
         int nIdForm = formResponse.getFormId( );

@@ -7,6 +7,7 @@
 					<form class="form-horizontal" id="form-validate"  action='jsp/site/Portal.jsp?page=formsResponse' method='post' params='enctype="multipart/form-data"'>
 						<input type='hidden' name='id_action' value='${id_action}' />
 						<input type='hidden' name='id_response' value='${id_form_response}' />
+						<input type="hidden" name="token" value = "${token}">
 						${tasks_form}
 						<div class="form-group">
 							<button class="btn btn-primary btn-sm" name="action_doSaveTaskForm"  type="submit" >#i18n{workflow.tasks_form_test_workflow.button_save}</button>
