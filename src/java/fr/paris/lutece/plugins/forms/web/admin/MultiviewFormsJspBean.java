@@ -560,7 +560,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     protected static String getMultiviewBaseViewUrl( )
     {
-        return JSP_FORMS_MULTIVIEW + "?view=" + VIEW_MULTIVIEW_FORMS;
+        return "MultiviewForms.jsp?view=" + VIEW_MULTIVIEW_FORMS;
     }
 
     /**
