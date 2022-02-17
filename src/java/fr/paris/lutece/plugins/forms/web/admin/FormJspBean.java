@@ -952,17 +952,22 @@ public class FormJspBean extends AbstractJspBean
         List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId() );
         
         String[] questionPublished = request.getParameterValues( "questionPublished" ) ;
+        Boolean published = false;
         
         for (Question question : questionList)
         {
+        	if (questionPublished != null)
+        	{
+        		published = Arrays.asList(questionPublished).contains(String.valueOf(question.getId()));
+        	}
         	Entry entry = question.getEntry();
         	if (entry.getFieldByCode(IEntryTypeService.FIELD_PUBLISHED) == null )
         	{
-        		FieldHome.create(GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf(Arrays.asList(questionPublished).contains(String.valueOf(question.getId())))));
+        		FieldHome.create(GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf(published)));
         	}
         	else
         	{
-        		FieldHome.update(GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf(Arrays.asList(questionPublished).contains(String.valueOf(question.getId())))));
+        		FieldHome.update(GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf(published)));
         	}
         }
 
