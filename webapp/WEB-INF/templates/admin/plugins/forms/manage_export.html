@@ -3,13 +3,7 @@
 <@row>
 	<@columns>
 		<@box color='primary'>
-			<@boxHeader title='${form.title!}'>
-				<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' hideTitle=['xs'] params='data-toggle="modal" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" data-target="#pubModal"' hideTitle=['all']  />
-				<#if form.active>
-					<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' />
-					<@aButton href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='list-alt' />
-				</#if>
-			</@boxHeader>
+			<@boxHeader title='${form.title!}' />
 			<@boxBody>
 				<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
 				<@formTabs tab="export" />
@@ -19,7 +13,8 @@
 						</@columns>
 						
 					</@row>
-				<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageForms.jsp'>
+				<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormExport.jsp'>
+					<@input type='hidden' id='token' name='token' value='${token}' />
 					<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 					<@row>
 						<@columns sm=4 offsetSm=1> 
@@ -51,13 +46,13 @@
 										<@td>
 											<#if export_config_list?size gt 1>
 												<#if config.order gt 1>
-													<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?action=doMoveUpExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveUpExportConfig}' hideTitle=['all'] buttonIcon='chevron-up' size='sm' />
+													<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doMoveUpExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveUpExportConfig}' hideTitle=['all'] buttonIcon='chevron-up' size='sm' />
 												</#if>
 												<#if config.order lt export_config_list?size>
-													<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?action=doMoveDownExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveDownExportConfig}' hideTitle=['all'] buttonIcon='chevron-down' size='sm' />
+													<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doMoveDownExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveDownExportConfig}' hideTitle=['all'] buttonIcon='chevron-down' size='sm' />
 												</#if>
 											</#if>
-											<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=confirmRemoveExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.removeExportConfig}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
+											<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?view=confirmRemoveExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.removeExportConfig}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
 										</@td>
 									</@tr>
 								</#list>
