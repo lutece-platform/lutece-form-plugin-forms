@@ -203,7 +203,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
             throws AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, actionCsrf ) )
+        if ( actionCsrf != null && !SecurityTokenService.getInstance( ).validate( request, actionCsrf ) )
         {
             throw new AccessDeniedException( UNAUTHORIZED );
         }

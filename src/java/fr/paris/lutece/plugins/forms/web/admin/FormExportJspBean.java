@@ -66,7 +66,7 @@ public class FormExportJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, FormJspBean.ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -79,7 +79,7 @@ public class FormExportJspBean extends AbstractJspBean
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_EXPORT_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfigOption( formToBeModified, getLocale( ) ) );
         model.put( MARK_EXPORT_CONFIG_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) ) );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormJspBean.ACTION_MODIFY_FORM ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_EXPORT_CONFIG ) );
         
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
     }
@@ -93,7 +93,7 @@ public class FormExportJspBean extends AbstractJspBean
         {
             return redirect( request, VIEW_MANAGE_FORMS );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, FormJspBean.ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_EXPORT_CONFIG );
         
         String field = request.getParameter( PARAMETER_EXPORT_CONFIG );
 
@@ -130,7 +130,7 @@ public class FormExportJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( idForm ), FormsResourceIdService.PERMISSION_MODIFY, request, FormJspBean.ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( idForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
 
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
@@ -143,7 +143,7 @@ public class FormExportJspBean extends AbstractJspBean
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_EXPORT_CONFIG ) );
         url.addParameter( PARAMETER_ID_CONFIG, idConfig );
         url.addParameter( FormsConstants.PARAMETER_ID_FORM, idForm );
-        url.addParameter(  SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_EXPORT_CONFIG ) );
+        url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_EXPORT_CONFIG ) );
         
         String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG, url.getUrl( ),
                 AdminMessage.TYPE_CONFIRMATION );
@@ -195,7 +195,6 @@ public class FormExportJspBean extends AbstractJspBean
     {
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
         int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( idForm ), FormsResourceIdService.PERMISSION_MODIFY, request, FormJspBean.ACTION_MODIFY_FORM );
         
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
@@ -234,7 +233,6 @@ public class FormExportJspBean extends AbstractJspBean
     {
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
         int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( idForm ), FormsResourceIdService.PERMISSION_MODIFY, request, FormJspBean.ACTION_MODIFY_FORM );
         
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {

@@ -2,16 +2,16 @@
 	<@tabs>
 		<@tabList>
 			<#if tab='steps'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}&token=${token}' tabIcon='step-forward' title='#i18n{forms.modify_form.tab.labelSteps}' />
+			<@tabLink active=active href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' tabIcon='step-forward' title='#i18n{forms.modify_form.tab.labelSteps}' />
 			
 			<#if tab='general'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelGeneral}' />
+			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelGeneral}' />
 			
 			<#if tab='export'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormExport.jsp?view=manageExport&id_form=${form.id}&token=${token}' tabIcon='file-export' title='#i18n{forms.modify_form.tab.labelExport}' />
+			<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormExport.jsp?view=manageExport&id_form=${form.id}' tabIcon='file-export' title='#i18n{forms.modify_form.tab.labelExport}' />
 			
 			<#if tab='questions'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=manageQuestionPublication&id_form=${form.id}&token=${token}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelQuestion}' />
+			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=manageQuestionPublication&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelQuestion}' />
 		</@tabList>
 		<#nested>
 	</@tabs>

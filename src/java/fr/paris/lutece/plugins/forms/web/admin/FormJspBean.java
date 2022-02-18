@@ -261,7 +261,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN, PluginService.isPluginEnable( KIBANA_FORMS_PLUGIN_NAME ) );
         model.put( FormsConstants.MARK_TIMESTAMP, strTimespamp );
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_FORM ) );
 
         
         setPageTitleProperty( EMPTY_STRING );
@@ -385,7 +385,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_DELETE, request, ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_DELETE, request, null );
 
         Form formToBeDeleted = FormHome.findByPrimaryKey( nId );
         String strConfirmRemoveMessage = formToBeDeleted.isActive( ) ? MESSAGE_CONFIRM_REMOVE_ACTIVE_FORM : MESSAGE_CONFIRM_REMOVE_FORM;
@@ -425,7 +425,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
         
-        checkUserPermission( Form.RESOURCE_TYPE, strIdForm,  FormsResourceIdService.PERMISSION_COPY, request, ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, strIdForm,  FormsResourceIdService.PERMISSION_COPY, request, ACTION_CREATE_FORM );
 
         if ( nId != FormsConstants.DEFAULT_ID_VALUE )
         {
@@ -504,7 +504,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -565,7 +565,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -620,7 +620,7 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -819,7 +819,7 @@ public class FormJspBean extends AbstractJspBean
     public void doExportJson( HttpServletRequest request ) throws AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_FORM ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, null ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -847,7 +847,7 @@ public class FormJspBean extends AbstractJspBean
     @Action( ACTION_IMPORT_FORM )
     public String doImportJson( HttpServletRequest request ) throws AccessDeniedException
     {
-        checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, ACTION_CREATE_FORM );
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
         try
