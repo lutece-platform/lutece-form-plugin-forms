@@ -421,7 +421,7 @@ public class FormXPage extends MVCApplication
             return true;
         }
         String strTimestamp = request.getParameter( FormsConstants.PARAMETER_TIMESTAMP );
-        String strToken = request.getParameter( FormsConstants.PARAMETER_TOKEN );
+        String strToken = request.getParameter( FormsConstants.PARAMETER_TOKEN_BYPASS );
         if ( StringUtils.isBlank( strToken ) || !StringUtils.isNumeric( strTimestamp ) )
         {
             return false;

@@ -1,7 +1,7 @@
 <@tform class='form' method='post' name='create_form' action='jsp/admin/plugins/forms/ManageForms.jsp'  params='enctype="multipart/form-data"'>
+	<@input type="hidden" name="token" value = "${token}" />
 	<@box>
-		<@boxHeader title='#i18n{forms.create_form.title}'>
-		</@boxHeader>
+		<@boxHeader title='#i18n{forms.create_form.title}' />
 		<@boxBody>
 			<@formModel />
 			<@formGroup rows=2>

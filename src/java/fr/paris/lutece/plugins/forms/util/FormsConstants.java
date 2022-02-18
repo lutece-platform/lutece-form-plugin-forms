@@ -141,7 +141,7 @@ public final class FormsConstants
     public static final String PARAMETER_INIT = "init";
     public static final String PARAMETER_ID_QUESTION_TO_REMOVE = "id_rm_question";
     public static final String PARAMETER_TIMESTAMP = "ts";
-    public static final String PARAMETER_TOKEN = "token";
+    public static final String PARAMETER_TOKEN_BYPASS = "token_bypass";
 
     public static final String PARAMETER_SELECTED_PANEL = "selected_panel";
     public static final String PARAMETER_CURRENT_SELECTED_PANEL = "current_selected_panel";

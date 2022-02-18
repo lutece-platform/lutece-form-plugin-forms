@@ -1,6 +1,7 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
 <@tform class='form' method='post' name='modify_forms_questions' action='jsp/admin/plugins/forms/ManageFormsQuestions.jsp'>
 	<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+	<@input type="hidden" name="token" value = "${token}" />
 	<@row>
 		<@columns>
 			<@box color='primary'>

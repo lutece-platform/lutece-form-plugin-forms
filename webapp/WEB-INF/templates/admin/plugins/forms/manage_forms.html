@@ -3,7 +3,7 @@
 		<@box color='primary'>
             <@boxHeader title='#i18n{forms.manageForm.title}' class='is-align-items-center' boxTools=true>
                 <#if permission_create_forms>
-                    <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm'] class='card-header-icon' color='secondary' />
+                    <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm&token=${token}' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm'] class='card-header-icon' color='secondary' />
                 	<@aButton title='#i18n{forms.manageForm.buttonImport}' buttonIcon='upload' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] class='card-header-icon' color='secondary' />
                 </#if>
             </@boxHeader>
@@ -65,16 +65,16 @@
                                         </#if>
                                         <#if action.permission=='PUBLISH'>
                                         	<#assign can_publish=true>
-                                            <#assign params='data-toggle="modal" data-target="#pubModal" data-url="${action.url}&id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"' />
+                                            <#assign params='data-toggle="modal" data-target="#pubModal" data-url="${action.url}&id_form=${form.id}&token=${token}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"' />
                                         </#if>
-                                        <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' hideTitle=['all'] color='${color}' class='${perm}' buttonIcon=action.iconUrl params=params size='sm' />
+                                        <@aButton href='${action.url}&id_form=${form.id}&token=${token}' title='${action.name}' hideTitle=['all'] color='${color}' class='${perm}' buttonIcon=action.iconUrl params=params size='sm' />
                                     </#list>
                                 </#if>
                                 <#if form.active>
                                 	<#assign inactiveBypass=''>
                                 	<#assign color='success'>
                                 <#else>
-                                	<#assign inactiveBypass='&ts='+timestamp+'&token='+inactiveBypassTokens[form.id?string]>
+                                	<#assign inactiveBypass='&ts='+timestamp+'&token_bypass='+inactiveBypassTokens[form.id?string]>
                                 	<#assign color='warning'>
                                 </#if>
                                 <@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' color=color />
@@ -144,6 +144,7 @@
 	<@modalHeader modalTitle='#i18n{forms.manageForm.buttonImport}' />
 	<@modalBody>
 		<@tform class='form' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageForms.jsp' params='enctype="multipart/form-data"'>
+			<@input type="hidden" name="token" value = "${token}" />
 			<@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
 				<@input type='file' name='json_file'/>
 			</@formGroup>

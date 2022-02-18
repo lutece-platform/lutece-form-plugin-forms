@@ -181,7 +181,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, FormJspBean.ACTION_MODIFY_FORM );
 
         Form formParent = FormHome.findByPrimaryKey( nIdForm );
         _step = new Step( );

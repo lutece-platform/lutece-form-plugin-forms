@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
@@ -198,9 +199,14 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
      * @throws AccessDeniedException
      *             An access denied exception
      */
-    protected void checkUserPermission( String strRessourceType, String strResource, String strPermissionName, HttpServletRequest request )
+    protected void checkUserPermission( String strRessourceType, String strResource, String strPermissionName, HttpServletRequest request, String actionCsrf )
             throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, actionCsrf ) )
+        {
+            throw new AccessDeniedException( UNAUTHORIZED );
+        }
         if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, (User) AdminUserService.getAdminUser( request ) ) )
         {
             throw new AccessDeniedException( UNAUTHORIZED );

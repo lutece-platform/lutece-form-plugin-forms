@@ -91,6 +91,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -185,7 +186,7 @@ public class FormJspBean extends AbstractJspBean
 
     // Actions
     private static final String ACTION_CREATE_FORM = "createForm";
-    private static final String ACTION_MODIFY_FORM = "modifyForm";
+    public static final String ACTION_MODIFY_FORM = "modifyForm";
     private static final String ACTION_REMOVE_FORM = "removeForm";
     private static final String ACTION_DUPLICATE_FORM = "duplicateForm";
     private static final String ACTION_CREATE_EXPORT_CONFIG = "createExportConfig";
@@ -204,7 +205,8 @@ public class FormJspBean extends AbstractJspBean
     private static final String ERROR_FORM_NOT_COPIED = "forms.error.form.not.copied";
     private static final String ERROR_FORM_NOT_IMPORTED = "forms.error.form.not.imported";
     private static final String MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG = "forms.modify_form.message.confirmRemoveExportConfig";
-
+    private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
+        
     // Errors
     private static final String ERROR_FORM_NOT_UPDATED = "forms.error.form.notUpdated";
     private static final String ERROR_FORM_DATE_START_AFTER_END = "forms.error.form.date.startAfterEnd";
@@ -275,7 +277,9 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN, PluginService.isPluginEnable( KIBANA_FORMS_PLUGIN_NAME ) );
         model.put( FormsConstants.MARK_TIMESTAMP, strTimespamp );
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM ) );
 
+        
         setPageTitleProperty( EMPTY_STRING );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_FORMS, locale, model );
@@ -295,7 +299,7 @@ public class FormJspBean extends AbstractJspBean
     @View( VIEW_CREATE_FORM )
     public String getCreateForm( HttpServletRequest request ) throws AccessDeniedException
     {
-        checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request );
+        checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, ACTION_MODIFY_FORM );
 
         _uploadHandler.removeSessionFiles( request.getSession( ) );
         _form = ( _form != null ) ? _form : new Form( );
@@ -326,7 +330,8 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
         model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
-
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_FORM ) );
+        
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_CREATE_FORM, model );
     }
 
@@ -336,10 +341,13 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_CREATE_FORM )
-    public String doCreateForm( HttpServletRequest request )
+    public String doCreateForm( HttpServletRequest request ) throws AccessDeniedException
     {
+        checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, ACTION_CREATE_FORM );
+
         populate( _form, request, request.getLocale( ) );
         populate( _formMessage, request, request.getLocale( ) );
 
@@ -393,13 +401,14 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_DELETE, request, ACTION_MODIFY_FORM );
 
         Form formToBeDeleted = FormHome.findByPrimaryKey( nId );
         String strConfirmRemoveMessage = formToBeDeleted.isActive( ) ? MESSAGE_CONFIRM_REMOVE_ACTIVE_FORM : MESSAGE_CONFIRM_REMOVE_FORM;
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_FORM ) );
         url.addParameter( FormsConstants.PARAMETER_ID_FORM, nId );
+        url.addParameter(  SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_FORM ) );
 
         String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
@@ -413,11 +422,11 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the html code to confirm
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_DUPLICATE_FORM )
-    public String doDuplicateForm( HttpServletRequest request )
+    public String doDuplicateForm( HttpServletRequest request ) throws AccessDeniedException
     {
-
         int nId = -1;
         String strIdForm;
 
@@ -431,11 +440,11 @@ public class FormJspBean extends AbstractJspBean
             AppLogService.error( ne );
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
+        
+        checkUserPermission( Form.RESOURCE_TYPE, strIdForm,  FormsResourceIdService.PERMISSION_COPY, request, ACTION_MODIFY_FORM );
 
-        if ( nId != FormsConstants.DEFAULT_ID_VALUE
-                && RBACService.isAuthorized( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, (User) getUser( ) ) )
+        if ( nId != FormsConstants.DEFAULT_ID_VALUE )
         {
-
             try
             {
                 String json = FormJsonService.getInstance( ).jsonExportForm( nId );
@@ -476,7 +485,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_DELETE, request, ACTION_REMOVE_FORM );
 
         if ( AccessControlService.getInstance( ).isAvailable( ) )
         {
@@ -511,7 +520,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_MODIFY_FORM );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -552,7 +561,8 @@ public class FormJspBean extends AbstractJspBean
 
             model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
             model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
-            
+            model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM ) );
+
             ExtendableResourcePluginActionManager.fillModel(request, getUser(), model, "*", FormResponse.RESOURCE_TYPE+ "_" + nId);
             
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );
@@ -571,7 +581,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_CREATE_EXPORT_CONFIG );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -589,7 +599,7 @@ public class FormJspBean extends AbstractJspBean
     }
     
     @View( VIEW_MANAGE_QUESTION_PUBLICATION )
-    public String getManageQuestion( HttpServletRequest request ) throws AccessDeniedException
+    public String getManageQuestionPublication( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
@@ -598,7 +608,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_CREATE_EXPORT_CONFIG );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -613,6 +623,8 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, questionList );
         model.put( MARK_FORM_MESSAGE, _formMessage );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION ) );
+        
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_QUESTION_PUBLICATION, model );
     }
 
@@ -828,7 +840,7 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_MODIFY_FORM );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -841,7 +853,8 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_FORM_MESSAGE, _formMessage );
             model.put( MARK_FORM, formToBeModified );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
-
+            model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM ) );
+            
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM_PUBLICATION, model );
         }
 
@@ -873,7 +886,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_MODIFY_FORM );
 
         _form = FormHome.findByPrimaryKey( nId );
 
@@ -938,8 +951,13 @@ public class FormJspBean extends AbstractJspBean
      *             AccessDeniedException if the user isn'y authorized to process the modification of params of a form
      */
     @Action( ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION )
-    public String doModifyFormQuestions( HttpServletRequest request ) throws AccessDeniedException
+    public String doModifyFormQuestionsPublication( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
     	int nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
         
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
@@ -1018,8 +1036,13 @@ public class FormJspBean extends AbstractJspBean
     }
 
     @Action( ACTION_EXPORT_FORM )
-    public void doExportJson( HttpServletRequest request )
+    public void doExportJson( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_FORM ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nId == FormsConstants.DEFAULT_ID_VALUE )
@@ -1042,8 +1065,9 @@ public class FormJspBean extends AbstractJspBean
     }
 
     @Action( ACTION_IMPORT_FORM )
-    public String doImportJson( HttpServletRequest request )
+    public String doImportJson( HttpServletRequest request ) throws AccessDeniedException
     {
+        checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, ACTION_MODIFY_FORM );
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
         try
