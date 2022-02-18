@@ -3,6 +3,7 @@
     <@boxHeader title='#i18n{forms.manageForm.pageTitle}' />
     <@boxBody>
         <@tform method='post' name='create_step' id='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
+        	<@input type='hidden' id='token' name='token" value="${token}' />
             <@input type='hidden' id='id_form' name='id_form" value="${step.idForm}' />
             <@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true>
                  <@input type='text' name='title' value='${step.title!}' />

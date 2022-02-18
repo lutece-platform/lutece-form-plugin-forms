@@ -734,7 +734,7 @@ public class FormJspBean extends AbstractJspBean
     public String doModifyFormQuestionsPublication( HttpServletRequest request ) throws AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_FORM ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }

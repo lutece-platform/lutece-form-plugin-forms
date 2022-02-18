@@ -63,6 +63,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -213,6 +214,8 @@ public class FormStepJspBean extends AbstractJspBean
         model.put( MARK_STEP_LIST, paginator.getPageItems( ) );
         model.put( MARK_LOCALE, request.getLocale( ) );
         model.put( MARK_TEMPLATE_PROVIDER, _stepService.getStepTemplateProvider( ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_STEP ) );
+        
         setPageTitleProperty( EMPTY_STRING );
 
         Locale locale = getLocale( );
@@ -253,6 +256,7 @@ public class FormStepJspBean extends AbstractJspBean
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_STEP ) );
 
         ReferenceList stepRefList = new ReferenceList( );
         stepRefList.addItem( -1, "" );
@@ -276,9 +280,10 @@ public class FormStepJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_CREATE_STEP )
-    public String doCreateStep( HttpServletRequest request )
+    public String doCreateStep( HttpServletRequest request ) throws AccessDeniedException
     {
         populate( _step, request, request.getLocale( ) );
 
@@ -286,7 +291,8 @@ public class FormStepJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_CREATE_STEP );
         }
-
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _step.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
+        
         StepHome.create( _step );
         addInfo( INFO_STEP_CREATED, getLocale( ) );
 
@@ -338,7 +344,8 @@ public class FormStepJspBean extends AbstractJspBean
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_STEP ) );
         url.addParameter( FormsConstants.PARAMETER_ID_STEP, nId );
-
+        url.addParameter(  SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_STEP ) );
+        
         String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
@@ -351,9 +358,10 @@ public class FormStepJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the html code to confirm
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_DUPLICATE_STEP )
-    public String doDuplicateStep( HttpServletRequest request )
+    public String doDuplicateStep( HttpServletRequest request ) throws AccessDeniedException
     {
         int nIdStep = -1;
 
@@ -368,7 +376,8 @@ public class FormStepJspBean extends AbstractJspBean
         }
 
         int nIdForm = -1;
-
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
+        
         if ( nIdStep != -1 )
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
@@ -398,9 +407,10 @@ public class FormStepJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the jsp URL to display the form to manage forms
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_REMOVE_STEP )
-    public String doRemoveStep( HttpServletRequest request )
+    public String doRemoveStep( HttpServletRequest request ) throws AccessDeniedException
     {
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
 
@@ -420,6 +430,7 @@ public class FormStepJspBean extends AbstractJspBean
         {
             nIdForm = _step.getIdForm( );
         }
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_REMOVE_STEP );
         _stepService.removeStep( nIdStep );
         FormResponseStepHome.removeByStep( nIdStep );
 
@@ -464,6 +475,7 @@ public class FormStepJspBean extends AbstractJspBean
             model.put( FormsConstants.MARK_STEP, _step );
             model.put( FormsConstants.MARK_FORM, _form );
             model.put( MARK_LOCALE, request.getLocale( ) );
+            model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_STEP ) );
 
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_STEP, TEMPLATE_MODIFY_STEP, model );
         }
@@ -478,9 +490,10 @@ public class FormStepJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return The Jsp URL of the process result
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_MODIFY_STEP )
-    public String doModifyStep( HttpServletRequest request )
+    public String doModifyStep( HttpServletRequest request ) throws AccessDeniedException
     {
         int nIdStep = -1;
         int nIdForm = -1;
@@ -488,6 +501,7 @@ public class FormStepJspBean extends AbstractJspBean
         try
         {
             nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_MODIFY_STEP );
             nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         }
         catch( NumberFormatException ne )
@@ -563,7 +577,7 @@ public class FormStepJspBean extends AbstractJspBean
     }
 
     @Action( ACTION_IMPORT_STEP )
-    public String doImportJson( HttpServletRequest request )
+    public String doImportJson( HttpServletRequest request ) throws AccessDeniedException
     {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
@@ -572,6 +586,7 @@ public class FormStepJspBean extends AbstractJspBean
         try
         {
             nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
             FormJsonService.getInstance( ).jsonImportStep( nIdForm, new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
             addInfo( INFO_STEP_CREATED, getLocale( ) );
         }
@@ -584,7 +599,7 @@ public class FormStepJspBean extends AbstractJspBean
     }
     
     @Action( ACTION_IMPORT_TEMPLATE )
-    public String doImportTemplate( HttpServletRequest request )
+    public String doImportTemplate( HttpServletRequest request ) throws AccessDeniedException
     {
 
         int nIdForm = -1;
@@ -592,6 +607,7 @@ public class FormStepJspBean extends AbstractJspBean
         try
         {
             nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
             nIdTemplate = Integer.parseInt( request.getParameter( PARAMETER_ID_TEMPLATE ) );
             StepJsonData template = _stepService.getStepTemplateData( nIdTemplate );
             if ( template != null )

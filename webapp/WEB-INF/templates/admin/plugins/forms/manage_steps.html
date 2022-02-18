@@ -48,7 +48,7 @@
 									</@td>
 									<@td>
 										<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' title='#i18n{forms.manage_steps.action.modifyStep} ${step.title}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
-										<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?action=duplicateStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.copyStep} ${step.title}' hideTitle=['all'] buttonIcon='copy' size='sm' />
+										<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?action=duplicateStep&id_step=${step.id}&token=${token}' title='#i18n{forms.manage_steps.action.copyStep} ${step.title}' hideTitle=['all'] buttonIcon='copy' size='sm' />
 										<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?action=doExportJson&id_step=${step.id}' title='#i18n{forms.manage_steps.action.exportStep} ${step.title}' hideTitle=['all'] buttonIcon='download' size='sm' />
 										<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.modify_step.tab.labelQuestions}' hideTitle=['all'] buttonIcon='list' size='sm' />
 										<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' title='#i18n{forms.manage_steps.action.removeStep}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' /> 
@@ -99,6 +99,7 @@
 	<@modalHeader modalTitle='#i18n{forms.manage_steps.buttonImport}' />
 	<@modalBody>
 		<@tform class='form' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp' params='enctype="multipart/form-data"'>
+			<@input type='hidden' name='token' value='${token}' />
 			<@input type='hidden' name='id_form' value='${form.id}' />
 			<@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
 				<@input type='file' name='json_file'/>
@@ -115,6 +116,7 @@
 		<@modalHeader modalTitle='#i18n{forms.manage_steps.buttonImportTemplate}' />
 		<@modalBody>
 			<@tform class='form' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
+				<@input type='hidden' name='token' value='${token}' />
 				<@input type='hidden' name='id_form' value='${form.id}' />
 				<@formGroup labelKey='#i18n{forms.manageForm.labelStepTemplates}'>
 					<@select name='id_template' items=template_provider.stepTemplateList />
