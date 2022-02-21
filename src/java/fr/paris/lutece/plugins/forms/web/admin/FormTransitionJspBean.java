@@ -53,8 +53,10 @@ import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.utils.algo.helper.DetectCycleGraphBuilder;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
@@ -179,7 +181,8 @@ public class FormTransitionJspBean extends AbstractJspBean
         model.put( MARK_TRANSITION_LIST, listTransition );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_FORM, _form );
-
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormStepJspBean.ACTION_MODIFY_STEP ) );
+        
         setPageTitleProperty( EMPTY_STRING );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_TRANSITIONS, locale, model );
@@ -205,7 +208,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         _transition = ( _transition != null ) ? _transition : new Transition( );
 
         Map<String, Object> model = getModel( );
-
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_TRANSITION ) );
         if ( _step != null )
         {
             buildTransitionModel( model );
@@ -240,6 +243,7 @@ public class FormTransitionJspBean extends AbstractJspBean
         }
 
         Map<String, Object> model = getModel( );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_TRANSITION ) );
 
         if ( _transition != null && _step != null )
         {
@@ -276,10 +280,17 @@ public class FormTransitionJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_CREATE_TRANSITION )
-    public String doCreateTransition( HttpServletRequest request )
+    public String doCreateTransition( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_CREATE_TRANSITION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+        
         if ( !createTransition( request ) )
         {
             return redirect( request, VIEW_CREATE_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
@@ -300,6 +311,7 @@ public class FormTransitionJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_TRANSITION_AND_CONTROL )
     public String doCreateTransitionAndControl( HttpServletRequest request )
     {
+        
         if ( !createTransition( request ) )
         {
             return redirect( request, VIEW_CREATE_TRANSITION, FormsConstants.PARAMETER_ID_STEP, _transition.getFromStep( ) );
@@ -348,10 +360,17 @@ public class FormTransitionJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_MODIFY_TRANSITION )
-    public String doModifyTransition( HttpServletRequest request )
+    public String doModifyTransition( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_TRANSITION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+        
         if ( !retrieveTransitionFromRequest( request ) )
         {
             return redirectToViewManageForm( request );
@@ -404,7 +423,8 @@ public class FormTransitionJspBean extends AbstractJspBean
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_TRANSITION ) );
         url.addParameter( FormsConstants.PARAMETER_ID_TRANSITION, nIdTransitionToRemove );
-
+        url.addParameter(  SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_TRANSITION ) );
+        
         String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_TRANSITION, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
@@ -417,10 +437,17 @@ public class FormTransitionJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the jsp URL to display the form to manage Transition
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_REMOVE_TRANSITION )
-    public String doRemoveTransition( HttpServletRequest request )
+    public String doRemoveTransition( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_REMOVE_TRANSITION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+        
         if ( !retrieveTransitionFromRequest( request ) )
         {
             return redirectToViewManageForm( request );

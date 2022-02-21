@@ -131,7 +131,7 @@ public class FormStepJspBean extends AbstractJspBean
 
     // Actions
     private static final String ACTION_CREATE_STEP = "createStep";
-    private static final String ACTION_MODIFY_STEP = "modifyStep";
+    public static final String ACTION_MODIFY_STEP = "modifyStep";
     private static final String ACTION_REMOVE_STEP = "removeStep";
     private static final String ACTION_DUPLICATE_STEP = "duplicateStep";
     private static final String ACTION_EXPORT_STEP = "doExportJson";

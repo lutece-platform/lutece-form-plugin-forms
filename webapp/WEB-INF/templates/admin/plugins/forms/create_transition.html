@@ -1,6 +1,7 @@
 <!-- title='#i18n{forms.create_transition.title}' -->
 <@tform method='post' id='create_transition' name='create_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
 	<@modalBody>
+		<@input type='hidden' id='token' name='token' value='${token}' />
 		<@messages errors=errors />
 		<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
 		<@input type='hidden' id='fromStep' name='fromStep' value='${step.id}' />

@@ -62,6 +62,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     private static final long serialVersionUID = 3421909824044642013L;
 
     protected static final String UNAUTHORIZED = "Unauthorized";
+    protected static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
 
     // Properties
     protected static final String PROPERTY_DEFAULT_LIST_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -205,7 +206,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         // CSRF Token control
         if ( actionCsrf != null && !SecurityTokenService.getInstance( ).validate( request, actionCsrf ) )
         {
-            throw new AccessDeniedException( UNAUTHORIZED );
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
         if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, (User) AdminUserService.getAdminUser( request ) ) )
         {

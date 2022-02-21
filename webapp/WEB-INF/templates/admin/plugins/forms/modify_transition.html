@@ -2,6 +2,7 @@
 <@tform method='post' id='modify_transition' name='modify_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
 	<@modalBody>
         <@messages errors=errors />
+        <@input type='hidden' id='token' name='token' value='${token}' />
         <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
         <@input type='hidden' id='fromStep' name='fromStep' value='${step.id}' />
         <@input type='hidden' id='id_transition' name='id_transition' value='${transition.id}' />

@@ -26,6 +26,7 @@
                         <@row>
                             <@columns sm=4>
                                 <@tform method='post' name='modify_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
+                                	<@input type='hidden' id='token' name='token' value='${token}' />
                                     <@messages errors=errors />
                                     <@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
                                     <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
