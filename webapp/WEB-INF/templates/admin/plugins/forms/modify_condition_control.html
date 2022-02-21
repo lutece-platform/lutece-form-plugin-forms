@@ -4,6 +4,7 @@
     <li class="active">${modify_condition_title}</li>
 </@formBreadCrumb>
 <@tform method='post' name='modify_control' id='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
+	<@input type='hidden' id='token' name='token' value='${token}' />
 	<@modalBody>
 		<@messages errors=errors />
 		<@formGroup labelKey='#i18n{forms.modify_control.labelStep}' helpKey='#i18n{forms.modify_control.labelStep.help}' mandatory=true>

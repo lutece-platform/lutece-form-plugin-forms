@@ -63,9 +63,11 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.ControlListenerManager;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -172,7 +174,6 @@ public class FormControlJspBean extends AbstractJspBean
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
 
         Map<String, Object> model = getModel( );
-
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
 
@@ -505,6 +506,7 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_QUESTION_LIST, referenceListQuestion );
         model.put( FormsConstants.MARK_AVAILABLE_STEPS, StepHome.getStepReferenceListByForm( _step.getIdForm( ) ) );
         model.put( FormsConstants.MARK_CONDITION_TITLE, _strControlTitle );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_CONTROL ) );
     }
 
     /**
@@ -513,10 +515,16 @@ public class FormControlJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_MODIFY_CONTROL )
-    public String doModifyControl( HttpServletRequest request )
+    public String doModifyControl( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_CONTROL ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         if ( !populateAndValidateControl( request ) )
         {
             return redirectView( request, VIEW_MODIFY_CONTROL );
@@ -552,7 +560,8 @@ public class FormControlJspBean extends AbstractJspBean
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_CONTROL ) );
         url.addParameter( FormsConstants.PARAMETER_ID_CONTROL, nIdControlToRemove );
-
+        url.addParameter(  SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_CONTROL ) );
+        
         String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_CONTROL, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
@@ -565,10 +574,17 @@ public class FormControlJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the jsp URL to display the form to manage Transition
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_REMOVE_CONTROL )
-    public String doRemoveControl( HttpServletRequest request )
+    public String doRemoveControl( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_REMOVE_CONTROL ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+
         if ( !retrieveControlFromRequest( request ) )
         {
             return redirectToViewManageForm( request );
