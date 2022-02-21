@@ -9,7 +9,7 @@
     <#if resource_actions.workflow_action_list?has_content>
 		<@div class="d-grid gap-2 position-relative mt-3">
 			<#list resource_actions.workflow_action_list as action>
-				<@aButton class='btn-block is-fullwidth my-1' href='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}' >
+				<@aButton class='btn-block is-fullwidth my-1' href='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?action=doProcessAction&amp;id_action=${action.id}&amp;id_form_response=${form_response.id}&token=${token}' >
 					<@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title=action.name alt=action.name /> ${action.name}  
 				</@aButton>
 			</#list>

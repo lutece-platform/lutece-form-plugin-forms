@@ -79,6 +79,7 @@ import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewMod
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -219,6 +220,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
 
         Map<String, Object> mapFormResponseDetailsModel = getModel( );
+        mapFormResponseDetailsModel.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_PROCESS_ACTION ) );
         mapFormResponseDetailsModel.put( MARK_FORM_RESPONSE, formResponse );
         mapFormResponseDetailsModel.put( MARK_FORM, form );
 
@@ -418,6 +420,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         model.put( MARK_ID_FORM_RESPONSE, nIdFormResponse );
         model.put( MARK_ID_ACTION, nIdAction );
         model.put( MARK_TASK_FORM, strHtmlTasksForm );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_TASK_FORM ) );
 
         return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_TASK_FORM, model );
     }
@@ -428,10 +431,16 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      * @param request
      *            the HttpServletRequest
      * @return the task form if exists, or the FormResponse detail view otherwise.
+     * @throws AccessDeniedException 
      */
     @Action( value = ACTION_PROCESS_ACTION )
-    public String doProcessWorkflowAction( HttpServletRequest request )
+    public String doProcessWorkflowAction( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_PROCESS_ACTION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         // Get parameters from request
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
@@ -478,10 +487,16 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return The Jsp URL of the process result
+     * @throws AccessDeniedException 
      */
     @Action( value = ACTION_SAVE_TASK_FORM )
-    public String doSaveTaskForm( HttpServletRequest request )
+    public String doSaveTaskForm( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_TASK_FORM ) )
+        {
+            throw new AccessDeniedException( ERROR_INVALID_TOKEN );
+        }
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
 
