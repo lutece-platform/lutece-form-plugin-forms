@@ -66,8 +66,10 @@ import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -103,7 +105,6 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private static final String VIEW_MANAGE_QUESTIONS = "manageQuestions";
 
     // Actions
-    private static final String ACTION_SAVE_QUESTION = "saveQuestion";
     private static final String ACTION_REMOVE_FILE = "removeFileComment";
 
     // Warning messages
@@ -146,7 +147,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_COMPOSITE_LIST, listICompositeDisplay );
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
-
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_QUESTION ) );
+        
         setPageTitleProperty( StringUtils.EMPTY );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_QUESTIONS, locale, model );
 
@@ -174,6 +176,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( MARK_ADD_FILE_COMMENT, true );
         model.put( MARK_ACTION, "jsp/admin/plugins/forms/ManageQuestions.jsp" );
         model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_QUESTION ) );
         model.put( FormsConstants.MARK_QUESTION_CREATE_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_CREATE_QUESTION, request.getLocale( ), model ).getHtml( ) );
 
@@ -200,7 +203,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
         model.put( FormsConstants.MARK_FORM, _form );
-
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_GROUP ) );
+        
         setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_CREATE_GROUP, getLocale( ), model );
         return getAdminPage( template.getHtml( ) );
@@ -212,10 +216,16 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_CREATE_GROUP )
-    public String doCreateGroup( HttpServletRequest request )
+    public String doCreateGroup( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_CREATE_GROUP ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         return createGroup( request, VIEW_MANAGE_QUESTIONS );
     }
 
@@ -237,6 +247,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
         model.put( FormsConstants.MARK_FORM, _form );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_GROUP ) );
 
         setPageTitleProperty( PROPERTY_CREATE_GROUP_TITLE );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MODIFY_GROUP, getLocale( ), model );
@@ -249,10 +260,16 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_MODIFY_GROUP )
-    public String doModifyGroup( HttpServletRequest request )
+    public String doModifyGroup( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_GROUP ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         return modifyGroup( request, VIEW_MANAGE_QUESTIONS );
     }
 
@@ -262,10 +279,16 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_CREATE_QUESTION )
-    public String doCreateQuestion( HttpServletRequest request )
+    public String doCreateQuestion( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_QUESTION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         try
         {
             String strReturnUrl = processQuestionCreation( request, VIEW_MANAGE_QUESTIONS );
@@ -294,10 +317,16 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_CREATE_QUESTION_AND_MANAGE_ENTRIES )
-    public String doCreateQuestionAndManageEntries( HttpServletRequest request )
+    public String doCreateQuestionAndManageEntries( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_QUESTION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         try
         {
             String strReturnUrl = processQuestionCreation( request, VIEW_MANAGE_QUESTIONS );
@@ -334,6 +363,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( MARK_ADD_FILE_COMMENT, true );
         model.put( MARK_ACTION, "jsp/admin/plugins/forms/ManageQuestions.jsp" );
         model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_QUESTION ) );
         model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model ).getHtml( ) );
 
@@ -348,10 +378,16 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_MODIFY_QUESTION )
-    public String doModifyQuestion( HttpServletRequest request )
+    public String doModifyQuestion( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_QUESTION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         try
         {
             String strReturnUrl = processQuestionUpdate( request );
@@ -380,10 +416,16 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_SAVE_QUESTION )
-    public String doSaveQuestion( HttpServletRequest request )
+    public String doSaveQuestion( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_QUESTION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         try
         {
             String strReturnUrl = processQuestionUpdate( request );
@@ -408,10 +450,16 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HttpServletRequest the request
      * @return the manage questions page
+     * @throws AccessDeniedException 
      */
     @Action( value = ACTION_DUPLICATE_QUESTION )
-    public String doDuplicateQuestion( HttpServletRequest request )
+    public String doDuplicateQuestion( HttpServletRequest request ) throws AccessDeniedException
     {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_QUESTION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         String strReturnUrl = processQuestionDuplication( request );
 
         if ( strReturnUrl != null )
@@ -488,7 +536,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         String strMessage = getConfirmMessageRemoveQuestion( _form, _formDisplay );
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_COMPOSITE ) );
         url.addParameter( FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
-
+        url.addParameter(  SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_COMPOSITE ) );
+        
         String strMessageUrl = AdminMessageService.getMessageUrl( request, strMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
@@ -530,11 +579,17 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
+     * @throws AccessDeniedException 
      */
     @Action( ACTION_REMOVE_COMPOSITE )
-    public String doRemoveComposite( HttpServletRequest request )
+    public String doRemoveComposite( HttpServletRequest request ) throws AccessDeniedException
     {
 
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_REMOVE_COMPOSITE ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), -1 );
         if ( _formDisplay == null || _formDisplay.getId( ) != nIdDisplay )
         {

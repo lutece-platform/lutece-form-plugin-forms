@@ -12,6 +12,7 @@
 				
 				<@tform method='post' name='create_group' action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
 					<@messages errors=errors />
+					<@input type='hidden' id='token' name='token' value='${token}' />
 					<@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
 					<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
 					<@input type='hidden' id='id_parent' name='id_parent' value='${id_parent}' />
