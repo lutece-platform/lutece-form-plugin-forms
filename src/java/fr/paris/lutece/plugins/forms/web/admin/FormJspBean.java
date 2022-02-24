@@ -283,7 +283,7 @@ public class FormJspBean extends AbstractJspBean
     @View( VIEW_CREATE_FORM )
     public String getCreateForm( HttpServletRequest request ) throws AccessDeniedException
     {
-        checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, null );
 
         _uploadHandler.removeSessionFiles( request.getSession( ) );
         _form = ( _form != null ) ? _form : new Form( );
