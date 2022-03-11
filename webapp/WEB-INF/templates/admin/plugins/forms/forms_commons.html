@@ -18,7 +18,6 @@
 	</#if>
 	<#return false>
 </#function>
-
 <#--
 -- Get the value of the parameter
 -- @param code the code of the parameter
@@ -35,7 +34,6 @@
 	</#if>
 	<#return default>
 </#function>
-
 <#--
 -- Get the field from a given title
 -- @param entry the entry
@@ -51,7 +49,6 @@
 		</#list>
 	</#if>
 </#function>
-
 <#--
 -- Get the field from a given code
 -- @param entry the entry
@@ -67,7 +64,6 @@
         </#list>
     </#if>
 </#function>
-
 <#-- 
 -- Get the field value from a given entry and a given title
 -- @param entry the entry
@@ -81,7 +77,6 @@
 	</#if>
 	<#return "">
 </#function>
-
 <#-- 
 -- Get the field value from a given entry and a given title
 -- @param entry the entry
@@ -95,7 +90,6 @@
 	</#if>
 	<#return "">
 </#function>
-
 <#-- 
 -- Get the response containing the field with the given title
 -- @param responses the list of responses
@@ -111,7 +105,6 @@
     </#list>
   </#if>
 </#function>
-
 <#-- 
 -- Get the response containing the field with the given code
 -- @param responses the list of responses
@@ -127,7 +120,6 @@
     </#list>
   </#if>
 </#function>
-
 <#-- 
 -- Get the response from a given entry
 -- WARNING : use only if the entry has ONE response
@@ -144,7 +136,6 @@
     </#list>
   </#if>
 </#function>
-
 <#-- 
 -- Get the response entry from a given entry
 -- @param responses the list of responses
@@ -160,7 +151,6 @@
     </#list>
   </#if>
 </#function>
-
 <#-- 
 -- Get the error for the given entry
 -- @param responses the list of responses
@@ -173,8 +163,6 @@
     <#return responseEntry.error />
   </#if>
 </#function>
-
-
 <#-- 
 -- Get the max files value of an entry
 -- @param entry the entry
@@ -187,7 +175,6 @@
 	</#if>
 	<#return "1">
 </#function>
-
 <#-- 
 -- Get the max size an uploaded file is authorized to have
 -- @param entry the entry
@@ -205,7 +192,6 @@
 	</#if>
 	<#return "5242880">
 </#function>
-
 <#--
 -- Check if the given entry must export the binary
 -- @param entry the entry
@@ -218,7 +204,6 @@
 	</#if>
 	<#return false />
 </#function>
-
 <#--
 -- Build the entry name
 -- @param entry the entry
@@ -232,7 +217,6 @@
   </#if>
   <#return name />
 </#function>
-
 <#macro formEditor >
 <#assign cssFiles="editor.css, page_template_styles.css" />
 <#assign editorLocale="" />
@@ -262,30 +246,31 @@ tinyMCE.init({
 	});
 </script>
 </#macro>
-
-<#macro toastr infos warnings errors msg='' msgType='info'>
+<#macro toastr infos warnings errors msg='' msgType='info' clickUrl=''>
 <link rel="stylesheet" type="text/css" href="js/admin/jquery/plugins/toastr/toastr.min.css" >
 <script src="js/admin/jquery/plugins/toastr/toastr.min.js"></script>
 <script>
 $( function(){
+<#if clickUrl !=''>
+	toastr.options.onclick = function () {
+		window.location.replace('${clickUrl}')
+	};
+</#if>
 <#if warnings?has_content>
 	<#list warnings as warning >
 		toastr.warning("${warning.message}");
 	</#list>	
 </#if>
-
 <#if errors?has_content>
 	<#list errors as error >
 		toastr.error("${error.message}");
 	</#list>	
 </#if>
-
 <#if infos?has_content>
 	<#list infos as info >
 		toastr.info("${info.message}");
 	</#list>	
 </#if>
-
 <#if msg !=''>
 	<#if msgType='info'>
 		toastr.info("${msg}");
@@ -300,7 +285,6 @@ $( function(){
 });
 </script>
 </#macro>
-
 <#macro formBreadCrumb home='jsp/admin/plugins/forms/ManageForms.jsp'>
 <@row>
 	<@breadcrumbs id='breadforms' params=' style="margin-bottom:1em; background-color:transparent;"'>
@@ -313,7 +297,6 @@ $( function(){
 	</@breadcrumbs>
 </@row>
 </#macro>     
-
 <#macro formModal id='pubModal' title=''>
 <@modal id='${id}'>
 	<#if token??>
@@ -333,7 +316,6 @@ $('#${id}').on('show.bs.modal', function (event) {
 });
 </script>
 </#macro>
-
 <#macro headerButton name='view_manageForm' label='portal.admin.message.buttonCancel' validate=true>
 <#if validate>
 	<#assign color = '' />
@@ -344,7 +326,6 @@ $('#${id}').on('show.bs.modal', function (event) {
 </#if>
 <@button type='submit' name='${name}' title='#i18n{${label}}' cancel=!validate buttonIcon=buttonIcon color=color />
 </#macro>
-
 <#macro formsButton okAction='' viewAction='' rows=1>
 <@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
 <#nested>
@@ -352,7 +333,6 @@ $('#${id}').on('show.bs.modal', function (event) {
 	<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' />
 </#if>
 </#macro>
-
 <#macro modalFrameScript formId actionId title modalId='qModal' iframeId='modalIframe' modalHeight=70 >
 <script>
 // Function to check if a webpage is in iFrame
@@ -400,7 +380,6 @@ $( function() {
 });
 </script>
 </#macro>
-
 <#macro formModel>
 	<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
 	<@addRequiredJsFiles />
@@ -539,7 +518,6 @@ $( function() {
 		</@columns>
 	</@row>
 </#macro>
-
 <#macro formVisualize>
 <div class="modal fade" id="modalPDF" tabindex="-1" role="dialog">
 	<div class="modal-dialog modal-lg" role="document" style="width:80vw;">
@@ -557,7 +535,6 @@ $( function() {
 		</div>
 	</div>
 </div>
-
 <link rel="stylesheet" type="text/css" href="js/admin/plugins/forms/vis/vis-network.min.css" >
 <script src="js/admin/plugins/forms/vis/vis.min.js"></script>
 <script src="js/admin/plugins/forms/vis/jspdf.min.js"></script>
@@ -590,13 +567,6 @@ $( function() {
 	</#list>
 	]);
 
-	/*
-		var nodePosition = getStoredPositions();
-		if( nodePosition != null ){
-			setNodesPosition( nodePosition );
-		}
-	*/
- 	
 	 // create an array with edges
  	var edges = new vis.DataSet([
 	 	<#assign nTransitionCount = transition_list?size >
@@ -908,8 +878,7 @@ $( function() {
 		xhr.send();
 	};
  </script>
- </#macro>
-
+</#macro>
 <#macro dateFilterJs>
 <link rel="stylesheet" type="text/css" href="css/admin/plugins/forms/daterangepicker.css">
 <script type="text/javascript" src="js/jquery/plugins/moment.min.js"></script>
@@ -985,7 +954,6 @@ $(function() {
 });
 </script>
 </#macro>
-
 <#macro scrollTopBtn>
 <a href="#" id="scroll" style="display: none;"><span></span></a>
 <script>
@@ -1004,7 +972,6 @@ $( function(){
 });
 </script>
 </#macro>
-
 <#macro headerSort field title jsp_url attribute id='' >
 <#if jsp_url?contains("?")>
 	<#assign sort_url = jsp_url + "&amp;sorted_attribute_name=" + attribute + "&amp;asc_sort=" />
@@ -1023,7 +990,6 @@ $( function(){
 	</div>
 </th>
 </#macro>
-
 <#macro jsHeaderSort>
 <script>
 $( function(){ 
@@ -1036,14 +1002,6 @@ $( function(){
 			} else {
 				$( sortId + ' .btn-sort.asc' ).toggleClass('active');
 			}
-			/* - Colored td for selected th
-				var colIndex = sortCol.index();
-				$('.table tbody tr').each( function(){
-					var nIndex = colIndex + 1;
-					var tdCol = 'td:nth-child(' + nIndex + ')'
-					$( tdCol ).toggleClass('th-active')
-				});
-			*/
 		}
 });
 </script>

@@ -16,6 +16,6 @@
 </#if>
 <#if multiviewConfigAction?? >
 	<@formGroup formStyle='inline' labelFor='config_multiview'>
-		<@aButton name='btn_multiview_config' id='btn_multiview_config' class='ml-1 ms-1'  href='${multiviewConfigAction.url!}' params='' title='${multiviewConfigAction.name}' hideTitle=['xs'] buttonIcon='${multiviewConfigAction.iconUrl}' />
+		<@aButton name='btn_multiview_config' id='btn_multiview_config' class='ml-1 ms-1' size='' href='${multiviewConfigAction.url!}' params='' title='${multiviewConfigAction.name}' hideTitle=['xs'] buttonIcon='${multiviewConfigAction.iconUrl}' />
 	</@formGroup>
 </#if>
