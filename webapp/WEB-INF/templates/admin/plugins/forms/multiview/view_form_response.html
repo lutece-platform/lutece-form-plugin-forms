@@ -46,56 +46,48 @@
 					</#list>
 				</#if>
 				<#if comment??>
-					<@box color='primary' class='step-group' id='step-comment' params=' tabindex=0 data-title="Commentaires"'>
-						<@boxHeader title='Commentaires' boxTools=true>
-							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-comment" aria-expanded="false" aria-controls="box-step-content-comment">
-								<i class="fa fa-minus-square"></i>
-							</button>
+					<@box color='primary' class='step-group' id='step-comment' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.comment.title}"'>
+						<@boxHeader title='#i18n{module.forms.extend.response.comment.title}' boxTools=true>
+							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-comment" aria-expanded="false" aria-controls="box-step-content-comment"' />
 						</@boxHeader>
 						<@boxBody id='box-step-content-comment' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='Commentaires' legendClass='sr-only' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
+							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.comment.title}' legendClass='sr-only' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
 							${comment!}
 							</@fieldSet>
 						</@boxBody>
 					</@box>
 				</#if>
 				<#if rating??>
-					<@box color='primary' class='step-group' id='step-rating' params=' tabindex=0 data-title="Vote"'>
-						<@boxHeader title='Vote' boxTools=true>
-							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-rating" aria-expanded="false" aria-controls="box-step-content-rating">
-								<i class="fa fa-minus-square"></i>
-							</button>
+					<@box color='primary' class='step-group' id='step-rating' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.rating.title}"'>
+						<@boxHeader title='#i18n{module.forms.extend.response.rating.title}' boxTools=true>
+							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-rating" aria-expanded="false" aria-controls="box-step-content-rating"' />
 						</@boxHeader>
 						<@boxBody id='box-step-content-rating' class='collapse show'>
-						<@fieldSet class='fieldset-group' legend='Vote' legendClass='sr-only' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
+						<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.rating.title}' legendClass='sr-only' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
 							${rating!}
 						</@fieldSet>
 						</@boxBody>
 					</@box>
 				</#if>
 				<#if follow??>
-					<@box color='primary' class='step-group' id='step-follow' params=' tabindex=0 data-title="Suivre"'>
-						<@boxHeader title='Suivre' boxTools=true>
-							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-follow" aria-expanded="false" aria-controls="box-step-content-follow">
-								<i class="fa fa-minus-square"></i>
-							</button>
+					<@box color='primary' class='step-group' id='step-follow' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.follow.title}"'>
+						<@boxHeader title='#i18n{module.forms.extend.response.follow.title}' boxTools=true>
+							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-follow" aria-expanded="false" aria-controls="box-step-content-follow"' />
 						</@boxHeader>
 						<@boxBody id='box-step-content-follow' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='Suivre' legendClass='sr-only' fieldsetId='group-follow' fieldsetParams=' tabindex=0'>
+							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.follow.title}' legendClass='sr-only' fieldsetId='group-follow' fieldsetParams=' tabindex=0'>
 								${follow!}
 							</@fieldSet>
 						</@boxBody>
 					</@box>
 				</#if>
 				<#if feedback??>
-					<@box color='primary' class='step-group' id='step-feedback' params=' tabindex=0 data-title="Signalement"'>
-						<@boxHeader title='Signalement' boxTools=true>
-							<button class="btn btn-link btn-sm" type="button" data-toggle="collapse" data-target="#box-step-content-feedback" aria-expanded="false" aria-controls="box-step-content-feedback">
-								<i class="fa fa-minus-square"></i>
-							</button>
+					<@box color='primary' class='step-group' id='step-feedback' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.feddback.title}"'>
+						<@boxHeader title='#i18n{module.forms.extend.response.feedback.title}' boxTools=true>
+							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-feedback" aria-expanded="false" aria-controls="box-step-content-feedback"' />
 						</@boxHeader>
 						<@boxBody id='box-step-content-feedback' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='Signalement' legendClass='sr-only' fieldsetId='group-feedback' fieldsetParams=' tabindex=0'>
+							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.feddback.title}' legendClass='sr-only' fieldsetId='group-feedback' fieldsetParams=' tabindex=0'>
 								${feedback!}
 							</@fieldSet>
 						</@boxBody>
@@ -121,11 +113,10 @@
 					<@boxBody>
 						<h2>#i18n{forms.multiviewForms.view_record_history.information}</h2>
 						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} : <strong>${form_response.creation}</strong></@p>
-						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong>	</@p>
-						<@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.status} : <strong >${form_response.published?string('Oui', 'Non')}</strong> </span></@p>
-						<#if resource_actions?exists && resource_actions.workflow_state?exists>
-							<@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.state} : <strong >${resource_actions.workflow_state.name}</strong> </span></@p>
-						</#if>
+						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong></@p>
+						<@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.status} : <strong>${form_response.published?string('Oui', 'Non')}</strong></span></@p>
+						<#if resource_actions?exists && resource_actions.workflow_state?exists><@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.state} : <strong >${resource_actions.workflow_state.name}</strong> </span></@p></#if>
+						<#if form_response.published><@p><@icon style='external-link' title='#i18n{portal.portal_footer.newWindow}' /> <@link href='jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${form_response.id}' target='_blank'>#i18n{forms.permission.label.viewResult}</@link></@p></#if>
 						<@display_actions resource_actions! />
 						${resource_history!}
 					</@boxBody>
@@ -143,7 +134,6 @@ $( function() {
 	$( '.content-header' ).hide();
 	$( '#form-detail-header' ).css( 'border-top', 0 );
 	setNavButtons( '${form_response.id}', '<i class="fas fa-arrow-left"></i> #i18n{portal.util.labelPrevious}', '#i18n{portal.util.labelNext} <i class="fas fa-arrow-right"></i>')	;
-	// $('.back-forms').remove();
 });
 </script>
 
