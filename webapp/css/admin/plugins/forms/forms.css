@@ -79,6 +79,9 @@ body, .wrapper{ height: 100%; overflow: visible; }
 
 .step-active { animation: heartbeat 1s ease-in-out reverse ; }
 
+/* Admin Map - Module forms-multiviewmapleaflet */
+#admin-forms-map-toggle{ position: absolute; top: -30px; right: 5px; z-index: 99; }
+
 /**
  * ----------------------------------------
  * Animation heartbeat
