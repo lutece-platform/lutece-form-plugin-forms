@@ -4,29 +4,49 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.FormResponseData;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 
 /**
  * FormResponseService
  *
  */
-public class FormResponseService implements IFormResponseService
+public class FormResponseService
 {
-    public static final String BEAN_NAME = "forms.formResponseService";
+    private FormService _formService;
     
-    @Autowired( required = false )
     private StateService _stateService;
+    
+    private static FormResponseService _formResponseService;
+    
+    private FormResponseService()
+    {
+    	_stateService = SpringContextService.getBean(StateService.BEAN_SERVICE );
+    	_formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    }
+    
+    public static FormResponseService getInstance()
+    {
+    	if ( _formResponseService == null)
+    	{
+    		_formResponseService = new FormResponseService();
+    	}
+    	
+    	return _formResponseService;
+    }
 
-    @Override
     public List<FormResponseData> getFormResponseListForUser( LuteceUser user )
     {
         List<FormResponse> formResponseList = FormResponseHome.getFormResponseByGuid( user.getName( ) );
@@ -54,6 +74,37 @@ public class FormResponseService implements IFormResponseService
             dataList.add( data );
         }
         return dataList;
+    }
+    
+    /**
+     * Saves the form response
+     * 
+     * @param formResponse
+     *            the form response to save
+     */
+    public void saveFormResponse( FormResponse formResponse )
+    {
+    	FormResponseHome.update( formResponse );
+    }
+    
+    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    public void deleteFormResponse(FormResponse formResponse)
+    {
+    	for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId() ) )
+        {
+            FormQuestionResponseHome.remove( formQuestionResponse );
+        }
+
+        FormResponseStepHome.removeByFormResponse( formResponse.getId() );
+
+        FormResponseHome.remove( formResponse.getId() );
+        
+        List<Integer> listIdResource = new ArrayList<Integer>();
+        listIdResource.add( formResponse.getId() );
+        
+        WorkflowService.getInstance().doRemoveWorkFlowResource( formResponse.getId(), FormResponse.RESOURCE_TYPE );
+
+        _formService.fireFormResponseEventDelete( formResponse );
     }
     
 }
