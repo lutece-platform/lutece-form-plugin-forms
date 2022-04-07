@@ -39,6 +39,7 @@ ${breadcrumb_template}
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
 							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
 						</@formGroup>
+						<@input type='hidden' id='token' name='token' value='${token}' />
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.createEntry.buttonSave}' hideTitle=['xs'] />
 							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' />
