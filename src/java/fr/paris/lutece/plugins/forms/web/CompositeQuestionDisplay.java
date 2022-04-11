@@ -62,10 +62,13 @@ import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeComment;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -88,7 +91,12 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private static final String MARK_QUESTION_ENTRY = "questionEntry";
     private static final String MARK_COMPLETENESS_FO = "is_completeness_bo";
     private static final String MARK_ENTRY_ITERATION_NUMBER = "entry_iteration_number";
+    private static final String MARK_FIELDS_LIST_BY_ID_ENTRIES = "fields_list_by_id_entries";
 
+    // Constants
+    private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
+    private static final String ILLUSTRATION_IMAGE = "illustration_image";
+    
     private Question _question;
     private final FormDisplay _formDisplay;
     private String _strIconName;
@@ -181,6 +189,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     public String getCompositeHtml( HttpServletRequest request, List<FormQuestionResponse> listFormQuestionResponse, Locale locale, DisplayType displayType )
     {
         String strQuestionTemplate = StringUtils.EMPTY;
+        Map<Integer, String> fieldsList = new HashMap<>( );
 
         if ( _question.getEntry( ) == null )
         {
@@ -199,6 +208,14 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             _model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
             _model.put( MARK_COMPLETENESS_FO, displayType == DisplayType.COMPLETE_FRONTOFFICE );
 
+            for( Field field : FieldHome.getFieldListByIdEntry( _question.getEntry().getIdEntry( ) ) )
+            {
+            	if( field.getCode( ).equals( ILLUSTRATION_IMAGE ) && field.getValue( ) != null )
+            		fieldsList.put( field.getIdField( ), ImageResourceManager.getImageUrl( PUBLIC_IMAGE_RESOURCE, Integer.parseInt( field.getValue( ) ) )  );
+            }
+            
+            _model.put( MARK_FIELDS_LIST_BY_ID_ENTRIES, fieldsList );
+            
             strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale, _model, displayType );
 
             _model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
