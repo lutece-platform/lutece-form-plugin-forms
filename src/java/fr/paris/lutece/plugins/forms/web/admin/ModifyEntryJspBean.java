@@ -40,6 +40,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
@@ -56,17 +57,22 @@ import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.business.file.File;
+import fr.paris.lutece.portal.service.fileimage.FileImagePublicService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.file.FileUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
@@ -98,6 +104,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private static final String MESSAGE_MANDATORY_FIELD = "forms.message.mandatory.field";
     private static final String MESSAGE_FIELD_VALUE_FIELD = "forms.message.field_value_field";
     private static final String FIELD_TITLE_FIELD = "forms.createField.labelTitle";
+    private static final String MESSAGE_ERROR_FILE_IMAGE = "froms.message.illustration.image";
 
     // properties
     private static final String PROPERTY_CREATE_FIELD_TITLE = "forms.createField.title";
@@ -115,6 +122,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private static final String PARAMETER_NO_DISPLAY_TITLE = "no_display_title";
     private static final String PARAMETER_COMMENT = "comment";
     private static final String PARAMETER_OPTION_NO_DISPLAY_TITLE = "option_no_display_title";
+    private static final String PARAMETER_ILLUSTRATION_IMAGE = "illustration_image";
 
     // Views
     private static final String VIEW_MODIFY_FIELD = "modifyField";
@@ -521,6 +529,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
         String strDefaultValue = request.getParameter( PARAMETER_DEFAULT_VALUE );
         String strNoDisplayTitle = request.getParameter( PARAMETER_NO_DISPLAY_TITLE );
         String strComment = request.getParameter( PARAMETER_COMMENT );
+//		MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
+//        FileItem imageFileItem = multipartRequest.getFile( PARAMETER_ILLUSTRATION_IMAGE );
 
         String strFieldError = EMPTY_STRING;
 
@@ -547,6 +557,21 @@ public class ModifyEntryJspBean extends AbstractJspBean
             return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
         }
 
+//        if ( imageFileItem != null && imageFileItem.getSize( ) > 0 )
+//        {
+//            try
+//            {
+//                String strFileStoreKey = ImageResourceManager.addImageResource( FileImagePublicService.IMAGE_RESOURCE_TYPE_ID, imageFileItem);
+//                File file = new File( );
+//                file.setFileKey( strFileStoreKey );
+//                field.setFile( file );
+//            }
+//            catch ( Exception e ) 
+//            {
+//            	AppLogService.error( MESSAGE_ERROR_FILE_IMAGE, e );
+//                throw new AppException( MESSAGE_ERROR_FILE_IMAGE, e );
+//            }
+//        }
         field.setCode( IEntryTypeService.FIELD_ANSWER_CHOICE );
         field.setTitle( strTitle );
         field.setValue( strValue );

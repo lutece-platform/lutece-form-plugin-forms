@@ -6,7 +6,7 @@ ${breadcrumb_template}
 		<@box>
 			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
-				<@tform method="post" name="manage_entries" action="${action}">
+				<@tform method="post" name="manage_entries" action="${action}" enctype="multipart/form-data">
 					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<@input type='hidden' name='width' id='width' value='0' />
@@ -77,6 +77,9 @@ ${breadcrumb_template}
 						</@formGroup>
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportablePdfComment}'>
 							<@checkBox orientation='switch' labelFor='exportable_pdf' labelKey='#i18n{forms.createEntry.labelResponsesExportablePdf}' name='exportable_pdf' id='exportable_pdf' value='1' checked=false />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportablePdfComment}'>
+							<@input type='file' id='illustration_image'  name='illustration_image' />
 						</@formGroup>
 						${question_create_template!}
 						<@formGroup>
