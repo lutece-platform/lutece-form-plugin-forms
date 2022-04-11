@@ -132,20 +132,6 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
      * {@inheritDoc }
      */
     @Override
-    public List<FormResponseStep> selectFormResponseStepList( Plugin plugin )
-    {
-        List<FormResponseStep> formResponseStepList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        //todo method
-        daoUtil.close( );
-
-        return formResponseStepList;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public void deleteByFormResponse( int nIdFormResponse, Plugin plugin )
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORM_RESPONSE, plugin ) )

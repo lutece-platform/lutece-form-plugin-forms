@@ -6,7 +6,7 @@ ${breadcrumb_template}
 		<@box>
 			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
-				<@tform method="post" name="manage_entries" action="${action}">
+				<@tform method="post" name="manage_entries" action="${action}" enctype="multipart/form-data">
 					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<@input type='hidden' name='width' id='width' value='0' />
@@ -65,6 +65,9 @@ ${breadcrumb_template}
 						</@formGroup>
 						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='illustration_image' labelKey='#i18n{forms.createEntry.labelIllustrationPicture}' helpKey='#i18n{forms.createEntry.labelIllustrationPictureHelp}'>
+							<@input type='file' id='illustration_image'  name='illustration_image' />
 						</@formGroup>
 						${question_create_template!}
 						<@formGroup>
