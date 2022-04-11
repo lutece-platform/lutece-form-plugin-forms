@@ -106,6 +106,8 @@ public class FormResponseService
             listIdResource.add( formResponse.getId() );
             
             WorkflowService.getInstance().doRemoveWorkFlowResource( formResponse.getId(), FormResponse.RESOURCE_TYPE );
+            
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
         }
     	catch( Exception e )
         {
