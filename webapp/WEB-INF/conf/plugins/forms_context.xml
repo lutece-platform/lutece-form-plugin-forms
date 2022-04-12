@@ -400,7 +400,6 @@
     <bean id="forms.stepService" class="fr.paris.lutece.plugins.forms.service.StepService" />
     <bean id="forms.formService" class="fr.paris.lutece.plugins.forms.service.FormService" />
     <bean id="forms.formWorkflowService" class="fr.paris.lutece.plugins.forms.service.workflow.FormWorkflowServiceImpl" />
-    <bean id="forms.formResponseService" class="fr.paris.lutece.plugins.forms.service.FormResponseService" />
     	
     <!-- Forms Multiview Authorization Service -->
     <bean id="forms.formsMultiviewAuthorizationService" class="fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService">

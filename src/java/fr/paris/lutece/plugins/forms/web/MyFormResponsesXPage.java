@@ -39,12 +39,10 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.service.FormResponseService;
-import fr.paris.lutece.plugins.forms.service.IFormResponseService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
@@ -78,8 +76,6 @@ public class MyFormResponsesXPage extends MVCApplication
     // Templates
     private static final String TEMPLATE_VIEW_FORMRESPONSES_LIST = "/skin/plugins/forms/list_formresponses.html";
 
-    private IFormResponseService _service = SpringContextService.getBean( FormResponseService.BEAN_NAME );
-
     /**
      * Return the default XPage with the list of all available Form
      * 
@@ -99,7 +95,7 @@ public class MyFormResponsesXPage extends MVCApplication
 
         Map<String, Object> model = getModel( );
         Locale locale = getLocale( request );
-        model.put( MARK_RESPONSE_LIST, _service.getFormResponseListForUser( user ) );
+        model.put( MARK_RESPONSE_LIST, FormResponseService.getInstance().getFormResponseListForUser( user ) );
 
         XPage xPage = getXPage( TEMPLATE_VIEW_FORMRESPONSES_LIST, locale, model );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_LIST_FORMRESPONSES_PAGETITLE, locale ) );
