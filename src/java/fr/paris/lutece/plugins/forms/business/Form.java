@@ -118,6 +118,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private String _strUnavailableMessage;
 
     private File _logo;
+    
+    private int _nIdCategory;
 
     /**
      * Returns the Id
@@ -640,4 +642,26 @@ public class Form implements AdminWorkgroupResource, RBACResource
         }
         return Base64.getEncoder( ).encodeToString( _logo.getPhysicalFile( ).getValue( ) );
     }
+
+    /**
+     * @return the id of the category linked to the form
+     */
+	public int getIdCategory() {
+		return _nIdCategory;
+	}
+
+	/**
+     * @param _nIdCategory
+     *            the _nIdCategory to set
+     */
+	public void setIdCategory(int _nIdCategory) {
+		this._nIdCategory = _nIdCategory;
+	}
+	
+	/**
+     * @return the id of the category linked to the form
+     */
+	public FormCategory getCategory() {
+		return FormCategoryHome.findByPrimaryKey(_nIdCategory) ;
+	}
 }

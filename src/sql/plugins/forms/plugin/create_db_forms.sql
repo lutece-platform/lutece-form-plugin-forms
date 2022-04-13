@@ -27,6 +27,7 @@ count_responses SMALLINT default 0,
 label_final_button VARCHAR(255),
 unavailable_message VARCHAR(255),
 id_logo INT DEFAULT 0 NOT NULL,
+id_category int DEFAULT NULL,
 PRIMARY KEY (id_form)
 );
 
@@ -264,4 +265,12 @@ CREATE TABLE forms_export_config (
 	field varchar(255),
 	display_order int,
 	PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS forms_category;
+CREATE TABLE forms_category (
+	id_category int AUTO_INCREMENT,
+	code varchar(100) NOT NULL,
+	name varchar(100) NOT NULL,
+	PRIMARY KEY (id_category)
 );

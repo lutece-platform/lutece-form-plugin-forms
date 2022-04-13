@@ -1,0 +1,21 @@
+<@tform class='form' method='post' name='modify_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp'  params='enctype="multipart/form-data"'>
+	<@box>
+		<@boxHeader title='#i18n{forms.modify_form_category.title}' />
+		<@boxBody>
+			<@input type='hidden' name='id_category' value='${category.id}' />
+			<@formGroup labelFor='title' labelKey='#i18n{forms.modify_form_category.labelName}' mandatory=true>
+				<@input type='text' name='name' id='name' value=category.name!'' maxlength=255 />
+			</@formGroup>
+			<@formGroup labelFor='title' labelKey='#i18n{forms.modify_form_category.labelCode}' mandatory=true>
+				<@input type='text' name='code' id='code' value=category.code!'' maxlength=255 />
+			</@formGroup>
+			<@formGroup rows=2>
+				<@headerButton name='action_modifyCategory' label='forms.modify_form_category.buttonValidate' /> 
+				<@headerButton name='action_modifyCategory' label='portal.admin.message.buttonCancel' validate=false />
+			</@formGroup>
+		</@boxBody>
+	</@box>
+</@tform>
+<@formEditor /> 
+
+<@toastr infos=infos warnings=warnings errors=errors />

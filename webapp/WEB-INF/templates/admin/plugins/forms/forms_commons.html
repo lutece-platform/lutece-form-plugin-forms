@@ -393,6 +393,9 @@ $( function() {
 				<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
 						<@input type='textarea' name='description'>${form.description!}</@input>
 				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.modify_form.labelCategory}' helpKey='#i18n{forms.modify_form.labelCategory.help}' rows=2>
+						<@select name='id_category' items=categoryList default_value='${form.idCategory!}' />
+				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.modify_form.labelLogo}' helpKey='#i18n{forms.modify_form.labelLogo.help}' rows=2>
 					<@addFileInput fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' cssClass='' multiple=true />
 					<#if !listFiles??><#assign listFiles = ''></#if>

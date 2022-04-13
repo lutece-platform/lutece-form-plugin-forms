@@ -49,6 +49,13 @@
             <feature-url>jsp/admin/plugins/forms/MultiviewForms.jsp</feature-url>
             <feature-icon-url/>
         </admin-feature>
+        <admin-feature>
+        <feature-id>FORMS_CATEGORIES</feature-id>
+        <feature-title>forms.adminFeature.categoriesForms.name</feature-title>
+        <feature-description>forms.adminFeature.categoriesForms.description</feature-description>
+        <feature-level>1</feature-level>
+        <feature-url>jsp/admin/plugins/forms/ManageFormsCategories.jsp</feature-url>
+    </admin-feature>
     </admin-features>
 
     <!-- XPages parameters -->
