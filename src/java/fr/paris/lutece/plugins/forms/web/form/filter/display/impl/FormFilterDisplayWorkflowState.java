@@ -157,6 +157,7 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
         {
             ReferenceListFactory referenceListFactory = new ReferenceListFactory( listWorkflowState, WORKFLOW_STATE_CODE_ATTRIBUTE,
                     WORKFLOW_STATE_NAME_ATTRIBUTE );
+            referenceListFactory.setDefaultName( getFormFilterDisplayLabel( request.getLocale() ) );
             referenceList = referenceListFactory.createReferenceList( );
         }
 
