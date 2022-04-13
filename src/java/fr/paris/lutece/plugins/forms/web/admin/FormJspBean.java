@@ -60,6 +60,7 @@ import fr.paris.lutece.plugins.forms.business.FormMessageHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.service.FormCategoryService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.json.FormJsonService;
@@ -154,6 +155,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_ACCESSCONTROL_REF_LIST = "accesscontrol_list";
     private static final String MARK_ACCESSCONTROL_ID = "accesscontrol_id";
     private static final String MARK_QUESTIONLIST = "questionList";
+    private static final String MARK_FORM_CATEGORY_LIST = "categoryList";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -210,6 +212,7 @@ public class FormJspBean extends AbstractJspBean
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
     private IAsyncUploadHandler _uploadHandler = AsynchronousUploadHandler.getHandler( );
+    private static FormCategoryService _formCategoryService = SpringContextService.getBean( FormCategoryService.BEAN_NAME );
 
     /**
      * Build the Manage View
@@ -306,6 +309,8 @@ public class FormJspBean extends AbstractJspBean
             ReferenceList referenceList = AccessControlService.getInstance( ).getAccessControlsEnabled( adminUser, getLocale() );
             model.put( MARK_ACCESSCONTROL_REF_LIST, referenceList );
         }
+        
+        ReferenceList formCategoryList = _formCategoryService.getFormCategoryReferenceList();
 
         model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
         model.put( MARK_FORM, _form );
@@ -315,6 +320,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
         model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_FORM ) );
+        model.put( MARK_FORM_CATEGORY_LIST, formCategoryList);
         
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_CREATE_FORM, model );
     }
@@ -514,6 +520,7 @@ public class FormJspBean extends AbstractJspBean
             setFormResponseMessage( formToBeModified.getId( ) );
 
             AdminUser adminUser = getUser( );
+            ReferenceList formCategoryList = _formCategoryService.getFormCategoryReferenceList();
 
             Map<String, Object> model = getModel( );
             model.put( MARK_FORM, formToBeModified );
@@ -521,6 +528,7 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
             model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
             model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
+            model.put( MARK_FORM_CATEGORY_LIST, formCategoryList );
 
             if ( formToBeModified.getLogo( ) != null )
             {
@@ -555,7 +563,7 @@ public class FormJspBean extends AbstractJspBean
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
 
-    @View( VIEW_MANAGE_QUESTION_PUBLICATION )
+	@View( VIEW_MANAGE_QUESTION_PUBLICATION )
     public String getManageQuestionPublication( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );

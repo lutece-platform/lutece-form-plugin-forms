@@ -23,6 +23,7 @@
     <bean id="forms.formMessageDAO" class="fr.paris.lutece.plugins.forms.business.FormMessageDAO" />
     <bean id="forms.indexerActionDAO" class="fr.paris.lutece.plugins.forms.business.form.search.IndexerActionDAO" />
     <bean id="forms.formExportConfigDao" class="fr.paris.lutece.plugins.forms.business.export.FormExportConfigDao" />
+    <bean id="forms.formCategoryDAO" class="fr.paris.lutece.plugins.forms.business.FormCategoryDAO" />
     
     <!-- Services -->
     <bean id="forms.formDatabaseService" class="fr.paris.lutece.plugins.forms.service.FormDatabaseService" />
@@ -400,6 +401,7 @@
     <bean id="forms.stepService" class="fr.paris.lutece.plugins.forms.service.StepService" />
     <bean id="forms.formService" class="fr.paris.lutece.plugins.forms.service.FormService" />
     <bean id="forms.formWorkflowService" class="fr.paris.lutece.plugins.forms.service.workflow.FormWorkflowServiceImpl" />
+    <bean id="forms.formCategoryService" class="fr.paris.lutece.plugins.forms.service.FormCategoryService" />
     	
     <!-- Forms Multiview Authorization Service -->
     <bean id="forms.formsMultiviewAuthorizationService" class="fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService">

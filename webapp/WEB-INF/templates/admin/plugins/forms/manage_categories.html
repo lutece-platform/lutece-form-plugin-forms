@@ -1,0 +1,30 @@
+<@row>
+    <@columns>
+		<@box color='primary'>
+            <@boxHeader title='#i18n{forms.manageFormCategory.title}' class='is-align-items-center' boxTools=true>
+            	<@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm'] class='card-header-icon' color='secondary' />
+            </@boxHeader>
+            <@boxBody>
+                <@table>
+                    <@tr>
+                        <@th>#i18n{forms.manageFormCategory.columnId}</@th>
+                        <@th>#i18n{forms.manageFormCategory.columnName}</@th>
+                        <@th>#i18n{forms.manageFormCategory.columnCode}</@th>
+                        <@th>#i18n{portal.util.labelActions}</@th>
+                    </@tr>
+                    <#list form_category_list as category>
+                    	<@tr>
+                    		<@td>${category.id}</@td>
+                    		<@td>${category.name}</@td>
+                    		<@td>${category.code}</@td>
+                    		<@td>
+								<@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}' title='#i18n{portal.util.labelModify}' buttonIcon='pencil' size='sm' hideTitle=['all']/>
+								<@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?action=confirmRemoveCategory&id_category=${category.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger' size='sm' hideTitle=['all']/>
+							</@td>
+                    	</@tr>
+                    </#list>
+                 </@table>
+             </@boxBody>
+        </@box>
+    </@columns>
+</@row>
