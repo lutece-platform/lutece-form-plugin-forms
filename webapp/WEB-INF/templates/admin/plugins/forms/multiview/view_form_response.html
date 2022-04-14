@@ -51,7 +51,7 @@
 							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-comment" aria-expanded="false" aria-controls="box-step-content-comment"' />
 						</@boxHeader>
 						<@boxBody id='box-step-content-comment' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.comment.title}' legendClass='sr-only' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
+							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.comment.subtitle}' legendClass='sr-only' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
 							${comment!}
 							</@fieldSet>
 						</@boxBody>
@@ -63,7 +63,7 @@
 							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-rating" aria-expanded="false" aria-controls="box-step-content-rating"' />
 						</@boxHeader>
 						<@boxBody id='box-step-content-rating' class='collapse show'>
-						<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.rating.title}' legendClass='sr-only' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
+						<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.rating.subtitle}' legendClass='sr-only' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
 							${rating!}
 						</@fieldSet>
 						</@boxBody>
@@ -75,19 +75,19 @@
 							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-follow" aria-expanded="false" aria-controls="box-step-content-follow"' />
 						</@boxHeader>
 						<@boxBody id='box-step-content-follow' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.follow.title}' legendClass='sr-only' fieldsetId='group-follow' fieldsetParams=' tabindex=0'>
+							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.follow.subtitle}' legendClass='sr-only' fieldsetId='group-follow' fieldsetParams=' tabindex=0'>
 								${follow!}
 							</@fieldSet>
 						</@boxBody>
 					</@box>
 				</#if>
 				<#if feedback??>
-					<@box color='primary' class='step-group' id='step-feedback' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.feddback.title}"'>
+					<@box color='primary' class='step-group' id='step-feedback' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.feedback.title}"'>
 						<@boxHeader title='#i18n{module.forms.extend.response.feedback.title}' boxTools=true>
 							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-feedback" aria-expanded="false" aria-controls="box-step-content-feedback"' />
 						</@boxHeader>
 						<@boxBody id='box-step-content-feedback' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.feddback.title}' legendClass='sr-only' fieldsetId='group-feedback' fieldsetParams=' tabindex=0'>
+							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.feedback.subtitle}' legendClass='sr-only' fieldsetId='group-feedback' fieldsetParams=' tabindex=0'>
 								${feedback!}
 							</@fieldSet>
 						</@boxBody>

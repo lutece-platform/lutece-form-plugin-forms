@@ -41,11 +41,13 @@ function setStepsIndex(){
 		var pId = $(this).attr('id'), 
 		t=  $(this).data('title');
 		var groups = $(this).find('fieldset'), listGroup='<ul>';
-		groups.each( function( ){
-			var gId = $(this).attr('id'), 
-			gt=$(this).find('legend').text();
-			listGroup += '<li tabindex=0><a class="nav-link" href="#' + gId + '" title="' + gt + '"><span>' + gt + '</span></a></li>';
-		});
+		if( groups.length > 1 ){
+			groups.each( function( ){
+				var gId = $(this).attr('id'), 
+				gt=$(this).find('legend').text();
+				listGroup += '<li tabindex=0><a class="nav-link" href="#' + gId + '" title="' + gt + '"><span>' + gt + '</span></a></li>';
+			});
+		}
 		listGroup +='</ul>';
 		let linkActive = active ? ' class="active"' : ''
         stepLinks += '<li' + linkActive + ' tabindex=0><a class="nav-link" href="#' + pId + '" title="' + t + '"><span>' + t + '</span></a>' + listGroup + '</li>';
@@ -86,7 +88,6 @@ $( function() {
 		});
 
 		if( tocState ==='expand' ){ $('#toc-compress-toggle').click() } ;
-		
 	}
 
 	// Set link on whole tr
