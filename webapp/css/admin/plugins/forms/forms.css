@@ -199,10 +199,17 @@ body, .wrapper{ height: 100%; overflow: visible; }
 }
 
 /* Mobile First */
-@media ( min-width: 769px ) { 
+@media screen and (min-width: 768px){
+	/* Module Extend comment */
+	.list-timeline:not(.list-timeline-simple) .list-timeline-content { padding: .5rem .5rem .5rem 3.5rem }
+	/* Timeline for comments extend */
+	.list-timeline:not(.list-timeline-simple) .list-timeline-content:hover{ background-color: var( --light ); border-radius: 15px; }
+	.list-timeline:not(.list-timeline-simple) .list-timeline-icon {	left: .5rem; }
+	.list-timeline:not(.list-timeline-simple):before {	left: calc( 1.5rem + 2px); }
+	.list-timeline:not(.list-timeline-simple)>li { margin-left: 0; }
+	/* iframe */
 	#modalIframe{ height: 75vh }
 }
-
 
 @media ( min-width: 992px ) { 
 	#modalIframe{ height: 55vh }
