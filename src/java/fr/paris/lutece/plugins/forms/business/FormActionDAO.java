@@ -85,7 +85,6 @@ public class FormActionDAO implements IFormActionDAO
             {
                 listActions.add( dataToObject( daoUtil ) );
             }
-
         }
         return listActions;
     }

@@ -252,7 +252,6 @@ public final class TransitionDAO implements ITransitionDAO
             }
         }
         return transition;
-
     }
 
     /**
