@@ -55,18 +55,18 @@ public class FormActionDAO implements IFormActionDAO
     public List<FormAction> selectActionsByFormState( int nState, Plugin plugin )
     {
         List<FormAction> listActions = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin );
-        daoUtil.setInt( 1, nState );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin ) )
         {
-            listActions.add( dataToObject( daoUtil ) );
+	        daoUtil.setInt( 1, nState );
+	        daoUtil.executeQuery( );
+	
+	        while ( daoUtil.next( ) )
+	        {
+	            listActions.add( dataToObject( daoUtil ) );
+	        }
+	
+	        return listActions;
         }
-
-        daoUtil.close( );
-
-        return listActions;
     }
 
     /**
@@ -76,15 +76,16 @@ public class FormActionDAO implements IFormActionDAO
     public List<FormAction> selectAllFormActions( Plugin plugin )
     {
         List<FormAction> listActions = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS, plugin ) )
         {
-            listActions.add( dataToObject( daoUtil ) );
-        }
+	        daoUtil.executeQuery( );
+	
+	        while ( daoUtil.next( ) )
+	        {
+	            listActions.add( dataToObject( daoUtil ) );
+	        }
 
-        daoUtil.close( );
+        }
 
         return listActions;
     }

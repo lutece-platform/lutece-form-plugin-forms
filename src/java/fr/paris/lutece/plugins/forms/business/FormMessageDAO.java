@@ -58,9 +58,7 @@ public final class FormMessageDAO implements IFormMessageDAO
     @Override
     public void insert( FormMessage formMessage, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
-
-        try
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formMessage.getIdForm( ) );
@@ -74,10 +72,6 @@ public final class FormMessageDAO implements IFormMessageDAO
                 formMessage.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.close( );
-        }
     }
 
     /**
@@ -86,18 +80,17 @@ public final class FormMessageDAO implements IFormMessageDAO
     @Override
     public FormMessage load( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeQuery( );
-
-        FormMessage formMessage = null;
-
-        if ( daoUtil.next( ) )
+    	FormMessage formMessage = null;
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-            formMessage = dataToObject( daoUtil );
+	        daoUtil.setInt( 1, nKey );
+	        daoUtil.executeQuery( );
+	
+	        if ( daoUtil.next( ) )
+	        {
+	            formMessage = dataToObject( daoUtil );
+	        }
         }
-
-        daoUtil.close( );
 
         return formMessage;
     }
@@ -108,10 +101,11 @@ public final class FormMessageDAO implements IFormMessageDAO
     @Override
     public void delete( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+	        daoUtil.setInt( 1, nKey );
+	        daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -120,10 +114,11 @@ public final class FormMessageDAO implements IFormMessageDAO
     @Override
     public void deleteByForm( int nIdForm, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORM, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORM, plugin ) )
+        {
+	        daoUtil.setInt( 1, nIdForm );
+	        daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -132,9 +127,7 @@ public final class FormMessageDAO implements IFormMessageDAO
     @Override
     public void store( FormMessage formMessage, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-
-        try
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formMessage.getIdForm( ) );
@@ -145,10 +138,6 @@ public final class FormMessageDAO implements IFormMessageDAO
 
             daoUtil.executeUpdate( );
         }
-        finally
-        {
-            daoUtil.close( );
-        }
     }
 
     /**
@@ -157,18 +146,17 @@ public final class FormMessageDAO implements IFormMessageDAO
     @Override
     public FormMessage selectByForm( int nIdForm, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FORM, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeQuery( );
-
-        FormMessage formMessage = null;
-
-        if ( daoUtil.next( ) )
+    	FormMessage formMessage = null;
+        try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FORM, plugin ) )
         {
-            formMessage = dataToObject( daoUtil );
+	        daoUtil.setInt( 1, nIdForm );
+	        daoUtil.executeQuery( );
+	
+	        if ( daoUtil.next( ) )
+	        {
+	            formMessage = dataToObject( daoUtil );
+	        }
         }
-
-        daoUtil.close( );
 
         return formMessage;
     }
