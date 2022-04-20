@@ -85,6 +85,7 @@ ${breadcrumb_template}
 						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportablePdfComment}'>
 							<@checkBox orientation='switch' labelFor='exportable_pdf' labelKey='#i18n{forms.createEntry.labelResponsesExportablePdf}' name='exportable_pdf' id='exportable_pdf' value='1' checked=entry.exportablePdf />
 						</@formGroup>
+						<@input type='hidden' id='token' name='token' value='${token}' />
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
 							<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' hideTitle=['xs'] />
