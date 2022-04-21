@@ -85,6 +85,7 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.search.IndexationService;
 import fr.paris.lutece.portal.service.search.SearchItem;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -424,12 +425,15 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                 documentList.add( doc );
             }
         }
-        addDocuments( documentList );
+        if( !documentList.isEmpty() ) {
+        	addDocuments( documentList );
+        }
         endIndexing( );
     }
 
     private void addDocuments( List<Document> documentList )
     {
+    	provideExternalFields( documentList );
         try
         {
             _indexWriter.addDocuments( documentList );
@@ -439,6 +443,20 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             AppLogService.error( "Unable to index form response", e );
         }
         documentList.clear( );
+    }
+    /**
+     * Provide external fields to Document objects
+     * 
+     * @param documentList
+     *            list of Document objects
+     *
+     */
+    private void provideExternalFields( List<Document> documentList )
+    {
+        for ( ILucenDocumentExternalFieldProvider provider : SpringContextService.getBeansOfType( ILucenDocumentExternalFieldProvider.class ) )
+        {
+            provider.provideFields( documentList );
+        }
     }
 
     /**
