@@ -114,9 +114,11 @@
 						<h2>#i18n{forms.multiviewForms.view_record_history.information}</h2>
 						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} : <strong>${form_response.creation}</strong></@p>
 						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong></@p>
-						<@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.status} : <strong>${form_response.published?string('Oui', 'Non')}</strong></span></@p>
 						<#if resource_actions?exists && resource_actions.workflow_state?exists><@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.state} : <strong >${resource_actions.workflow_state.name}</strong> </span></@p></#if>
-						<#if form_response.published><@p><@icon style='external-link' title='#i18n{portal.portal_footer.newWindow}' /> <@link href='jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${form_response.id}' target='_blank'>#i18n{forms.permission.label.viewResult}</@link></@p></#if>
+						<@p><@icon style='info-circle' /><#if form_response.published> #i18n{forms.multiviewForms.responseDetails.response.status} : <strong> ${form_response.update!} </strong><#else>#i18n{forms.multiviewForms.responseDetails.response.status}</#if></@p>
+						<#if form_response.published>
+						<@p><@icon style='external-link' title='#i18n{portal.portal_footer.newWindow}' /> <@link href='jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${form_response.id}' target='_blank'>#i18n{forms.permission.label.viewResult}</@link></@p>
+						</#if>
 						<@display_actions resource_actions! />
 						${resource_history!}
 					</@boxBody>
