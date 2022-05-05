@@ -244,7 +244,7 @@ public class FormResponse implements IExtendableResource
 	@Override
 	public String getExtendableResourceType()
 	{
-		return RESOURCE_TYPE;
+		return RESOURCE_TYPE +"_"+_nFormId ;
 	}
 
 	@Override

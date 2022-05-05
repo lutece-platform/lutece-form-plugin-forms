@@ -49,7 +49,7 @@ public class ReferenceListFactory
 {
     // Constants
     private static final String DEFAULT_NAME = StringUtils.EMPTY;
-    private static final String DEFAULT_CODE = FormsConstants.REFERENCE_ITEM_DEFAULT_CODE;
+    public static final String DEFAULT_CODE = FormsConstants.REFERENCE_ITEM_DEFAULT_CODE;
 
     // Variables
     private final Collection<?> _collectionItem;

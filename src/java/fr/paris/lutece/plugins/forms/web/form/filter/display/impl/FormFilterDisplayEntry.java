@@ -34,11 +34,11 @@
 package fr.paris.lutece.plugins.forms.web.form.filter.display.impl;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -57,9 +57,9 @@ import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryFilter;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.ResponseFilter;
-import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.util.ReferenceList;
 
 /**
@@ -70,7 +70,6 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
     // Constants
     private static final String DEFAULT_ENTRY_VALUE = StringUtils.EMPTY;
     private static final String PARAMETER_ENTRY_VALUE_PATTERN = "multiview_entry_value_%s";
-    private static final String ENTRY_RESPONSE_VALUE_ATTRIBUTE = "responseValue";
     private static final String FORM_RESOURCE_TYPE = Form.RESOURCE_TYPE;
 
     /**
@@ -139,18 +138,17 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
             List<String> listEntryCode = formColumnEntry.getListEntryCode( );
             listIEntryToRetrieveValueFrom = getEntryListFromCode( listEntryCode );
         }
+        ReferenceList referenceListResult = new ReferenceList( );
+   	 // Add the default ReferenceItem if necessary
+       referenceListResult.addItem( ReferenceListFactory.DEFAULT_CODE,  getFormFilterDisplayLabel( locale ) );
 
-        // Build the list of FormFilter to use for the filter from the list of entry to search on
-        List<Response> listResponse = getEntryResponseList( listIEntryToRetrieveValueFrom );
-        cleanListResponse( listResponse );
-        ReferenceListFactory referenceListFactory = new ReferenceListFactory( listResponse, ENTRY_RESPONSE_VALUE_ATTRIBUTE, ENTRY_RESPONSE_VALUE_ATTRIBUTE,
-                Boolean.FALSE );
+      FieldHome.getFieldListByListIdEntry(
+        		listIEntryToRetrieveValueFrom.stream().map(Entry::getIdEntry).distinct().collect(Collectors.toList())
+        		).stream().filter(field-> IEntryTypeService.FIELD_ANSWER_CHOICE.equals(field.getCode()))
+      	.forEach( (Field field) -> referenceListResult.addItem(field.getValue(), field.getTitle( )));
 
-        String strDefaultReferenceListName = getFormFilterDisplayLabel( locale );
-        referenceListFactory.setDefaultName( strDefaultReferenceListName );
-        referenceListFactory.setDefaultSortNeeded( Boolean.TRUE );
-
-        return referenceListFactory.createReferenceList( );
+        return referenceListResult;
+        
     }
 
     /**
@@ -215,54 +213,6 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
 
         return listEntry;
     }
-
-    /**
-     * Return the list of Response which are associated to the specified entry of the given list
-     * 
-     * @param listIEntryToRetrieveValueFrom
-     *            The list of entry to retrieve the response value from
-     * @return the list of Response which belong to an entry of the list of Entry which we want to gather values
-     */
-    private static List<Response> getEntryResponseList( List<Entry> listIEntryToRetrieveValueFrom )
-    {
-        List<Response> listResponseFieldResult = new ArrayList<>( );
-
-        if ( !CollectionUtils.isEmpty( listIEntryToRetrieveValueFrom ) )
-        {
-            for ( Entry entry : listIEntryToRetrieveValueFrom )
-            {
-                ResponseFilter responseFilter = new ResponseFilter( );
-                responseFilter.setIdEntry( entry.getIdEntry( ) );
-
-                listResponseFieldResult.addAll( ResponseHome.getResponseList( responseFilter ) );
-            }
-        }
-
-        return listResponseFieldResult;
-    }
-
-    /**
-     * Clean the given list of Response by removing all of those which have empty value
-     * 
-     * @param listResponse
-     *            The list to remove the Response with empty value
-     */
-    private static void cleanListResponse( List<Response> listResponse )
-    {
-        if ( !CollectionUtils.isEmpty( listResponse ) )
-        {
-            Iterator<Response> iteratorResponse = listResponse.iterator( );
-            while ( iteratorResponse.hasNext( ) )
-            {
-                Response response = iteratorResponse.next( );
-                if ( response != null && StringUtils.isBlank( response.getResponseValue( ) ) )
-                {
-                    iteratorResponse.remove( );
-                }
-            }
-        }
-    }
-
     /**
      * Return the name of the element build from the given pattern and the position of the filter
      * 
