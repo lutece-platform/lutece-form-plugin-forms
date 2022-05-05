@@ -60,7 +60,7 @@ public class FormResponseXPage extends MVCApplication
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
 
     // Views
-    private static final String VIEW_FORM_RESPONSE = "formResponseView";
+    public static final String VIEW_FORM_RESPONSE = "formResponseView";
     
     // Actions
     private static final String ACTION_PROCESS_ACTION = "doProcessAction";

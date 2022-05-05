@@ -96,9 +96,11 @@ import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.util.mvc.xpage.MVCApplication;
 import fr.paris.lutece.portal.util.mvc.xpage.annotations.Controller;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
@@ -806,11 +808,10 @@ public class FormXPage extends MVCApplication
             addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
         }
 
-        init( request );
-
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
-        String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed );
+        String strBackUrl =getBackUrl( form, bIsEndMessageDisplayed, _formResponseManager.getFormResponse( ).getId( ) );
+        init( request );        
 
         if ( formMessage.getEndMessageDisplay( ) )
         {
@@ -892,7 +893,7 @@ public class FormXPage extends MVCApplication
      *            {@code true} if the end message is displayed, {@code false} otherwise
      * @return the back URL
      */
-    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed )
+    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed,  int nIdFormResponse )
     {
         if ( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
         {
@@ -901,8 +902,15 @@ public class FormXPage extends MVCApplication
         else
         {
             UrlItem url = null;
-
-            if ( bIsEndMessageDisplayed )
+            
+            if ( bIsEndMessageDisplayed && form.isAuthentificationNeeded( ) )
+            {
+                url = new UrlItem( AppPathService.getPortalUrl( ) );
+                url.addParameter( MVCUtils.PARAMETER_PAGE, FormResponseXPage.XPAGE_NAME );
+                url.addParameter( MVCUtils.PARAMETER_VIEW, FormResponseXPage.VIEW_FORM_RESPONSE );
+                url.addParameter( FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
+            }
+            else if ( bIsEndMessageDisplayed )
             {
                 url = new UrlItem( getViewFullUrl( VIEW_STEP ) );
             }
