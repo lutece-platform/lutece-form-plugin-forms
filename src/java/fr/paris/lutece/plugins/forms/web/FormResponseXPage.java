@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2022, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.forms.web;
 
 import java.util.ArrayList;
@@ -42,14 +75,14 @@ import fr.paris.lutece.portal.web.xpages.XPage;
 @Controller( xpageName = FormResponseXPage.XPAGE_NAME, pageTitleI18nKey = FormResponseXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = FormResponseXPage.MESSAGE_PATH )
 public class FormResponseXPage extends MVCApplication
 {
-	protected static final String XPAGE_NAME = "formsResponse";
+    protected static final String XPAGE_NAME = "formsResponse";
 
-	/**
-	 * Generated serial id
-	 */
-	private static final long serialVersionUID = 8146530527615651620L;
-	
-	// Messages
+    /**
+     * Generated serial id
+     */
+    private static final long serialVersionUID = 8146530527615651620L;
+
+    // Messages
     protected static final String MESSAGE_PAGE_TITLE = "forms.response.xpage.form.view.pageTitle";
     protected static final String MESSAGE_PATH = "forms.response.xpage.form.view.pagePathLabel";
     protected static final String MESSAGE_ERROR_NOT_PUBLISHED_FORM_RESPONSE = "forms.xpage.response.error.inactive";
@@ -61,44 +94,44 @@ public class FormResponseXPage extends MVCApplication
 
     // Views
     public static final String VIEW_FORM_RESPONSE = "formResponseView";
-    
+
     // Actions
     private static final String ACTION_PROCESS_ACTION = "doProcessAction";
     private static final String ACTION_SAVE_TASK_FORM = "doSaveTaskForm";
-    
-	// Templates
+
+    // Templates
     private static final String TEMPLATE_VIEW_FORM_RESPONSE = "/skin/plugins/forms/view_form_response.html";
     private static final String TEMPLATE_TASK_FORM_RESPONSE = "/skin/plugins/forms/task_form_workflow.html";
-    
-    // Marks 
+
+    // Marks
     private static final String MARK_WORKFLOW_ACTION_LIST = "workflow_action_list";
     private static final String MARK_ID_FORM_RESPONSE = "id_form_response";
     private static final String MARK_ID_ACTION = "id_action";
     private static final String MARK_TASK_FORM = "tasks_form";
-    
+
     // Parameters
     private static final String PARAMETER_ID_ACTION = "id_action";
-    
-    @View( value = VIEW_FORM_RESPONSE, defaultView=true )
+
+    @View( value = VIEW_FORM_RESPONSE, defaultView = true )
     public XPage getFormResponseView( HttpServletRequest request ) throws SiteMessageException
     {
-    	Locale locale = getLocale( request );
-    	FormResponse formResponse = findFormResponseFrom(request);
-    	
-    	Collection<Action> actionsList = getActionsForUser( request, formResponse );
-    	
-    	Map<String, Object> model = getModel( );
-		model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
-		model.put( MARK_WORKFLOW_ACTION_LIST, actionsList );
-		model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_PROCESS_ACTION ) );
-		
-    	XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE, getLocale( request ), model );
+        Locale locale = getLocale( request );
+        FormResponse formResponse = findFormResponseFrom( request );
+
+        Collection<Action> actionsList = getActionsForUser( request, formResponse );
+
+        Map<String, Object> model = getModel( );
+        model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
+        model.put( MARK_WORKFLOW_ACTION_LIST, actionsList );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_PROCESS_ACTION ) );
+
+        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE, getLocale( request ), model );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
         xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );
 
         return xPage;
     }
-    
+
     @fr.paris.lutece.portal.util.mvc.commons.annotations.Action( value = ACTION_PROCESS_ACTION )
     public XPage doProcessAction( HttpServletRequest request ) throws AccessDeniedException
     {
@@ -113,12 +146,12 @@ public class FormResponseXPage extends MVCApplication
 
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
-        
+
         if ( user == null || formResponse == null || formResponse.getGuid( ) == null || !formResponse.getGuid( ).equals( user.getName( ) ) )
         {
             return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
         }
-        
+
         Locale locale = getLocale( request );
         WorkflowService workflowService = WorkflowService.getInstance( );
         if ( workflowService.isDisplayTasksForm( nIdAction, locale ) )
@@ -127,24 +160,23 @@ public class FormResponseXPage extends MVCApplication
 
             String strHtmlTasksForm = WorkflowService.getInstance( ).getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request,
                     locale, null );
-            
+
             Map<String, Object> model = new LinkedHashMap<>( );
             model.put( MARK_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
             model.put( MARK_ID_ACTION, String.valueOf( nIdAction ) );
             model.put( MARK_TASK_FORM, strHtmlTasksForm );
             model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_TASK_FORM ) );
-            
+
             XPage xPage = getXPage( TEMPLATE_TASK_FORM_RESPONSE, locale, model );
             xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
             xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );
-            
+
             return xPage;
         }
 
         try
         {
-            workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale,
-                    false, user );
+            workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale, false, user );
         }
         catch( AppException e )
         {
@@ -153,14 +185,14 @@ public class FormResponseXPage extends MVCApplication
         // Redirect to the correct view
         return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
     }
-    
+
     /**
      * Process workflow action
      *
      * @param request
      *            The Http request
      * @return The Jsp URL of the process result
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @fr.paris.lutece.portal.util.mvc.commons.annotations.Action( value = ACTION_SAVE_TASK_FORM )
     public XPage doSaveTaskForm( HttpServletRequest request ) throws AccessDeniedException
@@ -170,7 +202,7 @@ public class FormResponseXPage extends MVCApplication
 
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
-        
+
         if ( user == null || formResponse == null || formResponse.getGuid( ) == null || !formResponse.getGuid( ).equals( user.getName( ) ) )
         {
             return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
@@ -181,17 +213,16 @@ public class FormResponseXPage extends MVCApplication
         {
             throw new AccessDeniedException( "Invalid security token" );
         }
-        
+
         int nIdForm = formResponse.getFormId( );
         Locale locale = getLocale( request );
         WorkflowService workflowService = WorkflowService.getInstance( );
-       
+
         if ( workflowService.canProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, false, user ) )
         {
             try
             {
-                String strError = workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, locale,
-                        user );
+                String strError = workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, locale, user );
                 if ( strError != null )
                 {
                     return redirect( request, strError );
@@ -208,10 +239,10 @@ public class FormResponseXPage extends MVCApplication
         }
         return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
     }
-    	
-	private Collection<Action> getActionsForUser( HttpServletRequest request, FormResponse formResponse )
-	{
-	    LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+
+    private Collection<Action> getActionsForUser( HttpServletRequest request, FormResponse formResponse )
+    {
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         if ( user != null && formResponse != null && formResponse.getGuid( ) != null && formResponse.getGuid( ).equals( user.getName( ) ) )
         {
             Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
@@ -223,9 +254,9 @@ public class FormResponseXPage extends MVCApplication
                 return workflowService.getActions( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), (User) user );
             }
         }
-	    return new ArrayList<>( );
-	}
-    
+        return new ArrayList<>( );
+    }
+
     /**
      * Finds the formResponse from the specified request
      * 
@@ -241,30 +272,31 @@ public class FormResponseXPage extends MVCApplication
     {
         FormResponse formResponse = null;
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), FormsConstants.DEFAULT_ID_VALUE );
-        
+
         if ( nIdFormResponse != FormsConstants.DEFAULT_ID_VALUE )
         {
             formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
         }
         else
         {
-        	SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_FOUND_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_FOUND_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
         }
-        
+
         if ( formResponse == null )
         {
-        	SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_FOUND_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_FOUND_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
         }
-        else if ( !formResponse.isPublished() )
-        {
-            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-            boolean userOwnsReponse = user != null && user.getName( ).equals( formResponse.getGuid( ) );
-            if ( !userOwnsReponse )
+        else
+            if ( !formResponse.isPublished( ) )
             {
-                SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_PUBLISHED_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
+                LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+                boolean userOwnsReponse = user != null && user.getName( ).equals( formResponse.getGuid( ) );
+                if ( !userOwnsReponse )
+                {
+                    SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_PUBLISHED_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
+                }
             }
-        }
-        
+
         return formResponse;
     }
 }

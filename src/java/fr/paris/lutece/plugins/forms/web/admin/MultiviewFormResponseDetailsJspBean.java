@@ -163,7 +163,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     @View( value = VIEW_FORM_RESPONSE_DETAILS, defaultView = true )
     public String getResponseDetails( HttpServletRequest request ) throws AccessDeniedException
     {
-    	String strIdFormResponse = request.getParameter( PARAMETER_ID_FORM_RESPONSE );
+        String strIdFormResponse = request.getParameter( PARAMETER_ID_FORM_RESPONSE );
         int nIdFormResponse = NumberUtils.toInt( strIdFormResponse, NumberUtils.INTEGER_MINUS_ONE );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
         if ( formResponse == null )
@@ -202,7 +202,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             _mapFilterValues = fillFilterMapValues( request );
         }
         populateModelWithFilterValues( _mapFilterValues, model );
-        
+
         return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_VIEW_FORM_RESPONSE, model );
     }
 
@@ -431,7 +431,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      * @param request
      *            the HttpServletRequest
      * @return the task form if exists, or the FormResponse detail view otherwise.
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @Action( value = ACTION_PROCESS_ACTION )
     public String doProcessWorkflowAction( HttpServletRequest request ) throws AccessDeniedException
@@ -487,7 +487,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return The Jsp URL of the process result
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @Action( value = ACTION_SAVE_TASK_FORM )
     public String doSaveTaskForm( HttpServletRequest request ) throws AccessDeniedException

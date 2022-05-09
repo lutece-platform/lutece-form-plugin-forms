@@ -77,16 +77,16 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
                     bEmptyQuery = false;
                     String strQuestionCode = formParam.getKey( );
                     List<Question> questionList = QuestionHome.findByCode( strQuestionCode );
-                    
+
                     for ( Question question : questionList )
                     {
                         List<Field> listFields = FieldHome.getFieldListByIdEntry( question.getEntry( ).getIdEntry( ) );
-    
-                        Query query = new TermQuery(
-                                new Term( FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0",
-                                        formParam.getValue( ).toString( ) ) );
+
+                        Query query = new TermQuery( new Term(
+                                FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0",
+                                formParam.getValue( ).toString( ) ) );
                         booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
-    
+
                         for ( Field field : listFields )
                         {
                             String strFieldName = getFieldName( field );

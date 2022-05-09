@@ -38,7 +38,7 @@ package fr.paris.lutece.plugins.forms.business;
  */
 public class FormCategory
 {
-	private int _nId;
+    private int _nId;
 
     private String _strCode;
 
@@ -47,51 +47,51 @@ public class FormCategory
     /**
      * @return the _nId
      */
-    public int getId()
+    public int getId( )
     {
-		return _nId;
-	}
+        return _nId;
+    }
 
     /**
      * @param nId
      *            the nId to set
      */
-	public void setId(int _nId)
-	{
-		this._nId = _nId;
-	}
+    public void setId( int _nId )
+    {
+        this._nId = _nId;
+    }
 
     /**
      * @return the _strCode
      */
-	public String getCode()
-	{
-		return _strCode;
-	}
+    public String getCode( )
+    {
+        return _strCode;
+    }
 
-	/**
+    /**
      * @param code
      *            the code to set
      */
-	public void setCode(String code)
-	{
-		this._strCode = code;
-	}
+    public void setCode( String code )
+    {
+        this._strCode = code;
+    }
 
-	/**
+    /**
      * @return the _strName
      */
-	public String getName()
-	{
-		return _strName;
-	}
+    public String getName( )
+    {
+        return _strName;
+    }
 
-	/**
+    /**
      * @param name
      *            the name to set
      */
-	public void setName(String name)
-	{
-		this._strName = name;
-	}
+    public void setName( String name )
+    {
+        this._strName = name;
+    }
 }

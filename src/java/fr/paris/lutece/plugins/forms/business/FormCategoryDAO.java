@@ -51,7 +51,7 @@ public final class FormCategoryDAO implements IFormCategoryDAO
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_category ( code, name ) VALUES ( ?, ?) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_category WHERE id_category = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_category SET code = ?, name = ? WHERE id_category = ?";
-    
+
     /**
      * {@inheritDoc }
      */
@@ -67,7 +67,7 @@ public final class FormCategoryDAO implements IFormCategoryDAO
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
             {
-            	formCategory.setId( daoUtil.getGeneratedKeyInt( 1 ) );
+                formCategory.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
     }
@@ -142,18 +142,19 @@ public final class FormCategoryDAO implements IFormCategoryDAO
         return formCategory;
     }
 
-	@Override
-	public List<FormCategory> selectFormCategoryList(Plugin plugin) {
-		List<FormCategory> formCategoryList = new ArrayList<>( );
+    @Override
+    public List<FormCategory> selectFormCategoryList( Plugin plugin )
+    {
+        List<FormCategory> formCategoryList = new ArrayList<>( );
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
             daoUtil.executeQuery( );
             while ( daoUtil.next( ) )
             {
-            	formCategoryList.add( dataToObject( daoUtil ) );
+                formCategoryList.add( dataToObject( daoUtil ) );
             }
         }
         return formCategoryList;
-	}
+    }
 
 }

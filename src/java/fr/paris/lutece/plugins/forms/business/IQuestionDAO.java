@@ -96,7 +96,7 @@ public interface IQuestionDAO
      * @return The instance of the question
      */
     List<Question> loadByCode( String strCode, Plugin plugin );
-    
+
     /**
      * Load the data from the table
      * 

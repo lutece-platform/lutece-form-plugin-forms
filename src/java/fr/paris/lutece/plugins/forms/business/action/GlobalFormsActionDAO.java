@@ -58,7 +58,7 @@ public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 listActions.add( dataToObject( daoUtil ) );
@@ -78,7 +78,7 @@ public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
         {
             daoUtil.setString( 1, strCode );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 globalAction = dataToObject( daoUtil );

@@ -139,16 +139,15 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
             listIEntryToRetrieveValueFrom = getEntryListFromCode( listEntryCode );
         }
         ReferenceList referenceListResult = new ReferenceList( );
-   	 // Add the default ReferenceItem if necessary
-       referenceListResult.addItem( ReferenceListFactory.DEFAULT_CODE,  getFormFilterDisplayLabel( locale ) );
+        // Add the default ReferenceItem if necessary
+        referenceListResult.addItem( ReferenceListFactory.DEFAULT_CODE, getFormFilterDisplayLabel( locale ) );
 
-      FieldHome.getFieldListByListIdEntry(
-        		listIEntryToRetrieveValueFrom.stream().map(Entry::getIdEntry).distinct().collect(Collectors.toList())
-        		).stream().filter(field-> IEntryTypeService.FIELD_ANSWER_CHOICE.equals(field.getCode()))
-      	.forEach( (Field field) -> referenceListResult.addItem(field.getValue(), field.getTitle( )));
+        FieldHome.getFieldListByListIdEntry( listIEntryToRetrieveValueFrom.stream( ).map( Entry::getIdEntry ).distinct( ).collect( Collectors.toList( ) ) )
+                .stream( ).filter( field -> IEntryTypeService.FIELD_ANSWER_CHOICE.equals( field.getCode( ) ) )
+                .forEach( ( Field field ) -> referenceListResult.addItem( field.getValue( ), field.getTitle( ) ) );
 
         return referenceListResult;
-        
+
     }
 
     /**
@@ -213,6 +212,7 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
 
         return listEntry;
     }
+
     /**
      * Return the name of the element build from the given pattern and the position of the filter
      * 

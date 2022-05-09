@@ -515,7 +515,7 @@ public class FormControlJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @Action( ACTION_MODIFY_CONTROL )
     public String doModifyControl( HttpServletRequest request ) throws AccessDeniedException
@@ -560,8 +560,8 @@ public class FormControlJspBean extends AbstractJspBean
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_CONTROL ) );
         url.addParameter( FormsConstants.PARAMETER_ID_CONTROL, nIdControlToRemove );
-        url.addParameter(  SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_CONTROL ) );
-        
+        url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_CONTROL ) );
+
         String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_CONTROL, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
@@ -574,7 +574,7 @@ public class FormControlJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the jsp URL to display the form to manage Transition
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @Action( ACTION_REMOVE_CONTROL )
     public String doRemoveControl( HttpServletRequest request ) throws AccessDeniedException

@@ -100,7 +100,7 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String PARAMETER_PREVIOUS_STEP = "previousStep";
     private static final String PARAMETER_JSON_FILE = "json_file";
     private static final String PARAMETER_ID_TEMPLATE = "id_template";
-    
+
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_STEP = "forms.modify_step.pageTitle";
     private static final String PROPERTY_PAGE_TITLE_CREATE_STEP = "forms.create_step.pageTitle";
@@ -215,7 +215,7 @@ public class FormStepJspBean extends AbstractJspBean
         model.put( MARK_LOCALE, request.getLocale( ) );
         model.put( MARK_TEMPLATE_PROVIDER, _stepService.getStepTemplateProvider( ) );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_STEP ) );
-        
+
         setPageTitleProperty( EMPTY_STRING );
 
         Locale locale = getLocale( );
@@ -280,7 +280,7 @@ public class FormStepJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @Action( ACTION_CREATE_STEP )
     public String doCreateStep( HttpServletRequest request ) throws AccessDeniedException
@@ -292,7 +292,7 @@ public class FormStepJspBean extends AbstractJspBean
             return redirectView( request, VIEW_CREATE_STEP );
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _step.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
-        
+
         StepHome.create( _step );
         addInfo( INFO_STEP_CREATED, getLocale( ) );
 
@@ -344,8 +344,8 @@ public class FormStepJspBean extends AbstractJspBean
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_STEP ) );
         url.addParameter( FormsConstants.PARAMETER_ID_STEP, nId );
-        url.addParameter(  SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_STEP ) );
-        
+        url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_STEP ) );
+
         String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
@@ -358,7 +358,7 @@ public class FormStepJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the html code to confirm
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @Action( ACTION_DUPLICATE_STEP )
     public String doDuplicateStep( HttpServletRequest request ) throws AccessDeniedException
@@ -377,7 +377,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         int nIdForm = -1;
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
-        
+
         if ( nIdStep != -1 )
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
@@ -407,7 +407,7 @@ public class FormStepJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the jsp URL to display the form to manage forms
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @Action( ACTION_REMOVE_STEP )
     public String doRemoveStep( HttpServletRequest request ) throws AccessDeniedException
@@ -490,7 +490,7 @@ public class FormStepJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return The Jsp URL of the process result
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @Action( ACTION_MODIFY_STEP )
     public String doModifyStep( HttpServletRequest request ) throws AccessDeniedException
@@ -597,7 +597,7 @@ public class FormStepJspBean extends AbstractJspBean
         }
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
     }
-    
+
     @Action( ACTION_IMPORT_TEMPLATE )
     public String doImportTemplate( HttpServletRequest request ) throws AccessDeniedException
     {

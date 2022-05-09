@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2022, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.LinkedHashMap;
@@ -31,7 +64,7 @@ public class FormExportJspBean extends AbstractJspBean
 
     // Templates
     private static final String TEMPLATE_MANAGE_EXPORT = "/admin/plugins/forms/manage_export.html";
-    
+
     // Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_MODIFY_FORM = "forms.modify_form.pageTitle";
 
@@ -39,12 +72,12 @@ public class FormExportJspBean extends AbstractJspBean
     private static final String VIEW_MANAGE_EXPORT = "manageExport";
     private static final String VIEW_MANAGE_FORMS = "ManageForms.jsp?view=manageExport";
     private static final String VIEW_CONFIG_REMOVE_EXPORT_CONFIG = "confirmRemoveExportConfig";
-    
+
     // Marks
     private static final String MARK_EXPORT_LIST = "export_list";
     private static final String MARK_EXPORT_CONFIG_LIST = "export_config_list";
     private static final String MARK_FORM = "form";
-    
+
     // Actions
     private static final String ACTION_CREATE_EXPORT_CONFIG = "createExportConfig";
     private static final String ACTION_REMOVE_EXPORT_CONFIG = "removeExportConfig";
@@ -55,7 +88,7 @@ public class FormExportJspBean extends AbstractJspBean
     private static final String PARAMETER_EXPORT_CONFIG = "export_config";
     private static final String PARAMETER_ID_CONFIG = "id_config";
     private static final String MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG = "forms.modify_form.message.confirmRemoveExportConfig";
-    
+
     @View( VIEW_MANAGE_EXPORT )
     public String getManageExport( HttpServletRequest request ) throws AccessDeniedException
     {
@@ -80,10 +113,10 @@ public class FormExportJspBean extends AbstractJspBean
         model.put( MARK_EXPORT_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfigOption( formToBeModified, getLocale( ) ) );
         model.put( MARK_EXPORT_CONFIG_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) ) );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_EXPORT_CONFIG ) );
-        
+
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
     }
-    
+
     @Action( ACTION_CREATE_EXPORT_CONFIG )
     public String doCreateExportConfig( HttpServletRequest request ) throws AccessDeniedException
     {
@@ -94,7 +127,7 @@ public class FormExportJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_EXPORT_CONFIG );
-        
+
         String field = request.getParameter( PARAMETER_EXPORT_CONFIG );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
@@ -118,7 +151,7 @@ public class FormExportJspBean extends AbstractJspBean
 
         return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
     }
-    
+
     @View( VIEW_CONFIG_REMOVE_EXPORT_CONFIG )
     public String getConfirmRemoveExportConfig( HttpServletRequest request ) throws AccessDeniedException
     {
@@ -129,7 +162,7 @@ public class FormExportJspBean extends AbstractJspBean
         {
             return redirect( request, VIEW_MANAGE_FORMS );
         }
-        
+
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( idForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
 
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
@@ -144,14 +177,14 @@ public class FormExportJspBean extends AbstractJspBean
         url.addParameter( PARAMETER_ID_CONFIG, idConfig );
         url.addParameter( FormsConstants.PARAMETER_ID_FORM, idForm );
         url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_EXPORT_CONFIG ) );
-        
+
         String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG, url.getUrl( ),
                 AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
 
     }
-    
+
     @Action( ACTION_REMOVE_EXPORT_CONFIG )
     public String doRemoveExportConfig( HttpServletRequest request ) throws AccessDeniedException
     {
@@ -163,7 +196,7 @@ public class FormExportJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( idForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_REMOVE_EXPORT_CONFIG );
-        
+
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );
@@ -195,7 +228,7 @@ public class FormExportJspBean extends AbstractJspBean
     {
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
         int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
-        
+
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );
@@ -233,7 +266,7 @@ public class FormExportJspBean extends AbstractJspBean
     {
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
         int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
-        
+
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {
             Map<String, String> mapParameters = new LinkedHashMap<>( );

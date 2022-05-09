@@ -57,7 +57,7 @@ import fr.paris.lutece.util.file.FileUtil;
 public abstract class AbstractFileGenerator implements IFileGenerator
 {
     private static final String PATTERN_TIMESTAMP = "_yyyy-MM-dd-HH-mm-ss";
-    
+
     // 4: size for file extension (.pdf, .zip, .csv)
     private static final int MAX_NAME_LENGTH = 250 - PATTERN_TIMESTAMP.length( );
     protected static final String TMP_DIR = System.getProperty( "java.io.tmpdir" );

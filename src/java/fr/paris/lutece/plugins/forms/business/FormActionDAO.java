@@ -55,12 +55,12 @@ public class FormActionDAO implements IFormActionDAO
     public List<FormAction> selectActionsByFormState( int nState, Plugin plugin )
     {
         List<FormAction> listActions = new ArrayList<>( );
-        
+
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ACTIONS, plugin ) )
         {
             daoUtil.setInt( 1, nState );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 listActions.add( dataToObject( daoUtil ) );
@@ -80,7 +80,7 @@ public class FormActionDAO implements IFormActionDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 listActions.add( dataToObject( daoUtil ) );

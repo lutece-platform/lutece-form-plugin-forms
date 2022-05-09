@@ -118,7 +118,7 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private String _strUnavailableMessage;
 
     private File _logo;
-    
+
     private int _nIdCategory;
 
     /**
@@ -646,22 +646,25 @@ public class Form implements AdminWorkgroupResource, RBACResource
     /**
      * @return the id of the category linked to the form
      */
-	public int getIdCategory() {
-		return _nIdCategory;
-	}
+    public int getIdCategory( )
+    {
+        return _nIdCategory;
+    }
 
-	/**
+    /**
      * @param _nIdCategory
      *            the _nIdCategory to set
      */
-	public void setIdCategory(int _nIdCategory) {
-		this._nIdCategory = _nIdCategory;
-	}
-	
-	/**
+    public void setIdCategory( int _nIdCategory )
+    {
+        this._nIdCategory = _nIdCategory;
+    }
+
+    /**
      * @return the id of the category linked to the form
      */
-	public FormCategory getCategory() {
-		return FormCategoryHome.findByPrimaryKey(_nIdCategory) ;
-	}
+    public FormCategory getCategory( )
+    {
+        return FormCategoryHome.findByPrimaryKey( _nIdCategory );
+    }
 }

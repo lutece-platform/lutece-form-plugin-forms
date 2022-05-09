@@ -60,7 +60,7 @@ public final class StepService
     public static final String BEAN_NAME = "forms.stepService";
 
     private static final int DISPLAY_ROOT_PARENT_ID = 0;
-    
+
     @Autowired( required = false )
     private IStepTemplateProvider _provider;
 
@@ -170,17 +170,17 @@ public final class StepService
         }
         return listIdNextSteps;
     }
-    
+
     public IStepTemplateProvider getStepTemplateProvider( )
     {
         return _provider;
     }
-    
+
     public StepJsonData getStepTemplateData( int idTemplate )
     {
         if ( _provider == null )
         {
-            return null ;
+            return null;
         }
         return _provider.getStepTemplateData( idTemplate );
     }

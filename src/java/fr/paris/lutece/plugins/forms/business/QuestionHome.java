@@ -124,18 +124,18 @@ public final class QuestionHome
     {
         return _dao.loadByCode( strCode, _plugin );
     }
-    
+
     /**
-    * Returns all questions with the given technical code and entry.
-    * 
-    * @param strCode
-    *            The question code
-    * @return an instance of Question
-    */
-   public static Question findByCodeAndEntry( String strCode, int entryId )
-   {
-       return _dao.loadByCodeAndEntry( strCode, entryId, _plugin );
-   }
+     * Returns all questions with the given technical code and entry.
+     * 
+     * @param strCode
+     *            The question code
+     * @return an instance of Question
+     */
+    public static Question findByCodeAndEntry( String strCode, int entryId )
+    {
+        return _dao.loadByCodeAndEntry( strCode, entryId, _plugin );
+    }
 
     /**
      * Returns an instance of a question whose identifier is specified in parameter

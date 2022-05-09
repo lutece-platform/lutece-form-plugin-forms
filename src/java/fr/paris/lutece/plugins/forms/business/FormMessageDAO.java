@@ -85,7 +85,7 @@ public final class FormMessageDAO implements IFormMessageDAO
         {
             daoUtil.setInt( 1, nKey );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 formMessage = dataToObject( daoUtil );

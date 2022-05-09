@@ -333,7 +333,7 @@ public class Question implements Serializable, Cloneable
     {
         return _entry.isExportable( );
     }
-    
+
     /**
      * Return the responses published boolean
      * 

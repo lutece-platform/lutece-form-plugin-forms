@@ -44,16 +44,16 @@ import fr.paris.lutece.util.ReferenceList;
 public class FormCategoryService
 {
     public static final String BEAN_NAME = "forms.formCategoryService";
-    
-    public ReferenceList getFormCategoryReferenceList()
+
+    public ReferenceList getFormCategoryReferenceList( )
     {
-    	ReferenceList refList = new ReferenceList( );
+        ReferenceList refList = new ReferenceList( );
         refList.addItem( "", "" );
-    	List<FormCategory> formCategoryList = FormCategoryHome.getFormCategoryList();
-    	for (FormCategory cat : formCategoryList)
-    	{
-    		refList.addItem( cat.getId( ), cat.getName() );
-    	}
-		return refList;
-	}
+        List<FormCategory> formCategoryList = FormCategoryHome.getFormCategoryList( );
+        for ( FormCategory cat : formCategoryList )
+        {
+            refList.addItem( cat.getId( ), cat.getName( ) );
+        }
+        return refList;
+    }
 }

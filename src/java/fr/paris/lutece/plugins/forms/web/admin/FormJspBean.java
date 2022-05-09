@@ -192,7 +192,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String ERROR_FORM_NOT_COPIED = "forms.error.form.not.copied";
     private static final String ERROR_FORM_NOT_IMPORTED = "forms.error.form.not.imported";
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
-        
+
     // Errors
     private static final String ERROR_FORM_NOT_UPDATED = "forms.error.form.notUpdated";
     private static final String ERROR_FORM_DATE_START_AFTER_END = "forms.error.form.date.startAfterEnd";
@@ -266,7 +266,6 @@ public class FormJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_FORM ) );
 
-        
         setPageTitleProperty( EMPTY_STRING );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_FORMS, locale, model );
@@ -302,15 +301,15 @@ public class FormJspBean extends AbstractJspBean
             ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( (User) adminUser, getLocale( ) );
             model.put( MARK_WORKFLOW_REF_LIST, referenceList );
         }
-        
+
         if ( AccessControlService.getInstance( ).isAvailable( ) )
         {
             AdminUser adminUser = getUser( );
-            ReferenceList referenceList = AccessControlService.getInstance( ).getAccessControlsEnabled( adminUser, getLocale() );
+            ReferenceList referenceList = AccessControlService.getInstance( ).getAccessControlsEnabled( adminUser, getLocale( ) );
             model.put( MARK_ACCESSCONTROL_REF_LIST, referenceList );
         }
-        
-        ReferenceList formCategoryList = _formCategoryService.getFormCategoryReferenceList();
+
+        ReferenceList formCategoryList = _formCategoryService.getFormCategoryReferenceList( );
 
         model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
         model.put( MARK_FORM, _form );
@@ -320,8 +319,8 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
         model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_FORM ) );
-        model.put( MARK_FORM_CATEGORY_LIST, formCategoryList);
-        
+        model.put( MARK_FORM_CATEGORY_LIST, formCategoryList );
+
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_CREATE_FORM, model );
     }
 
@@ -331,7 +330,7 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @Action( ACTION_CREATE_FORM )
     public String doCreateForm( HttpServletRequest request ) throws AccessDeniedException
@@ -355,7 +354,7 @@ public class FormJspBean extends AbstractJspBean
 
         _formMessage.setIdForm( _form.getId( ) );
         FormMessageHome.create( _formMessage );
-        
+
         if ( AccessControlService.getInstance( ).isAvailable( ) )
         {
             int idAccessControl = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACCESS_CONTROL ), -1 );
@@ -398,7 +397,7 @@ public class FormJspBean extends AbstractJspBean
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_FORM ) );
         url.addParameter( FormsConstants.PARAMETER_ID_FORM, nId );
-        url.addParameter(  SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_FORM ) );
+        url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_FORM ) );
 
         String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
@@ -412,7 +411,7 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the html code to confirm
-     * @throws AccessDeniedException 
+     * @throws AccessDeniedException
      */
     @Action( ACTION_DUPLICATE_FORM )
     public String doDuplicateForm( HttpServletRequest request ) throws AccessDeniedException
@@ -430,8 +429,8 @@ public class FormJspBean extends AbstractJspBean
             AppLogService.error( ne );
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
-        checkUserPermission( Form.RESOURCE_TYPE, strIdForm,  FormsResourceIdService.PERMISSION_COPY, request, ACTION_CREATE_FORM );
+
+        checkUserPermission( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, request, ACTION_CREATE_FORM );
 
         if ( nId != FormsConstants.DEFAULT_ID_VALUE )
         {
@@ -482,7 +481,7 @@ public class FormJspBean extends AbstractJspBean
             // This will delete the remove the link between resource & access control.
             AccessControlService.getInstance( ).linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, -1 );
         }
-        
+
         FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
         formService.removeForm( nId, getUser( ) );
 
@@ -520,7 +519,7 @@ public class FormJspBean extends AbstractJspBean
             setFormResponseMessage( formToBeModified.getId( ) );
 
             AdminUser adminUser = getUser( );
-            ReferenceList formCategoryList = _formCategoryService.getFormCategoryReferenceList();
+            ReferenceList formCategoryList = _formCategoryService.getFormCategoryReferenceList( );
 
             Map<String, Object> model = getModel( );
             model.put( MARK_FORM, formToBeModified );
@@ -543,27 +542,28 @@ public class FormJspBean extends AbstractJspBean
                 ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( (User) adminUser, getLocale( ) );
                 model.put( MARK_WORKFLOW_REF_LIST, referenceList );
             }
-            
+
             if ( AccessControlService.getInstance( ).isAvailable( ) )
             {
-                ReferenceList referenceList = AccessControlService.getInstance( ).getAccessControlsEnabled( adminUser, getLocale() );
+                ReferenceList referenceList = AccessControlService.getInstance( ).getAccessControlsEnabled( adminUser, getLocale( ) );
                 model.put( MARK_ACCESSCONTROL_REF_LIST, referenceList );
-                model.put( MARK_ACCESSCONTROL_ID, AccessControlService.getInstance( ).findAccessControlForResource( formToBeModified.getId( ), Form.RESOURCE_TYPE ) );
+                model.put( MARK_ACCESSCONTROL_ID,
+                        AccessControlService.getInstance( ).findAccessControlForResource( formToBeModified.getId( ), Form.RESOURCE_TYPE ) );
             }
 
             model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
             model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
             model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM ) );
 
-            ExtendableResourcePluginActionManager.fillModel(request, getUser(), model, "*", FormResponse.RESOURCE_TYPE+ "_" + nId);
-            
+            ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model, "*", FormResponse.RESOURCE_TYPE + "_" + nId );
+
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );
         }
 
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
 
-	@View( VIEW_MANAGE_QUESTION_PUBLICATION )
+    @View( VIEW_MANAGE_QUESTION_PUBLICATION )
     public String getManageQuestionPublication( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
@@ -581,15 +581,15 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
-        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId() );
+
+        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, questionList );
         model.put( MARK_FORM_MESSAGE, _formMessage );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM ) );
-        
+
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_QUESTION_PUBLICATION, model );
     }
 
@@ -642,7 +642,7 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_FORM, formToBeModified );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
             model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM ) );
-            
+
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM_PUBLICATION, model );
         }
 
@@ -717,7 +717,7 @@ public class FormJspBean extends AbstractJspBean
         {
             FormMessageHome.update( _formMessage );
         }
-        
+
         if ( AccessControlService.getInstance( ).isAvailable( ) )
         {
             int idAccessControl = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACCESS_CONTROL ), -1 );
@@ -728,7 +728,7 @@ public class FormJspBean extends AbstractJspBean
 
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
-    
+
     /**
      * Process the change of publication statut of a form question
      *
@@ -746,35 +746,35 @@ public class FormJspBean extends AbstractJspBean
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
-    	int nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
-        
+        int nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
         if ( formToBeModified == null )
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
-        
-        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId() );
-        
-        String[] questionPublished = request.getParameterValues( "questionPublished" ) ;
+
+        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
+
+        String [ ] questionPublished = request.getParameterValues( "questionPublished" );
         Boolean published = false;
-        
-        for (Question question : questionList)
+
+        for ( Question question : questionList )
         {
-        	if (questionPublished != null)
-        	{
-        		published = Arrays.asList(questionPublished).contains(String.valueOf(question.getId()));
-        	}
-        	Entry entry = question.getEntry();
-        	if (entry.getFieldByCode(IEntryTypeService.FIELD_PUBLISHED) == null )
-        	{
-        		FieldHome.create(GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf(published)));
-        	}
-        	else
-        	{
-        		FieldHome.update(GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf(published)));
-        	}
+            if ( questionPublished != null )
+            {
+                published = Arrays.asList( questionPublished ).contains( String.valueOf( question.getId( ) ) );
+            }
+            Entry entry = question.getEntry( );
+            if ( entry.getFieldByCode( IEntryTypeService.FIELD_PUBLISHED ) == null )
+            {
+                FieldHome.create( GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf( published ) ) );
+            }
+            else
+            {
+                FieldHome.update( GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf( published ) ) );
+            }
         }
 
         return redirectView( request, VIEW_MANAGE_FORMS );

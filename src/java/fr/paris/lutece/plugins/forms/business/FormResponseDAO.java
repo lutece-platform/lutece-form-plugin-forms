@@ -101,7 +101,7 @@ public final class FormResponseDAO implements IFormResponseDAO
         {
             daoUtil.setInt( 1, nKey );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 formResponse = dataToObject( daoUtil );
@@ -141,7 +141,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
             daoUtil.setBoolean( nIndex++, formResponse.isPublished( ) );
-            daoUtil.setTimestamp( nIndex++, formResponse.getUpdateStatus() );
+            daoUtil.setTimestamp( nIndex++, formResponse.getUpdateStatus( ) );
             daoUtil.setInt( nIndex++, formResponse.getId( ) );
 
             daoUtil.executeUpdate( );
@@ -158,7 +158,7 @@ public final class FormResponseDAO implements IFormResponseDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 formResponseList.add( dataToObject( daoUtil ) );
@@ -174,11 +174,11 @@ public final class FormResponseDAO implements IFormResponseDAO
     public List<Integer> selectAllFormResponsesId( Plugin plugin )
     {
         List<Integer> formResponseIdList = new ArrayList<>( );
-        
+
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ID, plugin ) )
         {
-        daoUtil.executeQuery( );
-    
+            daoUtil.executeQuery( );
+
             while ( daoUtil.next( ) )
             {
                 formResponseIdList.add( daoUtil.getInt( 1 ) );
@@ -194,12 +194,12 @@ public final class FormResponseDAO implements IFormResponseDAO
     public List<FormResponse> selectFormResponseListUncompleteByIdForm( int nIdForm, Plugin plugin )
     {
         List<FormResponse> formResponseList = new ArrayList<>( );
-       
+
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_ID_FORM, plugin ) )
         {
             daoUtil.setInt( 1, nIdForm );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 formResponseList.add( dataToObject( daoUtil ) );
@@ -231,7 +231,7 @@ public final class FormResponseDAO implements IFormResponseDAO
         }
         return list;
     }
-    
+
     @Override
     public List<FormResponse> selectAllCompletedFormResponseByUser( String strGuid, Plugin plugin )
     {

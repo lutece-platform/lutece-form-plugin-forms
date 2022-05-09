@@ -97,12 +97,13 @@ public final class FormResponseHome
      *            The formResponse Id
      */
     public static void remove( int nKey )
-    {        
+    {
         FormResponse formResponse = _dao.load( nKey, _plugin );
         _dao.delete( nKey, _plugin );
-        if( formResponse!= null ) 
+        if ( formResponse != null )
         {
-        	ExtendableResourceRemovalListenerService.doRemoveResourceExtentions( FormResponse.RESOURCE_TYPE+"_"+formResponse.getFormId( ), Integer.toString( formResponse.getId() ) );
+            ExtendableResourceRemovalListenerService.doRemoveResourceExtentions( FormResponse.RESOURCE_TYPE + "_" + formResponse.getFormId( ),
+                    Integer.toString( formResponse.getId( ) ) );
         }
     }
 
@@ -280,7 +281,7 @@ public final class FormResponseHome
         }
         return listFormResponse;
     }
-    
+
     /**
      * Load the data of all the formResponse objects and returns them as a list
      * 

@@ -425,15 +425,16 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                 documentList.add( doc );
             }
         }
-        if( !documentList.isEmpty() ) {
-        	addDocuments( documentList );
+        if ( !documentList.isEmpty( ) )
+        {
+            addDocuments( documentList );
         }
         endIndexing( );
     }
 
     private void addDocuments( List<Document> documentList )
     {
-    	provideExternalFields( documentList );
+        provideExternalFields( documentList );
         try
         {
             _indexWriter.addDocuments( documentList );
@@ -444,6 +445,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         }
         documentList.clear( );
     }
+
     /**
      * Provide external fields to Document objects
      * 

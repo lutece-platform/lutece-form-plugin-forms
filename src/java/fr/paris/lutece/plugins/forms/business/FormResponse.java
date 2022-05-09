@@ -59,7 +59,7 @@ public class FormResponse implements IExtendableResource
     private Timestamp _dateUpdate;
 
     private boolean _bFromSave;
-    
+
     private boolean _bPublished;
 
     private Timestamp _dateUpdateStatus;
@@ -167,7 +167,7 @@ public class FormResponse implements IExtendableResource
     {
         this._bFromSave = bFromSave;
     }
-    
+
     /**
      * @return the _bPublished
      */
@@ -184,7 +184,7 @@ public class FormResponse implements IExtendableResource
     {
         this._bPublished = bPublished;
     }
-    
+
     /**
      * @return the _dateUpdate
      */
@@ -223,34 +223,34 @@ public class FormResponse implements IExtendableResource
         _listFormResponseStep = listFormResponseStep;
     }
 
-	@Override
-	public String getExtendableResourceDescription()
-	{
-		return RESOURCE_TYPE+"_"+_nFormId;
-	}
+    @Override
+    public String getExtendableResourceDescription( )
+    {
+        return RESOURCE_TYPE + "_" + _nFormId;
+    }
 
-	@Override
-	public String getExtendableResourceImageUrl()
-	{
-		return null;
-	}
+    @Override
+    public String getExtendableResourceImageUrl( )
+    {
+        return null;
+    }
 
-	@Override
-	public String getExtendableResourceName()
-	{
-		return RESOURCE_TYPE + "_" + _nId;
-	}
+    @Override
+    public String getExtendableResourceName( )
+    {
+        return RESOURCE_TYPE + "_" + _nId;
+    }
 
-	@Override
-	public String getExtendableResourceType()
-	{
-		return RESOURCE_TYPE +"_"+_nFormId ;
-	}
+    @Override
+    public String getExtendableResourceType( )
+    {
+        return RESOURCE_TYPE + "_" + _nFormId;
+    }
 
-	@Override
-	public String getIdExtendableResource()
-	{
-		return Integer.toString( _nId );
-	}
+    @Override
+    public String getIdExtendableResource( )
+    {
+        return Integer.toString( _nId );
+    }
 
 }

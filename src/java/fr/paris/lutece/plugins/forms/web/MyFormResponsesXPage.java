@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2021, City of Paris
+ * Copyright (c) 2002-2022, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,7 @@ public class MyFormResponsesXPage extends MVCApplication
 
     // Views
     private static final String VIEW_LIST_FORM_RESPONSES = "listFormResponses";
-    
+
     // Marks
     private static final String MARK_RESPONSE_LIST = "response_list";
 
@@ -95,7 +95,7 @@ public class MyFormResponsesXPage extends MVCApplication
 
         Map<String, Object> model = getModel( );
         Locale locale = getLocale( request );
-        model.put( MARK_RESPONSE_LIST, FormResponseService.getInstance().getFormResponseListForUser( user ) );
+        model.put( MARK_RESPONSE_LIST, FormResponseService.getInstance( ).getFormResponseListForUser( user ) );
 
         XPage xPage = getXPage( TEMPLATE_VIEW_FORMRESPONSES_LIST, locale, model );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_LIST_FORMRESPONSES_PAGETITLE, locale ) );

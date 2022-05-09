@@ -95,7 +95,7 @@ public final class FormDAO implements IFormDAO
             {
                 daoUtil.setInt( nIndex++, 0 );
             }
-            daoUtil.setInt(nIndex++, form.getIdCategory());
+            daoUtil.setInt( nIndex++, form.getIdCategory( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -177,7 +177,7 @@ public final class FormDAO implements IFormDAO
             {
                 daoUtil.setInt( nIndex++, 0 );
             }
-            daoUtil.setInt(nIndex++, form.getIdCategory());
+            daoUtil.setInt( nIndex++, form.getIdCategory( ) );
 
             daoUtil.setInt( nIndex, form.getId( ) );
 
@@ -301,7 +301,7 @@ public final class FormDAO implements IFormDAO
             logo.setIdFile( idLogo );
             form.setLogo( logo );
         }
-        
+
         form.setIdCategory( daoUtil.getInt( "id_category" ) );
         return form;
     }

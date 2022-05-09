@@ -88,7 +88,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
         {
             daoUtil.setInt( 1, nKey );
             daoUtil.executeQuery( );
-    
+
             if ( daoUtil.next( ) )
             {
                 formResponseStep = dataToObject( daoUtil );
@@ -162,12 +162,12 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     public List<FormResponseStep> selectFormResponseStepsByFormResponse( int nIdFormResponse, Plugin plugin )
     {
         List<FormResponseStep> listIdStep = new ArrayList<>( );
-        
+
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_RESPONSE, plugin ) )
         {
             daoUtil.setInt( 1, nIdFormResponse );
             daoUtil.executeQuery( );
-    
+
             while ( daoUtil.next( ) )
             {
                 listIdStep.add( dataToObject( daoUtil ) );

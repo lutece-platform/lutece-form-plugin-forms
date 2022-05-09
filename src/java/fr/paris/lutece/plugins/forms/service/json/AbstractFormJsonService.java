@@ -99,7 +99,7 @@ public abstract class AbstractFormJsonService
         StepJsonData jsonData = jsonExportStepAsData( idForm, idStep );
         return _objectMapper.writeValueAsString( jsonData );
     }
-    
+
     /**
      * Export the step as a StepJsonData Object.
      * 
@@ -154,7 +154,7 @@ public abstract class AbstractFormJsonService
 
         jsonImportStep( idForm, jsonData, locale );
     }
-    
+
     @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
     public void jsonImportStep( int idForm, StepJsonData jsonData, Locale locale ) throws JsonProcessingException
     {
