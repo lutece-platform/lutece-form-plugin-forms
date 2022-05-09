@@ -86,15 +86,6 @@ public interface IFormResponseStepDAO
     FormResponseStep load( int nKey, Plugin plugin );
 
     /**
-     * Load the data of all the FormResponseStep objects and returns them as a list
-     * 
-     * @param plugin
-     *            the Plugin
-     * @return The list which contains the data of all the FormResponseStep objects
-     */
-    List<FormResponseStep> selectFormResponseStepList( Plugin plugin );
-
-    /**
      * Load the order steps list by FormResponse id
      * 
      * @param nIdFormResponse

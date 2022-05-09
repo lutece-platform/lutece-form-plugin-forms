@@ -55,16 +55,15 @@ public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
     public List<GlobalFormsAction> selectAllFormActions( Plugin plugin )
     {
         List<GlobalFormsAction> listActions = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS, plugin ) )
         {
-            listActions.add( dataToObject( daoUtil ) );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                listActions.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
-
         return listActions;
     }
 
@@ -75,18 +74,17 @@ public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
     public GlobalFormsAction selectGlobalFormsActionByCode( String strCode, Plugin plugin, Locale locale )
     {
         GlobalFormsAction globalAction = null;
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS + SQL_QUERY_FILTER_BY_CODE, plugin );
-        daoUtil.setString( 1, strCode );
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_ACTIONS + SQL_QUERY_FILTER_BY_CODE, plugin ) )
         {
-            globalAction = dataToObject( daoUtil );
-            globalAction.setLocale( locale );
+            daoUtil.setString( 1, strCode );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                globalAction = dataToObject( daoUtil );
+                globalAction.setLocale( locale );
+            }
         }
-
-        daoUtil.close( );
-
         return globalAction;
     }
 

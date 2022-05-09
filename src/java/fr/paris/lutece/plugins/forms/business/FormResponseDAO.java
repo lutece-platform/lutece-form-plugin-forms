@@ -69,9 +69,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     @Override
     public void insert( FormResponse formResponse, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
-
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponse.getFormId( ) );
@@ -90,10 +88,6 @@ public final class FormResponseDAO implements IFormResponseDAO
                 formResponse.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.close( );
-        }
     }
 
     /**
@@ -102,18 +96,17 @@ public final class FormResponseDAO implements IFormResponseDAO
     @Override
     public FormResponse load( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeQuery( );
-
         FormResponse formResponse = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-            formResponse = dataToObject( daoUtil );
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                formResponse = dataToObject( daoUtil );
+            }
         }
-
-        daoUtil.close( );
 
         return formResponse;
     }
@@ -124,10 +117,11 @@ public final class FormResponseDAO implements IFormResponseDAO
     @Override
     public void delete( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeUpdate( );
+        }
 
     }
 
@@ -137,9 +131,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     @Override
     public void store( FormResponse formResponse, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponse.getFormId( ) );
@@ -154,10 +146,6 @@ public final class FormResponseDAO implements IFormResponseDAO
 
             daoUtil.executeUpdate( );
         }
-        finally
-        {
-            daoUtil.close( );
-        }
     }
 
     /**
@@ -167,15 +155,15 @@ public final class FormResponseDAO implements IFormResponseDAO
     public List<FormResponse> selectFormResponseList( Plugin plugin )
     {
         List<FormResponse> formResponseList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-            formResponseList.add( dataToObject( daoUtil ) );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                formResponseList.add( dataToObject( daoUtil ) );
+            }
         }
-        daoUtil.close( );
-
         return formResponseList;
     }
 
@@ -186,15 +174,16 @@ public final class FormResponseDAO implements IFormResponseDAO
     public List<Integer> selectAllFormResponsesId( Plugin plugin )
     {
         List<Integer> formResponseIdList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ID, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ID, plugin ) )
         {
-            formResponseIdList.add( daoUtil.getInt( 1 ) );
+        daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                formResponseIdList.add( daoUtil.getInt( 1 ) );
+            }
         }
-        daoUtil.close( );
-
         return formResponseIdList;
     }
 
@@ -205,15 +194,17 @@ public final class FormResponseDAO implements IFormResponseDAO
     public List<FormResponse> selectFormResponseListUncompleteByIdForm( int nIdForm, Plugin plugin )
     {
         List<FormResponse> formResponseList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_ID_FORM, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+       
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_ID_FORM, plugin ) )
         {
-            formResponseList.add( dataToObject( daoUtil ) );
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                formResponseList.add( dataToObject( daoUtil ) );
+            }
         }
-        daoUtil.close( );
 
         return formResponseList;
     }
@@ -304,11 +295,11 @@ public final class FormResponseDAO implements IFormResponseDAO
     @Override
     public void deleteByForm( int nIdForm, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORM, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
-
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORM, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**

@@ -140,20 +140,6 @@ public final class FormResponseStepHome
     }
 
     /**
-     * Load the data of all the formResponseStep objects and returns them as a list
-     * 
-     * @return the list which contains the data of all the formResponseStep objects
-     */
-    public static List<FormResponseStep> getFormResponseStepList( )
-    {
-        List<FormResponseStep> listFormResponseStep = _dao.selectFormResponseStepList( _plugin );
-        completeWithSteps( listFormResponseStep );
-        completeWithQuestionResponses( listFormResponseStep );
-
-        return listFormResponseStep;
-    }
-
-    /**
      * Completes the specified list of form response steps with the step
      * 
      * @param listFormResponseStep

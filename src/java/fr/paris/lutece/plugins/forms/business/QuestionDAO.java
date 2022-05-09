@@ -71,8 +71,7 @@ public final class QuestionDAO implements IQuestionDAO
     @Override
     public void insert( Question question, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setString( nIndex++, question.getTitle( ) );
@@ -92,10 +91,6 @@ public final class QuestionDAO implements IQuestionDAO
             {
                 question.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
-        }
-        finally
-        {
-            daoUtil.close( );
         }
     }
 
@@ -174,10 +169,11 @@ public final class QuestionDAO implements IQuestionDAO
     @Override
     public void delete( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -186,26 +182,27 @@ public final class QuestionDAO implements IQuestionDAO
     @Override
     public void store( Question question, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        int nIndex = 1;
-
-        daoUtil.setInt( nIndex++, question.getId( ) );
-        daoUtil.setString( nIndex++, question.getTitle( ) );
-        daoUtil.setString( nIndex++, question.getCode( ) );
-        daoUtil.setString( nIndex++, question.getDescription( ) );
-        daoUtil.setInt( nIndex++, question.getIdEntry( ) );
-        daoUtil.setInt( nIndex++, question.getIdStep( ) );
-        daoUtil.setBoolean( nIndex++, question.isVisibleMultiviewGlobal( ) );
-        daoUtil.setBoolean( nIndex++, question.isVisibleMultiviewFormSelected( ) );
-        daoUtil.setString( nIndex++, question.getColumnTitle( ) );
-        daoUtil.setBoolean( nIndex++, question.isFiltrableMultiviewGlobal( ) );
-        daoUtil.setBoolean( nIndex++, question.isFiltrableMultiviewFormSelected( ) );
-        daoUtil.setInt( nIndex++, question.getMultiviewColumnOrder( ) );
-
-        daoUtil.setInt( nIndex, question.getId( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
+        {
+            int nIndex = 1;
+    
+            daoUtil.setInt( nIndex++, question.getId( ) );
+            daoUtil.setString( nIndex++, question.getTitle( ) );
+            daoUtil.setString( nIndex++, question.getCode( ) );
+            daoUtil.setString( nIndex++, question.getDescription( ) );
+            daoUtil.setInt( nIndex++, question.getIdEntry( ) );
+            daoUtil.setInt( nIndex++, question.getIdStep( ) );
+            daoUtil.setBoolean( nIndex++, question.isVisibleMultiviewGlobal( ) );
+            daoUtil.setBoolean( nIndex++, question.isVisibleMultiviewFormSelected( ) );
+            daoUtil.setString( nIndex++, question.getColumnTitle( ) );
+            daoUtil.setBoolean( nIndex++, question.isFiltrableMultiviewGlobal( ) );
+            daoUtil.setBoolean( nIndex++, question.isFiltrableMultiviewFormSelected( ) );
+            daoUtil.setInt( nIndex++, question.getMultiviewColumnOrder( ) );
+    
+            daoUtil.setInt( nIndex, question.getId( ) );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -215,21 +212,19 @@ public final class QuestionDAO implements IQuestionDAO
     public List<Question> selectQuestionsList( Plugin plugin )
     {
         List<Question> questionList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL, plugin ) )
         {
-            questionList.add( dataToObject( daoUtil ) );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                questionList.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
 
         for ( Question quest : questionList )
         {
-
             quest.setEntry( getQuestionEntry( quest.getIdEntry( ) ) );
-
         }
         return questionList;
     }
@@ -241,21 +236,19 @@ public final class QuestionDAO implements IQuestionDAO
     public List<Question> selectQuestionsListByStep( int nIdStep, Plugin plugin )
     {
         List<Question> questionList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_STEP, plugin );
-        daoUtil.setInt( 1, nIdStep );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_STEP, plugin ) )
         {
-            questionList.add( dataToObject( daoUtil ) );
+            daoUtil.setInt( 1, nIdStep );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                questionList.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
         for ( Question quest : questionList )
         {
-
             quest.setEntry( getQuestionEntry( quest.getIdEntry( ) ) );
-
         }
         return questionList;
     }
@@ -267,15 +260,15 @@ public final class QuestionDAO implements IQuestionDAO
     public List<Integer> selectIdQuestionsList( Plugin plugin )
     {
         List<Integer> questionList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin ) )
         {
-            questionList.add( daoUtil.getInt( 1 ) );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                questionList.add( daoUtil.getInt( 1 ) );
+            }
         }
-
-        daoUtil.close( );
         return questionList;
     }
 
@@ -283,15 +276,15 @@ public final class QuestionDAO implements IQuestionDAO
     public List<Question> selectQuestionsListUncomplete( Plugin plugin )
     {
         List<Question> questionList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL, plugin ) )
         {
-            questionList.add( dataToObjectWithoutStepEntry( daoUtil ) );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                questionList.add( dataToObjectWithoutStepEntry( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
         return questionList;
     }
 
@@ -302,15 +295,14 @@ public final class QuestionDAO implements IQuestionDAO
     public ReferenceList selectQuestionsReferenceList( Plugin plugin )
     {
         ReferenceList questionList = new ReferenceList( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL, plugin ) )
         {
-            questionList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
+            {
+                questionList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            }
         }
-
-        daoUtil.close( );
         return questionList;
     }
 
@@ -343,16 +335,16 @@ public final class QuestionDAO implements IQuestionDAO
     public List<Question> selectQuestionsListByFormIdUncomplete( int nIdForm, Plugin plugin )
     {
         List<Question> questionList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin ) )
         {
-            questionList.add( dataToObjectWithoutStepEntry( daoUtil ) );
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                questionList.add( dataToObjectWithoutStepEntry( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
         return questionList;
     }
 
@@ -363,16 +355,16 @@ public final class QuestionDAO implements IQuestionDAO
     public ReferenceList selectQuestionsReferenceListByForm( int nIdForm, Plugin plugin )
     {
         ReferenceList questionList = new ReferenceList( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin ) )
         {
-            questionList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                questionList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            }
         }
-
-        daoUtil.close( );
         return questionList;
     }
 

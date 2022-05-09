@@ -63,8 +63,7 @@ public final class StepDAO implements IStepDAO
     @Override
     public void insert( Step step, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setString( nIndex++, step.getTitle( ) );
@@ -79,10 +78,6 @@ public final class StepDAO implements IStepDAO
                 step.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.close( );
-        }
     }
 
     /**
@@ -91,17 +86,17 @@ public final class StepDAO implements IStepDAO
     @Override
     public Step load( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeQuery( );
         Step step = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-            step = dataToObject( daoUtil );
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                step = dataToObject( daoUtil );
+            }
         }
-
-        daoUtil.close( );
         return step;
     }
 
@@ -111,17 +106,17 @@ public final class StepDAO implements IStepDAO
     @Override
     public Step selectInitialStep( int nIdForm, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_INITIAL_STEP, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeQuery( );
         Step step = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_INITIAL_STEP, plugin ) )
         {
-            step = dataToObject( daoUtil );
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                step = dataToObject( daoUtil );
+            }
         }
-
-        daoUtil.close( );
         return step;
     }
 
@@ -131,10 +126,11 @@ public final class StepDAO implements IStepDAO
     @Override
     public void delete( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -143,20 +139,21 @@ public final class StepDAO implements IStepDAO
     @Override
     public void store( Step step, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        int nIndex = 1;
-
-        daoUtil.setInt( nIndex++, step.getId( ) );
-        daoUtil.setString( nIndex++, step.getTitle( ) );
-        daoUtil.setString( nIndex++, step.getDescription( ) );
-        daoUtil.setInt( nIndex++, step.getIdForm( ) );
-        daoUtil.setBoolean( nIndex++, step.isInitial( ) );
-        daoUtil.setBoolean( nIndex++, step.isFinal( ) );
-
-        daoUtil.setInt( nIndex, step.getId( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
+        {
+            int nIndex = 1;
+    
+            daoUtil.setInt( nIndex++, step.getId( ) );
+            daoUtil.setString( nIndex++, step.getTitle( ) );
+            daoUtil.setString( nIndex++, step.getDescription( ) );
+            daoUtil.setInt( nIndex++, step.getIdForm( ) );
+            daoUtil.setBoolean( nIndex++, step.isInitial( ) );
+            daoUtil.setBoolean( nIndex++, step.isFinal( ) );
+    
+            daoUtil.setInt( nIndex, step.getId( ) );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -166,15 +163,16 @@ public final class StepDAO implements IStepDAO
     public List<Step> selectStepsList( Plugin plugin )
     {
         List<Step> stepList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-            stepList.add( dataToObject( daoUtil ) );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                stepList.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
         return stepList;
     }
 
@@ -185,15 +183,14 @@ public final class StepDAO implements IStepDAO
     public List<Integer> selectIdStepsList( Plugin plugin )
     {
         List<Integer> stepList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID, plugin ) )
         {
-            stepList.add( daoUtil.getInt( 1 ) );
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
+            {
+                stepList.add( daoUtil.getInt( 1 ) );
+            }
         }
-
-        daoUtil.close( );
         return stepList;
     }
 
@@ -204,16 +201,16 @@ public final class StepDAO implements IStepDAO
     public List<Integer> selectIdStepsListByForm( int nIdForm, Plugin plugin )
     {
         List<Integer> stepList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID_BY_FORM, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_ID_BY_FORM, plugin ) )
         {
-            stepList.add( daoUtil.getInt( 1 ) );
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                stepList.add( daoUtil.getInt( 1 ) );
+            }
         }
-
-        daoUtil.close( );
         return stepList;
     }
 
@@ -224,15 +221,16 @@ public final class StepDAO implements IStepDAO
     public ReferenceList selectStepsReferenceList( Plugin plugin )
     {
         ReferenceList stepList = new ReferenceList( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-            stepList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
-        }
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                stepList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            }
 
-        daoUtil.close( );
+        }
         return stepList;
     }
 
@@ -243,16 +241,16 @@ public final class StepDAO implements IStepDAO
     public List<Step> selectStepsListbyForm( int nFormId, Plugin plugin )
     {
         List<Step> stepList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin );
-        daoUtil.setInt( 1, nFormId );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin ) )
         {
-            stepList.add( dataToObject( daoUtil ) );
+            daoUtil.setInt( 1, nFormId );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                stepList.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
         return stepList;
     }
 
@@ -260,16 +258,16 @@ public final class StepDAO implements IStepDAO
     public ReferenceList selectStepReferenceListbyForm( int nFormId, Plugin plugin )
     {
         ReferenceList stepReferenceList = new ReferenceList( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin );
-        daoUtil.setInt( 1, nFormId );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin ) )
         {
-            stepReferenceList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            daoUtil.setInt( 1, nFormId );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                stepReferenceList.addItem( daoUtil.getInt( 1 ), daoUtil.getString( 2 ) );
+            }
         }
-
-        daoUtil.close( );
         return stepReferenceList;
     }
 

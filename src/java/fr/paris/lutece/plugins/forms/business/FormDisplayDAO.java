@@ -67,8 +67,7 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     @Override
     public void insert( FormDisplay formDisplay, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formDisplay.getFormId( ) );
@@ -86,11 +85,6 @@ public final class FormDisplayDAO implements IFormDisplayDAO
                 formDisplay.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.close( );
-
-        }
     }
 
     /**
@@ -99,18 +93,17 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     @Override
     public FormDisplay load( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeQuery( );
         FormDisplay formDisplay = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-            formDisplay = dataToObject( daoUtil );
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeQuery( );
+            
+            if ( daoUtil.next( ) )
+            {
+                formDisplay = dataToObject( daoUtil );
+            }
         }
-
-        daoUtil.close( );
-
         return formDisplay;
     }
 
@@ -120,10 +113,11 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     @Override
     public void delete( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeUpdate( );
+        }
 
     }
 
@@ -133,21 +127,22 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     @Override
     public void store( FormDisplay formDisplay, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-        int nIndex = 1;
-
-        daoUtil.setInt( nIndex++, formDisplay.getId( ) );
-        daoUtil.setInt( nIndex++, formDisplay.getFormId( ) );
-        daoUtil.setInt( nIndex++, formDisplay.getStepId( ) );
-        daoUtil.setInt( nIndex++, formDisplay.getCompositeId( ) );
-        daoUtil.setInt( nIndex++, formDisplay.getParentId( ) );
-        daoUtil.setInt( nIndex++, formDisplay.getDisplayOrder( ) );
-        daoUtil.setString( nIndex++, formDisplay.getCompositeType( ) );
-        daoUtil.setInt( nIndex++, formDisplay.getDepth( ) );
-        daoUtil.setInt( nIndex, formDisplay.getId( ) );
-
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
+        {
+            int nIndex = 1;
+    
+            daoUtil.setInt( nIndex++, formDisplay.getId( ) );
+            daoUtil.setInt( nIndex++, formDisplay.getFormId( ) );
+            daoUtil.setInt( nIndex++, formDisplay.getStepId( ) );
+            daoUtil.setInt( nIndex++, formDisplay.getCompositeId( ) );
+            daoUtil.setInt( nIndex++, formDisplay.getParentId( ) );
+            daoUtil.setInt( nIndex++, formDisplay.getDisplayOrder( ) );
+            daoUtil.setString( nIndex++, formDisplay.getCompositeType( ) );
+            daoUtil.setInt( nIndex++, formDisplay.getDepth( ) );
+            daoUtil.setInt( nIndex, formDisplay.getId( ) );
+    
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -157,15 +152,16 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     public List<FormDisplay> selectFormDisplayList( Plugin plugin )
     {
         List<FormDisplay> formDisplayList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin ) )
         {
-            formDisplayList.add( dataToObject( daoUtil ) );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                formDisplayList.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
 
         return formDisplayList;
     }
@@ -177,17 +173,18 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     public List<FormDisplay> selectFormDisplayListByParent( int nIdStep, int nIdParent, Plugin plugin )
     {
         List<FormDisplay> formDisplayList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_PARENT, plugin );
-        daoUtil.setInt( 1, nIdStep );
-        daoUtil.setInt( 2, nIdParent );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_PARENT, plugin ) )
         {
-            formDisplayList.add( dataToObject( daoUtil ) );
+            daoUtil.setInt( 1, nIdStep );
+            daoUtil.setInt( 2, nIdParent );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                formDisplayList.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
 
         return formDisplayList;
     }
@@ -205,20 +202,18 @@ public final class FormDisplayDAO implements IFormDisplayDAO
      */
     private int getNextPositionInGroup( int nIdStep, int nIdParent, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEXT_POSITION_BY_PARENT, plugin );
-        daoUtil.setInt( 1, nIdStep );
-        daoUtil.setInt( 2, nIdParent );
-        daoUtil.executeQuery( );
-
         int nNextPosition = 0;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_NEXT_POSITION_BY_PARENT, plugin ) )
         {
-            nNextPosition = daoUtil.getInt( 1 ) + 1;
+            daoUtil.setInt( 1, nIdStep );
+            daoUtil.setInt( 2, nIdParent );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                nNextPosition = daoUtil.getInt( 1 ) + 1;
+            }
         }
-
-        daoUtil.close( );
-
         return nNextPosition;
     }
 
@@ -226,17 +221,17 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     public ReferenceList selectGroupDisplayReferenceListByStep( int nIdStep, Plugin plugin )
     {
         ReferenceList groupList = new ReferenceList( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_GROUP_DISPLAY_BY_STEP, plugin );
-        daoUtil.setInt( 1, nIdStep );
-        daoUtil.setString( 2, CompositeDisplayType.GROUP.getLabel( ) );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_GROUP_DISPLAY_BY_STEP, plugin ) )
         {
-            groupList.addItem( daoUtil.getInt( "id_display" ), daoUtil.getString( "title" ) );
+            daoUtil.setInt( 1, nIdStep );
+            daoUtil.setString( 2, CompositeDisplayType.GROUP.getLabel( ) );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                groupList.addItem( daoUtil.getInt( "id_display" ), daoUtil.getString( "title" ) );
+            }
         }
-
-        daoUtil.close( );
         return groupList;
     }
 
@@ -248,19 +243,18 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     {
         FormDisplay formDisplay = null;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE, plugin );
-        daoUtil.setInt( 1, nIdForm );
-        daoUtil.setInt( 2, nIdStep );
-        daoUtil.setInt( 3, nIdComposite );
-        daoUtil.executeQuery( );
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE, plugin ) )
         {
-            formDisplay = dataToObject( daoUtil );
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.setInt( 2, nIdStep );
+            daoUtil.setInt( 3, nIdComposite );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                formDisplay = dataToObject( daoUtil );
+            }
         }
-
-        daoUtil.close( );
-
         return formDisplay;
     }
 

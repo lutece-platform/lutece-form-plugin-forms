@@ -61,9 +61,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     @Override
     public void insert( FormResponseStep formResponseStep, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin );
-
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponseStep.getFormResponseId( ) );
@@ -77,10 +75,6 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
                 formResponseStep.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
         }
-        finally
-        {
-            daoUtil.close( );
-        }
     }
 
     /**
@@ -89,19 +83,17 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     @Override
     public FormResponseStep load( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeQuery( );
-
         FormResponseStep formResponseStep = null;
-
-        if ( daoUtil.next( ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, plugin ) )
         {
-            formResponseStep = dataToObject( daoUtil );
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeQuery( );
+    
+            if ( daoUtil.next( ) )
+            {
+                formResponseStep = dataToObject( daoUtil );
+            }
         }
-
-        daoUtil.close( );
-
         return formResponseStep;
     }
 
@@ -111,10 +103,11 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     @Override
     public void delete( int nKey, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin );
-        daoUtil.setInt( 1, nKey );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        {
+            daoUtil.setInt( 1, nKey );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -123,9 +116,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     @Override
     public void store( FormResponseStep formResponseStep, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin );
-
-        try
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, plugin ) )
         {
             int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponseStep.getFormResponseId( ) );
@@ -136,24 +127,6 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
 
             daoUtil.executeUpdate( );
         }
-        finally
-        {
-            daoUtil.close( );
-        }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public List<FormResponseStep> selectFormResponseStepList( Plugin plugin )
-    {
-        List<FormResponseStep> formResponseStepList = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL, plugin );
-
-        daoUtil.close( );
-
-        return formResponseStepList;
     }
 
     /**
@@ -162,10 +135,11 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     @Override
     public void deleteByFormResponse( int nIdFormResponse, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORM_RESPONSE, plugin );
-        daoUtil.setInt( 1, nIdFormResponse );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_FORM_RESPONSE, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdFormResponse );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -174,10 +148,11 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     @Override
     public void deleteByStep( int nIdStep, Plugin plugin )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_STEP, plugin );
-        daoUtil.setInt( 1, nIdStep );
-        daoUtil.executeUpdate( );
-        daoUtil.close( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_BY_STEP, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdStep );
+            daoUtil.executeUpdate( );
+        }
     }
 
     /**
@@ -187,18 +162,17 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     public List<FormResponseStep> selectFormResponseStepsByFormResponse( int nIdFormResponse, Plugin plugin )
     {
         List<FormResponseStep> listIdStep = new ArrayList<>( );
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_RESPONSE, plugin );
-
-        daoUtil.setInt( 1, nIdFormResponse );
-        daoUtil.executeQuery( );
-
-        while ( daoUtil.next( ) )
+        
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_RESPONSE, plugin ) )
         {
-            listIdStep.add( dataToObject( daoUtil ) );
+            daoUtil.setInt( 1, nIdFormResponse );
+            daoUtil.executeQuery( );
+    
+            while ( daoUtil.next( ) )
+            {
+                listIdStep.add( dataToObject( daoUtil ) );
+            }
         }
-
-        daoUtil.close( );
-
         return listIdStep;
     }
 
