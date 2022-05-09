@@ -211,7 +211,7 @@ public class FormResponseXPage extends MVCApplication
         // CSRF Token control
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_TASK_FORM ) )
         {
-            throw new AccessDeniedException( "Invalid security token" );
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
 
         int nIdForm = formResponse.getFormId( );

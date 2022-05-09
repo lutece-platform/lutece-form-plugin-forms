@@ -63,6 +63,6 @@ public interface IFormCategoryDAO
     /**
      * {@inheritDoc }
      */
-    List<FormCategory> selectFormCategoryList( Plugin _plugin );
+    List<FormCategory> selectFormCategoryList( Plugin plugin );
 
 }

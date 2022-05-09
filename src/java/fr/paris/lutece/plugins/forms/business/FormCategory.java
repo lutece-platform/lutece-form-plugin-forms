@@ -56,9 +56,9 @@ public class FormCategory
      * @param nId
      *            the nId to set
      */
-    public void setId( int _nId )
+    public void setId( int nId )
     {
-        this._nId = _nId;
+        this._nId = nId;
     }
 
     /**

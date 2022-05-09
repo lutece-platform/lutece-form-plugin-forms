@@ -135,7 +135,7 @@ public class FormResponseService
 
             FormResponseHome.remove( formResponse.getId( ) );
 
-            List<Integer> listIdResource = new ArrayList<Integer>( );
+            List<Integer> listIdResource = new ArrayList<>( );
             listIdResource.add( formResponse.getId( ) );
 
             WorkflowService.getInstance( ).doRemoveWorkFlowResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE );

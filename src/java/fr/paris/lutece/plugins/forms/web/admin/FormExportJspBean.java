@@ -224,7 +224,7 @@ public class FormExportJspBean extends AbstractJspBean
     }
 
     @Action( ACTION_MOVE_UP_EXPORT_CONFIG )
-    public String doMoveUpExportConfig( HttpServletRequest request ) throws AccessDeniedException
+    public String doMoveUpExportConfig( HttpServletRequest request )
     {
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
         int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
@@ -262,7 +262,7 @@ public class FormExportJspBean extends AbstractJspBean
     }
 
     @Action( ACTION_MOVE_DOWN_EXPORT_CONFIG )
-    public String doMoveDownExportConfig( HttpServletRequest request ) throws AccessDeniedException
+    public String doMoveDownExportConfig( HttpServletRequest request )
     {
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
         int idForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );

@@ -101,7 +101,6 @@ public class FormCategoriesJspBean extends AbstractJspBean
 
     // Properties
     private static final String MESSAGE_CONFIRM_REMOVE_CATEGORY = "appointment.message.confirmRemoveCategory";
-    private static final String MESSAGE_ERROR_REMOVE_CATEGORY = "appointment.message.categoryIsAffected.errorRemoveCategory";
 
     // Session variable to store working values
     private FormCategory _formCategory;
@@ -160,10 +159,9 @@ public class FormCategoriesJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
-     * @throws AccessDeniedException
      */
     @Action( ACTION_CREATE_CATEGORY )
-    public String doCreateForm( HttpServletRequest request ) throws AccessDeniedException
+    public String doCreateForm( HttpServletRequest request )
     {
         populate( _formCategory, request, request.getLocale( ) );
 

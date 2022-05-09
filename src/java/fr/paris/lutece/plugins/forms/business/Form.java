@@ -655,9 +655,9 @@ public class Form implements AdminWorkgroupResource, RBACResource
      * @param _nIdCategory
      *            the _nIdCategory to set
      */
-    public void setIdCategory( int _nIdCategory )
+    public void setIdCategory( int nIdCategory )
     {
-        this._nIdCategory = _nIdCategory;
+        this._nIdCategory = nIdCategory;
     }
 
     /**
