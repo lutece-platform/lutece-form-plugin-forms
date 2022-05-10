@@ -64,51 +64,49 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
     public void buildFormFilterQuery( FormParameters formParameters )
     {
         BooleanQuery.Builder booleanQueryBuilder = new BooleanQuery.Builder( );
-        if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
+        if ( formParameters.getFormParametersMap( ).isEmpty( ) )
         {
-            Set<Map.Entry<String, Object>> setFormParameters = formParameters.getFormParametersMap( ).entrySet( );
+            setFormFilterQuery( null );
+            return;
+        }
+        
+        Set<Map.Entry<String, Object>> setFormParameters = formParameters.getFormParametersMap( ).entrySet( );
 
-            boolean bEmptyQuery = true;
-            for ( Map.Entry<String, Object> formParam : setFormParameters )
+        boolean bEmptyQuery = true;
+        for ( Map.Entry<String, Object> formParam : setFormParameters )
+        {
+
+            if ( !formParam.getValue( ).toString( ).equals( String.valueOf( FormsConstants.DEFAULT_ID_VALUE ) ) )
             {
+                bEmptyQuery = false;
+                String strQuestionCode = formParam.getKey( );
+                List<Question> questionList = QuestionHome.findByCode( strQuestionCode );
 
-                if ( !formParam.getValue( ).toString( ).equals( String.valueOf( FormsConstants.DEFAULT_ID_VALUE ) ) )
+                for ( Question question : questionList )
                 {
-                    bEmptyQuery = false;
-                    String strQuestionCode = formParam.getKey( );
-                    List<Question> questionList = QuestionHome.findByCode( strQuestionCode );
+                    List<Field> listFields = FieldHome.getFieldListByIdEntry( question.getEntry( ).getIdEntry( ) );
 
-                    for ( Question question : questionList )
+                    Query query = new TermQuery( new Term(
+                            FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0",
+                            formParam.getValue( ).toString( ) ) );
+                    booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
+
+                    for ( Field field : listFields )
                     {
-                        List<Field> listFields = FieldHome.getFieldListByIdEntry( question.getEntry( ).getIdEntry( ) );
-
-                        Query query = new TermQuery( new Term(
-                                FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0",
-                                formParam.getValue( ).toString( ) ) );
+                        String strFieldName = getFieldName( field );
+                        query = new TermQuery(
+                                new Term(
+                                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER
+                                                + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR + strFieldName,
+                                        formParam.getValue( ).toString( ) ) );
                         booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
-
-                        for ( Field field : listFields )
-                        {
-                            String strFieldName = getFieldName( field );
-                            query = new TermQuery(
-                                    new Term(
-                                            FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER
-                                                    + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR + strFieldName,
-                                            formParam.getValue( ).toString( ) ) );
-                            booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
-                        }
                     }
                 }
             }
-            if ( !bEmptyQuery )
-            {
-                setFormFilterQuery( booleanQueryBuilder.build( ) );
-            }
-            else
-            {
-                setFormFilterQuery( null );
-            }
-
+        }
+        if ( !bEmptyQuery )
+        {
+            setFormFilterQuery( booleanQueryBuilder.build( ) );
         }
         else
         {

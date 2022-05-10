@@ -961,23 +961,21 @@ public class FormXPage extends MVCApplication
                     question.setIsVisible( false );
                 }
             }
-            if ( !question.getEntry( ).isOnlyDisplayInBack( ) )
+            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+            if ( question.getEntry( ).isOnlyDisplayInBack( ) || entryDataService == null )
             {
-                IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-                if ( entryDataService != null )
-                {
-
-                    FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request,
-                            question.isVisible( ) && bValidateQuestionStep );
-
-                    if ( formQuestionResponse.hasError( ) )
-                    {
-                        bValidStep = false;
-                    }
-
-                    listResponsesTemp.add( formQuestionResponse );
-                }
+                continue;
             }
+
+            FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request,
+                    question.isVisible( ) && bValidateQuestionStep );
+
+            if ( formQuestionResponse.hasError( ) )
+            {
+                bValidStep = false;
+            }
+
+            listResponsesTemp.add( formQuestionResponse );
         }
 
         _formResponseManager.addResponses( listResponsesTemp );

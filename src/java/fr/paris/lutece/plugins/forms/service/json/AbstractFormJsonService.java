@@ -156,7 +156,7 @@ public abstract class AbstractFormJsonService
     }
 
     @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
-    public void jsonImportStep( int idForm, StepJsonData jsonData, Locale locale ) throws JsonProcessingException
+    public void jsonImportStep( int idForm, StepJsonData jsonData, Locale locale )
     {
         Step step = jsonData.getStep( );
         List<Group> groupList = jsonData.getGroupList( );

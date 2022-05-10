@@ -602,24 +602,14 @@ public class FormStepJspBean extends AbstractJspBean
     public String doImportTemplate( HttpServletRequest request ) throws AccessDeniedException
     {
 
-        int nIdForm = -1;
-        int nIdTemplate = -1;
-        try
+        int nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
+        int nIdTemplate = Integer.parseInt( request.getParameter( PARAMETER_ID_TEMPLATE ) );
+        StepJsonData template = _stepService.getStepTemplateData( nIdTemplate );
+        if ( template != null )
         {
-            nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
-            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
-            nIdTemplate = Integer.parseInt( request.getParameter( PARAMETER_ID_TEMPLATE ) );
-            StepJsonData template = _stepService.getStepTemplateData( nIdTemplate );
-            if ( template != null )
-            {
-                FormJsonService.getInstance( ).jsonImportStep( nIdForm, template, getLocale( ) );
-                addInfo( INFO_STEP_CREATED, getLocale( ) );
-            }
-        }
-        catch( JsonProcessingException e )
-        {
-            AppLogService.error( e.getMessage( ) );
-            addError( ERROR_STEP_NOT_IMPORTED, getLocale( ) );
+            FormJsonService.getInstance( ).jsonImportStep( nIdForm, template, getLocale( ) );
+            addInfo( INFO_STEP_CREATED, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
     }
