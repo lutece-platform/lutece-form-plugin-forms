@@ -9,3 +9,4 @@ PRIMARY KEY (id_category)
 );
 
 ALTER TABLE forms_form ADD id_category INT DEFAULT NULL;
+ALTER TABLE forms_form ADD backup_enabled SMALLINT default 0 NOT NULL;

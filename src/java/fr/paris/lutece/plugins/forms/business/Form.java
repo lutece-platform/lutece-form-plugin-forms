@@ -120,6 +120,8 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private File _logo;
 
     private int _nIdCategory;
+    
+    private boolean _bBackupEnabled;
 
     /**
      * Returns the Id
@@ -658,6 +660,22 @@ public class Form implements AdminWorkgroupResource, RBACResource
     public void setIdCategory( int nIdCategory )
     {
         this._nIdCategory = nIdCategory;
+    }
+
+    /**
+     * @return the bBackupEnabled
+     */
+    public boolean isBackupEnabled( )
+    {
+        return _bBackupEnabled;
+    }
+
+    /**
+     * @param bBackupEnabled the bBackupEnabled to set
+     */
+    public void setBackupEnabled( boolean bBackupEnabled )
+    {
+        _bBackupEnabled = bBackupEnabled;
     }
 
     /**

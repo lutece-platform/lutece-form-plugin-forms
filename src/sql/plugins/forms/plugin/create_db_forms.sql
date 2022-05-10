@@ -28,6 +28,7 @@ label_final_button VARCHAR(255),
 unavailable_message VARCHAR(255),
 id_logo INT DEFAULT 0 NOT NULL,
 id_category int DEFAULT NULL,
+backup_enabled SMALLINT default 0 NOT NULL,
 PRIMARY KEY (id_form)
 );
 
