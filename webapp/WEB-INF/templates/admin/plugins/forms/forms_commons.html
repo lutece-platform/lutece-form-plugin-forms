@@ -453,6 +453,9 @@ $( function() {
 						<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' hideLabel=['all'] rows=2>
 							<@checkBox labelFor='oneResponseByUser' labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) />
 						</@formGroup>
+						<@formGroup labelKey='#i18n{forms.create_form.labelBackupEnabled}' helpKey='#i18n{forms.create_form.labelBackupEnabled.help}' hideLabel=['all'] rows=2>
+							<@checkBox labelFor='backupEnabled' labelKey='#i18n{forms.create_form.labelBackupEnabled}' name='backupEnabled' id='backupEnabled' value='1' checked=(form?has_content && form.backupEnabled) />
+						</@formGroup>
 					</@columns> 
 				</@row>          
 			</@fieldSet>
