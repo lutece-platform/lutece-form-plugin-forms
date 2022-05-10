@@ -24,7 +24,7 @@
 	<#else>
 	  <button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit">#i18n{forms.step.next}</button>
 	</#if>
-	<#if user?? >
+	<#if user?? && form.backupEnabled>
 		<button class="btn btn-info btn-sm pull-right" name="action_doResetBackup"  type="submit" >#i18n{forms.step.resetResponse}</button>
 		<button class="btn btn-info btn-sm pull-right" name="action_doSaveForBackup"  type="submit" >#i18n{forms.step.saveResponse}</button>
     </#if>
