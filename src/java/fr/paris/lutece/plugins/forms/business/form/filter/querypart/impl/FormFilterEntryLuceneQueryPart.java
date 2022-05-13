@@ -33,10 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
@@ -76,30 +79,39 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
         for ( Map.Entry<String, Object> formParam : setFormParameters )
         {
 
-            if ( !formParam.getValue( ).toString( ).equals( String.valueOf( FormsConstants.DEFAULT_ID_VALUE ) ) )
+            String params = String.valueOf( formParam.getValue( ) );
+            List<String> valueList = Arrays.asList( params.split( ";" ) ).stream( )
+                    .filter( StringUtils::isNotEmpty )
+                    .filter( s -> !String.valueOf( FormsConstants.DEFAULT_ID_VALUE ).equals( s ) )
+                    .collect( Collectors.toList( ) );
+            
+            
+            if ( CollectionUtils.isNotEmpty( valueList ) )
             {
                 bEmptyQuery = false;
                 String strQuestionCode = formParam.getKey( );
                 List<Question> questionList = QuestionHome.findByCode( strQuestionCode );
-
                 for ( Question question : questionList )
                 {
                     List<Field> listFields = FieldHome.getFieldListByIdEntry( question.getEntry( ).getIdEntry( ) );
 
-                    Query query = new TermQuery( new Term(
-                            FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0",
-                            formParam.getValue( ).toString( ) ) );
-                    booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
-
-                    for ( Field field : listFields )
+                    for ( String value : valueList )
                     {
-                        String strFieldName = getFieldName( field );
-                        query = new TermQuery(
-                                new Term(
-                                        FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER
-                                                + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR + strFieldName,
-                                        formParam.getValue( ).toString( ) ) );
+                        Query query = new TermQuery( new Term(
+                                FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER + "0",
+                                value ) );
                         booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
+                        for ( Field field : listFields )
+                        {
+                            String strFieldName = getFieldName( field );
+                            query = new TermQuery(
+                                    new Term(
+                                            FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER
+                                                    + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR + strFieldName,
+                                                    value ) );
+                                booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
+                        }
+                        
                     }
                 }
             }

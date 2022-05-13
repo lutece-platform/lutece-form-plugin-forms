@@ -35,7 +35,13 @@ package fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.search.Query;
 
@@ -44,31 +50,25 @@ import org.apache.lucene.search.Query;
  */
 public class FormFilterWorkflowStateLuceneQueryPart extends AbstractFormFilterLuceneQueryPart
 {
-    private static final String INTEGER_MINUS_ONE = "-1";
-
     /**
      * {@inheritDoc}
      */
     @Override
     public void buildFormFilterQuery( FormParameters formParameters )
     {
+        setFormFilterQuery( null );
         if ( !formParameters.getFormParametersMap( ).isEmpty( ) )
         {
             Collection<Object> setFormParameters = formParameters.getFormParametersMap( ).values( );
+            String params = String.valueOf( setFormParameters.toArray( ) [0] );
+            List<Integer> idList = Arrays.asList( params.split( ";" ) ).stream( )
+                    .filter( StringUtils::isNotEmpty )
+                    .map( Integer::parseInt )
+                    .filter( i -> i != -1 )
+                    .collect( Collectors.toList( ) );
 
-            if ( setFormParameters.size( ) == 1 )
-            {
-                String strIdWorkflowState = String.valueOf( setFormParameters.toArray( ) [0] );
-                if ( !strIdWorkflowState.equals( INTEGER_MINUS_ONE ) )
-                {
-                    Query query = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, Integer.parseInt( strIdWorkflowState ) );
-                    setFormFilterQuery( query );
-                }
-            }
-        }
-        else
-        {
-            setFormFilterQuery( null );
+            Query query = IntPoint.newSetQuery( FormResponseSearchItem.FIELD_ID_WORKFLOW_STATE, idList );
+            setFormFilterQuery( query );
         }
     }
 }

@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.form.filter.display.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -43,6 +44,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -68,7 +70,6 @@ import fr.paris.lutece.util.ReferenceList;
 public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
 {
     // Constants
-    private static final String DEFAULT_ENTRY_VALUE = StringUtils.EMPTY;
     private static final String PARAMETER_ENTRY_VALUE_PATTERN = "multiview_entry_value_%s";
     private static final String FORM_RESOURCE_TYPE = Form.RESOURCE_TYPE;
 
@@ -87,13 +88,17 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
     @Override
     public Map<String, Object> getFilterDisplayMapValues( HttpServletRequest request )
     {
-        String strEntryValue = DEFAULT_ENTRY_VALUE;
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
 
         String strParameterName = buildElementName( PARAMETER_ENTRY_VALUE_PATTERN );
-        String strEntryParameterValue = request.getParameter( strParameterName );
-        if ( StringUtils.isNotBlank( strEntryParameterValue ) )
+        String[] strEntryParameterArray = request.getParameterValues( strParameterName );
+        
+        
+        if ( ArrayUtils.isNotEmpty( strEntryParameterArray ) )
         {
+            String value = Arrays.asList( strEntryParameterArray ).stream( ).collect( Collectors.joining( ";" ) );
+            setValue( value );
+            
             IFormColumn formColumn = retrieveFormColumn( );
             String strEntryValueColumnName = StringUtils.EMPTY;
             if ( formColumn != null )
@@ -102,13 +107,12 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
                 List<String> listEntryCode = formColumnEntry.getListEntryCode( );
                 strEntryValueColumnName = listEntryCode.get( 0 );
             }
-
-            mapFilterNameValues.put( strEntryValueColumnName, strEntryParameterValue );
-            strEntryValue = strEntryParameterValue;
+            mapFilterNameValues.put( strEntryValueColumnName, value );
         }
-
-        setValue( strEntryValue );
-
+        else
+        {
+            setValue( StringUtils.EMPTY );
+        }
         return mapFilterNameValues;
     }
 

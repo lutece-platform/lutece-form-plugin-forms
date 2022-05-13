@@ -34,13 +34,16 @@
 package fr.paris.lutece.plugins.forms.web.form.filter.display.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -90,19 +93,23 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
         int nIdForm = NumberUtils.toInt( request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ), DEFAULT_FORM_VALUE );
         int nIdPreviousForm = NumberUtils.toInt( request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM ),
                 DEFAULT_PREVIOUS_FORM_VALUE );
-        String strIdWorkflowState = request.getParameter( PARAMETER_ID_WORKFLOW_STATE );
+        String[] idWorkflowStateArray = request.getParameterValues( PARAMETER_ID_WORKFLOW_STATE );
 
         if ( nIdForm != nIdPreviousForm )
         {
-            strIdWorkflowState = StringUtils.EMPTY;
+            idWorkflowStateArray = null;
         }
 
-        if ( StringUtils.isNotBlank( strIdWorkflowState ) )
+        if ( ArrayUtils.isNotEmpty( idWorkflowStateArray ) )
         {
-            mapFilterNameValues.put( FormMultiviewWorkflowStateNameConstants.FILTER_ID_WORKFLOW_STATE, strIdWorkflowState );
+            String value = Arrays.asList( idWorkflowStateArray ).stream( ).collect( Collectors.joining( ";" ) );
+            mapFilterNameValues.put( FormMultiviewWorkflowStateNameConstants.FILTER_ID_WORKFLOW_STATE, value );
+            setValue( value );
         }
-
-        setValue( strIdWorkflowState );
+        else
+        {
+            setValue( StringUtils.EMPTY );
+        }
 
         return mapFilterNameValues;
     }
