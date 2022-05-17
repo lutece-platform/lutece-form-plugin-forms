@@ -68,12 +68,14 @@ import fr.paris.lutece.plugins.forms.web.admin.MultiviewFormResponseDetailsJspBe
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeImage;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
 import fr.paris.lutece.portal.business.event.ResourceEvent;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
@@ -536,5 +538,24 @@ public class FormService
                 fireFormResponseEventDelete( formResponse );
             }
         } ).start( );
+    }
+    
+    /**
+     * Save or update the field of the entry
+     * @param entry
+     * @param fieldName
+     * @param title
+     * @param value
+     */
+    public void saveOrUpdateField( Entry entry, String fieldName, String title, String value )
+    {
+        if ( entry.getFieldByCode( fieldName ) == null )
+        {
+            FieldHome.create( GenericAttributesUtils.createOrUpdateField( entry, fieldName, title, value ) );
+        }
+        else
+        {
+            FieldHome.update( GenericAttributesUtils.createOrUpdateField( entry, fieldName, title, value ) );
+        }
     }
 }

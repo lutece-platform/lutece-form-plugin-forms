@@ -68,10 +68,8 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.BreadcrumbManager;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.GenAttFileItem;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
@@ -767,14 +765,7 @@ public class FormJspBean extends AbstractJspBean
                 published = Arrays.asList( questionPublished ).contains( String.valueOf( question.getId( ) ) );
             }
             Entry entry = question.getEntry( );
-            if ( entry.getFieldByCode( IEntryTypeService.FIELD_PUBLISHED ) == null )
-            {
-                FieldHome.create( GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf( published ) ) );
-            }
-            else
-            {
-                FieldHome.update( GenericAttributesUtils.createOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf( published ) ) );
-            }
+            _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf( published ) );
         }
 
         return redirectView( request, VIEW_MANAGE_FORMS );
