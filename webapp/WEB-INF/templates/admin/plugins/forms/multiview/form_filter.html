@@ -4,14 +4,12 @@
 		<#assign params='onchange="this.form.submit()" multiple'>
 	</#if>
 	<@formGroup formStyle='inline' labelClass='sr-only' class='forms-filter' labelFor=filter_name labelKey='${filter_label!}'>
-		<select name='${filter_name}' class="selectpicker" onchange="this.form.submit()" multiple>
+		<@select name=filter_name id=filter_name items=null class='form-select selectpicker' params='onchange="this.form.submit()"' multiple=1>
 			<#list filter_list as item>
-				<#if filter_list_value?has_content && filter_list_value?split(";")?seq_contains(item.code) >
-					<option selected="selected" value="${item.code}" <#if !item.name?has_content>label="${i18n("portal.util.labelEmpty")}"</#if>>${item.name}</option>
-				<#else>
-					<option value="${item.code}" <#if !item.name?has_content>label="${i18n("portal.util.labelEmpty")}"</#if>>${item.name}</option>
-				</#if>
+				<#assign optSelected=false >
+				<#if filter_list_value?has_content && filter_list_value?split(";")?seq_contains(item.code) ><#assign optSelected=true ></#if>
+				<@option label=item.name! value=item.code selected=optSelected  />
 			</#list>
-		</select>
+		</@select>
 	</@formGroup>
 </#if>

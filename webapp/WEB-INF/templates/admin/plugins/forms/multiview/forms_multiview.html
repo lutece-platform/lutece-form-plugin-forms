@@ -1,7 +1,6 @@
 <@row>
 	<@columns>
 		<@box>
-			<script src="js/jquery/plugins/bootstrap-select/bootstrap-select.min.js"></script>
 			<@boxHeader id='multiviewFormsHeader' title='#i18n{forms.multiviewForms.boxTitle}' skipHeader=true />
 			<@boxBody>
 				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='inline'>
@@ -33,10 +32,20 @@
 		</@box>
 	</@columns>
 </@row>
+<link href="js/admin/plugins/forms/multiview/vanillaSelectBox.css" rel="stylesheet">
+<script src="js/admin/plugins/forms/multiview/vanillaSelectBox.js"></script>
 <script src="js/admin/plugins/forms/multiview/forms-multiview.js"></script>
 <script>
 var formTitle = $("#id_form option:selected").text();
 $("#multiviewFormsHeader > *").text($("#multiviewFormsHeader > *").text() + " : " + formTitle);
+$( function(){
+	$(".selectpicker").each( function( idx, el ){
+		let idSelect = '#' + $(this).attr('id');
+		$(this).children("option:first").remove();
+		eval('var selectBox' + idx + '= new vanillaSelectBox( "' + idSelect + '" ,{"maxWidth":200,"translations": { "all": "Tout", "item": "élement","items": "élements", "selectAll": "Tout cocher", "clearAll": "Tout décocher" },"keepInlineStyles":false, "keepInlineCaretStyles":false, search:false});' );
+	});
+	
+});
 </script>
 <@dateFilterJs />
 <@scrollTopBtn />
