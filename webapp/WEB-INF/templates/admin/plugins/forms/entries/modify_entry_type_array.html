@@ -52,12 +52,12 @@ ${breadcrumb_template}
 						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
 						</@formGroup>
-					<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportableComment}'>
-						<@checkBox orientation='switch' labelFor='exportable' labelKey='#i18n{forms.createEntry.labelResponsesExportable}' name='exportable' id='exportable' value='1' checked=entry.exportable />
-					</@formGroup>
-					<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportablePdfComment}'>
-						<@checkBox orientation='switch' labelFor='exportable_pdf' labelKey='#i18n{forms.createEntry.labelResponsesExportablePdf}' name='exportable_pdf' id='exportable_pdf' value='1' checked=entry.exportablePdf />
-					</@formGroup>
+					<#if entry.exportable>
+						<@input type='hidden' name='exportable' value='1' />
+					</#if>
+					<#if entry.exportablePdf>
+						<@input type='hidden' name='exportable_pdf' value='1' />
+					</#if>
                     ${question_modify_template!}
 					<@formGroup rows=2>
 						<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
