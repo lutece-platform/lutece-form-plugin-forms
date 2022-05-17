@@ -1,5 +1,4 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
-
 <@row>
 	<@columns>
 		<@box color='primary'>
@@ -7,59 +6,66 @@
 			<@boxBody>
 				<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
 				<@formTabs tab="export" />
+				<@cCard>
 					<@row>
-						<@columns xs=12 sm=3 offsetSm=1> 
-						<h3>#i18n{forms.modify_form.export.config.text1}</h3>
+						<@columns sm=2 class='mt-5'>
+							<@tabList vertical=true> 
+								<@tabLink id='export-1-tab' active=true href='#export-1' title='#i18n{forms.modify_form.export.config.text1}' />
+								<@tabLink id='export-2-tab' href='#export-2' title='What else' />
+							</@tabList>
 						</@columns>
-						
+						<@columns sm=10>
+							<@tabContent>
+								<@tabPanel id="export-1" active=true>
+									<@row>
+										<@columns sm=9>
+											<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormExport.jsp'>
+												<@input type='hidden' id='token' name='token' value='${token}' />
+												<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+												<@formGroup labelKey='#i18n{forms.modify_form.labelExportOption}' mandatory=true rows=2 class='has-addons'>
+												<@inputGroup class=''>
+													<@select name='export_config' items=export_list default_value='' />
+													<@inputGroupItem>
+														<@button type='submit' name='action_createExportConfig' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['all'] />
+													</@inputGroupItem>
+												</@inputGroup>
+												</@formGroup>
+													<@table id='export_config'>
+														<@tr>
+															<@th>#i18n{forms.modify_form.labelExportOption}</@th>
+															<@th>#i18n{forms.modify_form.labelOrder}</@th>
+															<@th>#i18n{forms.manageForm.columnActions}</@th>
+														</@tr>
+														<#list export_config_list as config>
+															<@tr>
+																<@td>${config.fieldTitle}</@td>
+																<@td>${config.order}</@td>
+																<@td>
+																	<#if export_config_list?size gt 1>
+																		<#if config.order gt 1>
+																			<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doMoveUpExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveUpExportConfig}' hideTitle=['all'] buttonIcon='chevron-up' size='sm' />
+																		</#if>
+																		<#if config.order lt export_config_list?size>
+																			<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doMoveDownExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveDownExportConfig}' hideTitle=['all'] buttonIcon='chevron-down' size='sm' />
+																		</#if>
+																	</#if>
+																	<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?view=confirmRemoveExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.removeExportConfig}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
+																</@td>
+															</@tr>
+														</#list>
+													</@table>
+												</@tform>
+											</@columns>
+											<@columns sm=3> 
+												<@callOut color='warning' title='#i18n{forms.modify_form.export.config.text2}' titleLevel='strong' callOutIcon='exclamation' />
+											</@columns>
+										</@row>
+								</@tabPanel>
+								<@tabPanel id='export-2'>What else !</@tabPanel>
+							</@tabContent>
+						</@columns>
 					</@row>
-				<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormExport.jsp'>
-					<@input type='hidden' id='token' name='token' value='${token}' />
-					<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-					<@row>
-						<@columns sm=4 offsetSm=1> 
-							<@formGroup labelKey='#i18n{forms.modify_form.labelExportOption}' mandatory=true rows=2 class='has-addons'>
-								<@inputGroup class=''>
-									<@select name='export_config' items=export_list default_value='' />
-									<@inputGroupItem>
-										<@button type='submit' name='action_createExportConfig' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['all'] />
-									</@inputGroupItem>
-								</@inputGroup>
-							</@formGroup>
-						</@columns>
-						<@columns sm=4> 
-							<@callOut color='warning' title='#i18n{forms.modify_form.export.config.text2}' titleLevel='strong' callOutIcon='exclamation' />
-						</@columns>
-					</@row>
-					<@row>
-						<@columns xs=12 sm=6 offsetSm=1>
-							<@table id='export_config'>
-								<@tr>
-									<@th>#i18n{forms.modify_form.labelExportOption}</@th>
-									<@th>#i18n{forms.modify_form.labelOrder}</@th>
-									<@th>#i18n{forms.manageForm.columnActions}</@th>
-								</@tr>
-								<#list export_config_list as config>
-									<@tr>
-										<@td>${config.fieldTitle}</@td>
-										<@td>${config.order}</@td>
-										<@td>
-											<#if export_config_list?size gt 1>
-												<#if config.order gt 1>
-													<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doMoveUpExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveUpExportConfig}' hideTitle=['all'] buttonIcon='chevron-up' size='sm' />
-												</#if>
-												<#if config.order lt export_config_list?size>
-													<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doMoveDownExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.moveDownExportConfig}' hideTitle=['all'] buttonIcon='chevron-down' size='sm' />
-												</#if>
-											</#if>
-											<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?view=confirmRemoveExportConfig&id_config=${config.id}&id_form=${form.id}' title='#i18n{forms.modify_form.action.removeExportConfig}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' />
-										</@td>
-									</@tr>
-								</#list>
-							</@table>
-						</@columns>
-					</@row>
-				</@tform>
+				</@cCard>
 			</@boxBody>
 		</@box>
 	</@columns>
