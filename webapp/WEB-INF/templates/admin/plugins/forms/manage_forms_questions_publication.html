@@ -17,28 +17,27 @@
 					<@formTabs tab="questions" />
 					<@tabContent>
 	                    <@tabPanel id='tabpanel' active=true>
-							<@table id='list' class='table-striped is-fullwidth'>
+							<@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
 								<@tr>
-									<@th>#i18n{forms.manage_question_response.step}</@th>
-									<@th>#i18n{forms.manage_question_response.columnTitle}</@th>
-									<@th>#i18n{forms.manage_question_response.status}</@th>
+									<@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>
+									<@th params='data-field="title"'>#i18n{forms.manage_question_response.columnTitle}</@th>
+									<@th params='data-sortable="true" data-field="status"'>#i18n{forms.manage_question_response.status} (Publi&eacute; / Non publi&eacute;)</@th>
 								</@tr>
-								<#list questionList as question>
+								<@tableHeadBodySeparator />	
+								<#list questionList?sort_by('id') as question>
 									<@tr>
+										<@td>${question.step.title!}</@td>
+										<@td>${question.title!}</@td>
 										<@td>
-											${question.step.title!}
-										</@td>
-										<@td>
-											${question.title!}
-										</@td>
-										<@td>
-											<@formGroup labelFor='published'>
-	                							<@checkBox name='questionPublished' id='${question.id}' value='${question.id}' checked=(question?has_content && question.published!) />
+											<#assign status><#if question?has_content && question.published!>Publié<#else>Non publié</#if></#assign>
+											<@formGroup labelFor='published' labelKey=status labelClass='text-white'>
+	                							<@checkBox orientation='switch' name='questionPublished' id='${question.id}' value='${question.id}' checked=(question?has_content && question.published!) />
 	            							</@formGroup>
 										</@td>
 									</@tr>
+									
 								</#list>
-							</@table>
+							</@table> 
 						</@tabPanel>
 	                </@tabContent>
 	                <@formGroup rows=2>
@@ -49,3 +48,10 @@
 		</@columns>
 	</@row>
 </@tform>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="js/admin/lib/table/bootstrap-table.min.css">
+<link rel="stylesheet" href="js/admin/lib/table/extensions/group-by-v2/bootstrap-table-group-by.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="js/admin/lib/table/bootstrap-table.min.js"></script>
+<script src="js/admin/lib/table/extensions/group-by-v2/bootstrap-table-group-by.js"></script>
+<script src="js/admin/lib/table/locale/bootstrap-table-fr-FR.min.js"></script>
