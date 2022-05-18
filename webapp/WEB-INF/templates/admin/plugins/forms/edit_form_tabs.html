@@ -12,6 +12,9 @@
 			
 			<#if tab='questions'><#assign active = true /><#else><#assign active = false /></#if>
 			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=manageQuestionPublication&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelQuestion}' />
+			
+			<#if tab='multiview'><#assign active = true /><#else><#assign active = false /></#if>
+			<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp?view=manageMultiview&id_form=${form.id}' tabIcon='list-alt' title='#i18n{forms.modify_form.tab.labelMultiview}' />
 		</@tabList>
 		<#nested>
 	</@tabs>

@@ -1,0 +1,32 @@
+<#include "/admin/plugins/forms/edit_form_tabs.html" />
+<@row>
+	<@columns>
+		<@box color='primary'>
+			<@boxHeader title='${form.title!}' />
+			<@boxBody>
+				<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
+				<@formTabs tab="export" />
+				<@box>
+					<@row>
+						<@columns sm=2 class='mt-5'>
+							<@tabList vertical=true> 
+								<@tabLink id='multiview-1-tab' active=true href='#multiview-1' title='#i18n{forms.modify_form.multiview.config.display}' />
+								<@tabLink id='multiview-2-tab' href='#multiview-2' title='#i18n{forms.modify_form.multiview.config.filter}' />
+							</@tabList>
+						</@columns>
+						<@columns sm=10>
+							<@tabContent>
+								<@tabPanel id="multiview-1" active=true>
+								
+								</@tabPanel>
+								<@tabPanel id='multiview-2'>
+								
+								</@tabPanel>
+							</@tabContent>
+						</@columns>
+					</@row>
+				</@box>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
