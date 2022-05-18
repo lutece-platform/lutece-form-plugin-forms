@@ -11,11 +11,3 @@
 <@formGroup labelFor='multiview_column_order' labelKey='#i18n{forms.modify_question.labelColumnOrderTitle}' helpKey='#i18n{forms.modify_question.labelColumnOrderTitle.help}'>
     <@input type='number' name='multiview_column_order' min=0 value='${question.multiviewColumnOrder}' />
 </@formGroup>
-<#if can_be_filtered>
-	<@formGroup labelKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal}' hideLabel=['all'] helpKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal.help}'>
-	    <@checkBox labelFor='is_filterable_multiview_global' labelKey='#i18n{forms.modify_question.labelFilterableMultiviewGlobal}' name='is_filterable_multiview_global' id='is_filterable_multiview_global' value='1' checked=question.isFiltrableMultiviewGlobal() />
-	</@formGroup>
-	<@formGroup labelKey='#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}' hideLabel=['all'] helpKey='#i18n{forms.modify_question.labelFilterableFormSelected.help}'>
-	    <@checkBox labelFor='is_filterable_multiview_form_selected' labelKey='#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}' name='is_filterable_multiview_form_selected' id='is_filterable_multiview_form_selected' value='1' checked=question.isFiltrableMultiviewFormSelected() />
-	</@formGroup>
-</#if>

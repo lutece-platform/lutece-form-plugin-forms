@@ -86,10 +86,6 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class
     };
 
-    private static final Class<?> [ ] FILTERABLE = {
-            EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeDate.class
-    };
-
     // Actions
     protected static final String ACTION_CREATE_QUESTION = "createQuestion";
     protected static final String ACTION_CREATE_QUESTION_AND_MANAGE_ENTRIES = "createQuestionAndManageEntries";
@@ -244,8 +240,6 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         _question.setIdStep( nIdStep );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
         _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
-        _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
-        _question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED ) != null );
 
         String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
         columnTitle = ( columnTitle == null || columnTitle.isEmpty( ) ) ? _question.getTitle( ) : columnTitle;
@@ -334,8 +328,6 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
                 : _entry.getTitle( );
         _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
         _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
-        _question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL ) != null );
-        _question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED ) != null );
         String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
         columnTitle = StringUtils.isEmpty( columnTitle ) ? _question.getTitle( ) : columnTitle;
         _question.setColumnTitle( columnTitle );
@@ -524,9 +516,6 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             setPageTitleProperty( PROPERTY_CREATE_QUESTION_TITLE );
         }
 
-        boolean canBeFiltered = Arrays.asList( FILTERABLE ).contains( entryTypeService.getClass( ) );
-
-        model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
         model.put( FormsConstants.MARK_ANONYMIZATION_HELP, entryTypeService.getAnonymizationHelpMessage( request.getLocale( ) ) );
 
         if ( Arrays.asList( ENTRY_TYPE_USER_REF_LIT ).contains( entryTypeService.getClass( ) ) )
@@ -593,8 +582,6 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             setPageTitleProperty( PROPERTY_MODIFY_QUESTION_TITLE );
         }
 
-        boolean canBeFiltered = Arrays.asList( FILTERABLE ).contains( entryTypeService.getClass( ) );
-        model.put( FormsConstants.MARK_CAN_BE_FILTERED, canBeFiltered );
         model.put( FormsConstants.MARK_ANONYMIZATION_HELP, entryTypeService.getAnonymizationHelpMessage( request.getLocale( ) ) );
 
         if ( entryTypeService instanceof EntryTypeComment )
