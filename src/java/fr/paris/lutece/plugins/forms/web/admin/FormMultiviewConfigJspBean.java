@@ -33,8 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,11 +51,19 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
+import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 
 @Controller( controllerJsp = "ManageFormMultiviewConfig.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
@@ -58,6 +71,12 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
 {
     private static final long serialVersionUID = -2505310758526626253L;
 
+    private static final Class<?> [ ] FILTERABLE = {
+            EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeDate.class
+    };
+    
+    private static final List<Class<?>> FILTERABLE_LIST = Arrays.asList( FILTERABLE );
+    
     // Templates
     private static final String TEMPLATE_MANAGE_MULTIVIEW_CONFIG = "/admin/plugins/forms/manage_multiview_config.html";
 
@@ -70,14 +89,14 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
 
     // Marks
     private static final String MARK_FORM = "form";
+    private static final String MARK_FILTERABLE_QUESTIONLIST = "filterableQuestionList";
     private static final String MARK_QUESTIONLIST = "questionList";
     
     // Actions
     private static final String ACTION_MANAGE_MULTIVIEW = "manageMultiviewConfig";
+    private static final String ACTION_MODIFY_FILTERABLE_QUESTIONS = "modifyFilterableQuestions";
 
     // Parameters
-
-    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     
     @View( VIEW_MANAGE_MULTIVIEW )
     public String getManageMultiview( HttpServletRequest request ) throws AccessDeniedException
@@ -99,12 +118,75 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         }
         
         List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
+        List<Question> filterableQuestionList = new ArrayList<>( );
+
+        for ( Question question : questionList )
+        {
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) );
+            if ( FILTERABLE_LIST.contains( entryTypeService.getClass( ) ) )
+            {
+                filterableQuestionList.add( question );
+            }
+        }
         
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, questionList );
+        model.put( MARK_FILTERABLE_QUESTIONLIST, filterableQuestionList );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MANAGE_MULTIVIEW ) );
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_MULTIVIEW_CONFIG, model );
+    }
+    
+    @Action( ACTION_MODIFY_FILTERABLE_QUESTIONS )
+    public String modifyFilterableQuestions( HttpServletRequest request ) throws AccessDeniedException
+    {
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+        
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirect( request, VIEW_MANAGE_FORMS );
+        }
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_MANAGE_MULTIVIEW );
+
+        Form formToBeModified = FormHome.findByPrimaryKey( nId );
+
+        if ( formToBeModified == null )
+        {
+            return redirect( request, VIEW_MANAGE_FORMS );
+        }
+        
+        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
+
+        String[ ] questionFilterGlobal = request.getParameterValues( "is_filterable_multiview_global" );
+        String[ ] questionFilterFormSelected = request.getParameterValues( "is_filterable_multiview_form_selected" );
+        
+        Set<String> questionFilterGlobalSet = new HashSet<>( );
+        if ( questionFilterGlobal != null )
+        {
+            questionFilterGlobalSet.addAll( Arrays.asList( questionFilterGlobal ) );
+        }
+        Set<String> questionFilterFormSelectedSet = new HashSet<>( );
+        if ( questionFilterFormSelected != null )
+        {
+            questionFilterFormSelectedSet.addAll( Arrays.asList( questionFilterFormSelected ) );
+        }
+        
+        
+        for ( Question question : questionList )
+        {
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) );
+            if ( FILTERABLE_LIST.contains( entryTypeService.getClass( ) ) )
+            {
+                question.setFiltrableMultiviewGlobal( questionFilterGlobalSet.contains( String.valueOf( question.getId( ) ) ) );
+                question.setFiltrableMultiviewFormSelected( questionFilterFormSelectedSet.contains( String.valueOf( question.getId( ) ) ) );
+                QuestionHome.update( question );
+            }
+        }
+        
+        Map<String, String> mapParameters = new LinkedHashMap<>( );
+        mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nId ) );
+
+        return redirect( request, VIEW_MANAGE_MULTIVIEW, mapParameters );
     }
 }
