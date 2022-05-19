@@ -1,13 +1,1 @@
 <@input type='hidden' id='token' name='token' value='${token}' />
-<@formGroup>
-    <@checkBox orientation='switch' labelFor='is_visible_multiview_global' labelKey='#i18n{forms.modify_question.labelVisibleMultiviewGlobal}' name='is_visible_multiview_global' id='is_visible_multiview_global' value='1' checked=question.isVisibleMultiviewGlobal()/>
-</@formGroup>
-<@formGroup>
-    <@checkBox orientation='switch' labelFor='is_visible_multiview_form_selected' labelKey='#i18n{forms.modify_question.labelVisibleMultiviewFormSelected}' name='is_visible_multiview_form_selected' id='is_visible_multiview_form_selected' value='1' checked=question.isVisibleMultiviewFormSelected() />
-</@formGroup>
-<@formGroup labelFor='column_title' labelKey='#i18n{forms.modify_question.labelColumnTitle}' helpKey='#i18n{forms.modify_question.labelColumnTitle.help}'>
-    <@input type='text' name='column_title' value='${(question.columnTitle)!}' />
-</@formGroup>
-<@formGroup labelFor='multiview_column_order' labelKey='#i18n{forms.modify_question.labelColumnOrderTitle}' helpKey='#i18n{forms.modify_question.labelColumnOrderTitle.help}'>
-    <@input type='number' name='multiview_column_order' min=0 value='${question.multiviewColumnOrder}' />
-</@formGroup>

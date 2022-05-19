@@ -58,7 +58,6 @@ import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.forms.service.IFormDisplayService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -238,13 +237,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         _question.setDescription( _entry.getComment( ) );
         _question.setIdEntry( _entry.getIdEntry( ) );
         _question.setIdStep( nIdStep );
-        _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
-        _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
 
-        String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
-        columnTitle = ( columnTitle == null || columnTitle.isEmpty( ) ) ? _question.getTitle( ) : columnTitle;
-        _question.setColumnTitle( columnTitle );
-        _question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER ), 0 ) );
         getFormDatabaseService( ).createQuestion( _question );
 
         int nDisplayDepth = getFormDisplayService( ).getDisplayDepthFromParent( nParentGroup );
@@ -326,11 +319,6 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
                 : _entry.getTitle( );
-        _question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL ) != null );
-        _question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED ) != null );
-        String columnTitle = request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE );
-        columnTitle = StringUtils.isEmpty( columnTitle ) ? _question.getTitle( ) : columnTitle;
-        _question.setColumnTitle( columnTitle );
         _question.setTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
         _question.setDescription( _entry.getComment( ) );
