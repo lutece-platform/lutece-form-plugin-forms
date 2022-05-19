@@ -95,6 +95,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
     // Actions
     private static final String ACTION_MANAGE_MULTIVIEW = "manageMultiviewConfig";
     private static final String ACTION_MODIFY_FILTERABLE_QUESTIONS = "modifyFilterableQuestions";
+    private static final String ACTION_MODIFY_VISIBLE_QUESTIONS = "modifyVisibleQuestions";
 
     // Parameters
     
@@ -182,6 +183,41 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
                 question.setFiltrableMultiviewFormSelected( questionFilterFormSelectedSet.contains( String.valueOf( question.getId( ) ) ) );
                 QuestionHome.update( question );
             }
+        }
+        
+        Map<String, String> mapParameters = new LinkedHashMap<>( );
+        mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nId ) );
+
+        return redirect( request, VIEW_MANAGE_MULTIVIEW, mapParameters );
+    }
+    
+    @Action( ACTION_MODIFY_VISIBLE_QUESTIONS )
+    public String modifyVisibleQuestions( HttpServletRequest request ) throws AccessDeniedException
+    {
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+        
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirect( request, VIEW_MANAGE_FORMS );
+        }
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_MANAGE_MULTIVIEW );
+
+        Form formToBeModified = FormHome.findByPrimaryKey( nId );
+
+        if ( formToBeModified == null )
+        {
+            return redirect( request, VIEW_MANAGE_FORMS );
+        }
+        
+        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
+        for ( Question question : questionList )
+        {
+            question.setVisibleMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_GLOBAL + "_" + question.getId( ) ) != null );
+            question.setVisibleMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_FORM_SELECTED + "_" + question.getId( ) ) != null );
+            question.setColumnTitle( request.getParameter( FormsConstants.PARAMETER_COLUMN_TITLE + "_" + question.getId( ) ) );
+            question.setMultiviewColumnOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_MULTIVIEW_ORDER + "_" + question.getId( ) ), 0 ) );
+            
+            QuestionHome.update( question );
         }
         
         Map<String, String> mapParameters = new LinkedHashMap<>( );

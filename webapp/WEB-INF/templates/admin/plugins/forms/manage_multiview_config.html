@@ -17,7 +17,50 @@
 						<@columns sm=10>
 							<@tabContent>
 								<@tabPanel id="multiview-1" active=true>
-								
+									<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp'>
+										<@input type='hidden' id='token' name='token' value='${token}' />
+										<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+										<@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
+											<@tr>
+												<@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>
+												<@th params='data-field="title"'>#i18n{forms.manage_question_response.columnTitle}</@th>
+												<@th params='data-sortable="true" data-field="visibleGlobal"'>#i18n{forms.modify_question.labelFilterableMultiviewGlobal}</@th>
+												<@th params='data-sortable="true" data-field="visibleForm"'>#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}</@th>
+												<@th params='data-sortable="true" data-field="column"'>#i18n{forms.modify_question.labelColumnTitle}</@th>
+												<@th params='data-sortable="true" data-field="order"'>#i18n{forms.modify_question.labelColumnOrderTitle}</@th>
+											</@tr>
+											<@tableHeadBodySeparator />	
+											<#list questionList?sort_by('id') as question>
+												<@tr>
+													<@td>${question.step.title!}</@td>
+													<@td>${question.title!}</@td>
+													<@td>
+														<@formGroup>
+													    	<@checkBox orientation='switch' labelFor='is_visible_multiview_global_${question.id}' name='is_visible_multiview_global_${question.id}' value='1' checked=question.isVisibleMultiviewGlobal()/>
+														</@formGroup>
+													</@td>
+													<@td>
+														<@formGroup>
+													    	<@checkBox orientation='switch' labelFor='is_visible_multiview_form_selected_${question.id}' name='is_visible_multiview_form_selected_${question.id}' value='1' checked=question.isVisibleMultiviewFormSelected() />
+														</@formGroup>
+													</@td>
+													<@td>
+														<@formGroup>
+													    	<@input type='text' name='column_title_${question.id}' value='${question.columnTitle!question.title}' />
+														</@formGroup>
+													</@td>
+													<@td>
+														<@formGroup>
+													    	<@input type='number' name='multiview_column_order_${question.id}' min=0 value='${question.multiviewColumnOrder}' />
+														</@formGroup>
+													</@td>
+												</@tr>
+											</#list>
+										</@table>
+										<@formGroup rows=2>
+											<@headerButton name='action_modifyVisibleQuestions' label='forms.modify_form.buttonValidate' /> 
+										</@formGroup>
+									</@tform>
 								</@tabPanel>
 								<@tabPanel id='multiview-2'>
 									<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp'>
@@ -27,8 +70,8 @@
 											<@tr>
 												<@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>
 												<@th params='data-field="title"'>#i18n{forms.manage_question_response.columnTitle}</@th>
-												<@th params='data-sortable="true" data-field="status"'>#i18n{forms.modify_question.labelFilterableMultiviewGlobal}</@th>
-												<@th params='data-sortable="true" data-field="status"'>#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}</@th>
+												<@th params='data-sortable="true" data-field="filterGlobal"'>#i18n{forms.modify_question.labelFilterableMultiviewGlobal}</@th>
+												<@th params='data-sortable="true" data-field="filterForm"'>#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}</@th>
 											</@tr>
 											<@tableHeadBodySeparator />	
 											<#list filterableQuestionList?sort_by('id') as question>
