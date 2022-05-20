@@ -904,9 +904,9 @@ public class FormXPage extends MVCApplication
         {
             UrlItem url = null;
 
-            if ( bIsEndMessageDisplayed && form.isAuthentificationNeeded( ) )
+            if ( form.isAuthentificationNeeded( ) )
             {
-                url = new UrlItem( AppPathService.getPortalUrl( ) );
+            	url= bIsEndMessageDisplayed? new UrlItem( AppPathService.getPortalUrl( )):new UrlItem( "" );
                 url.addParameter( MVCUtils.PARAMETER_PAGE, FormResponseXPage.XPAGE_NAME );
                 url.addParameter( MVCUtils.PARAMETER_VIEW, FormResponseXPage.VIEW_FORM_RESPONSE );
                 url.addParameter( FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
