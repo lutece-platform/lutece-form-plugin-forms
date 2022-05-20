@@ -79,10 +79,6 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
     private static final String ACTION_MANAGE_WORKFLOW = "manageWorkflowConfig";
     private static final String ACTION_MODIFY_WORKFLOW = "modifyWorkflowConfig";
 
-    // Parameters
-    private static final String PARAMETER_USED_CORRECT_RESPONSE = "used_in_correct_form_response";
-    private static final String PARAMETER_USED_COMPLETE_RESPONSE = "used_in_complete_form_response";
-    
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     
     @View( VIEW_MANAGE_WORKFLOW )
@@ -135,12 +131,12 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
         List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
         for ( Question question : questionList )
         {
-            boolean usedInCorrectFormResponse = request.getParameter( PARAMETER_USED_CORRECT_RESPONSE + "_" + question.getId( ) ) != null;
-            boolean usedInCompleteFormResponse = request.getParameter( PARAMETER_USED_COMPLETE_RESPONSE + "_" + question.getId( ) ) != null;
+            boolean usedInCorrectFormResponse = request.getParameter( FormsConstants.PARAMETER_USED_CORRECT_RESPONSE + "_" + question.getId( ) ) != null;
+            boolean usedInCompleteFormResponse = request.getParameter( FormsConstants.PARAMETER_USED_COMPLETE_RESPONSE + "_" + question.getId( ) ) != null;
             
             Entry entry = question.getEntry( );
-            _formService.saveOrUpdateField( entry, PARAMETER_USED_CORRECT_RESPONSE, null, String.valueOf( usedInCorrectFormResponse ) );
-            _formService.saveOrUpdateField( entry, PARAMETER_USED_COMPLETE_RESPONSE, null, String.valueOf( usedInCompleteFormResponse ) );
+            _formService.saveOrUpdateField( entry, FormsConstants.PARAMETER_USED_CORRECT_RESPONSE, null, String.valueOf( usedInCorrectFormResponse ) );
+            _formService.saveOrUpdateField( entry, FormsConstants.PARAMETER_USED_COMPLETE_RESPONSE, null, String.valueOf( usedInCompleteFormResponse ) );
         }
         
         Map<String, String> mapParameters = new LinkedHashMap<>( );

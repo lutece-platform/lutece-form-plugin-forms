@@ -54,12 +54,6 @@ ${breadcrumb_template}
                     	<@formGroup>
                         	<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
                     	</@formGroup>
-                        <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
-	                    	<@checkBox orientation='switch' labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=entry.usedInCorrectFormResponse />
-	                    </@formGroup>
-	                     <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
-							<@checkBox orientation='switch' labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=entry.usedInCompleteFormResponse />
-						</@formGroup>
 						<#if entry.exportable>
 							<@input type='hidden' name='exportable' value='1' />
 						</#if>

@@ -158,6 +158,9 @@ public final class FormsConstants
     public static final String PARAMETER_VIEW_MODIFY_CONTROL = "view_modifyControl";
     public static final String PARAMETRE_VALIDATOR_LISTQUESTION_NAME = "forms_listQuestionValidator";
     public static final String PARAMETER_MULTIVIEW_ORDER = "multiview_column_order";
+    
+    public static final String PARAMETER_USED_CORRECT_RESPONSE = "used_in_correct_form_response";
+    public static final String PARAMETER_USED_COMPLETE_RESPONSE = "used_in_complete_form_response";
 
     // Jsp
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";

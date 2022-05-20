@@ -70,12 +70,6 @@ ${breadcrumb_template}
 						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
 						</@formGroup>
-						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCorrectionComment}'>
-							<@checkBox orientation='switch' labelFor='used_in_correct_form_response' labelKey='#i18n{forms.createEntry.labelResponsesCorrection}' name='used_in_correct_form_response' id='used_in_correct_form_response' value='1' checked=false />
-						</@formGroup>
-						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesCompleteComment}'>
-							<@checkBox orientation='switch' labelFor='used_in_complete_form_response' labelKey='#i18n{forms.createEntry.labelResponsesComplete}' name='used_in_complete_form_response' id='used_in_complete_form_response' value='1' checked=false />
-						</@formGroup>
 						${question_create_template!}
 						<@formGroup>
 							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' />
