@@ -233,6 +233,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
                 : _entry.getTitle( );
         _question.setTitle( strTitle );
+        _question.setColumnTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
         _question.setDescription( _entry.getComment( ) );
         _question.setIdEntry( _entry.getIdEntry( ) );
