@@ -15,6 +15,9 @@
 			
 			<#if tab='multiview'><#assign active = true /><#else><#assign active = false /></#if>
 			<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp?view=manageMultiview&id_form=${form.id}' tabIcon='list-alt' title='#i18n{forms.modify_form.tab.labelMultiview}' />
+			
+			<#if tab='workflow'><#assign active = true /><#else><#assign active = false /></#if>
+			<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormWorkflowConfig.jsp?view=manageWorkflow&id_form=${form.id}' tabIcon='tasks' title='#i18n{forms.modify_form.tab.labelWorkflow}' />
 		</@tabList>
 		<#nested>
 	</@tabs>
