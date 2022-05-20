@@ -24,14 +24,14 @@
 									<@td>${question.title!}</@td>
 									<@td>
 										<@formGroup>
-											<#assign field_correct=getFieldByCode( question.entry, "used_in_correct_form_response")>
-											<@checkBox orientation='switch' name='used_in_correct_form_response_${question.id}' value='1' checked=(field_correct?? && field_correct.value?boolean) />
+											<#assign field_correct=getFieldValueByCode( question.entry, "used_in_correct_form_response")>
+											<@checkBox orientation='switch' name='used_in_correct_form_response_${question.id}' value='1' checked=(field_correct?has_content && field_correct?boolean) />
 										</@formGroup>
 									</@td>
 									<@td>
 										<@formGroup>
-											<#assign field_complete=getFieldByCode( question.entry, "used_in_complete_form_response")>
-											<@checkBox orientation='switch' name='used_in_complete_form_response_${question.id}' value='1' checked=(field_complete?? && field_complete.value?boolean) />
+											<#assign field_complete=getFieldValueByCode( question.entry, "used_in_complete_form_response")>
+											<@checkBox orientation='switch' name='used_in_complete_form_response_${question.id}' value='1' checked=(field_complete?has_content && field_complete?boolean) />
 										</@formGroup>
 									</@td>
 								</@tr>
