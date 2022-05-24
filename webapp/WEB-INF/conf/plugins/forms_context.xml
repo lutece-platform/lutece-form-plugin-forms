@@ -520,4 +520,6 @@
     <bean id="forms.questionTitleAnonymizationService" class="fr.paris.lutece.plugins.forms.service.anonymization.QuestionTitleAnonymizationService" />
     <bean id="forms.stepIdAnonymizationService" class="fr.paris.lutece.plugins.forms.service.anonymization.StepIdAnonymizationService" />
     <bean id="forms.formResponseExtendableResourceService" class="fr.paris.lutece.plugins.forms.service.resource.FormResponseExtendableResourceService" />
+    
+    <bean id="forms.dashboardForms" class="fr.paris.lutece.plugins.forms.dashboard.PublicDashboardForms" />
 </beans>
