@@ -12,17 +12,24 @@
 			<#assign hide=hide+"hideId(${idConditional}.id);">
 		</#if>
 	</#list>
+	<#assign fieldAlignment = entry.getFieldByCode('alignment_text').value >
+	<#assign leftText = entry.getFieldByCode('left_text').value >
+	<#assign rightText = entry.getFieldByCode('right_text').value >
 	${entry.CSSClass!}
 	
 		<div class="form-group">
 			<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
 			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 			<#assign inLine = entry.fieldInLine>
+			${leftText!}
 			<#list entry.fields as field>
 				<#if field.code == 'answer_choice'>
 					<#assign idName = buildEntryName( entry, entry_iteration_number )>
 					<#if entry.fieldInLine != true><div class="radio"></#if>
-						<label <#if entry.fieldInLine>class="radio-inline"</#if> for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> > 
+						<#if fieldAlignment?? && fieldAlignment?boolean>
+						<label <#if entry.fieldInLine>class="custom-control custom-radio custom-control-inline"</#if> for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> > 
+							<div class="radio-above">
+						</#if>
 							<input type="radio" id="${idName}_${field.idField}" name="${idName}" value="${field.idField}"
 							<#if list_responses?? && list_responses?has_content>
 								<#list list_responses as response>
@@ -40,9 +47,12 @@
 								<#assign idConditional = idName + field.idField>
 								displayId(${idConditional}.id);</#if>"
 							/>
-					 <#if !field.noDisplayTitle>
-					 	${field.title}
-					 </#if>
+							 <#if !field.noDisplayTitle>
+							 	${field.title}
+							 </#if>
+							 <#if fieldAlignment?? && fieldAlignment?boolean>
+								</div>
+							</#if>
 						</label>
 						<#if entry.fieldInLine != true></div></#if>
 						
@@ -58,6 +68,7 @@
 				<#if entry.fieldInLine&&entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="help-block">${entry.helpMessage}</span>
 				</#if>
+				${rightText!}
 			</div>
 		</div>
 	 

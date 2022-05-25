@@ -50,6 +50,21 @@ ${breadcrumb_template}
 								<option value=0 <#if !entry.fieldInLine >selected="selected" </#if>>#i18n{forms.createEntry.selectPresentationNotInLine}</option>
 							</@select>
 						</@formGroup>
+						<@formGroup labelFor='alignment_text' labelKey='#i18n{forms.createEntry.labelAlignmentText}'>
+							<#assign alignment_type=getFieldValueByCode( entry, "alignment_text")>
+							<@select id='alignment_text' name='alignment_text'>
+								<option value=1 <#if alignment_type = '1' >selected="selected"</#if> >#i18n{forms.createEntry.selectAlignmentTop}</option>
+								<option value=0 <#if alignment_type = '0' >selected="selected"</#if> >#i18n{forms.createEntry.selectAlignmentToTheRight}</option>
+							</@select>
+						</@formGroup>
+						<@formGroup labelFor='entry_radio_left' labelKey='#i18n{forms.createEntry.labelTextLeft}' helpKey='#i18n{forms.createEntry.labelTextLeft}'>
+							<#assign text_left=getFieldValueByCode( entry, "left_text")>
+							<@input type='text' name='left_text' id='left_text' value=text_left maxlength=100 />
+						</@formGroup>
+						<@formGroup labelFor='entry_radio_right' labelKey='#i18n{forms.createEntry.labelTextRight}' helpKey='#i18n{forms.createEntry.labelTextRight}'>
+							<#assign text_right=getFieldValueByCode( entry, "right_text")>
+							<@input type='text' name='right_text' id='right_text' value=text_right maxlength=100 />
+						</@formGroup>
 						<@formGroup>
 							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory labelKey='#i18n{forms.createEntry.labelMandatory}' />
 						</@formGroup>
