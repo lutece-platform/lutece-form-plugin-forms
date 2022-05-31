@@ -70,8 +70,11 @@ import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionFilter;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionHome;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.util.LuceneUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -676,6 +679,16 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                                         AppLogService.error( "Unable to parse " + response.getResponseValue( ) + " to integer ", e );
                                     }
                                 }
+                                else
+                                    if ( entryTypeService instanceof EntryTypeSelect || entryTypeService instanceof EntryTypeRadioButton || entryTypeService instanceof EntryTypeCheckBox )
+                                    {
+                                        doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_SELECT_SUFFIX, response.getResponseValue( ), Field.Store.YES ) );
+                                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_SELECT_SUFFIX, new BytesRef( response.getResponseValue( ) ) ) );
+                                        if ( responseField != null && StringUtils.isNotEmpty( responseField.getTitle( ) ) )
+                                        {
+                                            doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_SELECT_TITLE , responseField.getTitle( ), Field.Store.YES ) );
+                                        }
+                                    }
                                 else
                                 {
                                     doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );

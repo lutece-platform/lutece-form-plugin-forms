@@ -121,7 +121,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
             {
                 Object objEntryValue = entry.getValue( );
                 String objEntryKey = entry.getKey( );
-                if ( objEntryValue == null )
+                if ( objEntryValue == null || objEntryKey.endsWith( FormResponseSearchItem.FIELD_SELECT_SUFFIX ) )
                 {
                     continue;
                 }

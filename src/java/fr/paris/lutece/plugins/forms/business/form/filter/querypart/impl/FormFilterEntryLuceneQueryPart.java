@@ -51,10 +51,15 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 
 /**
  * Implementation of the IFormFilterQueryPart for an Entry filter
@@ -94,7 +99,9 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
                 for ( Question question : questionList )
                 {
                     List<Field> listFields = FieldHome.getFieldListByIdEntry( question.getEntry( ).getIdEntry( ) );
-
+                    IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) );
+                    boolean isSelect = entryTypeService instanceof EntryTypeSelect || entryTypeService instanceof EntryTypeRadioButton || entryTypeService instanceof EntryTypeCheckBox;
+                    
                     for ( String value : valueList )
                     {
                         Query query = new TermQuery( new Term(
@@ -107,7 +114,7 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
                             query = new TermQuery(
                                     new Term(
                                             FormResponseSearchItem.FIELD_ENTRY_CODE_SUFFIX + strQuestionCode + FormResponseSearchItem.FIELD_RESPONSE_FIELD_ITER
-                                                    + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR + strFieldName,
+                                                    + "0" + FormResponseSearchItem.FIELD_RESPONSE_FIELD_SEPARATOR + strFieldName + ( isSelect ? FormResponseSearchItem.FIELD_SELECT_SUFFIX : "" ),
                                                     value ) );
                                 booleanQueryBuilder.add( query, BooleanClause.Occur.SHOULD );
                         }

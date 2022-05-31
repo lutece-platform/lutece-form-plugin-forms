@@ -63,6 +63,8 @@ public class FormResponseSearchItem extends SearchItem
     public static final String FIELD_RESPONSE_ID = "_response_id_";
     public static final String FIELD_DATE_SUFFIX = "_date";
     public static final String FIELD_INT_SUFFIX = "_int";
+    public static final String FIELD_SELECT_SUFFIX = "_select";
+    public static final String FIELD_SELECT_TITLE = "_select_title";
     public static final String FIELD_PUBLISHED = "published";
 
     private static final int INTEGER_MINUS_ONE = -1;
