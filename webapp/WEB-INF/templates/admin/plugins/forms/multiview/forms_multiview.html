@@ -42,6 +42,7 @@ $( function(){
 	$(".selectpicker").each( function( idx, el ){
 		let idSelect = '#' + $(this).attr('id');
 		let ph = $(this).children("option:first").text();
+		$(this).children("option:first").remove();
 		eval('var selectBox' + idx + '= new vanillaSelectBox( "' + idSelect + '" ,{"maxWidth":200,"placeHolder": ph,"translations": { "all": "Tout", "item": "élement","items": "élements", "selectAll": "Tout cocher", "clearAll": "Tout décocher" },"keepInlineStyles":false, "keepInlineCaretStyles":false, search:false});' );
 	});
 	

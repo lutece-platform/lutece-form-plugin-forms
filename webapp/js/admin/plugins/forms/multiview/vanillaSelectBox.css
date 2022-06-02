@@ -91,7 +91,6 @@ li.short{
     width: 100%;
     padding: .4375rem 1.55rem .4375rem .75rem;
     -moz-padding-start: calc(.75rem - 3px);
-    font-size: .875rem;
     font-weight: 400;
     line-height: 1.4285714;
     color: #232e3c;
