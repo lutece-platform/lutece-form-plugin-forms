@@ -33,10 +33,15 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.portal.service.resource.IExtendableResource;
+import fr.paris.lutece.portal.service.security.RsaService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * This is the business class for the object FormResponse
@@ -117,6 +122,25 @@ public class FormResponse implements IExtendableResource
         this._strGuid = strGuid;
     }
 
+    /**
+     * @return the RSA-encrypted guid 
+     */
+    public String getEncryptedGuid( )
+    {
+        if ( StringUtils.isNotEmpty( _strGuid ) )
+        {
+            try
+            {
+                return RsaService.encryptRsa( _strGuid );
+            }
+            catch( GeneralSecurityException e )
+            {
+                AppLogService.error( "Error Encrypting guid", e );
+            }
+        }
+        return StringUtils.EMPTY;
+    }
+    
     /**
      * @return the _dateCreation
      */
