@@ -141,15 +141,26 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
         List<FileItem> listFiles = new ArrayList<>( );
         for ( Response response : listResponse )
         {
-            if ( ( response.getFile( ) != null ) && ( response.getFile( ).getIdFile( ) > 0 ) )
+            if ( response.getFile( ) != null )
             {
-                File file = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
-                PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( file.getPhysicalFile( ).getIdPhysicalFile( ) );
-                FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
-                ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
-                        + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
-                        request );
-                listFiles.add( fileItem );
+                if ( StringUtils.isNotEmpty( response.getFile( ).getFileKey( ) ) )
+                {
+                    File file = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
+                    PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( file.getPhysicalFile( ).getIdPhysicalFile( ) );
+                    FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
+                    ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
+                            + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
+                            request );
+                    listFiles.add( fileItem );
+                }
+                else if ( response.getFile( ).getPhysicalFile( ) != null )
+                {
+                    FileItem fileItem = new GenAttFileItem( response.getFile( ).getPhysicalFile( ).getValue( ), response.getFile( ).getTitle( ) );
+                    ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
+                            + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
+                            request );
+                    listFiles.add( fileItem );
+                }
             }
         }
         model.put( "listFiles", listFiles );
