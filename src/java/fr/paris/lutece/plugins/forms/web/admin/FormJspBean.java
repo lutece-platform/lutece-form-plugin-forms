@@ -815,13 +815,8 @@ public class FormJspBean extends AbstractJspBean
     }
 
     @Action( ACTION_EXPORT_FORM )
-    public void doExportJson( HttpServletRequest request ) throws AccessDeniedException
+    public void doExportJson( HttpServletRequest request )
     {
-        // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, null ) )
-        {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
-        }
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
         if ( nId == FormsConstants.DEFAULT_ID_VALUE )
