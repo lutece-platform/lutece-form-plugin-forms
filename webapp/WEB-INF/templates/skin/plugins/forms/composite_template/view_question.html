@@ -35,11 +35,10 @@
 				// Check if conditionnal field is in a collapsed group
 				stepGroup.each( function(){
 					if( $(this).hasClass('step-group-collapsible') ){
-						hasCollapse=true, 
+						hasCollapse=$(this).find("div[class*='display_field_']").not(".control_invalid").length == 0, 
 						toCollapse=$(this);
 					}
 				});
-				
 				if(!$("div[displayControl='${control.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid") && validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
 				{
 					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').removeClass("control_invalid");
