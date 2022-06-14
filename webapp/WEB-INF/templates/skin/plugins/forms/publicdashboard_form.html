@@ -1,0 +1,15 @@
+		<h2>#i18n{forms.publicdashboard.title}</h2>
+		<div class="table-responsive">
+			<table class="table table-striped">
+				<tbody>
+					<#list forms_publicdashboard?keys as keyForm>
+						<#list forms_publicdashboard[keyForm]?keys as keyFormQuestionReponse>
+							<tr>
+								<td>${keyFormQuestionReponse}</td>
+								<td>${forms_publicdashboard[keyForm][keyFormQuestionReponse]!}</td>
+							</tr>
+						</#list>
+					</#list>
+				</tbody>
+			</table>
+		</div>
