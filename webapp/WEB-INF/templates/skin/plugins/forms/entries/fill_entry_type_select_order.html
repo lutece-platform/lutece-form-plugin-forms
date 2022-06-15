@@ -1,0 +1,85 @@
+<#if !entry.onlyDisplayInBack || is_completeness_bo>
+	<div class="form-group">
+		<script src="js/admin/jquery/jquery-ui.min.js"></script>
+		<#assign idName = buildEntryName( entry, entry_iteration_number )>
+		<input type='hidden' name='${idName}' id='${idName}'>
+		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"  for="${idName}">${entry.title} <#if entry.mandatory>*</#if></label>
+		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">	 
+			<ul id="sortable1" class="connectedSortable ${entry.CSSClass!}"
+				<#if list_responses??>
+					<#list list_responses as response>
+						<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
+							class="error"
+							<#break>
+						</#if>
+					</#list>
+				</#if>	>
+				<#list entry.fields as field>
+					<#if field.code == 'answer_choice'>
+						<#assign notSelected=true />
+						<#if list_responses?has_content>
+							<#list list_responses as response>
+								<#if response.entry.idEntry == entry.idEntry && response.field??>
+									<#if response.field.idField == field.idField>
+										<#assign notSelected=false />
+									</#if>
+								</#if>
+							</#list>
+						</#if>
+						<#if notSelected>
+							 <li class="ui-state-default" id="field_${field.idField}">${field.title}</li>
+						</#if>
+					</#if>
+				</#list>
+				</ul>
+ 
+				<ul id="sortable2" class="connectedSortable ${entry.CSSClass!}">
+				<#if list_responses??>
+					<#list list_responses as response>
+						<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
+							class="error"
+							<#break>
+						</#if>
+					</#list>
+				</#if>	>
+				<#if list_responses?has_content>
+					<#list list_responses?sort_by('sortOrder') as response>
+						<#list entry.fields as field>
+							<#if response.field.idField == field.idField>
+								<li class="ui-state-default" id="field_${field.idField}">${field.title}</li>
+							</#if>
+						</#list>
+					</#list>
+				</#if>
+			</ul>
+			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+				<span class="help-block">${entry.helpMessage}</span>
+			</#if>
+			<#if list_responses??>
+				<#list list_responses as response>
+					<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+						<div class="alert alert-danger">
+							<#assign error = response.entry.error>
+							<#if error.mandatoryError>
+								#i18n{forms.message.mandatory.entry}
+							<#else>
+								${error.errorMessage}
+							</#if>
+						</div>	
+					</#if>
+				</#list>
+			</#if>
+		</div>
+	</div>
+	<script>
+  $( function() {
+    $( "#sortable1, #sortable2" ).sortable({
+      connectWith: ".connectedSortable"
+    }).disableSelection();
+
+    $('form').submit(function(){
+	    $('#${idName}').val($( "#sortable2" ).sortable("serialize").replaceAll('&',';'));
+	}); 
+  });
+</script>
+</#if>

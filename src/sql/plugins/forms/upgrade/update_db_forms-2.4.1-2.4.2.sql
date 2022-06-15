@@ -10,3 +10,6 @@ PRIMARY KEY (id_category)
 
 ALTER TABLE forms_form ADD id_category INT DEFAULT NULL;
 ALTER TABLE forms_form ADD backup_enabled SMALLINT default 0 NOT NULL;
+
+INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin,display_order,inactive) VALUES 
+(121, 'Liste triable', 0, 0, 0, 'forms.entryTypeSelectOrder', 'list-ol', 'forms',20,0);
