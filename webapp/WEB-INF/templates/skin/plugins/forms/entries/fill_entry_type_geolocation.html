@@ -60,7 +60,7 @@
 	        <#include "/skin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
 	        <@setupSuggestPOI />
 	        <script type="text/javascript">
-	        $(window).load(function () {
+	        $(window).on('load', function () {
 	
 	            const currStep=$('.step-current .step-content'), hasCheckAdr=currStep.find('.checkaddress').length;
 	            if( hasCheckAdr > 0 ){
