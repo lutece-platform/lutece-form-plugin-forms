@@ -9,7 +9,7 @@
 				<@box>
 					<@row>
 						<@columns sm=2 class='mt-5'>
-							<@tabList vertical=true> 
+							<@tabList vertical=true>
 								<@tabLink id='multiview-1-tab' active=true href='#multiview-1' title='#i18n{forms.modify_form.multiview.config.display}' />
 								<@tabLink id='multiview-2-tab' href='#multiview-2' title='#i18n{forms.modify_form.multiview.config.filter}' />
 							</@tabList>
@@ -29,7 +29,7 @@
 												<@th params='data-sortable="true" data-field="column"'>#i18n{forms.modify_question.labelColumnTitle}</@th>
 												<@th params='data-sortable="true" data-field="order"'>#i18n{forms.modify_question.labelColumnOrderTitle}</@th>
 											</@tr>
-											<@tableHeadBodySeparator />	
+											<@tableHeadBodySeparator />
 											<#list questionList?sort_by('id') as question>
 												<@tr>
 													<@td>${question.step.title!}</@td>
@@ -58,7 +58,7 @@
 											</#list>
 										</@table>
 										<@formGroup rows=2>
-											<@headerButton name='action_modifyVisibleQuestions' label='forms.modify_form.buttonValidate' /> 
+											<@headerButton name='action_modifyVisibleQuestions' label='forms.modify_form.buttonValidate' />
 										</@formGroup>
 									</@tform>
 								</@tabPanel>
@@ -73,26 +73,26 @@
 												<@th params='data-sortable="true" data-field="filterGlobal"'>#i18n{forms.modify_question.labelFilterableMultiviewGlobal}</@th>
 												<@th params='data-sortable="true" data-field="filterForm"'>#i18n{forms.modify_question.labelFilterableMultiviewFormSelected}</@th>
 											</@tr>
-											<@tableHeadBodySeparator />	
+											<@tableHeadBodySeparator />
 											<#list filterableQuestionList?sort_by('id') as question>
 												<@tr>
 													<@td>${question.step.title!}</@td>
 													<@td>${question.title!}</@td>
 													<@td>
-														<@formGroup labelFor='is_filterable_multiview_global' labelKey='forms.modify_question.labelFilterableMultiviewGlobal' labelClass='text-white'>
-				                							<@checkBox orientation='switch' name='is_filterable_multiview_global' id='is_filterable_multiview_global_${question.id}' value='${question.id}' checked=(question.isFiltrableMultiviewGlobal()!) />
+														<@formGroup>
+				                							<@checkBox orientation='switch' name='is_filterable_multiview_global_${question.id}' id='is_filterable_multiview_global_${question.id}' value='${question.id}' checked=(question.isFiltrableMultiviewGlobal()!) />
 				            							</@formGroup>
 													</@td>
 													<@td>
-														<@formGroup labelFor='is_filterable_multiview_form_selected' labelKey='forms.modify_question.labelFilterableMultiviewFormSelected' labelClass='text-white'>
-				                							<@checkBox orientation='switch' name='is_filterable_multiview_form_selected' id='is_filterable_multiview_form_selected_${question.id}' value='${question.id}' checked=(question.isFiltrableMultiviewFormSelected()!) />
+														<@formGroup>
+				                							<@checkBox orientation='switch' name='is_filterable_multiview_form_selected_${question.id}' id='is_filterable_multiview_form_selected_${question.id}' value='${question.id}' checked=(question.isFiltrableMultiviewFormSelected()!) />
 				            							</@formGroup>
 													</@td>
 												</@tr>
 											</#list>
 										</@table>
 										<@formGroup rows=2>
-											<@headerButton name='action_modifyFilterableQuestions' label='forms.modify_form.buttonValidate' /> 
+											<@headerButton name='action_modifyFilterableQuestions' label='forms.modify_form.buttonValidate' />
 										</@formGroup>
 									</@tform>
 								</@tabPanel>
