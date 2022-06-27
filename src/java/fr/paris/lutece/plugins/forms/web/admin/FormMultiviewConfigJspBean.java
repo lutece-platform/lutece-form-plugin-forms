@@ -156,28 +156,13 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         
         List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
 
-        String[ ] questionFilterGlobal = request.getParameterValues( "is_filterable_multiview_global" );
-        String[ ] questionFilterFormSelected = request.getParameterValues( "is_filterable_multiview_form_selected" );
-        
-        Set<String> questionFilterGlobalSet = new HashSet<>( );
-        if ( questionFilterGlobal != null )
-        {
-            questionFilterGlobalSet.addAll( Arrays.asList( questionFilterGlobal ) );
-        }
-        Set<String> questionFilterFormSelectedSet = new HashSet<>( );
-        if ( questionFilterFormSelected != null )
-        {
-            questionFilterFormSelectedSet.addAll( Arrays.asList( questionFilterFormSelected ) );
-        }
-        
-        
         for ( Question question : questionList )
         {
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) );
             if ( FILTERABLE_LIST.contains( entryTypeService.getClass( ) ) )
             {
-                question.setFiltrableMultiviewGlobal( questionFilterGlobalSet.contains( String.valueOf( question.getId( ) ) ) );
-                question.setFiltrableMultiviewFormSelected( questionFilterFormSelectedSet.contains( String.valueOf( question.getId( ) ) ) );
+            	question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL + "_" + question.getId( ) ) != null );
+                question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED + "_" + question.getId( ) ) != null );
                 QuestionHome.update( question );
             }
         }
