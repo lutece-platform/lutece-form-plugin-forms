@@ -218,6 +218,7 @@
   <#return name />
 </#function>
 <#macro formEditor >
+<#include "/admin/util/editor/editor.html" />
 <#assign cssFiles="editor.css, page_template_styles.css" />
 <#assign editorLocale="" />
 <#-- We only have the language pack for French (France) installed in webapp/js/editors/tinymce/langs -->
@@ -226,25 +227,7 @@
 <#if locale?? && (2 <= locale?string?length) && (locale?string?substring(0,2) == "fr")>
 	<#assign editorLocale="fr_FR" />
 </#if>
-<script src="${webapp_url!}js/admin/editors/tinymce/tinymce.min.js"></script>
-<script>
-tinyMCE.init({
-	// General options ${editorLocale}
-	forced_root_block : '',
-	selector : "textarea.richtext",
-	theme : "modern",
-	document_base_url : "${webapp_url!}",
-	menubar : false,
-	<#if editorLocale != "">language : '${editorLocale}',</#if>
-	plugins: [ "link image lists charmap hr anchor pagebreak nonbreaking contextmenu paste textcolor" ],
-	// Extended elements
-	extended_valid_elements : "iframe[style|src|width|height|name|align|frameborder|scrolling],script[src|type],i[class]",
-	paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,p,br",
-	content_css: "${cssFiles}",
-	toolbar: "bold italic | forecolor | alignleft aligncenter alignright alignjustify | bullist | link | code",
-	contextmenu: "link image | paste copy cut | forecolor backcolor ",
-	});
-</script>
+<@initEditor cssFiles=cssFiles />
 </#macro>
 <#macro toastr infos warnings errors msg='' msgType='info' clickUrl=''>
 <link rel="stylesheet" type="text/css" href="js/admin/jquery/plugins/toastr/toastr.min.css" >
