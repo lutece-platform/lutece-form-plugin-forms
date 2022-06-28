@@ -73,6 +73,10 @@ public abstract class GenericFormsProvider implements IProvider
 {
     // MESSAGE
     private static final String MESSAGE_DESCRIPTION = "forms.marker.provider.url.detail.reponse.description";
+    private static final String MESSAGE_CREATION_DATE = "forms.marker.provider.url.detail.reponse.creation_date";
+    private static final String MESSAGE_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.update_date";
+    private static final String MESSAGE_STATUS = "forms.marker.provider.url.detail.reponse.status";
+    private static final String MESSAGE_STATUS_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.status_update_date";
 
     // PROPERTY
     private static final String PROPERTY_LUTECE_ADMIN_PROD_URL = "lutece.admin.prod.url";
@@ -204,13 +208,13 @@ public abstract class GenericFormsProvider implements IProvider
         collectionNotifyMarkers.add( notifyMarkerURl );
         
         InfoMarker creationDateMarker = new InfoMarker( MARK_CREATION_DATE );
-        creationDateMarker.setDescription( "Date de creation" );
+        creationDateMarker.setDescription( I18nService.getLocalizedString( MESSAGE_CREATION_DATE, I18nService.getDefaultLocale( ) ) );
         InfoMarker updateDateMarker = new InfoMarker( MARK_UPDATE_DATE );
-        updateDateMarker.setDescription( "Date de mise à jour" );
+        updateDateMarker.setDescription( I18nService.getLocalizedString( MESSAGE_UPDATE_DATE, I18nService.getDefaultLocale( ) ) );
         InfoMarker statusMarker = new InfoMarker( MARK_STATUS );
-        statusMarker.setDescription( "Status" );
+        statusMarker.setDescription( I18nService.getLocalizedString( MESSAGE_STATUS, I18nService.getDefaultLocale( ) ) );
         InfoMarker updateStatusDateMarker = new InfoMarker( MARK_STATUS_UPDATE_DATE );
-        updateStatusDateMarker.setDescription( "Date de mise à jour du status" );
+        updateStatusDateMarker.setDescription( I18nService.getLocalizedString( MESSAGE_STATUS_UPDATE_DATE, I18nService.getDefaultLocale( ) ) );
         
         collectionNotifyMarkers.add( creationDateMarker );
         collectionNotifyMarkers.add( updateDateMarker );
