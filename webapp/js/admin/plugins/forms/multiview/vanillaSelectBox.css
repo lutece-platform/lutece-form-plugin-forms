@@ -219,6 +219,7 @@ li.short{
 	background-color: #fff;
 	min-height:1.4em;
 	padding: 0.2em 2em 0.2em 26px;
+	width: 1000px;
 }
 
 .vsb-menu .multi li.grouped-option {
@@ -257,10 +258,10 @@ li.short{
 	font-size: inherit;
 	color: #333;
 	float:left;
-	margin-left:-18px;
+	margin-left:-16.5px;
 	display: inline-block;
 	transform: rotate(45deg);
-	margin-top:1px;
+	margin-top: 3px;
 	height: 8px;
 	width:  5px;
 	border-bottom: 3px solid black;
