@@ -2,12 +2,16 @@
 		<div class="table-responsive">
 			<table class="table table-striped">
 				<tbody>
-					<#list forms_publicdashboard?keys as keyForm>
-						<#list forms_publicdashboard[keyForm]?keys as keyFormQuestionReponse>
-							<tr>
-								<td>${keyFormQuestionReponse}</td>
-								<td>${forms_publicdashboard[keyForm][keyFormQuestionReponse]!}</td>
-							</tr>
+					<#list list_formsresponse as formRep>
+						<#list formRep.steps as step>
+							<#list step.questions as question>
+								<tr>
+									<td>${question.question.title!}</td>
+									<#list question.entryResponse as response>
+										<td>${response.responseValue!}</td>
+									</#list>
+								</tr>
+							</#list>
 						</#list>
 					</#list>
 				</tbody>
