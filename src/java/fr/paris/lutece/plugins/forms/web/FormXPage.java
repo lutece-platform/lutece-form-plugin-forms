@@ -910,6 +910,8 @@ public class FormXPage extends MVCApplication
                 url.addParameter( MVCUtils.PARAMETER_PAGE, FormResponseXPage.XPAGE_NAME );
                 url.addParameter( MVCUtils.PARAMETER_VIEW, FormResponseXPage.VIEW_FORM_RESPONSE );
                 url.addParameter( FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
+                url.addParameter( FormsConstants.PARAMETER_ACTION_SUCCESS, "true" );     
+
             }
             else
                 if ( bIsEndMessageDisplayed )

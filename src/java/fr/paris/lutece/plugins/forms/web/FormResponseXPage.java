@@ -91,6 +91,8 @@ public class FormResponseXPage extends MVCApplication
     protected static final String MESSAGE_FORM_RESPONSE_PATHLABEL = "forms.xpage.response.pathlabel";
     private static final String MESSAGE_ACTION_ERROR = "forms.xpage.response.action.error";
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
+    private static final String MESSAGE_ACTION_SUCCESS = "forms.xpage.response.action.success";
+
 
     // Views
     public static final String VIEW_FORM_RESPONSE = "formResponseView";
@@ -119,12 +121,15 @@ public class FormResponseXPage extends MVCApplication
         FormResponse formResponse = findFormResponseFrom( request );
 
         Collection<Action> actionsList = getActionsForUser( request, formResponse );
-
+        if("true".equals(request.getParameter(FormsConstants.PARAMETER_ACTION_SUCCESS)))
+        {
+        	addInfo( MESSAGE_ACTION_SUCCESS,getLocale(request) );
+        }
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
         model.put( MARK_WORKFLOW_ACTION_LIST, actionsList );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_PROCESS_ACTION ) );
-
+       
         XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE, getLocale( request ), model );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
         xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );

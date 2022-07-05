@@ -104,7 +104,6 @@ public final class FormsConstants
     public static final String PARAMETER_OCR_DOCUMENT = "ocr_document";
     public static final String PARAMETER_TYPE_DOCUMENT_KEY = "type_document_key";
     public static final String PARAMETER_ID_MAPPING = "id_mapping";
-
     public static final String PARAMETER_TARGET_VIEW = "view";
     public static final String COMPOSITE_STEP_TYPE = "step";
     public static final String COMPOSITE_GROUP_TYPE = "group";
@@ -132,6 +131,8 @@ public final class FormsConstants
     public static final String PARAMETER_REF_LIST_VALUE = "refListValue";
     public static final String PARAMETER_REF_LIST_FIELD = "refListField";
     public static final String PARAMETER_REF_LIST_MAPPING = "refListMapping";
+    public static final String PARAMETER_ACTION_SUCCESS = "action_success";
+
 
     public static final String PARAMETER_ACTION_GO_TO_STEP = "action_doGoToStep";
     public static final String PARAMETER_INFO_KEY = "info_key";
@@ -212,6 +213,7 @@ public final class FormsConstants
     public static final String SEPARATOR_UNDERSCORE = "_";
     public static final String SEPARATOR_SEMICOLON = ";";
     public static final String END_OF_LINE = "\n";
+
 
     /**
      * Default private constructor. Do not call
