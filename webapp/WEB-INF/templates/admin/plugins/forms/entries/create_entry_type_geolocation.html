@@ -31,7 +31,7 @@ ${breadcrumb_template}
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
 							<@input type='textarea' name='comment' id='comment'></@input>
 						</@formGroup>
-						<@formGroup labelFor='map_provider' labelKey='#i18n{forms.createEntry.mapProvider}'>
+						<@formGroup labelFor='map_provider' labelKey='#i18n{forms.createEntry.mapProvider}' mandatory=true>
 							<@select name='map_provider' id='map_provider' items=entryTypeService.mapProvidersRefList default_value='-1' />
 						</@formGroup>
 						<!-- champs mode d’édition (suggestPOI, ligne, polygone)  -->
