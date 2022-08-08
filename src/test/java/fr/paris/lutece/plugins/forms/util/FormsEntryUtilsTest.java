@@ -1,7 +1,6 @@
-package fr.paris.lutece.plugins.forms.service.entrytype.util;
+package fr.paris.lutece.plugins.forms.util;
 
 import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
