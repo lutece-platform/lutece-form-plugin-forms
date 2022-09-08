@@ -5,7 +5,7 @@
 		<input type='hidden' name='${idName}' id='${idName}'>
 		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3"  for="${idName}">${entry.title} <#if entry.mandatory>*</#if></label>
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">	 
-			<ul id="sortable1" class="connectedSortable ${entry.CSSClass!}"
+			<ul id="sortable1" class="connectedSortable ${entry.CSSClass!}">
 				<#if list_responses??>
 					<#list list_responses as response>
 						<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
@@ -13,7 +13,7 @@
 							<#break>
 						</#if>
 					</#list>
-				</#if>	>
+				</#if>
 				<#list entry.fields as field>
 					<#if field.code == 'answer_choice'>
 						<#assign notSelected=true />
@@ -41,7 +41,7 @@
 							<#break>
 						</#if>
 					</#list>
-				</#if>	>
+				</#if>
 				<#if list_responses?has_content>
 					<#list list_responses?sort_by('sortOrder') as response>
 						<#list entry.fields as field>
@@ -78,7 +78,7 @@
     }).disableSelection();
 
     $('form').submit(function(){
-	    $('#${idName}').val($( "#sortable2" ).sortable("serialize").replaceAll('&',';'));
+	    $('#${idName}').val($( "#sortable1" ).sortable("serialize").replaceAll('&',';'));
 	}); 
   });
 </script>
