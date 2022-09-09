@@ -495,9 +495,10 @@ public class FormXPage extends MVCApplication
      * 
      * @throws SiteMessageException
      *             Exception
+     * @throws UserNotSignedException 
      */
     @Action( value = ACTION_PREVIOUS_STEP )
-    public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException
+    public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         boolean bSessionLost = isSessionLost( );
         try
@@ -506,12 +507,12 @@ public class FormXPage extends MVCApplication
         }
         catch( FormNotFoundException e )
         {
-            return redirectView( request, VIEW_STEP );
+            return getStepView(  request );
         }
         if ( bSessionLost )
         {
             addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
-            return redirectView( request, VIEW_STEP );
+            return  getStepView(  request );
         }
         try
         {
@@ -519,7 +520,7 @@ public class FormXPage extends MVCApplication
         }
         catch( QuestionValidationException exception )
         {
-            return redirectView( request, VIEW_STEP );
+            return getStepView(  request );
         }
         _formResponseManager.popStep( );
 
@@ -527,7 +528,7 @@ public class FormXPage extends MVCApplication
 
         _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
 
-        return redirectView( request, VIEW_STEP );
+        return  getStepView(  request );
     }
 
     /**
@@ -538,9 +539,10 @@ public class FormXPage extends MVCApplication
      * 
      * @throws SiteMessageException
      *             Exception
+     * @throws UserNotSignedException 
      */
     @Action( value = ACTION_GO_TO_STEP )
-    public XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException
+    public XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         boolean bSessionLost = isSessionLost( );
 
@@ -550,13 +552,13 @@ public class FormXPage extends MVCApplication
         }
         catch( FormNotFoundException e )
         {
-            return redirectView( request, VIEW_STEP );
+        	return getStepView(  request );
         }
 
         if ( bSessionLost )
         {
             addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
-            return redirectView( request, VIEW_STEP );
+            return getStepView(  request );
         }
 
         try
@@ -574,7 +576,7 @@ public class FormXPage extends MVCApplication
 
         _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
 
-        return redirectView( request, VIEW_STEP );
+        return getStepView(  request );
     }
 
     /**
@@ -585,9 +587,10 @@ public class FormXPage extends MVCApplication
      * @return the summary page
      * @throws SiteMessageException
      *             if there is an error during the page generation
+     * @throws UserNotSignedException 
      */
     @Action( value = ACTION_FORM_RESPONSE_SUMMARY )
-    public XPage doFormResponseSummary( HttpServletRequest request ) throws SiteMessageException
+    public XPage doFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         Form form = null;
         try
@@ -597,19 +600,19 @@ public class FormXPage extends MVCApplication
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                return getStepView(  request );
             }
             fillResponseManagerWithResponses( request, true );
             boolean needValidation = form.isCaptchaStepFinal( );
             if ( isCaptchaKO( request, needValidation ) )
             {
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                return getStepView(  request );
             }
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
-            return redirectView( request, VIEW_STEP );
+            return  getStepView(  request );
         }
 
         return getFormResponseSummaryPage( request, form );
@@ -720,19 +723,19 @@ public class FormXPage extends MVCApplication
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                return getStepView(  request );
             }
             fillResponseManagerWithResponses( request, true );
             boolean needValidation = form.isCaptchaStepFinal( );
             if ( isCaptchaKO( request, needValidation ) )
             {
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                return getStepView(  request );
             }
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
-            return redirectView( request, VIEW_STEP );
+        	return getStepView(  request );
         }
 
         return doSaveResponse( request, form );
@@ -767,7 +770,7 @@ public class FormXPage extends MVCApplication
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                return  getStepView(  request );
             }
             boolean needValidation = form.isCaptchaRecap( );
             if ( isCaptchaKO( request, needValidation ) )
@@ -778,26 +781,26 @@ public class FormXPage extends MVCApplication
         }
         catch( FormNotFoundException exception )
         {
-            return redirectView( request, VIEW_STEP );
+        	return getStepView(  request );
         }
 
         return doSaveResponse( request, form );
     }
 
-    private XPage doSaveResponse( HttpServletRequest request, Form form ) throws SiteMessageException
+    private XPage doSaveResponse( HttpServletRequest request, Form form ) throws SiteMessageException, UserNotSignedException
     {
         _currentStep = _formResponseManager.getCurrentStep( );
         if ( !_formResponseManager.validateFormResponses( ) )
         {
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-            return redirectView( request, VIEW_STEP );
+            return getStepView(  request );
         }
         if ( !_currentStep.isFinal( ) )
         {
 
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
             addError( MESSAGE_ERROR_STEP_NOT_FINAL, getLocale( request ) );
-            return redirectView( request, VIEW_STEP );
+            return getStepView(  request );
         }
 
         saveFormResponse( form, request );
@@ -820,7 +823,7 @@ public class FormXPage extends MVCApplication
         }
         else
         {
-            return redirect( request, strBackUrl );
+        	return getStepView(  request );
         }
 
         model.put( FormsConstants.PARAMETER_BACK_URL, strBackUrl );
@@ -1016,7 +1019,7 @@ public class FormXPage extends MVCApplication
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                return getStepView(  request );
             }
             fillResponseManagerWithResponses( request, true );
 
@@ -1024,12 +1027,12 @@ public class FormXPage extends MVCApplication
             if ( isCaptchaKO( request, needValidation ) )
             {
                 addWarning( MESSAGE_WARNING_CAPTCHA, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                return getStepView(  request );
             }
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
-            return redirectView( request, VIEW_STEP );
+        	return getStepView(  request );
         }
 
         List<String> errorList = new ArrayList<>( );
@@ -1043,7 +1046,7 @@ public class FormXPage extends MVCApplication
                     errorList.stream( ).collect( Collectors.joining( ) )
             }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( VIEW_STEP ) );
         }
-        return redirectView( request, VIEW_STEP );
+        return getStepView(  request );
     }
 
     private boolean isCaptchaKO( HttpServletRequest request, boolean needValidation )
@@ -1129,12 +1132,12 @@ public class FormXPage extends MVCApplication
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                return getStepView(  request );
             }
         }
         catch( FormNotFoundException exception )
         {
-            return redirectView( request, VIEW_STEP );
+        	return getStepView(  request );
         }
 
         checkAuthentication( form, request );
@@ -1145,7 +1148,7 @@ public class FormXPage extends MVCApplication
         }
         catch( QuestionValidationException e )
         {
-            return redirectView( request, VIEW_STEP );
+        	return getStepView(  request );
         }
 
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
@@ -1155,7 +1158,7 @@ public class FormXPage extends MVCApplication
 
         _formService.saveFormForBackup( formResponse );
 
-        return redirectView( request, VIEW_STEP );
+        return getStepView(  request );
     }
 
     /**
@@ -1187,7 +1190,7 @@ public class FormXPage extends MVCApplication
         }
         catch( FormNotFoundException exception )
         {
-            return redirectView( request, VIEW_STEP );
+        	return getStepView(  request );
         }
 
         checkAuthentication( form, request );
@@ -1198,7 +1201,7 @@ public class FormXPage extends MVCApplication
 
         init( form.getId( ) );
 
-        return redirectView( request, VIEW_STEP );
+        return getStepView(  request );
     }
 
     /**
@@ -1222,14 +1225,14 @@ public class FormXPage extends MVCApplication
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                return getStepView(  request );
             }
 
             fillResponseManagerWithResponses( request, false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
-            return redirectView( request, VIEW_STEP );
+        	return getStepView(  request );
         }
 
         int nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_ADD_ITERATION ),
@@ -1240,7 +1243,7 @@ public class FormXPage extends MVCApplication
             _stepDisplayTree.iterate( nIdGroup );
         }
 
-        return redirectView( request, VIEW_STEP );
+        return getStepView(  request );
     }
 
     /**
@@ -1264,13 +1267,13 @@ public class FormXPage extends MVCApplication
             if ( bSessionLost )
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
-                return redirectView( request, VIEW_STEP );
+                return getStepView(  request );
             }
             fillResponseManagerWithResponses( request, false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
-            return redirectView( request, VIEW_STEP );
+        	return getStepView(  request );
         }
 
         String strIterationInfo = request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_REMOVE_ITERATION );
@@ -1282,7 +1285,7 @@ public class FormXPage extends MVCApplication
 
         _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
 
-        return redirectView( request, VIEW_STEP );
+        return getStepView(  request );
     }
 
     /**
@@ -1304,7 +1307,7 @@ public class FormXPage extends MVCApplication
         if ( bSessionLost )
         {
             addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
-            return redirectView( request, VIEW_STEP );
+            return getStepView(  request );
         }
 
         String error = null;
@@ -1335,7 +1338,7 @@ public class FormXPage extends MVCApplication
         }
         catch( QuestionValidationException exception )
         {
-            return redirectView( request, VIEW_STEP );
+        	return getStepView(  request );
         }
 
         if ( isUpload )
@@ -1378,7 +1381,7 @@ public class FormXPage extends MVCApplication
                 }
         }
 
-        return redirectView( request, VIEW_STEP );
+        return getStepView(  request );
     }
 
     /**
