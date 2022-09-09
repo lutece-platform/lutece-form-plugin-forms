@@ -823,7 +823,7 @@ public class FormXPage extends MVCApplication
         }
         else
         {
-        	return getStepView(  request );
+        	 return redirect( request, strBackUrl );
         }
 
         model.put( FormsConstants.PARAMETER_BACK_URL, strBackUrl );
