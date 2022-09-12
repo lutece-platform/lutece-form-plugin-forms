@@ -38,7 +38,10 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.math.NumberUtils;
+
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -78,6 +81,7 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected String _strCurrentPageIndex;
     protected int _nItemsPerPage;
     protected LocalizedDelegatePaginator<Integer> _paginator;
+    protected transient FormResponseItemSortConfig _formResponseItemComparatorConfig;
 
     protected void initiatePaginatorProperties( HttpServletRequest request )
     {
@@ -113,6 +117,45 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         model.put( strBookmark, _paginator.getPageItems( ) );
 
         return model;
+    }
+    
+    /**
+     * Build the configuration to use for sort the FormResponseItem with the information from the request
+     * 
+     * @param request
+     *            The request to retrieve the values for the sort from
+     */
+    protected void buildFormResponseItemComparatorConfiguration( HttpServletRequest request )
+    {
+        String strColumnToSortPosition = request.getParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION );
+        if ( strColumnToSortPosition != null )
+        {
+            int nColumnToSortPosition = NumberUtils.toInt( strColumnToSortPosition, NumberUtils.INTEGER_MINUS_ONE );
+
+            String strParamSortKey = request.getParameter( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME );
+
+            String strAscSort = request.getParameter( FormsConstants.PARAMETER_SORT_ASC_VALUE );
+            boolean bAscSort = Boolean.parseBoolean( strAscSort );
+
+            _formResponseItemComparatorConfig = new FormResponseItemSortConfig( nColumnToSortPosition, strParamSortKey, bAscSort );
+        }
+    }
+    
+    /**
+     * Build the configuration to use for sort the FormResponseItem with the information from the request
+     * same as buildFormResponseItemComparatorConfiguration() but without using column position
+     * 
+     * @param request
+     *            The request to retrieve the values for the sort from
+     */
+    protected void buildItemComparatorConfiguration( HttpServletRequest request ) {
+    	String strParamSortKey = request.getParameter( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME );
+    	if ( strParamSortKey != null ) {
+            String strAscSort = request.getParameter( FormsConstants.PARAMETER_SORT_ASC_VALUE );
+            boolean bAscSort = Boolean.parseBoolean( strAscSort );
+
+            _formResponseItemComparatorConfig = new FormResponseItemSortConfig( 0, strParamSortKey, bAscSort );
+        }
     }
 
     /**

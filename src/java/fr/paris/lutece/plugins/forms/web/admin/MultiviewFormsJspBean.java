@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.filegenerator.service.TemporaryFileGeneratorService;
@@ -139,7 +138,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private transient List<IFormColumnDisplay> _listFormColumnDisplay;
     private transient List<IFormPanelDisplay> _listFormPanelDisplay;
     private transient IFormPanelDisplay _formPanelDisplayActive;
-    private transient FormResponseItemSortConfig _formResponseItemComparatorConfig;
     private transient String _strFormSelectedValue = StringUtils.EMPTY;
     private transient List<IFormPanelDisplay> _listAuthorizedFormPanelDisplay;
 
@@ -465,28 +463,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             formPanelDisplay.buildTemplate( getLocale( ) );
         }
     }
-
-    /**
-     * Build the configuration to use for sort the FormResponseItem with the information from the request
-     * 
-     * @param request
-     *            The request to retrieve the values for the sort from
-     */
-    private void buildFormResponseItemComparatorConfiguration( HttpServletRequest request )
-    {
-        String strColumnToSortPosition = request.getParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION );
-        if ( strColumnToSortPosition != null )
-        {
-            int nColumnToSortPosition = NumberUtils.toInt( strColumnToSortPosition, NumberUtils.INTEGER_MINUS_ONE );
-
-            String strParamSortKey = request.getParameter( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME );
-
-            String strAscSort = request.getParameter( FormsConstants.PARAMETER_SORT_ASC_VALUE );
-            boolean bAscSort = Boolean.parseBoolean( strAscSort );
-
-            _formResponseItemComparatorConfig = new FormResponseItemSortConfig( nColumnToSortPosition, strParamSortKey, bAscSort );
-        }
-    }
+    
 
     /**
      * Build the base url to use for redirect to the page of the details of a form response

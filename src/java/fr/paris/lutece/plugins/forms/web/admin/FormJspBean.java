@@ -157,6 +157,10 @@ public class FormJspBean extends AbstractJspBean
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
+    
+    // JSP URL
+    // private static final String JSP_FORMS= "jsp/admin/plugins/forms/ManageForms.jsp";
+
 
     // Messages
     private static final String MESSAGE_CONFIRM_REMOVE_FORM = "forms.message.confirmRemoveForm";
@@ -231,8 +235,10 @@ public class FormJspBean extends AbstractJspBean
 
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
-
-        List<Form> listForms = FormHome.getFormList( );
+        
+        buildItemComparatorConfiguration( request );
+        
+        List<Form> listForms = FormHome.getFormListSorted( _formResponseItemComparatorConfig );
         listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, (User) adminUser );
 
         Map<String, Object> model = getModel( );

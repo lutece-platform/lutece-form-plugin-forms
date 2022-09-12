@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
@@ -203,6 +204,35 @@ public final class FormDAO implements IFormDAO
             }
         }
         return formList;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<Form> selectFormsListSorted( Plugin plugin, FormResponseItemSortConfig sortConfig )
+    {
+        List<Form> formList = new ArrayList<>( );
+        String strSqlQuerySelectAll = buildSqlQueryOrderByAscDesc(SQL_QUERY_SELECTALL, sortConfig);
+        try ( DAOUtil daoUtil = new DAOUtil( strSqlQuerySelectAll, plugin ) )
+        {
+            daoUtil.executeQuery( );
+            while ( daoUtil.next( ) )
+            {
+                formList.add( dataToObject( daoUtil ) );
+            }
+        }
+        return formList;
+    }
+    
+    private String buildSqlQueryOrderByAscDesc(String strSqlQuery, FormResponseItemSortConfig sortConfig) {
+    	if (sortConfig != null) {
+    		if (sortConfig.getSortAttributeName() != null && !sortConfig.getSortAttributeName().isBlank()) {
+    			strSqlQuery += (" ORDER BY " + sortConfig.getSortAttributeName()
+    					+ (sortConfig.isAscSort() ? " ASC" : " DESC"));
+    		}
+    	}
+    	return strSqlQuery;
     }
 
     /**
