@@ -43,7 +43,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.filegenerator.service.TemporaryFileGeneratorService;
@@ -52,7 +51,7 @@ import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsAction;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionHome;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -139,7 +138,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private transient List<IFormColumnDisplay> _listFormColumnDisplay;
     private transient List<IFormPanelDisplay> _listFormPanelDisplay;
     private transient IFormPanelDisplay _formPanelDisplayActive;
-    private transient FormResponseItemSortConfig _formResponseItemComparatorConfig;
     private transient String _strFormSelectedValue = StringUtils.EMPTY;
     private transient List<IFormPanelDisplay> _listAuthorizedFormPanelDisplay;
 
@@ -168,8 +166,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         // Build the Column for the Panel and save their values for the active panel
         initiatePaginatorProperties( request );
-        buildFormResponseItemComparatorConfiguration( request );
-        buildFormPanelDisplayWithData( request, getIndexStart( ), _nItemsPerPage, _formResponseItemComparatorConfig );
+        buildFormItemSortConfiguration( request );
+        buildFormPanelDisplayWithData( request, getIndexStart( ), _nItemsPerPage, _formItemSortConfig );
 
         // Build the template of each form filter display
         if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
@@ -275,7 +273,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
             TemporaryFileGeneratorService.getInstance( ).generateFile( formatExport.createFileGenerator( form.getTitle( ),
-                    _formPanelDisplayActive.getFormPanel( ), _listFormColumn, listFormFilter, _formResponseItemComparatorConfig ), user );
+                    _formPanelDisplayActive.getFormPanel( ), _listFormColumn, listFormFilter, _formItemSortConfig ), user );
         }
         addInfo( "forms.export.async.message", getLocale( ) );
 
@@ -408,7 +406,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                 _formPanelDisplayActive = formPanelDisplay;
             }
         }
-        _formResponseItemComparatorConfig = new FormResponseItemSortConfig( -1, null, true );
+        _formItemSortConfig = new FormItemSortConfig( -1, null, true );
     }
 
     /**
@@ -432,7 +430,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     /**
      * Build all the form panels by building their template and retrieve the data of their columns for the given list of filter and the specified text to search
      */
-    private void buildFormPanelDisplayWithData( HttpServletRequest request, int nIndexStart, int nPageSize, FormResponseItemSortConfig sortConfig )
+    private void buildFormPanelDisplayWithData( HttpServletRequest request, int nIndexStart, int nPageSize, FormItemSortConfig sortConfig )
     {
         // Retrieve the list of all FormFilter
         List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
@@ -465,28 +463,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             formPanelDisplay.buildTemplate( getLocale( ) );
         }
     }
-
-    /**
-     * Build the configuration to use for sort the FormResponseItem with the information from the request
-     * 
-     * @param request
-     *            The request to retrieve the values for the sort from
-     */
-    private void buildFormResponseItemComparatorConfiguration( HttpServletRequest request )
-    {
-        String strColumnToSortPosition = request.getParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION );
-        if ( strColumnToSortPosition != null )
-        {
-            int nColumnToSortPosition = NumberUtils.toInt( strColumnToSortPosition, NumberUtils.INTEGER_MINUS_ONE );
-
-            String strParamSortKey = request.getParameter( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME );
-
-            String strAscSort = request.getParameter( FormsConstants.PARAMETER_SORT_ASC_VALUE );
-            boolean bAscSort = Boolean.parseBoolean( strAscSort );
-
-            _formResponseItemComparatorConfig = new FormResponseItemSortConfig( nColumnToSortPosition, strParamSortKey, bAscSort );
-        }
-    }
+    
 
     /**
      * Build the base url to use for redirect to the page of the details of a form response
@@ -528,11 +505,11 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     private void addFilterSortConfigToUrl( UrlItem urlRedirectionDetails )
     {
-        if ( _formResponseItemComparatorConfig != null )
+        if ( _formItemSortConfig != null )
         {
-            String strSortPosition = Integer.toString( _formResponseItemComparatorConfig.getColumnToSortPosition( ) );
-            String strAttributeName = _formResponseItemComparatorConfig.getSortAttributeName( );
-            String strAscSort = String.valueOf( _formResponseItemComparatorConfig.isAscSort( ) );
+            String strSortPosition = Integer.toString( _formItemSortConfig.getColumnToSortPosition( ) );
+            String strAttributeName = _formItemSortConfig.getSortAttributeName( );
+            String strAscSort = String.valueOf( _formItemSortConfig.isAscSort( ) );
 
             urlRedirectionDetails.addParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION, strSortPosition );
             urlRedirectionDetails.addParameter( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME, strAttributeName );

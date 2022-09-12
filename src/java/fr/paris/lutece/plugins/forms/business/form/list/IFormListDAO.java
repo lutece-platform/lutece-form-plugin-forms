@@ -34,7 +34,7 @@
 package fr.paris.lutece.plugins.forms.business.form.list;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
@@ -63,7 +63,7 @@ public interface IFormListDAO
      *            The comparator config
      */
     void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
-            FormResponseItemSortConfig sortConfig );
+            FormItemSortConfig sortConfig );
 
     /**
      * Search the Lucene Index.
@@ -77,5 +77,5 @@ public interface IFormListDAO
      * @return
      */
     List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormResponseItemSortConfig sortConfig );
+            FormItemSortConfig sortConfig );
 }

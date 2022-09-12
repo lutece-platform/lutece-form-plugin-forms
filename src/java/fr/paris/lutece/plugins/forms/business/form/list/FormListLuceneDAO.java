@@ -41,7 +41,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
@@ -72,7 +72,7 @@ public class FormListLuceneDAO implements IFormListDAO
      */
     @Override
     public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
-            FormResponseItemSortConfig sortConfig )
+            FormItemSortConfig sortConfig )
     {
         // To retrieve the values to display on the table we must have a FormPanel and a list of FormColumn
         if ( formPanel == null || CollectionUtils.isEmpty( listFormColumn ) )
@@ -87,13 +87,13 @@ public class FormListLuceneDAO implements IFormListDAO
 
     @Override
     public List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormResponseItemSortConfig sortConfig )
+            FormItemSortConfig sortConfig )
     {
         return searchFormResponseItem( formPanel, listFormColumn, listFormFilter, 0, 0, sortConfig );
     }
 
     private List<FormResponseItem> searchFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            int nStartIndex, int nPageSize, FormResponseItemSortConfig sortConfig )
+            int nStartIndex, int nPageSize, FormItemSortConfig sortConfig )
     {
         // Create the list of all values of the parameter to used
         List<String> listQueryParametersValues = new ArrayList<>( );

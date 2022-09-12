@@ -48,7 +48,7 @@ import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
@@ -65,7 +65,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     protected final FormPanel _formPanel;
     protected final List<IFormColumn> _listFormColumn;
     protected final List<FormFilter> _listFormFilter;
-    protected final FormResponseItemSortConfig _sortConfig;
+    protected final FormItemSortConfig _sortConfig;
     protected final String _fileName;
     protected final String _fileDescription;
 
@@ -78,7 +78,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
      * @param _listFormResponseItems
      */
     protected AbstractFileGenerator( String fileName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormResponseItemSortConfig sortConfig, String fileDescription )
+            FormItemSortConfig sortConfig, String fileDescription )
     {
         _fileName = StringUtils.substring( fileName, 0, MAX_NAME_LENGTH ) + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_TIMESTAMP ) );
         _formPanel = formPanel;
