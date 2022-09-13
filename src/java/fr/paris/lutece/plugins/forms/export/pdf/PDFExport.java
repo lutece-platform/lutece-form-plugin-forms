@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.export.pdf;
 import java.util.List;
 
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
@@ -101,7 +101,7 @@ public class PDFExport implements IFormatExport
 
     @Override
     public IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormResponseItemSortConfig sortConfig )
+            FormItemSortConfig sortConfig )
     {
         return new PdfFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription );
     }

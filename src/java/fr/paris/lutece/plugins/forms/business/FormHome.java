@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -123,7 +123,7 @@ public final class FormHome
      * 
      * @return the list which contains the data of all the form objects
      */
-    public static List<Form> getFormListSorted( FormResponseItemSortConfig sortConfig )
+    public static List<Form> getFormListSorted( FormItemSortConfig sortConfig )
     {
         return _dao.selectFormsListSorted( _plugin, sortConfig );
     }

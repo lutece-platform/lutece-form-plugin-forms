@@ -12,7 +12,8 @@
                     <@tr>
                         <@headerSort field='title' title='#i18n{forms.manageForm.columnTitle}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='title' />
                         <@th>#i18n{forms.manageForm.columnActions}</@th>
-                        <@th hide=['xs']>#i18n{forms.manageForm.columnPeriodDisponibility}</@th>
+                        <!--@th hide=['xs']>#i18n{forms.manageForm.columnPeriodDisponibility}</@th-->
+                        <@headerSort field='period_disponibility' title='#i18n{forms.manageForm.columnPeriodDisponibility}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='period_disponibility' />
                         <@headerSort field='creation_date' title='#i18n{forms.manageForm.columnCreationDate}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='creation_date' />
                     </@tr>
                     <#list form_list as form>

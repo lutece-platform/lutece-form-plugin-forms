@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import java.util.List;
@@ -105,7 +105,7 @@ public interface IFormDAO
      *            the sort configuration (column to sort, order type)           
      * @return The list which contains the data of all the form objects
 	 */
-	List<Form> selectFormsListSorted(Plugin plugin, FormResponseItemSortConfig sortConfig);
+	List<Form> selectFormsListSorted(Plugin plugin, FormItemSortConfig sortConfig);
 
     /**
      * Load the data of all the form objects and returns them as a referenceList

@@ -236,9 +236,9 @@ public class FormJspBean extends AbstractJspBean
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
         
-        buildItemComparatorConfiguration( request );
+        buildFormItemSortConfiguration( request );
         
-        List<Form> listForms = FormHome.getFormListSorted( _formResponseItemComparatorConfig );
+        List<Form> listForms = FormHome.getFormListSorted( _formItemSortConfig );
         listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, (User) adminUser );
 
         Map<String, Object> model = getModel( );

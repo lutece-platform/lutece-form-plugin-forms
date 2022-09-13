@@ -44,7 +44,7 @@ import java.util.List;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -70,7 +70,7 @@ public class CSVFileGenerator extends AbstractFileGenerator
      * @param _listFormResponseItems
      */
     public CSVFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormResponseItemSortConfig sortConfig, String fileDescription )
+            FormItemSortConfig sortConfig, String fileDescription )
     {
         super( FileUtil.normalizeFileName( formName ), formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription );
     }

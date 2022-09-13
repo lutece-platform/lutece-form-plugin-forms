@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.list;
 
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import java.util.Comparator;
 import java.util.List;
 
@@ -82,7 +82,7 @@ public class FormListFacade
      * @param sortConfig
      */
     public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
-            FormResponseItemSortConfig sortConfig )
+            FormItemSortConfig sortConfig )
     {
         listFormColumn.sort( Comparator.comparing( IFormColumn::getFormColumnPosition ) );
 

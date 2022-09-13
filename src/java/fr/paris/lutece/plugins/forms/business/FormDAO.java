@@ -37,9 +37,10 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
@@ -58,6 +59,8 @@ public final class FormDAO implements IFormDAO
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_form SET id_form = ?, title = ?, description = ?, update_date = ?, availability_start_date = ?, availability_end_date = ?, workgroup = ?, id_workflow = ?, authentification_needed = ?, one_response_by_user = ?, breadcrumb_name = ?, display_summary = ?, return_url = ?, max_number_response = ?, captcha_step_initial = ?, captcha_step_final = ?, captcha_recap = ?, count_responses = ?, label_final_button = ?, unavailable_message = ?, id_logo = ? , id_category = ?, backup_enabled = ? WHERE id_form = ?";
     private static final String SQL_QUERY_COUNT_NUMBER_OF_RESPONSE = "SELECT count(id_form) FROM forms_response WHERE id_form = ? and from_save = 0";
     private static final String SQL_QUERY_COUNT_NUMBER_RESPONSE_USER = "SELECT count(id_form) FROM forms_response WHERE id_form=? and guid= ? AND from_save = 0 ";
+    
+    private static final String COLUMN_PERIOD_DISPONIBILITY = "period_disponibility";
 
     /**
      * {@inheritDoc }
@@ -210,7 +213,7 @@ public final class FormDAO implements IFormDAO
      * {@inheritDoc }
      */
     @Override
-    public List<Form> selectFormsListSorted( Plugin plugin, FormResponseItemSortConfig sortConfig )
+    public List<Form> selectFormsListSorted( Plugin plugin, FormItemSortConfig sortConfig )
     {
         List<Form> formList = new ArrayList<>( );
         String strSqlQuerySelectAll = buildSqlQueryOrderByAscDesc(SQL_QUERY_SELECTALL, sortConfig);
@@ -222,16 +225,23 @@ public final class FormDAO implements IFormDAO
                 formList.add( dataToObject( daoUtil ) );
             }
         }
+        
+        if (sortConfig != null && !formList.isEmpty() && COLUMN_PERIOD_DISPONIBILITY.equals(sortConfig.getSortAttributeName())) {
+        	formList.sort(new Form());
+        	if (!sortConfig.isAscSort()) {
+        		Collections.reverse(formList);
+        	}
+        }
+
         return formList;
     }
     
-    private String buildSqlQueryOrderByAscDesc(String strSqlQuery, FormResponseItemSortConfig sortConfig) {
-    	if (sortConfig != null) {
-    		if (sortConfig.getSortAttributeName() != null && !sortConfig.getSortAttributeName().isBlank()) {
-    			strSqlQuery += (" ORDER BY " + sortConfig.getSortAttributeName()
-    					+ (sortConfig.isAscSort() ? " ASC" : " DESC"));
-    		}
-    	}
+    private String buildSqlQueryOrderByAscDesc(String strSqlQuery, FormItemSortConfig sortConfig) {
+		if (sortConfig != null && sortConfig.getSortAttributeName() != null && !sortConfig.getSortAttributeName().isBlank()
+				&& !COLUMN_PERIOD_DISPONIBILITY.equals(sortConfig.getSortAttributeName())) {
+			strSqlQuery += (" ORDER BY " + sortConfig.getSortAttributeName()
+					+ (sortConfig.isAscSort() ? " ASC" : " DESC"));
+		}
     	return strSqlQuery;
     }
 
