@@ -225,14 +225,12 @@ public final class FormDAO implements IFormDAO
                 formList.add( dataToObject( daoUtil ) );
             }
         }
-        
         if (sortConfig != null && !formList.isEmpty() && COLUMN_PERIOD_DISPONIBILITY.equals(sortConfig.getSortAttributeName())) {
         	formList.sort(new Form());
         	if (!sortConfig.isAscSort()) {
         		Collections.reverse(formList);
         	}
         }
-
         return formList;
     }
     
