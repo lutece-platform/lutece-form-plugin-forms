@@ -40,6 +40,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -235,7 +237,7 @@ public final class FormDAO implements IFormDAO
     }
     
     private String buildSqlQueryOrderByAscDesc(String strSqlQuery, FormItemSortConfig sortConfig) {
-		if (sortConfig != null && sortConfig.getSortAttributeName() != null && !sortConfig.getSortAttributeName().isBlank()
+		if (sortConfig != null && sortConfig.getSortAttributeName() != null && !StringUtils.isBlank(sortConfig.getSortAttributeName())
 				&& !COLUMN_PERIOD_DISPONIBILITY.equals(sortConfig.getSortAttributeName())) {
 			strSqlQuery += (" ORDER BY " + sortConfig.getSortAttributeName()
 					+ (sortConfig.isAscSort() ? " ASC" : " DESC"));
