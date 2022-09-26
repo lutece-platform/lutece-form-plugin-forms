@@ -9,30 +9,19 @@
 		<@messages errors=errors />
 		<@formGroup labelKey='#i18n{forms.modify_control.labelStep}' helpKey='#i18n{forms.modify_control.labelStep.help}' mandatory=true>
 			<@inputGroup>
-				<@select name='id_step' items=availableSteps default_value='${id_step!}' />
+				<@select name='id_step' items=availableSteps default_value='${target_id_step!}' />
 				<@inputGroupItem>
-					<@button type='submit' name='view_modifyControl' value='validateStep' hideTitle=['all'] buttonIcon='check'/>
+					<@button type='submit' name='view_modifyConditionControl' value='validateStep' hideTitle=['all'] buttonIcon='check'/>
 				</@inputGroupItem>
 			</@inputGroup>
 		</@formGroup>
 		<@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}' >
 			<@inputGroup>
-				<@select name='id_question' items=listQuestion default_value='' /> 
+				<@select name='id_question' items=listQuestion default_value='${target_id_question!}' /> 
 				<@inputGroupItem>
-					<@button type='submit' name='view_modifyControl' value='validateQuestion' hideTitle=['all'] buttonIcon='check' />
+					<@button type='submit' name='view_modifyConditionControl' value='validateQuestion' hideTitle=['all'] buttonIcon='check' />
 				</@inputGroupItem>
 			</@inputGroup>
-		<#if control.listIdQuestion??>
-		<#list control.listIdQuestion as question >
-			<#list listQuestion as q >
-				<#if question == q.code?number>
-					<@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}' title='#i18n{portal.util.labelDelete} ${q.name!}' class='btn btn-xs btn-danger truncate'>
-						<@icon style='times fa-fw' /> ${q.name!}
-					</@link>
-				</#if>
-			</#list>
-		</#list>	
-		</#if>
 		</@formGroup>
 		<#assign labelicon>
 			<@icon style='asterisk' />
@@ -41,7 +30,7 @@
 			<@inputGroup>
 				<@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
 				<@inputGroupItem>
-					<@button type='submit' name='view_modifyControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
+					<@button type='submit' name='view_modifyConditionControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
 				</@inputGroupItem>
 			</@inputGroup>
 		</@formGroup>

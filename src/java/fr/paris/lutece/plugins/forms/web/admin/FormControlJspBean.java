@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -45,13 +46,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.plugins.forms.business.ConditionControl;
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
-import fr.paris.lutece.plugins.forms.business.FormDisplay;
-import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
-import fr.paris.lutece.plugins.forms.business.Group;
-import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -91,6 +89,7 @@ public class FormControlJspBean extends AbstractJspBean
     private static final long serialVersionUID = -9023450166890042022L;
 
     private static final String TEMPLATE_MANAGE_CONTROL = "/admin/plugins/forms/manage_control.html";
+    private static final String TEMPLATE_MANAGE_CONDITION_CONTROL = "/admin/plugins/forms/manage_condition_control.html";
     private static final String TEMPLATE_MODIFY_TRANSITION_CONTROL = "/admin/plugins/forms/modify_transition_control.html";
     private static final String TEMPLATE_MODIFY_CONDITION_CONTROL = "/admin/plugins/forms/modify_condition_control.html";
     private static final String TEMPLATE_MODIFY_QUESTION_CONTROL = "/admin/plugins/forms/modify_question_control.html";
@@ -104,6 +103,7 @@ public class FormControlJspBean extends AbstractJspBean
 
     // Views
     private static final String VIEW_MANAGE_CONTROL = "manageControl";
+    private static final String VIEW_MANAGE_CONDITION_CONTROL = "manageConditionControl";
     private static final String VIEW_MODIFY_CONTROL = "modifyControl";
     private static final String VIEW_MODIFY_CONDITION_CONTROL = "modifyConditionControl";
     private static final String VIEW_CONFIRM_REMOVE_CONTROL = "confirmRemoveControl";
@@ -118,8 +118,7 @@ public class FormControlJspBean extends AbstractJspBean
     private static final String INFO_CONTROL_UPDATED = "forms.info.control.updated";
     private static final String INFO_CONTROL_REMOVED = "forms.info.control.removed";
     private static final String MESSAGE_CONFIRM_REMOVE_CONTROL = "forms.message.confirmRemoveControl";
-    private static final String INFO_CONDITION_GROUP_TITLE = "forms.modify_condition_group_control.title";
-    private static final String INFO_CONDITION_QUESTION_TITLE = "forms.modify_condition_question_control.title";
+    private static final String INFO_CONDITION_TITLE = "forms.modify_condition_control.title";
 
     // Errors
     private static final String ERROR_CONTROL_REMOVED = "forms.error.deleteControl";
@@ -128,6 +127,7 @@ public class FormControlJspBean extends AbstractJspBean
 
     // Markers
     private static final String MARK_LIST_CONTROL = "control_list";
+    private static final String MARK_LIST_CONDITION_CONTROL = "condition_control_list";
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
 
@@ -136,7 +136,6 @@ public class FormControlJspBean extends AbstractJspBean
     // Session variable to store working values
     private int _nIdTarget;
     private Question _question;
-    private Group _group;
     private Control _control;
     private Step _step;
     private String _strControlTemplate;
@@ -223,7 +222,8 @@ public class FormControlJspBean extends AbstractJspBean
             _control.setControlType( _controlType.getLabel( ) );
             _control.setIdControlTarget( _nIdTarget );
 
-            if ( _controlType.equals( ControlType.VALIDATION ) )
+            if ( _controlType.equals( ControlType.VALIDATION )
+            		|| _controlType.equals( ControlType.CONDITIONAL ) )
             {
                 Set<Integer> listQuestion = new HashSet<>( );
                 listQuestion.add( _nIdTarget );
@@ -245,99 +245,97 @@ public class FormControlJspBean extends AbstractJspBean
             {
                 _strControlTemplate = TEMPLATE_MODIFY_QUESTION_CONTROL;
             }
+        else if ( _controlType.equals( ControlType.CONDITIONAL ) )
+            {
+                _strControlTemplate = TEMPLATE_MODIFY_CONDITION_CONTROL;
+            }
 
     }
-
+    
     /**
-     * Returns the form to modify a control for conditionnal question
-     *
+     * display the Manage Condition Control View
+     * 
      * @param request
-     *            The Http request
-     * @return the html code of the control form
+     *            The HTTP request
+     * @return The page
      */
+    @View( value = VIEW_MANAGE_CONDITION_CONTROL, defaultView = true )
+    public String getManageConditionControl( HttpServletRequest request )
+    {
+    	clearAttributes( );
+        retrieveParameters( request );
+
+        if ( _step == null || _controlType == null )
+        {
+            return redirectToViewManageForm( request );
+        }
+    	
+    	List<Control> listControl = ControlHome.getControlByControlTargetAndType( _nIdTarget, _controlType );
+    	List<ConditionControl> listConditionControl = new ArrayList<>();
+    	for (Control control : listControl) {
+    		Question targetQuestion = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) );
+            Step targetStep = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
+    		ConditionControl conditionControl = new ConditionControl(targetStep.getTitle(), targetQuestion.getTitle(), control);
+    		listConditionControl.add(conditionControl);
+    	}
+
+        LocalizedPaginator<ConditionControl> paginator = new LocalizedPaginator<>( listConditionControl, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
+                _strCurrentPageIndex, getLocale( ) );
+        
+        _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
+        _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
+    	
+    	Map<String, Object> model = getModel( );
+        model.put( MARK_PAGINATOR, paginator );
+        model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
+
+        model.put( FormsConstants.PARAMETER_CONTROL_TYPE, _controlType.name( ) );
+        model.put( FormsConstants.MARK_STEP_HOME, StepHome.class );
+        model.put( FormsConstants.MARK_QUESTION_HOME, QuestionHome.class );
+        model.put( FormsConstants.MARK_VALIDATOR_MANAGER, EntryServiceManager.getInstance( ) );
+        model.put( FormsConstants.MARK_QUESTION, _question );
+        model.put( FormsConstants.MARK_STEP, _step );
+        model.put( MARK_LIST_CONDITION_CONTROL, listConditionControl );
+    	
+    	Locale locale = getLocale( );
+        HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONDITION_CONTROL, locale, model );
+
+        return getAdminPage( templateList.getHtml( ) );
+    }
+
     @View( VIEW_MODIFY_CONDITION_CONTROL )
     public String getModifyConditionControl( HttpServletRequest request )
     {
-        _controlType = ControlType.CONDITIONAL;
-
-        int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-
-        _step = StepHome.findByPrimaryKey( nIdStep );
-
         if ( _step == null )
         {
-            return redirectToViewManageForm( request );
+            int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
+            _step = StepHome.findByPrimaryKey( nIdStep );
         }
 
-        int nIdCompositeDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), FormsConstants.DEFAULT_ID_VALUE );
-
-        FormDisplay formDisplay = FormDisplayHome.findByPrimaryKey( nIdCompositeDisplay );
-
-        if ( formDisplay == null )
+        if ( _control == null )
+        {
+            initControl( request );
+        }
+        
+        if ( _control == null && !retrieveControlFromRequest( request ) )
         {
             return redirectToViewManageForm( request );
         }
 
-        if ( formDisplay.getCompositeType( ).equals( FormsConstants.COMPOSITE_QUESTION_TYPE ) )
+        Map<String, Object> model = getModel( );
+        _strControlTitle = I18nService.getLocalizedString( INFO_CONDITION_TITLE, request.getLocale( ) );
+        
+        if ( _control != null )
         {
-            _question = QuestionHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
-
-            if ( _question == null )
-            {
-                return redirectToViewManageForm( request );
-            }
-
-            Object [ ] args = {
-                    _question.getTitle( ),
-            };
-
-            _strControlTitle = I18nService.getLocalizedString( INFO_CONDITION_QUESTION_TITLE, args, request.getLocale( ) );
-        }
-        else
-            if ( formDisplay.getCompositeType( ).equals( FormsConstants.COMPOSITE_GROUP_TYPE ) )
-            {
-                _group = GroupHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
-
-                if ( _group == null )
-                {
-                    return redirectToViewManageForm( request );
-                }
-
-                Object [ ] args = {
-                        _group.getTitle( ),
-                };
-
-                _strControlTitle = I18nService.getLocalizedString( INFO_CONDITION_GROUP_TITLE, args, request.getLocale( ) );
-            }
-
-        List<Control> listConditionalControl = ControlHome.getControlByControlTargetAndType( nIdCompositeDisplay, _controlType );
-
-        if ( !listConditionalControl.isEmpty( ) )
-        {
-            _control = listConditionalControl.get( 0 );
-        }
-        else
-            if ( _control != null )
-            {
-
-                _control.setListIdQuestion( null );
-            }
-
-        if ( _control == null || _control.getListIdQuestion( ) == null || _control.getListIdQuestion( ).isEmpty( ) )
-        {
-            _control = new Control( );
-            _control.setIdControlTarget( nIdCompositeDisplay );
-            _control.setControlType( ControlType.CONDITIONAL.getLabel( ) );
+        	buildControlModel( request, model );
         }
         else
         {
-            Question question = QuestionHome.findByPrimaryKey( _control.getListIdQuestion( ).iterator( ).next( ) );
-            _step = StepHome.findByPrimaryKey( question.getIdStep( ) );
+            redirectToViewManageForm( request );
         }
 
         _strControlTemplate = TEMPLATE_MODIFY_CONDITION_CONTROL;
-
-        return redirectView( request, VIEW_MODIFY_CONTROL );
+        return getPage( INFO_CONDITION_TITLE, _strControlTemplate, model );
     }
 
     /**
@@ -392,7 +390,14 @@ public class FormControlJspBean extends AbstractJspBean
     private void buildControlModel( HttpServletRequest request, Map<String, Object> model )
     {
         String strValidatorName = request.getParameter( FormsConstants.PARAMETER_VALIDATOR_NAME );
-        String valSubmit = request.getParameter( FormsConstants.PARAMETER_VIEW_MODIFY_CONTROL );
+        
+        String valSubmit;
+        if ( _controlType == ControlType.CONDITIONAL) {
+        	valSubmit = request.getParameter( FormsConstants.PARAMETER_VIEW_MODIFY_CONDITION_CONTROL );
+        } else {
+        	valSubmit = request.getParameter( FormsConstants.PARAMETER_VIEW_MODIFY_CONTROL );
+        }
+        
         int idStep = _step.getId( );
         if ( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) != null )
         {
@@ -402,7 +407,7 @@ public class FormControlJspBean extends AbstractJspBean
         boolean bStepChanged = false;
         if ( valSubmit != null && valSubmit.equals( FormsConstants.VALIDATE_STEP ) )
         {
-            bStepChanged = true;
+        	bStepChanged = true;
         }
 
         ReferenceList referenceListQuestion = new ReferenceList( );
@@ -436,20 +441,11 @@ public class FormControlJspBean extends AbstractJspBean
                 nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
             }
 
-        String removeQuestion = request.getParameter( FormsConstants.VAL_REMOVE_QUESTION );
-        if ( removeQuestion != null && removeQuestion.equals( FormsConstants.VAL_REMOVE_QUESTION ) )
-        {
-            String idQuestionToRemove = request.getParameter( FormsConstants.PARAMETER_ID_QUESTION_TO_REMOVE );
-            Set<Integer> listIdQuestion = _control.getListIdQuestion( );
-            listIdQuestion.removeIf( p -> p.equals( Integer.parseInt( idQuestionToRemove ) ) );
-            _control.setListIdQuestion( listIdQuestion );
-        }
-
         if ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE
                 && ( _control.getListIdQuestion( ) == null || _control.getListIdQuestion( ).stream( ).noneMatch( p -> p.equals( nIdQuestion ) ) ) )
         {
 
-            Set<Integer> listIdQuestion = ( _control.getListIdQuestion( ) != null ) ? _control.getListIdQuestion( ) : new HashSet<>( );
+            Set<Integer> listIdQuestion = new HashSet<>( );
             listIdQuestion.add( nIdQuestion );
             _control.setListIdQuestion( listIdQuestion );
 
@@ -502,7 +498,8 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_CONTROL_TEMPLATE, strValidatorTemplate );
         model.put( FormsConstants.MARK_CONTROL, _control );
-        model.put( FormsConstants.MARK_ID_STEP, idStep );
+        model.put( FormsConstants.MARK_TARGET_ID_STEP, idStep );
+        model.put( FormsConstants.MARK_TARGET_ID_QUESTION, nIdQuestion );
         model.put( FormsConstants.MARK_QUESTION_LIST, referenceListQuestion );
         model.put( FormsConstants.MARK_AVAILABLE_STEPS, StepHome.getStepReferenceListByForm( _step.getIdForm( ) ) );
         model.put( FormsConstants.MARK_CONDITION_TITLE, _strControlTitle );
@@ -702,7 +699,6 @@ public class FormControlJspBean extends AbstractJspBean
         _control = null;
         _nIdTarget = 0;
         _question = null;
-        _group = null;
         _strControlTitle = null;
         _controlType = null;
     }
@@ -722,14 +718,9 @@ public class FormControlJspBean extends AbstractJspBean
         {
             case CONDITIONAL:
                 strTargetJsp = FormsConstants.JSP_MANAGE_QUESTIONS;
-                if ( _question != null )
-                {
-                    nIdStep = _question.getIdStep( );
-                }
-                else
-                {
-                    nIdStep = _group.getIdStep( );
-                }
+                Question question = QuestionHome.findByPrimaryKey( _control.getIdControlTarget() );
+                _step = StepHome.findByPrimaryKey( question.getIdStep( ) );
+                nIdStep = _step.getId( );
                 break;
             case TRANSITION:
                 strTargetJsp = FormsConstants.JSP_MANAGE_CONTROLS;
