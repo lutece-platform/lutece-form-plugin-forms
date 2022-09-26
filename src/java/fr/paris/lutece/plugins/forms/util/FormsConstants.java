@@ -49,6 +49,7 @@ public final class FormsConstants
     public static final String MARK_ID_FORM = "id_form";
     public static final String MARK_STEP = "step";
     public static final String MARK_ID_STEP = "id_step";
+    public static final String MARK_TARGET_ID_STEP = "target_id_step";
     public static final String MARK_COMPOSITE_LIST = "composite_list";
     public static final String MARK_ENTRY_TYPE_REF_LIST = "entry_type_list";
     public static final String MARK_ENTRY = "entry";
@@ -56,7 +57,7 @@ public final class FormsConstants
     public static final String MARK_ID_PARENT = "id_parent";
     public static final String MARK_GROUP = "group";
     public static final String MARK_QUESTION = "question";
-    public static final String MARK_ID_QUESTION = "id_question";
+    public static final String MARK_TARGET_ID_QUESTION = "target_id_question";
     public static final String MARK_ID_DISPLAY = "id_display";
     public static final String MARK_FIELD = "field";
     public static final String MARK_LIST_STEPS = "list_steps";
@@ -78,6 +79,8 @@ public final class FormsConstants
     public static final String MARK_CONDITION_TITLE = "modify_condition_title";
     public static final String MARK_QUESTION_LIST_RESPONSES = "list_responses";
     public static final String MARK_VALIDATOR = "validator";
+    public static final String MARK_STEP_HOME = "stepHome";
+    public static final String MARK_QUESTION_HOME = "questionHome";
     public static final String MARK_VALIDATOR_MANAGER = "validatorManager";
     public static final String MARK_QUESTION_CREATE_TEMPLATE = "question_create_template";
     public static final String MARK_QUESTION_MODIFY_TEMPLATE = "question_modify_template";
@@ -160,6 +163,7 @@ public final class FormsConstants
     public static final String PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED = "is_filterable_multiview_form_selected";
     public static final String PARAMETER_COLUMN_TITLE = "column_title";
     public static final String PARAMETER_VIEW_MODIFY_CONTROL = "view_modifyControl";
+    public static final String PARAMETER_VIEW_MODIFY_CONDITION_CONTROL = "view_modifyConditionControl";
     public static final String PARAMETRE_VALIDATOR_LISTQUESTION_NAME = "forms_listQuestionValidator";
     public static final String PARAMETER_MULTIVIEW_ORDER = "multiview_column_order";
     
