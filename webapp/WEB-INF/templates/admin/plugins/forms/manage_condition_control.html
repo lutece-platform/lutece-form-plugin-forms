@@ -30,11 +30,6 @@
 				</#list>
 			</tbody>
 		</@table>
-		<#if control_type == 'CONDITIONAL'>
-			<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' target='_top' title='#i18n{forms.form.returnPage}' size='' />
-		<#else>
-			<@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' target='_top' title='#i18n{forms.form.returnPage}' size='' />
-		</#if> 
 	<#else>    
 		<@alert color='warning'>
 			<@icon style='exclamation-triangle' /> #i18n{forms.manage_condition_control.labelNoConditionControl}
