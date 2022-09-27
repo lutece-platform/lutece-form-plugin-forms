@@ -24,11 +24,10 @@
 		</@formGroup>
 	</@modalBody>
 	<@modalFooter>
-		<@formsButton okAction='modifyControl' viewAction=''>
-			<#if control.id gt 0>
-				<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='times' color='danger' />
-			</#if>
-		</@formsButton>
+		<#if control.id gt 0>
+			<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='times' color='danger' />
+		</#if>
+		<@formsButton okAction='modifyControl' viewAction='' />
 	</@modalFooter>
 </@tform>
 
@@ -40,13 +39,14 @@ function isIniFrame() {
 
 $( function() {
     if ( isIniFrame() ){
-        var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
-		$('body').css( 'overflow', 'hidden' );
+		$('body').css( 'overflow-x', 'hidden' ).css( 'padding-bottom', '0' );
 		$('.content-header').hide();
-		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
+		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
 		$('header').remove();
 		$('#breadforms').remove();
 		$('#footer').remove();
+
+		var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
 		btnAction.click( function(e){ 
 			formAction.submit( function(){
 				e.preventDefault();
@@ -54,6 +54,7 @@ $( function() {
 				_this.unbind('submit').submit();
 			});
 		});
+
 		var modalTitle = "#i18n{forms.modify_question_control.title}";
 		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
     } else {

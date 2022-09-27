@@ -9,10 +9,10 @@
 		<@table>
 			<thead>
 				<tr>
-					<@th xs=6 sm=5 md=7>#i18n{forms.modify_control.labelStep}</@th>
-					<@th xs=5 sm=6 md=4>#i18n{forms.modify_control.labelQuestion}</@th>
-					<@th xs=6 sm=5 md=7>#i18n{forms.modify_control.labelValidator}</@th>
-					<@th xs=5 sm=6 md=4>#i18n{forms.manageForm.columnActions}</@th>
+					<@th sm=6>#i18n{forms.modify_control.labelStep}</@th>
+					<@th sm=1>#i18n{forms.modify_control.labelQuestion}</@th>
+					<@th sm=1>#i18n{forms.modify_control.labelValidator}</@th>
+					<@th sm=4>#i18n{forms.manageForm.columnActions}</@th>
 				</tr>
 			</thead>
 			<tbody>
@@ -20,9 +20,9 @@
 					<#assign validator = validatorManager.getValidator( condition_control.control.validatorName ) />
 					<tr>
 						<@td sm=6>${condition_control.targetStepTitle}</@td>
-						<@td sm=6>${condition_control.targetQuestionTitle}</@td>
-						<@td sm=6>${validator.validatorDisplayName}</@td>
-						<@td sm=3>
+						<@td sm=1>${condition_control.targetQuestionTitle}</@td>
+						<@td sm=1>${validator.validatorDisplayName}</@td>
+						<@td sm=4>
 							<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_control=${condition_control.control.id}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
 							<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${condition_control.control.id}&id_step=${id_step!}&id_rm_question=${condition_control.control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' params=' target="_top"' />
 						</@td>
@@ -50,7 +50,7 @@ function isIniFrame() {
 
 $( function() {
     if ( isIniFrame() ){
-		$('body').css( 'overflow', 'hidden' );
+		$('body').css( 'overflow', 'auto' );
 		$('.content-header').hide();
 		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
 		$('header').remove();
