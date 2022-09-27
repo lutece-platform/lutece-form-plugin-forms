@@ -1,7 +1,7 @@
 <@formBreadCrumb>
     <li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
     <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
-    <li class="active">${modify_condition_title}</li>
+    <li class="active">#i18n{forms.modify_condition_control.title}</li>
 </@formBreadCrumb>
 <@tform method='post' name='modify_control' id='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
 	<@input type='hidden' id='token' name='token' value='${token}' />
@@ -70,7 +70,7 @@ $( function() {
 			});
 		});
 
-		var modalTitle = "${modify_condition_title}";
+		var modalTitle = "#i18n{forms.modify_condition_control.title}";
 		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
     } else {
         $('#pubModal .content-header').hide();
