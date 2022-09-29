@@ -232,8 +232,8 @@ public class FormControlJspBean extends AbstractJspBean
         }
         else
         {
-            Question question = QuestionHome.findByPrimaryKey( _control.getListIdQuestion( ).iterator( ).next( ) );
-            _step = StepHome.findByPrimaryKey( question.getIdStep( ) );
+            _question = QuestionHome.findByPrimaryKey( _control.getListIdQuestion( ).iterator( ).next( ) );
+            _step = StepHome.findByPrimaryKey( _question.getIdStep( ) );
         }
 
         if ( _controlType.equals( ControlType.TRANSITION ) )
@@ -429,17 +429,11 @@ public class FormControlJspBean extends AbstractJspBean
         {
             _control.setListIdQuestion( null );
             nIdQuestion = FormsConstants.DEFAULT_ID_VALUE;
+        } else if ( valSubmit != null && valSubmit.equals( FormsConstants.VALIDATE_QUESTION ) ) {
+        	nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
+        } else {
+        	nIdQuestion = _control.getListIdQuestion( ).iterator( ).next( );
         }
-        else
-            if ( valSubmit != null && valSubmit.equals( FormsConstants.VALIDATE_VALIDATOR ) )
-            {
-
-                nIdQuestion = FormsConstants.DEFAULT_ID_VALUE;
-            }
-            else
-            {
-                nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
-            }
 
         if ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE
                 && ( _control.getListIdQuestion( ) == null || _control.getListIdQuestion( ).stream( ).noneMatch( p -> p.equals( nIdQuestion ) ) ) )

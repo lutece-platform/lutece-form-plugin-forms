@@ -228,6 +228,7 @@ public final class FormsConstants
     public static final String ACTION_FORMS_EXPORT_RESPONSES = "multiviewExport";
     public static final String VAL_REMOVE_QUESTION = "removeQuestion";
     public static final String VALIDATE_STEP = "validateStep";
+    public static final String VALIDATE_QUESTION = "validateQuestion";
     public static final String VALIDATE_VALIDATOR = "validateValidator";
 
     // Other
