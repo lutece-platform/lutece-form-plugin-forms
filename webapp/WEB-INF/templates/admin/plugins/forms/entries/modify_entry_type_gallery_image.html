@@ -1,0 +1,102 @@
+<#include "all_entry_commons.html" />
+<#include "/admin/util/editor/editor.html" />
+
+${breadcrumb_template}
+<@row>
+	<@columns>
+		<@box>
+			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
+			<@boxBody>
+				<@tform action="${action}">
+					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
+						<@input type='hidden' name='id_step' value='${step.id}' />
+						<@input type='hidden' name='id_question' value='${question.id}' />
+						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
+						</@formGroup>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+						</@formGroup>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
+							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
+						</@formGroup>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
+							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
+						</@formGroup>
+						<@formGroup id='fgMandatory'>
+							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
+						</@formGroup>
+						<@formGroup>
+							<@checkBox labelFor='export_binary' labelKey='#i18n{forms.createEntry.labelExportBinary}' labelKey='#i18n{forms.createEntry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
+							<@tag color='warning'>#i18n{forms.createEntry.labelExportBinaryWarning}</@tag>
+						</@formGroup>
+						<@formGroup>
+							<@checkBox labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+							<@checkBox labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+						</@formGroup>
+						<@formGroup>
+							<#assign anonymizable=getFieldByCode( entry, "anonymizable")>
+							<#if anonymizable.value?boolean>
+								<#assign checkedValue = true />
+								<#assign anonPattern = anonymizable.title />
+							<#else>
+								<#assign checkedValue = false />
+								<#assign anonPattern ="" />
+							</#if>
+							<@checkBox labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
+						</@formGroup>
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
+						</@formGroup>
+						<#if entry.exportable>
+							<@input type='hidden' name='exportable' value='1' />
+						</#if>
+						<#if entry.exportablePdf>
+							<@input type='hidden' name='exportable_pdf' value='1' />
+						</#if>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
+						</@formGroup>
+						<@input type='hidden' id='token' name='token' value='${token}' />
+						<@formGroup>
+							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
+							<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' hideTitle=['xs'] />
+							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' />
+						</@formGroup>
+					</@fieldSet>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
+<@initEditor />
+<@anonymPattern />
+<script>
+$(function() {
+	//Load
+	loadGalleryList( );
+	
+	function loadGalleryList( ){
+		var request = $.ajax( { 
+			url : 'jsp/admin/plugins/galleryimage/GetSelectGalleryList.jsp',
+			type : 'GET',
+			dataType : 'html'
+		} );
+		
+		request.done( function ( content ) {
+			$( '#fgMandatory' ).after( content );
+			<#assign selectCodeGallery = (getFieldValueByCode( entry, "code_gallery" )!) />
+			<#if selectCodeGallery??>
+				$('#code_gallery').val('${selectCodeGallery!}')
+			</#if>
+		} );
+	}
+});
+
+</script>

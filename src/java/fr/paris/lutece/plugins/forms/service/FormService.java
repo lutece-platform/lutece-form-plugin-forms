@@ -72,6 +72,7 @@ import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeGalleryImage;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeImage;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
@@ -365,8 +366,8 @@ public class FormService
             Entry entryResponse = EntryHome.findByPrimaryKey( response.getEntry( ).getIdEntry( ) );
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entryResponse );
 
-            if ( ( entryTypeService instanceof AbstractEntryTypeFile || entryTypeService instanceof AbstractEntryTypeImage )
-                    && Form.RESOURCE_TYPE.equals( entryResponse.getResourceType( ) ) )
+            if ( ( entryTypeService instanceof AbstractEntryTypeFile || entryTypeService instanceof AbstractEntryTypeImage 
+                   || entryTypeService instanceof AbstractEntryTypeGalleryImage ) && Form.RESOURCE_TYPE.equals( entryResponse.getResourceType( ) ) )
             {
                 bFileAccessAuthorized = canUserAccessFile( request, entryResponse.getIdResource( ) );
             }

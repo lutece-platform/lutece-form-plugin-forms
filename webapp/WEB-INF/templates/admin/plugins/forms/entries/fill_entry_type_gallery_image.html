@@ -1,0 +1,33 @@
+<#assign codeGallery = getFieldByCode(entry,'code_gallery').value >
+<#assign idName = 'attribute' + entry.idEntry>
+<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+	<#assign helpKey = entry.helpMessage />
+</#if>
+<#assign idFileSelected = ''>
+<#if list_responses?? && list_responses?has_content>
+	<#list list_responses as response>
+		<#if response?? && response.file??>
+		<#assign idFileSelected = response.file.idFile />
+		</#if>
+	</#list>
+</#if>
+<@formGroup labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey=helpKey mandatory=entry.mandatory>
+	<@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected/>
+	<#if list_responses?? && list_responses?has_content>
+		<#assign response_error = list_responses[0]>
+		<#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
+		<@alert color='danger'>
+			<#assign error = response_error.entry.error>
+			<#if error.mandatoryError>
+				#i18n{forms.message.mandatory.entry}
+			<#else>
+				${error.errorMessage}
+			</#if>
+		</@alert>
+		</#if>
+	</#if>
+</@formGroup>
+<script>
+  /*HACK for firefox*/
+  $("#listUpload  button[type='submit']").attr("onclick","return false;");
+</script>
