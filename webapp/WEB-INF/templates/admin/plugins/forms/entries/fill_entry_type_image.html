@@ -16,11 +16,16 @@
   <#assign listFiles = ''>
 </#if>
 
+<#assign codeGallery = getFieldByCode(entry,'code_gallery').value >
+<#assign isGalleryImage = getFieldByCode(entry,'gallery_image_field').value >
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#if entry.helpMessage?exists&&entry.helpMessage!=''>
   <#assign helpKey = entry.helpMessage />
 </#if>
 <@formGroup labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey=helpKey mandatory=entry.mandatory>
+	<#if isGalleryImage == '1'>
+	  <@galleryImage codeGallery=codeGallery inputName=idName />
+	<#else>
     <#assign fieldName=idName >
     <#assign cssClass=entry.CSSClass!'' >
     <#if list_responses??>
@@ -36,7 +41,7 @@
     <div id="listUpload">
       <@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles />
     </div>
-
+    </#if>
     <#if list_responses?? && list_responses?has_content>
       <#assign response_error = list_responses[0]>
       <#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
@@ -51,7 +56,6 @@
       </#if>
     </#if>
 </@formGroup>
-
 <script>
   /*HACK for firefox*/
   $("#listUpload  button[type='submit']").attr("onclick","return false;");

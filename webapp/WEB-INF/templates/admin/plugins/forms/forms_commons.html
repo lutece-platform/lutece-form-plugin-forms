@@ -205,6 +205,18 @@
 	<#return false />
 </#function>
 <#--
+-- Check if the given entry must galleryImage
+-- @param entry the entry
+-- @return true if gallery image, false otherwise
+-->
+<#function getGalleryImage entry>
+	<#assign field = getFieldValueByCode( entry, "gallery_image_field" ) />
+	<#if field?? && field = "1">
+		<#return true />
+	</#if>
+	<#return false />
+</#function>
+<#--
 -- Build the entry name
 -- @param entry the entry
 -- @param entry_iteration_number the iteration number

@@ -32,10 +32,13 @@ ${breadcrumb_template}
 						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelType} : ${entry.entryType.title}'>
 							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
 						</@formGroup>
-						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.createEntry.labelFileMaxSize}' mandatory=true>
+						<@formGroup id="fgGalleryImageField">
+							<@checkBox orientation='switch' labelFor='gallery_image_field' labelKey='#i18n{forms.createEntry.labelGalleryImage}' name='gallery_image_field' id='gallery_image_field'  value='1' />
+						</@formGroup>
+						<@formGroup labelFor='file_max_size' id="fg_file_max_size" labelKey='#i18n{forms.createEntry.labelFileMaxSize}' mandatory=true>
 							<@input type='text' name='file_max_size' id='file_max_size' value=getName('file_max_size',list_param_default_values) />
 						</@formGroup>
-						<@formGroup labelFor='max_files' labelKey='#i18n{forms.createEntry.labelMaxFiles}' mandatory=true>
+						<@formGroup labelFor='max_files' id="fg_max_files" labelKey='#i18n{forms.createEntry.labelMaxFiles}' mandatory=true>
 							<@input type='text' name='max_files' id='max_files' value=getName('max_files',list_param_default_values) maxlength=2 />
 						</@formGroup>
 						<@formGroup>
@@ -73,4 +76,48 @@ ${breadcrumb_template}
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
  <@anonymPattern />
- 
+ <script>
+$(function() {
+	//Load
+	loadGalleryList();
+	
+	$('#gallery_image_field').change( function (){
+		if( $(this).is(':checked') ){
+			showInputGallery( );
+		} else{
+			hideInputGallery( );
+		}
+	});
+	
+	function showInputGallery( ){
+		$('#fg_file_max_size').hide();
+		$('#fg_max_files').hide();
+		$('#file_max_size').prop('required', false);
+		$('#max_files').prop('required', false);
+		$('#fg_code_gallery').removeClass('hidden');
+		$('#fg_code_gallery').prop('required', true);
+	}
+	
+	function hideInputGallery( ){
+		$('#fg_file_max_size').show();
+		$('#fg_max_files').show();
+		$('#file_max_size').prop('required', true);
+		$('#max_files').prop('required', true);
+		$('#fg_code_gallery').addClass('hidden');
+		$('#fg_code_gallery').prop('required', false);	
+	}
+	
+	function loadGalleryList( ){
+		var request = $.ajax( { 
+			url : 'jsp/admin/plugins/galleryimage/GetSelectGalleryList.jsp',
+			type : 'GET',
+			dataType : 'html'
+		} );
+		
+		request.done( function ( content ) { 
+			$( '#fgGalleryImageField' ).after( content );
+		} );
+	}
+});
+
+</script>
