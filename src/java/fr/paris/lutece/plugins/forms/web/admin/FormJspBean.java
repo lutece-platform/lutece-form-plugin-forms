@@ -399,7 +399,8 @@ public class FormJspBean extends AbstractJspBean
         url.addParameter( FormsConstants.PARAMETER_ID_FORM, nId );
         url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_FORM ) );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage,
+                new Object[ ] { formToBeDeleted.getTitle( ) }, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
 
