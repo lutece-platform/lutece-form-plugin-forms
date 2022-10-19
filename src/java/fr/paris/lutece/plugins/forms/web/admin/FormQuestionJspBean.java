@@ -554,7 +554,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         url.addParameter( FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
         url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_COMPOSITE ) );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, strMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, strMessage,
+                new Object[ ] { getFormDisplayService( ).getDisplayTitle( _formDisplay ) }, url.getUrl( ),
+                AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
     }
