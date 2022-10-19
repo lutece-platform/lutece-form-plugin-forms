@@ -250,7 +250,7 @@ public class FormXPage extends MVCApplication
      * @throws UserNotSignedException
      *             exception if the form requires an authentification and the user is not logged
      */
-    public void checkMyLuteceAuthentification( Form form, HttpServletRequest request ) throws UserNotSignedException
+    private void checkMyLuteceAuthentification( Form form, HttpServletRequest request ) throws UserNotSignedException
     {
         // Try to register the user in case of external authentication
         if ( !SecurityService.isAuthenticationEnable( ) )
@@ -293,7 +293,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      */
     @View( value = VIEW_STEP )
-    public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
         if ( PARAMETER_INIT.equals( paramInit ) )
@@ -498,7 +498,7 @@ public class FormXPage extends MVCApplication
      * @throws UserNotSignedException 
      */
     @Action( value = ACTION_PREVIOUS_STEP )
-    public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         boolean bSessionLost = isSessionLost( );
         try
@@ -542,7 +542,7 @@ public class FormXPage extends MVCApplication
      * @throws UserNotSignedException 
      */
     @Action( value = ACTION_GO_TO_STEP )
-    public XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         boolean bSessionLost = isSessionLost( );
 
@@ -590,7 +590,7 @@ public class FormXPage extends MVCApplication
      * @throws UserNotSignedException 
      */
     @Action( value = ACTION_FORM_RESPONSE_SUMMARY )
-    public XPage doFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         Form form = null;
         try
@@ -1004,7 +1004,7 @@ public class FormXPage extends MVCApplication
      * @throws AccessDeniedException
      */
     @Action( value = ACTION_SAVE_STEP )
-    public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
+    public synchronized XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
@@ -1115,7 +1115,7 @@ public class FormXPage extends MVCApplication
      * @throws AccessDeniedException
      */
     @Action( value = ACTION_SAVE_FOR_BACKUP )
-    public XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
+    public synchronized XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
@@ -1175,7 +1175,7 @@ public class FormXPage extends MVCApplication
      * @throws AccessDeniedException
      */
     @Action( value = ACTION_RESET_BACKUP )
-    public XPage doResetBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
+    public synchronized XPage doResetBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
@@ -1216,7 +1216,7 @@ public class FormXPage extends MVCApplication
      *             if the user is not signed in
      */
     @Action( value = ACTION_ADD_ITERATION )
-    public XPage doAddIteration( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doAddIteration( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         try
         {
@@ -1258,7 +1258,7 @@ public class FormXPage extends MVCApplication
      *             if the user is not signed in
      */
     @Action( value = ACTION_REMOVE_ITERATION )
-    public XPage doRemoveIteration( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doRemoveIteration( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         try
         {
@@ -1300,7 +1300,7 @@ public class FormXPage extends MVCApplication
      *             if the user is not signed in
      */
     @Action( value = ACTION_UPLOAD )
-    public XPage doSynchronousUploadDocument( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doSynchronousUploadDocument( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
 
         boolean bSessionLost = isSessionLost( );
