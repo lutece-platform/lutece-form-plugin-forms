@@ -7,7 +7,7 @@
         <@box color='primary'>
 			<@boxHeader title='${form.title!}' class='is-align-content-center'>
 				<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' hideTitle=['xs'] params='data-toggle="modal" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" data-target="#pubModal"'  />
-				<@aButton title='#i18n{forms.manage_steps.buttonImport}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] />
+				<@aButton title='#i18n{forms.manage_steps.buttonImport}' buttonIcon='upload' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] />
 				<#if template_provider??>
 					<@aButton title='#i18n{forms.manage_steps.buttonImportTemplate}' buttonIcon='upload' size='sm' params='data-toggle="modal" data-target="#importTemplateModal" ' hideTitle=['xs','sm'] />
 				</#if>
