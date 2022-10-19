@@ -45,6 +45,19 @@ ${breadcrumb_template}
 								<option value=0 <#if presentation_type = '0' >selected="selected"</#if> >#i18n{forms.createEntry.selectPresentationNotInLine}</option>
 							</@select>
 						</@formGroup>
+						<@formGroup labelFor='alignment_text' labelKey='#i18n{forms.createEntry.labelAlignmentText}'>
+							<#assign alignment_type = getName('alignment_text',list_param_default_values)!1>
+							<@select id='alignment_text' name='alignment_text'>
+								<option value=1 <#if alignment_type = '1' >selected="selected"</#if> >#i18n{forms.createEntry.selectAlignmentTop}</option>
+								<option value=0 <#if alignment_type = '0' >selected="selected"</#if> >#i18n{forms.createEntry.selectAlignmentToTheRight}</option>
+							</@select>
+						</@formGroup>
+						<@formGroup labelFor='entry_text_left' labelKey='#i18n{forms.createEntry.labelTextLeft}' helpKey='#i18n{forms.createEntry.labelTextLeft}'>
+							<@input type='text' name='left_text' id='left_text' value='' maxlength=100 />
+						</@formGroup>
+						<@formGroup labelFor='entry_text_right' labelKey='#i18n{forms.createEntry.labelTextRight}' helpKey='#i18n{forms.createEntry.labelTextRight}'>
+							<@input type='text' name='right_text' id='right_text' value='' maxlength=100 />
+						</@formGroup>
 						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
 							<@checkBox orientation='switch' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
 						</@formGroup>
