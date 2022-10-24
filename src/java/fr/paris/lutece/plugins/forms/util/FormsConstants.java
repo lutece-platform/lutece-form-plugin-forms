@@ -95,6 +95,7 @@ public final class FormsConstants
     public static final String MARK_TIMESTAMP = "timestamp";
     public static final String MARK_INACTIVEBYPASSTOKENS = "inactiveBypassTokens";
     public static final String MARK_FORM_RESPONSE = "formResponse";
+    public static final String MARK_LIST_CONTROL = "list_control";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";

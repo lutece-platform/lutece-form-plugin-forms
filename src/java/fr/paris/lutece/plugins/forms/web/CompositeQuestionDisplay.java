@@ -38,8 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
 import java.util.stream.Collectors;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -209,11 +209,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
 
                 _model.put( FormsConstants.MARK_VALIDATOR, validator );
-                Control controlNew = control.clone( );
+               /* Control controlNew = control.clone( );
                 controlNew.setValue( validator.getJavascriptControlValue( control ) );
-                _model.put( FormsConstants.MARK_CONTROL, controlNew );
+            	_model.put( FormsConstants.MARK_CONTROL, controlNew );*/
 
                 _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
+                
+                _model.put(FormsConstants.MARK_LIST_CONTROL, ControlHome.getControlByControlTargetAndType( _question.getId(), ControlType.CONDITIONAL ));
 
                 if ( CollectionUtils.isNotEmpty( control.getListIdQuestion( ) ) && CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
                 {
