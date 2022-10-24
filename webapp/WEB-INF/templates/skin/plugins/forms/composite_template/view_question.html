@@ -4,13 +4,13 @@
 	<#if other_step_validation??>
 		<script>
 		$(function() {
-		<#if other_step_validation>
-			$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').show();
-			$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
-	 	<#else>
-			$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').hide();
-			$('#${question.id}_${question.iterationNumber}').val('');
-		</#if>
+			<#if other_step_validation>
+				$('.display_field_${question.id!''}_${question.iterationNumber}').show();
+				$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
+		 	<#else>
+	 			$('.display_field_${question.id!''}_${question.iterationNumber}').hide();
+				$('#${question.id}_${question.iterationNumber}').val('');
+			</#if>
 		});
 		</script>
     <#else>
@@ -24,40 +24,53 @@
 					${validator.getJavascriptValidation()!'return true;'}
 				}
 			</#if>
-
-			var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
-			input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
-			input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
-				var inputValue = getFieldValue(input${control.id}_${question.iterationNumber}), 
-					hasCollapse=false, 
-					toCollapse=null,
-					stepGroup = $('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').parentsUntil('.step-content');
-				// Check if conditionnal field is in a collapsed group
-				stepGroup.each( function(){
-					if( $(this).hasClass('step-group-collapsible') ){
-						hasCollapse=$(this).find("div[class*='display_field_']").not(".control_invalid").length == 0, 
-						toCollapse=$(this);
-					}
-				});
-				if(!$("div[displayControl='${control.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid") && validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
-				{
-					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').removeClass("control_invalid");
-					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').show();
-					if( hasCollapse ){ toCollapse.show() }; // Show parent group if is in a collapse step-group
-					$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
-				} else {
-					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').addClass("control_invalid");
-					$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').hide();
-					if( hasCollapse ){ toCollapse.hide(); } // Hide parent group if is in a collapse step-group
-					$('#${question.id}_${question.iterationNumber}').val('');
-				}
-				var currentControl = "${question.id}_${question.iterationNumber}";
-				var currentInput = getInputElement(currentControl);
-				if ( currentInput[0] != undefined && currentInput[0].type != 'file' ){
-					currentInput.change();
+			
+			var hasCollapse=false, 
+				toCollapse=null,
+				stepGroup = $('.display_field_${question.id!''}_${question.iterationNumber}').parentsUntil('.step-content');
+			stepGroup.each( function(){
+				if( $(this).hasClass('step-group-collapsible') ){
+					hasCollapse=$(this).find("div[class*='display_field_']").not(".control_invalid").length == 0, 
+					toCollapse=$(this);
 				}
 			});
-			input${control.id}_${question.iterationNumber}.change();
+			
+			<#list list_control as control>
+				var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+				input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
+				input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
+					var isQuestionDisplayed = true;
+					<#list list_control as itemControl>
+						var displayItemControl = ${itemControl.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+						input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
+						var inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
+						// AND condition : if at least 1 control value isn't present, do not display question
+						if($("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid")
+								|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}'))
+						{
+							isQuestionDisplayed = false;
+						}
+					</#list>
+					if(isQuestionDisplayed)
+					{
+						$('.display_field_${question.id!''}_${question.iterationNumber}').removeClass("control_invalid");
+						$('.display_field_${question.id!''}_${question.iterationNumber}').show();
+						if( hasCollapse ){ toCollapse.show() }; // Show parent group if is in a collapse step-group
+						$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
+					} else {
+						$('.display_field_${question.id!''}_${question.iterationNumber}').addClass("control_invalid");
+						$('.display_field_${question.id!''}_${question.iterationNumber}').hide();
+						if( hasCollapse ){ toCollapse.hide(); } // Hide parent group if is in a collapse step-group
+						$('#${question.id}_${question.iterationNumber}').val('');
+					}
+					var currentControl = "${question.id}_${question.iterationNumber}";
+					var currentInput = getInputElement(currentControl);
+					if ( currentInput[0] != undefined && currentInput[0].type != 'file' ){
+						currentInput.change();
+					}
+				});
+				input${control.id}_${question.iterationNumber}.change();
+			</#list>
 		});
 		</script>
 	</#if>
