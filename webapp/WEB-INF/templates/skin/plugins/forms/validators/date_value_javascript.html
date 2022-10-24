@@ -1,14 +1,14 @@
 if(inputValue !== undefined && inputValue !== '')
 {
 	var lang = window.navigator.language;
-	var dateControl = moment(controlValue);
-	
 	moment.locale(lang);
+	
+	var dateControl = moment(controlValue);
 	if(Array.isArray(inputValue))
 	{
 		for(var i=0;i<inputValue.length;i++)
 		{
-			var dateInput = moment(inputValue[i], 'L');
+			var dateInput = moment(inputValue[i]);
 			if ( !(dateInput.getTime() ${operation} dateControl.getTime() ) )
 			{
 				return false;
@@ -18,7 +18,7 @@ if(inputValue !== undefined && inputValue !== '')
 	}
 	else
 	{
-		var dateInput = moment(inputValue, 'L');
+		var dateInput = moment(inputValue);
 		return dateInput ${operation} dateControl;
 	}
 }
