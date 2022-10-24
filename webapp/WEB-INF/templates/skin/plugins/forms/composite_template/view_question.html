@@ -1,5 +1,5 @@
-<div class="row <#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if>" displayControl="${question.id}_${question.iterationNumber}">${questionContent}</div>
-<#if validator??>
+<div class="row <#if question??>display_field_${question.id}_${question.iterationNumber}</#if>" displayControl="${question.id}_${question.iterationNumber}">${questionContent}</div>
+<#if list_validator??>
 	<input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='' hidden />
 	<#if other_step_validation??>
 		<script>
@@ -17,14 +17,16 @@
     	<script>
 		$(function() {
 			<#assign validNames = [] />
-			<#if !validNames?seq_contains(validator.validatorBeanName)>
-				<#assign validNames = validNames + [validator.validatorBeanName] />
-				function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue)
-				{
-					${validator.getJavascriptValidation()!'return true;'}
-				}
-			</#if>
-			
+			<#list list_validator as validator>
+				<#if !validNames?seq_contains(validator.validatorBeanName)>
+					<#assign validNames = validNames + [validator.validatorBeanName] />
+					function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue)
+					{
+						${validator.getJavascriptValidation()!'return true;'}
+					}
+				</#if>
+			</#list>
+
 			var hasCollapse=false, 
 				toCollapse=null,
 				stepGroup = $('.display_field_${question.id!''}_${question.iterationNumber}').parentsUntil('.step-content');

@@ -79,6 +79,7 @@ public final class FormsConstants
     public static final String MARK_CONDITION_TITLE = "modify_condition_title";
     public static final String MARK_QUESTION_LIST_RESPONSES = "list_responses";
     public static final String MARK_VALIDATOR = "validator";
+    public static final String MARK_LIST_VALIDATOR = "list_validator";
     public static final String MARK_STEP_HOME = "stepHome";
     public static final String MARK_QUESTION_HOME = "questionHome";
     public static final String MARK_VALIDATOR_MANAGER = "validatorManager";

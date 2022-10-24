@@ -222,30 +222,29 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             _model.put( FormsConstants.MARK_QUESTION, _question );
             if ( _formDisplay.getDisplayControl( ) != null )
             {
-                Control control = _formDisplay.getDisplayControl( );
-                IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-
-                _model.put( FormsConstants.MARK_VALIDATOR, validator );
-               /* Control controlNew = control.clone( );
-                controlNew.setValue( validator.getJavascriptControlValue( control ) );
-            	_model.put( FormsConstants.MARK_CONTROL, controlNew );*/
-
-                _model.put( FormsConstants.MARK_ID_DISPLAY, control.getIdControlTarget( ) );
-                
-                _model.put(FormsConstants.MARK_LIST_CONTROL, ControlHome.getControlByControlTargetAndType( _question.getId(), ControlType.CONDITIONAL ));
-
-                if ( CollectionUtils.isNotEmpty( control.getListIdQuestion( ) ) && CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
-                {
-                    int questionControlStep = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) ).getIdStep( );
-                    if ( questionControlStep != _question.getIdStep( ) )
+                List<Control> listControl = ControlHome.getControlByControlTargetAndType( _question.getId(), ControlType.CONDITIONAL );
+                List<IValidator> listValidator = new ArrayList<>();
+                for (Control control : listControl) {
+                	IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+                	listValidator.add(validator);
+                	control.setValue(validator.getJavascriptControlValue( control ));
+                	if ( CollectionUtils.isNotEmpty( control.getListIdQuestion( ) ) && CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
                     {
-                        List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
-                                .filter( questionReponse -> control.getListIdQuestion( ).contains( questionReponse.getQuestion( ).getId( ) ) )
-                                .collect( Collectors.toList( ) );
-                        _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, validator.validate( listFormQuestionReponseToCheck, control ) );
+                        int questionControlStep = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) ).getIdStep( );
+                        if ( questionControlStep != _question.getIdStep( ) )
+                        {
+                            List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
+                                    .filter( questionReponse -> control.getListIdQuestion( ).contains( questionReponse.getQuestion( ).getId( ) ) )
+                                    .collect( Collectors.toList( ) );
+                            _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, validator.validate( listFormQuestionReponseToCheck, control ) );
 
+                        }
                     }
                 }
+                _model.put(FormsConstants.MARK_LIST_CONTROL, listControl);
+                _model.put( FormsConstants.MARK_LIST_VALIDATOR, listValidator );
+
+                
             }
 
             HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, _model );
