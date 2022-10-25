@@ -206,7 +206,9 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             if ( _formDisplay.getDisplayControl( ) != null )
             {
                 List<Control> listControl = ControlHome.getControlByControlTargetAndType( _question.getId(), ControlType.CONDITIONAL );
+                List<Control> listOtherStepControl = new ArrayList<>();
                 List<IValidator> listValidator = new ArrayList<>();
+                Boolean otherStepValidation = null;
                 for (Control control : listControl) {
                 	IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
                 	listValidator.add(validator);
@@ -219,11 +221,16 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                             List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
                                     .filter( questionReponse -> control.getListIdQuestion( ).contains( questionReponse.getQuestion( ).getId( ) ) )
                                     .collect( Collectors.toList( ) );
-                            _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, validator.validate( listFormQuestionReponseToCheck, control ) );
-
+                            otherStepValidation = validator.validate( listFormQuestionReponseToCheck, control );
+                            listOtherStepControl.add(control);
                         }
                     }
                 }
+                
+                // remove controls from other steps
+                listControl.removeAll(listOtherStepControl);
+                
+                _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, otherStepValidation);
                 _model.put(FormsConstants.MARK_LIST_CONTROL, listControl);
                 _model.put( FormsConstants.MARK_LIST_VALIDATOR, listValidator );
 
