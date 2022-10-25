@@ -1,20 +1,7 @@
 <div class="row <#if question??>display_field_${question.id}_${question.iterationNumber}</#if>" displayControl="${question.id}_${question.iterationNumber}">${questionContent}</div>
 <#if list_validator??>
 	<input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='' hidden />
-	<#if other_step_validation??>
 		<script>
-		$(function() {
-			<#if other_step_validation>
-				$('.display_field_${question.id!''}_${question.iterationNumber}').show();
-				$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
-		 	<#else>
-	 			$('.display_field_${question.id!''}_${question.iterationNumber}').hide();
-				$('#${question.id}_${question.iterationNumber}').val('');
-			</#if>
-		});
-		</script>
-    <#else>
-    	<script>
 		$(function() {
 			<#assign validNames = [] />
 			<#list list_validator as validator>
@@ -37,6 +24,18 @@
 				}
 			});
 			
+			var otherStepValidated = true;
+			<#if other_step_validation??>
+				<#if other_step_validation>
+					$('.display_field_${question.id!''}_${question.iterationNumber}').show();
+					$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
+				<#else>
+		 			$('.display_field_${question.id!''}_${question.iterationNumber}').hide();
+					$('#${question.id}_${question.iterationNumber}').val('');
+					otherStepValidated = false;
+				</#if>
+			</#if>
+			
 			<#list list_control as control>
 				var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
 				input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
@@ -53,7 +52,7 @@
 							isQuestionDisplayed = false;
 						}
 					</#list>
-					if(isQuestionDisplayed)
+					if(isQuestionDisplayed && otherStepValidated)
 					{
 						$('.display_field_${question.id!''}_${question.iterationNumber}').removeClass("control_invalid");
 						$('.display_field_${question.id!''}_${question.iterationNumber}').show();
@@ -75,7 +74,6 @@
 			</#list>
 		});
 		</script>
-	</#if>
 <#else>
 	<input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='${question.id}_${question.iterationNumber}' hidden />
 </#if>
