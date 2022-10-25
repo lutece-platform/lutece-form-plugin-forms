@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -51,22 +53,41 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
+import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormAction;
 import fr.paris.lutece.plugins.forms.business.FormActionHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormMessage;
 import fr.paris.lutece.plugins.forms.business.FormMessageHome;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.business.Transition;
+import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
+import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
+import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.service.FormCategoryService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.json.FormJsonService;
+import fr.paris.lutece.plugins.forms.service.provider.GenericFormsProvider;
+import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsUtils;
+import fr.paris.lutece.plugins.forms.validation.IValidator;
+import fr.paris.lutece.plugins.forms.web.FormResponseManager;
+import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.BreadcrumbManager;
+import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
+import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
+import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.GenAttFileItem;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
@@ -83,10 +104,16 @@ import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.message.SiteMessage;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
+import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
+import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -97,6 +124,7 @@ import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.web.resource.ExtendableResourcePluginActionManager;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.portal.web.util.LocalizedPaginator;
@@ -126,6 +154,8 @@ public class FormJspBean extends AbstractJspBean
     private static final String TEMPLATE_MODIFY_FORM = "/admin/plugins/forms/modify_form.html";
     private static final String TEMPLATE_MODIFY_FORM_PUBLICATION = "/admin/plugins/forms/modify_publication.html";
     private static final String TEMPLATE_MANAGE_QUESTION_PUBLICATION = "/admin/plugins/forms/manage_forms_questions_publication.html";
+    private static final String TEMPLATE_VIEW_STEP = "/admin/plugins/forms/step_view.html";
+    private static final String TEMPLATE_FORM_SUBMITTED = "/skin/plugins/forms/form_submitted_view.html";
 
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_JSON_FILE = "json_file";
@@ -154,6 +184,10 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_ACCESSCONTROL_ID = "accesscontrol_id";
     private static final String MARK_QUESTIONLIST = "questionList";
     private static final String MARK_FORM_CATEGORY_LIST = "categoryList";
+    private static final String MARK_BO_USER = "userBackOffice";
+    
+    // Steps
+    private static final String STEP_HTML_MARKER = "stepContent";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -161,6 +195,10 @@ public class FormJspBean extends AbstractJspBean
     // Messages
     private static final String MESSAGE_CONFIRM_REMOVE_FORM = "forms.message.confirmRemoveForm";
     private static final String MESSAGE_CONFIRM_REMOVE_ACTIVE_FORM = "forms.message.confirmRemoveActiveForm";
+    private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
+    private static final String MESSAGE_ERROR_NO_STEP = "forms.message.error.noStep";
+    private static final String MESSAGE_LOAD_BACKUP = "forms.message.view.loadBackUp";
+    private static final String MESSAGE_ERROR_CONTROL = "forms.message.error.control";
 
     // Validations
     private static final String VALIDATION_ATTRIBUTES_PREFIX = "forms.model.entity.form.attribute.";
@@ -172,28 +210,38 @@ public class FormJspBean extends AbstractJspBean
     private static final String VIEW_MODIFY_PUBLICATION = "modifyPublication";
     private static final String VIEW_CONFIRM_REMOVE_FORM = "confirmRemoveForm";
     private static final String VIEW_MANAGE_QUESTION_PUBLICATION = "manageQuestionPublication";
+    private static final String VIEW_STEP = "stepView";
+    private static final String VIEW_FORM_RESPONSE = "formResponseView";
 
     // Actions
     private static final String ACTION_CREATE_FORM = "createForm";
-    public static final String ACTION_MODIFY_FORM = "modifyForm";
+    private static final String ACTION_MODIFY_FORM = "modifyForm";
     private static final String ACTION_REMOVE_FORM = "removeForm";
     private static final String ACTION_DUPLICATE_FORM = "duplicateForm";
     private static final String ACTION_EXPORT_FORM = "doExportJson";
     private static final String ACTION_IMPORT_FORM = "doImportJson";
     private static final String ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION = "modifyFormQuestions";
+    private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
+    private static final String ACTION_SAVE_STEP = "doSaveStep";
+    private static final String ACTION_GO_TO_STEP = "doGoToStep";
 
     // Infos
     private static final String INFO_FORM_CREATED = "forms.info.form.created";
     private static final String INFO_FORM_UPDATED = "forms.info.form.updated";
     private static final String INFO_FORM_REMOVED = "forms.info.form.removed";
     private static final String INFO_FORM_COPIED = "forms.info.form.copied";
-    private static final String ERROR_FORM_NOT_COPIED = "forms.error.form.not.copied";
-    private static final String ERROR_FORM_NOT_IMPORTED = "forms.error.form.not.imported";
-    private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
 
     // Errors
     private static final String ERROR_FORM_NOT_UPDATED = "forms.error.form.notUpdated";
     private static final String ERROR_FORM_DATE_START_AFTER_END = "forms.error.form.date.startAfterEnd";
+    private static final String ERROR_FORM_NOT_COPIED = "forms.error.form.not.copied";
+    private static final String ERROR_FORM_NOT_IMPORTED = "forms.error.form.not.imported";
+    
+    // Messages
+    private static final String MESSAGE_ERROR_STEP_NOT_FINAL = "forms.error.step.isnot.final";
+    
+    // Constants
+    private static final int INCORRECT_ID = -1;
 
     // Plugin names
     private static final String KIBANA_FORMS_PLUGIN_NAME = "kibana-forms";
@@ -205,6 +253,14 @@ public class FormJspBean extends AbstractJspBean
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
+    
+    private FormResponseManager _formResponseManager;
+    private Step _currentStep;
+    private StepDisplayTree _stepDisplayTree;
+    private IBreadcrumb _breadcrumb;
+    
+    // Parameter
+    private static final String PARAMETER_INIT = "true";
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
@@ -649,6 +705,366 @@ public class FormJspBean extends AbstractJspBean
         return redirectView( request, VIEW_MANAGE_FORMS );
 
     }
+    
+    /**
+     * 
+     * @param request
+     *            The Http request
+     * @return the String
+     * 
+     * @throws SiteMessageException
+     *             Exception
+     * @throws UserNotSignedException
+     *             Exception
+     */
+    @View( value = VIEW_STEP )
+    public String getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
+        String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
+        if ( PARAMETER_INIT.equals( paramInit ) )
+        {
+            init( request );
+        }
+
+        int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE && ( _currentStep == null || nIdForm != _currentStep.getIdForm( ) ) )
+        {
+            init( nIdForm );
+        }
+
+        if ( _currentStep == null )
+        {
+            // Throws Exception
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_NO_STEP, SiteMessage.TYPE_ERROR );
+            return null;
+        }
+
+        Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
+
+        Map<String, Object> model = getModel( );
+        if ( _breadcrumb == null )
+        {
+            _breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
+        }
+
+        initFormResponseManager( request, form );
+        if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
+        {
+            _currentStep = _formResponseManager.getCurrentStep( );
+            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+
+            Object [ ] args = {
+                    _formResponseManager.getFormResponse( ).getUpdate( ),
+            };
+
+            model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( MESSAGE_LOAD_BACKUP, args, getLocale( ) ) );
+        }
+
+        if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
+        {
+            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+            _formResponseManager.add( _currentStep );
+        }
+
+        getFormStepModel( form, request, model );
+        
+        return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_VIEW_STEP, model );
+    }
+    
+    /**
+     * @param form
+     *            The form to display
+     * @param request
+     *            The Http request
+     * @param model
+     *            The model for view
+     */
+    private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model )
+    {
+        Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
+        modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
+        _stepDisplayTree.addModel( modelForStep );
+
+        if ( form.isCountResponses( ) )
+        {
+            form.setCurrentNumberResponse( FormHome.getNumberOfResponseForms( form.getId( ) ) );
+        }
+        if ( form.getLogo( ) != null )
+        {
+            form.setLogo( FileHome.findByPrimaryKey( form.getLogo( ).getIdFile( ) ) );
+            form.getLogo( ).setPhysicalFile( PhysicalFileHome.findByPrimaryKey( form.getLogo( ).getPhysicalFile( ).getIdPhysicalFile( ) ) );
+        }
+        model.put( FormsConstants.MARK_FORM, form );
+        model.put( STEP_HTML_MARKER,
+                _stepDisplayTree.getCompositeHtml( request, _formResponseManager.findAllResponses( ), getLocale( ), DisplayType.EDITION_FRONTOFFICE ) );
+        model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, _breadcrumb.getTopHtml( request, _formResponseManager ) );
+        model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, _breadcrumb.getBottomHtml( request, _formResponseManager ) );
+        fillCommons( model );
+    }
+    
+    /**
+     * 
+     * @param request
+     *            The Http request
+     * @return the view
+     * 
+     * @throws SiteMessageException
+     *             Exception
+     * @throws UserNotSignedException
+     *             Exception
+     * @throws AccessDeniedException
+     */
+    @Action( value = ACTION_SAVE_FORM_RESPONSE )
+    public String doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
+    {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+        Form form = null;
+        try
+        {
+        	form = findFormFrom( request );
+            fillResponseManagerWithResponses( request, true );
+        }
+        catch( FormNotFoundException | QuestionValidationException exception )
+        {
+        	return getStepView(  request );
+        }
+
+        return doSaveResponse( request, form );
+    }
+    
+    /**
+     * @param request
+     *            The Http request
+     * @param bValidateQuestionStep
+     *            valid question ton next step
+     * 
+     * @throws QuestionValidationException
+     *             if there is at least one question not valid
+     */
+    private void fillResponseManagerWithResponses( HttpServletRequest request, boolean bValidateQuestionStep ) throws QuestionValidationException
+    {
+        List<Question> listQuestionStep = _stepDisplayTree.getQuestions( );
+
+        boolean bValidStep = true;
+        List<FormQuestionResponse> listResponsesTemp = new ArrayList<>( );
+
+        String [ ] listConditionalQuestionsValues = request.getParameterValues( FormsConstants.PARAMETER_DISPLAYED_QUESTIONS );
+
+        for ( Question question : listQuestionStep )
+        {
+            for ( int i = 0; i < listConditionalQuestionsValues.length; i++ )
+            {
+                String [ ] listQuestionId = listConditionalQuestionsValues [i].split( FormsConstants.SEPARATOR_UNDERSCORE );
+                if ( StringUtils.isNotEmpty( listQuestionId [0] ) && Integer.parseInt( listQuestionId [0] ) == question.getId( )
+                        && Integer.parseInt( listQuestionId [1] ) == question.getIterationNumber( ) )
+                {
+                    question.setIsVisible( true );
+                    break;
+                }
+                else
+                {
+                    question.setIsVisible( false );
+                }
+            }
+            IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+            if ( question.getEntry( ).isOnlyDisplayInBack( ) || entryDataService == null )
+            {
+                continue;
+            }
+
+            FormQuestionResponse formQuestionResponse = entryDataService.createResponseFromRequest( question, request,
+                    question.isVisible( ) && bValidateQuestionStep );
+
+            if ( formQuestionResponse.hasError( ) )
+            {
+                bValidStep = false;
+            }
+
+            listResponsesTemp.add( formQuestionResponse );
+        }
+
+        _formResponseManager.addResponses( listResponsesTemp );
+
+        if ( !bValidStep )
+        {
+            throw new QuestionValidationException( );
+        }
+    }
+    
+    private String doSaveResponse( HttpServletRequest request, Form form ) throws SiteMessageException, UserNotSignedException
+    {
+        _currentStep = _formResponseManager.getCurrentStep( );
+        if ( !_formResponseManager.validateFormResponses( ) )
+        {
+            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+            return getStepView(  request );
+        }
+        if ( !_currentStep.isFinal( ) )
+        {
+
+            _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+            addError( MESSAGE_ERROR_STEP_NOT_FINAL, getLocale( ) );
+            return getStepView(  request );
+        }
+
+        saveFormResponse( form, request );
+        Map<String, Object> model = getModel( );
+
+        model.put( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
+
+        FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
+        boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
+        String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed, _formResponseManager.getFormResponse( ).getId( ) );
+        init( request );
+
+        if ( formMessage.getEndMessageDisplay( ) )
+        {
+            model.put( FormsConstants.MARK_INFO, formMessage.getEndMessage( ) );
+        }
+        else
+        {
+        	 return redirect( request, strBackUrl );
+        }
+
+        model.put( FormsConstants.PARAMETER_BACK_URL, strBackUrl );
+        fillCommons( model );
+
+        return getPage( form.getTitle( ), TEMPLATE_FORM_SUBMITTED, model );
+    }
+    
+    /**
+     * 
+     * @param request
+     *            The Http request
+     * @return the view
+     * 
+     * @throws SiteMessageException
+     *             Exception
+     * @throws UserNotSignedException
+     *             Exception
+     * @throws AccessDeniedException
+     */
+    @Action( value = ACTION_SAVE_STEP )
+    public String doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
+    {
+        // CSRF Token control
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+
+        try
+        {
+        	findFormFrom( request );
+            fillResponseManagerWithResponses( request, true );
+        }
+        catch( FormNotFoundException | QuestionValidationException exception )
+        {
+        	return getStepView(  request );
+        }
+
+        List<String> errorList = new ArrayList<>( );
+
+        Step currentStep = getNextStep( errorList );
+        _currentStep = currentStep != null ? currentStep : _currentStep;
+
+        if ( currentStep == null )
+        {
+            SiteMessageService.setMessage( request, MESSAGE_ERROR_CONTROL, new Object [ ] {
+                    errorList.stream( ).collect( Collectors.joining( ) )
+            }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( VIEW_STEP ) );
+        }
+        return getStepView(  request );
+    }
+    
+    /**
+     * 
+     * @param request
+     *            The Http request
+     * @return the view
+     * 
+     * @throws SiteMessageException
+     *             Exception
+     * @throws UserNotSignedException 
+     */
+    @Action( value = ACTION_GO_TO_STEP )
+    public String doGoToStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    {
+
+        try
+        {
+            findFormFrom( request );
+        }
+        catch( FormNotFoundException e )
+        {
+        	return getStepView(  request );
+        }
+
+        try
+        {
+            fillResponseManagerWithResponses( request, false );
+        }
+        catch( QuestionValidationException e )
+        {
+            // this cannot happen because the validation is not performed
+        }
+
+        int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ACTION_GO_TO_STEP ), INCORRECT_ID );
+
+        _currentStep = _formResponseManager.goTo( nIndexStep );
+
+        _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+
+        return getStepView(  request );
+    }
+    
+    /**
+     * initialize the object.
+     */
+    private void init( HttpServletRequest request )
+    {
+        _formResponseManager = null;
+        _currentStep = null;
+        _stepDisplayTree = null;
+        _breadcrumb = null;
+        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
+    }
+    
+    /**
+     * initialize the object
+     * 
+     * @param nIdForm
+     *            id form
+     */
+    private void init( int nIdForm )
+    {
+        _currentStep = StepHome.getInitialStep( nIdForm );
+        _formResponseManager = null;
+        _stepDisplayTree = null;
+        _breadcrumb = null;
+    }
+    
+    private void initFormResponseManager( HttpServletRequest request, Form form )
+    {
+        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+
+        if ( _formResponseManager == null )
+        {
+            if ( user != null )
+            {
+                _formResponseManager = _formService.createFormResponseManagerFromBackUp( form, user.getName( ) );
+            }
+            else
+            {
+                _formResponseManager = new FormResponseManager( form );
+            }
+        }
+    }
 
     /**
      * Process the change form of a form
@@ -857,5 +1273,158 @@ public class FormJspBean extends AbstractJspBean
             addError( ERROR_FORM_NOT_IMPORTED, getLocale( ) );
         }
         return redirectView( request, VIEW_MANAGE_FORMS );
+    }
+    
+    /**
+     * Finds the form from the specified request
+     * 
+     * @param request
+     *            the request
+     * @return the found form, or {@code null} if not found
+     * @throws SiteMessageException
+     *             if the form is not accessible
+     */
+    private Form findFormFrom( HttpServletRequest request ) throws FormNotFoundException
+    {
+        Form form = null;
+
+        if ( _currentStep == null )
+        {
+            int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), INCORRECT_ID );
+
+            if ( nIdForm != INCORRECT_ID )
+            {
+                form = FormHome.findByPrimaryKey( nIdForm );
+
+                if ( form == null )
+                {
+                    throw new FormNotFoundException( );
+                }
+
+                init( nIdForm );
+            }
+            else
+            {
+                throw new FormNotFoundException( );
+            }
+        }
+        else
+        {
+            form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
+        }
+        
+        return form;
+    }
+    
+    /**
+     * 
+     * @param form
+     *            The Form
+     * @param bIsEndMessageDisplayed
+     *            {@code true} if the end message is displayed, {@code false} otherwise
+     * @return the back URL
+     */
+    private String getBackUrl( Form form, boolean bIsEndMessageDisplayed, int nIdFormResponse )
+    {
+        if ( StringUtils.isNotEmpty( form.getReturnUrl( ) ) )
+        {
+            return form.getReturnUrl( );
+        }
+        else
+        {
+            UrlItem url = null;
+
+            if ( form.isAuthentificationNeeded( ) )
+            {
+            	url= bIsEndMessageDisplayed? new UrlItem( AppPathService.getPortalUrl( ) ):new UrlItem( "" );
+                url.addParameter( MVCUtils.PARAMETER_PAGE, GenericFormsProvider.PARAMETER_PAGE_FORM_RESPONSE );
+                url.addParameter( MVCUtils.PARAMETER_VIEW, VIEW_FORM_RESPONSE );
+                url.addParameter( FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
+                url.addParameter( FormsConstants.PARAMETER_ACTION_SUCCESS, "true" );     
+
+            }
+            else
+                if ( bIsEndMessageDisplayed )
+                {
+                    url = new UrlItem( getViewFullUrl( VIEW_STEP ) );
+                }
+                else
+                {
+                    url = new UrlItem( getViewUrl( VIEW_STEP ) );
+                }
+
+            url.addParameter( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
+
+            return url.getUrl( );
+        }
+    }
+    
+    /**
+     * save the response of form
+     * 
+     * @param form
+     *            the form
+     * @param request
+     *            The Http request request
+     * @throws SiteMessageException
+     *             the exception
+     */
+    private void saveFormResponse( Form form, HttpServletRequest request )
+    {
+        FormResponse formResponse = _formResponseManager.getFormResponse( );
+        if ( form.isAuthentificationNeeded( ) )
+        {
+            formResponse.setGuid( MARK_BO_USER );
+        }
+        
+        _formService.saveForm( form, formResponse );
+
+        AccessControlService.getInstance( ).cleanSessionData( request, form.getId( ), Form.RESOURCE_TYPE );
+
+        _formService.processFormAction( form, formResponse );
+    }
+    
+    /**
+     * @return The next Step
+     */
+    private Step getNextStep( List<String> errorList )
+    {
+        List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( _currentStep.getId( ) );
+
+        for ( Transition transition : listTransition )
+        {
+            List<Control> listTransitionControl = ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION );
+            boolean controlsValidated = true;
+
+            if ( listTransitionControl.isEmpty( ) )
+            {
+                return StepHome.findByPrimaryKey( transition.getNextStep( ) );
+            }
+
+            for ( Control transitionControl : listTransitionControl )
+            {
+                Question targetQuestion = QuestionHome.findByPrimaryKey( transitionControl.getListIdQuestion( ).iterator( ).next( ) );
+                Step stepTarget = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
+                List<FormQuestionResponse> listQuestionResponse = _formResponseManager.findResponsesFor( stepTarget ).stream( )
+                        .filter( q -> transitionControl.getListIdQuestion( ).stream( ).anyMatch( t -> t.equals( q.getQuestion( ).getId( ) ) ) )
+                        .collect( Collectors.toList( ) );
+
+                IValidator validator = EntryServiceManager.getInstance( ).getValidator( transitionControl.getValidatorName( ) );
+                if ( validator != null && !validator.validate( listQuestionResponse, transitionControl ) )
+                {
+                    controlsValidated = false;
+                    errorList.add( transitionControl.getErrorMessage( ) );
+                    break;
+                }
+            }
+
+            if ( controlsValidated )
+            {
+                return StepHome.findByPrimaryKey( transition.getNextStep( ) );
+            }
+
+        }
+
+        return null;
     }
 }
