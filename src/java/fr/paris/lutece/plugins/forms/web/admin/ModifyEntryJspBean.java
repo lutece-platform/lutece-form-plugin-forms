@@ -40,6 +40,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
@@ -56,17 +57,22 @@ import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.business.file.File;
+import fr.paris.lutece.portal.service.fileimage.FileImagePublicService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.file.FileUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.string.StringUtil;
@@ -98,6 +104,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
     private static final String MESSAGE_MANDATORY_FIELD = "forms.message.mandatory.field";
     private static final String MESSAGE_FIELD_VALUE_FIELD = "forms.message.field_value_field";
     private static final String FIELD_TITLE_FIELD = "forms.createField.labelTitle";
+    private static final String MESSAGE_ERROR_FILE_IMAGE = "Error importing file.";
 
     // properties
     private static final String PROPERTY_CREATE_FIELD_TITLE = "forms.createField.title";
@@ -229,7 +236,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         {
             return getJspManageQuestions( request, _step.getId( ) );
         }
-
+        
         Entry entry = null;
 
         _nIdEntry = _question.getIdEntry( );
@@ -237,7 +244,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         entry = EntryHome.findByPrimaryKey( field.getParentEntry( ).getIdEntry( ) );
 
         field.setParentEntry( entry );
-
+        
         HashMap<String, Object> model = new HashMap<>( );
         Locale locale = getLocale( );
         model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
@@ -265,6 +272,9 @@ public class ModifyEntryJspBean extends AbstractJspBean
     {
 
         String strIdEntry = request.getParameter( FormsConstants.PARAMETER_ID_ENTRY );
+        MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
+        FileItem imageFileItem = multipartRequest.getFile( FormsConstants.PARAMETER_ILLUSTRATION_IMAGE );
+        
         _nIdEntry = Integer.parseInt( strIdEntry );
 
         if ( !updateStepAndQuestion( request ) )
@@ -283,6 +293,22 @@ public class ModifyEntryJspBean extends AbstractJspBean
         if ( strError != null )
         {
             return redirect( request, strError );
+        }
+        
+        if ( imageFileItem != null && imageFileItem.getSize( ) > 0 )
+        {
+            try
+            {
+                String strFileStoreKey = ImageResourceManager.addImageResource( FileImagePublicService.IMAGE_RESOURCE_TYPE_ID, imageFileItem );
+                File fileImage = new File( );
+                fileImage.setFileKey( strFileStoreKey );
+                field.setFileImage( fileImage );
+            }
+            catch ( Exception e ) 
+            {
+            	AppLogService.error( MESSAGE_ERROR_FILE_IMAGE, e );
+                throw new AppException( MESSAGE_ERROR_FILE_IMAGE, e );
+            }
         }
 
         FieldHome.create( field );
@@ -303,6 +329,8 @@ public class ModifyEntryJspBean extends AbstractJspBean
         Field field = null;
 
         String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
+        MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
+        FileItem imageFileItem = multipartRequest.getFile( FormsConstants.PARAMETER_ILLUSTRATION_IMAGE );
         int nIdField = -1;
 
         if ( !updateStepAndQuestion( request ) )
@@ -332,6 +360,22 @@ public class ModifyEntryJspBean extends AbstractJspBean
             if ( strError != null )
             {
                 return redirect( request, strError );
+            }
+            
+            if ( imageFileItem != null && imageFileItem.getSize( ) > 0 )
+            {
+                try
+                {
+                	String strFileStoreKey = ImageResourceManager.addImageResource( FileImagePublicService.IMAGE_RESOURCE_TYPE_ID, imageFileItem );
+                    File fileImage = new File( );
+                    fileImage.setFileKey( strFileStoreKey );
+                    field.setFileImage( fileImage );
+                }
+                catch ( Exception e ) 
+                {
+                	AppLogService.error( MESSAGE_ERROR_FILE_IMAGE, e );
+                    throw new AppException( MESSAGE_ERROR_FILE_IMAGE, e );
+                }
             }
 
             FieldHome.update( field );
