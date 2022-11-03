@@ -431,6 +431,9 @@ $( function() {
 						<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' hideLabel=['all'] rows=2>
 							<@checkBox labelFor='authentificationNeeded' labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
 						</@formGroup>
+						<@formGroup labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' helpKey='#i18n{forms.create_form.labelAccessToResponsesByRole.help}' hideLabel=['all'] rows=2>
+							<@checkBox labelFor='accessToResponsesByRole' labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' name='accessToResponsesByRole' id='accessToResponsesByRole' value='1' checked=(form?has_content && form.accessToResponsesByRole) />
+						</@formGroup>	
 					</@columns>       
 					<@columns xs=12 sm=4>           
 						<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' hideLabel=['all'] rows=2>

@@ -135,5 +135,16 @@ public interface IFormDAO
      * @return return the number of response of form of user
      */
     int countNumberOfResponseFormByUser( int nIdForm, String strGuid );
+    
+    /**
+     * Load the data of all form Objects for a given list of form identifiers
+     * 
+     * @param listIdForm
+     *            the list of form identifiers
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the Form objects
+     */
+    List<Form> selectFormByPrimaryKeyList( List<Integer> listIdForm, Plugin plugin );
 
 }

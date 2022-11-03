@@ -33,19 +33,16 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
+import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.web.FormResponseData;
-import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -61,13 +58,10 @@ public class FormResponseService
 {
     private FormService _formService;
 
-    private StateService _stateService;
-
     private static FormResponseService _formResponseService;
 
     private FormResponseService( )
     {
-        _stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
         _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     }
 
@@ -83,33 +77,16 @@ public class FormResponseService
 
     public List<FormResponseData> getFormResponseListForUser( LuteceUser user )
     {
-        List<FormResponse> formResponseList = FormResponseHome.getFormResponseByGuid( user.getName( ) );
-        List<FormResponseData> dataList = new ArrayList<>( formResponseList.size( ) );
-        for ( FormResponse formResponse : formResponseList )
-        {
-            FormResponseData data = new FormResponseData( );
-            data.setIdFormResponse( formResponse.getId( ) );
-            data.setDateUpdate( new Date( formResponse.getUpdate( ).getTime( ) ) );
-            Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
-            if ( form == null )
-            {
-                continue;
-            }
-
-            data.setFormTitle( form.getTitle( ) );
-            if ( _stateService != null )
-            {
-                State formResponseState = _stateService.findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
-                if ( formResponseState != null )
-                {
-                    data.setWorkflowState( formResponseState.getName( ) );
-                }
-            }
-            dataList.add( data );
-        }
-        return dataList;
+        
+		return FormsResponseUtils.filterFormResponseListForLuteceUser(FormsResponseUtils.getFormResponseListByRoleAndGuid(user), user) ;
     }
-
+    
+    public List<FormResponse> getFormResponseForUser( LuteceUser user )
+    {
+      
+		return FormsResponseUtils.filterFormResponseForLuteceUser(FormsResponseUtils.getFormResponseListByRoleAndGuid( user ), user) ;
+    }
+    
     /**
      * Saves the form response
      * 

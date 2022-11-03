@@ -163,4 +163,15 @@ public final class FormHome
         return _dao.countNumberOfResponseFormByUser( nIdForm, strGuid );
     }
 
+    /**
+     * Load the data of all form Objects for a given list of form identifiers
+     * 
+     * @param listIdForm
+     *            The list of form identifiers
+     * @return the form objects
+     */
+    public static List<Form> getFormByPrimaryKeyList( List<Integer> listIdForm )
+    {
+        return _dao.selectFormByPrimaryKeyList( listIdForm, _plugin );
+    }
 }

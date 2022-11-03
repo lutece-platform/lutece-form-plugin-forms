@@ -124,6 +124,12 @@ public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Fo
     private int _nIdCategory;
     
     private boolean _bBackupEnabled;
+    
+    /**
+     *  Access to responses management on FO by role
+     **/
+    private boolean _bAccessToResponsesByRole;
+
 
     /**
      * Returns the Id
@@ -687,7 +693,23 @@ public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Fo
     {
         return FormCategoryHome.findByPrimaryKey( _nIdCategory );
     }
-
+    /**
+     * Returns true if the access to responses management on FO is based on the roles, false otherwise
+     * @return true if the access to responses management on FO is based on the roles, false otherwise
+     */ 
+     public boolean isAccessToResponsesByRole()
+     {
+         return _bAccessToResponsesByRole;
+     }
+ 
+    /**
+     * Sets the AccessToResponsesByRole
+     * @param bAccessToResponsesByRole The AccessToResponsesByRole
+     */ 
+     public void setAccessToResponsesByRole( boolean bAccessToResponsesByRole )
+     {
+         _bAccessToResponsesByRole = bAccessToResponsesByRole;
+     }
     /**
      * Custom comparator for Availability Period sorting
      */
