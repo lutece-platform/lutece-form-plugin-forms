@@ -49,15 +49,16 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class ControlDAO implements IControlDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT fc.id_control, fc.value, fc.error_message, fc.validator_name, fc.control_type, fc.id_control_target FROM forms_control fc ";
-    private static final String SQL_QUERY_CONTROLQUESTIONS_SELECTALL = "SELECT fc.id_control, fc.value, fc.error_message, fc.validator_name, fc.control_type, fc.id_control_target FROM forms_control fc join forms_control_question fcq on(fcq.id_control = fc.id_control) ";
+    private static final String SQL_QUERY_SELECTALL = "SELECT fc.id_control, fc.value, fc.error_message, fc.validator_name, fc.control_type, fc.id_control_target, fc.id_control_group FROM forms_control fc ";
+    private static final String SQL_QUERY_CONTROLQUESTIONS_SELECTALL = "SELECT fc.id_control, fc.value, fc.error_message, fc.validator_name, fc.control_type, fc.id_control_target, fc.id_control_group FROM forms_control fc join forms_control_question fcq on(fcq.id_control = fc.id_control) ";
 
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE fc.id_control = ?";
     private static final String SQL_QUERY_SELECT_BY_QUESTION = SQL_QUERY_CONTROLQUESTIONS_SELECTALL + "WHERE fcq.id_question = ?";
     private static final String SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE = SQL_QUERY_CONTROLQUESTIONS_SELECTALL
             + " WHERE fcq.id_question = ? AND fc.control_type = ?";
     private static final String SQL_QUERY_SELECT_BY_CONTROL_TARGET = SQL_QUERY_SELECTALL + " WHERE fc.id_control_target = ? AND fc.control_type = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, validator_name, control_type, id_control_target ) VALUES ( ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_SELECT_BY_CONTROL_GROUP = SQL_QUERY_SELECTALL + " WHERE fc.id_control_group = ?";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, validator_name, control_type, id_control_target, id_control_group ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_INSERT_CONTROL_QUESTION = "INSERT INTO forms_control_question ( id_control, id_question ) VALUES ( ?, ? ) ";
     private static final String SQL_QUERY_INSERT_CONTROL_QUESTION_VALUE = "INSERT INTO forms_control_question_mapping ( id_control, id_question, value ) VALUES ( ?, ?, ? ) ";
 
@@ -66,7 +67,7 @@ public final class ControlDAO implements IControlDAO
     private static final String SQL_QUERY_DELETE_CONTROL_QUESTION_VALUE = "DELETE FROM forms_control_question_mapping WHERE id_control = ? ";
 
     private static final String SQL_QUERY_DELETE_BY_CONTROL_TARGET = "DELETE FROM forms_control WHERE id_control_target = ? AND control_type = ?";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?,  validator_name = ?, control_type = ?, id_control_target = ? WHERE id_control = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_control SET id_control = ?, value = ?, error_message = ?,  validator_name = ?, control_type = ?, id_control_target = ?, id_control_group = ? WHERE id_control = ?";
 
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_control FROM forms_control";
 
@@ -91,6 +92,7 @@ public final class ControlDAO implements IControlDAO
             daoUtil.setString( nIndex++, control.getValidatorName( ) );
             daoUtil.setString( nIndex++, control.getControlType( ) );
             daoUtil.setInt( nIndex++, control.getIdControlTarget( ) );
+            daoUtil.setInt( nIndex++, control.getIdControlGroup( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -244,6 +246,7 @@ public final class ControlDAO implements IControlDAO
             daoUtil.setString( nIndex++, control.getValidatorName( ) );
             daoUtil.setString( nIndex++, control.getControlType( ) );
             daoUtil.setInt( nIndex++, control.getIdControlTarget( ) );
+            daoUtil.setInt( nIndex++, control.getIdControlGroup() );
 
             daoUtil.setInt( nIndex, control.getId( ) );
 
@@ -361,6 +364,7 @@ public final class ControlDAO implements IControlDAO
         control.setValidatorName( daoUtil.getString( "validator_name" ) );
         control.setControlType( daoUtil.getString( "control_type" ) );
         control.setIdControlTarget( daoUtil.getInt( "id_control_target" ) );
+        control.setIdControlGroup(daoUtil.getInt("id_control_group") ); 
 
         return control;
     }
