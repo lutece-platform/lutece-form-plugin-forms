@@ -92,6 +92,8 @@ public final class FormsConstants
     public static final String MARK_TIMESTAMP = "timestamp";
     public static final String MARK_INACTIVEBYPASSTOKENS = "inactiveBypassTokens";
     public static final String MARK_FORM_RESPONSE = "formResponse";
+    public static final String STEP_HTML_MARKER = "stepContent";
+
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -132,6 +134,7 @@ public final class FormsConstants
     public static final String PARAMETER_REF_LIST_FIELD = "refListField";
     public static final String PARAMETER_REF_LIST_MAPPING = "refListMapping";
     public static final String PARAMETER_ACTION_SUCCESS = "action_success";
+    public static final String PARAMETER_ILLUSTRATION_IMAGE = "illustration_image";
 
 
     public static final String PARAMETER_ACTION_GO_TO_STEP = "action_doGoToStep";
@@ -163,6 +166,16 @@ public final class FormsConstants
     public static final String PARAMETER_USED_CORRECT_RESPONSE = "used_in_correct_form_response";
     public static final String PARAMETER_USED_COMPLETE_RESPONSE = "used_in_complete_form_response";
 
+    // Messages
+    public static final String MESSAGE_STEP_TITLE = "forms.step.title";
+    public static final String MESSAGE_ERROR_STEP_NOT_FINAL = "forms.error.step.isnot.final";
+    public static final String MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM = "forms.error.form.MaxResponse";
+    public static final String MESSAGE_ERROR_INACTIVE_FORM = "forms.error.form.inactive";
+    public static final String MESSAGE_LOAD_BACKUP = "forms.message.view.loadBackUp";
+    public static final String MESSAGE_SUMMARY_TITLE = "forms.summary.title";
+    public static final String MESSAGE_ERROR_NO_STEP = "forms.error.form.noStep";
+
+    
     // Jsp
     public static final String JSP_MANAGE_STEPS = "jsp/admin/plugins/forms/ManageSteps.jsp";
     public static final String JSP_MANAGE_FORMS = "jsp/admin/plugins/forms/ManageForms.jsp";
@@ -209,6 +222,7 @@ public final class FormsConstants
     public static final String VALIDATE_VALIDATOR = "validateValidator";
 
     // Other
+    public static final int INCORRECT_ID = -1;
     public static final String FORM_DEFAULT_END_MESSAGE = "forms.message.form.submitted";
     public static final String SEPARATOR_UNDERSCORE = "_";
     public static final String SEPARATOR_SEMICOLON = ";";

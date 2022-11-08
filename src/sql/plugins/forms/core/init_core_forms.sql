@@ -13,6 +13,7 @@ INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is
 ('FORMS_CATEGORIES','forms.adminFeature.categoriesForms.name',1,'jsp/admin/plugins/forms/ManageFormsCategories.jsp','forms.adminFeature.categoriesForms.description',0,'forms',NULL,NULL,NULL,6);
 
 
+
 --
 -- Data for table core_user_right
 --

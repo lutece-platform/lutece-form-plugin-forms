@@ -43,7 +43,6 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.web.FormResponseData;
-import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -88,7 +87,7 @@ public class FormResponseService
     }
     
     /**
-     * Saves the form response
+     * Update the form response
      * 
      * @param formResponse
      *            the form response to save
@@ -96,6 +95,7 @@ public class FormResponseService
     public void saveFormResponse( FormResponse formResponse )
     {
         FormResponseHome.update( formResponse );
+        _formService.fireFormResponseEventUpdate( formResponse );
     }
 
     public void deleteFormResponse( FormResponse formResponse )
@@ -127,5 +127,4 @@ public class FormResponseService
 
         _formService.fireFormResponseEventDelete( formResponse );
     }
-
 }

@@ -1,0 +1,56 @@
+<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
+<@addRequiredJsFiles />
+<script type="text/javascript" src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
+<script>
+function getInputElement(displayControl){
+var types = ['input','select','textarea'];
+var elm = null;
+for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++){
+	elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
+}
+
+if(elm.is('input')){
+	elm = $('input[name="' + elm.attr('name') + '"]');
+}
+return elm;
+}
+
+function getFieldValue(elm){
+if(elm.is(':radio'))
+{
+	var input = $('input[name="' + elm.attr('name') + '"]:checked');
+	return input.val();
+} else if (elm.is(':checkbox')){
+	var resultChecked = [];
+	for(var i=0;i< elm.length;i++){
+		if (elm [i].checked){
+			resultChecked.push(elm[i].value);
+		}
+	}
+	return resultChecked;
+} else if (elm.is('select')) {
+	return elm[0].options[elm[0].selectedIndex].value;
+}
+//add other specific implementations here
+else {
+	return elm.val();
+}
+}
+</script>
+
+<h3>${formTitle!}</h3>
+<form class="form-horizontal" id="form-validate" action="jsp/admin/plugins/forms/ManageFormResponse.jsp" method="post" enctype="multipart/form-data">
+	<#if form.logo??>
+		<img id="form_logo" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt=""/>
+	</#if>
+	<@messages warnings=warnings />
+	<#if messageInfo?? >
+	<div class="alert alert-info" role="alert">
+		${messageInfo}
+	</div>
+	</#if>
+	${formTopBreadcrumb!}
+	<#if form.countResponses>#i18n{forms.createEntry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
+	${stepContent!}
+	${formBottomBreadcrumb!}
+</form>

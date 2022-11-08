@@ -1,5 +1,16 @@
 <#if !entry.onlyDisplayInBack>
 	<div class="form-group">
+	    <#if getFieldByCode( entry, "illustration_image")??>
+		    <#assign illustration_image_entry=getFieldByCode( entry, "illustration_image")>
+		    <#assign image_id = illustration_image_entry.value>
+		    <#list fields_list_by_id_entries as key, value>
+			    <#if key = illustration_image_entry.idField>
+			        <img src="${value!''}" alt="${illustration_image_entry.title!''}" style="max-width:100%;">
+			    </#if>
+		    </#list>
+	    </#if>
+   	</div>
+	<div class="form-group">
 	    <label class="col-xs-12 col-sm-3 control-label">
 	        ${entry.title!''}
 	    </label>

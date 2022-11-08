@@ -22,7 +22,11 @@
 				<#if field.code == 'answer_choice'>
 					<#assign idName = buildEntryName( entry, entry_iteration_number )>
 					<#if entry.fieldInLine != true><div class="radio"></#if>
-						<label <#if entry.fieldInLine>class="radio-inline"</#if> for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> > 
+						<label <#if entry.fieldInLine>class="radio-inline"</#if> for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> >
+							<#if field.fileImage.url??>
+								<@img url=field.fileImage.url title=field.title alt=field.title params='width="100" height="100"' />
+								<div class="radiobutton-above">
+							</#if> 
 							<input type="radio" id="${idName}_${field.idField}" name="${idName}" value="${field.idField}"
 							<#if list_responses?? && list_responses?has_content>
 								<#list list_responses as response>
@@ -43,6 +47,9 @@
 					 <#if !field.noDisplayTitle>
 					 	${field.title}
 					 </#if>
+					 <#if field.fileImage.url??>
+						</div>
+					</#if>
 						</label>
 						<#if entry.fieldInLine != true></div></#if>
 						
