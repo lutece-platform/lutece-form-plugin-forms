@@ -98,6 +98,8 @@ public final class FormsConstants
     public static final String MARK_FORM_RESPONSE = "formResponse";
     public static final String STEP_HTML_MARKER = "stepContent";
     public static final String MARK_LIST_CONTROL = "list_control";
+    public static final String MARK_ID_CONTROL_GROUP = "id_control_group";
+    public static final String MARK_LOGICAL_OPERATOR_LABEL = "logical_operator_label";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -141,8 +143,10 @@ public final class FormsConstants
     public static final String PARAMETER_REF_LIST_MAPPING = "refListMapping";
     public static final String PARAMETER_ACTION_SUCCESS = "action_success";
     public static final String PARAMETER_ILLUSTRATION_IMAGE = "illustration_image";
-
-
+    public static final String PARAMETER_ID_CONTROL_GROUP = "id_control_group";
+    public static final String PARAMETER_LOGICAL_OPERATOR = "logical_operator";
+    public static final String PARAMETER_VIEW_MODIFY_LOGICAL_OPERATOR = "view_modifyLogicalOperator";
+    public static final String PARAMETER_VALIDATE_LOGICAL_OPERATOR = "validateLogicalOperator";
     public static final String PARAMETER_ACTION_GO_TO_STEP = "action_doGoToStep";
     public static final String PARAMETER_INFO_KEY = "info_key";
     public static final String PARAMETER_BACK_URL = "back_url";
