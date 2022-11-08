@@ -200,6 +200,14 @@ public final class ControlGroupDAO implements IControlGroupDAO
     	}
     }
     
+    @Override
+    public ReferenceList selectLogicalOperatorsReferenceList() {
+    	ReferenceList logicalOperatorsList = new ReferenceList();
+    	logicalOperatorsList.addItem(LogicalOperator.AND.getLabel(), "et logique");
+    	logicalOperatorsList.addItem(LogicalOperator.OR.getLabel(), "ou logique");
+    	return logicalOperatorsList;
+    }
+    
     /**
      * {@inheritDoc }
      */

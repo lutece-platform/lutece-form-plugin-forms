@@ -20,6 +20,7 @@
     <bean id="forms.formResponseDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseDAO" />
     <bean id="forms.formResponseStepDAO" class="fr.paris.lutece.plugins.forms.business.FormResponseStepDAO" />
     <bean id="forms.controlDAO" class="fr.paris.lutece.plugins.forms.business.ControlDAO" />
+    <bean id="forms.controlGroupDAO" class="fr.paris.lutece.plugins.forms.business.ControlGroupDAO" />
     <bean id="forms.formMessageDAO" class="fr.paris.lutece.plugins.forms.business.FormMessageDAO" />
     <bean id="forms.indexerActionDAO" class="fr.paris.lutece.plugins.forms.business.form.search.IndexerActionDAO" />
     <bean id="forms.formExportConfigDao" class="fr.paris.lutece.plugins.forms.business.export.FormExportConfigDao" />

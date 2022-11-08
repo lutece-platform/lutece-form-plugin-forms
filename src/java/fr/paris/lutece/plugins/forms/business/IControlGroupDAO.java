@@ -104,4 +104,10 @@ public interface IControlGroupDAO
      * @return The list which contains the data of all the avant objects
      */
 	List<ControlGroup> selectControlGroupsListByIds( Plugin _plugin, List<Integer> listIds );
+
+	/**
+	 * Load all logical operators from enum
+	 * @return The referenceList which contains the logical operators
+	 */
+	ReferenceList selectLogicalOperatorsReferenceList();
 }
