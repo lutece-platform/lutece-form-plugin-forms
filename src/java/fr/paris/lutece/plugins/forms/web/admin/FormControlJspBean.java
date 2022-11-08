@@ -634,6 +634,10 @@ public class FormControlJspBean extends AbstractJspBean
         if ( _control != null )
         {
             ControlHome.remove( _control.getId( ) );
+            if (ControlType.CONDITIONAL.getLabel().equals(_control.getControlType())
+            		&& ControlHome.getControlCountByControlTargetAndType(_control.getIdControlTarget(), ControlType.CONDITIONAL) == 0) {
+            	ControlGroupHome.remove(_control.getIdControlGroup());
+            }
             ControlListenerManager.notifyListenersControlRemoval( _control, request );
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_REMOVED );
         }
