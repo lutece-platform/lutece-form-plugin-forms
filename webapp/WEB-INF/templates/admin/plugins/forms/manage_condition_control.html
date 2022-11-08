@@ -30,6 +30,14 @@
 				</#list>
 			</tbody>
 		</@table>
+		<@tform method='post' id='modifyLogicalOperator' action='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl'>
+			<@inputGroup>
+				<@select name='logical_operator' items=logicalOperators default_value='${logical_operator_label!}' />
+				<@inputGroupItem>
+					<@button type='submit' name='view_modifyLogicalOperator' value='validateLogicalOperator' hideTitle=['all'] buttonIcon='check'/>
+				</@inputGroupItem>
+			</@inputGroup>
+		</@tform>
 	<#else>    
 		<@alert color='warning'>
 			<@icon style='exclamation-triangle' /> #i18n{forms.manage_condition_control.labelNoConditionControl}
@@ -39,7 +47,7 @@
 	<@messages infos=infos />
 </@modalBody>
 <@modalFooter>
-	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_step=${step.id}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
+	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_step=${step.id}&id_control_group=${id_control_group!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
 </@modalFooter>
 
 <script>

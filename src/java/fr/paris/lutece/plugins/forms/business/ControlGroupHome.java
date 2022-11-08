@@ -31,9 +31,7 @@
  *
  * License 1.0
  */
-
-
- package fr.paris.lutece.plugins.forms.business;
+package fr.paris.lutece.plugins.forms.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
@@ -128,6 +126,15 @@ public final class ControlGroupHome
     public static ReferenceList getControlGroupsReferenceList( )
     {
         return _dao.selectControlGroupsReferenceList( _plugin );
+    }
+    
+    /**
+     * Load the data of all the logical operators from enum and returns them as a referenceList
+     * @return the referenceList which contains the data of all the logical operators objects
+     */
+    public static ReferenceList getLogicalOperatorsReferenceList( )
+    {
+    	return _dao.selectLogicalOperatorsReferenceList();
     }
     
 	

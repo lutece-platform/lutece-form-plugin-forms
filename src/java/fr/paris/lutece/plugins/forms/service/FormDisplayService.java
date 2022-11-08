@@ -37,6 +37,7 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
@@ -84,12 +85,18 @@ public class FormDisplayService extends AbstractFormDisplayService
                     ControlHome.remove( control.getId( ) );
                 }
 
-                listControl = ControlHome.getControlByQuestionAndType( formDisplayCompositeId, ControlType.CONDITIONAL.getLabel( ) );
-
+                listControl = ControlHome.getControlByControlTargetAndType( formDisplayCompositeId, ControlType.CONDITIONAL );
+                int nIdControlGroup = 0;
                 for ( Control control : listControl )
                 {
+                	if (nIdControlGroup == 0) {
+            			nIdControlGroup = control.getIdControlGroup();
+            		}
                     ControlHome.remove( control.getId( ) );
                 }
+                // Delete control group
+                ControlGroupHome.remove(nIdControlGroup);
+                
                 ControlHome.removeByControlTarget( formDisplayToDelete.getId( ), ControlType.CONDITIONAL );
 
                 // Delete the Question and its Entry
