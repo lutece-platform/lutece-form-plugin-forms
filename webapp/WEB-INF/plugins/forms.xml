@@ -42,6 +42,14 @@
             <feature-icon-url/>
         </admin-feature>
         <admin-feature>
+            <feature-id>FORM_RESPONSE_MANAGEMENT</feature-id>
+            <feature-title>forms.adminFeature.manageFormResponse.name</feature-title>
+            <feature-description>forms.adminFeature.manageFormResponse.description</feature-description>
+            <feature-level>1</feature-level>
+            <feature-url>jsp/admin/plugins/forms/ManageFormResponse.jsp</feature-url>
+            <feature-icon-url/>
+        </admin-feature>
+        <admin-feature>
             <feature-id>FORMS_MULTIVIEW</feature-id>
             <feature-title>forms.adminFeature.multiviewForms.name</feature-title>
             <feature-description>forms.adminFeature.multiviewForms.description</feature-description>

@@ -1,10 +1,47 @@
-<@box color='primary' id='step-${step.id}' class='step-group' params=' tabindex=0 data-title="${step.title}"'>
-<@boxHeader title='${step.title} - ${form.title}' boxTools=true>
-    <@button type='button' color='link' params=' data-toggle="collapse" data-target="#box-step-content-${step.id}" aria-expanded="false" aria-controls="box-step-content-${step.id}"'>
-        <@icon style='minus-square' />
-    </@button>
-</@boxHeader>
-<@boxBody id='box-step-content-${step.id}' class='collapse show'>
-${stepContent}
-</@boxBody>
-</@box>
+<div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 class="panel-title">${step.title}</h3>
+    </div>
+    <div id="step-content" class="panel-body">
+    ${stepContent}
+    </div>
+  <div class="panel-footer">
+  	<input type="hidden" name="token" value = "${token}">
+	<input name="page" value="forms" type="hidden">
+	<input name="id_form" value="${step.idForm}" type="hidden">
+	<#if !step.initial><button class="btn btn-primary btn-sm" name="action_doReturnStep"  type="submit" >#i18n{forms.step.previous}</button></#if>
+	<#if step.final>
+      <#if form.displaySummary >
+        <button class="btn btn-primary btn-sm" name="action_formResponseSummary"  type="submit">#i18n{forms.step.see.summary}</button>
+      <#else>
+      	<#assign label_button="#i18n{forms.step.save}" />
+      	<#if form.labelFinalButton?has_content>
+      		<#assign label_button=form.labelFinalButton />
+      	</#if>
+        <button class="btn btn-primary btn-sm" name="action_doSaveResponse"  type="submit">${label_button}</button>
+      </#if>
+	<#else>
+	  <button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit">#i18n{forms.step.next}</button>
+	</#if>
+	<#if user?? && form.backupEnabled>
+		<button class="btn btn-info btn-sm pull-right" name="action_doResetBackup"  type="submit" >#i18n{forms.step.resetResponse}</button>
+		<button class="btn btn-info btn-sm pull-right" name="action_doSaveForBackup"  type="submit" >#i18n{forms.step.saveResponse}</button>
+    </#if>
+  </div>
+</div>
+<script>
+  $( function() {
+     /* Check if step-group has all field hidden due to conditionnal behavior */
+    $(".step-group").each( function(){
+      var count_field = $(this).find( '.form-group').length,
+        count_cond =  $(this).find( 'div[class*="display_field_"]' ).length,
+        count_cond_visible = $(this).find( 'div[class*="display_field_"]:visible' ).length;
+       
+      if( count_field == count_cond &&  count_cond > 0 &&  count_cond_visible==0 ){
+        $(this).toggle();
+        $(this).addClass('step-group-collapsible');
+      }
+    });
+  });
+  </script>
+  
