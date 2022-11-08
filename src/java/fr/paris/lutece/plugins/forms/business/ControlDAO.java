@@ -57,7 +57,6 @@ public final class ControlDAO implements IControlDAO
     private static final String SQL_QUERY_SELECT_BY_QUESTION_AND_TYPE = SQL_QUERY_CONTROLQUESTIONS_SELECTALL
             + " WHERE fcq.id_question = ? AND fc.control_type = ?";
     private static final String SQL_QUERY_SELECT_BY_CONTROL_TARGET = SQL_QUERY_SELECTALL + " WHERE fc.id_control_target = ? AND fc.control_type = ?";
-    private static final String SQL_QUERY_SELECT_BY_CONTROL_GROUP = SQL_QUERY_SELECTALL + " WHERE fc.id_control_group = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_control ( value, error_message, validator_name, control_type, id_control_target, id_control_group ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_INSERT_CONTROL_QUESTION = "INSERT INTO forms_control_question ( id_control, id_question ) VALUES ( ?, ? ) ";
     private static final String SQL_QUERY_INSERT_CONTROL_QUESTION_VALUE = "INSERT INTO forms_control_question_mapping ( id_control, id_question, value ) VALUES ( ?, ?, ? ) ";
