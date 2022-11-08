@@ -209,6 +209,22 @@ public final class ControlHome
         }
         return listControl;
     }
+    
+    /**
+     * Return the number of controls linked to the display
+     * 
+     * @param nIdControlTarget
+     * @param controlType
+     * @return
+     */
+    public static int getControlCountByControlTargetAndType( int nIdControlTarget, ControlType controlType )
+    {
+    	List<Control> listControl = getControlByControlTargetAndType(nIdControlTarget, controlType);
+    	if (listControl != null) {
+    		return listControl.size();
+    	}
+    	return 0;
+    }
 
     /**
      * Loads control list based on its attached question and control type
