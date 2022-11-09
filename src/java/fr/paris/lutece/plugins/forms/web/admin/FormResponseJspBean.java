@@ -22,7 +22,7 @@ import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.util.FormResponseUtils;
+import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.web.FormResponseManager;
 import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
@@ -69,11 +69,11 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the String
      * 
      */
-    @View( value = FormResponseUtils.VIEW_STEP )
+    @View( value = FormsResponseUtils.VIEW_STEP )
     public String getStepView( HttpServletRequest request )
     {
     	String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
-        if ( FormResponseUtils.PARAMETER_INIT.equals( paramInit ) )
+        if ( FormsResponseUtils.PARAMETER_INIT.equals( paramInit ) )
         {
             init( request );
         }
@@ -89,7 +89,7 @@ public class FormResponseJspBean extends AbstractJspBean
 
         if (  form.getMaxNumberResponse( ) != 0 )
         {
-            Object lock = FormResponseUtils.getLockOnForm( form );
+            Object lock = FormsResponseUtils.getLockOnForm( form );
             synchronized( lock )
             {
             	if ( form.getMaxNumberResponse( ) != 0 )
@@ -98,7 +98,7 @@ public class FormResponseJspBean extends AbstractJspBean
                     int nNumberReponseForm = responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms );
                     if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
                     {
-                    	return I18nService.getLocalizedString( FormResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, getLocale( ) );
+                    	return I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, getLocale( ) );
                     }
                 }
             }
@@ -113,7 +113,7 @@ public class FormResponseJspBean extends AbstractJspBean
                 _breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
             }
 
-            _formResponseManager = FormResponseUtils.initFormResponseManager( request, form, _formResponseManager, _frontOffice );
+            _formResponseManager = FormsResponseUtils.initFormResponseManager( request, form, _formResponseManager, _frontOffice );
             if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
             {
                 _currentStep = _formResponseManager.getCurrentStep( );
@@ -123,7 +123,7 @@ public class FormResponseJspBean extends AbstractJspBean
                         _formResponseManager.getFormResponse( ).getUpdate( ),
                 };
 
-                model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( FormResponseUtils.MESSAGE_LOAD_BACKUP, args, FormResponseUtils.getLocale( request ) ) );
+                model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_LOAD_BACKUP, args, FormsResponseUtils.getLocale( request ) ) );
             }
 
             if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
@@ -133,13 +133,13 @@ public class FormResponseJspBean extends AbstractJspBean
             }
             
             Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
-            modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
+            modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
             _stepDisplayTree.addModel( modelForStep );
 
-            model = FormResponseUtils.getFormStepModel( form, request, model, _breadcrumb, _formResponseManager, _stepDisplayTree, _frontOffice );
+            model = FormsResponseUtils.getFormStepModel( form, request, model, _breadcrumb, _formResponseManager, _stepDisplayTree, _frontOffice );
             fillCommons( model );
             
-            String strTitleForm = I18nService.getLocalizedString( FormResponseUtils.MESSAGE_STEP_TITLE, new String [ ] {
+            String strTitleForm = I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_STEP_TITLE, new String [ ] {
                     form.getTitle( ), _currentStep.getTitle( )
             }, getLocale( ) );
             
@@ -147,7 +147,7 @@ public class FormResponseJspBean extends AbstractJspBean
         }
         else
         {
-        	return I18nService.getLocalizedString( FormResponseUtils.MESSAGE_ERROR_INACTIVE_FORM, getLocale( ) );
+        	return I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_ERROR_INACTIVE_FORM, getLocale( ) );
         }
         
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM_RESPONSE, TEMPLATE_VIEW_STEP, model );
@@ -159,13 +159,13 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = FormResponseUtils.ACTION_SAVE_STEP )
+    @Action( value = FormsResponseUtils.ACTION_SAVE_STEP )
     public String doSaveStep( HttpServletRequest request )
     {
     	try
         {	
     		findFormFrom( request );
-            _formResponseManager = FormResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+            _formResponseManager = FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
         }
         catch( FormNotFoundException | QuestionValidationException e )
         {
@@ -175,7 +175,7 @@ public class FormResponseJspBean extends AbstractJspBean
 
         List<String> errorList = new ArrayList<>( );
 
-        Step currentStep = FormResponseUtils.getNextStep( _currentStep, errorList, _formResponseManager );
+        Step currentStep = FormsResponseUtils.getNextStep( _currentStep, errorList, _formResponseManager );
         _currentStep = currentStep != null ? currentStep : _currentStep;
 
         return getStepView( request );
@@ -187,14 +187,14 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = FormResponseUtils.ACTION_SAVE_FORM_RESPONSE )
+    @Action( value = FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE )
     public String doSaveFormResponse( HttpServletRequest request )
     {
         Form form = null;
         try
         {
         	form = findFormFrom( request );
-            _formResponseManager = FormResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+            _formResponseManager = FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -210,13 +210,13 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = FormResponseUtils.ACTION_PREVIOUS_STEP )
+    @Action( value = FormsResponseUtils.ACTION_PREVIOUS_STEP )
     public String doReturnStep( HttpServletRequest request )
     {
         try
         {
         	findFormFrom( request );
-            FormResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+            FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -237,20 +237,20 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = FormResponseUtils.ACTION_GO_TO_STEP )
+    @Action( value = FormsResponseUtils.ACTION_GO_TO_STEP )
     public String doGoToStep( HttpServletRequest request )
     {
         try
         {
         	findFormFrom( request );
-        	FormResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+        	FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
         }
         catch( FormNotFoundException | QuestionValidationException e )
         {
             return getStepView( request );
         }
 
-        int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ACTION_GO_TO_STEP ), FormResponseUtils.INCORRECT_ID );
+        int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ACTION_GO_TO_STEP ), FormsResponseUtils.INCORRECT_ID );
 
         _currentStep = _formResponseManager.goTo( nIndexStep );
 
@@ -265,13 +265,13 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = FormResponseUtils.ACTION_SAVE_FOR_BACKUP )
+    @Action( value = FormsResponseUtils.ACTION_SAVE_FOR_BACKUP )
     public String doSaveForBackup( HttpServletRequest request )
     {
         try
         {
         	findFormFrom( request );
-            _formResponseManager = FormResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+            _formResponseManager = FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -281,7 +281,7 @@ public class FormResponseJspBean extends AbstractJspBean
         User admin = AdminUserService.getAdminUser( request );
 
         FormResponse formResponse = _formResponseManager.getFormResponse( );
-        formResponse.setGuid( admin.getEmail( ) );
+        formResponse.setAdmin( admin.getAccessCode( ) );
 
         _formService.saveFormForBackup( formResponse );
 
@@ -295,7 +295,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = FormResponseUtils.ACTION_RESET_BACKUP )
+    @Action( value = FormsResponseUtils.ACTION_RESET_BACKUP )
     public String doResetBackup( HttpServletRequest request )
     {
         Form form = null;
@@ -328,7 +328,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The request
      * @return the summary page
      */
-    @Action( value = FormResponseUtils.ACTION_FORM_RESPONSE_SUMMARY )
+    @Action( value = FormsResponseUtils.ACTION_FORM_RESPONSE_SUMMARY )
     public String doFormResponseSummary( HttpServletRequest request )
     {
         Form form = null;
@@ -336,7 +336,7 @@ public class FormResponseJspBean extends AbstractJspBean
         try 
         {
 			form = findFormFrom( request );
-			FormResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+			FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
 		} 
         catch ( FormNotFoundException | QuestionValidationException e ) 
         {
@@ -352,7 +352,7 @@ public class FormResponseJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_ID_FORM, form.getId( ) );
         model.put( FormsConstants.MARK_FORM, form );
 
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
         
         return getPage( form.getTitle( ), TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, model );
     }
@@ -363,7 +363,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = FormResponseUtils.ACTION_SAVE_FORM_RESPONSE_SUMMARY )
+    @Action( value = FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE_SUMMARY )
     public synchronized String doSaveFormResponseSummary( HttpServletRequest request )
     {
         Form form = null;
@@ -387,11 +387,11 @@ public class FormResponseJspBean extends AbstractJspBean
         if ( !_currentStep.isFinal( ) )
         {
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-            addError( FormResponseUtils.MESSAGE_ERROR_STEP_NOT_FINAL, FormResponseUtils.getLocale( request ) );
+            addError( FormsResponseUtils.MESSAGE_ERROR_STEP_NOT_FINAL, FormsResponseUtils.getLocale( request ) );
             return getStepView(  request );
         }
         
-        FormResponseUtils.saveFormResponseBO( form, request, _formResponseManager.getFormResponse( ) );
+        FormsResponseUtils.saveFormResponseBO( form, request, _formResponseManager.getFormResponse( ) );
 
         Map<String, Object> model = getModel( );
 
@@ -454,11 +454,11 @@ public class FormResponseJspBean extends AbstractJspBean
         if ( !_currentStep.isFinal( ) )
         {
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-            addError( FormResponseUtils.MESSAGE_ERROR_STEP_NOT_FINAL, getLocale( ) );
+            addError( FormsResponseUtils.MESSAGE_ERROR_STEP_NOT_FINAL, getLocale( ) );
             return getStepView(  request );
         }
         
-        FormResponseUtils.saveFormResponseBO( form, request, _formResponseManager.getFormResponse( ) );
+        FormsResponseUtils.saveFormResponseBO( form, request, _formResponseManager.getFormResponse( ) );
         
         Map<String, Object> model = getModel( );
 
@@ -497,7 +497,7 @@ public class FormResponseJspBean extends AbstractJspBean
 
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
-        List<String> listStepHtml = FormResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager );
+        List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager );
         mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, listStepHtml );
         fillCommons( mapFormResponseSummaryModel );
         return mapFormResponseSummaryModel;
@@ -518,9 +518,9 @@ public class FormResponseJspBean extends AbstractJspBean
 
         if ( _currentStep == null )
         {
-            int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormResponseUtils.INCORRECT_ID );
+            int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsResponseUtils.INCORRECT_ID );
 
-            if ( nIdForm != FormResponseUtils.INCORRECT_ID )
+            if ( nIdForm != FormsResponseUtils.INCORRECT_ID )
             {
                 form = FormHome.findByPrimaryKey( nIdForm );
 
@@ -564,11 +564,11 @@ public class FormResponseJspBean extends AbstractJspBean
             
             if ( bIsEndMessageDisplayed )
             {
-                url = new UrlItem( _controller.controllerPath( ) + getViewUrl( FormResponseUtils.VIEW_STEP ) );
+                url = new UrlItem( _controller.controllerPath( ) + getViewUrl( FormsResponseUtils.VIEW_STEP ) );
             }
             else
             {
-                url = new UrlItem( getViewUrl( FormResponseUtils.VIEW_STEP ) );
+                url = new UrlItem( getViewUrl( FormsResponseUtils.VIEW_STEP ) );
             }
             
             url.addParameter( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );

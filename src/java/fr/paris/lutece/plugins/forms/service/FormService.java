@@ -437,6 +437,33 @@ public class FormService
 
         return formResponseManager;
     }
+    
+    /**
+     * Creates a {@code FormResponseManager} object from a back up
+     * 
+     * @param form
+     *            The form
+     * @param strUserGuid
+     *            The admin id
+     * @return the created {@code FormResponseManager} object
+     */
+    public FormResponseManager createFormResponseBOManagerFromBackUp( Form form, String strAdminId )
+    {
+        FormResponseManager formResponseManager = null;
+
+        List<FormResponse> listFormResponse = FormResponseHome.getFormResponseByAdminAndForm( strAdminId, form.getId( ), true );
+
+        if ( CollectionUtils.isNotEmpty( listFormResponse ) )
+        {
+            formResponseManager = new FormResponseManager( listFormResponse.get( 0 ) );
+        }
+        else
+        {
+            formResponseManager = new FormResponseManager( form );
+        }
+
+        return formResponseManager;
+    }
 
     // FORM RESPONSE CREATION
     /**

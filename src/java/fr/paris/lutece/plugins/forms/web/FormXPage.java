@@ -61,7 +61,7 @@ import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
-import fr.paris.lutece.plugins.forms.util.FormResponseUtils;
+import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
@@ -257,11 +257,11 @@ public class FormXPage extends MVCApplication
      * @throws UserNotSignedException
      *             Exception
      */
-    @View( value = FormResponseUtils.VIEW_STEP )
+    @View( value = FormsResponseUtils.VIEW_STEP )
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
-        if ( FormResponseUtils.PARAMETER_INIT.equals( paramInit ) )
+        if ( FormsResponseUtils.PARAMETER_INIT.equals( paramInit ) )
         {
             init( request );
         }
@@ -285,15 +285,15 @@ public class FormXPage extends MVCApplication
 
         if ( form.isOneResponseByUser( ) || form.getMaxNumberResponse( ) != 0 )
         {
-            Object lock = FormResponseUtils.getLockOnForm( form );
+            Object lock = FormsResponseUtils.getLockOnForm( form );
             synchronized( lock )
             {
-                FormResponseUtils.checkIfUserResponseForm( form, request );
-                FormResponseUtils.checkNumberMaxResponseForm( form, request );
+                FormsResponseUtils.checkIfUserResponseForm( form, request );
+                FormsResponseUtils.checkNumberMaxResponseForm( form, request );
             }
         }
 
-        String strTitleForm = I18nService.getLocalizedString( FormResponseUtils.MESSAGE_STEP_TITLE, new String [ ] {
+        String strTitleForm = I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_STEP_TITLE, new String [ ] {
                 form.getTitle( ), _currentStep.getTitle( )
         }, getLocale( request ) );
         String strPathForm = form.getTitle( );
@@ -306,7 +306,7 @@ public class FormXPage extends MVCApplication
                 _breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
             }
 
-            _formResponseManager = FormResponseUtils.initFormResponseManager( request, form, _formResponseManager, _frontOffice );
+            _formResponseManager = FormsResponseUtils.initFormResponseManager( request, form, _formResponseManager, _frontOffice );
             if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
             {
                 _currentStep = _formResponseManager.getCurrentStep( );
@@ -316,7 +316,7 @@ public class FormXPage extends MVCApplication
                         _formResponseManager.getFormResponse( ).getUpdate( ),
                 };
 
-                model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( FormResponseUtils.MESSAGE_LOAD_BACKUP, args, getLocale( request ) ) );
+                model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_LOAD_BACKUP, args, getLocale( request ) ) );
             }
 
             if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
@@ -336,10 +336,10 @@ public class FormXPage extends MVCApplication
             }
             
             Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
-            modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
+            modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
             _stepDisplayTree.addModel( modelForStep );
 
-            model = FormResponseUtils.getFormStepModel( form, request, model, _breadcrumb, _formResponseManager, _stepDisplayTree, _frontOffice );
+            model = FormsResponseUtils.getFormStepModel( form, request, model, _breadcrumb, _formResponseManager, _stepDisplayTree, _frontOffice );
         }
         else
         {
@@ -349,7 +349,7 @@ public class FormXPage extends MVCApplication
             }
             else
             {
-                SiteMessageService.setMessage( request, FormResponseUtils.MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+                SiteMessageService.setMessage( request, FormsResponseUtils.MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
             }
         }
 
@@ -414,7 +414,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException 
      */
-    @Action( value = FormResponseUtils.ACTION_PREVIOUS_STEP )
+    @Action( value = FormsResponseUtils.ACTION_PREVIOUS_STEP )
     public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         boolean bSessionLost = isSessionLost( );
@@ -433,7 +433,7 @@ public class FormXPage extends MVCApplication
         }
         try
         {
-            FormResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+            FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
         }
         catch( QuestionValidationException exception )
         {
@@ -458,7 +458,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException 
      */
-    @Action( value = FormResponseUtils.ACTION_GO_TO_STEP )
+    @Action( value = FormsResponseUtils.ACTION_GO_TO_STEP )
     public XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         boolean bSessionLost = isSessionLost( );
@@ -480,14 +480,14 @@ public class FormXPage extends MVCApplication
 
         try
         {
-        	FormResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+        	FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
         }
         catch( QuestionValidationException e )
         {
             // this cannot happen because the validation is not performed
         }
 
-        int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ACTION_GO_TO_STEP ), FormResponseUtils.INCORRECT_ID );
+        int nIndexStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ACTION_GO_TO_STEP ), FormsResponseUtils.INCORRECT_ID );
 
         _currentStep = _formResponseManager.goTo( nIndexStep );
 
@@ -506,7 +506,7 @@ public class FormXPage extends MVCApplication
      *             if there is an error during the page generation
      * @throws UserNotSignedException 
      */
-    @Action( value = FormResponseUtils.ACTION_FORM_RESPONSE_SUMMARY )
+    @Action( value = FormsResponseUtils.ACTION_FORM_RESPONSE_SUMMARY )
     public XPage doFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         Form form = null;
@@ -519,7 +519,7 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return getStepView(  request );
             }
-            FormResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+            FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
             boolean needValidation = form.isCaptchaStepFinal( );
             if ( isCaptchaKO( request, needValidation ) )
             {
@@ -553,8 +553,8 @@ public class FormXPage extends MVCApplication
         {
             model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
         }
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
-        String strTitleForm = I18nService.getLocalizedString( FormResponseUtils.MESSAGE_SUMMARY_TITLE, new String [ ] {
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
+        String strTitleForm = I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_SUMMARY_TITLE, new String [ ] {
                 form.getTitle( )
         }, getLocale( request ) );
 
@@ -578,7 +578,7 @@ public class FormXPage extends MVCApplication
 
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
-        List<String> listStepHtml = FormResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager );
+        List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager );
         mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, listStepHtml );
         if ( bypassInactiveState( form, request ) )
         {
@@ -600,11 +600,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = FormResponseUtils.ACTION_SAVE_FORM_RESPONSE )
+    @Action( value = FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE )
     public synchronized XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, FormResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -618,7 +618,7 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return getStepView(  request );
             }
-            FormResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+            FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
             boolean needValidation = form.isCaptchaStepFinal( );
             if ( isCaptchaKO( request, needValidation ) )
             {
@@ -646,11 +646,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = FormResponseUtils.ACTION_SAVE_FORM_RESPONSE_SUMMARY )
+    @Action( value = FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE_SUMMARY )
     public synchronized XPage doSaveFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, FormResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -692,7 +692,7 @@ public class FormXPage extends MVCApplication
         {
 
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-            addError( FormResponseUtils.MESSAGE_ERROR_STEP_NOT_FINAL, getLocale( request ) );
+            addError( FormsResponseUtils.MESSAGE_ERROR_STEP_NOT_FINAL, getLocale( request ) );
             return getStepView(  request );
         }
 
@@ -745,9 +745,9 @@ public class FormXPage extends MVCApplication
 
         if ( _currentStep == null )
         {
-            int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormResponseUtils.INCORRECT_ID );
+            int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsResponseUtils.INCORRECT_ID );
 
-            if ( nIdForm != FormResponseUtils.INCORRECT_ID )
+            if ( nIdForm != FormsResponseUtils.INCORRECT_ID )
             {
                 form = FormHome.findByPrimaryKey( nIdForm );
 
@@ -776,7 +776,7 @@ public class FormXPage extends MVCApplication
             }
             else
             {
-                SiteMessageService.setMessage( request, FormResponseUtils.MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+                SiteMessageService.setMessage( request, FormsResponseUtils.MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
             }
         }
         return form;
@@ -812,11 +812,11 @@ public class FormXPage extends MVCApplication
             else
                 if ( bIsEndMessageDisplayed )
                 {
-                    url = new UrlItem( getViewFullUrl( FormResponseUtils.VIEW_STEP ) );
+                    url = new UrlItem( getViewFullUrl( FormsResponseUtils.VIEW_STEP ) );
                 }
                 else
                 {
-                    url = new UrlItem( getViewUrl( FormResponseUtils.VIEW_STEP ) );
+                    url = new UrlItem( getViewUrl( FormsResponseUtils.VIEW_STEP ) );
                 }
 
             url.addParameter( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
@@ -837,11 +837,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = FormResponseUtils.ACTION_SAVE_STEP )
+    @Action( value = FormsResponseUtils.ACTION_SAVE_STEP )
     public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, FormResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -855,7 +855,7 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return getStepView(  request );
             }
-            FormResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+            FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
 
             boolean needValidation = _currentStep.isInitial( ) && form.isCaptchaStepInitial( );
             if ( isCaptchaKO( request, needValidation ) )
@@ -871,14 +871,14 @@ public class FormXPage extends MVCApplication
 
         List<String> errorList = new ArrayList<>( );
 
-        Step currentStep = FormResponseUtils.getNextStep( _currentStep, errorList, _formResponseManager );
+        Step currentStep = FormsResponseUtils.getNextStep( _currentStep, errorList, _formResponseManager );
         _currentStep = currentStep != null ? currentStep : _currentStep;
 
         if ( currentStep == null )
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_CONTROL, new Object [ ] {
                     errorList.stream( ).collect( Collectors.joining( ) )
-            }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( FormResponseUtils.VIEW_STEP ) );
+            }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( FormsResponseUtils.VIEW_STEP ) );
         }
         return getStepView(  request );
     }
@@ -904,11 +904,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = FormResponseUtils.ACTION_SAVE_FOR_BACKUP )
+    @Action( value = FormsResponseUtils.ACTION_SAVE_FOR_BACKUP )
     public XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, FormResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -934,7 +934,7 @@ public class FormXPage extends MVCApplication
 
         try
         {
-        	FormResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+        	FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
         }
         catch( QuestionValidationException e )
         {
@@ -964,11 +964,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = FormResponseUtils.ACTION_RESET_BACKUP )
+    @Action( value = FormsResponseUtils.ACTION_RESET_BACKUP )
     public XPage doResetBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, FormResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -1018,7 +1018,7 @@ public class FormXPage extends MVCApplication
                 return getStepView(  request );
             }
 
-            FormResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+            FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -1059,7 +1059,7 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return getStepView(  request );
             }
-            FormResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+            FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
@@ -1123,7 +1123,7 @@ public class FormXPage extends MVCApplication
         try
         {
 
-        	FormResponseUtils.fillResponseManagerWithResponses( wrappedRequest, false, _formResponseManager, _stepDisplayTree.getQuestions( ) );
+        	FormsResponseUtils.fillResponseManagerWithResponses( wrappedRequest, false, _formResponseManager, _stepDisplayTree.getQuestions( ), _frontOffice );
 
         }
         catch( QuestionValidationException exception )
@@ -1199,13 +1199,13 @@ public class FormXPage extends MVCApplication
 
         if ( form.isOneResponseByUser( ) || form.getMaxNumberResponse( ) != 0 )
         {
-            Object lock = FormResponseUtils.getLockOnForm( form );
+            Object lock = FormsResponseUtils.getLockOnForm( form );
             synchronized( lock )
             {
-                FormResponseUtils.checkIfUserResponseForm( form, request );
-                FormResponseUtils.checkNumberMaxResponseForm( form, request );
+                FormsResponseUtils.checkIfUserResponseForm( form, request );
+                FormsResponseUtils.checkNumberMaxResponseForm( form, request );
                 _formService.saveForm( form, formResponse );
-                FormResponseUtils.increaseNumberResponse( form );
+                FormsResponseUtils.increaseNumberResponse( form );
             }
         }
         else

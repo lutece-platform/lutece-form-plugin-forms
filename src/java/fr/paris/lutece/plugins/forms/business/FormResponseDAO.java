@@ -58,6 +58,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ?, status = ?, role = ?, admin = ?, update_date_status = ? WHERE id_response = ?";
     private static final String SQL_QUERY_SELECT_FOR_BACKUP = SQL_QUERY_SELECTALL + " WHERE guid = ? AND id_form = ? AND from_save = ? ";
+    private static final String SQL_QUERY_SELECT_FOR_BACKUP_BO = SQL_QUERY_SELECTALL + " WHERE admin = ? AND id_form = ? AND from_save = ? ";
     private static final String SQL_QUERY_SELECT_ALL_BY_USER = SQL_QUERY_SELECTALL + " WHERE guid = ? AND from_save = 0 ";
     private static final String SQL_QUERY_SELECT_ALL_BY_ROLE = SQL_QUERY_SELECTALL + " WHERE from_save = 0 AND role IN ( ? ";
     private static final String SQL_QUERY_SELECT_BY_LIST_FORM_RESPONSE = SQL_QUERY_SELECTALL + " WHERE id_response IN (?";
@@ -225,6 +226,29 @@ public final class FormResponseDAO implements IFormResponseDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FOR_BACKUP, plugin ) )
         {
             daoUtil.setString( 1, strGuid );
+            daoUtil.setInt( 2, nIdForm );
+            daoUtil.setBoolean( 3, fromBackup );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                list.add( dataToObject( daoUtil ) );
+            }
+        }
+        return list;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FormResponse> selectFormResponseByAdmin( String strAdmin, int nIdForm, boolean fromBackup, Plugin plugin )
+    {
+        List<FormResponse> list = new ArrayList<>( );
+
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FOR_BACKUP_BO, plugin ) )
+        {
+            daoUtil.setString( 1, strAdmin );
             daoUtil.setInt( 2, nIdForm );
             daoUtil.setBoolean( 3, fromBackup );
             daoUtil.executeQuery( );
