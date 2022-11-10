@@ -24,7 +24,7 @@
 				}
 			});
 			
-			var otherStepValidated = true;
+			var bOtherStepValidated = true;
 			<#if other_step_validation??>
 				<#if other_step_validation>
 					$('.display_field_${question.id!''}_${question.iterationNumber}').show();
@@ -32,7 +32,7 @@
 				<#else>
 		 			$('.display_field_${question.id!''}_${question.iterationNumber}').hide();
 					$('#${question.id}_${question.iterationNumber}').val('');
-					otherStepValidated = false;
+					bOtherStepValidated = false;
 				</#if>
 			</#if>
 			
@@ -40,7 +40,8 @@
 				var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
 				input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
 				input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
-					var isQuestionDisplayed = true;
+					var nValidControlsCount = 0;
+					var nNotValidControlsCount = 0;
 					<#list list_control as itemControl>
 						var displayItemControl = ${itemControl.listIdQuestion[0]} + "_" + ${question.iterationNumber},
 						input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
@@ -49,10 +50,18 @@
 						if($("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid")
 								|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}'))
 						{
-							isQuestionDisplayed = false;
+							nNotValidControlsCount++;
+						} else {
+							nValidControlsCount++;
 						}
 					</#list>
-					if(isQuestionDisplayed && otherStepValidated)
+					var bIsQuestionDisplayed;
+					<#if logical_operator_label == 'or'>
+						bIsQuestionDisplayed = (nValidControlsCount > 0) || bOtherStepValidated;
+					<#else>
+						bIsQuestionDisplayed = (nNotValidControlsCount == 0) && bOtherStepValidated;
+					</#if>
+					if(bIsQuestionDisplayed)
 					{
 						$('.display_field_${question.id!''}_${question.iterationNumber}').removeClass("control_invalid");
 						$('.display_field_${question.id!''}_${question.iterationNumber}').show();
