@@ -50,6 +50,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -152,7 +153,7 @@ public class FormResponseXPage extends MVCApplication
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
 
-        if ( user == null || formResponse == null || formResponse.getGuid( ) == null || !formResponse.getGuid( ).equals( user.getName( ) ) )
+        if (  formResponse == null || !FormsResponseUtils.isAuthorized(formResponse, user) )
         {
             return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
         }
@@ -208,7 +209,7 @@ public class FormResponseXPage extends MVCApplication
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
 
-        if ( user == null || formResponse == null || formResponse.getGuid( ) == null || !formResponse.getGuid( ).equals( user.getName( ) ) )
+        if ( formResponse == null || !FormsResponseUtils.isAuthorized(formResponse, user) )
         {
             return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
         }
@@ -291,17 +292,11 @@ public class FormResponseXPage extends MVCApplication
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_FOUND_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
         }
-        else
-            if ( !formResponse.isPublished( ) )
-            {
-                LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-                boolean userOwnsReponse = user != null && user.getName( ).equals( formResponse.getGuid( ) );
-                if ( !userOwnsReponse )
-                {
+        else if ( !formResponse.isPublished( ) && !FormsResponseUtils.isAuthorized(formResponse, SecurityService.getInstance( ).getRegisteredUser( request ) ) )
+        {
                     SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_PUBLISHED_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
-                }
-            }
-
+        }
+        
         return formResponse;
     }
 }

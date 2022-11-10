@@ -70,6 +70,8 @@ public class FormResponse implements IExtendableResource
     private Timestamp _dateUpdateStatus;
 
     private List<FormResponseStep> _listFormResponseStep;
+    
+    private String _strRole;
 
     /**
      * @return the _nId
@@ -246,6 +248,28 @@ public class FormResponse implements IExtendableResource
     {
         _listFormResponseStep = listFormResponseStep;
     }
+    
+    /**
+     * Gets the  formResponse role
+     * 
+     * @return formResponse role as a String
+     */
+    public String getRole( )
+    {
+        return _strRole;
+    }
+
+    /**
+     *  Sets the formResponse role
+     * 
+     * @param strRole
+     *            The role 
+     */
+    public void setRole( String strRole )
+    {
+        _strRole =  strRole;
+    }
+
 
     @Override
     public String getExtendableResourceDescription( )

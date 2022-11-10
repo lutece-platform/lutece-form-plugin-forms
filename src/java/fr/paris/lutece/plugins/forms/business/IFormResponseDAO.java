@@ -138,6 +138,17 @@ public interface IFormResponseDAO
     List<FormResponse> selectAllCompletedFormResponseByUser( String strGuid, Plugin plugin );
 
     /**
+     * Load the data of all the FormResponse objects by front office role and returns them as a list
+     * 
+     * @param listRole
+     *            the given role FO
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the FormResponse objects
+     */
+    List<FormResponse> selectFormResponseByRole( List<String> listRole, Plugin plugin );
+
+    /**
      * Load the data of all formResponses Objects for a given list of formResponses identifiers
      * 
      * @param listIdFormResponse

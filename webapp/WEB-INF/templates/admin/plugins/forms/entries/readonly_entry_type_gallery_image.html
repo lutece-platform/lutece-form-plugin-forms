@@ -1,0 +1,16 @@
+<@row>
+    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+    <@columns sm=9>
+    <#if list_responses?has_content>
+        <#list list_responses as response>
+            <@p>
+            <#if response.file?exists && entry?exists >
+                <@link href='jsp/admin/plugins/forms/FormsDownloadFile.jsp?id_file=${response.file.idFile}&id_response=${response.idResponse}'>
+                    <img src="image?resource_type=forms_entry_img&id=${response.file.idFile}&id_response=${response.idResponse}" width="100px" height="100px"/>
+                </@link>
+            </#if>
+            </@p>
+        </#list>
+    </#if>
+    </@columns>
+</@row>

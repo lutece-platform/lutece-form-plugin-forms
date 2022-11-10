@@ -29,6 +29,8 @@ unavailable_message VARCHAR(255),
 id_logo INT DEFAULT 0 NOT NULL,
 id_category int DEFAULT NULL,
 backup_enabled SMALLINT default 0 NOT NULL,
+access_to_responses_by_role SMALLINT default 0,
+
 PRIMARY KEY (id_form)
 );
 
@@ -233,6 +235,7 @@ CREATE TABLE IF NOT EXISTS forms_response (
   update_date timestamp default '1980-01-01 00:00' NOT NULL,
   from_save SMALLINT default 0,
   status SMALLINT default 0 NOT NULL,
+  role varchar(50) default NULL,
   update_date_status timestamp default CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id_response)
 );

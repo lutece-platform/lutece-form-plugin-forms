@@ -163,6 +163,14 @@
             </list>
         </property>
     </bean>
+	<bean id="forms.entryTypeGalleryImage" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeGalleryImage" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.fileDeleteAnonymizationType" />
+                <ref bean="genericattributes.fileReplaceAnonymizationType" />
+            </list>
+        </property>
+    </bean>
 	<bean id="forms.entryTypeMyLuteceUser" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeMyLuteceUser">
         <property name="anonymizationTypes">
             <list>
@@ -290,6 +298,9 @@
 	<bean id="forms.entryTypeImageDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeImage" />
 	</bean>
+	<bean id="forms.entryTypeGalleryImageDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeGalleryImage" />
+	</bean>
 	<bean id="forms.entryTypeMyLuteceUserDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeMyLuteceUser" />
 	</bean>
@@ -354,6 +365,9 @@
 	</bean>
 	<bean id="forms.entryTypeImageDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeImage" />
+	</bean>
+	<bean id="forms.entryTypeGalleryImageDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeGalleryImage" />
 	</bean>
 	<bean id="forms.entryTypeMyLuteceUserDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeMyLuteceUser" />
