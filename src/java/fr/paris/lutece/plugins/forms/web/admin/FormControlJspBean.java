@@ -311,7 +311,7 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
 
-        model.put( MARK_LOGICAL_OPERATORS_LIST, ControlGroupHome.getLogicalOperatorsReferenceList() );
+        model.put( MARK_LOGICAL_OPERATORS_LIST, ControlGroupHome.getLogicalOperatorsReferenceList(request.getLocale()) );
         ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
         String strLogicalOperatorParam = request.getParameter(FormsConstants.PARAMETER_LOGICAL_OPERATOR);
         if (strLogicalOperatorParam != null) {
