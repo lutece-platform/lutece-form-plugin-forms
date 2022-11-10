@@ -35,6 +35,7 @@
 
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
@@ -42,6 +43,7 @@ import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -201,10 +203,10 @@ public final class ControlGroupDAO implements IControlGroupDAO
     }
     
     @Override
-    public ReferenceList selectLogicalOperatorsReferenceList() {
+    public ReferenceList selectLogicalOperatorsReferenceList(Locale locale) {
     	ReferenceList logicalOperatorsList = new ReferenceList();
-    	logicalOperatorsList.addItem(LogicalOperator.AND.getLabel(), "et logique");
-    	logicalOperatorsList.addItem(LogicalOperator.OR.getLabel(), "ou logique");
+    	logicalOperatorsList.addItem(LogicalOperator.AND.getLabel(), I18nService.getLocalizedString( "forms.manage_condition_control.logicalOperator.and", locale));
+    	logicalOperatorsList.addItem(LogicalOperator.OR.getLabel(), I18nService.getLocalizedString( "forms.manage_condition_control.logicalOperator.or", locale));
     	return logicalOperatorsList;
     }
     

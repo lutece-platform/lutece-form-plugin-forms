@@ -40,6 +40,7 @@ import fr.paris.lutece.util.ReferenceList;
 
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -130,11 +131,12 @@ public final class ControlGroupHome
     
     /**
      * Load the data of all the logical operators from enum and returns them as a referenceList
+     * @param locale TODO
      * @return the referenceList which contains the data of all the logical operators objects
      */
-    public static ReferenceList getLogicalOperatorsReferenceList( )
+    public static ReferenceList getLogicalOperatorsReferenceList(Locale locale )
     {
-    	return _dao.selectLogicalOperatorsReferenceList();
+    	return _dao.selectLogicalOperatorsReferenceList(locale);
     }
     
 	

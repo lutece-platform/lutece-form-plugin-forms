@@ -37,6 +37,7 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -107,7 +108,8 @@ public interface IControlGroupDAO
 
 	/**
 	 * Load all logical operators from enum
+	 * @param locale TODO
 	 * @return The referenceList which contains the logical operators
 	 */
-	ReferenceList selectLogicalOperatorsReferenceList();
+	ReferenceList selectLogicalOperatorsReferenceList(Locale locale);
 }
