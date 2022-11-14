@@ -60,6 +60,8 @@ public class Control implements Cloneable
     private String _strControlType;
 
     private int _nIdControlTarget;
+    
+    private int _nIdControlGroup;
 
     /**
      * @return the _nId
@@ -182,7 +184,15 @@ public class Control implements Cloneable
         this._nIdControlTarget = nIdControlTarget;
     }
 
-    /**
+    public int getIdControlGroup() {
+		return _nIdControlGroup;
+	}
+
+	public void setIdControlGroup(int nIdControlGroup) {
+		this._nIdControlGroup = nIdControlGroup;
+	}
+
+	/**
      * {@inheritDoc}
      * 
      * @throws CloneNotSupportedException
@@ -208,6 +218,7 @@ public class Control implements Cloneable
         controlNew.setIdControlTarget( _nIdControlTarget );
         controlNew.setValidatorName( _strValidatorName );
         controlNew.setValue( _strValue );
+        controlNew.setIdControlGroup(_nIdControlGroup);
 
         return controlNew;
     }

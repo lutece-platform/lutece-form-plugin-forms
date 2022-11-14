@@ -169,6 +169,7 @@ error_message varchar(512) default '',
 validator_name varchar(255) NOT NULL,
 control_type varchar(255) NOT NULL,
 id_control_target int default '0' NOT NULL,
+id_control_group int,
 PRIMARY KEY (id_control)
 );
 
@@ -277,4 +278,11 @@ CREATE TABLE forms_category (
 	code varchar(100) NOT NULL,
 	name varchar(100) NOT NULL,
 	PRIMARY KEY (id_category)
+);
+
+DROP TABLE IF EXISTS forms_control_group;
+CREATE TABLE forms_control_group (
+	id_control_group int AUTO_INCREMENT,
+	logical_operator varchar(50) NOT NULL,
+	PRIMARY KEY (id_control_group)
 );

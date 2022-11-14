@@ -47,6 +47,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlGroup;
+import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
@@ -54,6 +56,7 @@ import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
+import fr.paris.lutece.plugins.forms.business.LogicalOperator;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
@@ -208,8 +211,14 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 List<Control> listControl = ControlHome.getControlByControlTargetAndType( _question.getId(), ControlType.CONDITIONAL );
                 List<Control> listOtherStepControl = new ArrayList<>();
                 List<IValidator> listValidator = new ArrayList<>();
-                Boolean otherStepValidation = null;
+                Boolean bOtherStepValidation = null;
+                int nIdControlGroup = 0;
+                int nValidControlsCount = 0;
+                int nNotValidControlsCount = 0;
                 for (Control control : listControl) {
+                	if (nIdControlGroup == 0) {
+            			nIdControlGroup = control.getIdControlGroup();
+            		}
                 	IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
                 	listValidator.add(validator);
                 	control.setValue(validator.getJavascriptControlValue( control ));
@@ -221,7 +230,11 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                             List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
                                     .filter( questionReponse -> control.getListIdQuestion( ).contains( questionReponse.getQuestion( ).getId( ) ) )
                                     .collect( Collectors.toList( ) );
-                            otherStepValidation = validator.validate( listFormQuestionReponseToCheck, control );
+                            if (validator.validate( listFormQuestionReponseToCheck, control )) {
+                            	nValidControlsCount++;
+                            } else {
+                            	nNotValidControlsCount++;
+                            }
                             listOtherStepControl.add(control);
                         }
                     }
@@ -230,11 +243,17 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 // remove controls from other steps
                 listControl.removeAll(listOtherStepControl);
                 
-                _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, otherStepValidation);
                 _model.put(FormsConstants.MARK_LIST_CONTROL, listControl);
                 _model.put( FormsConstants.MARK_LIST_VALIDATOR, listValidator );
-
                 
+                ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
+                _model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator() : LogicalOperator.AND.getLabel()) );
+                if (controlGroup != null && LogicalOperator.OR.getLabel().equals(controlGroup.getLogicalOperator())) {
+                	bOtherStepValidation = nValidControlsCount > 0;
+                } else {
+                	bOtherStepValidation = nNotValidControlsCount == 0;
+                }
+                _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, bOtherStepValidation);
             }
 
             HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, _model );

@@ -48,8 +48,11 @@ import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.ConditionControl;
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlGroup;
+import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
+import fr.paris.lutece.plugins.forms.business.LogicalOperator;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
@@ -128,6 +131,7 @@ public class FormControlJspBean extends AbstractJspBean
     // Markers
     private static final String MARK_LIST_CONTROL = "control_list";
     private static final String MARK_LIST_CONDITION_CONTROL = "condition_control_list";
+    private static final String MARK_LOGICAL_OPERATORS_LIST = "logicalOperators";
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
 
@@ -228,6 +232,11 @@ public class FormControlJspBean extends AbstractJspBean
                 Set<Integer> listQuestion = new HashSet<>( );
                 listQuestion.add( _nIdTarget );
                 _control.setListIdQuestion( listQuestion );
+                if (_controlType.equals( ControlType.CONDITIONAL ))
+                {
+	                int nIdControlGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL_GROUP ), 0 );
+	                _control.setIdControlGroup(nIdControlGroup);
+                }
             }
         }
         else
@@ -262,8 +271,10 @@ public class FormControlJspBean extends AbstractJspBean
     @View( value = VIEW_MANAGE_CONDITION_CONTROL, defaultView = true )
     public String getManageConditionControl( HttpServletRequest request )
     {
-    	clearAttributes( );
-        retrieveParameters( request );
+    	if (!FormsConstants.PARAMETER_VALIDATE_LOGICAL_OPERATOR.equals(request.getParameter(FormsConstants.PARAMETER_VIEW_MODIFY_LOGICAL_OPERATOR))) {
+    		clearAttributes( );
+    		retrieveParameters( request );
+    	}
 
         if ( _step == null || _controlType == null )
         {
@@ -272,7 +283,11 @@ public class FormControlJspBean extends AbstractJspBean
     	
     	List<Control> listControl = ControlHome.getControlByControlTargetAndType( _nIdTarget, _controlType );
     	List<ConditionControl> listConditionControl = new ArrayList<>();
+    	int nIdControlGroup = 0;
     	for (Control control : listControl) {
+    		if (nIdControlGroup == 0) {
+    			nIdControlGroup = control.getIdControlGroup();
+    		}
     		Question targetQuestion = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) );
             Step targetStep = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
     		ConditionControl conditionControl = new ConditionControl(targetStep.getTitle(), targetQuestion.getTitle(), control);
@@ -295,12 +310,43 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_VALIDATOR_MANAGER, EntryServiceManager.getInstance( ) );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
+
+        model.put( MARK_LOGICAL_OPERATORS_LIST, ControlGroupHome.getLogicalOperatorsReferenceList(request.getLocale()) );
+        ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
+        String strLogicalOperatorParam = request.getParameter(FormsConstants.PARAMETER_LOGICAL_OPERATOR);
+        if (strLogicalOperatorParam != null) {
+        	updateControlGroup(listConditionControl, controlGroup, strLogicalOperatorParam);
+        }
+        model.put( FormsConstants.MARK_ID_CONTROL_GROUP, (controlGroup != null ? controlGroup.getId() : null) );
+        model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator() : LogicalOperator.AND.getLabel()) );
         model.put( MARK_LIST_CONDITION_CONTROL, listConditionControl );
-    	
+        
     	Locale locale = getLocale( );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONDITION_CONTROL, locale, model );
 
         return getAdminPage( templateList.getHtml( ) );
+    }
+    
+    private void updateControlGroup(List<ConditionControl> listConditionControl, ControlGroup controlGroup, String strLogicalOperator)
+    {
+    	if (strLogicalOperator != null) {
+        	if (controlGroup != null) {
+        		controlGroup.setLogicalOperator(strLogicalOperator);
+        		controlGroup = ControlGroupHome.update(controlGroup);
+        	} else {
+        		controlGroup = new ControlGroup();
+        		controlGroup.setLogicalOperator(strLogicalOperator);
+        		controlGroup = ControlGroupHome.create(controlGroup);
+        	}
+        	
+        	for (ConditionControl conditionalControl : listConditionControl) {
+        		Control control = conditionalControl.getControl();
+        		control.setIdControlGroup(controlGroup.getId());
+        		control = ControlHome.update(control);
+        		conditionalControl.setControl(control);
+        	}
+        	
+        }
     }
 
     @View( VIEW_MODIFY_CONDITION_CONTROL )
@@ -588,6 +634,10 @@ public class FormControlJspBean extends AbstractJspBean
         if ( _control != null )
         {
             ControlHome.remove( _control.getId( ) );
+            if (ControlType.CONDITIONAL.getLabel().equals(_control.getControlType())
+            		&& ControlHome.getControlCountByControlTargetAndType(_control.getIdControlTarget(), ControlType.CONDITIONAL) == 0) {
+            	ControlGroupHome.remove(_control.getIdControlGroup());
+            }
             ControlListenerManager.notifyListenersControlRemoval( _control, request );
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_REMOVED );
         }
