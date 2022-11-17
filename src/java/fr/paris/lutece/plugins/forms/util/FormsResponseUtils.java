@@ -48,7 +48,6 @@ import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
-import fr.paris.lutece.portal.service.accesscontrol.AccessControlService;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -329,7 +328,7 @@ public class FormsResponseUtils
         model.put( FormsConstants.MARK_FORM_TOP_BREADCRUMB, breadcrumb.getTopHtml( request, formResponseManager ) );
         model.put( FormsConstants.MARK_FORM_BOTTOM_BREADCRUMB, breadcrumb.getBottomHtml( request, formResponseManager ) );
         model.put( STEP_HTML_MARKER,
-                stepDisplayTree.getCompositeHtml( request, formResponseManager.findAllResponses( ), getLocale( request ), frontOffice ? DisplayType.EDITION_FRONTOFFICE : DisplayType.EDITION_BACKOFFICE ) );
+                stepDisplayTree.getCompositeHtml( request, formResponseManager.findAllResponses( ), frontOffice ? getLocaleFO( request ) : AdminUserService.getLocale( request ), frontOffice ? DisplayType.EDITION_FRONTOFFICE : DisplayType.EDITION_BACKOFFICE ) );
         
         return model;
     }
@@ -406,44 +405,6 @@ public class FormsResponseUtils
         return formResponseManager;
     }
     
-    /**
-     * save the response of form
-     * 
-     * @param form
-     *            the form
-     * @param request
-     *            The Http request request
-     * @throws SiteMessageException
-     *             the exception
-     */
-    public static void saveFormResponseBO( Form form, HttpServletRequest request, FormResponse formResponse )
-    {
-		User adminUser = AdminUserService.getAdminUser( request );
-    	formResponse.setAdmin( adminUser.getEmail( ) );
-
-        if ( ( form.getMaxNumberResponse( ) != 0 ) )
-        {
-            Object lock = getLockOnForm( form );
-            synchronized( lock )
-            {
-                int nNumberReponseForm = _responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms );
-                if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
-                {
-                    return;
-                }
-                _formService.saveForm( form, formResponse );
-                increaseNumberResponse( form );
-            }
-        }
-        else
-        {
-            _formService.saveForm( form, formResponse );
-        }
-        AccessControlService.getInstance( ).cleanSessionData( request, form.getId( ), Form.RESOURCE_TYPE );
-
-        _formService.processFormAction( form, formResponse );
-    }
-    
     public static synchronized Object getLockOnForm( Form form )
     {
         _lockFormId.putIfAbsent( form.getId( ), new Object( ) );
@@ -517,7 +478,7 @@ public class FormsResponseUtils
      *            The list of steps
      * @return the list of HTML
      */
-    public static List<String> buildStepsHtml( HttpServletRequest request, List<Step> listStep, FormResponseManager formResponseManager)
+    public static List<String> buildStepsHtml( HttpServletRequest request, List<Step> listStep, FormResponseManager formResponseManager, boolean frontOffice )
     {
         List<String> listFormDisplayTrees = new ArrayList<>( );
 
@@ -525,14 +486,19 @@ public class FormsResponseUtils
         {
             StepDisplayTree stepDisplayTree = new StepDisplayTree( step.getId( ), formResponseManager.getFormResponse( ) );
 
-            listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request, formResponseManager.findResponsesFor( step ), getLocale( request ),
+            listFormDisplayTrees.add( stepDisplayTree.getCompositeHtml( request, formResponseManager.findResponsesFor( step ), frontOffice ? getLocaleFO( request ) : AdminUserService.getLocale( request ),
                     DisplayType.READONLY_FRONTOFFICE ) );
         }
 
         return listFormDisplayTrees;
     }
     
-    public static Locale getLocale( HttpServletRequest request )
+    public static int getNumberReponseForm( int idForm )
+    {
+    	return _responsePerFormMap.computeIfAbsent( idForm, FormHome::getNumberOfResponseForms );
+    }
+    
+    public static Locale getLocaleFO( HttpServletRequest request )
     {
         return LocaleService.getContextUserLocale( request );
     }

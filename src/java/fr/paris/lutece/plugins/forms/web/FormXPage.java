@@ -578,7 +578,7 @@ public class FormXPage extends MVCApplication
 
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
-        List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager );
+        List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager, _frontOffice );
         mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, listStepHtml );
         if ( bypassInactiveState( form, request ) )
         {

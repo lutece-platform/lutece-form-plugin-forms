@@ -19,6 +19,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
+import fr.paris.lutece.plugins.forms.service.FormResponseService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -36,10 +37,13 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.url.UrlItem;
 
-@Controller( controllerJsp = "ManageFormResponse.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORM_RESPONSE_MANAGEMENT" )
+@Controller( controllerJsp = "ManageFormResponse.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormResponseJspBean extends AbstractJspBean
 {
 	private static final long serialVersionUID = 1L;
+	
+	// Views
+	private static final String VIEW_MANAGE_FORMS = "ManageForms.jsp";
 	
 	// Templates
 	private static final String TEMPLATE_VIEW_STEP = "/admin/plugins/forms/step_view.html";
@@ -98,7 +102,8 @@ public class FormResponseJspBean extends AbstractJspBean
                     int nNumberReponseForm = responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms );
                     if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
                     {
-                    	return I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, getLocale( ) );
+                    	addError( FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, getLocale( ) );
+                    	return redirect( request, VIEW_MANAGE_FORMS );
                     }
                 }
             }
@@ -123,7 +128,7 @@ public class FormResponseJspBean extends AbstractJspBean
                         _formResponseManager.getFormResponse( ).getUpdate( ),
                 };
 
-                model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_LOAD_BACKUP, args, FormsResponseUtils.getLocale( request ) ) );
+                model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_LOAD_BACKUP, args, getLocale( ) ) );
             }
 
             if ( _stepDisplayTree == null || _currentStep.getId( ) != _stepDisplayTree.getStep( ).getId( ) )
@@ -147,7 +152,8 @@ public class FormResponseJspBean extends AbstractJspBean
         }
         else
         {
-        	return I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_ERROR_INACTIVE_FORM, getLocale( ) );
+        	addError( FormsResponseUtils.MESSAGE_ERROR_INACTIVE_FORM, getLocale( ) );
+        	return redirect( request, VIEW_MANAGE_FORMS );
         }
         
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM_RESPONSE, TEMPLATE_VIEW_STEP, model );
@@ -387,11 +393,11 @@ public class FormResponseJspBean extends AbstractJspBean
         if ( !_currentStep.isFinal( ) )
         {
             _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-            addError( FormsResponseUtils.MESSAGE_ERROR_STEP_NOT_FINAL, FormsResponseUtils.getLocale( request ) );
+            addError( FormsResponseUtils.MESSAGE_ERROR_STEP_NOT_FINAL, getLocale( ) );
             return getStepView(  request );
         }
         
-        FormsResponseUtils.saveFormResponseBO( form, request, _formResponseManager.getFormResponse( ) );
+        FormResponseService.getInstance( ).saveFormResponseBO( form, request, _formResponseManager.getFormResponse( ) );
 
         Map<String, Object> model = getModel( );
 
@@ -458,7 +464,7 @@ public class FormResponseJspBean extends AbstractJspBean
             return getStepView(  request );
         }
         
-        FormsResponseUtils.saveFormResponseBO( form, request, _formResponseManager.getFormResponse( ) );
+        FormResponseService.getInstance( ).saveFormResponseBO( form, request, _formResponseManager.getFormResponse( ) );
         
         Map<String, Object> model = getModel( );
 
@@ -497,7 +503,7 @@ public class FormResponseJspBean extends AbstractJspBean
 
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
-        List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager );
+        List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager, _frontOffice );
         mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, listStepHtml );
         fillCommons( mapFormResponseSummaryModel );
         return mapFormResponseSummaryModel;

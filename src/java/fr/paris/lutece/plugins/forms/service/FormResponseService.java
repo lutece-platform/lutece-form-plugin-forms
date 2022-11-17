@@ -36,6 +36,10 @@ package fr.paris.lutece.plugins.forms.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
+import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
@@ -43,7 +47,8 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.web.FormResponseData;
-import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
+import fr.paris.lutece.portal.service.accesscontrol.AccessControlService;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -97,6 +102,44 @@ public class FormResponseService
     {
         FormResponseHome.update( formResponse );
     }
+    
+    /**
+     * save the response of form
+     * 
+     * @param form
+     *            the form
+     * @param request
+     *            The Http request
+     *  @param formResponse
+     *            The FormResponse
+     */
+    public void saveFormResponseBO( Form form, HttpServletRequest request, FormResponse formResponse )
+    {
+		User adminUser = AdminUserService.getAdminUser( request );
+    	formResponse.setAdmin( adminUser.getEmail( ) );
+
+        if ( ( form.getMaxNumberResponse( ) != 0 ) )
+        {
+            Object lock = FormsResponseUtils.getLockOnForm( form );
+            synchronized( lock )
+            {
+                int nNumberReponseForm = FormsResponseUtils.getNumberReponseForm( form.getId( ) );
+                if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
+                {
+                    return;
+                }
+                _formService.saveForm( form, formResponse );
+                FormsResponseUtils.increaseNumberResponse( form );
+            }
+        }
+        else
+        {
+            _formService.saveForm( form, formResponse );
+        }
+        AccessControlService.getInstance( ).cleanSessionData( request, form.getId( ), Form.RESOURCE_TYPE );
+
+        _formService.processFormAction( form, formResponse );
+    }
 
     public void deleteFormResponse( FormResponse formResponse )
     {
@@ -127,5 +170,4 @@ public class FormResponseService
 
         _formService.fireFormResponseEventDelete( formResponse );
     }
-
 }
