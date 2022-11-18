@@ -72,7 +72,7 @@ public final class FormResponseDAO implements IFormResponseDAO
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
-        	int nIndex = 1;
+            int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponse.getFormId( ) );
             daoUtil.setString( nIndex++, formResponse.getGuid( ) );
 

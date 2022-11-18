@@ -63,7 +63,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
     {
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
-        	int nIndex = 1;
+            int nIndex = 1;
             daoUtil.setInt( nIndex++, formResponseStep.getFormResponseId( ) );
             daoUtil.setInt( nIndex++, formResponseStep.getStep( ).getId( ) );
             daoUtil.setInt( nIndex++, formResponseStep.getOrder( ) );
@@ -122,6 +122,7 @@ public final class FormResponseStepDAO implements IFormResponseStepDAO
             daoUtil.setInt( nIndex++, formResponseStep.getFormResponseId( ) );
             daoUtil.setInt( nIndex++, formResponseStep.getStep( ).getId( ) );
             daoUtil.setInt( nIndex++, formResponseStep.getOrder( ) );
+
             daoUtil.setInt( nIndex++, formResponseStep.getId( ) );
 
             daoUtil.executeUpdate( );
