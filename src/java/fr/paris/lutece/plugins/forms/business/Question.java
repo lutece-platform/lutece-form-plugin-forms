@@ -85,6 +85,8 @@ public class Question implements Serializable, Cloneable
     private boolean _bIsFiltrableMultiviewFormSelected;
 
     private int _nMultiviewColumnOrder;
+    
+    private int _nExportDisplayOrder;
 
     /**
      * Returns the Id
@@ -463,4 +465,13 @@ public class Question implements Serializable, Cloneable
     {
         _nMultiviewColumnOrder = nMultiviewColumnOrder;
     }
+
+	public int getExportDisplayOrder() {
+		return _nExportDisplayOrder;
+	}
+
+	public void setExportDisplayOrder(int nExportDisplayOrder) {
+		_nExportDisplayOrder = nExportDisplayOrder;
+	}
+    
 }

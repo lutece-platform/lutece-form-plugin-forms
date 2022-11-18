@@ -80,6 +80,7 @@ multiview_column_order INT default 0 NOT NULL,
 column_title varchar(255) default '' NOT NULL,
 is_filterable_multiview_global SMALLINT default 0 NOT NULL,
 is_filterable_multiview_form_selected SMALLINT default 0 NOT NULL,
+export_display_order INT default 0,
 PRIMARY KEY (id_question)
 );
 CREATE INDEX index_fq_code ON forms_question ( code );
