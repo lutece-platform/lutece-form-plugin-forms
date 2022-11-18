@@ -8,3 +8,5 @@ CREATE TABLE forms_control_group (
 	PRIMARY KEY (id_control_group)
 );
 ALTER TABLE forms_control ADD id_control_group INT DEFAULT NULL;
+
+ALTER TABLE forms_question ADD export_display_order INT default 0;
