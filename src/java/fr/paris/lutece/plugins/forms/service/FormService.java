@@ -59,6 +59,7 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.service.workflow.IFormWorkflowService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
 import fr.paris.lutece.plugins.forms.web.CompositeQuestionDisplay;
 import fr.paris.lutece.plugins.forms.web.FormResponseManager;
@@ -101,29 +102,70 @@ public class FormService
     /**
      * Saves the specified form
      * 
+     * @deprecated use saveForm( FormResponse formResponse )
+     * 
      * @param form
      *            the form to save
      * @param formResponse
      *            the form response to save
      */
+    @Deprecated
     public void saveForm( Form form, FormResponse formResponse )
     {
         TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
 
-        try
+        Object lock = FormsResponseUtils.getLockOnForm( form );
+        synchronized( lock )
         {
-            formResponse.setFromSave( Boolean.FALSE );
+	        try
+	        {
+	            formResponse.setFromSave( Boolean.FALSE );
+	
+	            filterFinalSteps( formResponse );
+	            saveFormResponse( formResponse );
+	            saveFormResponseSteps( formResponse );
+	            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+	        }
+	        catch( Exception e )
+	        {
+	            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+	            throw new AppException( e.getMessage( ), e );
+	        }
+        }
+        fireFormResponseEventCreation( formResponse );
+    }
+    
+    /**
+     * Saves the specified form
+     * 
+     * @param form
+     *            the form to save
+     * @param formResponse
+     *            the form response to save
+     */
+    public void saveForm( FormResponse formResponse )
+    {
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+        
+        Object lock = FormsResponseUtils.getLockOnForm( FormHome.findByPrimaryKey( formResponse.getFormId( ) ) );
+        synchronized( lock )
+        {
+        	try
+            {
+                formResponse.setFromSave( Boolean.FALSE );
 
-            filterFinalSteps( formResponse );
-            saveFormResponse( formResponse );
-            saveFormResponseSteps( formResponse );
-            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+                filterFinalSteps( formResponse );
+                saveFormResponse( formResponse );
+                saveFormResponseSteps( formResponse );
+                TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+            }
+            catch( Exception e )
+            {
+                TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+                throw new AppException( e.getMessage( ), e );
+            }
         }
-        catch( Exception e )
-        {
-            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
-            throw new AppException( e.getMessage( ), e );
-        }
+        
         fireFormResponseEventCreation( formResponse );
     }
 
@@ -425,33 +467,6 @@ public class FormService
         FormResponseManager formResponseManager = null;
 
         List<FormResponse> listFormResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, form.getId( ), true );
-
-        if ( CollectionUtils.isNotEmpty( listFormResponse ) )
-        {
-            formResponseManager = new FormResponseManager( listFormResponse.get( 0 ) );
-        }
-        else
-        {
-            formResponseManager = new FormResponseManager( form );
-        }
-
-        return formResponseManager;
-    }
-    
-    /**
-     * Creates a {@code FormResponseManager} object from a back up
-     * 
-     * @param form
-     *            The form
-     * @param strUserGuid
-     *            The admin id
-     * @return the created {@code FormResponseManager} object
-     */
-    public FormResponseManager createFormResponseBOManagerFromBackUp( Form form, String strAdminId )
-    {
-        FormResponseManager formResponseManager = null;
-
-        List<FormResponse> listFormResponse = FormResponseHome.getFormResponseByAdminAndForm( strAdminId, form.getId( ), true );
 
         if ( CollectionUtils.isNotEmpty( listFormResponse ) )
         {

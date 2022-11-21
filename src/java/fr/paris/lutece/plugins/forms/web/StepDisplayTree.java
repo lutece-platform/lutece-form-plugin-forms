@@ -276,14 +276,9 @@ public class StepDisplayTree
             }
         }
         
-        if ( displayType == DisplayType.EDITION_BACKOFFICE )
+        if ( displayType != DisplayType.EDITION_BACKOFFICE )
         {
-        	User adminUser = AdminUserService.getAdminUser( request );
-        	_model.put( FormsConstants.MARK_USER, adminUser );
-        }
-        else
-        {
-            _model.put( FormsConstants.MARK_USER, user );
+        	_model.put( FormsConstants.MARK_USER, user );
         }
 
         String strTemplate = findTemplateFor( displayType );

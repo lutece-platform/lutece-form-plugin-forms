@@ -3,7 +3,6 @@ package fr.paris.lutece.plugins.forms.util;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,9 +48,7 @@ import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
-import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -59,21 +56,6 @@ import fr.paris.lutece.portal.web.l10n.LocaleService;
 
 public class FormsResponseUtils 
 {
-	// Views
-	public static final String VIEW_STEP = "stepView";
-	public static final String VIEW_FORM_RESPONSE = "formResponseView";
-	public static final String VIEW_ERROR = "errorView";
-	
-	// Actions
-	public static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
-	public static final String ACTION_SAVE_STEP = "doSaveStep";
-	public static final String ACTION_RESET_BACKUP = "doResetBackup";
-	public static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
-	public static final String ACTION_PREVIOUS_STEP = "doReturnStep";
-	public static final String ACTION_GO_TO_STEP = "doGoToStep";
-	public static final String ACTION_FORM_RESPONSE_SUMMARY = "formResponseSummary";
-	public static final String ACTION_SAVE_FORM_RESPONSE_SUMMARY = "doSaveResponseSummary";
-	
 	// Steps
     public static final String STEP_HTML_MARKER = "stepContent";
 
@@ -94,7 +76,7 @@ public class FormsResponseUtils
     
 	// Other
     private static ConcurrentMap<Integer, Object> _lockFormId = new ConcurrentHashMap<>( );
-    private static Map<Integer, Integer> _responsePerFormMap = new HashMap<>( );
+    private static Map<Integer, Integer> _responsePerFormMap = new ConcurrentHashMap<>( );
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
 	private FormsResponseUtils( )
@@ -299,7 +281,7 @@ public class FormsResponseUtils
         	{
         		User admin = AdminUserService.getAdminUser( request );
         		
-        		formResponseManager = _formService.createFormResponseBOManagerFromBackUp( form, admin.getAccessCode( ) );
+        		formResponseManager = createFormResponseBOManagerFromBackUp( form, admin.getAccessCode( ) );
         	}
         }
     	
@@ -413,6 +395,33 @@ public class FormsResponseUtils
     }
     
     /**
+     * Creates a {@code FormResponseManager} object from a back up
+     * 
+     * @param form
+     *            The form
+     * @param strUserGuid
+     *            The admin id
+     * @return the created {@code FormResponseManager} object
+     */
+    public static FormResponseManager createFormResponseBOManagerFromBackUp( Form form, String strAdminId )
+    {
+        FormResponseManager formResponseManager = null;
+
+        List<FormResponse> listFormResponse = FormResponseHome.getFormResponseByAdminAndForm( strAdminId, form.getId( ), true );
+
+        if ( CollectionUtils.isNotEmpty( listFormResponse ) )
+        {
+            formResponseManager = new FormResponseManager( listFormResponse.get( 0 ) );
+        }
+        else
+        {
+            formResponseManager = new FormResponseManager( form );
+        }
+
+        return formResponseManager;
+    }
+    
+    /**
      * Increase the number of response of the Form
      * 
      * @param form
@@ -436,16 +445,13 @@ public class FormsResponseUtils
      * @throws SiteMessageException
      *             the exception
      */
-    public static void checkNumberMaxResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException
+    public static Boolean checkNumberMaxResponseForm( Form form )
     {
         if ( form.getMaxNumberResponse( ) != 0 )
         {
-            int nNumberReponseForm = _responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms );
-            if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
-            {
-                SiteMessageService.setMessage( request, MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
-            }
+            return ( _responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms ) < form.getMaxNumberResponse( ) );
         }
+        return true;
     }
     
     /**
@@ -457,17 +463,14 @@ public class FormsResponseUtils
      *            the request
      * @throws SiteMessageException
      */
-    public static void checkIfUserResponseForm( Form form, HttpServletRequest request ) throws SiteMessageException
+    public static Boolean checkIfUserResponseForm( Form form, HttpServletRequest request )
     {
         if ( form.isAuthentificationNeeded( ) && form.isOneResponseByUser( ) )
         {
             LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-            int nLimitNumberResponse = FormHome.getNumberOfResponseFormByUser( form.getId( ), user.getName( ) );
-            if ( nLimitNumberResponse >= NumberUtils.INTEGER_ONE )
-            {
-                SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM, SiteMessage.TYPE_ERROR );
-            }
+            return ( FormHome.getNumberOfResponseFormByUser( form.getId( ), user.getName( ) ) < NumberUtils.INTEGER_ONE );
         }
+        return true;
     }
     
     /**
@@ -492,11 +495,6 @@ public class FormsResponseUtils
         }
 
         return listFormDisplayTrees;
-    }
-    
-    public static int getNumberReponseForm( int idForm )
-    {
-    	return _responsePerFormMap.computeIfAbsent( idForm, FormHome::getNumberOfResponseForms );
     }
     
     public static Locale getLocaleFO( HttpServletRequest request )

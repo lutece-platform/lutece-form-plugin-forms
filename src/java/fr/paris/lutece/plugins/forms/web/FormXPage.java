@@ -120,6 +120,17 @@ public class FormXPage extends MVCApplication
 
     // Views
     private static final String VIEW_LIST_FORM = "listForm";
+    private static final String VIEW_STEP = "stepView";
+    
+    // Actions
+ 	private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
+ 	private static final String ACTION_SAVE_STEP = "doSaveStep";
+ 	private static final String ACTION_RESET_BACKUP = "doResetBackup";
+ 	private static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
+ 	private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
+ 	private static final String ACTION_GO_TO_STEP = "doGoToStep";
+ 	private static final String ACTION_FORM_RESPONSE_SUMMARY = "formResponseSummary";
+ 	private static final String ACTION_SAVE_FORM_RESPONSE_SUMMARY = "doSaveResponseSummary";
 
     // Actions
     private static final String ACTION_UPLOAD = "doSynchronousUploadDocument";
@@ -257,7 +268,7 @@ public class FormXPage extends MVCApplication
      * @throws UserNotSignedException
      *             Exception
      */
-    @View( value = FormsResponseUtils.VIEW_STEP )
+    @View( value = VIEW_STEP )
     public XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
@@ -288,8 +299,14 @@ public class FormXPage extends MVCApplication
             Object lock = FormsResponseUtils.getLockOnForm( form );
             synchronized( lock )
             {
-                FormsResponseUtils.checkIfUserResponseForm( form, request );
-                FormsResponseUtils.checkNumberMaxResponseForm( form, request );
+            	if ( Boolean.FALSE.equals(FormsResponseUtils.checkIfUserResponseForm( form, request ) ) )
+                {
+                	SiteMessageService.setMessage( request, FormsResponseUtils.MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM, SiteMessage.TYPE_ERROR );
+                }
+                if ( Boolean.FALSE.equals(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
+                {
+                	SiteMessageService.setMessage( request, FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+                }
             }
         }
 
@@ -336,7 +353,7 @@ public class FormXPage extends MVCApplication
             }
             
             Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
-            modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
+            modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
             _stepDisplayTree.addModel( modelForStep );
 
             model = FormsResponseUtils.getFormStepModel( form, request, model, _breadcrumb, _formResponseManager, _stepDisplayTree, _frontOffice );
@@ -414,7 +431,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException 
      */
-    @Action( value = FormsResponseUtils.ACTION_PREVIOUS_STEP )
+    @Action( value = ACTION_PREVIOUS_STEP )
     public XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         boolean bSessionLost = isSessionLost( );
@@ -458,7 +475,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException 
      */
-    @Action( value = FormsResponseUtils.ACTION_GO_TO_STEP )
+    @Action( value = ACTION_GO_TO_STEP )
     public XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         boolean bSessionLost = isSessionLost( );
@@ -506,7 +523,7 @@ public class FormXPage extends MVCApplication
      *             if there is an error during the page generation
      * @throws UserNotSignedException 
      */
-    @Action( value = FormsResponseUtils.ACTION_FORM_RESPONSE_SUMMARY )
+    @Action( value = ACTION_FORM_RESPONSE_SUMMARY )
     public XPage doFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         Form form = null;
@@ -553,7 +570,7 @@ public class FormXPage extends MVCApplication
         {
             model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
         }
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
         String strTitleForm = I18nService.getLocalizedString( FormsResponseUtils.MESSAGE_SUMMARY_TITLE, new String [ ] {
                 form.getTitle( )
         }, getLocale( request ) );
@@ -600,11 +617,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE )
+    @Action( value = ACTION_SAVE_FORM_RESPONSE )
     public synchronized XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -646,11 +663,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE_SUMMARY )
+    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY )
     public synchronized XPage doSaveFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -812,11 +829,11 @@ public class FormXPage extends MVCApplication
             else
                 if ( bIsEndMessageDisplayed )
                 {
-                    url = new UrlItem( getViewFullUrl( FormsResponseUtils.VIEW_STEP ) );
+                    url = new UrlItem( getViewFullUrl( VIEW_STEP ) );
                 }
                 else
                 {
-                    url = new UrlItem( getViewUrl( FormsResponseUtils.VIEW_STEP ) );
+                    url = new UrlItem( getViewUrl( VIEW_STEP ) );
                 }
 
             url.addParameter( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
@@ -837,11 +854,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = FormsResponseUtils.ACTION_SAVE_STEP )
+    @Action( value = ACTION_SAVE_STEP )
     public XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -878,7 +895,7 @@ public class FormXPage extends MVCApplication
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_CONTROL, new Object [ ] {
                     errorList.stream( ).collect( Collectors.joining( ) )
-            }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( FormsResponseUtils.VIEW_STEP ) );
+            }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( VIEW_STEP ) );
         }
         return getStepView(  request );
     }
@@ -904,11 +921,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = FormsResponseUtils.ACTION_SAVE_FOR_BACKUP )
+    @Action( value = ACTION_SAVE_FOR_BACKUP )
     public XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -964,11 +981,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = FormsResponseUtils.ACTION_RESET_BACKUP )
+    @Action( value = ACTION_RESET_BACKUP )
     public XPage doResetBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }
@@ -1202,15 +1219,21 @@ public class FormXPage extends MVCApplication
             Object lock = FormsResponseUtils.getLockOnForm( form );
             synchronized( lock )
             {
-                FormsResponseUtils.checkIfUserResponseForm( form, request );
-                FormsResponseUtils.checkNumberMaxResponseForm( form, request );
-                _formService.saveForm( form, formResponse );
+                if ( Boolean.FALSE.equals(FormsResponseUtils.checkIfUserResponseForm( form, request ) ) )
+                {
+                	SiteMessageService.setMessage( request, FormsResponseUtils.MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM, SiteMessage.TYPE_ERROR );
+                }
+                if ( Boolean.FALSE.equals(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
+                {
+                	SiteMessageService.setMessage( request, FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
+                }
+                _formService.saveForm( formResponse );
                 FormsResponseUtils.increaseNumberResponse( form );
             }
         }
         else
         {
-            _formService.saveForm( form, formResponse );
+            _formService.saveForm( formResponse );
         }
         AccessControlService.getInstance( ).cleanSessionData( request, form.getId( ), Form.RESOURCE_TYPE );
 

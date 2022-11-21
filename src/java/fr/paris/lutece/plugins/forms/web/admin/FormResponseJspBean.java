@@ -42,6 +42,20 @@ public class FormResponseJspBean extends AbstractJspBean
 {
 	private static final long serialVersionUID = 1L;
 	
+	// Views
+	private static final String VIEW_STEP = "stepView";
+	private static final String VIEW_ERROR = "errorView";
+	
+	// Actions
+	private static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";
+	private static final String ACTION_SAVE_STEP = "doSaveStep";
+	private static final String ACTION_RESET_BACKUP = "doResetBackup";
+	private static final String ACTION_SAVE_FOR_BACKUP = "doSaveForBackup";
+	private static final String ACTION_PREVIOUS_STEP = "doReturnStep";
+	private static final String ACTION_GO_TO_STEP = "doGoToStep";
+	private static final String ACTION_FORM_RESPONSE_SUMMARY = "formResponseSummary";
+	private static final String ACTION_SAVE_FORM_RESPONSE_SUMMARY = "doSaveResponseSummary";
+	
 	// Templates
 	private static final String TEMPLATE_VIEW_STEP = "/admin/plugins/forms/step_view.html";
 	private static final String TEMPLATE_FORM_SUBMITTED = "/admin/plugins/forms/form_submitted_view.html";
@@ -72,7 +86,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the String
      * 
      */
-    @View( value = FormsResponseUtils.VIEW_STEP )
+    @View( value = VIEW_STEP )
     public String getStepView( HttpServletRequest request )
     {
     	String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
@@ -95,15 +109,10 @@ public class FormResponseJspBean extends AbstractJspBean
             Object lock = FormsResponseUtils.getLockOnForm( form );
             synchronized( lock )
             {
-            	if ( form.getMaxNumberResponse( ) != 0 )
+                if ( Boolean.FALSE.equals(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
                 {
-            		Map<Integer, Integer> responsePerFormMap = new HashMap<>( );
-                    int nNumberReponseForm = responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms );
-                    if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
-                    {
-                    	addError( FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, getLocale( ) );
-                    	return redirectView(request, FormsResponseUtils.VIEW_ERROR );
-                    }
+                	addError( FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, getLocale( ) );
+                	return redirectView(request, VIEW_ERROR );
                 }
             }
         }
@@ -137,7 +146,7 @@ public class FormResponseJspBean extends AbstractJspBean
             }
             
             Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
-            modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
+            modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
             _stepDisplayTree.addModel( modelForStep );
 
             model = FormsResponseUtils.getFormStepModel( form, request, model, _breadcrumb, _formResponseManager, _stepDisplayTree, _frontOffice );
@@ -152,7 +161,7 @@ public class FormResponseJspBean extends AbstractJspBean
         else
         {
         	addError( FormsResponseUtils.MESSAGE_ERROR_INACTIVE_FORM, getLocale( ) );
-        	return redirectView(request, FormsResponseUtils.VIEW_ERROR );
+        	return redirectView(request, VIEW_ERROR );
         }
         
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM_RESPONSE, TEMPLATE_VIEW_STEP, model );
@@ -165,7 +174,7 @@ public class FormResponseJspBean extends AbstractJspBean
      * @return the String
      * 
      */
-    @View( value = FormsResponseUtils.VIEW_ERROR )
+    @View( value = VIEW_ERROR )
     public String getErrorView( HttpServletRequest request )
     {
     	Map<String, Object> model = getModel( );
@@ -179,7 +188,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = FormsResponseUtils.ACTION_SAVE_STEP )
+    @Action( value = ACTION_SAVE_STEP )
     public String doSaveStep( HttpServletRequest request )
     {
     	try
@@ -207,7 +216,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE )
+    @Action( value = ACTION_SAVE_FORM_RESPONSE )
     public String doSaveFormResponse( HttpServletRequest request )
     {
         Form form = null;
@@ -230,7 +239,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = FormsResponseUtils.ACTION_PREVIOUS_STEP )
+    @Action( value = ACTION_PREVIOUS_STEP )
     public String doReturnStep( HttpServletRequest request )
     {
         try
@@ -257,7 +266,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = FormsResponseUtils.ACTION_GO_TO_STEP )
+    @Action( value = ACTION_GO_TO_STEP )
     public String doGoToStep( HttpServletRequest request )
     {
         try
@@ -285,7 +294,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = FormsResponseUtils.ACTION_SAVE_FOR_BACKUP )
+    @Action( value = ACTION_SAVE_FOR_BACKUP )
     public String doSaveForBackup( HttpServletRequest request )
     {
         try
@@ -315,7 +324,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = FormsResponseUtils.ACTION_RESET_BACKUP )
+    @Action( value = ACTION_RESET_BACKUP )
     public String doResetBackup( HttpServletRequest request )
     {
         Form form = null;
@@ -348,7 +357,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The request
      * @return the summary page
      */
-    @Action( value = FormsResponseUtils.ACTION_FORM_RESPONSE_SUMMARY )
+    @Action( value = ACTION_FORM_RESPONSE_SUMMARY )
     public String doFormResponseSummary( HttpServletRequest request )
     {
         Form form = null;
@@ -372,7 +381,7 @@ public class FormResponseJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_ID_FORM, form.getId( ) );
         model.put( FormsConstants.MARK_FORM, form );
 
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE ) );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
         
         return getPage( form.getTitle( ), TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, model );
     }
@@ -383,7 +392,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = FormsResponseUtils.ACTION_SAVE_FORM_RESPONSE_SUMMARY )
+    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY )
     public synchronized String doSaveFormResponseSummary( HttpServletRequest request )
     {
         Form form = null;
@@ -411,7 +420,9 @@ public class FormResponseJspBean extends AbstractJspBean
             return getStepView(  request );
         }
         
-        FormResponseService.getInstance( ).saveFormResponseBO( form, request, _formResponseManager.getFormResponse( ) );
+        _formResponseManager.getFormResponse( ).setAdmin( AdminUserService.getAdminUser( request ).getEmail( ) );
+        
+        FormResponseService.getInstance( ).saveFormResponseBO( _formResponseManager.getFormResponse( ) );
 
         Map<String, Object> model = getModel( );
 
@@ -478,7 +489,9 @@ public class FormResponseJspBean extends AbstractJspBean
             return getStepView(  request );
         }
         
-        FormResponseService.getInstance( ).saveFormResponseBO( form, request, _formResponseManager.getFormResponse( ) );
+        _formResponseManager.getFormResponse( ).setAdmin( AdminUserService.getAdminUser( request ).getEmail( ) );
+        
+        FormResponseService.getInstance( ).saveFormResponseBO( _formResponseManager.getFormResponse( ) );
         
         Map<String, Object> model = getModel( );
 
@@ -584,11 +597,11 @@ public class FormResponseJspBean extends AbstractJspBean
             
             if ( bIsEndMessageDisplayed )
             {
-                url = new UrlItem( _controller.controllerPath( ) + getViewUrl( FormsResponseUtils.VIEW_STEP ) );
+                url = new UrlItem( _controller.controllerPath( ) + getViewUrl( VIEW_STEP ) );
             }
             else
             {
-                url = new UrlItem( getViewUrl( FormsResponseUtils.VIEW_STEP ) );
+                url = new UrlItem( getViewUrl( VIEW_STEP ) );
             }
             
             url.addParameter( FormsConstants.PARAMETER_ID_FORM, form.getId( ) );
