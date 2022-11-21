@@ -62,6 +62,7 @@ public class FormsResponseUtils
 	// Views
 	public static final String VIEW_STEP = "stepView";
 	public static final String VIEW_FORM_RESPONSE = "formResponseView";
+	public static final String VIEW_ERROR = "errorView";
 	
 	// Actions
 	public static final String ACTION_SAVE_FORM_RESPONSE = "doSaveResponse";

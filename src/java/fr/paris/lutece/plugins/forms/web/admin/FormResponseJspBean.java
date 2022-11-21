@@ -42,16 +42,15 @@ public class FormResponseJspBean extends AbstractJspBean
 {
 	private static final long serialVersionUID = 1L;
 	
-	// Views
-	private static final String VIEW_MANAGE_FORMS = "ManageForms.jsp";
-	
 	// Templates
 	private static final String TEMPLATE_VIEW_STEP = "/admin/plugins/forms/step_view.html";
 	private static final String TEMPLATE_FORM_SUBMITTED = "/admin/plugins/forms/form_submitted_view.html";
 	private static final String TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY = "/admin/plugins/forms/form_response_summary.html";
+	private static final String TEMPLATE_VIEW_ERROR_PAGE = "/admin/plugins/forms/error_view.html";
 
 	// Properties for page titles
     private static final String PROPERTY_PAGE_TITLE_CREATE_FORM_RESPONSE = "forms.create_form_response.pageTitle";
+    private static final String PROPERTY_PAGE_TITLE_ERROR_FORM_RESPONSE = "forms.error_form_response.pageTitle";
     
     // Markers
     private static final String MARK_FORM_TITLE = "formTitle";
@@ -103,7 +102,7 @@ public class FormResponseJspBean extends AbstractJspBean
                     if ( nNumberReponseForm >= form.getMaxNumberResponse( ) )
                     {
                     	addError( FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, getLocale( ) );
-                    	return redirect( request, VIEW_MANAGE_FORMS );
+                    	return redirectView(request, FormsResponseUtils.VIEW_ERROR );
                     }
                 }
             }
@@ -153,10 +152,25 @@ public class FormResponseJspBean extends AbstractJspBean
         else
         {
         	addError( FormsResponseUtils.MESSAGE_ERROR_INACTIVE_FORM, getLocale( ) );
-        	return redirect( request, VIEW_MANAGE_FORMS );
+        	return redirectView(request, FormsResponseUtils.VIEW_ERROR );
         }
         
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM_RESPONSE, TEMPLATE_VIEW_STEP, model );
+    }
+    
+    /**
+     * 
+     * @param request
+     *            The Http request
+     * @return the String
+     * 
+     */
+    @View( value = FormsResponseUtils.VIEW_ERROR )
+    public String getErrorView( HttpServletRequest request )
+    {
+    	Map<String, Object> model = getModel( );
+        
+        return getPage( PROPERTY_PAGE_TITLE_ERROR_FORM_RESPONSE, TEMPLATE_VIEW_ERROR_PAGE, model );
     }
     
     /**
