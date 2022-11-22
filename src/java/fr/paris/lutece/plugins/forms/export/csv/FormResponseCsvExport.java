@@ -86,6 +86,9 @@ public class FormResponseCsvExport
         for ( Step step : orderedStepList )
         {
             List<Question> questionList = QuestionHome.getQuestionsListByStep( step.getId( ) );
+            if (questionList != null) {
+            	questionList.sort(Comparator.comparingInt(Question::getExportDisplayOrder));
+            }
             for ( Question question : questionList )
             {
                 if ( question.isResponseExportable( ) )
