@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -85,6 +86,9 @@ public class FormResponseCsvExport
         for ( Step step : orderedStepList )
         {
             List<Question> questionList = QuestionHome.getQuestionsListByStep( step.getId( ) );
+            if (questionList != null) {
+            	questionList.sort(Comparator.comparingInt(Question::getExportDisplayOrder));
+            }
             for ( Question question : questionList )
             {
                 if ( question.isResponseExportable( ) )
