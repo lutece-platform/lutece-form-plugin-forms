@@ -33,10 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.List;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
-
-import java.util.List;
 
 /**
  * IFormDisplayDAO Interface
@@ -145,4 +145,12 @@ public interface IFormDisplayDAO
      * @return The list which contains the data of all the FormDisplay objects
      */
     List<FormDisplay> selectFormDisplayListByForm( int nIdForm, Plugin plugin );
+
+    /**
+     * 
+     * @param nIdStep
+     * @param plugin
+     * @return The list which contains the data of all the FormDisplay objects ordered by export_display_order column from forms_question
+     */
+	List<FormDisplay> selectFormDisplayListOrderByQuestionExportDisplayOrder(int nIdStep, Plugin plugin);
 }

@@ -120,7 +120,7 @@ public class FormResponsePdfExport
     {
         Step step = formResponseStep.getStep( );
 
-        List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParent( step.getId( ), 0 );
+        List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListOrderByQuestionExportDisplayOrder( step.getId( ) );
 
         List<PdfCell> listContent = new ArrayList<>( );
         for ( FormDisplay formDisplay : listStepFormDisplay )
