@@ -33,13 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
-import java.sql.Statement;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This class provides Data Access methods for Form objects
@@ -60,7 +60,10 @@ public final class FormDisplayDAO implements IFormDisplayDAO
             + "FROM forms_display d INNER JOIN forms_group g ON d.id_composite = g.id_group "
             + "WHERE d.id_step = ? AND d.composite_type = ? order by d.id_parent, d.display_order";
     private static final String SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND id_step = ? AND id_composite = ?";
-
+    private static final String SQL_QUERY_SELECT_ORDER_BY_QUESTION_EXPORT_DISPLAY_ORDER = "SELECT fd.id_display, fd.id_form, fd.id_step, fd.id_composite, fd.id_parent, fd.display_order, fd.composite_type, fd.display_depth "
+    		+ "FROM forms_display fd LEFT JOIN forms_question fq ON fd.id_composite = fq.id_question "
+    		+ "WHERE fd.id_step = ? ORDER BY fq.export_display_order ASC";
+    
     /**
      * {@inheritDoc }
      */
@@ -187,6 +190,23 @@ public final class FormDisplayDAO implements IFormDisplayDAO
         }
 
         return formDisplayList;
+    }
+    
+    @Override
+    public List<FormDisplay> selectFormDisplayListOrderByQuestionExportDisplayOrder( int nIdStep, Plugin plugin )
+    {
+    	List<FormDisplay> formDisplayList = new ArrayList<>( );
+    	try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ORDER_BY_QUESTION_EXPORT_DISPLAY_ORDER, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdStep );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                formDisplayList.add( dataToObject( daoUtil ) );
+            }
+        }
+    	return formDisplayList;
     }
 
     /**

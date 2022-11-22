@@ -145,6 +145,21 @@ public final class FormDisplayHome
         }
         return result;
     }
+    
+    /**
+     * Load the data of all the formDisplay from a form step and returns them as a list ordered by export order
+     * @param nIdStep
+     * @return
+     */
+    public static List<FormDisplay> getFormDisplayListOrderByQuestionExportDisplayOrder( int nIdStep )
+    {
+        List<FormDisplay> result = _dao.selectFormDisplayListOrderByQuestionExportDisplayOrder(nIdStep, _plugin);
+        for ( FormDisplay formDisplay : result )
+        {
+            initConditionalDisplayForFormDisplay( formDisplay );
+        }
+        return result;
+    }
 
     /**
      * Load the data of all the FormDisplay objects of type "Group" linked to a given FormStep and returns them as a referenceList
