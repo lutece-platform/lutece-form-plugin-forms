@@ -57,6 +57,7 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
+import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.service.workflow.IFormWorkflowService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
@@ -102,7 +103,7 @@ public class FormService
     /**
      * Saves the specified form
      * 
-     * @deprecated use saveForm( FormResponse formResponse )
+     * @deprecated use {@link #saveFormResponse( FormResponse formResponse, Form form ) }
      * 
      * @param form
      *            the form to save
@@ -122,7 +123,7 @@ public class FormService
 	            formResponse.setFromSave( Boolean.FALSE );
 	
 	            filterFinalSteps( formResponse );
-	            saveFormResponse( formResponse );
+	            save( formResponse );
 	            saveFormResponseSteps( formResponse );
 	            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
 	        }
@@ -133,6 +134,57 @@ public class FormService
 	        }
         }
         fireFormResponseEventCreation( formResponse );
+    }
+    
+    /**
+     * Save the response of form
+     * 
+     *  @param formResponse
+     *            The FormResponse
+     * @throws MaxFormResponseException 
+     */
+    public void saveFormResponse( FormResponse formResponse ) throws MaxFormResponseException
+    {	
+    	saveFormResponse( formResponse, FormHome.findByPrimaryKey( formResponse.getFormId( ) ) );
+    }
+    
+    /**
+     * save the response of form
+     * 
+     *  @param formResponse
+     *            The FormResponse
+     * @throws MaxFormResponseException 
+     */
+    public void saveFormResponse( FormResponse formResponse, Form form ) throws MaxFormResponseException
+    {	
+        if ( ( form.getMaxNumberResponse( ) != 0 ) )
+        {
+        	int formResponseId = formResponse.getId( );
+        	
+            synchronized( FormsResponseUtils.getLockOnForm( form ) )
+            {
+            	if ( formResponse.getGuid( ) != null && !(FormsResponseUtils.checkIfUserResponseForm( form, formResponse.getGuid( ) ) ) )
+                {
+                	throw new MaxFormResponseException( );
+                }
+            	if ( !(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
+                {
+            		throw new MaxFormResponseException( );
+                }
+                saveForm( formResponse );
+                
+                if ( formResponseId > 0 )
+                {
+                	FormsResponseUtils.increaseNumberResponse( form );
+                }
+            }
+        }
+        else
+        {
+            saveForm( formResponse );
+        }
+    	
+    	fireFormResponseEventCreation( formResponse );
     }
     
     /**
@@ -155,7 +207,7 @@ public class FormService
                 formResponse.setFromSave( Boolean.FALSE );
 
                 filterFinalSteps( formResponse );
-                saveFormResponse( formResponse );
+                save( formResponse );
                 saveFormResponseSteps( formResponse );
                 TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
             }
@@ -201,7 +253,7 @@ public class FormService
      * @param formResponse
      *            the form response to save
      */
-    private void saveFormResponse( FormResponse formResponse )
+    private void save( FormResponse formResponse )
     {
         if ( formResponse.getId( ) > 0 )
         {
@@ -282,7 +334,7 @@ public class FormService
     {
         formResponse.setFromSave( Boolean.TRUE );
 
-        saveFormResponse( formResponse );
+        save( formResponse );
         saveFormResponseSteps( formResponse );
     }
 

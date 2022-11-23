@@ -57,6 +57,7 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
+import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
@@ -299,11 +300,11 @@ public class FormXPage extends MVCApplication
             Object lock = FormsResponseUtils.getLockOnForm( form );
             synchronized( lock )
             {
-            	if ( Boolean.FALSE.equals(FormsResponseUtils.checkIfUserResponseForm( form, request ) ) )
+            	if ( _formResponseManager.getFormResponse( ).getGuid( ) != null && !(FormsResponseUtils.checkIfUserResponseForm( form, _formResponseManager.getFormResponse( ).getGuid( ) ) ) )
                 {
                 	SiteMessageService.setMessage( request, FormsResponseUtils.MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM, SiteMessage.TYPE_ERROR );
                 }
-                if ( Boolean.FALSE.equals(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
+                if ( !(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
                 {
                 	SiteMessageService.setMessage( request, FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
                 }
@@ -1214,27 +1215,16 @@ public class FormXPage extends MVCApplication
             formResponse.setGuid( user.getName( ) );
         }
 
-        if ( form.isOneResponseByUser( ) || form.getMaxNumberResponse( ) != 0 )
+        try
         {
-            Object lock = FormsResponseUtils.getLockOnForm( form );
-            synchronized( lock )
-            {
-                if ( Boolean.FALSE.equals(FormsResponseUtils.checkIfUserResponseForm( form, request ) ) )
-                {
-                	SiteMessageService.setMessage( request, FormsResponseUtils.MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM, SiteMessage.TYPE_ERROR );
-                }
-                if ( Boolean.FALSE.equals(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
-                {
-                	SiteMessageService.setMessage( request, FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, SiteMessage.TYPE_ERROR );
-                }
-                _formService.saveForm( formResponse );
-                FormsResponseUtils.increaseNumberResponse( form );
-            }
-        }
-        else
+			_formService.saveFormResponse( formResponse );
+		}
+        catch ( MaxFormResponseException e )
         {
-            _formService.saveForm( formResponse );
-        }
+        	//todo
+        	SiteMessageService.setMessage( request, e.getMessage( ), SiteMessage.TYPE_ERROR );
+		}
+        
         AccessControlService.getInstance( ).cleanSessionData( request, form.getId( ), Form.RESOURCE_TYPE );
 
         _formService.processFormAction( form, formResponse );

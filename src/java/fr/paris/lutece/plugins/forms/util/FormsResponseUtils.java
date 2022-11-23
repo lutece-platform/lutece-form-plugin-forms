@@ -76,7 +76,7 @@ public class FormsResponseUtils
     
 	// Other
     private static ConcurrentMap<Integer, Object> _lockFormId = new ConcurrentHashMap<>( );
-    private static Map<Integer, Integer> _responsePerFormMap = new ConcurrentHashMap<>( );
+    private static ConcurrentMap<Integer, Integer> _responsePerFormMap = new ConcurrentHashMap<>( );
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
 	private FormsResponseUtils( )
@@ -428,10 +428,13 @@ public class FormsResponseUtils
      */
     public static void increaseNumberResponse( Form form )
     {
-        if ( form.getMaxNumberResponse( ) != 0 )
+        synchronized( FormsResponseUtils.getLockOnForm( form ) )
         {
-            int nNumberReponseForm = _responsePerFormMap.get( form.getId( ) );
-            _responsePerFormMap.put( form.getId( ), nNumberReponseForm + 1 );
+        	if ( form.getMaxNumberResponse( ) != 0 )
+            {
+                int nNumberReponseForm = _responsePerFormMap.get( form.getId( ) );
+                _responsePerFormMap.put( form.getId( ), nNumberReponseForm + 1 );
+            }
         }
     }
     
@@ -445,8 +448,9 @@ public class FormsResponseUtils
      * @throws SiteMessageException
      *             the exception
      */
-    public static Boolean checkNumberMaxResponseForm( Form form )
+    public static boolean checkNumberMaxResponseForm( Form form )
     {
+    	//Todo
         if ( form.getMaxNumberResponse( ) != 0 )
         {
             return ( _responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms ) < form.getMaxNumberResponse( ) );
@@ -463,12 +467,11 @@ public class FormsResponseUtils
      *            the request
      * @throws SiteMessageException
      */
-    public static Boolean checkIfUserResponseForm( Form form, HttpServletRequest request )
+    public static boolean checkIfUserResponseForm( Form form, String strGuid )
     {
         if ( form.isAuthentificationNeeded( ) && form.isOneResponseByUser( ) )
         {
-            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-            return ( FormHome.getNumberOfResponseFormByUser( form.getId( ), user.getName( ) ) < NumberUtils.INTEGER_ONE );
+            return ( FormHome.getNumberOfResponseFormByUser( form.getId( ), strGuid ) < NumberUtils.INTEGER_ONE );
         }
         return true;
     }

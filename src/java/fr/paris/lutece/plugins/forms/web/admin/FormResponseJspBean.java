@@ -1,7 +1,6 @@
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
@@ -18,8 +17,8 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
+import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
-import fr.paris.lutece.plugins.forms.service.FormResponseService;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -109,7 +108,7 @@ public class FormResponseJspBean extends AbstractJspBean
             Object lock = FormsResponseUtils.getLockOnForm( form );
             synchronized( lock )
             {
-                if ( Boolean.FALSE.equals(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
+                if ( !(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
                 {
                 	addError( FormsResponseUtils.MESSAGE_ERROR_NUMBER_MAX_RESPONSE_FORM, getLocale( ) );
                 	return redirectView(request, VIEW_ERROR );
@@ -420,9 +419,18 @@ public class FormResponseJspBean extends AbstractJspBean
             return getStepView(  request );
         }
         
-        _formResponseManager.getFormResponse( ).setAdmin( AdminUserService.getAdminUser( request ).getEmail( ) );
+        _formResponseManager.getFormResponse( ).setAdmin( AdminUserService.getAdminUser( request ).getAccessCode( ) );
         
-        FormResponseService.getInstance( ).saveFormResponseBO( _formResponseManager.getFormResponse( ) );
+        try
+        {
+			_formService.saveFormResponse( _formResponseManager.getFormResponse( ) );
+	        _formService.processFormAction( form, _formResponseManager.getFormResponse( ) );
+		} 
+        catch ( MaxFormResponseException e )
+        {
+        	addError( e.getMessage( ) );
+			redirectView(request, VIEW_ERROR);
+		}
 
         Map<String, Object> model = getModel( );
 
@@ -489,9 +497,18 @@ public class FormResponseJspBean extends AbstractJspBean
             return getStepView(  request );
         }
         
-        _formResponseManager.getFormResponse( ).setAdmin( AdminUserService.getAdminUser( request ).getEmail( ) );
+        _formResponseManager.getFormResponse( ).setAdmin( AdminUserService.getAdminUser( request ).getAccessCode( ) );
         
-        FormResponseService.getInstance( ).saveFormResponseBO( _formResponseManager.getFormResponse( ) );
+        try
+        {
+			_formService.saveFormResponse( _formResponseManager.getFormResponse( ) );
+	        _formService.processFormAction( form, _formResponseManager.getFormResponse( ) );
+		} 
+        catch ( MaxFormResponseException e )
+        {
+			addError( e.getMessage( ) );
+			redirectView(request, VIEW_ERROR);
+		}
         
         Map<String, Object> model = getModel( );
 

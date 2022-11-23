@@ -36,8 +36,6 @@ package fr.paris.lutece.plugins.forms.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
@@ -57,7 +55,7 @@ import fr.paris.lutece.util.sql.TransactionManager;
  */
 public class FormResponseService
 {
-    private FormService _formService;
+    private static FormService _formService;
 
     private static FormResponseService _formResponseService;
 
@@ -89,7 +87,7 @@ public class FormResponseService
     }
     
     /**
-     * Saves the form response
+     * Update the form response
      * 
      * @param formResponse
      *            the form response to save
@@ -97,37 +95,7 @@ public class FormResponseService
     public void saveFormResponse( FormResponse formResponse )
     {
         FormResponseHome.update( formResponse );
-    }
-    
-    /**
-     * save the response of form
-     * 
-     *  @param formResponse
-     *            The FormResponse
-     */
-    public void saveFormResponseBO( FormResponse formResponse )
-    {
-    	Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
-
-        if ( ( form.getMaxNumberResponse( ) != 0 ) )
-        {
-            Object lock = FormsResponseUtils.getLockOnForm( form );
-            synchronized( lock )
-            {
-            	if ( Boolean.FALSE.equals(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
-                {
-                	return;
-                }
-                _formService.saveForm( formResponse );
-                FormsResponseUtils.increaseNumberResponse( form );
-            }
-        }
-        else
-        {
-            _formService.saveForm( formResponse );
-        }
-
-        _formService.processFormAction( form, formResponse );
+        _formService.fireFormResponseEventUpdate( formResponse );
     }
 
     public void deleteFormResponse( FormResponse formResponse )
