@@ -10,13 +10,13 @@
 					<@row>
 						<@columns sm=2 class='mt-5'>
 							<@tabList vertical=true> 
-								<@tabLink id='export-1-tab' active=!is_exportable_questions!true href='#export-1' title='#i18n{forms.modify_form.export.config.text1}' />
-								<@tabLink id='export-2-tab' active=is_exportable_questions!false href='#export-2' title='#i18n{forms.modify_form.export.config.questions}' />
+								<@tabLink id='export-1-tab' active=true href='#export-1' title='#i18n{forms.modify_form.export.config.text1}' />
+								<@tabLink id='export-2-tab' href='#export-2' title='#i18n{forms.modify_form.export.config.questions}' />
 							</@tabList>
 						</@columns>
 						<@columns sm=10>
 							<@tabContent>
-								<@tabPanel id="export-1" active=!is_exportable_questions!true >
+								<@tabPanel id="export-1" active=true >
 									<@row>
 										<@columns sm=9>
 											<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormExport.jsp'>
@@ -61,7 +61,7 @@
 											</@columns>
 										</@row>
 								</@tabPanel>
-								<@tabPanel id='export-2' active=is_exportable_questions!false >
+								<@tabPanel id='export-2' >
 									<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormExport.jsp'>
 										<@input type='hidden' id='token' name='token' value='${token}' />
 										<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
@@ -89,15 +89,9 @@
 				            							</@formGroup>
 													</@td>
 													<@td>
-														${question.exportDisplayOrder}
-														<#if questionList?size gt 1>
-															<#if question.exportDisplayOrder gt 1>
-																<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doMoveUpExportableQuestion&id_form=${form.id}&id_question=${question.id}' title='#i18n{forms.modify_form.action.moveUpExportConfig}' hideTitle=['all'] buttonIcon='chevron-up' size='sm' />
-															</#if>
-															<#if question.exportDisplayOrder lt questionList?size>
-																<@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doMoveDownExportableQuestion&id_form=${form.id}&id_question=${question.id}' title='#i18n{forms.modify_form.action.moveDownExportConfig}' hideTitle=['all'] buttonIcon='chevron-down' size='sm' />
-															</#if>
-														</#if>
+														<@formGroup>
+													    	<@input type='number' name='export_display_order_${question.id}' min=0 value='${question.exportDisplayOrder}' />
+														</@formGroup>
 													</@td>
 												</@tr>
 											</#list>
