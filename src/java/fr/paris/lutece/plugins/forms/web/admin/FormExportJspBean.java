@@ -94,13 +94,10 @@ public class FormExportJspBean extends AbstractJspBean
     private static final String ACTION_MOVE_UP_EXPORT_CONFIG = "doMoveUpExportConfig";
     private static final String ACTION_MOVE_DOWN_EXPORT_CONFIG = "doMoveDownExportConfig";
     private static final String ACTION_MODIFY_EXPORTABLE_QUESTIONS = "modifyExportableQuestions";
-    private static final String ACTION_MOVE_UP_EXPORTABLE_QUESTION = "doMoveUpExportableQuestion";
-    private static final String ACTION_MOVE_DOWN_EXPORTABLE_QUESTION = "doMoveDownExportableQuestion";
 
     // Parameters
     private static final String PARAMETER_EXPORT_CONFIG = "export_config";
     private static final String PARAMETER_ID_CONFIG = "id_config";
-    private static final String PARAMETER_IS_EXPORTABLE_QUESTIONS = "is_exportable_questions";
     private static final String MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG = "forms.modify_form.message.confirmRemoveExportConfig";
 
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
@@ -124,21 +121,12 @@ public class FormExportJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         
-        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
-        for (Question question : questionList) {
-        	// set default order
-        	if (question.getExportDisplayOrder() == 0) {
-        		question.setExportDisplayOrder(questionList.indexOf(question) + 1);
-        	}
-        }
-        
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
-        model.put( MARK_QUESTIONLIST, questionList );
+        model.put( MARK_QUESTIONLIST, QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) ) );
         model.put( MARK_EXPORT_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfigOption( formToBeModified, getLocale( ) ) );
         model.put( MARK_EXPORT_CONFIG_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) ) );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_EXPORT_CONFIG ) );
-        model.put(PARAMETER_IS_EXPORTABLE_QUESTIONS, Boolean.valueOf(request.getParameter( PARAMETER_IS_EXPORTABLE_QUESTIONS )));
         
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
     }
@@ -214,10 +202,7 @@ public class FormExportJspBean extends AbstractJspBean
         
         for ( Question question : questionList )
         {
-        	// set default order
-        	if (question.getExportDisplayOrder() == 0) {
-        		question.setExportDisplayOrder(questionList.indexOf(question) + 1);
-        	}
+        	question.setExportDisplayOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_EXPORT_DISPLAY_ORDER + "_" + question.getId( ) ), 0 ) );
         	QuestionHome.update(question);
         	
             boolean exportable = questionExportableSet.contains( String.valueOf( question.getId( ) ) );
@@ -379,58 +364,5 @@ public class FormExportJspBean extends AbstractJspBean
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
 
         return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
-    }
-    
-    @Action( ACTION_MOVE_UP_EXPORTABLE_QUESTION )
-    public String doMoveUpExportableQuestion( HttpServletRequest request )
-    {
-    	Map<String, String> mapParameters = changeOrderExportableQuestions(request, true);
-        return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
-    }
-    
-    @Action( ACTION_MOVE_DOWN_EXPORTABLE_QUESTION )
-    public String doMoveDownExportableQuestion( HttpServletRequest request )
-    {
-    	Map<String, String> mapParameters = changeOrderExportableQuestions(request, false);
-        return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
-    }
-    
-    private Map<String, String> changeOrderExportableQuestions(HttpServletRequest request, boolean bIsMoveUp)
-    {
-    	int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
-    	int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
-    	
-    	Map<String, String> mapParameters = new LinkedHashMap<>( );
-        mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nIdForm ) );
-        
-        if ( nIdQuestion == FormsConstants.DEFAULT_ID_VALUE )
-        {
-            return mapParameters;
-        }
-    	
-    	List<Question> questionList = QuestionHome.getListQuestionByIdForm( nIdForm );
-    	
-    	Question questionToMove = QuestionHome.findByPrimaryKey(nIdQuestion);
-    	int currentOrder = questionToMove.getExportDisplayOrder();
-    	
-    	for (Question question : questionList) {
-    		if (bIsMoveUp && question.getExportDisplayOrder() == currentOrder - 1) {
-				question.setExportDisplayOrder(currentOrder);
-				QuestionHome.update( question );
-
-				questionToMove.setExportDisplayOrder( currentOrder - 1 );
-				QuestionHome.update(questionToMove);
-                break;
-    		} else if (!bIsMoveUp && question.getExportDisplayOrder() == currentOrder + 1 ){
-				question.setExportDisplayOrder(currentOrder);
-				QuestionHome.update( question );
-
-				questionToMove.setExportDisplayOrder( currentOrder + 1 );
-				QuestionHome.update(questionToMove);
-                break;
-    		}
-    	}
-    	mapParameters.put(PARAMETER_IS_EXPORTABLE_QUESTIONS, String.valueOf(true));
-        return mapParameters;
     }
 }
