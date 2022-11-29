@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web.file;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.service.FormService;
@@ -47,6 +48,7 @@ import fr.paris.lutece.portal.service.image.ImageResource;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.image.ImageResourceProvider;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.web.LocalVariables;
 import fr.paris.lutece.util.file.FileUtil;
 
@@ -169,4 +171,9 @@ public final class FormsFileImageService implements ImageResourceProvider
         // Variables
         private static final FormsFileImageService _singleton = new FormsFileImageService( );
     }
+
+	@Override
+	public String addImageResource(FileItem fileItem) {
+		throw new AppException( "Not implemented yet" );
+	}
 }

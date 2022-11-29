@@ -6,7 +6,7 @@
 			<@boxHeader title='#i18n{forms.createField.title} : "${field.parentEntry.title}"' />
 			<@boxBody>
         		<@fieldSet legend='#i18n{forms.createField.title} : "${field.parentEntry.title}"' hideLegend=['all']>
-					<@tform action='jsp/admin/plugins/forms/ModifyEntry.jsp'>
+					<@tform action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data">
 						<@input type='hidden' name='id_step' value='${question.idStep}' />
 						<@input type='hidden' name='id_question' value='${question.id}' />
 						<@input type='hidden' name='id_entry' value='${id_entry}' />
@@ -18,6 +18,9 @@
 						</@formGroup>
 						<@formGroup labelFor='comment' labelKey='#i18n{forms.createField.labelComment}'>
 							<@input type='textarea' name='comment' id='comment'></@input>
+						</@formGroup>
+						<@formGroup labelFor='illustration_image' labelKey='#i18n{forms.createEntry.labelIllustrationPicture}' helpKey='#i18n{forms.createEntry.labelIllustrationPictureHelp}'>
+							<@input type='file' id='illustration_image'  name='illustration_image' />
 						</@formGroup>
 						<@formGroup>
 							<@checkBox labelFor='default_value' labelKey='#i18n{forms.createField.labelDefaultValue}' name='default_value' id='default_value' value='1' />

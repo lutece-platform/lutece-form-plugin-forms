@@ -139,6 +139,7 @@ public final class FormsConstants
     public static final String PARAMETER_REF_LIST_FIELD = "refListField";
     public static final String PARAMETER_REF_LIST_MAPPING = "refListMapping";
     public static final String PARAMETER_ACTION_SUCCESS = "action_success";
+    public static final String PARAMETER_ILLUSTRATION_IMAGE = "illustration_image";
     public static final String PARAMETER_ID_CONTROL_GROUP = "id_control_group";
     public static final String PARAMETER_LOGICAL_OPERATOR = "logical_operator";
     public static final String PARAMETER_VIEW_MODIFY_LOGICAL_OPERATOR = "view_modifyLogicalOperator";
