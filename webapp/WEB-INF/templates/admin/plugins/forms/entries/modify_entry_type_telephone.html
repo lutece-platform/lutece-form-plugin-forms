@@ -38,7 +38,7 @@ ${breadcrumb_template}
 						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.createEntry.labelAutocomplete}' helpKey='#i18n{forms.createEntry.labelHelpMessageAutocomplete}'>
 							<#assign field = getFieldByCode( entry, "autocomplete" ) >
 							<@input type='text' name='autocomplete' id='autocomplete' value="${field.value?if_exists}" params=' list="autocompleteList"' />
-							<datalist id="autocompleteList"><option value="tel"><option value="tel-national"></datalist>
+							<datalist id="autocompleteList"><option value="off"><option value="on"><option value="tel"><option value="tel-national"></datalist>
 						</@formGroup>
 						<@formGroup labelFor='defaultRegion' labelKey='#i18n{forms.createEntry.labelDefaultRegion}' helpKey='#i18n{forms.createEntry.labelHelpMessageDefaultRegion}'>
 							<#assign field = getFieldByCode( entry, "defaultRegion" ) >
