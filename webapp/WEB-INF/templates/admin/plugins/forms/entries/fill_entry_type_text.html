@@ -2,6 +2,13 @@
 <#assign field_width=getFieldValueByCode( entry, "width")>
 <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
 <#assign field=getFieldByCode( entry, "text_config")>
+<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
+
+<#if field_autocomplete?? && field_autocomplete??>
+	<#assign autocomplete = "autocomplete=${field_autocomplete.value}" />
+<#else>
+	<#assign autocomplete = "" />
+</#if>
 
 <#if list_responses?has_content>
 	<#list list_responses as response>
@@ -28,7 +35,7 @@
 
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
 	<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-	<@input type='text' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue placeHolder=placeholder/>
+	<@input type='text' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue params=autocomplete placeHolder=placeholder/>
 </@formGroup>
 
 <#if list_responses??>
