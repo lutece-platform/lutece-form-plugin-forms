@@ -3,9 +3,16 @@
 <#assign field_min=getFieldByCode( entry, "min")>
 <#assign field_max=getFieldByCode( entry, "max")>
 <#assign suffix = '' >
+<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
 <#if entry.fields?? && entry.fields?has_content>
 	<#assign suffix = getFieldValueByCode( entry, 'suffix') >
 </#if>
+<#if field_autocomplete?? && field_autocomplete.value??>
+	<#assign autocomplete = "autocomplete=${field_autocomplete.value}" />
+<#else>
+	<#assign autocomplete = "" />
+</#if>
+
 <#if list_responses?has_content>
 	<#list list_responses as response>
 		<#if response.entry.idEntry == entry.idEntry>
@@ -35,7 +42,7 @@
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory htmlRequired=false >
 	<@inputGroup>
 		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-		<@input type='number' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue min=min max=max placeHolder=placeholder/>
+		<@input type='number' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue min=min max=max params=autocomplete placeHolder=placeholder/>
 		<#if suffix!=''>
 			<@inputGroupItem type='text'>${suffix}</@inputGroupItem>
 		</#if>
