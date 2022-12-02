@@ -4,7 +4,7 @@
 <#assign field=getFieldByCode( entry, "text_config")>
 <#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
 
-<#if field_autocomplete?? && field_autocomplete??>
+<#if field_autocomplete?? && field_autocomplete.value??>
 	<#assign autocomplete = "autocomplete=${field_autocomplete.value}" />
 <#else>
 	<#assign autocomplete = "" />

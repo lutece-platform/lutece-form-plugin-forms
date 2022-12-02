@@ -36,6 +36,10 @@ ${breadcrumb_template}
 						<@formGroup labelFor='placeholder' labelKey='#i18n{forms.createEntry.labelPlaceholder}'>
 							<@input type='text' name='placeholder' id='placeholder' value='' maxlength=100 />
 						</@formGroup>
+						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.createEntry.labelAutocomplete}' helpKey='#i18n{forms.createEntry.labelHelpMessageAutocomplete}'>
+							<@input type='text' name='autocomplete' id='autocomplete' params=' list="autocompleteList"' />
+							<datalist id="autocompleteList"><option value="off"><option value="on"><option value="name"></datalist>
+						</@formGroup>
 						<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
 							<@input type='textarea' name='value' id='value'></@input>
 						</@formGroup>
