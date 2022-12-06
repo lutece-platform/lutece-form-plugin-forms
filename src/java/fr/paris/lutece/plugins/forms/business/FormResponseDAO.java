@@ -381,7 +381,7 @@ public final class FormResponseDAO implements IFormResponseDAO
         formResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
         formResponse.setPublished( daoUtil.getBoolean( "status" ) );
         formResponse.setRole( daoUtil.getString( "role" ) );
-        formResponse.setRole( daoUtil.getString( "admin" ) );
+        formResponse.setAdmin( daoUtil.getString( "admin" ) );
 
         Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
         formResponse.setDateCreation( timestampCreationDate );
