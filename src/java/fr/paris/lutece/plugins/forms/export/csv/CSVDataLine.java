@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -58,9 +59,8 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 public class CSVDataLine
 {
     private static final String RESPONSE_SEPARATOR = " ";
-    private static final String ITERATION_SEPARATOR = "|";
 
-    private final Map<Integer, String> _mapDataToExport;
+    private final Map<Integer, Map<Integer, String>> _mapDataToExport;
     private final String _commonDataToExport;
 
     /**
@@ -94,23 +94,20 @@ public class CSVDataLine
         Question question = formQuestionResponse.getQuestion( );
         IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
 
-        List<String> listResponseValue = entryDataService.responseToStrings( formQuestionResponse );
+        Map<Integer, List<String>> mapIterationsResponseValue = entryDataService.responseToIterationsStrings( formQuestionResponse );
         StringBuilder sbReponseValues = new StringBuilder( );
 
-        for ( String strResponseValue : listResponseValue )
+        for (Entry<Integer, List<String>> entry : mapIterationsResponseValue.entrySet())
         {
-            sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
-        }
-        if ( !_mapDataToExport.containsKey( question.getId( ) ) )
-        {
-            _mapDataToExport.put( question.getId( ), CSVUtil.safeString( sbReponseValues.toString( ) ) );
-        }
-        else
-        {
-            StringBuilder sbConcatReponseValues = new StringBuilder( );
-            sbConcatReponseValues.append( _mapDataToExport.get( question.getId( ) ) ).append( ITERATION_SEPARATOR )
-                    .append( CSVUtil.safeString( sbReponseValues.toString( ) ) );
-            _mapDataToExport.replace( question.getId( ), sbConcatReponseValues.toString( ) );
+        	Integer iteration = entry.getKey();
+        	if (!_mapDataToExport.containsKey(iteration)) {
+        		_mapDataToExport.put(iteration, new HashMap<>());
+        	}
+        	Map<Integer, String> mapQuestionsData = _mapDataToExport.get(iteration);
+        	for (String strResponseValue : entry.getValue()) {
+    			sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
+        	}
+        	mapQuestionsData.put(question.getId( ),  CSVUtil.safeString( sbReponseValues.toString( ) ));
         }
     }
 
@@ -119,10 +116,20 @@ public class CSVDataLine
      *            The column name
      * @return the _mapDataToExport
      */
-    public String getDataToExport( Question question )
+    public String getDataToExport( Integer iteration, Question question )
     {
-        return _mapDataToExport.get( question.getId( ) );
+        return _mapDataToExport.get(iteration) != null ? _mapDataToExport.get(iteration).get(question.getId()) : null;
     }
+    
+    public Map<Integer, Map<Integer, String>> getMapDataToExport()
+    {
+    	return _mapDataToExport;
+    }
+    
+    /*public Map<Integer, String> getMapDataByIteration(Integer iteration)
+    {
+    	return _mapDataToExport.get(iteration);
+    }*/
 
     public String getCommonDataToExport( )
     {
