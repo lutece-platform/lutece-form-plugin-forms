@@ -281,6 +281,26 @@ public final class FormResponseHome
         }
         return listFormResponse;
     }
+    
+    /**
+     * Load the data of all the formResponse objects and returns them as a list
+     * 
+     * @param strGuid
+     *            The user Guid
+     * @param nIdForm
+     *            The form primary key
+     * @param fromBackup
+     * @return the formResponse objects
+     */
+    public static List<FormResponse> getFormResponseByAdminAndForm( String strAdmin, int nIdForm, boolean fromBackup )
+    {
+        List<FormResponse> listFormResponse = _dao.selectFormResponseByAdmin( strAdmin, nIdForm, fromBackup, _plugin );
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            completeWithSteps( formResponse );
+        }
+        return listFormResponse;
+    }
 
     /**
      * Load the data of all the formResponse uncomplete objects and returns them as a list

@@ -236,6 +236,7 @@ CREATE TABLE IF NOT EXISTS forms_response (
   from_save SMALLINT default 0,
   status SMALLINT default 0 NOT NULL,
   role varchar(50) default NULL,
+  admin varchar(50) default NULL,
   update_date_status timestamp default CURRENT_TIMESTAMP NOT NULL,
   PRIMARY KEY (id_response)
 );

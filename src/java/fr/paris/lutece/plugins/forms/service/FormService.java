@@ -57,8 +57,10 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
+import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.service.workflow.IFormWorkflowService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
 import fr.paris.lutece.plugins.forms.web.CompositeQuestionDisplay;
 import fr.paris.lutece.plugins.forms.web.FormResponseManager;
@@ -84,7 +86,6 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.event.ResourceEventManager;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.sql.TransactionManager;
 
@@ -100,31 +101,67 @@ public class FormService
 
     /**
      * Saves the specified form
-     * 
+     *      * 
      * @param form
      *            the form to save
      * @param formResponse
      *            the form response to save
+     * @throws MaxFormResponseException 
+     * 			 the MaxFormResponseException Runtime Exception
+     * 
      */
     public void saveForm( Form form, FormResponse formResponse )
     {
-        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+    	TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+	    try
+	    {
+	    	if (  (form.getMaxNumberResponse( ) != 0 || form.isOneResponseByUser( ))
+	    			&& ( formResponse.getId() == 0 || !formResponse.isFromSave( )) )
+	        {
+	    		synchronized( FormsResponseUtils.getLockOnForm( form ) )
+	            {
+	            	if ( !(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
+	                {
+	            		throw new MaxFormResponseException( "The maximum number of response has been reached for the form: "+ form.getTitle( ) );
+	                }
+	            	if(!(FormsResponseUtils.checkIfUserResponseForm( form,  formResponse.getGuid() ) )) {       
+		            	
+	            		throw new MaxFormResponseException( "The maximum number of response has been reached for the user with the guid: "+formResponse.getGuid() );    
+		            }
+	            	saveForm(formResponse );
+	                if (form.getMaxNumberResponse( ) != 0) 
+	                {
+	                	FormsResponseUtils.increaseNumberResponse( form );
+	                }
+	            }	        
+	        }
+	    	else
+	    	{	    		
+	        	saveForm( formResponse );
+	        }
+	    	
+	        TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
 
-        try
-        {
-            formResponse.setFromSave( Boolean.FALSE );
-
-            filterFinalSteps( formResponse );
-            saveFormResponse( formResponse );
-            saveFormResponseSteps( formResponse );
-            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
-        }
-        catch( Exception e )
-        {
-            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
-            throw new AppException( e.getMessage( ), e );
-        }
-        fireFormResponseEventCreation( formResponse );
+	     }
+	     catch( Exception e )
+	     {
+	    	 TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+	         throw e ;
+	     }         
+        
+	    fireFormResponseEventCreation( formResponse );         
+    }
+    /**
+     * Save the response of form
+     * 
+     *  @param formResponse
+     *            The FormResponse
+      * @throws MaxFormResponseException 
+     * 			 the MaxFormResponseException Runtime Exception
+     */
+    public void saveFormResponse( FormResponse formResponse )
+    {	
+    	saveForm( FormHome.findByPrimaryKey( formResponse.getFormId( ) ), formResponse );
     }
 
     /**
@@ -152,14 +189,24 @@ public class FormService
         formResponse.setSteps(
                 formResponse.getSteps( ).stream( ).filter( step -> step.getOrder( ) != FormsConstants.ORDER_NOT_SET ).collect( Collectors.toList( ) ) );
     }
-
+    /**
+     * Saves the form
+     * @param formResponse
+     */
+    private void saveForm(FormResponse formResponse) 
+    {
+    	formResponse.setFromSave( Boolean.FALSE );	
+        filterFinalSteps( formResponse );
+        save( formResponse );
+        saveFormResponseSteps( formResponse );
+    }
     /**
      * Saves the form response
      * 
      * @param formResponse
      *            the form response to save
      */
-    private void saveFormResponse( FormResponse formResponse )
+    private void save( FormResponse formResponse )
     {
         if ( formResponse.getId( ) > 0 )
         {
@@ -174,10 +221,10 @@ public class FormService
         }
         else
         {
-            FormResponseHome.create( formResponse );
+        	FormResponseHome.create( formResponse );
         }
     }
-
+    
     /**
      * Saves the form response
      * 
@@ -240,7 +287,7 @@ public class FormService
     {
         formResponse.setFromSave( Boolean.TRUE );
 
-        saveFormResponse( formResponse );
+        save( formResponse );
         saveFormResponseSteps( formResponse );
     }
 
@@ -423,9 +470,7 @@ public class FormService
     public FormResponseManager createFormResponseManagerFromBackUp( Form form, String strUserGuid )
     {
         FormResponseManager formResponseManager = null;
-
         List<FormResponse> listFormResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, form.getId( ), true );
-
         if ( CollectionUtils.isNotEmpty( listFormResponse ) )
         {
             formResponseManager = new FormResponseManager( listFormResponse.get( 0 ) );
@@ -434,7 +479,6 @@ public class FormService
         {
             formResponseManager = new FormResponseManager( form );
         }
-
         return formResponseManager;
     }
 
