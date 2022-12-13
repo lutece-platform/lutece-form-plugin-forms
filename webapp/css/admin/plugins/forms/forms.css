@@ -79,7 +79,7 @@ body, .wrapper{ height: 100%; overflow: visible; }
 
 .step-active { animation: heartbeat 1s ease-in-out reverse ; }
 
-/* Admin Map - Module forms-multiviewmapleaflet */
+/* Admin Map - Module forms-multiviewmapleaflet 			*/
 #admin-forms-map-toggle{ position: absolute; top: -30px; right: 5px; z-index: 99; }
 
 /**
@@ -183,6 +183,22 @@ body, .wrapper{ height: 100%; overflow: visible; }
 .page-break-before { page-break-before: always; page-break-inside: avoid; clear: both }
 .vis-network .vis-navigation .vis-button:hover{ box-shadow: none; opacity: 0.7 }
 
+/* Preview 													*/
+#form-validate .breadcrumb .breadcrumb-item .btn.btn-link{ padding: 0; }
+#form-validate > .card > .card-header:before{ content: attr(data-step); font-size: 1.5rem; font-weight: 600; background-color: #656d77; color: #fff; padding: 1.085rem 2rem; top: 0; position: relative;}
+#form-validate > .card > .card-header > .card-title { font-size: 1.5rem; color: #656d77; font-weight: 600; padding-left: .5rem; }
+#form-validate > .card > .card-header {  padding: 0; margin-bottom: 0; }
+
+/* Breadcrumb */
+.step.step-next{ padding: .75rem 0; margin-bottom: 1rem; color: #656d77; background-color: #fff; border-bottom: 1px solid rgba(101,109,119,.16); } 
+.step.step-done > .step-title > .container, .step.step-done > .step-title + .container, .step.step-next > .step-title > .container{ padding-right: 0; padding-left: 0; margin-right: 0; margin-left: 0; max-width: 100%; }
+.step.step-next > .step-title > .container > h1:before { content: attr(data-step);background-color: #656d77; color: #fff; padding: 1.085rem 2rem; top: .25rem; position: relative;}
+
+.step.step-done{ box-shadow: rgba(35,46,60,.04) 0 2px 4px 0; border: 1px solid rgba(101,109,119,.16); flex: 1 1 auto;  position: relative; background-color: #fff; border: 1px solid rgba(101,109,119,.16); border-radius: 4px;}
+.step.step-done > .step-title > .container > h1{ display: flex; align-items: center; border-bottom: 1px solid rgba(101,109,119,.16); }
+.step.step-done > .step-title > .container > h1 div{ margin-left: auto; margin-right: 2rem; }
+.step.step-done > .step-title > .container > h1 span{ margin-left:.75rem; color: #656d77; }
+.step.step-done > .step-title > .container > h1:before { content: url('data:image/svg+xml,%3csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(255,255,255)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M9 12l2 2l4 -4" /%3e%3c/svg%3e'); background-color: #656d77; color: #fff; padding: 1.185rem 1.75rem; top: 0; position: relative; }
 /* RESPONSIVE FIX 											*/
 /* Small Devices, Tablets 									*/
 @media only screen and (max-width :768px) {

@@ -1,6 +1,6 @@
 <#include "/admin/plugins/asynchronousupload/upload_commons.html" />
 <@addRequiredJsFiles />
-<script type="text/javascript" src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
+<script src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
 <script>
 function getInputElement(displayControl){
 var types = ['input','select','textarea'];
@@ -37,20 +37,12 @@ else {
 }
 }
 </script>
-
-<h3>${formTitle!}</h3>
 <form class="form-horizontal" id="form-validate" action="jsp/admin/plugins/forms/ManageFormResponse.jsp" method="post" enctype="multipart/form-data">
-	<#if form.logo??>
-		<img id="form_logo" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt=""/>
-	</#if>
-	<@messages warnings=warnings />
-	<#if messageInfo?? >
-	<div class="alert alert-info" role="alert">
-		${messageInfo}
-	</div>
-	</#if>
-	${formTopBreadcrumb!}
-	<#if form.countResponses>#i18n{forms.createEntry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
-	${stepContent!}
-	${formBottomBreadcrumb!}
+<#if form.logo??><img id="form_logo" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt="" ></#if>
+<@messages warnings=warnings />
+<#if messageInfo?? ><div class="alert alert-info" role="alert">${messageInfo}</div></#if>
+${formTopBreadcrumb!}
+<#if form.countResponses>#i18n{forms.createEntry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
+${stepContent!}
+${formBottomBreadcrumb!}
 </form>
