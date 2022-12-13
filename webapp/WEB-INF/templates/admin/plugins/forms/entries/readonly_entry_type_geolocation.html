@@ -5,16 +5,16 @@
         <#assign responseX = "" >
         <#assign responseY = "" >
         <#if getResponseContainingTheFieldWithCode( list_responses, "address" )?? >
-        <#assign responseAddress = getResponseContainingTheFieldWithCode( list_responses, "address" ).toStringValueResponse >
+        <#assign responseAddress = getResponseContainingTheFieldWithCode( list_responses, "address" ).toString() >
         </#if>
         <#if getResponseContainingTheFieldWithCode( list_responses, "geometry" )?? >
-        <#assign responseGeometry = getResponseContainingTheFieldWithCode( list_responses, "geometry" ).toStringValueResponse >
+        <#assign responseGeometry = getResponseContainingTheFieldWithCode( list_responses, "geometry" ).toString() >
         </#if>
         <#if getResponseContainingTheFieldWithCode( list_responses, "X" )?? >
-        <#assign responseX = getResponseContainingTheFieldWithCode( list_responses, "X" ).toStringValueResponse >
+        <#assign responseX = getResponseContainingTheFieldWithCode( list_responses, "X" ).toString() >
         </#if>
         <#if getResponseContainingTheFieldWithCode( list_responses, "Y" )?? >
-        <#assign responseY = getResponseContainingTheFieldWithCode( list_responses, "Y" ).toStringValueResponse >
+        <#assign responseY = getResponseContainingTheFieldWithCode( list_responses, "Y" ).toString() >
         </#if>
         <#if responseX == "" || responseX == "0" || responseY == "" || responseY == "0">
             #i18n{forms.entryType.geolocalisation.message.noGeolocation}

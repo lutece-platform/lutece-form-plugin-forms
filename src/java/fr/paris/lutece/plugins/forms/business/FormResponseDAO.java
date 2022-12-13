@@ -49,15 +49,16 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormResponseDAO implements IFormResponseDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save, status,role, update_date_status FROM forms_response";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_response, id_form, guid, creation_date, update_date, from_save, status,role, admin, update_date_status FROM forms_response";
     private static final String SQL_QUERY_SELECT_ID = "SELECT id_response FROM forms_response";
     private static final String SQL_QUERY_SELECTALL_BY_ID_FORM = SQL_QUERY_SELECTALL + " WHERE id_form = ? ";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_response = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save, status, role, update_date_status ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_response ( id_form, guid, creation_date, update_date, from_save, status, role, admin, update_date_status ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_response WHERE id_response = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_response WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ?, status = ?, role = ?, update_date_status = ? WHERE id_response = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_response SET id_form = ?, guid = ?, update_date = ?, from_save = ?, status = ?, role = ?, admin = ?, update_date_status = ? WHERE id_response = ?";
     private static final String SQL_QUERY_SELECT_FOR_BACKUP = SQL_QUERY_SELECTALL + " WHERE guid = ? AND id_form = ? AND from_save = ? ";
+    private static final String SQL_QUERY_SELECT_FOR_BACKUP_BO = SQL_QUERY_SELECTALL + " WHERE admin = ? AND id_form = ? AND from_save = ? ";
     private static final String SQL_QUERY_SELECT_ALL_BY_USER = SQL_QUERY_SELECTALL + " WHERE guid = ? AND from_save = 0 ";
     private static final String SQL_QUERY_SELECT_ALL_BY_ROLE = SQL_QUERY_SELECTALL + " WHERE from_save = 0 AND role IN ( ? ";
     private static final String SQL_QUERY_SELECT_BY_LIST_FORM_RESPONSE = SQL_QUERY_SELECTALL + " WHERE id_response IN (?";
@@ -82,6 +83,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
             daoUtil.setBoolean( nIndex++, formResponse.isPublished( ) );
             daoUtil.setString( nIndex++, formResponse.getRole( ) );
+            daoUtil.setString( nIndex++, formResponse.getAdmin( ) );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.executeUpdate( );
 
@@ -144,6 +146,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
             daoUtil.setBoolean( nIndex++, formResponse.isPublished( ) );
             daoUtil.setString( nIndex++, formResponse.getRole( ) );
+            daoUtil.setString( nIndex++, formResponse.getAdmin( ) );
             daoUtil.setTimestamp( nIndex++, formResponse.getUpdateStatus( ) );
             daoUtil.setInt( nIndex++, formResponse.getId( ) );
 
@@ -223,6 +226,29 @@ public final class FormResponseDAO implements IFormResponseDAO
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FOR_BACKUP, plugin ) )
         {
             daoUtil.setString( 1, strGuid );
+            daoUtil.setInt( 2, nIdForm );
+            daoUtil.setBoolean( 3, fromBackup );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                list.add( dataToObject( daoUtil ) );
+            }
+        }
+        return list;
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FormResponse> selectFormResponseByAdmin( String strAdmin, int nIdForm, boolean fromBackup, Plugin plugin )
+    {
+        List<FormResponse> list = new ArrayList<>( );
+
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FOR_BACKUP_BO, plugin ) )
+        {
+            daoUtil.setString( 1, strAdmin );
             daoUtil.setInt( 2, nIdForm );
             daoUtil.setBoolean( 3, fromBackup );
             daoUtil.executeQuery( );
@@ -354,7 +380,8 @@ public final class FormResponseDAO implements IFormResponseDAO
         formResponse.setGuid( daoUtil.getString( "guid" ) );
         formResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
         formResponse.setPublished( daoUtil.getBoolean( "status" ) );
-        formResponse.setRole(daoUtil.getString( "role" ));
+        formResponse.setRole( daoUtil.getString( "role" ) );
+        formResponse.setAdmin( daoUtil.getString( "admin" ) );
 
         Timestamp timestampCreationDate = daoUtil.getTimestamp( "creation_date" );
         formResponse.setDateCreation( timestampCreationDate );
