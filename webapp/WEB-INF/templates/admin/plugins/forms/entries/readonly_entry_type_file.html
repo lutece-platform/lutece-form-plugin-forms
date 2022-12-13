@@ -5,9 +5,13 @@
         <#list list_responses as response>
             <@p>
             <#if response.file?exists>
-                <@link href='jsp/admin/plugins/forms/FormsDownloadFile.jsp?id_file=${response.file.idFile}&id_response=${response.idResponse}'>
-                    ${response.file.title}(${response.file.size} O)
-                </@link>
+		<#if response.file.fileKey?exists>
+		        <@link href='jsp/admin/plugins/forms/FormsDownloadFile.jsp?id_file=${response.file.idFile}&id_response=${response.idResponse}'>
+		            ${response.file.title}(${response.file.size} O)
+		        </@link>
+		<#else>
+			${response.file.title}(${response.file.size} O)
+		</#if>
             </#if>
 			</@p>
         </#list>

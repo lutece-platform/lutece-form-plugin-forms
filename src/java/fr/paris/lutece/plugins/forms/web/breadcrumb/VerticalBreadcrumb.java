@@ -52,7 +52,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  */
 public class VerticalBreadcrumb implements IBreadcrumb
 {
-    private static final String TEMPLATE_BREADCRUMB_HTML = "/skin/plugins/forms/breadcrumb/vertical_breadcrumb.html";
+    private static final String TEMPLATE_BREADCRUMB_HTML = "/util/plugins/forms/breadcrumb/vertical_breadcrumb.html";
     private final String _strBreadcrumbBeanName;
     private final String _strBreadcrumbDisplayBeanName;
 
