@@ -96,18 +96,19 @@ public class CSVDataLine
 
         Map<Integer, List<String>> mapIterationsResponseValue = entryDataService.responseToIterationsStrings( formQuestionResponse );
         StringBuilder sbReponseValues = new StringBuilder( );
-
+        
         for (Entry<Integer, List<String>> entry : mapIterationsResponseValue.entrySet())
         {
         	Integer iteration = entry.getKey();
-        	if (!_mapDataToExport.containsKey(iteration)) {
-        		_mapDataToExport.put(iteration, new HashMap<>());
-        	}
-        	Map<Integer, String> mapQuestionsData = _mapDataToExport.get(iteration);
-        	for (String strResponseValue : entry.getValue()) {
-    			sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
-        	}
-        	mapQuestionsData.put(question.getId( ),  CSVUtil.safeString( sbReponseValues.toString( ) ));
+        	for ( String strResponseValue : entry.getValue() )
+            {
+                sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
+            }
+            if ( !_mapDataToExport.containsKey( question.getId( ) ) )
+            {
+            	_mapDataToExport.put(question.getId( ), new HashMap<>());
+            }
+            _mapDataToExport.get(question.getId()).put(iteration, CSVUtil.safeString( sbReponseValues.toString( ) ));
         }
     }
 
@@ -116,20 +117,10 @@ public class CSVDataLine
      *            The column name
      * @return the _mapDataToExport
      */
-    public String getDataToExport( Integer iteration, Question question )
+    public String getDataToExport( Question question )
     {
-        return _mapDataToExport.get(iteration) != null ? _mapDataToExport.get(iteration).get(question.getId()) : null;
+        return _mapDataToExport.get(question.getId()) != null ? _mapDataToExport.get(question.getId()).get(question.getIterationNumber()) : null;
     }
-    
-    public Map<Integer, Map<Integer, String>> getMapDataToExport()
-    {
-    	return _mapDataToExport;
-    }
-    
-    /*public Map<Integer, String> getMapDataByIteration(Integer iteration)
-    {
-    	return _mapDataToExport.get(iteration);
-    }*/
 
     public String getCommonDataToExport( )
     {

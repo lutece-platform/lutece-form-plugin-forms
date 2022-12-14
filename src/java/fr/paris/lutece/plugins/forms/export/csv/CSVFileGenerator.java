@@ -40,8 +40,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
@@ -117,6 +115,7 @@ public class CSVFileGenerator extends AbstractFileGenerator
                     _listFormFilter, _sortConfig );
             for ( FormResponseItem formResponseItem : listFormResponseItems )
             {
+                count++;
                 FormResponse formResponse = FormResponseHome.findByPrimaryKeyForIndex( formResponseItem.getIdFormResponse( ) );
                 if ( first )
                 {
@@ -124,15 +123,8 @@ public class CSVFileGenerator extends AbstractFileGenerator
                     bos.newLine( );
                     first = false;
                 }
-                Map<Integer, String> mapDataToExport = formResponseExport.buildCsvDataToExport( formResponse, findWorkflowState(formResponseItem));
-                for (Entry<Integer, String> entry : mapDataToExport.entrySet())
-                {
-                	bos.write(entry.getValue());
-                    bos.newLine( );
-                    count++;
-                }
-                
-                
+                bos.write( formResponseExport.buildCsvDataToExport( formResponse, findWorkflowState( formResponseItem ) ) );
+                bos.newLine( );
                 if ( count % FLUSH_SIZE == 0 )
                 {
                     bos.flush( );
