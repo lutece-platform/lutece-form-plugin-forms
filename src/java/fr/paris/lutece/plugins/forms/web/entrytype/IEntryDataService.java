@@ -90,7 +90,16 @@ public interface IEntryDataService
      *            the response to convert
      * @return the list of {@code String} objects
      */
-    Map<Integer, List<String>> responseToIterationsStrings( FormQuestionResponse formQuestionResponse );
+    List<String> responseToStrings( FormQuestionResponse formQuestionResponse );
+    
+    /**
+     * Extracts the responses from the specified form question response as a map of {@code String} objects
+     * 
+     * @param formQuestionResponse
+     *            the response to convert
+     * @return the Map of {@code String} objects
+     */
+    Map<Integer, List<String>> responseToIterationsStrings(FormQuestionResponse formQuestionResponse);
 
     /**
      * Performs a treatment when the question is removed in front-office

@@ -61,7 +61,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question_response WHERE id_question_response = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_question_response SET id_form_response = ?, id_question = ?, id_step = ?, iteration_number = ? WHERE id_question_response = ?";
     private static final String SQL_QUERY_SELECT_BY_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_question = ?";
-    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_form_response = ? AND id_question = ?";
+    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_form_response = ? AND id_question = ? ORDER BY iteration_number ASC";
     private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP = SQL_QUERY_SELECTALL
             + " WHERE id_form_response = ? AND id_step = ? ORDER BY id_question_response ASC";
     private static final String SQL_QUERY_SELECT_BY_LIST_RESPONSE_STEP = SQL_QUERY_SELECTALL + " WHERE ";

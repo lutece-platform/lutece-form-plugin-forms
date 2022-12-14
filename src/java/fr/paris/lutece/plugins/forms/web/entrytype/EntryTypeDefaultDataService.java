@@ -196,6 +196,26 @@ public class EntryTypeDefaultDataService implements IEntryDataService
      * {@inheritDoc}
      */
     @Override
+    public List<String> responseToStrings( FormQuestionResponse formQuestionResponse )
+    {
+        List<String> listResponseValue = new ArrayList<>( );
+        Entry entry = formQuestionResponse.getQuestion( ).getEntry( );
+
+        for ( Response response : formQuestionResponse.getEntryResponse( ) )
+        {
+            String strResponseValue = EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForExport( entry, null, response,
+                    I18nService.getDefaultLocale( ) );
+
+            if ( strResponseValue != null )
+            {
+                listResponseValue.add( strResponseValue );
+            }
+        }
+
+        return listResponseValue;
+    }
+    
+    @Override
     public Map<Integer, List<String>> responseToIterationsStrings( FormQuestionResponse formQuestionResponse )
     {
     	Map<Integer, List<String>> mapResponseValue = new HashMap<>();
@@ -208,7 +228,6 @@ public class EntryTypeDefaultDataService implements IEntryDataService
 
             if ( strResponseValue != null )
             {
-                //mapResponseValue.add( strResponseValue );
             	if (mapResponseValue.containsKey(response.getIterationNumber()))
             	{
             		mapResponseValue.get(response.getIterationNumber()).add(strResponseValue);
