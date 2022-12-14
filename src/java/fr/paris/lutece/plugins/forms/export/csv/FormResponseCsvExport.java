@@ -34,11 +34,8 @@
 package fr.paris.lutece.plugins.forms.export.csv;
 
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -96,7 +93,7 @@ public class FormResponseCsvExport
             {
                 if ( question.isResponseExportable( ) )
                 {
-                    _csvHeader.addHeader( question );
+                    _csvHeader.addHeadersWithIterations(formResponse, question);
                 }
             }
         }
@@ -114,7 +111,8 @@ public class FormResponseCsvExport
 
         for ( Question question : _csvHeader.getColumnToExport( ) )
         {
-            sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question ) ) ).append( _csvSeparator );
+        	boolean bIsIteration = _csvHeader.getListIterationQuestionColumn().contains(question);
+            sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question, bIsIteration ) ) ).append( _csvSeparator );
         }
 
         return sbCsvColumn.toString( );
@@ -123,7 +121,7 @@ public class FormResponseCsvExport
     /**
      * Build the CSV string for all data lines
      */
-    public Map<Integer, String> buildCsvDataToExport( FormResponse formResponse, String state )
+    public String buildCsvDataToExport( FormResponse formResponse, String state )
     {
         CSVDataLine csvDataLine = new CSVDataLine( formResponse, state, _csvSeparator );
 
@@ -137,23 +135,20 @@ public class FormResponseCsvExport
                 }
             }
         }
-        
-        Map<Integer, String> mapIterationsDataRow = new HashMap<>();
-        for (Entry<Integer, Map<Integer, String>> entry : csvDataLine.getMapDataToExport().entrySet())
+
+        StringBuilder sbCsvData = new StringBuilder( );
+
+        StringBuilder sbRecordContent = new StringBuilder( );
+        sbRecordContent.append( csvDataLine.getCommonDataToExport( ) );
+
+        for ( Question question : _csvHeader.getColumnToExport( ) )
         {
-        	Integer iteration = entry.getKey();
-        	StringBuilder sbCsvData = new StringBuilder( );
-            StringBuilder sbRecordContent = new StringBuilder( );
-            sbRecordContent.append( csvDataLine.getCommonDataToExport( ) );
-            for ( Question question : _csvHeader.getColumnToExport( ) )
-            {
-                sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( iteration, question ), StringUtils.EMPTY ) ) )
-                        .append( _csvSeparator );
-            }
-            sbCsvData.append( sbRecordContent.toString( ) );
-            mapIterationsDataRow.put(iteration, sbCsvData.toString());
+            sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) )
+                    .append( _csvSeparator );
         }
-        
-        return mapIterationsDataRow;
+
+        sbCsvData.append( sbRecordContent.toString( ) );
+
+        return sbCsvData.toString( );
     }
 }

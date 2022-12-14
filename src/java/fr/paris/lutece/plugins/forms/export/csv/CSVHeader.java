@@ -37,6 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
 
 /**
@@ -46,6 +49,7 @@ import fr.paris.lutece.plugins.forms.business.Question;
 public class CSVHeader
 {
     private final List<Question> _listQuestionColumn;
+    private final List<Question> _listIterationQuestionColumn;
 
     /**
      * Constructor
@@ -53,6 +57,7 @@ public class CSVHeader
     public CSVHeader( )
     {
         _listQuestionColumn = new ArrayList<>( );
+        _listIterationQuestionColumn = new ArrayList<>();
     }
 
     /**
@@ -92,6 +97,18 @@ public class CSVHeader
         }
         _listQuestionColumn.add( question );
     }
+    
+    public void addHeadersWithIterations(FormResponse formResponse, Question question)
+    {
+    	List<FormQuestionResponse> formQuestionResponseList = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion(formResponse.getId(), question.getId());
+    	for (FormQuestionResponse formQuestionResponse : formQuestionResponseList)
+    	{
+    		_listQuestionColumn.add( formQuestionResponse.getQuestion() );
+    		if (formQuestionResponseList.size() > 1) {
+    			_listIterationQuestionColumn.add(formQuestionResponse.getQuestion());
+    		}
+    	}
+    }
 
     /**
      * @return the _listFinalColumnToExport
@@ -100,4 +117,8 @@ public class CSVHeader
     {
         return new ArrayList<>( _listQuestionColumn );
     }
+
+	public List<Question> getListIterationQuestionColumn() {
+		return new ArrayList<>( _listIterationQuestionColumn );
+	}
 }
