@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.export.csv;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -46,9 +47,9 @@ import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
@@ -92,9 +93,7 @@ public class CSVDataLine
     public void addData( FormQuestionResponse formQuestionResponse )
     {
         Question question = formQuestionResponse.getQuestion( );
-        IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-
-        Map<Integer, List<String>> mapIterationsResponseValue = entryDataService.responseToIterationsStrings( formQuestionResponse );
+        Map<Integer, List<String>> mapIterationsResponseValue = responseToIterationsStrings( formQuestionResponse );
         StringBuilder sbReponseValues = new StringBuilder( );
         
         for (Entry<Integer, List<String>> entry : mapIterationsResponseValue.entrySet())
@@ -110,6 +109,31 @@ public class CSVDataLine
             }
             _mapDataToExport.get(question.getId()).put(iteration, CSVUtil.safeString( sbReponseValues.toString( ) ));
         }
+    }
+    
+    private Map<Integer, List<String>> responseToIterationsStrings(FormQuestionResponse formQuestionResponse)
+    {
+    	Map<Integer, List<String>> mapResponseValue = new HashMap<>();
+    	fr.paris.lutece.plugins.genericattributes.business.Entry entry = formQuestionResponse.getQuestion().getEntry();
+        for ( Response response : formQuestionResponse.getEntryResponse( ) )
+        {
+            String strResponseValue = EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForExport( entry, null, response,
+                    I18nService.getDefaultLocale( ) );
+            if ( strResponseValue != null )
+            {
+            	if (mapResponseValue.containsKey(response.getIterationNumber()))
+            	{
+            		mapResponseValue.get(response.getIterationNumber()).add(strResponseValue);
+            	}
+            	else
+            	{
+            		List<String> listResponseValue = new ArrayList<>();
+            		listResponseValue.add(strResponseValue);
+            		mapResponseValue.put(response.getIterationNumber(), listResponseValue);
+            	}
+            }
+        }
+        return mapResponseValue;
     }
 
     /**
