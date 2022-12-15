@@ -34,9 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -213,34 +211,6 @@ public class EntryTypeDefaultDataService implements IEntryDataService
         }
 
         return listResponseValue;
-    }
-    
-    @Override
-    public Map<Integer, List<String>> responseToIterationsStrings( FormQuestionResponse formQuestionResponse )
-    {
-    	Map<Integer, List<String>> mapResponseValue = new HashMap<>();
-        Entry entry = formQuestionResponse.getQuestion( ).getEntry( );
-
-        for ( Response response : formQuestionResponse.getEntryResponse( ) )
-        {
-            String strResponseValue = EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForExport( entry, null, response,
-                    I18nService.getDefaultLocale( ) );
-
-            if ( strResponseValue != null )
-            {
-            	if (mapResponseValue.containsKey(response.getIterationNumber()))
-            	{
-            		mapResponseValue.get(response.getIterationNumber()).add(strResponseValue);
-            	} else
-            	{
-            		List<String> listResponseValue = new ArrayList<>();
-            		listResponseValue.add(strResponseValue);
-            		mapResponseValue.put(response.getIterationNumber(), listResponseValue);
-            	}
-            }
-        }
-
-        return mapResponseValue;
     }
 
     /**

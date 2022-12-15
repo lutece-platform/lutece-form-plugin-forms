@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -91,15 +90,6 @@ public interface IEntryDataService
      * @return the list of {@code String} objects
      */
     List<String> responseToStrings( FormQuestionResponse formQuestionResponse );
-    
-    /**
-     * Extracts the responses from the specified form question response as a map of {@code String} objects
-     * 
-     * @param formQuestionResponse
-     *            the response to convert
-     * @return the Map of {@code String} objects
-     */
-    Map<Integer, List<String>> responseToIterationsStrings(FormQuestionResponse formQuestionResponse);
 
     /**
      * Performs a treatment when the question is removed in front-office
