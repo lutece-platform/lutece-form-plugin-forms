@@ -63,5 +63,76 @@
             <#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam >
         </#if>
         <#include entry.mapProvider.htmlCode />
+        <#include "/admin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
+        <@setupSuggestPOI />
+        <script type="text/javascript">
+        $(window).on( 'load', function () {
+            const currStep=$('.step-current .step-content'), hasCheckAdr=currStep.find('.checkaddress').length;
+            if( hasCheckAdr > 0 ){
+                currStep.addClass('checkadress');
+                currStep.find('[name="action_doSaveStep"]').attr('disabled','disabled');
+            }
+
+            var jAdresse = $('#${entry.idEntry}_address');
+            var jAdresseId = $('#${entry.idEntry}_idAddress');
+            var jAdresseX = $('#${entry.idEntry}_x');
+            var jAdresseY = $('#${entry.idEntry}_y');
+            var jAdresseGeometry = $('#${entry.idEntry}_geometry');
+        
+            jAdresse.suggestPOI();
+            jAdresse.bind( $.suggestPOI.EVT_SELECT, function (event) {
+                event.preventDefault();
+                jAdresseGeometry.val(event.poi.type);
+                jAdresseY.val(event.poi.y);
+                jAdresseX.val(event.poi.x);
+                jAdresseId.val(event.poi.id);
+				jAdresse.addClass('wssuggest');
+				jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
+            });
+			
+			/* Remove unused field with wsadress */
+			$('#${entry.idEntry}_address_results').remove();
+			
+			/* JIRA :           																	 */
+			/* Check if an entry has been selected in the data list and prevent from validating step */
+            
+
+            var wsv = sessionStorage.getItem('wsvalidated_${entry.idEntry}');
+            if( wsv === 'done' ){
+                jAdresse.addClass('wssuggest');
+                jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
+                $('[name="action_doSaveStep"]').removeAttr('disabled');
+            } 
+
+            if( hasCheckAdr > 0 ){
+                jAdresse.on( 'focus', (e) => {
+                    if( $(e.target).hasClass('wsvalidated') ){
+                        $(e.target).addClass('wssuggest');
+                    }
+                });
+                
+                jAdresse.on( 'keyup', (e) => {
+                    if( $(e.target).hasClass('wssuggest') ){
+                        $(e.target).removeClass('wssuggest').removeClass('wsvalidated');
+                        $('.btn-action').attr('disabled','disabled');
+                    }
+                });
+                
+                jAdresse.on( 'blur', (e) => {
+                    if( !$(e.target).hasClass('wssuggest') ){
+                        $(e.target).addClass('is-invalid');
+                        $(e.target).next('.invalid-feedback').length===0 ? $(e.target).after('<div class="invalid-feedback">Vous devez sélectionner un adresse dans la liste proposée.</div>') : '';
+                        $('.btn-action').attr('disabled','disabled');
+                        $(e.target).focus();
+                    } else {
+                        $(e.target).addClass('wsvalidated').removeClass('wssuggest').removeClass('is-invalid').next('.invalid-feedback').remove();
+                        $('.btn-action').removeAttr('disabled');
+                        sessionStorage.setItem('wsvalidated_${entry.idEntry}', 'done');
+                    }
+                });
+            }
+            
+        });
+        </script>
     </#if>
 </@formGroup>
