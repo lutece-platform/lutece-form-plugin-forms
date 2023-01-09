@@ -151,10 +151,10 @@ public class FormsResponseUtils
      */
     public static List<FormResponse> getFormResponseListByRoleAndGuid( LuteceUser user )
     {
-        List<FormResponse> formResponseListByGuid = FormResponseHome.getFormResponseUncompleteByGuid( user.getName( ) );
+        List<FormResponse> formResponseListByGuid = FormResponseHome.getFormResponseByGuid( user.getName( ) );
         String[] userRoles=  SecurityService.getInstance().getRolesByUser(user);
         userRoles= (userRoles!= null && userRoles.length != 0) ? userRoles:user.getRoles( ); 
-		List<FormResponse> formResponseList= (userRoles==null)? new ArrayList<>( ):FormResponseHome.getFormResponseUncompleteByRole(Arrays.asList( userRoles ));
+		List<FormResponse> formResponseList= (userRoles==null)? new ArrayList<>( ):FormResponseHome.getFormResponseByRole(Arrays.asList( userRoles ));
 		
         formResponseListByGuid.forEach( (FormResponse formResponse) ->{
 			if(formResponseList.stream().noneMatch( response -> response.getId() == formResponse.getId() )) 
