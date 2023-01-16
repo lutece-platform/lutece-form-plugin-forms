@@ -77,7 +77,10 @@ import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.form.response.view.FormResponseViewModelProcessorFactory;
 import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewModelProcessor;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -140,6 +143,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String MARK_HISTORY_WORKFLOW_ENABLED = "history_workflow";
     private static final String MARK_WORKFLOW_STATE = "workflow_state";
     private static final String MARK_WORKFLOW_ACTION_LIST = "workflow_action_list";
+    private static final String MARK_ADMIN_DEPOSITARY = "admin_depositary";
 
     // Messages
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
@@ -253,6 +257,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         int nIdWorkflow = form.getIdWorkflow( );
         WorkflowService workflowService = WorkflowService.getInstance( );
         boolean bHistoryEnabled = workflowService.isAvailable( ) && ( nIdWorkflow != FormsConstants.DEFAULT_ID_VALUE );
+        
+        if ( formResponse.getAdmin( ) != null )
+        {
+        	mapFormResponseDetailsModel.put( MARK_ADMIN_DEPOSITARY, AdminUserHome.findUserByLogin( formResponse.getAdmin( ) ) );
+        }
 
         if ( bHistoryEnabled )
         {
