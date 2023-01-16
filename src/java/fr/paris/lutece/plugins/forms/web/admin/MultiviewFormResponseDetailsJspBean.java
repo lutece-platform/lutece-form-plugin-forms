@@ -260,8 +260,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         
         if ( formResponse.getAdmin( ) != null )
         {
-        	AdminUser admin_depositary = AdminUserHome.findUserByLogin( formResponse.getAdmin( ) );
-        	mapFormResponseDetailsModel.put( MARK_ADMIN_DEPOSITARY, admin_depositary );
+        	mapFormResponseDetailsModel.put( MARK_ADMIN_DEPOSITARY, AdminUserHome.findUserByLogin( formResponse.getAdmin( ) ) );
         }
 
         if ( bHistoryEnabled )
