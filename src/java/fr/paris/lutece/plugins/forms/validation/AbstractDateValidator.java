@@ -72,11 +72,14 @@ public abstract class AbstractDateValidator extends AbstractValidator
             Date dateControl = new Date( dateFormat.parse( control.getValue( ) ).getTime( ) );
             for ( Response response : questionResponse.getEntryResponse( ) )
             {
-                Date date = new Date( Long.parseLong( response.getResponseValue( ) ) );
-                if ( !validateDate( dateControl, date ) )
-                {
-                    return false;
-                }
+            	if (response.getResponseValue() != null)
+            	{
+            		Date date = new Date( Long.parseLong( response.getResponseValue( ) ) );
+                    if ( !validateDate( dateControl, date ) )
+                    {
+                        return false;
+                    }
+            	}
             }
             return true;
         }
