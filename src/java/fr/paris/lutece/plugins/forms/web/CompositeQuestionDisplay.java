@@ -298,7 +298,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             strTemplate = TEMPLATE_QUESTION_EDITION_FRONTOFFICE;
         }
 
-        if ( displayType == DisplayType.EDITION_BACKOFFICE )
+        if ( displayType == DisplayType.EDITION_BACKOFFICE || displayType == DisplayType.SUBMIT_BACKOFFICE )
         {
             strTemplate = TEMPLATE_QUESTION_EDITION_BACKOFFICE;
         }
@@ -381,7 +381,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             _question.setIsVisible( true );
         }
 
-        if ( displayType == DisplayType.EDITION_BACKOFFICE )
+        if ( displayType == DisplayType.EDITION_BACKOFFICE || displayType == DisplayType.SUBMIT_BACKOFFICE )
         {
             _question.setIsVisible( true );
 

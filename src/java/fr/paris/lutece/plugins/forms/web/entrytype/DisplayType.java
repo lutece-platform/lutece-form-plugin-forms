@@ -40,6 +40,7 @@ package fr.paris.lutece.plugins.forms.web.entrytype;
 public final class DisplayType
 {
     public static final DisplayType EDITION_BACKOFFICE = new DisplayType( Mode.EDITION, false );
+    public static final DisplayType SUBMIT_BACKOFFICE = new DisplayType( Mode.EDITION, false );
     public static final DisplayType RESUBMIT_BACKOFFICE = new DisplayType( Mode.SELECT, false );
     public static final DisplayType RESUBMIT_FRONTOFFICE = new DisplayType( Mode.EDITION, true );
     public static final DisplayType COMPLETE_BACKOFFICE = new DisplayType( Mode.SELECT, false );
