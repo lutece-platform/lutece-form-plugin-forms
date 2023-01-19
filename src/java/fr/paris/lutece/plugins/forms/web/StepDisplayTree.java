@@ -80,6 +80,7 @@ public class StepDisplayTree
     private static final String TEMPLATE_STEP_EDITION_BACKOFFICE = "/admin/plugins/forms/composite/view_step.html";
     private static final String TEMPLATE_STEP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_step_read_only.html";
     private static final String TEMPLATE_STEP_SELECT_BACKOFFICE = "/admin/plugins/forms/composite/select_step.html";
+    private static final String TEMPLATE_STEP_SUBMIT_BACKOFFICE = "/admin/plugins/forms/composite/view_step_bo.html";
 
     // Marks
     private static final String MARK_STEP_CONTENT = "stepContent";
@@ -276,7 +277,7 @@ public class StepDisplayTree
             }
         }
         
-        if ( displayType != DisplayType.EDITION_BACKOFFICE )
+        if ( displayType != DisplayType.SUBMIT_BACKOFFICE )
         {
         	_model.put( FormsConstants.MARK_USER, user );
         }
@@ -300,6 +301,11 @@ public class StepDisplayTree
         if ( displayType == DisplayType.EDITION_FRONTOFFICE )
         {
             strTemplate = TEMPLATE_STEP_EDITION_FRONTOFFICE;
+        }
+        
+        if ( displayType == DisplayType.SUBMIT_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_STEP_SUBMIT_BACKOFFICE;
         }
 
         if ( displayType == DisplayType.READONLY_BACKOFFICE )
