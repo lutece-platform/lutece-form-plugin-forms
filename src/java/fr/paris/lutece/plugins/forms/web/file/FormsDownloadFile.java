@@ -41,14 +41,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.message.SiteMessageException;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.web.constants.Messages;
@@ -59,8 +66,6 @@ import fr.paris.lutece.util.filesystem.FileSystemUtil;
  */
 public final class FormsDownloadFile
 {
-    // Parameters
-    private static final String PARAMETER_ID_FILE = "id_file";
 
     // Messages
     private static final String MESSAGE_ERROR_DURING_DOWNLOAD_FILE = "forms.error.downloadFile";
@@ -88,7 +93,7 @@ public final class FormsDownloadFile
      */
     public static String doDownloadFile( HttpServletRequest request, HttpServletResponse response )
     {
-        int nIdFile = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FILE ), ID_FILE_INCORRECT );
+        int nIdFile = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FILE ), ID_FILE_INCORRECT );
         int nIdResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), ID_RESPONSE_INCORRECT );
 
         FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
@@ -96,8 +101,49 @@ public final class FormsDownloadFile
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );
         }
-
-        PhysicalFile physicalFile = null;
+		addFileContentToResponse(  response,  nIdFile );
+        return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_DURING_DOWNLOAD_FILE, AdminMessage.TYPE_STOP );
+    }
+    
+    /**
+     * Write in the HttpServletResponse the file to download.
+     * This service is only used for FO requests
+     * 
+     * @param request
+     *            The HttpServletRequest to use to retrieve the parameter values from
+     * @param response
+     *            The HttpServletResponse to set the file to download
+     */
+    public static void doDownloadFileFO( HttpServletRequest request, HttpServletResponse response ) throws SiteMessageException
+    {
+        int nIdFile = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FILE ), ID_FILE_INCORRECT );
+        int nIdFormQuestionResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM_QUESTION_REPONSE), ID_RESPONSE_INCORRECT );
+        
+        FormQuestionResponse formQuestionResponse= ( nIdFormQuestionResponse != ID_FILE_INCORRECT)?FormQuestionResponseHome.findByPrimaryKey(nIdFormQuestionResponse):null;
+        
+        if( formQuestionResponse != null && nIdFile != ID_FILE_INCORRECT ) 
+        {
+	        FormResponse formResponse= FormResponseHome.findUncompleteByPrimaryKey(formQuestionResponse.getIdFormResponse( ));
+	      
+	        if( formQuestionResponse.getEntryResponse().stream().anyMatch(resp -> resp.getFile() != null && resp.getFile().getIdFile() == nIdFile )
+	        	&& ((formResponse!= null && formResponse.isPublished() && formQuestionResponse.getQuestion().isPublished( ))
+	        	|| FormsResponseUtils.isAuthorized(formResponse, SecurityService.getInstance( ).getRegisteredUser( request ) ) 
+	        	))        
+	        { 
+	        		addFileContentToResponse(  response,  nIdFile );
+	        }  
+        }
+    }
+    /**
+     * Add the information of the given File with the content of its PhysicalFile to the HttpServletResponse
+     * 
+     * @param response
+     *            The httpServletResponse on which to add the content of the PhysicalFile
+     * @param nIdFile the id file
+     */
+    private static void addFileContentToResponse( HttpServletResponse response, int nIdFile ) {
+    	
+    	PhysicalFile physicalFile = null;
         File file = FileHome.findByPrimaryKey( nIdFile );
         if ( file != null )
         {
@@ -108,10 +154,7 @@ public final class FormsDownloadFile
         {
             addFileContentToResponse( response, file, physicalFile );
         }
-
-        return AdminMessageService.getMessageUrl( request, MESSAGE_ERROR_DURING_DOWNLOAD_FILE, AdminMessage.TYPE_STOP );
     }
-
     /**
      * Add the information of the given File with the content of its PhysicalFile to the HttpServletResponse
      * 

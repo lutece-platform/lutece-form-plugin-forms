@@ -50,7 +50,9 @@ import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.l10n.LocaleService;
+import fr.paris.lutece.util.url.UrlItem;
 
 public class FormsResponseUtils 
 {
@@ -441,4 +443,40 @@ public class FormsResponseUtils
     	return (listIdFormByRole.contains( formResponse.getFormId( )) && formResponse.getRole() != null && isUserHasRole(user, formResponse.getRole( ) )) 
 				|| (!listIdFormByRole.contains( formResponse.getFormId( )) && user.getName().equals(formResponse.getGuid( )));
     }
+    /**
+     * Build FormsResponse file url. This url is only used for FO
+     * @param nIdFormQuestionResponse the forms question response
+     * @param nIdFile the file id
+     * @return the url builded 
+     */
+    public static String buildFileUrl(int nIdFormQuestionResponse, int nIdFile) 
+    {
+    	UrlItem url = new UrlItem( getRootUrl( ) + FormsConstants.FORMS_FILE_URL_FO );
+        url.addParameter( FormsConstants.PARAMETER_ID_FORM_QUESTION_REPONSE, nIdFormQuestionResponse );
+        url.addParameter( FormsConstants.PARAMETER_ID_FILE, nIdFile );
+
+        return url.getUrl( );
+    }
+    /**
+     * Return the url of the Root of the webapp
+     * 
+     * @return strBase the webapp url
+     */
+    public static String getRootUrl( )
+    {
+        String strBaseUrl = AppPropertiesService.getProperty( FormsConstants.PROPERTY_BASE_URL );
+
+        if ( StringUtils.isBlank( strBaseUrl ) )
+        {
+            strBaseUrl = AppPropertiesService.getProperty( FormsConstants.PROPERTY_PROD_URL );
+        }
+
+        if ( !strBaseUrl.endsWith( "/" ) )
+        {
+            strBaseUrl = strBaseUrl + "/";
+        }
+        strBaseUrl = StringUtils.isBlank( strBaseUrl ) ? "" : strBaseUrl;
+        return strBaseUrl;
+    }
+    
 }

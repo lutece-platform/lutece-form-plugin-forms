@@ -118,6 +118,8 @@ public final class FormsConstants
     public static final String PARAMETER_ID_ENTRY_TYPE = "id_type";
     public static final String PARAMETER_ID_GROUP = "id_group";
     public static final String PARAMETER_ID_QUESTION = "id_question";
+    public static final String PARAMETER_ID_FORM_QUESTION_REPONSE = "id_questionResponse";
+    public static final String PARAMETER_ID_FILE = "id_file";
     public static final String PARAMETER_ID_QUESTION_MAPPING = "id_question_mapping";
     public static final String PARAMETER_ID_DISPLAY = "id_display";
     public static final String PARAMETER_ID_PARENT = "id_parent";
@@ -222,6 +224,9 @@ public final class FormsConstants
     public static final String VALIDATE_VALIDATOR = "validateValidator";
 
     // Other
+    public static final String PROPERTY_PROD_URL = "lutece.prod.url";
+    public static final String PROPERTY_BASE_URL = "lutece.base.url";
+    public static final String FORMS_FILE_URL_FO ="jsp/site/plugins/forms/FormsDownloadFile.jsp";
     public static final int INCORRECT_ID = -1;
     public static final String FORM_DEFAULT_END_MESSAGE = "forms.message.form.submitted";
     public static final String SEPARATOR_UNDERSCORE = "_";
