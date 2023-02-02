@@ -76,7 +76,7 @@ import fr.paris.lutece.portal.web.xpages.XPage;
 @Controller( xpageName = FormResponseXPage.XPAGE_NAME, pageTitleI18nKey = FormResponseXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = FormResponseXPage.MESSAGE_PATH )
 public class FormResponseXPage extends MVCApplication
 {
-    protected static final String XPAGE_NAME = "formsResponse";
+    public static final String XPAGE_NAME = "formsResponse";
 
     /**
      * Generated serial id

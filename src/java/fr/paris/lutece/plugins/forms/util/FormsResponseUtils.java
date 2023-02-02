@@ -37,6 +37,7 @@ import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.FormResponseData;
 import fr.paris.lutece.plugins.forms.web.FormResponseManager;
+import fr.paris.lutece.plugins.forms.web.FormResponseXPage;
 import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
@@ -50,7 +51,9 @@ import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.web.l10n.LocaleService;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -454,6 +457,21 @@ public class FormsResponseUtils
     	UrlItem url = new UrlItem( getRootUrl( ) + FormsConstants.FORMS_FILE_URL_FO );
         url.addParameter( FormsConstants.PARAMETER_ID_FORM_QUESTION_REPONSE, nIdFormQuestionResponse );
         url.addParameter( FormsConstants.PARAMETER_ID_FILE, nIdFile );
+
+        return url.getUrl( );
+    }
+    /**
+     * Build FormsResponse FO url.
+     * @param nIdFormQuestionResponse the forms question response
+     * @param nIdFile the file id
+     * @return the url builded 
+     */
+    public static String buildFormsResponseFOUrl(int nIdFormResponse) 
+    {
+    	UrlItem url = new UrlItem( getRootUrl( ) + AppPathService.getPortalUrl( ) );
+        url.addParameter( MVCUtils.PARAMETER_PAGE, FormResponseXPage.XPAGE_NAME );
+        url.addParameter( MVCUtils.PARAMETER_VIEW, FormResponseXPage.VIEW_FORM_RESPONSE );
+        url.addParameter( FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
 
         return url.getUrl( );
     }
