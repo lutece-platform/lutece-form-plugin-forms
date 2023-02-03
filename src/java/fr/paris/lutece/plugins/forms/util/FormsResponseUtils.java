@@ -78,16 +78,30 @@ public class FormsResponseUtils
      */
     public static boolean isAuthorized( FormResponse formResponse, LuteceUser user )
     {
-        boolean userOwnsReponse = user != null && formResponse.getGuid( ) != null && user.getName( ).equals( formResponse.getGuid( ) );
         Form form= FormHome.findByPrimaryKey( formResponse.getFormId( ));
+        return isAuthorized(  formResponse,  user, form );
+    }
+    /**
+     * Check that a given user is allowed to access for manage the formResponse
+     * 
+     * @param formResponse
+     *           the formsResponse
+     * @param user
+     *            the user trying to access the resource
+     * @param form
+     * 				the form
+     * @return true if the user can access for manage the given resource, false otherwise
+     */
+    public static boolean isAuthorized( FormResponse formResponse, LuteceUser user, Form form )
+    {
+        boolean userOwnsReponse = user != null && formResponse.getGuid( ) != null && user.getName( ).equals( formResponse.getGuid( ) );
 
-        if( user != null && form != null && form.isAccessToResponsesByRole( ) && formResponse.getRole() != null ) 
-        {
-            
-            	return isUserHasRole( user, formResponse.getRole( ) ) ;
+        if( user != null && form != null && form.isAccessToResponsesByRole( ) && formResponse.getRole() != null  ) 
+        {           
+            	return isUserHasRole( user, formResponse.getRole( ) ) && formResponse.getFormId() == form.getId( );
         }
         
-        return userOwnsReponse && ( form != null && !form.isAccessToResponsesByRole( )); 
+        return userOwnsReponse && ( form != null && !form.isAccessToResponsesByRole( )) && formResponse.getFormId() == form.getId( ); 
     }
     
    /**
