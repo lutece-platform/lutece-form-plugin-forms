@@ -11,7 +11,7 @@
 		</#if>
 	</#list>
 </#if>
-<@formGroup labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey=helpKey mandatory=entry.mandatory>
+<@formGroup labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey=helpKey mandatory=entry.mandatory htmlRequired=false >
 	<@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected/>
 	<#if list_responses?? && list_responses?has_content>
 		<#assign response_error = list_responses[0]>

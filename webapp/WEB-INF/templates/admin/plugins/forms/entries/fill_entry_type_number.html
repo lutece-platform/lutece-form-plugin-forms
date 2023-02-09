@@ -6,7 +6,6 @@
 <#if entry.fields?? && entry.fields?has_content>
 	<#assign suffix = getFieldValueByCode( entry, 'suffix') >
 </#if>
-	
 <#if list_responses?has_content>
 	<#list list_responses as response>
 		<#if response.entry.idEntry == entry.idEntry>
@@ -33,7 +32,7 @@
 <#if field_max.value??>
 	<#assign max=field_max.value?number />
 </#if>
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory htmlRequired=false >
 	<@inputGroup>
 		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 		<@input type='number' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue min=min max=max placeHolder=placeholder/>
@@ -42,7 +41,6 @@
 		</#if>
 	</@inputGroup>
 </@formGroup>
-
 <#if list_responses??>
   <#list list_responses as response>
     <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>

@@ -2,7 +2,6 @@
 <#assign field_width=getFieldValueByCode( entry, "width")>
 <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
 <#assign field=getFieldByCode( entry, "text_config")>
-
 <#if list_responses?has_content>
 	<#list list_responses as response>
 		<#if response.entry.idEntry == entry.idEntry>
@@ -21,16 +20,13 @@
 		<#assign inputValue = '' />
 	</#if>
 </#if>
-
 <#if field_max_size?number!=-1>
 	<#assign maxlength = field_max_size?number />
 </#if>
-
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
 	<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 	<@input type='text' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue placeHolder=placeholder/>
 </@formGroup>
-
 <#if list_responses??>
   <#list list_responses as response>
     <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
@@ -39,17 +35,16 @@
     </#if>
   </#list>
 </#if>
-
 <#assign confirmField=getFieldByCode( entry, "confirm_field")>
 <#if confirmField.value?boolean>
 	<#assign idName = buildEntryName( entry, entry_iteration_number )>
-	<@formGroup labelFor='${idName}_confirm_field' labelKey='${confirmField.title}' mandatory=entry.mandatory>
+	<@formGroup labelFor='${idName}_confirm_field' labelKey='${confirmField.title}' mandatory=entry.mandatory htmlRequired=false >
     <#assign field_width=getFieldValueByCode( entry, "width")>
     <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
     <#assign field=getFieldByCode( entry, "text_config")>
 	<#if field_max_size?number!=-1>
 		<#assign maxlength = field_max_size?number />
 	</#if>
-		<@input type='text' name='${idName}_confirm_field' id='${idName}_confirm_field' inputSize=field_width?number value='' maxlength=maxlength!0 />
+		<@input type='text' name='${idName}_confirm_field' id='${idName}_confirm_field' inputSize=field_width?number value='' maxlength=maxlength!0/>
     </@formGroup>
 </#if>

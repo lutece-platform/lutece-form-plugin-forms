@@ -1,28 +1,24 @@
 <#assign editModeValue = "">
 <#assign viewNumberValue = "1">
 <#if entry.fields??>
-        <#assign addressField = getFieldValueByCode( entry, "address" )>
-        <#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
-        <#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
+    <#assign addressField = getFieldValueByCode( entry, "address" )>
+    <#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
+    <#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
 </#if>
-
 <#assign addressValue = "" />
 <#assign idAddressValue = "" />
 <#assign xValue = "" />
 <#assign yValue = "" />
 <#assign geometryValue = "" />
-
 <#if error??>
 	<#assign groupStyle = 'error' />
 <#else>
 	<#assign formGroupClass=entry.CSSClass! />
 </#if>
-
 <#if entry.helpMessage?exists&&entry.helpMessage!=''>
 	<#assign helpKey=entry.helpMessage />
 </#if>
-
-<@formGroup labelFor='form${entry.idEntry}_address' labelKey='${entry.title}' helpKey=helpKey!'' groupStyle=groupStyle!'' id='attribute${entry.idEntry}' class=formGroupClass!'' mandatory=entry.mandatory>
+<@formGroup labelFor='form${entry.idEntry}_address' labelKey='${entry.title}' helpKey=helpKey!'' groupStyle=groupStyle!'' id='attribute${entry.idEntry}' class=formGroupClass!'' mandatory=entry.mandatory htmlRequired=false >
     <#if list_responses?? && list_responses?has_content>
         <#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse />
         <#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse />
@@ -38,12 +34,10 @@
     <#else>
         <@input type='hidden' name='${entry.idEntry}_address' id='${entry.idEntry}_address' value='${addressValue!}' />
     </#if>
-    
     <@input type='hidden' name='${entry.idEntry}_idAddress' id='${entry.idEntry}_idAddress' value='${idAddressValue!}' />
     <@input type='hidden' name='${entry.idEntry}_x' id='${entry.idEntry}_x' value='${xValue!}' />
     <@input type='hidden' name='${entry.idEntry}_y' id='${entry.idEntry}_y' value='${yValue!}' />
     <@input type='hidden' name='${entry.idEntry}_geometry' id='${entry.idEntry}_geometry' value='${geometryValue!}' />
-
     <#if error?? && error.isDisplayableError>
         <@alert color='danger'>
             <#if error.mandatoryError>
@@ -53,71 +47,60 @@
             </#if>
         </@alert>
     </#if>
-
     <#if entry.mapProvider?has_content>
         <#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
             <#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter >
         </#if>
-        
         <#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).addressParam?? >
             <#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam >
         </#if>
         <#include entry.mapProvider.htmlCode />
         <#include "/admin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
         <@setupSuggestPOI />
-        <script type="text/javascript">
+        <script>
         $(window).on( 'load', function () {
             const currStep=$('.step-current .step-content'), hasCheckAdr=currStep.find('.checkaddress').length;
             if( hasCheckAdr > 0 ){
                 currStep.addClass('checkadress');
                 currStep.find('[name="action_doSaveStep"]').attr('disabled','disabled');
             }
-
             var jAdresse = $('#${entry.idEntry}_address');
             var jAdresseId = $('#${entry.idEntry}_idAddress');
             var jAdresseX = $('#${entry.idEntry}_x');
             var jAdresseY = $('#${entry.idEntry}_y');
             var jAdresseGeometry = $('#${entry.idEntry}_geometry');
-        
             jAdresse.suggestPOI();
-            jAdresse.bind( $.suggestPOI.EVT_SELECT, function (event) {
+            jAdresse.bind( $.suggestPOI.EVT_SELECT, function( event ){
                 event.preventDefault();
                 jAdresseGeometry.val(event.poi.type);
                 jAdresseY.val(event.poi.y);
                 jAdresseX.val(event.poi.x);
                 jAdresseId.val(event.poi.id);
-				jAdresse.addClass('wssuggest');
-				jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
+				jAdresse.addClass( 'wssuggest' );
+				jAdresse.removeClass( 'is-invalid' ).next( '.invalid-feedback' ).remove();
             });
-			
 			/* Remove unused field with wsadress */
 			$('#${entry.idEntry}_address_results').remove();
-			
-			/* JIRA :           																	 */
+			/* JIRA :                                                                                */
 			/* Check if an entry has been selected in the data list and prevent from validating step */
-            
-
-            var wsv = sessionStorage.getItem('wsvalidated_${entry.idEntry}');
+            var wsv = sessionStorage.getItem( 'wsvalidated_${entry.idEntry}' );
             if( wsv === 'done' ){
                 jAdresse.addClass('wssuggest');
                 jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
                 $('[name="action_doSaveStep"]').removeAttr('disabled');
             } 
-
             if( hasCheckAdr > 0 ){
                 jAdresse.on( 'focus', (e) => {
                     if( $(e.target).hasClass('wsvalidated') ){
                         $(e.target).addClass('wssuggest');
                     }
                 });
-                
                 jAdresse.on( 'keyup', (e) => {
                     if( $(e.target).hasClass('wssuggest') ){
                         $(e.target).removeClass('wssuggest').removeClass('wsvalidated');
                         $('.btn-action').attr('disabled','disabled');
                     }
                 });
-                
                 jAdresse.on( 'blur', (e) => {
                     if( !$(e.target).hasClass('wssuggest') ){
                         $(e.target).addClass('is-invalid');
@@ -131,7 +114,6 @@
                     }
                 });
             }
-            
         });
         </script>
     </#if>

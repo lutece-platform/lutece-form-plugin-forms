@@ -11,7 +11,7 @@
 </#list>
 
 
-<@formGroup class='${entry.CSSClass!}' labelFor='form${entry.idEntry}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' id='form${entry.idEntry}' mandatory=entry.mandatory>
+<@formGroup class='${entry.CSSClass!}' labelFor='form${entry.idEntry}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' id='form${entry.idEntry}' mandatory=entry.mandatory htmlRequired=false >
   <#assign inLine = entry.fieldInLine>
   <#list entry.fields as field>
   	<#if field.code == 'answer_choice'>
