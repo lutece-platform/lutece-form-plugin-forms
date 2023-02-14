@@ -1,11 +1,11 @@
 <#assign classDisp><#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if></#assign>
 <#assign param>displayControl="${question.id}_${question.iterationNumber}" </#assign>
 <#assign entryCSSClass>${classDisp} mt-3<#if question.entry.CSSClass??><#if question.entry.CSSClass?trim?starts_with('col-')> ${question.entry.CSSClass}<#else> col-12</#if></#if></#assign>
-<@cCol class=entryCSSClass default='' params=param>
+<@columns class=entryCSSClass params=param>
 ${questionContent}
-</@cCol>
+</@columns>
 <#if validator??>
-	<@cInput name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='' type='hidden' /> 
+	<@input name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='' type='hidden' /> 
 	<script>
 	$(function() {
 	<#if other_step_validation??>
@@ -63,7 +63,7 @@ ${questionContent}
 	});
 	</script>
 <#else>
-	<@cInput name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='${question.id}_${question.iterationNumber}' type='hidden' />
+	<@input name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='${question.id}_${question.iterationNumber}' type='hidden' />
 </#if>
 
 
