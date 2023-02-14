@@ -72,7 +72,7 @@ public abstract class AbstractValidator implements IValidator
         for ( FormQuestionResponse questionResponse : formQuestionResponse )
         {
 
-            if ( !validate( questionResponse, control ) )
+            if ( questionResponse.getQuestion( ).getId( ) == control.getIdControlTarget( ) && !validate( questionResponse, control ) )
             {
 
                 return false;

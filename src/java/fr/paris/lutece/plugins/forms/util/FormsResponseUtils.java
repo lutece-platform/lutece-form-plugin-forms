@@ -41,6 +41,8 @@ import fr.paris.lutece.plugins.forms.web.FormResponseXPage;
 import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
+import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
@@ -338,6 +340,35 @@ public class FormsResponseUtils
             }
 
             listResponsesTemp.add( formQuestionResponse );
+        }
+        
+        for ( FormQuestionResponse formQuestionResponse : listResponsesTemp )
+        {
+        	if ( bValidateQuestionStep )
+        	{
+	        	List<Control> listControl = ControlHome.getControlByQuestionAndType( formQuestionResponse.getQuestion( ).getId( ), ControlType.VALIDATION.getLabel( ) );
+	        	
+	        	for ( Control control : listControl )
+	            {
+	                IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+	                if ( !validator.validate( listResponsesTemp, control ) )
+	                {
+	                	GenericAttributeError error = new GenericAttributeError( );
+	
+	                    error.setIsDisplayableError( true );
+	                    error.setErrorMessage( control.getErrorMessage( ) );
+	
+	                    formQuestionResponse.setError( error );
+	
+	                    break;
+	                }
+	            }
+        	}
+        	
+        	if ( formQuestionResponse.hasError( ) )
+            {
+                bValidStep = false;
+            }
         }
 
         formResponseManager.addResponses( listResponsesTemp );
