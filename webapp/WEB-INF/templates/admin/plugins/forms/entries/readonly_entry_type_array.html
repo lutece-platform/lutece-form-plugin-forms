@@ -1,10 +1,39 @@
 <@row>
     <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
     <@columns sm=9>
-    <#if list_responses?has_content>
-        <#list list_responses as response>
-            <@p>${response.toStringValueResponse!''}</@p>
-        </#list>
-    </#if>
+        <@table>
+	      <#assign x=getFieldValueByCode(entry, "array_row")?number>
+	      <#list 1..x+1 as i>
+	        <@tr>
+	        	<#assign y=getFieldValueByCode(entry, "array_column")?number>
+		        <#list 1..y+1 as j>
+		          <@td>
+		          <#assign title="">
+		          <#assign inputValue = "">
+		          <#list entry.fields as field>
+		            <#assign value=i+"_"+j>
+		            <#if field.value == value>
+		              <#assign title=field.title!>
+		              <#if list_responses??>
+		                <#list list_responses as response>
+		                  <#if response.field?has_content && response.field.value == value && response.toStringValueResponse?has_content>
+		                    <#assign responseValue = response.toStringValueResponse>
+		                  </#if>
+		                </#list>
+		              </#if>
+		            </#if>
+		          </#list>
+		            <#if j==1 && i!=1>
+		              <b>${title!}</b>
+		            <#elseif i == 1 && j != 1>
+		              <b>${title!}</b>
+		            <#else>
+		              <@p>${responseValue!''}</@p>
+		            </#if>
+		          </@td>
+	          	</#list>
+	        </@tr>
+	      </#list>  
+		</@table>
     </@columns>
 </@row>
