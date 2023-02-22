@@ -3,18 +3,39 @@
 	    <label class="col-xs-12 col-sm-3 control-label">
 	        ${entry.title!''}
 	    </label>
-	    <#if list_responses?has_content>
-	        <#assign first = true>
-	        <#list list_responses as response>
-	            <#if first>
-	                <#assign first = false>
-	                <div class="col-xs-12 col-sm-9">
-	            <#else>
-	                <div class="col-xs-12 col-sm-9 col-sm-offset-3">
-	            </#if>
-	                ${response.toStringValueResponse!''}
-	            </div>
-	        </#list>
-	    </#if>
+	    <@table>
+	      <#assign x=getFieldValueByCode(entry, "array_row")?number>
+	      <#list 1..x+1 as i>
+	        <@tr>
+	        	<#assign y=getFieldValueByCode(entry, "array_column")?number>
+		        <#list 1..y+1 as j>
+		          <@td>
+		          <#assign title="">
+		          <#assign responseValue = "">
+		          <#list entry.fields as field>
+		            <#assign value=i+"_"+j>
+		            <#if field.value == value>
+		              <#assign title=field.title!>
+		              <#if list_responses??>
+		                <#list list_responses as response>
+		                  <#if response.field?has_content && response.field.value == value && response.toStringValueResponse?has_content>
+		                    <#assign responseValue = response.toStringValueResponse>
+		                  </#if>
+		                </#list>
+		              </#if>
+		            </#if>
+		          </#list>
+		            <#if j==1 && i!=1>
+		              <b>${title!}</b>
+		            <#elseif i == 1 && j != 1>
+		              <b>${title!}</b>
+		            <#else>
+		              ${responseValue!''}
+		            </#if>
+		          </@td>
+	          	</#list>
+	        </@tr>
+	      </#list>  
+		</@table>
 	</div>
 </#if>
