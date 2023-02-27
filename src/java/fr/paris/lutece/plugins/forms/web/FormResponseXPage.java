@@ -249,16 +249,18 @@ public class FormResponseXPage extends MVCApplication
     private Collection<Action> getActionsForUser( HttpServletRequest request, FormResponse formResponse )
     {
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-        Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
-
-        if ( formResponse != null && FormsResponseUtils.isAuthorized(formResponse, SecurityService.getInstance( ).getRegisteredUser( request ), form ))    		 
+        if (formResponse != null)
         {
-            WorkflowService workflowService = WorkflowService.getInstance( );
-            boolean workflowEnabled = workflowService.isAvailable( ) && ( form.getIdWorkflow( ) != FormsConstants.DEFAULT_ID_VALUE );
-
-            if ( workflowEnabled )
+        	Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
+            if (FormsResponseUtils.isAuthorized(formResponse, SecurityService.getInstance( ).getRegisteredUser( request ), form ))    		 
             {
-                return workflowService.getActions( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), (User) user );
+                WorkflowService workflowService = WorkflowService.getInstance( );
+                boolean workflowEnabled = workflowService.isAvailable( ) && ( form.getIdWorkflow( ) != FormsConstants.DEFAULT_ID_VALUE );
+
+                if ( workflowEnabled )
+                {
+                    return workflowService.getActions( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), (User) user );
+                }
             }
         }
         return new ArrayList<>( );
