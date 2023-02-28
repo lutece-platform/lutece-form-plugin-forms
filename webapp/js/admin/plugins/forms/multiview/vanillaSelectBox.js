@@ -744,22 +744,24 @@ vanillaSelectBox.prototype.buildSelect = function (data) {
             }
         });
         for (let group in groups) {
-            let anOptgroup = document.createElement("optgroup");
-            anOptgroup.setAttribute("label", group);
-            
-            options = data.filter(function(x){
-                return x.parent == group;
-            });
-            options.forEach(function (x) {
-                let anOption = document.createElement("option");
-                anOption.value = x.value;
-                anOption.text = x.text;
-                if(x.selected){
-                    anOption.setAttribute("selected",true)
-                }
-                anOptgroup.appendChild(anOption);
-            });
-            self.root.appendChild(anOptgroup);
+			if (groups.hasOwnProperty(group)) {
+				let anOptgroup = document.createElement("optgroup");
+	            anOptgroup.setAttribute("label", group);
+	            
+	            options = data.filter(function(x){
+	                return x.parent == group;
+	            });
+	            options.forEach(function (x) {
+	                let anOption = document.createElement("option");
+	                anOption.value = x.value;
+	                anOption.text = x.text;
+	                if(x.selected){
+	                    anOption.setAttribute("selected",true)
+	                }
+	                anOptgroup.appendChild(anOption);
+	            });
+	            self.root.appendChild(anOptgroup);
+			}
         }
     }else{
         data.forEach(function (x) {
