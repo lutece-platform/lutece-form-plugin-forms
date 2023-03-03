@@ -9,7 +9,7 @@
 		        <#list 1..y+1 as j>
 		          <@td>
 		          <#assign title="">
-		          <#assign inputValue = "">
+		          <#assign responseValue = "">
 		          <#list entry.fields as field>
 		            <#assign value=i+"_"+j>
 		            <#if field.value == value>
@@ -28,7 +28,7 @@
 		            <#elseif i == 1 && j != 1>
 		              <b>${title!}</b>
 		            <#else>
-		              <@p>${responseValue!''}</@p>
+		              ${responseValue!''}
 		            </#if>
 		          </@td>
 	          	</#list>
