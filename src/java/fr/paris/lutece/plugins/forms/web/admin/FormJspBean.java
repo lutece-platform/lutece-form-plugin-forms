@@ -778,18 +778,20 @@ public class FormJspBean extends AbstractJspBean
     {
         _uploadHandler.addFilesUploadedSynchronously( request, PARAMETER_LOGO );
         List<FileItem> listUploadedFileItems = _uploadHandler.getListUploadedFiles( PARAMETER_LOGO, request.getSession( ) );
-        FileItem fileItem = listUploadedFileItems != null ? listUploadedFileItems.get(0) : null;
-        if (fileItem != null)
+        for ( FileItem fileItem : listUploadedFileItems )
         {
-        	File file = new File( );
-            file.setTitle( fileItem.getName( ) );
-            file.setSize( ( fileItem.getSize( ) < Integer.MAX_VALUE ) ? (int) fileItem.getSize( ) : Integer.MAX_VALUE );
-            file.setMimeType( FileSystemUtil.getMIMEType( file.getTitle( ) ) );
+        	if (fileItem != null)
+            {
+            	File file = new File( );
+                file.setTitle( fileItem.getName( ) );
+                file.setSize( ( fileItem.getSize( ) < Integer.MAX_VALUE ) ? (int) fileItem.getSize( ) : Integer.MAX_VALUE );
+                file.setMimeType( FileSystemUtil.getMIMEType( file.getTitle( ) ) );
 
-            PhysicalFile physicalFile = new PhysicalFile( );
-            physicalFile.setValue( fileItem.get( ) );
-            file.setPhysicalFile( physicalFile );
-            return file;
+                PhysicalFile physicalFile = new PhysicalFile( );
+                physicalFile.setValue( fileItem.get( ) );
+                file.setPhysicalFile( physicalFile );
+                return file;
+            }
         }
         return null;
     }
