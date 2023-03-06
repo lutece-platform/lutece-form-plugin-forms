@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -72,13 +74,14 @@ public abstract class AbstractDateValidator extends AbstractValidator
             Date dateControl = new Date( dateFormat.parse( control.getValue( ) ).getTime( ) );
             for ( Response response : questionResponse.getEntryResponse( ) )
             {
-            	if (response.getResponseValue() != null)
+            	if (StringUtils.isEmpty(response.getResponseValue()))
+                {
+            		return false;
+                }
+            	Date date = new Date( Long.parseLong(response.getResponseValue()));
+            	if (!validateDate(dateControl, date))
             	{
-            		Date date = new Date( Long.parseLong( response.getResponseValue( ) ) );
-                    if ( !validateDate( dateControl, date ) )
-                    {
-                        return false;
-                    }
+            		return false;
             	}
             }
             return true;
@@ -86,8 +89,8 @@ public abstract class AbstractDateValidator extends AbstractValidator
         catch( ParseException e )
         {
             AppLogService.error( "Error formatingdate", e );
-            return false;
         }
+        return false;
     }
 
     @Override
