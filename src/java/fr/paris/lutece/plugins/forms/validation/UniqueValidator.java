@@ -106,20 +106,22 @@ public class UniqueValidator extends AbstractValidator
             Collection<Response> listSubmittedResponses = ResponseHome.getResponseList( filter );
 
             String strValueEntry = response.getResponseValue( );
-
+            if (StringUtils.isEmpty(strValueEntry))
+            {
+        		return false;
+            }
+            
             for ( Response submittedResponse : listSubmittedResponses )
             {
                 String strSubmittedResponse = submittedResponse.getToStringValueResponse( );
-
-                if ( !strValueEntry.equals( StringUtils.EMPTY ) && ( strSubmittedResponse != null ) && !strSubmittedResponse.equals( StringUtils.EMPTY )
-                        && strValueEntry.equalsIgnoreCase( strSubmittedResponse ) )
+                if (StringUtils.isNotEmpty(strSubmittedResponse) && strValueEntry.equalsIgnoreCase( strSubmittedResponse ) )
                 {
                     return false;
                 }
             }
+            return true;
         }
-
-        return true;
+        return false;
     }
 
 }
