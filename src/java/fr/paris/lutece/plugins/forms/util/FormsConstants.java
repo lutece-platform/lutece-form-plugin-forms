@@ -100,6 +100,7 @@ public final class FormsConstants
     public static final String MARK_LIST_CONTROL = "list_control";
     public static final String MARK_ID_CONTROL_GROUP = "id_control_group";
     public static final String MARK_LOGICAL_OPERATOR_LABEL = "logical_operator_label";
+    public static final String MARK_REGEX_URL = "regex_url";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -210,6 +211,8 @@ public final class FormsConstants
     public static final int ORDER_NOT_SET = Integer
             .parseInt( DatastoreService.getDataValue( "forms.formResponseStep.orderNotSet", NumberUtils.INTEGER_MINUS_ONE.toString( ) ) );
     public static final int FILE_TYPE_RIB = 1;
+
+    public static final String DEFAULT_REGEX_URL = "((http|https)://)[a-zA-Z0-9@:\\-%.\\+~#?&//=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%.\\+~#?&;//=]*)";
 
     // Markers
     public static final String MARK_AVAILABLE_STEPS = "availableSteps";

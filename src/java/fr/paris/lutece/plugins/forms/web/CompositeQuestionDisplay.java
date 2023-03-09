@@ -210,6 +210,10 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             _model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
             _model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
             _model.put( MARK_COMPLETENESS_FO, displayType == DisplayType.COMPLETE_FRONTOFFICE );
+<<<<<<< Upstream, based on develop
+=======
+            _model.put( FormsConstants.MARK_REGEX_URL, FormsConstants.DEFAULT_REGEX_URL );
+>>>>>>> a24db48 LUT-20558 : rename variables
 
             for( Field field : FieldHome.getFieldListByIdEntry( _question.getEntry().getIdEntry( ) ) )
             {
