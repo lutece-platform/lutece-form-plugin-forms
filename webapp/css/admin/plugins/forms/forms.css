@@ -27,9 +27,7 @@ body, .wrapper{ height: 100%; overflow: visible; }
 
 /* Table Header 																*/
 .th-header{ background-color: #EEE }
-.th-header a{ color: #fff }
 .th-active{ background-color: #1d98f6;  }
-.th-active, .th-active a{ color: #fff }
 
 /* Multiview - No answers 														*/
 #multiview-no-forms{ height:70vh; display:flex; justify-content:center; align-items:start; width:100%;}
