@@ -183,6 +183,7 @@ public class FormStepJspBean extends AbstractJspBean
         }
 
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+        checkWorkgroupPermission(nIdForm, request);
 
         Form formParent = FormHome.findByPrimaryKey( nIdForm );
         _step = new Step( );
@@ -292,6 +293,7 @@ public class FormStepJspBean extends AbstractJspBean
             return redirectView( request, VIEW_CREATE_STEP );
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _step.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
+        checkWorkgroupPermission(_step.getIdForm( ), request);
 
         StepHome.create( _step );
         addInfo( INFO_STEP_CREATED, getLocale( ) );
@@ -378,6 +380,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         int nIdForm = -1;
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
+        checkWorkgroupPermission(nIdForm, request);
 
         if ( nIdStep != -1 )
         {
@@ -432,6 +435,7 @@ public class FormStepJspBean extends AbstractJspBean
             nIdForm = _step.getIdForm( );
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_REMOVE_STEP );
+        checkWorkgroupPermission(nIdForm, request);
         _stepService.removeStep( nIdStep );
         FormResponseStepHome.removeByStep( nIdStep );
 
@@ -503,6 +507,7 @@ public class FormStepJspBean extends AbstractJspBean
         {
             nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
             checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_MODIFY_STEP );
+            checkWorkgroupPermission(nIdForm, request);
             nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         }
         catch( NumberFormatException ne )
@@ -588,6 +593,7 @@ public class FormStepJspBean extends AbstractJspBean
         {
             nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
             checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
+            checkWorkgroupPermission(nIdForm, multipartRequest);
             FormJsonService.getInstance( ).jsonImportStep( nIdForm, new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
             addInfo( INFO_STEP_CREATED, getLocale( ) );
         }
@@ -605,6 +611,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         int nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
+        checkWorkgroupPermission(nIdForm, request);
         int nIdTemplate = Integer.parseInt( request.getParameter( PARAMETER_ID_TEMPLATE ) );
         StepJsonData template = _stepService.getStepTemplateData( nIdTemplate );
         if ( template != null )

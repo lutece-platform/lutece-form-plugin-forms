@@ -146,6 +146,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_BREADCRUMB_TYPE = "breadcrumbTypes";
     private static final String MARK_PERMISSION_CREATE_FORMS = "permission_create_forms";
     private static final String MARK_WORKFLOW_REF_LIST = "workflow_list";
+    private static final String MARK_WORKGROUP_REF_LIST = "workgroup_list";
     private static final String MARK_WEBAPP_URL = "webapp_url";
     private static final String MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN = "is_active_kibana_forms_plugin";
     private static final String MARK_IS_ACTIVE_CAPTCHA = "is_active_captcha";
@@ -301,6 +302,10 @@ public class FormJspBean extends AbstractJspBean
             ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( (User) adminUser, getLocale( ) );
             model.put( MARK_WORKFLOW_REF_LIST, referenceList );
         }
+        
+        ReferenceList workGroupReferenceList = AdminWorkgroupService.getUserWorkgroups(getUser(), getLocale());
+        model.put( MARK_WORKGROUP_REF_LIST, workGroupReferenceList );
+        model.put(FormsConstants.MARK_DEFAULT_VALUE_WORKGROUP_KEY, AdminWorkgroupService.ALL_GROUPS);
 
         if ( AccessControlService.getInstance( ).isAvailable( ) )
         {
@@ -391,6 +396,7 @@ public class FormJspBean extends AbstractJspBean
         }
 
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_DELETE, request, null );
+        checkWorkgroupPermission(nId, request);
 
         Form formToBeDeleted = FormHome.findByPrimaryKey( nId );
         String strConfirmRemoveMessage = formToBeDeleted.isActive( ) ? MESSAGE_CONFIRM_REMOVE_ACTIVE_FORM : MESSAGE_CONFIRM_REMOVE_FORM;
@@ -432,7 +438,8 @@ public class FormJspBean extends AbstractJspBean
         }
 
         checkUserPermission( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, request, ACTION_CREATE_FORM );
-
+        checkWorkgroupPermission(nId, request);
+        
         if ( nId != FormsConstants.DEFAULT_ID_VALUE )
         {
             try
@@ -476,6 +483,7 @@ public class FormJspBean extends AbstractJspBean
         }
 
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_DELETE, request, ACTION_REMOVE_FORM );
+        checkWorkgroupPermission(nId, request);
 
         if ( AccessControlService.getInstance( ).isAvailable( ) )
         {
@@ -511,6 +519,7 @@ public class FormJspBean extends AbstractJspBean
         }
 
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
+        checkWorkgroupPermission(nId, request);
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -543,6 +552,10 @@ public class FormJspBean extends AbstractJspBean
                 ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( (User) adminUser, getLocale( ) );
                 model.put( MARK_WORKFLOW_REF_LIST, referenceList );
             }
+            
+            ReferenceList workGroupReferenceList = AdminWorkgroupService.getUserWorkgroups(getUser(), getLocale());
+            model.put( MARK_WORKGROUP_REF_LIST, workGroupReferenceList );
+            model.put(FormsConstants.MARK_DEFAULT_VALUE_WORKGROUP_KEY, AdminWorkgroupService.ALL_GROUPS);
 
             if ( AccessControlService.getInstance( ).isAvailable( ) )
             {
@@ -582,6 +595,8 @@ public class FormJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
+        
+        checkWorkgroupPermission(formToBeModified, request);
 
         List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
 
@@ -630,6 +645,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
+        checkWorkgroupPermission(nId, request);
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 
@@ -684,6 +700,8 @@ public class FormJspBean extends AbstractJspBean
             addError( ERROR_FORM_NOT_UPDATED, getLocale( ) );
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
+        
+        checkWorkgroupPermission(_form, request);
 
         _formMessage = FormMessageHome.findByForm( _form.getId( ) );
 

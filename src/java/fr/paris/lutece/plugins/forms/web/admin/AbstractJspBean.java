@@ -41,6 +41,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
@@ -49,6 +51,7 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.web.util.LocalizedDelegatePaginator;
 import fr.paris.lutece.util.html.AbstractPaginator;
@@ -239,6 +242,24 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
         {
             throw new AccessDeniedException( UNAUTHORIZED );
         }
+    }
+    
+    protected void checkWorkgroupPermission(int nIdForm, HttpServletRequest request) throws AccessDeniedException
+    {
+    	Form form = FormHome.findByPrimaryKey(nIdForm);
+    	if (form == null)
+    	{
+    		throw new AccessDeniedException( UNAUTHORIZED );
+    	}
+    	checkWorkgroupPermission(form, request);
+    }
+    
+    protected void checkWorkgroupPermission(Form form, HttpServletRequest request) throws AccessDeniedException
+    {
+    	if (!AdminWorkgroupService.isAuthorized(form, (User) AdminUserService.getAdminUser( request )))
+    	{
+    		throw new AccessDeniedException( UNAUTHORIZED );
+    	}
     }
 
     /**
