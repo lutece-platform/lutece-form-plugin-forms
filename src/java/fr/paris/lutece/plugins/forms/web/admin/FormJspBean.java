@@ -687,12 +687,6 @@ public class FormJspBean extends AbstractJspBean
 
         _formMessage = FormMessageHome.findByForm( _form.getId( ) );
 
-        if ( _form.getLogo( ) != null )
-        {
-            FileHome.remove( _form.getLogo( ).getIdFile( ) );
-            _form.setLogo( null );
-        }
-
         populate( _form, request, request.getLocale( ) );
         populate( _formMessage, request, request.getLocale( ) );
 
@@ -701,6 +695,11 @@ public class FormJspBean extends AbstractJspBean
             return redirect( request, VIEW_MODIFY_FORM, FormsConstants.PARAMETER_ID_FORM, _form.getId( ) );
         }
 
+        if ( _form.getLogo( ) != null )
+        {
+            FileHome.remove( _form.getLogo( ).getIdFile( ) );
+            _form.setLogo( null );
+        }
         _form.setLogo( getLogoFromRequest( request ) );
         if ( _form.getLogo( ) != null )
         {
