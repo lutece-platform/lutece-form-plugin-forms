@@ -467,7 +467,8 @@ $( function() {
 				<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
 					<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
 				</@formGroup>
-				<@formGroup labelKey='#i18n{forms.create_form.labelLabelFinalButton}' rows=2>
+				<#assign helpLabelFinalButton = '#i18n{forms.create_form.labelLabelFinalButton.help} #i18n{forms.step.save}'>
+				<@formGroup labelKey='#i18n{forms.create_form.labelLabelFinalButton}' helpKey='${helpLabelFinalButton}' rows=2>
 					<@input type='text' name='labelFinalButton' value='${form.labelFinalButton!}' />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' hideLabel=['all'] helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
