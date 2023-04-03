@@ -36,11 +36,15 @@ package fr.paris.lutece.plugins.forms.export.csv;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -60,6 +64,8 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 public class CSVDataLine
 {
     private static final String RESPONSE_SEPARATOR = " ";
+    
+    private static final String CONSTANT_COMMA = ",";
 
     private final Map<Integer, Map<Integer, String>> _mapDataToExport;
     private final String _commonDataToExport;
@@ -115,22 +121,31 @@ public class CSVDataLine
     {
     	Map<Integer, List<String>> mapResponseValue = new HashMap<>();
     	fr.paris.lutece.plugins.genericattributes.business.Entry entry = formQuestionResponse.getQuestion().getEntry();
+    	
+    	String strExportFieldsPrefix = entry.getEntryType().getBeanName() != null ? entry.getEntryType().getBeanName() : StringUtils.EMPTY;
+    	
+    	String strExportFieldsList = AppPropertiesService.getProperty( strExportFieldsPrefix + FormsConstants.PROPERTY_EXPORT_FIELD_LIST_PREFIX , null );
+    	List<String> exportFieldsList = StringUtils.isEmpty(strExportFieldsList) ? new ArrayList<>() : Arrays.asList( strExportFieldsList.split( CONSTANT_COMMA ) );
+    	
         for ( Response response : formQuestionResponse.getEntryResponse( ) )
         {
-            String strResponseValue = EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForExport( entry, null, response,
-                    I18nService.getDefaultLocale( ) );
-            if ( strResponseValue != null )
+        	if ( CollectionUtils.isEmpty(exportFieldsList) || exportFieldsList.contains(response.getField().getCode()))
             {
-            	if (mapResponseValue.containsKey(response.getIterationNumber()))
-            	{
-            		mapResponseValue.get(response.getIterationNumber()).add(strResponseValue);
-            	}
-            	else
-            	{
-            		List<String> listResponseValue = new ArrayList<>();
-            		listResponseValue.add(strResponseValue);
-            		mapResponseValue.put(response.getIterationNumber(), listResponseValue);
-            	}
+        		String strResponseValue = EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForExport( entry, null, response,
+                        I18nService.getDefaultLocale( ) );
+                if ( strResponseValue != null )
+                {
+                	if (mapResponseValue.containsKey(response.getIterationNumber()))
+                	{
+                		mapResponseValue.get(response.getIterationNumber()).add(strResponseValue);
+                	}
+                	else
+                	{
+                		List<String> listResponseValue = new ArrayList<>();
+                		listResponseValue.add(strResponseValue);
+                		mapResponseValue.put(response.getIterationNumber(), listResponseValue);
+                	}
+                }
             }
         }
         return mapResponseValue;

@@ -190,6 +190,7 @@ public final class FormsConstants
     public static final String CONSTANT_MYLUTECE_ATTRIBUTE_I18N_PREFIX = "forms.entrytype.myluteceuserattribute.attribute.";
     public static final String PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT = "forms.export.formResponse.form.date.creation.format";
     public static final String PROPERTY_INACTIVE_BYPASS_DURATION_MILLISECONDS = "forms.inactive.bypass.duration.milliseconds";
+    public static final String PROPERTY_EXPORT_FIELD_LIST_PREFIX = ".export.fields";
 
     // Constants
     public static final int DEFAULT_FILTER_VALUE = NumberUtils.INTEGER_MINUS_ONE;
