@@ -120,7 +120,7 @@ public class FormResponsePdfExport
     {
         Step step = formResponseStep.getStep( );
 
-        List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListOrderByQuestionExportDisplayOrder( step.getId( ) );
+        List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParentOrderByQuestionExportDisplayOrder( step.getId( ), 0 );
 
         List<PdfCell> listContent = new ArrayList<>( );
         for ( FormDisplay formDisplay : listStepFormDisplay )
@@ -147,7 +147,7 @@ public class FormResponsePdfExport
         List<PdfCell> listContent = new ArrayList<>( );
         Group group = GroupHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
 
-        List<FormDisplay> listGroupDisplay = FormDisplayHome.getFormDisplayListByParent( formResponseStep.getStep( ).getId( ), formDisplay.getId( ) );
+        List<FormDisplay> listGroupDisplay = FormDisplayHome.getFormDisplayListByParentOrderByQuestionExportDisplayOrder( formResponseStep.getStep( ).getId( ), formDisplay.getId( ) );
         for ( int ite = 0; ite < group.getIterationMax( ); ite++ )
         {
             for ( FormDisplay formDisplayGroup : listGroupDisplay )

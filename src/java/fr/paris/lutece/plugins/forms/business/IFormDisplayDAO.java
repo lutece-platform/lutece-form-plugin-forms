@@ -149,8 +149,9 @@ public interface IFormDisplayDAO
     /**
      * 
      * @param nIdStep
+     * @param nIdParent TODO
      * @param plugin
      * @return The list which contains the data of all the FormDisplay objects ordered by export_display_order column from forms_question
      */
-	List<FormDisplay> selectFormDisplayListOrderByQuestionExportDisplayOrder(int nIdStep, Plugin plugin);
+	List<FormDisplay> selectFormDisplayListByParentOrderByQuestionExportDisplayOrder(int nIdStep, int nIdParent, Plugin plugin);
 }
