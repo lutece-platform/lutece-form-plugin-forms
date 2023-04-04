@@ -149,11 +149,12 @@ public final class FormDisplayHome
     /**
      * Load the data of all the formDisplay from a form step and returns them as a list ordered by export order
      * @param nIdStep
+     * @param nIdParent TODO
      * @return
      */
-    public static List<FormDisplay> getFormDisplayListOrderByQuestionExportDisplayOrder( int nIdStep )
+    public static List<FormDisplay> getFormDisplayListByParentOrderByQuestionExportDisplayOrder( int nIdStep, int nIdParent )
     {
-        List<FormDisplay> result = _dao.selectFormDisplayListOrderByQuestionExportDisplayOrder(nIdStep, _plugin);
+        List<FormDisplay> result = _dao.selectFormDisplayListByParentOrderByQuestionExportDisplayOrder(nIdStep, nIdParent, _plugin);
         for ( FormDisplay formDisplay : result )
         {
             initConditionalDisplayForFormDisplay( formDisplay );

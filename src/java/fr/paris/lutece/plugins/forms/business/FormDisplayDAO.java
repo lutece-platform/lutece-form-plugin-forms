@@ -60,9 +60,9 @@ public final class FormDisplayDAO implements IFormDisplayDAO
             + "FROM forms_display d INNER JOIN forms_group g ON d.id_composite = g.id_group "
             + "WHERE d.id_step = ? AND d.composite_type = ? order by d.id_parent, d.display_order";
     private static final String SQL_QUERY_SELECT_BY_FROM_STEP_COMPOSITE = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND id_step = ? AND id_composite = ?";
-    private static final String SQL_QUERY_SELECT_ORDER_BY_QUESTION_EXPORT_DISPLAY_ORDER = "SELECT fd.id_display, fd.id_form, fd.id_step, fd.id_composite, fd.id_parent, fd.display_order, fd.composite_type, fd.display_depth "
+    private static final String SQL_QUERY_SELECT_BY_PARENT_ORDER_BY_QUESTION_EXPORT_DISPLAY_ORDER = "SELECT fd.id_display, fd.id_form, fd.id_step, fd.id_composite, fd.id_parent, fd.display_order, fd.composite_type, fd.display_depth "
     		+ "FROM forms_display fd LEFT JOIN forms_question fq ON fd.id_composite = fq.id_question "
-    		+ "WHERE fd.id_step = ? ORDER BY fq.export_display_order ASC";
+    		+ "WHERE fd.id_step = ? AND id_parent = ? ORDER BY fq.export_display_order ASC";
     
     /**
      * {@inheritDoc }
@@ -193,12 +193,13 @@ public final class FormDisplayDAO implements IFormDisplayDAO
     }
     
     @Override
-    public List<FormDisplay> selectFormDisplayListOrderByQuestionExportDisplayOrder( int nIdStep, Plugin plugin )
+    public List<FormDisplay> selectFormDisplayListByParentOrderByQuestionExportDisplayOrder( int nIdStep, int nIdParent, Plugin plugin )
     {
     	List<FormDisplay> formDisplayList = new ArrayList<>( );
-    	try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ORDER_BY_QUESTION_EXPORT_DISPLAY_ORDER, plugin ) )
+    	try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_PARENT_ORDER_BY_QUESTION_EXPORT_DISPLAY_ORDER, plugin ) )
         {
             daoUtil.setInt( 1, nIdStep );
+            daoUtil.setInt( 2, nIdParent );
             daoUtil.executeQuery( );
 
             while ( daoUtil.next( ) )
