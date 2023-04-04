@@ -331,13 +331,9 @@ public class FormXPage extends MVCApplication
             initFormResponseManager( request, form );
             if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
             {
-                _currentStep = _formResponseManager.getCurrentStep( );
-                _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
-
                 Object [ ] args = {
                         _formResponseManager.getFormResponse( ).getUpdate( ),
                 };
-
                 model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( FormsConstants.MESSAGE_LOAD_BACKUP, args, getLocale( request ) ) );
             }
 
