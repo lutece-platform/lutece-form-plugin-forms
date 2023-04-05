@@ -60,6 +60,7 @@ import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelectOrder;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeCommentDisplayService;
@@ -83,7 +84,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     private static final long serialVersionUID = -8828358457153413756L;
 
     private static final Class<?> [ ] ENTRY_TYPE_USER_REF_LIT = {
-            EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class
+            EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeSelectOrder.class
     };
 
     // Actions
