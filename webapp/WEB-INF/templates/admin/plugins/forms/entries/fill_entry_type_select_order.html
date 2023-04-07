@@ -2,7 +2,6 @@
 <#if entry.helpMessage?exists&&entry.helpMessage!=''>
   <#assign helpKey=entry.helpMessage />
 </#if>
-
 <#if list_responses??>
 	<#list list_responses as response>
 	  <#if response.entry.idEntry == entry.idEntry && response.entry.error??>
@@ -12,8 +11,7 @@
 	</#list>
 	<#assign inputClass = entry.CSSClass! />
 </#if>
-	
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' groupStyle=groupStyle!'' mandatory=entry.mandatory htmlRequired=false >
     <script src="js/admin/jquery/jquery-ui.min.js"></script>
     <@input type='hidden' name='${idName}' id='${idName}'  />
     <ul id="sortable1" class="connectedSortable ${inputClass}"
@@ -43,7 +41,6 @@
 			</#if>
 		</#list>
 	</ul>
-	 
 	<ul id="sortable2" class="connectedSortable ${inputClass}">
 		<#if list_responses??>
 			<#list list_responses as response>
@@ -82,7 +79,6 @@
     $( "#sortable1, #sortable2" ).sortable({
       connectWith: ".connectedSortable"
     }).disableSelection();
-
     $('form').submit(function(){
 	    $('#${idName}').val($( "#sortable2" ).sortable("serialize").replaceAll('&',';'));
 	}); 

@@ -231,8 +231,10 @@ public class FormJspBean extends AbstractJspBean
 
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
-
-        List<Form> listForms = FormHome.getFormList( );
+        
+        buildFormItemSortConfiguration( request );
+        
+        List<Form> listForms = FormHome.getFormListSorted( _formItemSortConfig );
         listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, (User) adminUser );
 
         Map<String, Object> model = getModel( );
@@ -397,7 +399,8 @@ public class FormJspBean extends AbstractJspBean
         url.addParameter( FormsConstants.PARAMETER_ID_FORM, nId );
         url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_FORM ) );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage,
+                new Object[ ] { formToBeDeleted.getTitle( ) }, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
 
@@ -777,15 +780,18 @@ public class FormJspBean extends AbstractJspBean
         List<FileItem> listUploadedFileItems = _uploadHandler.getListUploadedFiles( PARAMETER_LOGO, request.getSession( ) );
         for ( FileItem fileItem : listUploadedFileItems )
         {
-            File file = new File( );
-            file.setTitle( fileItem.getName( ) );
-            file.setSize( ( fileItem.getSize( ) < Integer.MAX_VALUE ) ? (int) fileItem.getSize( ) : Integer.MAX_VALUE );
-            file.setMimeType( FileSystemUtil.getMIMEType( file.getTitle( ) ) );
+        	if (fileItem != null)
+            {
+            	File file = new File( );
+                file.setTitle( fileItem.getName( ) );
+                file.setSize( ( fileItem.getSize( ) < Integer.MAX_VALUE ) ? (int) fileItem.getSize( ) : Integer.MAX_VALUE );
+                file.setMimeType( FileSystemUtil.getMIMEType( file.getTitle( ) ) );
 
-            PhysicalFile physicalFile = new PhysicalFile( );
-            physicalFile.setValue( fileItem.get( ) );
-            file.setPhysicalFile( physicalFile );
-            return file;
+                PhysicalFile physicalFile = new PhysicalFile( );
+                physicalFile.setValue( fileItem.get( ) );
+                file.setPhysicalFile( physicalFile );
+                return file;
+            }
         }
         return null;
     }

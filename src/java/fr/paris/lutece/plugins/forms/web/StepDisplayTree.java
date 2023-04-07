@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
@@ -57,6 +58,7 @@ import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
 import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
@@ -75,8 +77,10 @@ public class StepDisplayTree
     private static final String TEMPLATE_STEP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step.html";
     private static final String TEMPLATE_STEP_EDITION_NO_BUTTON_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step_no_button.html";
     private static final String TEMPLATE_STEP_READONLY_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step_read_only.html";
-    private static final String TEMPLATE_STEP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_step.html";
+    private static final String TEMPLATE_STEP_EDITION_BACKOFFICE = "/admin/plugins/forms/composite/view_step.html";
+    private static final String TEMPLATE_STEP_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_step_read_only.html";
     private static final String TEMPLATE_STEP_SELECT_BACKOFFICE = "/admin/plugins/forms/composite/select_step.html";
+    private static final String TEMPLATE_STEP_SUBMIT_BACKOFFICE = "/admin/plugins/forms/composite/view_step_bo.html";
 
     // Marks
     private static final String MARK_STEP_CONTENT = "stepContent";
@@ -215,7 +219,7 @@ public class StepDisplayTree
     }
 
     /**
-     * Build and return the html template of the tree for Front-Office display
+     * Build and return the html template of the tree
      * 
      * @param request
      *            the request
@@ -253,7 +257,6 @@ public class StepDisplayTree
 
         _model.put( FormsConstants.MARK_FORM, _form );
         _model.put( FormsConstants.MARK_STEP, _step );
-        _model.put( FormsConstants.MARK_USER, user );
         _model.put( MARK_STEP_CONTENT, strBuilder.toString( ) );
 
         if ( displayType == DisplayType.EDITION_FRONTOFFICE )
@@ -272,6 +275,11 @@ public class StepDisplayTree
                     _model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
                 }
             }
+        }
+        
+        if ( displayType != DisplayType.SUBMIT_BACKOFFICE )
+        {
+        	_model.put( FormsConstants.MARK_USER, user );
         }
 
         String strTemplate = findTemplateFor( displayType );
@@ -294,6 +302,11 @@ public class StepDisplayTree
         {
             strTemplate = TEMPLATE_STEP_EDITION_FRONTOFFICE;
         }
+        
+        if ( displayType == DisplayType.SUBMIT_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_STEP_SUBMIT_BACKOFFICE;
+        }
 
         if ( displayType == DisplayType.READONLY_BACKOFFICE )
         {
@@ -306,7 +319,7 @@ public class StepDisplayTree
         }
         if ( displayType == DisplayType.EDITION_BACKOFFICE )
         {
-            strTemplate = TEMPLATE_STEP_READONLY_BACKOFFICE;
+            strTemplate = TEMPLATE_STEP_EDITION_BACKOFFICE;
         }
         if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
         {

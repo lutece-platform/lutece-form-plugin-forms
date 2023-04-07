@@ -281,7 +281,52 @@ public final class FormResponseHome
         }
         return listFormResponse;
     }
+    
+    /**
+     * Load the data of all the formResponse objects and returns them as a list
+     * 
+     * @param strGuid
+     *            The user Guid
+     * @param nIdForm
+     *            The form primary key
+     * @param fromBackup
+     * @return the formResponse objects
+     */
+    public static List<FormResponse> getFormResponseByAdminAndForm( String strAdmin, int nIdForm, boolean fromBackup )
+    {
+        List<FormResponse> listFormResponse = _dao.selectFormResponseByAdmin( strAdmin, nIdForm, fromBackup, _plugin );
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            completeWithSteps( formResponse );
+        }
+        return listFormResponse;
+    }
 
+    /**
+     * Load the data of all the formResponse uncomplete objects and returns them as a list
+     * 
+     * @param strGuid
+     *            The user Guid
+     * @return the formResponse objects
+     */
+    public static List<FormResponse> getFormResponseUncompleteByGuid( String strGuid )
+    {
+        return _dao.selectAllCompletedFormResponseByUser( strGuid, _plugin );
+        
+    }
+    /**
+     * Load the data of all the FormResponse uncomplete objects by front office role and returns them as a list
+     * 
+     * @param listRole
+     *            the given role FO
+     * @return The list which contains the data of the FormResponse objects
+     */
+    public static List<FormResponse> getFormResponseUncompleteByRole( List<String> listRole )
+    {
+    	 return _dao.selectFormResponseByRole( listRole, _plugin );
+         
+    }
+    
     /**
      * Load the data of all the formResponse objects and returns them as a list
      * 
@@ -298,7 +343,22 @@ public final class FormResponseHome
         }
         return listFormResponse;
     }
-
+    /**
+     * Load the data of all the FormResponse objects by front office role and returns them as a list
+     * 
+     * @param strRole
+     *            the given role FO
+     * @return The list which contains the data of all the FormResponse objects
+     */
+    public static List<FormResponse> getFormResponseByRole( List<String> listRole )
+    {
+    	 List<FormResponse> listFormResponse = _dao.selectFormResponseByRole( listRole, _plugin );
+         for ( FormResponse formResponse : listFormResponse )
+         {
+             completeWithSteps( formResponse );
+         }
+         return listFormResponse;
+    }
     /**
      * Load the data of all formResponses Objects for a given list of formResponses identifiers
      * 

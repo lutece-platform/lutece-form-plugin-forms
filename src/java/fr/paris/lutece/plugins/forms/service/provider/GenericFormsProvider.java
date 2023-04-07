@@ -67,19 +67,35 @@ import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
 
 public abstract class GenericFormsProvider implements IProvider
 {
     // MESSAGE
-    private static final String MESSAGE_DESCRIPTION = "forms.marker.provider.url.detail.reponse.description";
+    private static final String MESSAGE_DESCRIPTION = "forms.marker.provider.url.admin.detail.reponse.description";
+    private static final String MESSAGE_FO_DESCRIPTION = "forms.marker.provider.url.fo.detail.reponse.description";
+    private static final String MESSAGE_CREATION_DATE = "forms.marker.provider.url.detail.reponse.creation_date";
+    private static final String MESSAGE_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.update_date";
+    private static final String MESSAGE_STATUS = "forms.marker.provider.url.detail.reponse.status";
+    private static final String MESSAGE_STATUS_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.status_update_date";
 
+    // PROPERTY
+    private static final String PROPERTY_LUTECE_ADMIN_PROD_URL = "lutece.admin.prod.url";
     // MARKS
     private static final String MARK_POSITION = "position_";
     private static final String MARK_URL_ADMIN_RESPONSE = "url_admin_forms_response_detail";
+    private static final String MARK_URL_FO_RESPONSE = "url_fo_forms_response_detail";
+    private static final String MARK_CREATION_DATE = "creation_date";
+    private static final String MARK_UPDATE_DATE = "update_date";
+    private static final String MARK_STATUS = "status";
+    private static final String MARK_STATUS_UPDATE_DATE = "update_date_status";
     // PARAMETERS
     public static final String PARAMETER_VIEW_FORM_RESPONSE_DETAILS = "view_form_response_details";
+    public static final String PARAMETER_VIEW_FORM_RESPONSE_DETAILS_FO = "formResponseView";
     public static final String PARAMETER_ID_FORM_RESPONSES = "id_form_response";
+    public static final String PARAMETER_ID_FORM_RESPONSES_FO = "id_response";
+    public static final String PARAMETER_PAGE_FORM_RESPONSE = "formsResponse";
 
     // FIELDS
     protected final FormResponse _formResponse;
@@ -156,12 +172,29 @@ public abstract class GenericFormsProvider implements IProvider
         }
         result.addAll( markers.values( ) );
 
-        InfoMarker notifyMarkerUrl = new InfoMarker( MARK_URL_ADMIN_RESPONSE );
-        UrlItem url = new UrlItem( AppPathService.getBaseUrl( _request ) + MultiviewFormResponseDetailsJspBean.CONTROLLER_JSP_NAME_WITH_PATH );
-        url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS );
-        url.addParameter( PARAMETER_ID_FORM_RESPONSES, _formResponse.getId( ) );
-        notifyMarkerUrl.setValue( url.getUrl( ) );
-        result.add( notifyMarkerUrl );
+        InfoMarker notifyMarkerAdminUrl = new InfoMarker( MARK_URL_ADMIN_RESPONSE );
+        UrlItem adminUrl = new UrlItem( AppPropertiesService.getProperty( PROPERTY_LUTECE_ADMIN_PROD_URL ) + MultiviewFormResponseDetailsJspBean.CONTROLLER_JSP_NAME_WITH_PATH );
+        adminUrl.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS );
+        adminUrl.addParameter( PARAMETER_ID_FORM_RESPONSES, _formResponse.getId( ) );
+        notifyMarkerAdminUrl.setValue( adminUrl.getUrl( ) );
+        result.add( notifyMarkerAdminUrl );
+        
+        InfoMarker notifyMarkerFOUrl = new InfoMarker( MARK_URL_FO_RESPONSE );
+        UrlItem url = new UrlItem( AppPathService.getProdUrl( _request ) + AppPathService.getPortalUrl( ) );
+        url.addParameter( FormsConstants.PARAMETER_PAGE, PARAMETER_PAGE_FORM_RESPONSE );
+        url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS_FO );
+        url.addParameter( PARAMETER_ID_FORM_RESPONSES_FO, _formResponse.getId( ) );
+        notifyMarkerFOUrl.setValue( url.getUrl( ) );
+        result.add( notifyMarkerFOUrl );
+        
+        InfoMarker creationDateMarker = new InfoMarker( MARK_CREATION_DATE );
+        creationDateMarker.setValue( _formResponse.getCreation( ).toString( ) );
+        InfoMarker updateDateMarker = new InfoMarker( MARK_UPDATE_DATE );
+        updateDateMarker.setValue( _formResponse.getCreation( ).toString( ) );
+        InfoMarker statusMarker = new InfoMarker( MARK_STATUS );
+        statusMarker.setValue( String.valueOf( _formResponse.isPublished( ) ) );
+        InfoMarker updateStatusDateMarker = new InfoMarker( MARK_STATUS_UPDATE_DATE );
+        updateStatusDateMarker.setValue( _formResponse.getUpdateStatus( ).toString( ) );
         return result;
     }
 
@@ -184,9 +217,28 @@ public abstract class GenericFormsProvider implements IProvider
             notifyMarker.setDescription( formQuestion.getTitle( ) );
             collectionNotifyMarkers.add( notifyMarker );
         }
-        InfoMarker notifyMarkerURl = new InfoMarker( MARK_URL_ADMIN_RESPONSE );
-        notifyMarkerURl.setDescription( I18nService.getLocalizedString( MESSAGE_DESCRIPTION, I18nService.getDefaultLocale( ) ) );
-        collectionNotifyMarkers.add( notifyMarkerURl );
+        InfoMarker notifyMarkerAdminURl = new InfoMarker( MARK_URL_ADMIN_RESPONSE );
+        notifyMarkerAdminURl.setDescription( I18nService.getLocalizedString( MESSAGE_DESCRIPTION, I18nService.getDefaultLocale( ) ) );
+        collectionNotifyMarkers.add( notifyMarkerAdminURl );
+        
+        InfoMarker notifyMarkerFOURl = new InfoMarker( MARK_URL_FO_RESPONSE );
+        notifyMarkerFOURl.setDescription( I18nService.getLocalizedString( MESSAGE_FO_DESCRIPTION, I18nService.getDefaultLocale( ) ) );
+        collectionNotifyMarkers.add( notifyMarkerFOURl );
+        
+        InfoMarker creationDateMarker = new InfoMarker( MARK_CREATION_DATE );
+        creationDateMarker.setDescription( I18nService.getLocalizedString( MESSAGE_CREATION_DATE, I18nService.getDefaultLocale( ) ) );
+        InfoMarker updateDateMarker = new InfoMarker( MARK_UPDATE_DATE );
+        updateDateMarker.setDescription( I18nService.getLocalizedString( MESSAGE_UPDATE_DATE, I18nService.getDefaultLocale( ) ) );
+        InfoMarker statusMarker = new InfoMarker( MARK_STATUS );
+        statusMarker.setDescription( I18nService.getLocalizedString( MESSAGE_STATUS, I18nService.getDefaultLocale( ) ) );
+        InfoMarker updateStatusDateMarker = new InfoMarker( MARK_STATUS_UPDATE_DATE );
+        updateStatusDateMarker.setDescription( I18nService.getLocalizedString( MESSAGE_STATUS_UPDATE_DATE, I18nService.getDefaultLocale( ) ) );
+        
+        collectionNotifyMarkers.add( creationDateMarker );
+        collectionNotifyMarkers.add( updateDateMarker );
+        collectionNotifyMarkers.add( statusMarker );
+        collectionNotifyMarkers.add( updateStatusDateMarker );
+        
         return collectionNotifyMarkers;
     }
 

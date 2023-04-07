@@ -1,5 +1,112 @@
-<#if question.visible>
-<div class="row <#if id_display??>display_field_${id_display}</#if>" displayControl="${question.id}_${question.iterationNumber}">
-    ${questionContent}
-</div>
+<#assign classDisp><#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if></#assign>
+<#assign param>displayControl="${question.id}_${question.iterationNumber}" </#assign>
+<#assign entryCSSClass>${classDisp} mt-3<#if question.entry.CSSClass??><#if question.entry.CSSClass?trim?starts_with('col-')> ${question.entry.CSSClass}<#else> col-12</#if></#if></#assign>
+<@columns class=entryCSSClass params=param>
+${questionContent}
+</@columns>
+<#if validator??>
+	<@input name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='' type='hidden' /> 
+	<script>
+	$(function() {
+	<#if other_step_validation??>
+		<#if other_step_validation>
+			$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').show();
+			$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
+		<#else>
+			$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').hide();
+
+			$('#${question.id}_${question.iterationNumber}').val('');
+		</#if>
+	<#else>
+		<#assign validNames = [] />
+		<#if !validNames?seq_contains(validator.validatorBeanName)>
+			<#assign validNames = validNames + [validator.validatorBeanName] />
+			function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue){
+				${validator.getJavascriptValidation()!'return true;'}
+			}
+		</#if>
+		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+			input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
+			input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
+			var inputValue = getFieldValue(input${control.id}_${question.iterationNumber}), 
+				hasCollapse=false, 
+				toCollapse=null,
+				stepGroup = $('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').parentsUntil('.step-content');
+			stepGroup.each( function(){
+				if( $(this).hasClass('step-group-collapsible') ){
+					hasCollapse=true, 
+					toCollapse=$(this);
+				}
+			});
+			if(!$("div[displayControl='${control.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid") && validator_${control.validatorName?replace('.','_')}( inputValue, '${control.value}'))
+			{
+				$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').removeClass("control_invalid");
+				$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').show();
+				if( hasCollapse ){ toCollapse.show() };
+				$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
+			} else {
+				$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').addClass("control_invalid");
+				$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').hide();
+				$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').find('input[type="text"],select').val('');
+				$('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').find('input[type="checkbox"]').prop('checked',false);
+				if( hasCollapse ){ toCollapse.hide(); }
+				$('#${question.id}_${question.iterationNumber}').val('');
+			}
+			var currentControl = "${question.id}_${question.iterationNumber}";
+			var currentInput = getInputElement(currentControl);
+			if ( currentInput[0] != undefined && currentInput[0].type != 'file' ){
+				currentInput.change();
+			}
+		});
+		input${control.id}_${question.iterationNumber}.change();
+		</#if>
+	});
+	</script>
+<#else>
+	<@input name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='${question.id}_${question.iterationNumber}' type='hidden' />
 </#if>
+
+
+<script>
+function getInputElement( displayControl ){
+	var types = ['input','select','textarea'];
+	var elm = null;
+	for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++){
+		elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
+	}
+	if( elm.is('input') ){
+		elm = $('input[name="' + elm.attr('name') + '"]');
+	}
+	return elm;
+}
+
+function getFieldValue( elm ){
+	if(elm.is(':radio')){
+		var input = $('input[name="' + elm.attr('name') + '"]:checked');
+		return input.val();
+	} else if (elm.is(':checkbox'))	{
+		var resultChecked = [];
+		for(var i=0;i< elm.length;i++){
+			if (elm [i].checked){
+				resultChecked.push(elm[i].value);
+			}
+		}
+		return resultChecked;
+	} else if (elm.is('select')) {
+		return elm[0].options[elm[0].selectedIndex].value;
+	}
+	//add other specific implementations here
+	else {
+		return elm.val();
+	}
+}
+
+$( function() {
+	$("button[name='action_addIteration']").on("click", function() {
+		var target = "#last_" + $(this).attr("value");
+		var form = $(this).closest("form");
+		var newUrl = form.attr("action").replace(/#current_step$/,target);
+		form.attr("action",newUrl);
+	});
+});
+</script>

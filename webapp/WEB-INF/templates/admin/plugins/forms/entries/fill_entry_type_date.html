@@ -4,7 +4,6 @@
 <#if getResponse( list_responses, entry )?? >
   <#assign response = getResponse( list_responses, entry ) >
 </#if>
-
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#if error??><#assign groupStyle = 'error' /><#else><#assign groupStyle = '' /></#if>
 <#if entry.helpMessage?exists&&entry.helpMessage!=''>
@@ -12,8 +11,7 @@
 <#else>
 	<#assign helpKey = '' />
 </#if>
-
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory htmlRequired=false >
     <@inputGroup>
 		<#assign field = getFieldByCode( entry, "default_date_value" )>
 		<#assign default=''>
@@ -29,7 +27,6 @@
 		</@inputGroupItem>
 	</@inputGroup>
 </@formGroup>
-
 <#if list_responses??>
 	<#list list_responses as response>
 		<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
@@ -44,9 +41,7 @@
 		</#if>
 	</#list>
 </#if>
-
 <#-- <@getDatePickerBootstrap idField="${idName}" language=locale.language /> -->
-
 <script type="text/javascript">
   $( document ).ready(function() {
     $("#attribute${idName}").on('changeDate', function(ev){

@@ -59,15 +59,16 @@ public final class CSVUtil
      * 
      * @param question
      *            the question
+     * @param isIteration TODO
      * @return the column name
      */
-    public static String buildColumnName( Question question )
+    public static String buildColumnName( Question question, boolean isIteration )
     {
         String strColumnName = question.getTitle( );
 
-        if ( question.getIterationNumber( ) > 0 )
+        if ( isIteration )
         {
-            strColumnName = new StringBuilder( question.getTitle( ) ).append( ITERATION_PREFIX ).append( question.getIterationNumber( ) )
+            strColumnName = new StringBuilder( question.getTitle( ) ).append( ITERATION_PREFIX ).append( question.getIterationNumber( ) + 1)
                     .append( ITERATION_SUFFIX ).toString( );
         }
 

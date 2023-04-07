@@ -4,7 +4,6 @@
 <#if getResponse( list_responses, entry )?? >
   <#assign response = getResponse( list_responses, entry ) >
 </#if>
-
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign field = getFieldByCode( entry, "autocomplete" ) >
 <#if field?? && field.value??>
@@ -18,12 +17,10 @@
 <#else>
 	<#assign helpKey = '' />
 </#if>
-
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory htmlRequired=false >
     <#assign placeholder = getFieldValueByCode(entry, "placeholder") >
     <@input type='tel' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=(response.toStringValueResponse)! params=autocomplete placeHolder=placeholder />
 </@formGroup>
-
 <#if list_responses??>
 	<#list list_responses as response>
 		<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>

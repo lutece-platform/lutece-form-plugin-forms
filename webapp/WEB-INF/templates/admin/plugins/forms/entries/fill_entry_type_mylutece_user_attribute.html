@@ -1,5 +1,5 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
-<@formGroup class='${entry.CSSClass!}' labelFor='${idName}' labelKey='${entry.title}' helpKey='${entry.helpMessage!}' mandatory=entry.mandatory>
+<@formGroup class='${entry.CSSClass!}' labelFor='${idName}' labelKey='${entry.title}' helpKey='${entry.helpMessage!}' mandatory=entry.mandatory htmlRequired=false >
     <#if user??>
       <#list entry.fields as field>
         <@staticText>${user.getUserInfo(field.value )}</@staticText>

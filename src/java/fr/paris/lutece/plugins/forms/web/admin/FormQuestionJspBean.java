@@ -67,6 +67,7 @@ import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
@@ -111,6 +112,12 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
     private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveGroup.formActive";
 
+    // Markers
+    private static final String MARK_FIELDS_LIST_BY_ID_ENTRIES = "fields_list_by_id_entries";
+
+    // Constants
+    private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
+    private static final String ILLUSTRATION_IMAGE = "illustration_image";
     private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
 
     private Form _form;
@@ -354,6 +361,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     public String getModifyQuestion( HttpServletRequest request )
     {
         Map<String, Object> model = initModifyQuestionModel( request );
+        Map<Integer, String> fieldsList = new HashMap<>( );
 
         if ( ( _form == null ) || ( _form.getId( ) != _entry.getIdResource( ) ) )
         {
@@ -366,6 +374,14 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_QUESTION ) );
         model.put( FormsConstants.MARK_QUESTION_MODIFY_TEMPLATE,
                 AppTemplateService.getTemplate( TEMPLATE_MODIFY_QUESTION, request.getLocale( ), model ).getHtml( ) );
+        
+        for( Field field : FieldHome.getFieldListByIdEntry( _question.getEntry().getIdEntry( ) ) )
+        {
+        	if( field.getCode( ).equals( ILLUSTRATION_IMAGE ) && field.getValue( ) != null )
+        		fieldsList.put( field.getIdField( ), ImageResourceManager.getImageUrl( PUBLIC_IMAGE_RESOURCE, Integer.parseInt( field.getValue( ) ) )  );
+        }
+        
+        model.put( MARK_FIELDS_LIST_BY_ID_ENTRIES, fieldsList );
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
         HtmlTemplate template = AppTemplateService.getTemplate( entryTypeService.getTemplateModify( _entry, false ), getLocale( ), model );
@@ -538,7 +554,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         url.addParameter( FormsConstants.PARAMETER_ID_DISPLAY, nIdDisplay );
         url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_COMPOSITE ) );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, strMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, strMessage,
+                new Object[ ] { getFormDisplayService( ).getDisplayTitle( _formDisplay ) }, url.getUrl( ),
+                AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
     }

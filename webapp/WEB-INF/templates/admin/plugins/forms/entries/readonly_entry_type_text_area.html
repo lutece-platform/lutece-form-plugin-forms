@@ -1,9 +1,9 @@
 <@row>
     <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
-    <@columns sm=9>
+    <@columns sm=9 class='mb-3'>
     <#if list_responses?has_content>
         <#list list_responses as response>
-            <@p>${response.toStringValueResponse!''}</@p>
+            ${response.toStringValueResponse!?replace("\n", "<br>")}
         </#list>
     </#if>
     </@columns>

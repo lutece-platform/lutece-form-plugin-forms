@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.LuceneQueryBuilder;
 import fr.paris.lutece.plugins.forms.business.form.column.querypart.IFormColumnQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
@@ -172,7 +172,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
      */
     @Override
     public List<FormResponseSearchItem> getSearchResults( List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart,
-            List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart, FormResponseItemSortConfig sortConfig,
+            List<IFormColumnQueryPart> listFormColumnQueryPart, List<IFormFilterQueryPart> listFormFilterQueryPart, FormItemSortConfig sortConfig,
             int nStartIndex, int nPageSize, FormPanel formPanel )
     {
 
@@ -228,7 +228,7 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
      *            The sort config
      * @return the Lucene Sort obj
      */
-    private Sort buildLuceneSort( FormResponseItemSortConfig sortConfig )
+    private Sort buildLuceneSort( FormItemSortConfig sortConfig )
     {
         if ( sortConfig != null )
         {

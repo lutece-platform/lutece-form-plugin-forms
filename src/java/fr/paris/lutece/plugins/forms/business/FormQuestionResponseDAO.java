@@ -61,7 +61,7 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_question_response WHERE id_question_response = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_question_response SET id_form_response = ?, id_question = ?, id_step = ?, iteration_number = ? WHERE id_question_response = ?";
     private static final String SQL_QUERY_SELECT_BY_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_question = ?";
-    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_form_response = ? AND id_question = ?";
+    private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_QUESTION = SQL_QUERY_SELECTALL + " WHERE id_form_response = ? AND id_question = ? ORDER BY iteration_number ASC";
     private static final String SQL_QUERY_SELECT_BY_RESPONSE_AND_STEP = SQL_QUERY_SELECTALL
             + " WHERE id_form_response = ? AND id_step = ? ORDER BY id_question_response ASC";
     private static final String SQL_QUERY_SELECT_BY_LIST_RESPONSE_STEP = SQL_QUERY_SELECTALL + " WHERE ";
@@ -72,6 +72,8 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
     private static final FormQuestionEntryResponseDAO _formQuestionEntryResponseDAO = new FormQuestionEntryResponseDAO( );
 
     private static final String PARAMETER_QUESTION_RESPONSE_ID = "id_question_response";
+    private static final String PARAMETER_QUESTION_ENTRY_RESPONSE_ID = "id_question_entry_response";
+    private static final String PARAMETER_ENTRY_RESPONSE = "id_entry_response";
 
     /**
      * {@inheritDoc }
@@ -674,9 +676,9 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         private FormQuestionEntryResponse dataToObject( DAOUtil daoUtil )
         {
             FormQuestionEntryResponse formQuestionEntryResponse = new FormQuestionEntryResponse( );
-            formQuestionEntryResponse._nId = daoUtil.getInt( "id_question_entry_response" );
+            formQuestionEntryResponse._nId = daoUtil.getInt( PARAMETER_QUESTION_ENTRY_RESPONSE_ID );
             formQuestionEntryResponse._nIdQuestionResponse = daoUtil.getInt( PARAMETER_QUESTION_RESPONSE_ID );
-            formQuestionEntryResponse._response = ResponseHome.findByPrimaryKey( daoUtil.getInt( "id_entry_response" ) );
+            formQuestionEntryResponse._response = ResponseHome.findByPrimaryKey( daoUtil.getInt( PARAMETER_ENTRY_RESPONSE ) );
 
             return formQuestionEntryResponse;
         }
@@ -691,10 +693,10 @@ public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
         private FormQuestionEntryResponse dataToObjectWithoutResponse( DAOUtil daoUtil )
         {
             FormQuestionEntryResponse formQuestionEntryResponse = new FormQuestionEntryResponse( );
-            formQuestionEntryResponse._nId = daoUtil.getInt( "id_question_entry_response" );
+            formQuestionEntryResponse._nId = daoUtil.getInt( PARAMETER_QUESTION_ENTRY_RESPONSE_ID );
             formQuestionEntryResponse._nIdQuestionResponse = daoUtil.getInt( PARAMETER_QUESTION_RESPONSE_ID );
             formQuestionEntryResponse._response = new Response( );
-            formQuestionEntryResponse._response.setIdResponse( daoUtil.getInt( "id_entry_response" ) );
+            formQuestionEntryResponse._response.setIdResponse( daoUtil.getInt( PARAMETER_ENTRY_RESPONSE ) );
 
             return formQuestionEntryResponse;
         }

@@ -118,7 +118,7 @@ public class EntryTypeDefaultDataService implements IEntryDataService
         if ( bValidateQuestion )
         {
             formQuestionResponse.setError( error );
-
+            
             List<Control> listControl = ControlHome.getControlByQuestionAndType( question.getId( ), ControlType.VALIDATION.getLabel( ) );
 
             for ( Control control : listControl )

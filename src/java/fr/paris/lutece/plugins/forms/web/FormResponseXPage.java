@@ -50,6 +50,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -75,7 +76,7 @@ import fr.paris.lutece.portal.web.xpages.XPage;
 @Controller( xpageName = FormResponseXPage.XPAGE_NAME, pageTitleI18nKey = FormResponseXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = FormResponseXPage.MESSAGE_PATH )
 public class FormResponseXPage extends MVCApplication
 {
-    protected static final String XPAGE_NAME = "formsResponse";
+    public static final String XPAGE_NAME = "formsResponse";
 
     /**
      * Generated serial id
@@ -91,6 +92,8 @@ public class FormResponseXPage extends MVCApplication
     protected static final String MESSAGE_FORM_RESPONSE_PATHLABEL = "forms.xpage.response.pathlabel";
     private static final String MESSAGE_ACTION_ERROR = "forms.xpage.response.action.error";
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
+    private static final String MESSAGE_ACTION_SUCCESS = "forms.xpage.response.action.success";
+
 
     // Views
     public static final String VIEW_FORM_RESPONSE = "formResponseView";
@@ -119,12 +122,15 @@ public class FormResponseXPage extends MVCApplication
         FormResponse formResponse = findFormResponseFrom( request );
 
         Collection<Action> actionsList = getActionsForUser( request, formResponse );
-
+        if("true".equals(request.getParameter(FormsConstants.PARAMETER_ACTION_SUCCESS)))
+        {
+        	addInfo( MESSAGE_ACTION_SUCCESS,getLocale(request) );
+        }
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
         model.put( MARK_WORKFLOW_ACTION_LIST, actionsList );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_PROCESS_ACTION ) );
-
+       
         XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE, getLocale( request ), model );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
         xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );
@@ -147,7 +153,7 @@ public class FormResponseXPage extends MVCApplication
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
 
-        if ( user == null || formResponse == null || formResponse.getGuid( ) == null || !formResponse.getGuid( ).equals( user.getName( ) ) )
+        if (  formResponse == null || !FormsResponseUtils.isAuthorized(formResponse, user) )
         {
             return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
         }
@@ -203,7 +209,7 @@ public class FormResponseXPage extends MVCApplication
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
 
-        if ( user == null || formResponse == null || formResponse.getGuid( ) == null || !formResponse.getGuid( ).equals( user.getName( ) ) )
+        if ( formResponse == null || !FormsResponseUtils.isAuthorized(formResponse, user) )
         {
             return redirect( request, VIEW_FORM_RESPONSE, FormsConstants.PARAMETER_ID_RESPONSE, nIdFormResponse );
         }
@@ -243,15 +249,18 @@ public class FormResponseXPage extends MVCApplication
     private Collection<Action> getActionsForUser( HttpServletRequest request, FormResponse formResponse )
     {
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-        if ( user != null && formResponse != null && formResponse.getGuid( ) != null && formResponse.getGuid( ).equals( user.getName( ) ) )
+        if (formResponse != null)
         {
-            Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
-            WorkflowService workflowService = WorkflowService.getInstance( );
-            boolean workflowEnabled = workflowService.isAvailable( ) && ( form.getIdWorkflow( ) != FormsConstants.DEFAULT_ID_VALUE );
-
-            if ( workflowEnabled )
+        	Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
+            if (FormsResponseUtils.isAuthorized(formResponse, SecurityService.getInstance( ).getRegisteredUser( request ), form ))    		 
             {
-                return workflowService.getActions( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), (User) user );
+                WorkflowService workflowService = WorkflowService.getInstance( );
+                boolean workflowEnabled = workflowService.isAvailable( ) && ( form.getIdWorkflow( ) != FormsConstants.DEFAULT_ID_VALUE );
+
+                if ( workflowEnabled )
+                {
+                    return workflowService.getActions( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), (User) user );
+                }
             }
         }
         return new ArrayList<>( );
@@ -286,17 +295,11 @@ public class FormResponseXPage extends MVCApplication
         {
             SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_FOUND_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
         }
-        else
-            if ( !formResponse.isPublished( ) )
-            {
-                LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-                boolean userOwnsReponse = user != null && user.getName( ).equals( formResponse.getGuid( ) );
-                if ( !userOwnsReponse )
-                {
+        else if ( !formResponse.isPublished( ) && !FormsResponseUtils.isAuthorized(formResponse, SecurityService.getInstance( ).getRegisteredUser( request ) ) )
+        {
                     SiteMessageService.setMessage( request, MESSAGE_ERROR_NOT_PUBLISHED_FORM_RESPONSE, SiteMessage.TYPE_ERROR );
-                }
-            }
-
+        }
+        
         return formResponse;
     }
 }

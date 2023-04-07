@@ -1,0 +1,25 @@
+ <@messages warnings=warnings />
+ <form class="form-horizontal" id="summary_validate" action="jsp/admin/plugins/forms/ManageFormResponse.jsp" method="post">
+ <input name="id_form" value="${id_form}" type="hidden" />
+  <div id="form-response-summary" class="box-body">
+  	<#if form.countResponses>#i18n{forms.createEntry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
+    <#if list_summary_step_display?has_content>
+      <#list list_summary_step_display as summary_step_display>
+        ${summary_step_display}
+      </#list>
+    </#if>
+  </div>
+  <div class="panel-footer">
+  	<#assign label_button="#i18n{forms.summary.validate}" />
+  	<#if form.labelFinalButton?has_content>
+  		<#assign label_button=form.labelFinalButton />
+  	</#if>
+  	<input type="hidden" name="token" value = "${token}">
+    <button type="submit" class="btn btn-primary btn-sm"  name="action_doSaveResponseSummary" >
+      <i class="glyphicon glyphicon-ok"></i>&nbsp;${label_button}
+    </button>
+	<a class="btn btn-default btn-sm" href="jsp/admin/plugins/forms/ManageFormResponse.jsp?&view=stepView&id_form=${id_form}" title="#i18n{forms.summary.step.previous}">
+		<i class="glyphicon glyphicon-remove-circle"></i>&nbsp;<span class="">#i18n{forms.summary.step.previous}</span>
+	</a>
+  </div>
+</form>

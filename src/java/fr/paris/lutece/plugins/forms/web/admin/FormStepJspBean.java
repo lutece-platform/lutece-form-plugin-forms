@@ -346,7 +346,8 @@ public class FormStepJspBean extends AbstractJspBean
         url.addParameter( FormsConstants.PARAMETER_ID_STEP, nId );
         url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_STEP ) );
 
-        String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
+        String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage,
+                new Object[ ] { _step.getTitle( ) }, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
 

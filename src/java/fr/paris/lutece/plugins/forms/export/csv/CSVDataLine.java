@@ -35,19 +35,25 @@ package fr.paris.lutece.plugins.forms.export.csv;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
@@ -58,9 +64,10 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 public class CSVDataLine
 {
     private static final String RESPONSE_SEPARATOR = " ";
-    private static final String ITERATION_SEPARATOR = "|";
+    
+    private static final String CONSTANT_COMMA = ",";
 
-    private final Map<Integer, String> _mapDataToExport;
+    private final Map<Integer, Map<Integer, String>> _mapDataToExport;
     private final String _commonDataToExport;
 
     /**
@@ -92,26 +99,56 @@ public class CSVDataLine
     public void addData( FormQuestionResponse formQuestionResponse )
     {
         Question question = formQuestionResponse.getQuestion( );
-        IEntryDataService entryDataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
-
-        List<String> listResponseValue = entryDataService.responseToStrings( formQuestionResponse );
+        Map<Integer, List<String>> mapIterationsResponseValue = responseToIterationsStrings( formQuestionResponse );
         StringBuilder sbReponseValues = new StringBuilder( );
-
-        for ( String strResponseValue : listResponseValue )
+        
+        for (Entry<Integer, List<String>> entry : mapIterationsResponseValue.entrySet())
         {
-            sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
+        	Integer iteration = entry.getKey();
+        	for ( String strResponseValue : entry.getValue() )
+            {
+                sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
+            }
+            if ( !_mapDataToExport.containsKey( question.getId( ) ) )
+            {
+            	_mapDataToExport.put(question.getId( ), new HashMap<>());
+            }
+            _mapDataToExport.get(question.getId()).put(iteration, CSVUtil.safeString( sbReponseValues.toString( ) ));
         }
-        if ( !_mapDataToExport.containsKey( question.getId( ) ) )
+    }
+    
+    private Map<Integer, List<String>> responseToIterationsStrings(FormQuestionResponse formQuestionResponse)
+    {
+    	Map<Integer, List<String>> mapResponseValue = new HashMap<>();
+    	fr.paris.lutece.plugins.genericattributes.business.Entry entry = formQuestionResponse.getQuestion().getEntry();
+    	
+    	String strExportFieldsPrefix = entry.getEntryType().getBeanName() != null ? entry.getEntryType().getBeanName() : StringUtils.EMPTY;
+    	
+    	String strExportFieldsList = AppPropertiesService.getProperty( strExportFieldsPrefix + FormsConstants.PROPERTY_EXPORT_FIELD_LIST_PREFIX , null );
+    	List<String> exportFieldsList = StringUtils.isEmpty(strExportFieldsList) ? new ArrayList<>() : Arrays.asList( strExportFieldsList.split( CONSTANT_COMMA ) );
+    	
+        for ( Response response : formQuestionResponse.getEntryResponse( ) )
         {
-            _mapDataToExport.put( question.getId( ), CSVUtil.safeString( sbReponseValues.toString( ) ) );
+        	if ( CollectionUtils.isEmpty(exportFieldsList) || exportFieldsList.contains(response.getField().getCode()))
+            {
+        		String strResponseValue = EntryTypeServiceManager.getEntryTypeService( entry ).getResponseValueForExport( entry, null, response,
+                        I18nService.getDefaultLocale( ) );
+                if ( strResponseValue != null )
+                {
+                	if (mapResponseValue.containsKey(response.getIterationNumber()))
+                	{
+                		mapResponseValue.get(response.getIterationNumber()).add(strResponseValue);
+                	}
+                	else
+                	{
+                		List<String> listResponseValue = new ArrayList<>();
+                		listResponseValue.add(strResponseValue);
+                		mapResponseValue.put(response.getIterationNumber(), listResponseValue);
+                	}
+                }
+            }
         }
-        else
-        {
-            StringBuilder sbConcatReponseValues = new StringBuilder( );
-            sbConcatReponseValues.append( _mapDataToExport.get( question.getId( ) ) ).append( ITERATION_SEPARATOR )
-                    .append( CSVUtil.safeString( sbReponseValues.toString( ) ) );
-            _mapDataToExport.replace( question.getId( ), sbConcatReponseValues.toString( ) );
-        }
+        return mapResponseValue;
     }
 
     /**
@@ -121,7 +158,7 @@ public class CSVDataLine
      */
     public String getDataToExport( Question question )
     {
-        return _mapDataToExport.get( question.getId( ) );
+        return _mapDataToExport.get(question.getId()) != null ? _mapDataToExport.get(question.getId()).get(question.getIterationNumber()) : null;
     }
 
     public String getCommonDataToExport( )

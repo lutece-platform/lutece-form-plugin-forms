@@ -26,7 +26,7 @@
 </#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number ) />
 
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory  htmlRequired=false >
 	<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 	<@input type='textarea' name='${idName}' id='${idName}' cols=field_width?number rows=field_height?number class='${entry.CSSClass!}' richtext=richtext placeHolder=placeholder>${responseContent}</@input>	
 </@formGroup>

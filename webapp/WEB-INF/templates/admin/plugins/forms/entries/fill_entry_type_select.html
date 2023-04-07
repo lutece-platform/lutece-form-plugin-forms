@@ -2,7 +2,6 @@
 <#if entry.helpMessage?exists&&entry.helpMessage!=''>
   <#assign helpKey=entry.helpMessage />
 </#if>
-
 <#if list_responses??>
 	<#list list_responses as response>
 	  <#if response.entry.idEntry == entry.idEntry && response.entry.error??>
@@ -12,46 +11,23 @@
 	</#list>
 	<#assign inputClass = entry.CSSClass! />
 </#if>
-	
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
-    <@select name='${idName}' id='${idName}' class=inputClass!''>
-      <option value="">#i18n{form.xpage.form.noValue}</option>
-      <#list entry.fields as field>
-      	<#if field.code == 'answer_choice'>
-	        <option  value="${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if>
-	          <#if list_responses?has_content>
-	            <#list list_responses as response>
-	              <#if response.entry.idEntry == entry.idEntry && response.field??>
-	                <#if response.field.idField == field.idField>
-	                  selected ="selected"
-	                  <#break>
-	                </#if>
-	              </#if>
-	            </#list>
-	          <#else>
-	            <#if field.defaultValue>
-	              selected ="selected"
-	            </#if>
-	          </#if>
-	          >
-	          ${field.title}
-	        </option>
-        </#if>
-      </#list>
-    </@select>
-
-    <#if list_responses??>
-      <#list list_responses as response>
-        <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-          <@alert color='danger'>
-            <#assign error = response.entry.error>
-            <#if error.mandatoryError>
-              #i18n{forms.message.mandatory.entry}
-            <#else>
-              ${error.errorMessage}
-            </#if>
-          </@alert>
-        </#if>
-      </#list>
-    </#if>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' groupStyle=groupStyle!'' mandatory=entry.mandatory htmlRequired=false >
+<@select name='${idName}' id='${idName}' class=inputClass!''>
+	<option value="">#i18n{form.xpage.form.noValue}</option>
+	<#list entry.fields as field><#if field.code == 'answer_choice'><option  value="${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if><#if list_responses?has_content><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.field??><#if response.field.idField == field.idField>selected ="selected" <#break></#if></#if></#list><#else><#if field.defaultValue> selected ="selected"</#if></#if> >${field.title}</option></#if></#list>
+</@select>
+<#if list_responses??>
+	<#list list_responses as response>
+		<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+			<@alert color='danger'>
+			<#assign error = response.entry.error>
+			<#if error.mandatoryError>
+				#i18n{forms.message.mandatory.entry}
+			<#else>
+				${error.errorMessage}
+			</#if>
+			</@alert>
+		</#if>
+	</#list>
+</#if>
 </@formGroup>

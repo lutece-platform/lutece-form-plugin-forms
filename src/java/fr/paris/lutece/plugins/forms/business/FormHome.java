@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -116,6 +117,16 @@ public final class FormHome
     {
         return _dao.selectFormsList( _plugin );
     }
+    
+    /**
+     * Load the data of all the form objects and returns them as a list
+     * 
+     * @return the list which contains the data of all the form objects
+     */
+    public static List<Form> getFormListSorted( FormItemSortConfig sortConfig )
+    {
+        return _dao.selectFormsListSorted( _plugin, sortConfig );
+    }
 
     /**
      * Load the data of all the form objects and returns them as a referenceList
@@ -152,4 +163,15 @@ public final class FormHome
         return _dao.countNumberOfResponseFormByUser( nIdForm, strGuid );
     }
 
+    /**
+     * Load the data of all form Objects for a given list of form identifiers
+     * 
+     * @param listIdForm
+     *            The list of form identifiers
+     * @return the form objects
+     */
+    public static List<Form> getFormByPrimaryKeyList( List<Integer> listIdForm )
+    {
+        return _dao.selectFormByPrimaryKeyList( listIdForm, _plugin );
+    }
 }

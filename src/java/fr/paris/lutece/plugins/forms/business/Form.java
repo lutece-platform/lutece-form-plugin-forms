@@ -37,6 +37,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
@@ -45,12 +46,13 @@ import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Base64;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * This is the business class for the object Form
  */
-public class Form implements AdminWorkgroupResource, RBACResource
+public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Form>
 {
 
     /**
@@ -122,6 +124,12 @@ public class Form implements AdminWorkgroupResource, RBACResource
     private int _nIdCategory;
     
     private boolean _bBackupEnabled;
+    
+    /**
+     *  Access to responses management on FO by role
+     **/
+    private boolean _bAccessToResponsesByRole;
+
 
     /**
      * Returns the Id
@@ -685,4 +693,75 @@ public class Form implements AdminWorkgroupResource, RBACResource
     {
         return FormCategoryHome.findByPrimaryKey( _nIdCategory );
     }
+    /**
+     * Returns true if the access to responses management on FO is based on the roles, false otherwise
+     * @return true if the access to responses management on FO is based on the roles, false otherwise
+     */ 
+     public boolean isAccessToResponsesByRole()
+     {
+         return _bAccessToResponsesByRole;
+     }
+ 
+    /**
+     * Sets the AccessToResponsesByRole
+     * @param bAccessToResponsesByRole The AccessToResponsesByRole
+     */ 
+     public void setAccessToResponsesByRole( boolean bAccessToResponsesByRole )
+     {
+         _bAccessToResponsesByRole = bAccessToResponsesByRole;
+     }
+    /**
+     * Custom comparator for Availability Period sorting
+     */
+	@Override
+	public int compare(Form form1, Form form2) {
+		int nComparisonResult = NumberUtils.INTEGER_ZERO;
+		if (form1 == null) {
+			if (form2 != null) {
+				nComparisonResult = NumberUtils.INTEGER_MINUS_ONE;
+			}
+		} else {
+			if (form2 == null) {
+				nComparisonResult = NumberUtils.INTEGER_ONE;
+			} else {
+				nComparisonResult = compareFormsAviability(form1, form2);
+			}
+		}
+		return nComparisonResult;
+	}
+	
+	private int compareFormsAviability(Form form1, Form form2) {
+		int nComparisonResult = NumberUtils.INTEGER_ZERO;
+		if (form1.isActive()) {
+			if (!form2.isActive()) {
+				nComparisonResult = NumberUtils.INTEGER_ONE;
+			}
+		} else {
+			if (form2.isActive()) {
+				nComparisonResult = NumberUtils.INTEGER_MINUS_ONE;
+			} else {
+				boolean bIsSoonToBeActivatedForm1 = isSoonToBeActivated(form1);
+				boolean bIsSoonToBeActivatedForm2 = isSoonToBeActivated(form2);
+				if (bIsSoonToBeActivatedForm1 && !bIsSoonToBeActivatedForm2) {
+					nComparisonResult = NumberUtils.INTEGER_ONE;
+				} else if (!bIsSoonToBeActivatedForm1 && bIsSoonToBeActivatedForm2) {
+					nComparisonResult = NumberUtils.INTEGER_MINUS_ONE;
+				}
+			}
+		}
+		return nComparisonResult;
+	}
+	
+	/**
+	 * Returns the soon to be activated status of a form
+	 * @param form
+	 * @return true if the form is soon to be activated, false otherwise
+	 */
+	private boolean isSoonToBeActivated(Form form) {
+		Date dToday = new Date(System.currentTimeMillis());
+		if (form != null && form.getAvailabilityStartDate() != null && form.getAvailabilityStartDate().after(dToday) ) {
+			return true;
+		}
+		return false;
+	}
 }

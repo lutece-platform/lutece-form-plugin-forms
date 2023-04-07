@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
@@ -89,7 +90,7 @@ public class FormResponseCsvExport
             {
                 if ( question.isResponseExportable( ) )
                 {
-                    _csvHeader.addHeader( question );
+                    _csvHeader.addHeadersWithIterations(formResponse, question);
                 }
             }
         }
@@ -107,7 +108,8 @@ public class FormResponseCsvExport
 
         for ( Question question : _csvHeader.getColumnToExport( ) )
         {
-            sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question ) ) ).append( _csvSeparator );
+        	boolean bIsIteration = _csvHeader.getListIterationQuestionColumn().contains(question);
+            sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question, bIsIteration ) ) ).append( _csvSeparator );
         }
 
         return sbCsvColumn.toString( );
