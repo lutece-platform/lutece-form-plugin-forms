@@ -40,15 +40,20 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Entities.EscapeMode;
 
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
@@ -56,14 +61,22 @@ import fr.paris.lutece.plugins.forms.export.AbstractFileGenerator;
 import fr.paris.lutece.plugins.forms.export.pdf.FormResponsePdfExport;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.html2pdf.service.PdfConverterService;
+import fr.paris.lutece.plugins.html2pdf.service.PdfConverterServiceException;
+import fr.paris.lutece.plugins.workflow.modules.formspdf.service.template.IFormResponseTemplateService;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.file.FileUtil;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 public class PdfFullFileGenerator extends AbstractFileGenerator
 {
     private boolean _hasMultipleFiles = false;
+    
+    private static IFormResponseTemplateService _formResponseTemplateService = SpringContextService.getBean( "workflow-formspdf.formResponseTemplateService" );
 
     protected PdfFullFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormItemSortConfig sortConfig, String fileDescription )
@@ -118,7 +131,9 @@ public class PdfFullFileGenerator extends AbstractFileGenerator
         return files [0].toPath( );
     }
 
-    private void writeExportFile( Path directoryFile ) throws IOException
+    @SuppressWarnings("unused")
+	@Deprecated
+    private void writeExportFileDeprecated( Path directoryFile ) throws IOException
     {
         FormResponsePdfExport export = new FormResponsePdfExport( );
 
@@ -136,6 +151,51 @@ public class PdfFullFileGenerator extends AbstractFileGenerator
             {
                 export.buildPdfExport( formResponse, outputStream );
             }
+
+            List<Path> listAttachments = writeAndGetAttachments( directoryFile, formResponse );
+
+            Path [ ] filesToZip = listAttachments.toArray( new Path [ listAttachments.size( ) + 1] );
+            filesToZip [listAttachments.size( )] = pdfFile;
+
+            Path zipfile = directoryFile.resolve( generatedName + FileUtil.EXTENSION_ZIP );
+            FileUtil.zipFiles( zipfile, filesToZip );
+
+            for ( Path file : filesToZip )
+            {
+                FileUtil.deleteFile( file.toFile( ) );
+            }
+        }
+    }
+    
+    private void writeExportFile( Path directoryFile ) throws IOException
+    {
+    	List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn,
+                _listFormFilter, _sortConfig );
+
+        _hasMultipleFiles = listFormResponseItems.size( ) > 1;
+        for ( FormResponseItem responseItem : listFormResponseItems )
+        {
+        	Map<String, Object> model = new HashMap<>( );
+
+            FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
+            HtmlTemplate htmltemplate = _formResponseTemplateService.generateHtmlFromDefaultTemplate(model, formResponse);
+
+            String generatedName = generateFileName( formResponse );
+            Path pdfFile = directoryFile.resolve( generatedName + ".pdf" );
+
+            try ( OutputStream outputStream = Files.newOutputStream( pdfFile ) )
+            {
+            	Document doc = Jsoup.parse( htmltemplate.getHtml( ), UTF_8 );
+	            doc.outputSettings( ).syntax( Document.OutputSettings.Syntax.xml );
+	            doc.outputSettings( ).escapeMode( EscapeMode.base.xhtml );
+	            doc.outputSettings( ).charset( UTF_8 );
+	
+	            PdfConverterService.getInstance( ).getPdfBuilder( ).reset( ).withHtmlContent( doc.html( ) ).notEditable( ).render( outputStream );
+            }
+            catch(PdfConverterServiceException | IOException e)
+	        {
+	            AppLogService.error( "Error generating pdf for response " + formResponse.getId( ), e );
+	        }
 
             List<Path> listAttachments = writeAndGetAttachments( directoryFile, formResponse );
 

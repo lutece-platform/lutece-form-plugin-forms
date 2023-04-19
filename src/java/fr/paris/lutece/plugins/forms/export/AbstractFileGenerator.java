@@ -61,6 +61,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     // 4: size for file extension (.pdf, .zip, .csv)
     private static final int MAX_NAME_LENGTH = 250 - PATTERN_TIMESTAMP.length( );
     protected static final String TMP_DIR = System.getProperty( "java.io.tmpdir" );
+    protected static final String UTF_8 = "UTF-8";
 
     protected final FormPanel _formPanel;
     protected final List<IFormColumn> _listFormColumn;

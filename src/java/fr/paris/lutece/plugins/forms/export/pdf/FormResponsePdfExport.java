@@ -68,6 +68,8 @@ import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
+@SuppressWarnings("unused")
+@Deprecated
 public class FormResponsePdfExport
 {
     private static final String KEY_LABEL_YES = "portal.util.labelYes";

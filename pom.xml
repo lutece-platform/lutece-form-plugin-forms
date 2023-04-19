@@ -66,6 +66,12 @@
             <artifactId>pdfbox</artifactId>
             <version>2.0.25</version>
         </dependency>
+		<dependency>
+			<groupId>fr.paris.lutece.plugins</groupId>
+			<artifactId>module-workflow-formstopdf</artifactId>
+			<version>[1.0.1-SNAPSHOT,)</version>
+			<type>lutece-plugin</type>
+		</dependency>
     </dependencies>
     <properties>
         <componentName>forms</componentName>
