@@ -553,4 +553,6 @@
     <bean id="forms.formResponseExtendableResourceService" class="fr.paris.lutece.plugins.forms.service.resource.FormResponseExtendableResourceService" />
     
     <bean id="forms.dashboardForms" class="fr.paris.lutece.plugins.forms.dashboard.PublicDashboardForms" />
+    
+    <bean id="workflow-formspdf.formResponseTemplateService" class="fr.paris.lutece.plugins.workflow.modules.formspdf.service.template.FormResponseTemplateService"/>
 </beans>
