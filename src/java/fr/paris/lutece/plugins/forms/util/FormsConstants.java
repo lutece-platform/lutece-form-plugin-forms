@@ -216,6 +216,7 @@ public final class FormsConstants
     public static final String DS_KEY_FORM_TITLE_COLUMN = "forms.display.form.columnTitle";
     public static final String DS_KEY_FORM_ASSIGNEE_COLUMN = "forms.display.form.columnAssignee";
     public static final String DS_KEY_FORM_CSV_SEPARATOR = "forms.display.form.csv.separator";
+    public static final String DS_KEY_FORM_PDF_NUMBER_OF_RESPONSES_PER_FILE = "forms.display.form.pdf.number.of.response.per.file";
 
     // Actions forms
     public static final String ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG = "multiviewConfig";

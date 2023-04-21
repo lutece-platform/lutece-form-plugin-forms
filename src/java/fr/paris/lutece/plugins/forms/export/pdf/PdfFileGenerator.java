@@ -39,16 +39,14 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities.EscapeMode;
-
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
@@ -56,10 +54,6 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.export.AbstractFileGenerator;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
-import fr.paris.lutece.plugins.html2pdf.service.PdfConverterService;
-import fr.paris.lutece.plugins.html2pdf.service.PdfConverterServiceException;
-import fr.paris.lutece.plugins.workflow.modules.formspdf.service.template.IFormResponseTemplateService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.file.FileUtil;
@@ -72,8 +66,6 @@ public class PdfFileGenerator extends AbstractFileGenerator
     private static final String EXTENSION_PDF = ".pdf";
 
     private boolean _hasMultipleFiles = false;
-    
-    private static IFormResponseTemplateService _formResponseTemplateService = SpringContextService.getBean( "workflow-formspdf.formResponseTemplateService" );
     
     protected PdfFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormItemSortConfig sortConfig, String fileDescription )
@@ -152,29 +144,67 @@ public class PdfFileGenerator extends AbstractFileGenerator
     {
         List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn,
                 _listFormFilter, _sortConfig );
-
         _hasMultipleFiles = listFormResponseItems.size( ) > 1;
-        for ( FormResponseItem responseItem : listFormResponseItems )
+        
+        int intNumberOfFormResponsesPerPdf = MultiviewConfig.getInstance().getNumberOfFormResponsesPerPdf();
+        if (intNumberOfFormResponsesPerPdf > 1)
         {
-        	Map<String, Object> model = new HashMap<>( );
-        	
-            FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-            HtmlTemplate htmltemplate = _formResponseTemplateService.generateHtmlFromDefaultTemplate(model, formResponse);
-            
-            try ( OutputStream outputStream = Files.newOutputStream( directoryFile.resolve( generateFileName( formResponse ) + ".pdf" ) ) )
-            {
-            	Document doc = Jsoup.parse( htmltemplate.getHtml( ), UTF_8 );
-	            doc.outputSettings( ).syntax( Document.OutputSettings.Syntax.xml );
-	            doc.outputSettings( ).escapeMode( EscapeMode.base.xhtml );
-	            doc.outputSettings( ).charset( UTF_8 );
-	
-	            PdfConverterService.getInstance( ).getPdfBuilder( ).reset( ).withHtmlContent( doc.html( ) ).notEditable( ).render( outputStream );
-	        }
-	        catch(PdfConverterServiceException | IOException e)
-	        {
-	            AppLogService.error( "Error generating pdf for response " + formResponse.getId( ), e );
-	        }
-	        
+        	generateMultipleFormResponsesPerFile(directoryFile, listFormResponseItems, intNumberOfFormResponsesPerPdf);
+        }
+        else
+        {
+        	generateOneFormResponsePerFile(directoryFile, listFormResponseItems);
         }
     }
+    
+    private void generateMultipleFormResponsesPerFile(Path directoryFile, List<FormResponseItem> listFormResponseItems, int intNumberOfFormResponsesPerPdf) throws IOException
+    {
+    	for (int intStartIndex = 0; intStartIndex < listFormResponseItems.size(); intStartIndex += intNumberOfFormResponsesPerPdf)
+    	{
+    		try {
+				int intEndIndexExcluded = Math.min(intStartIndex + intNumberOfFormResponsesPerPdf, listFormResponseItems.size());
+				List<FormResponseItem> subListFormResponseItems = listFormResponseItems.subList(intStartIndex, intEndIndexExcluded);
+				List<FormResponse> subListFormResponse = new ArrayList<>();
+				
+				for(FormResponseItem responseItem : subListFormResponseItems)
+				{
+					FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
+					subListFormResponse.add(formResponse);
+				}
+				
+				Map<String, Object> model = new HashMap<>( );
+				HtmlTemplate htmltemplate = _formResponseTemplateService.generateHtmlMultipleFormResponsesFromDefaultTemplate(model, subListFormResponse);
+				
+				String generatedName = generateMultiFormResponsesFileName(subListFormResponse, intStartIndex + 1, intEndIndexExcluded);
+				generatePdfFile(directoryFile, htmltemplate, generatedName);
+			} catch (IOException e) {
+				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+				throw e;
+			} catch (Exception e) {
+				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+			}
+    	}
+    }
+    
+    private void generateOneFormResponsePerFile(Path directoryFile, List<FormResponseItem> listFormResponseItems) throws IOException
+    {
+    	for ( FormResponseItem responseItem : listFormResponseItems )
+        {
+        	try {
+				Map<String, Object> model = new HashMap<>( );
+				
+				FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
+				HtmlTemplate htmltemplate = _formResponseTemplateService.generateHtmlFromDefaultTemplate(model, formResponse);
+				
+				String generatedName = generateFileName(formResponse);
+				generatePdfFile(directoryFile, htmltemplate, generatedName);
+			} catch (IOException e) {
+				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+				throw e;
+			} catch (Exception e) {
+				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+			}
+        }
+    }
+
 }

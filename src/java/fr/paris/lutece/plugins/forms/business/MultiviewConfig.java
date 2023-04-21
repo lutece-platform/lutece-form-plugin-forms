@@ -43,8 +43,9 @@ public class MultiviewConfig
     boolean _bDisplayFormsTitleColumn;
     boolean _bDisplayFormsAssigneeColumn;
     String _strCsvSeparator;
+    int _intNumberOfFormResponsesPerPdf;
 
-    /**
+	/**
      * Private constructor for singleton pattern
      */
     private MultiviewConfig( )
@@ -56,9 +57,12 @@ public class MultiviewConfig
         _bDisplayFormsAssigneeColumn = Boolean.parseBoolean( strDisplayFormColumnAssignee );
 
         _strCsvSeparator = DatastoreService.getDataValue( FormsConstants.DS_KEY_FORM_CSV_SEPARATOR, ";" );
+        
+        String strNumberOfFormResponsesPerPdf = DatastoreService.getDataValue( FormsConstants.DS_KEY_FORM_PDF_NUMBER_OF_RESPONSES_PER_FILE, "1" );
+        _intNumberOfFormResponsesPerPdf = Integer.parseInt(strNumberOfFormResponsesPerPdf);
     }
 
-    /**
+	/**
      * Return the singleton instance of the multiview config
      * 
      * @return the Multiview config
@@ -126,6 +130,16 @@ public class MultiviewConfig
     {
         _strCsvSeparator = strCsvSeparator;
     }
+    
+    public int getNumberOfFormResponsesPerPdf()
+    {
+		return _intNumberOfFormResponsesPerPdf;
+	}
+
+	public void setNumberOfFormResponsesPerPdf(int intNumberOfFormResponsesPerPdf)
+	{
+		_intNumberOfFormResponsesPerPdf = intNumberOfFormResponsesPerPdf;
+	}
 
     /**
      * Save the config
@@ -137,5 +151,8 @@ public class MultiviewConfig
         String strDisplayFormsAssigneeColumn = Boolean.toString( _bDisplayFormsAssigneeColumn );
         DatastoreService.setDataValue( FormsConstants.DS_KEY_FORM_ASSIGNEE_COLUMN, strDisplayFormsAssigneeColumn );
         DatastoreService.setDataValue( FormsConstants.DS_KEY_FORM_CSV_SEPARATOR, _strCsvSeparator );
+        
+        String strNumberOfFormResponsesPerPdf = Integer.toString(_intNumberOfFormResponsesPerPdf);
+        DatastoreService.setDataValue( FormsConstants.DS_KEY_FORM_PDF_NUMBER_OF_RESPONSES_PER_FILE, strNumberOfFormResponsesPerPdf );
     }
 }
