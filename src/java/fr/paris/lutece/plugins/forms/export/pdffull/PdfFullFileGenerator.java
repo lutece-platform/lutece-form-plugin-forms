@@ -46,12 +46,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities.EscapeMode;
 
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
@@ -61,13 +59,9 @@ import fr.paris.lutece.plugins.forms.export.AbstractFileGenerator;
 import fr.paris.lutece.plugins.forms.export.pdf.FormResponsePdfExport;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.html2pdf.service.PdfConverterService;
-import fr.paris.lutece.plugins.html2pdf.service.PdfConverterServiceException;
-import fr.paris.lutece.plugins.workflow.modules.formspdf.service.template.IFormResponseTemplateService;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.file.FileUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -76,8 +70,6 @@ public class PdfFullFileGenerator extends AbstractFileGenerator
 {
     private boolean _hasMultipleFiles = false;
     
-    private static IFormResponseTemplateService _formResponseTemplateService = SpringContextService.getBean( "workflow-formspdf.formResponseTemplateService" );
-
     protected PdfFullFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormItemSortConfig sortConfig, String fileDescription )
     {
@@ -151,64 +143,99 @@ public class PdfFullFileGenerator extends AbstractFileGenerator
             {
                 export.buildPdfExport( formResponse, outputStream );
             }
+            
+            // generateAttachments(directoryFile, formResponse, pdfFile, generatedName);
+        }
+    }
 
-            List<Path> listAttachments = writeAndGetAttachments( directoryFile, formResponse );
-
-            Path [ ] filesToZip = listAttachments.toArray( new Path [ listAttachments.size( ) + 1] );
-            filesToZip [listAttachments.size( )] = pdfFile;
-
-            Path zipfile = directoryFile.resolve( generatedName + FileUtil.EXTENSION_ZIP );
-            FileUtil.zipFiles( zipfile, filesToZip );
-
-            for ( Path file : filesToZip )
-            {
-                FileUtil.deleteFile( file.toFile( ) );
-            }
+    private void writeExportFile( Path directoryFile ) throws IOException
+    {
+        List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn,
+                _listFormFilter, _sortConfig );
+        _hasMultipleFiles = listFormResponseItems.size( ) > 1;
+        
+        int intNumberOfFormResponsesPerPdf = MultiviewConfig.getInstance().getNumberOfFormResponsesPerPdf();
+        if (intNumberOfFormResponsesPerPdf > 1)
+        {
+        	generateMultipleFormResponsesPerFile(directoryFile, listFormResponseItems, intNumberOfFormResponsesPerPdf);
+        }
+        else
+        {
+        	generateOneFormResponsePerFile(directoryFile, listFormResponseItems);
         }
     }
     
-    private void writeExportFile( Path directoryFile ) throws IOException
+    private void generateMultipleFormResponsesPerFile(Path directoryFile, List<FormResponseItem> listFormResponseItems, int intNumberOfFormResponsesPerPdf) throws IOException
     {
-    	List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn,
-                _listFormFilter, _sortConfig );
-
-        _hasMultipleFiles = listFormResponseItems.size( ) > 1;
-        for ( FormResponseItem responseItem : listFormResponseItems )
+    	for (int intStartIndex = 0; intStartIndex < listFormResponseItems.size(); intStartIndex += intNumberOfFormResponsesPerPdf)
+    	{
+    		try {
+				int intEndIndexExcluded = Math.min(intStartIndex + intNumberOfFormResponsesPerPdf, listFormResponseItems.size());
+				List<FormResponseItem> subListFormResponseItems = listFormResponseItems.subList(intStartIndex, intEndIndexExcluded);
+				List<FormResponse> subListFormResponse = new ArrayList<>();
+				
+				for(FormResponseItem responseItem : subListFormResponseItems)
+				{
+					FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
+					subListFormResponse.add(formResponse);
+				}
+				
+				Map<String, Object> model = new HashMap<>( );
+				HtmlTemplate htmltemplate = _formResponseTemplateService.generateHtmlMultipleFormResponsesFromDefaultTemplate(model, subListFormResponse);
+				
+				String generatedName = generateMultiFormResponsesFileName(subListFormResponse, intStartIndex + 1, intEndIndexExcluded);
+				Path pdfFile = directoryFile.resolve( generatedName + ".pdf" );
+				generatePdfFile(directoryFile, htmltemplate, generatedName);
+				generateAttachments(directoryFile, subListFormResponse, pdfFile, generatedName);
+			} catch (IOException e) {
+				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+				throw e;
+			} catch (Exception e) {
+				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+			}
+    	}
+    }
+    
+    private void generateOneFormResponsePerFile(Path directoryFile, List<FormResponseItem> listFormResponseItems) throws IOException
+    {
+    	for ( FormResponseItem responseItem : listFormResponseItems )
         {
-        	Map<String, Object> model = new HashMap<>( );
+        	try {
+				Map<String, Object> model = new HashMap<>( );
+				
+				FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
+				HtmlTemplate htmltemplate = _formResponseTemplateService.generateHtmlFromDefaultTemplate(model, formResponse);
+				
+				String generatedName = generateFileName(formResponse);
+				Path pdfFile = directoryFile.resolve( generatedName + ".pdf" );
+				generatePdfFile(directoryFile, htmltemplate, generatedName);
+				
+				List<FormResponse> listUniqueFormResponse = new ArrayList<>();
+				listUniqueFormResponse.add(formResponse);
+				generateAttachments(directoryFile, listUniqueFormResponse, pdfFile, generatedName);
+			} catch (IOException e) {
+				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+				throw e;
+			} catch (Exception e) {
+				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+			}
+        }
+    }
+    
+    
+    private void generateAttachments(Path directoryFile, List<FormResponse> listFormResponse, Path pdfFile, String generatedName) throws IOException, Exception
+    {
+    	List<Path> listAttachments = writeAndGetAttachments( directoryFile, listFormResponse );
 
-            FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-            HtmlTemplate htmltemplate = _formResponseTemplateService.generateHtmlFromDefaultTemplate(model, formResponse);
+        Path [ ] filesToZip = listAttachments.toArray( new Path [ listAttachments.size( ) + 1] );
+        filesToZip [listAttachments.size( )] = pdfFile;
 
-            String generatedName = generateFileName( formResponse );
-            Path pdfFile = directoryFile.resolve( generatedName + ".pdf" );
+        Path zipfile = directoryFile.resolve( generatedName + FileUtil.EXTENSION_ZIP );
+        FileUtil.zipFiles( zipfile, filesToZip );
 
-            try ( OutputStream outputStream = Files.newOutputStream( pdfFile ) )
-            {
-            	Document doc = Jsoup.parse( htmltemplate.getHtml( ), UTF_8 );
-	            doc.outputSettings( ).syntax( Document.OutputSettings.Syntax.xml );
-	            doc.outputSettings( ).escapeMode( EscapeMode.base.xhtml );
-	            doc.outputSettings( ).charset( UTF_8 );
-	
-	            PdfConverterService.getInstance( ).getPdfBuilder( ).reset( ).withHtmlContent( doc.html( ) ).notEditable( ).render( outputStream );
-            }
-            catch(PdfConverterServiceException | IOException e)
-	        {
-	            AppLogService.error( "Error generating pdf for response " + formResponse.getId( ), e );
-	        }
-
-            List<Path> listAttachments = writeAndGetAttachments( directoryFile, formResponse );
-
-            Path [ ] filesToZip = listAttachments.toArray( new Path [ listAttachments.size( ) + 1] );
-            filesToZip [listAttachments.size( )] = pdfFile;
-
-            Path zipfile = directoryFile.resolve( generatedName + FileUtil.EXTENSION_ZIP );
-            FileUtil.zipFiles( zipfile, filesToZip );
-
-            for ( Path file : filesToZip )
-            {
-                FileUtil.deleteFile( file.toFile( ) );
-            }
+        for ( Path file : filesToZip )
+        {
+            FileUtil.deleteFile( file.toFile( ) );
         }
     }
 
@@ -216,48 +243,51 @@ public class PdfFullFileGenerator extends AbstractFileGenerator
      * Get all attachements in the {@link FormResponse} and write them to disk
      * 
      * @param directoryFile
-     * @param formResponse
+     * @param listFormResponse
      * @return
      * @throws IOException
      */
-    private List<Path> writeAndGetAttachments( Path directoryFile, FormResponse formResponse ) throws IOException
+    private List<Path> writeAndGetAttachments( Path directoryFile, List<FormResponse> listFormResponse ) throws IOException, Exception
     {
-        List<Response> listResponse = formResponse.getSteps( ).stream( ).flatMap( frs -> frs.getQuestions( ).stream( ) )
-                .flatMap( fqr -> fqr.getEntryResponse( ).stream( ) ).collect( Collectors.toList( ) );
+    	List<Path> listAttachments = new ArrayList<>( );
+    	for(FormResponse formResponse : listFormResponse)
+    	{
+	        List<Response> listResponse = formResponse.getSteps( ).stream( ).flatMap( frs -> frs.getQuestions( ).stream( ) )
+	                .flatMap( fqr -> fqr.getEntryResponse( ).stream( ) ).collect( Collectors.toList( ) );
 
-        List<Path> listAttachments = new ArrayList<>( );
-        List<String> fileNames = new ArrayList<>( );
-        for ( Response response : listResponse )
-        {
-            if ( response.getFile( ) != null )
-            {
-                fr.paris.lutece.portal.business.file.File coreFile = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
-
-                String filename = coreFile.getTitle( );
-
-                long nbFiles = fileNames.stream( ).filter( s -> s.equals( coreFile.getTitle( ) ) ).count( );
-                if ( nbFiles > 0 )
-                {
-                    StringBuilder fileSb = new StringBuilder( );
-                    fileSb.append( FilenameUtils.removeExtension( filename ) );
-                    fileSb.append( "_" );
-                    fileSb.append( ++nbFiles );
-                    fileSb.append( "." );
-                    fileSb.append( FilenameUtils.getExtension( filename ) );
-                    filename = fileSb.toString( );
-                }
-                fileNames.add( coreFile.getTitle( ) );
-
-                Path attachment = directoryFile.resolve( filename );
-
-                PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( coreFile.getPhysicalFile( ).getIdPhysicalFile( ) );
-                try ( OutputStream outputStream = Files.newOutputStream( attachment ) )
-                {
-                    outputStream.write( physicalFile.getValue( ) );
-                }
-                listAttachments.add( attachment );
-            }
-        }
-        return listAttachments;
+	        List<String> fileNames = new ArrayList<>( );
+	        for ( Response response : listResponse )
+	        {
+	            if ( response.getFile( ) != null )
+	            {
+	                fr.paris.lutece.portal.business.file.File coreFile = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
+	
+	                String filename = coreFile.getTitle( );
+	
+	                long nbFiles = fileNames.stream( ).filter( s -> s.equals( coreFile.getTitle( ) ) ).count( );
+	                if ( nbFiles > 0 )
+	                {
+	                    StringBuilder fileSb = new StringBuilder( );
+	                    fileSb.append( FilenameUtils.removeExtension( filename ) );
+	                    fileSb.append( "_" );
+	                    fileSb.append( ++nbFiles );
+	                    fileSb.append( "." );
+	                    fileSb.append( FilenameUtils.getExtension( filename ) );
+	                    filename = fileSb.toString( );
+	                }
+	                fileNames.add( coreFile.getTitle( ) );
+	
+	                Path attachment = directoryFile.resolve( filename );
+	
+	                PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( coreFile.getPhysicalFile( ).getIdPhysicalFile( ) );
+	                try ( OutputStream outputStream = Files.newOutputStream( attachment ) )
+	                {
+	                    outputStream.write( physicalFile.getValue( ) );
+	                }
+	                listAttachments.add( attachment );
+	            }
+	        }
+    	}
+    	return listAttachments;
     }
 }
