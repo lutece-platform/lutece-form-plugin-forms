@@ -170,6 +170,13 @@
             </list>
         </property>
     </bean>
+    <bean id="forms.entryTypeCartography" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCartography" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.defaultGeolocAnonymizationType" />
+            </list>
+        </property>
+    </bean>
 	<bean id="forms.entryTypeImage" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage" >
         <property name="anonymizationTypes">
             <list>
@@ -310,6 +317,9 @@
 	<bean id="forms.entryTypeGeolocationDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeGeolocDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeGeolocation" />
 	</bean>
+	<bean id="forms.entryTypeCartographyDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeCartographyDisplayService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeCartography" />
+	</bean>
 	<bean id="forms.entryTypeImageDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeImage" />
 	</bean>
@@ -374,6 +384,9 @@
 	</bean>
 	<bean id="forms.entryTypeGeolocationDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeGeolocation" />
+	</bean>
+	<bean id="forms.entryTypeCartographyDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeCartography" />
 	</bean>
 	<bean id="forms.entryTypeGroupDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeGroup" />
