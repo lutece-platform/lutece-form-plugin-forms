@@ -33,10 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.export;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -45,9 +41,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities.EscapeMode;
 
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -59,13 +52,7 @@ import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
-import fr.paris.lutece.plugins.html2pdf.service.PdfConverterService;
-import fr.paris.lutece.plugins.html2pdf.service.PdfConverterServiceException;
-import fr.paris.lutece.plugins.workflow.modules.formspdf.service.template.IFormResponseTemplateService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.file.FileUtil;
-import fr.paris.lutece.util.html.HtmlTemplate;
 
 public abstract class AbstractFileGenerator implements IFileGenerator
 {
@@ -76,8 +63,6 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     private static final int MAX_NAME_LENGTH = 250 - PATTERN_TIMESTAMP.length( );
     protected static final String TMP_DIR = System.getProperty( "java.io.tmpdir" );
     protected static final String UTF_8 = "UTF-8";
-    
-    protected static final String LOG_ERROR_PDF_EXPORT_GENERATION = "Error during PDF export generation";
 
     protected final FormPanel _formPanel;
     protected final List<IFormColumn> _listFormColumn;
@@ -88,8 +73,6 @@ public abstract class AbstractFileGenerator implements IFileGenerator
 
     private List<FormExportConfig> _configList = null;
     private Form _form;
-    
-    protected static IFormResponseTemplateService _formResponseTemplateService = SpringContextService.getBean( "workflow-formspdf.formResponseTemplateService" );
 
     /**
      * Constructor
@@ -134,24 +117,6 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     	Form form = listFormResponse.get(0) != null ? FormHome.findByPrimaryKey(listFormResponse.get(0).getFormId()) : null;
     	String formTitle = form != null ? form.getTitle() : "";
     	return StringUtils.substring( formTitle, 0, MAX_NAME_LENGTH ) + "_" + startRange + "-" + endRange + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_DATE ) );
-    }
-    
-    protected void generatePdfFile(Path directoryFile, HtmlTemplate htmltemplate, String fileName) throws PdfConverterServiceException, IOException
-    {
-    	try ( OutputStream outputStream = Files.newOutputStream( directoryFile.resolve( fileName + ".pdf" ) ) )
-        {
-        	Document doc = Jsoup.parse( htmltemplate.getHtml( ), UTF_8 );
-            doc.outputSettings( ).syntax( Document.OutputSettings.Syntax.xml );
-            doc.outputSettings( ).escapeMode( EscapeMode.base.xhtml );
-            doc.outputSettings( ).charset( UTF_8 );
-
-            PdfConverterService.getInstance( ).getPdfBuilder( ).reset( ).withHtmlContent( doc.html( ) ).notEditable( ).render( outputStream );
-        }
-        catch(PdfConverterServiceException | IOException e)
-        {
-            AppLogService.error( "Error generating pdf for file " + fileName, e );
-            throw e;
-        }
     }
     
 }

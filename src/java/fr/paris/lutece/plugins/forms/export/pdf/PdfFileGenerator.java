@@ -52,19 +52,16 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
-import fr.paris.lutece.plugins.forms.export.AbstractFileGenerator;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.file.FileUtil;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-public class PdfFileGenerator extends AbstractFileGenerator
+public class PdfFileGenerator extends AbstractPdfFileGenerator
 {
     private static final boolean ZIP_EXPORT = Boolean.parseBoolean( AppPropertiesService.getProperty( "forms.export.pdf.zip", "false" ) );
-    private static final String CONSTANT_MIME_TYPE_PDF = "application/pdf";
-    private static final String EXTENSION_PDF = ".pdf";
-
+    
     private boolean _hasMultipleFiles = false;
     
     protected PdfFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
@@ -173,7 +170,7 @@ public class PdfFileGenerator extends AbstractFileGenerator
 				}
 				
 				Map<String, Object> model = new HashMap<>( );
-				HtmlTemplate htmltemplate = _formResponseTemplateService.generateHtmlMultipleFormResponsesFromDefaultTemplate(model, subListFormResponse);
+				HtmlTemplate htmltemplate = generateHtmlMultipleFormResponsesFromDefaultTemplate(model, subListFormResponse);
 				
 				String generatedName = generateMultiFormResponsesFileName(subListFormResponse, intStartIndex + 1, intEndIndexExcluded);
 				generatePdfFile(directoryFile, htmltemplate, generatedName);
@@ -194,7 +191,7 @@ public class PdfFileGenerator extends AbstractFileGenerator
 				Map<String, Object> model = new HashMap<>( );
 				
 				FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-				HtmlTemplate htmltemplate = _formResponseTemplateService.generateHtmlFromDefaultTemplate(model, formResponse);
+				HtmlTemplate htmltemplate = generateHtmlFromDefaultTemplate(model, formResponse);
 				
 				String generatedName = generateFileName(formResponse);
 				generatePdfFile(directoryFile, htmltemplate, generatedName);
