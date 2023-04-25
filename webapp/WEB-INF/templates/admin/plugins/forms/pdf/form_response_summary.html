@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Export PDF d'un formulaire</title>
+</head>
+<body> 
+ 
+   <div id="form-response-summary" class="box-body">
+    <#if list_export_step_display?has_content>
+      <form>
+      <#list list_export_step_display as export_step_display>
+        <p>
+        ${export_step_display.group!} ${export_step_display.title!} ${export_step_display.value!}
+        </p>
+      </#list>
+      </form>
+    </#if>
+  </div>
+  <div class="panel-footer">
+  </div>
+
+ </body>
+ </html>
