@@ -264,7 +264,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 _model.put( FormsConstants.MARK_LIST_VALIDATOR, listValidator );
                 
                 ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
-                _model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator() : LogicalOperator.AND.getLabel()) );
+                _model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator().getLabel() : LogicalOperator.AND.getLabel()) );
                 if (controlGroup != null && LogicalOperator.OR.getLabel().equals(controlGroup.getLogicalOperator())) {
                 	bOtherStepValidation = nValidControlsCount > 0;
                 } else {

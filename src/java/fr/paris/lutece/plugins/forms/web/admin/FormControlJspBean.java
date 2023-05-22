@@ -315,10 +315,11 @@ public class FormControlJspBean extends AbstractJspBean
         ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
         String strLogicalOperatorParam = request.getParameter(FormsConstants.PARAMETER_LOGICAL_OPERATOR);
         if (strLogicalOperatorParam != null) {
-        	updateControlGroup(listConditionControl, controlGroup, strLogicalOperatorParam);
+        	LogicalOperator logicalOperator = LogicalOperator.valueOf(strLogicalOperatorParam.toUpperCase());
+        	updateControlGroup(listConditionControl, controlGroup, logicalOperator);
         }
         model.put( FormsConstants.MARK_ID_CONTROL_GROUP, (controlGroup != null ? controlGroup.getId() : null) );
-        model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator() : LogicalOperator.AND.getLabel()) );
+        model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator().getLabel() : LogicalOperator.AND.getLabel()) );
         model.put( MARK_LIST_CONDITION_CONTROL, listConditionControl );
         
     	Locale locale = getLocale( );
@@ -327,15 +328,15 @@ public class FormControlJspBean extends AbstractJspBean
         return getAdminPage( templateList.getHtml( ) );
     }
     
-    private void updateControlGroup(List<ConditionControl> listConditionControl, ControlGroup controlGroup, String strLogicalOperator)
+    private void updateControlGroup(List<ConditionControl> listConditionControl, ControlGroup controlGroup, LogicalOperator logicalOperator)
     {
-    	if (strLogicalOperator != null) {
+    	if (logicalOperator != null) {
         	if (controlGroup != null) {
-        		controlGroup.setLogicalOperator(strLogicalOperator);
+        		controlGroup.setLogicalOperator(logicalOperator);
         		controlGroup = ControlGroupHome.update(controlGroup);
         	} else {
         		controlGroup = new ControlGroup();
-        		controlGroup.setLogicalOperator(strLogicalOperator);
+        		controlGroup.setLogicalOperator(logicalOperator);
         		controlGroup = ControlGroupHome.create(controlGroup);
         	}
         	

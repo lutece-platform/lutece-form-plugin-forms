@@ -7,7 +7,7 @@ public enum LogicalOperator {
 	
 	private final String _strLabel;
 
-	private LogicalOperator(String strLabel) {
+	LogicalOperator(String strLabel) {
 		this._strLabel = strLabel;
 	}
 

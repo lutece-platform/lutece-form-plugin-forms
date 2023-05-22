@@ -69,7 +69,7 @@ public final class ControlGroupDAO implements IControlGroupDAO
         try( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
-            daoUtil.setString( nIndex++ , controlGroup.getLogicalOperator( ) );
+            daoUtil.setString( nIndex++ , controlGroup.getLogicalOperator().getLabel() );
             
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) ) 
@@ -98,7 +98,7 @@ public final class ControlGroupDAO implements IControlGroupDAO
 	            int nIndex = 1;
 	            
 	            controlGroup.setId( daoUtil.getInt( nIndex++ ) );
-			    controlGroup.setLogicalOperator( daoUtil.getString( nIndex ) );
+			    controlGroup.setLogicalOperator( LogicalOperator.valueOf( daoUtil.getString(nIndex).toUpperCase() ) );
 	        }
 	
 	        return Optional.ofNullable( controlGroup );
@@ -129,7 +129,7 @@ public final class ControlGroupDAO implements IControlGroupDAO
 	        int nIndex = 1;
 	        
 	        daoUtil.setInt( nIndex++ , controlGroup.getId( ) );
-            	daoUtil.setString( nIndex++ , controlGroup.getLogicalOperator( ) );
+            	daoUtil.setString( nIndex++ , controlGroup.getLogicalOperator().getLabel() );
 	        daoUtil.setInt( nIndex , controlGroup.getId( ) );
 	
 	        daoUtil.executeUpdate( );
@@ -153,7 +153,7 @@ public final class ControlGroupDAO implements IControlGroupDAO
 	            int nIndex = 1;
 	            
 	            controlGroup.setId( daoUtil.getInt( nIndex++ ) );
-			    controlGroup.setLogicalOperator( daoUtil.getString( nIndex ) );
+			    controlGroup.setLogicalOperator( LogicalOperator.valueOf( daoUtil.getString(nIndex).toUpperCase() ) );
 	
 	            controlGroupList.add( controlGroup );
 	        }
@@ -243,7 +243,7 @@ public final class ControlGroupDAO implements IControlGroupDAO
 		            int nIndex = 1;
 		            
 		            controlGroup.setId( daoUtil.getInt( nIndex++ ) );
-				    controlGroup.setLogicalOperator( daoUtil.getString( nIndex ) );
+				    controlGroup.setLogicalOperator( LogicalOperator.valueOf( daoUtil.getString(nIndex).toUpperCase() ) );
 		            
 		            controlGroupList.add( controlGroup );
 		        }
