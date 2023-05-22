@@ -33,9 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
-import javax.validation.constraints.Size;
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+
+import javax.validation.constraints.NotEmpty;
 /**
  * This is the business class for the object ControlGroup
  */ 
@@ -47,8 +47,7 @@ public class ControlGroup implements Serializable
     private int _nId;
     
     @NotEmpty( message = "#i18n{forms.validation.controlgroup.LogicalOperator.notEmpty}" )
-    @Size( max = 50 , message = "#i18n{forms.validation.controlgroup.LogicalOperator.size}" ) 
-    private String _strLogicalOperator;
+    private LogicalOperator _logicalOperator;
 
     /**
      * Returns the Id
@@ -67,23 +66,21 @@ public class ControlGroup implements Serializable
     {
         _nId = nId;
     }
-    
+ 
     /**
      * Returns the LogicalOperator
-     * @return The LogicalOperator
+     * @return
      */
-    public String getLogicalOperator( )
-    {
-        return _strLogicalOperator;
-    }
+    public LogicalOperator getLogicalOperator() {
+		return _logicalOperator;
+	}
 
     /**
      * Sets the LogicalOperator
-     * @param strLogicalOperator The LogicalOperator
-     */ 
-    public void setLogicalOperator( String strLogicalOperator )
-    {
-        _strLogicalOperator = strLogicalOperator;
-    }
-    
+     * @param logicalOperator
+     */
+	public void setLogicalOperator(LogicalOperator logicalOperator) {
+		this._logicalOperator = logicalOperator;
+	}
+ 
 }
