@@ -533,9 +533,15 @@ public class FormJspBean extends AbstractJspBean
             if ( formToBeModified.getLogo( ) != null )
             {
                 File logo = FileHome.findByPrimaryKey( formToBeModified.getLogo( ).getIdFile( ) );
-                PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( logo.getPhysicalFile( ).getIdPhysicalFile( ) );
-                FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), logo.getTitle( ) );
-                _uploadHandler.addFileItemToUploadedFilesList( fileItem, PARAMETER_LOGO, request );
+                if (logo != null && logo.getPhysicalFile( ) != null)
+                {
+                	PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( logo.getPhysicalFile( ).getIdPhysicalFile( ) );
+                	if (physicalFile != null)
+                	{
+                		FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), logo.getTitle( ) );
+                        _uploadHandler.addFileItemToUploadedFilesList( fileItem, PARAMETER_LOGO, request );
+                	}
+                }
             }
 
             if ( WorkflowService.getInstance( ).isAvailable( ) )
