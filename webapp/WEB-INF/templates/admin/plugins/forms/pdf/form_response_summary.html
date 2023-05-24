@@ -1,23 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Export PDF d'un formulaire</title>
+	<title>Export PDF formulaire ${form_title}</title>
 </head>
-<body> 
- 
-   <div id="form-response-summary" class="box-body">
-    <#if list_export_step_display?has_content>
-      <form>
-      <#list list_export_step_display as export_step_display>
-        <p>
-        ${export_step_display.group!} ${export_step_display.title!} ${export_step_display.value!}
-        </p>
-      </#list>
-      </form>
-    </#if>
-  </div>
-  <div class="panel-footer">
-  </div>
-
- </body>
- </html>
+<body>
+	<h1 style="font-size: 24px; text-align: center;">
+		${form_title}
+	</h1>
+	<div id="form-response-summary" style="margin-bottom: 3em;">
+		<#if list_pdf_cell?has_content>
+			<#list list_pdf_cell as pdf_cell>
+				<#if pdf_cell.formResponseNumber gt 0 >
+					<h2 style="font-size: 18px; text-align: center;">
+						#i18n{forms.multiviewForms.template.pdf.formResponseNumber} : ${pdf_cell.formResponseNumber}
+					</h2>
+				</#if>
+				<#if pdf_cell.formResponseDate??>
+					<h2 style="font-size: 18px; text-align: center;">
+						#i18n{forms.multiviewForms.template.pdf.formResponseDate} : ${pdf_cell.formResponseDate}
+					</h2>
+				</#if>
+				<#if pdf_cell.step??>
+					<h3>${pdf_cell.step!}</h3>
+				<#else>
+					<#if pdf_cell.group??>
+						<h3>${pdf_cell.group!}</h3>
+					<#else>
+						<#if pdf_cell.drawable>
+							<p style="border-bottom: solid; border-bottom-width: thin;">
+								<b>${pdf_cell.title!}</b> : ${pdf_cell.value!}
+							</p>
+						</#if>
+					</#if>
+				</#if>
+			</#list>
+		</#if>
+	</div>
+	<div class="panel-footer"></div>
+</body>
+</html>

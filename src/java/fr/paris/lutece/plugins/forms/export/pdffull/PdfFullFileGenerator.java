@@ -73,7 +73,7 @@ public class PdfFullFileGenerator extends AbstractPdfFileGenerator
     protected PdfFullFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormItemSortConfig sortConfig, String fileDescription )
     {
-        super( FileUtil.normalizeFileName( formName ), formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription );
+        super( FileUtil.normalizeFileName( formName ), formName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription );
     }
 
     @Override
