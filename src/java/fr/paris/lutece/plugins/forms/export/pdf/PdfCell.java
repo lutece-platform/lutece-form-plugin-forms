@@ -40,6 +40,9 @@ public class PdfCell
     private String _title;
     private String _value;
     private String _group;
+    private String _step;
+    private int _formResponseNumber;
+    private String _formResponseDate;
 
     /**
      * @return the title
@@ -91,8 +94,33 @@ public class PdfCell
     {
         this._group = group;
     }
+    
 
-    public boolean isDrawable( )
+    public String getStep() {
+		return _step;
+	}
+
+	public void setStep(String step) {
+		this._step = step;
+	}
+
+	public int getFormResponseNumber() {
+		return _formResponseNumber;
+	}
+
+	public void setFormResponseNumber(int formResponseNumber) {
+		this._formResponseNumber = formResponseNumber;
+	}
+
+	public String getFormResponseDate() {
+		return _formResponseDate;
+	}
+
+	public void setFormResponseDate(String formResponseDate) {
+		this._formResponseDate = formResponseDate;
+	}
+
+	public boolean isDrawable( )
     {
         return StringUtils.isNoneEmpty( _title, _value );
     }

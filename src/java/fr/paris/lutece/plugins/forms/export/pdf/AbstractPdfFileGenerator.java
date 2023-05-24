@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -18,8 +20,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
+import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
@@ -39,6 +43,7 @@ import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeComment;
@@ -51,6 +56,7 @@ import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
@@ -63,28 +69,69 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 	private static final String KEY_LABEL_YES = "portal.util.labelYes";
     private static final String KEY_LABEL_NO = "portal.util.labelNo";
     
-    private static final String MARK_STEP_FORMS = "list_export_step_display";
+    // markers
+    private static final String MARK_PDF_CELL_LIST = "list_pdf_cell";
+    private static final String MARK_FORM_TITLE = "form_title";
+    
+    protected final String _formTitle;
 	
-	protected AbstractPdfFileGenerator(String fileName, FormPanel formPanel, List<IFormColumn> listFormColumn,
+	protected AbstractPdfFileGenerator(String fileName, String formTitle, FormPanel formPanel, List<IFormColumn> listFormColumn,
 			List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String fileDescription) {
 		super(fileName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription);
+		_formTitle = formTitle;
 	}
 
 	protected HtmlTemplate generateHtmlFromDefaultTemplate(Map<String, Object> model, FormResponse formResponse) throws Exception
 	{
-        model.put( MARK_STEP_FORMS, getPdfCellValueFormsReponse( formResponse ) );
+		model.put( MARK_FORM_TITLE, _formTitle);
+		List<PdfCell> listPdfCell = new ArrayList<>();
+		listPdfCell.addAll(generateFirstFormResponseInfos(formResponse));
+		listPdfCell.addAll(getPdfCellValueFormsReponse( formResponse ));
+        model.put( MARK_PDF_CELL_LIST, listPdfCell );
+        
         return AppTemplateService.getTemplate( DEFAULT_TEMPLATE, Locale.getDefault( ), model );
 	}
 
 	protected HtmlTemplate generateHtmlMultipleFormResponsesFromDefaultTemplate(Map<String, Object> model, List<FormResponse> listFormResponse) throws Exception
 	{
+		model.put( MARK_FORM_TITLE, _formTitle);
 		List<PdfCell> listPdfCell = new ArrayList<>();
 		for (FormResponse formResponse : listFormResponse)
 		{
+			listPdfCell.addAll(generateFirstFormResponseInfos(formResponse));
 			listPdfCell.addAll(getPdfCellValueFormsReponse( formResponse ));
 		}
-        model.put( MARK_STEP_FORMS, listPdfCell );
+        model.put( MARK_PDF_CELL_LIST, listPdfCell );
+        
         return AppTemplateService.getTemplate( DEFAULT_TEMPLATE, Locale.getDefault( ), model );
+	}
+	
+	private List<PdfCell> generateFirstFormResponseInfos(FormResponse formResponse)
+	{
+		List<PdfCell> pdfCells = new ArrayList<>();
+		
+		// form response update date
+		PdfCell formResponseDateCell = new PdfCell();
+		formResponseDateCell.setFormResponseDate(formatDateFormResponse(formResponse));
+		pdfCells.add(formResponseDateCell);
+		
+		// form response number
+		PdfCell formResponseNumberCell = new PdfCell();
+		formResponseNumberCell.setFormResponseNumber(formResponse.getId());
+		pdfCells.add(formResponseNumberCell);
+		
+		return pdfCells;
+	}
+	
+	private String formatDateFormResponse(FormResponse formResponse)
+	{
+		if (formResponse != null && formResponse.getUpdate() != null)
+		{
+			DateFormat dateFormat = new SimpleDateFormat( AppPropertiesService.getProperty( FormsConstants.PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT ), Locale.getDefault( ) );
+			return dateFormat.format( formResponse.getUpdate( ) );
+		}
+		return null;
+		
 	}
 	
 	/**
@@ -124,6 +171,12 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
         List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParent( step.getId( ), 0 );
 
         List<PdfCell> listContent = new ArrayList<>( );
+        
+        // add step title
+        PdfCell stepCell = new PdfCell( );
+        stepCell.setStep(step.getTitle());
+        listContent.add(stepCell);
+        
         for ( FormDisplay formDisplay : listStepFormDisplay )
         {
             if ( CompositeDisplayType.GROUP.getLabel( ).equals( formDisplay.getCompositeType( ) ) )
@@ -155,14 +208,26 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
     private List<PdfCell> createCellsForGroup( FormResponseStep formResponseStep, FormDisplay formDisplay )
     {
         List<PdfCell> listContent = new ArrayList<>( );
+        
         Group group = GroupHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
+        String groupName = group.getTitle( );
 
         List<FormDisplay> listGroupDisplay = FormDisplayHome.getFormDisplayListByParent( formResponseStep.getStep( ).getId( ), formDisplay.getId( ) );
         for ( int ite = 0; ite < group.getIterationMax( ); ite++ )
         {
+        	// add group cell
+        	if ( group.getIterationMax( ) > 1 )
+            {
+                int iteration = ite + 1;
+                groupName += " (" + iteration + ")";
+            }
+        	PdfCell groupCell = new PdfCell( );
+        	groupCell.setGroup( groupName );
+        	listContent.add(groupCell);
+        	
             for ( FormDisplay formDisplayGroup : listGroupDisplay )
             {
-                PdfCell cell = createPdfCell( formResponseStep, formDisplayGroup, group, ite );
+                PdfCell cell = createPdfCell( formResponseStep, formDisplayGroup, ite );
                 if ( cell != null )
                 {
                     listContent.add( cell );
@@ -183,7 +248,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
      */
     private PdfCell createPdfCellNoGroup( FormResponseStep formResponseStep, FormDisplay formDisplay )
     {
-        return createPdfCell( formResponseStep, formDisplay, null, 0 );
+        return createPdfCell( formResponseStep, formDisplay, 0 );
     }
 
     /**
@@ -193,13 +258,11 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
      *            the form response step
      * @param formDisplay
      *            the form display
-     * @param group
-     *            the group
      * @param iterationNumber
      *            the iteration number
      * @return the pdf cell
      */
-    private PdfCell createPdfCell( FormResponseStep formResponseStep, FormDisplay formDisplay, Group group, int iterationNumber )
+    private PdfCell createPdfCell( FormResponseStep formResponseStep, FormDisplay formDisplay, int iterationNumber )
     {
         FormQuestionResponse formQuestionResponse = formResponseStep.getQuestions( ).stream( )
                 .filter( fqr -> fqr.getQuestion( ).getEntry( ).isExportablePdf( ) )
@@ -215,16 +278,6 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
                 PdfCell cell = new PdfCell( );
                 cell.setTitle( key );
                 cell.setValue( listResponseValue.stream( ).filter( StringUtils::isNotEmpty ).collect( Collectors.joining( ";" ) ) );
-                if ( group != null )
-                {
-                    String groupName = group.getTitle( );
-                    if ( group.getIterationMax( ) > 1 )
-                    {
-                        int iteration = iterationNumber + 1;
-                        groupName += " (" + iteration + ")";
-                    }
-                    cell.setGroup( groupName );
-                }
                 return cell;
             }
         }
@@ -277,14 +330,8 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 
             String strResponseValue = entryTypeService.getResponseValueForRecap( entry, null, response, I18nService.getDefaultLocale( ) );
 
-            if ( entryTypeService instanceof EntryTypeCheckBox && strResponseValue != null )
-            {
-                listResponseValue.add( "<input type=\"checkbox\" name=\"" + strResponseValue + " \" checked=\"checked\" />" );
-            }
-
             if ( ( entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera ) && strResponseValue != null )
             {
-
                 if ( response.getFile( ) != null )
                 {
                     IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
@@ -294,22 +341,11 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 
                     listResponseValue.add( "<img src=\"data:image/jpeg;base64, " + encoded + " \" width=\"100px\" height=\"100px\" /> " );
                 }
-
             }
             if ( entryTypeService instanceof EntryTypeFile && response.getFile( ) != null )
             {
                 IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
                 listResponseValue.add( fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) ).getTitle( ) );
-            }
-
-            if ( entryTypeService instanceof EntryTypeRadioButton && strResponseValue != null )
-            {
-                listResponseValue.add( "<input type=\"radio\" value=\"" + strResponseValue + " \" name=\"" + strResponseValue + " \" checked=\"checked\" />" );
-            }
-
-            if ( entryTypeService instanceof EntryTypeSelect && strResponseValue != null )
-            {
-                listResponseValue.add( "<select name=\"" + strResponseValue + " \" > <option>" + strResponseValue + "</option> </select>" );
             }
 
             if ( strResponseValue != null )
