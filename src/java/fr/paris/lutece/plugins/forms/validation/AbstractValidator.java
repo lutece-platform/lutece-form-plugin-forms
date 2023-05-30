@@ -38,6 +38,7 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
@@ -71,13 +72,22 @@ public abstract class AbstractValidator implements IValidator
 
         for ( FormQuestionResponse questionResponse : formQuestionResponse )
         {
+        	if (ControlType.TRANSITION.getLabel().equals(control.getControlType()))
+        	{
+        		if ( !validate( questionResponse, control ) )
+                {
 
-            if ( questionResponse.getQuestion( ).getId( ) == control.getIdControlTarget( ) && !validate( questionResponse, control ) )
-            {
+                    return false;
+                }
+        	}
+        	else
+        	{
+        		if ( questionResponse.getQuestion( ).getId( ) == control.getIdControlTarget( ) && !validate( questionResponse, control ) )
+                {
 
-                return false;
-            }
-
+                    return false;
+                }
+        	}
         }
 
         return true;
