@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServ
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.html2pdf.service.PdfConverterService;
 import fr.paris.lutece.plugins.html2pdf.service.PdfConverterServiceException;
+import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -331,16 +332,20 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
                 {
                     IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
                     fr.paris.lutece.portal.business.file.File fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
-
-                    String encoded = Base64.getEncoder( ).encodeToString( fileImage.getPhysicalFile( ).getValue( ) );
-
+                    
+                    String encoded = StringUtils.EMPTY;
+                    if(fileImage != null && fileImage.getPhysicalFile() != null)
+                    {
+                    	encoded = Base64.getEncoder( ).encodeToString( fileImage.getPhysicalFile( ).getValue( ) );
+                    }
                     listResponseValue.add( "<img src=\"data:image/jpeg;base64, " + encoded + " \" width=\"100px\" height=\"100px\" /> " );
                 }
             }
             if ( entryTypeService instanceof EntryTypeFile && response.getFile( ) != null )
             {
                 IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
-                listResponseValue.add( fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) ).getTitle( ) );
+                File fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
+                listResponseValue.add( fileImage != null ? fileImage.getTitle( ) : StringUtils.EMPTY);
             }
 
             if ( strResponseValue != null )
