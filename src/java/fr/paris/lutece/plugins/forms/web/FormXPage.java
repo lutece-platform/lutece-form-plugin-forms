@@ -330,7 +330,7 @@ public class FormXPage extends MVCApplication
                 	_stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
             	}
                 Object [ ] args = {
-                        _formResponseManager.getFormResponse( ).getUpdate( ),
+                        _formResponseManager.getFormResponseUpdateDate(),
                 };
                 model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( FormsConstants.MESSAGE_LOAD_BACKUP, args, getLocale( request ) ) );
             }
