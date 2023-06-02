@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +46,7 @@ import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
@@ -140,6 +142,23 @@ public class FormResponseManager
         initStepsOrder( );
 
         return _formResponse;
+    }
+    
+    /**
+     * Return the form Response update date
+     * 
+     * @return
+     */
+    public Timestamp getFormResponseUpdateDate()
+    {
+    	FormResponse formResponse = getFormResponse();
+    	Timestamp updateDate = formResponse.getUpdate();
+    	if (updateDate == null)
+    	{
+    		FormResponse formResponseFromDB = FormResponseHome.findUncompleteByPrimaryKey(formResponse.getId());
+    		updateDate = formResponseFromDB != null ? formResponseFromDB.getUpdate() : null;
+    	}
+    	return updateDate;
     }
 
     /**
