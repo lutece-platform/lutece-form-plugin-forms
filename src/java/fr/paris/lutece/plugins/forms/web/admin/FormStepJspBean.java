@@ -164,7 +164,7 @@ public class FormStepJspBean extends AbstractJspBean
      * @param request
      *            The HTTP request
      * @return The page
-     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     * @throws AccessDeniedException
      *             Access denied is user isnt authorized by RBAC
      */
     @View( value = VIEW_MANAGE_STEPS, defaultView = true )

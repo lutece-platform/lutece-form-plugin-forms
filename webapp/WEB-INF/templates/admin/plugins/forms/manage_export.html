@@ -10,13 +10,13 @@
 					<@row>
 						<@columns sm=2 class='mt-5'>
 							<@tabList vertical=true> 
-								<@tabLink id='export-1-tab' active=true href='#export-1' title='#i18n{forms.modify_form.export.config.text1}' />
-								<@tabLink id='export-2-tab' href='#export-2' title='#i18n{forms.modify_form.export.config.questions}' />
+								<@tabLink id='export-1-tab' active=!activeTabPannel2 href='#export-1' title='#i18n{forms.modify_form.export.config.text1}' />
+								<@tabLink id='export-2-tab' active=activeTabPannel2 href='#export-2' title='#i18n{forms.modify_form.export.config.questions}' />
 							</@tabList>
 						</@columns>
 						<@columns sm=10>
 							<@tabContent>
-								<@tabPanel id="export-1" active=true >
+								<@tabPanel id="export-1" active=!activeTabPannel2 >
 									<@row>
 										<@columns sm=9>
 											<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormExport.jsp'>
@@ -61,51 +61,95 @@
 											</@columns>
 										</@row>
 								</@tabPanel>
-								<@tabPanel id='export-2' >
-									<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormExport.jsp'>
-										<@input type='hidden' id='token' name='token' value='${token}' />
-										<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-										<@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
-											<@tr>
-												<@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>
-												<@th params='data-field="title"'>#i18n{forms.manage_question_response.columnTitle}</@th>
-												<@th params='data-sortable="true" data-field="status"'>#i18n{forms.createEntry.labelResponsesExportable}</@th>
-												<@th params='data-sortable="true" data-field="status"'>#i18n{forms.createEntry.labelResponsesExportablePdf}</@th>
-												<@th>#i18n{forms.manage_question_response.order}</@th>
-											</@tr>
-											<@tableHeadBodySeparator />	
-											<#list questionList?sort_by('exportDisplayOrder') as question>
-												<@tr>
-													<@td>${question.step.title!}</@td>
-													<@td>${question.title!}</@td>
-													<@td>
-														<@formGroup labelFor='exportable' labelKey='forms.createEntry.labelResponsesExportable' labelClass='text-white'>
-				                							<@checkBox orientation='switch' name='exportable' id='exportable_${question.id}' value='${question.id}' checked=(question?has_content && question.entry.exportable!) />
-				            							</@formGroup>
-													</@td>
-													<@td>
-														<@formGroup labelFor='exportablePdf' labelKey='forms.createEntry.labelResponsesExportablePdf' labelClass='text-white'>
-				                							<@checkBox orientation='switch' name='exportablePdf' id='exportablePdf_${question.id}' value='${question.id}' checked=(question?has_content && question.entry.exportablePdf!) />
-				            							</@formGroup>
-													</@td>
-													<@td>
-														<@formGroup>
-													    	<@input type='number' name='export_display_order_${question.id}' min=0 value='${question.exportDisplayOrder}' />
-														</@formGroup>
-													</@td>
-												</@tr>
-											</#list>
-										</@table>
-										<@formGroup rows=2>
-											<@headerButton name='action_modifyExportableQuestions' label='forms.modify_form.buttonValidate' /> 
-										</@formGroup>
-									</@tform>
-								</@tabPanel>
-							</@tabContent>
-						</@columns>
-					</@row>
-				</@box>
-			</@boxBody>
-		</@box>
-	</@columns>
+<@tabPanel id='export-2' active=activeTabPannel2 >
+<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormExport.jsp'>
+<@input type='hidden' id='token' name='token' value='${token}' />
+<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+<@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
+<@tr>
+<@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>
+<@th params='data-field="title"'>#i18n{forms.manage_question_response.columnTitle}</@th>
+<@th params='data-sortable="true" data-field="status"'>#i18n{forms.createEntry.labelResponsesExportable}</@th>
+<@th params='data-sortable="true" data-field="status"'>#i18n{forms.createEntry.labelResponsesExportablePdf}</@th>
+<@th>#i18n{forms.manage_question_response.order}</@th>
+</@tr>
+<@tableHeadBodySeparator />
+<script>
+	let questionsIdAndDisplayOrder = '${questionsIdAndDisplayOrder}';
+	questionsIdAndDisplayOrder = questionsIdAndDisplayOrder.split(",");
+	for (let i = 0; i < questionsIdAndDisplayOrder.length; i++) {
+		questionsIdAndDisplayOrder[i] = questionsIdAndDisplayOrder[i].split("=");
+		questionsIdAndDisplayOrder[i][0] = parseInt(questionsIdAndDisplayOrder[i][0]);
+		questionsIdAndDisplayOrder[i][1] = parseInt(questionsIdAndDisplayOrder[i][1]);
+	}
+	let number_max_order = questionsIdAndDisplayOrder.length;
+	console.log(number_max_order);
+
+	function assignNewOrder (id_question, new_order) {
+		let InputIdToReAssign ="";
+		let valueToReAssign = 0;
+		let arrayOrder = [];
+		for (let i = 1; i < questionsIdAndDisplayOrder.length; i++) {
+			let orderValue = document.getElementById("export_display_order_" + questionsIdAndDisplayOrder[i][0]).value;
+			arrayOrder.push(document.getElementById("export_display_order_" + questionsIdAndDisplayOrder[i][0]).value);
+			if (orderValue === new_order && document.getElementById("export_display_order_" + questionsIdAndDisplayOrder[i][0]).id !== id_question) {
+				InputIdToReAssign = document.getElementById("export_display_order_" + questionsIdAndDisplayOrder[i][0]).id
+			}
+		}
+
+		if(new_order === 1) {
+			valueToReAssign = new_order + 1;
+		}
+		if(new_order === number_max_order) {
+			valueToReAssign = new_order - 1;
+		}
+		if(new_order !== 1 && new_order !== number_max_order) {
+			if(!arrayOrder.includes(new_order+1)){
+				valueToReAssign = new_order+1;
+			}
+			if(!arrayOrder.includes(new_order-1)){
+				valueToReAssign = new_order-1;
+			}
+		}
+		//	document.getElementById(InputIdToReAssign).value = valueToReAssign;
+	}
+</script>
+<#list questionList?sort_by('exportDisplayOrder') as question>
+<div>
+	<@tr id='question_${question.id}'>
+	<@td>${question.step.title!}</@td>
+<@td>${question.title!}</@td>
+<@td>
+<@formGroup labelFor='exportable' labelKey='forms.createEntry.labelResponsesExportable' labelClass='text-white'>
+<@checkBox orientation='switch' name='exportable' id='exportable_${question.id}' value='${question.id}' checked=(question?has_content && question.entry.exportable!) />
+</@formGroup>
+</@td>
+<@td>
+<@formGroup labelFor='exportablePdf' labelKey='forms.createEntry.labelResponsesExportablePdf' labelClass='text-white'>
+<@checkBox orientation='switch' name='exportablePdf' id='exportablePdf_${question.id}' value='${question.id}' checked=(question?has_content && question.entry.exportablePdf!) />
+</@formGroup>
+</@td>
+<@td>
+<@input type='hidden' name='id_question_${question.id}' value='${question.id}' />
+<@formGroup>
+
+<input type="number" id="export_display_order_${question.id}" name="export_display_order_${question.id}" min="1" max="${number_max_order}" value="${question.exportDisplayOrder}"  onchange="assignNewOrder(this.id, this.value)" />
+</@formGroup>
+</@td>
+</@tr>
+</div>
+</#list>
+</@table>
+<@formGroup rows=2>
+<@headerButton name='action_modifyExportableQuestions' label='forms.modify_form.buttonValidate' />
+</@formGroup>
+</@tform>
+</@tabPanel>
+</@tabContent>
+</@columns>
+</@row>
+</@box>
+</@boxBody>
+</@box>
+</@columns>
 </@row>
