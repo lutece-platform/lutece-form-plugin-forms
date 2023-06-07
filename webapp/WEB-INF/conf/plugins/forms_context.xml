@@ -107,6 +107,7 @@
 			<list>
 				<value type="java.lang.String">forms.entryTypeText</value>
 				<value type="java.lang.String">forms.entryTypeMyLuteceUserattribute</value>
+				<value type="java.lang.String">forms.entryTypeNumber</value>
 			</list>
 		</constructor-arg>
 	</bean>
