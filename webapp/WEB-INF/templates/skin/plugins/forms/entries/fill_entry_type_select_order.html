@@ -78,12 +78,12 @@
     }).disableSelection();
 
     $('form').submit(function(){
-    	if ( $( "#sortable1" ).html( ).length === 0){
+    	if ( $( "#sortable2 li" ).length === 0){
     		$('#${idName}').val($( "#sortable1" ).sortable("serialize").replaceAll('&',';'));
     	}else{
     		$('#${idName}').val($( "#sortable2" ).sortable("serialize").replaceAll('&',';'));
     	}
-	}); 
+	});
   });
 </script>
 </#if>
