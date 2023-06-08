@@ -61,7 +61,13 @@
 </@columns>
 </@row>
 </@tabPanel>
+
+
+
+
+
 <@tabPanel id='export-2' active=activeTabPannel2 >
+
 <@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormExport.jsp'>
 <@input type='hidden' id='token' name='token' value='${token}' />
 <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
@@ -73,39 +79,12 @@
 <@th params='data-sortable="true" data-field="status"'>#i18n{forms.createEntry.labelResponsesExportablePdf}</@th>
 <@th>#i18n{forms.manage_question_response.order}</@th>
 </@tr>
+
 <@tableHeadBodySeparator />
-<script>
-	let questionsIdAndDisplayOrder = '${questionsIdAndDisplayOrder}';
-	questionsIdAndDisplayOrder = questionsIdAndDisplayOrder.split(",");
-	for (let i = 0; i < questionsIdAndDisplayOrder.length; i++) {
-		questionsIdAndDisplayOrder[i] = questionsIdAndDisplayOrder[i].split("=");
-		questionsIdAndDisplayOrder[i][0] = parseInt(questionsIdAndDisplayOrder[i][0]);
-		questionsIdAndDisplayOrder[i][1] = parseInt(questionsIdAndDisplayOrder[i][1]);
-	}
-	let number_max_order = questionsIdAndDisplayOrder.length;
-	function assignNewOrder (id_question, new_order) {
-		let InputIdToReAssign ="";
-		let valueToReAssign ;
-		let arrayOrder = [];
-		for (let i = 0; i < questionsIdAndDisplayOrder.length; i++) {
-			let orderValue = document.getElementById("export_display_order_" + questionsIdAndDisplayOrder[i][1]).value;
-			arrayOrder.push(orderValue);
-			if (orderValue === new_order && document.getElementById("export_display_order_" + questionsIdAndDisplayOrder[i][0]).id !== id_question) {
-				InputIdToReAssign = document.getElementById("export_display_order_" + questionsIdAndDisplayOrder[i][0]).id
-			}
-		}
-		for (let i = 1; i < questionsIdAndDisplayOrder.length+1; i++) {
-			if (!arrayOrder.includes(i.toString())) {
-				valueToReAssign = i;
-			}
-		}
-		document.getElementById(InputIdToReAssign).value = valueToReAssign;
-	}
-</script>
+
 <#list questionList?sort_by('exportDisplayOrder') as question>
-<div>
-	<@tr id='question_${question.id}'>
-	<@td>${question.step.title!}</@td>
+<@tr>
+<@td>${question.step.title!}</@td>
 <@td>${question.title!}</@td>
 <@td>
 <@formGroup labelFor='exportable' labelKey='forms.createEntry.labelResponsesExportable' labelClass='text-white'>
@@ -120,24 +99,18 @@
 <@td>
 <@input type='hidden' name='id_question_${question.id}' value='${question.id}' />
 <@formGroup>
-<input type="number" id="export_display_order_${question.id}" name="export_display_order_${question.id}" min="1" max="${number_max_order}" value="${question.exportDisplayOrder}"  onchange="assignNewOrder(this.id, this.value)" />
+<@inputGroup>
+<@comboOrders name='export_display_order_${question.id}' default_value=question.exportDisplayOrder max=number_max_order />
 
-<!--<@inputGroup>
- <@comboOrders name='export_display_order_${question.id}' default_value=question.exportDisplayOrder max=number_max_order />
-TODO LUT-20544 : futur bouton de changement d'ordre pour 1 ligne  -->
-<!--
 <@inputGroupItem>
-    <@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doChangeOrderExportableQuestion&id_question=${question.id}&export_display_order_${question.id}'
-        buttonIcon='check' color='default' hideTitle=['all'] size='sm' />
-    <@button name='action_doChangeOrderExportableQuestion' buttonIcon='check' color='default' hideTitle=['all'] size='sm' />
+<@aButton href='jsp/admin/plugins/forms/ManageOrderExportableQuestion.jsp?actionName=doChangeOrderExportableQuestion&id_question=${question.id}&export_display_order_${question.id}'
+buttonIcon='check' color='default' hideTitle=['all'] size='sm' />
 </@inputGroupItem>
 
 </@inputGroup>
--->
 </@formGroup>
 </@td>
 </@tr>
-</div>
 </#list>
 </@table>
 <@formGroup rows=2>
@@ -152,4 +125,98 @@ TODO LUT-20544 : futur bouton de changement d'ordre pour 1 ligne  -->
 </@boxBody>
 </@box>
 </@columns>
+
 </@row>
+<!--
+<script defer>
+	let questionsIdAndDisplayOrder = '${questionsIdAndDisplayOrder}';
+	// parse the json string into an array of objects
+	questionsIdAndDisplayOrder = JSON.parse(questionsIdAndDisplayOrder);
+	console.log(questionsIdAndDisplayOrder)
+	questionsIdAndDisplayOrder.sort(function(a, b) {
+		return a.exportDisplayOrder - b.exportDisplayOrder;
+	});
+	console.log(questionsIdAndDisplayOrder)
+	const number_max_order = questionsIdAndDisplayOrder.length;
+
+
+	function assignNewOrder (id_question, new_order) {
+		let InputIdToReAssign ="";
+		let valueToReAssign ;
+		let arrayOrder = [];
+		for (let i = 0; i < questionsIdAndDisplayOrder.length; i++) {
+			let orderValue = document.getElementById("export_display_order_" + questionsIdAndDisplayOrder[i].id).value;
+			arrayOrder.push(orderValue);
+			if (orderValue === new_order && document.getElementById("export_display_order_" + questionsIdAndDisplayOrder[i].id).id !== id_question) {
+				InputIdToReAssign = document.getElementById("export_display_order_" + questionsIdAndDisplayOrder[i].id).id
+			}
+		}
+		for (let i = 1; i < questionsIdAndDisplayOrder.length+1; i++) {
+			if (!arrayOrder.includes(i.toString())) {
+				valueToReAssign = i;
+			}
+		}
+		document.getElementById(InputIdToReAssign).value = valueToReAssign;
+	}
+	for (i = 0; i < questionsIdAndDisplayOrder.length; ++i) {
+		let tr = document.createElement('tr');
+		tr.id = "question_"+questionsIdAndDisplayOrder[i].id;
+		let td = document.createElement('td');
+		td.innerText = questionsIdAndDisplayOrder[i].stepTitle;
+		let td2 = document.createElement('td');
+		td2.innerText = questionsIdAndDisplayOrder[i].title;
+		let td3 = document.createElement('td');
+        let label = document.createElement('label');
+        label.className = "form-check form-switch";
+        label.htmlFor = "exportable_"+questionsIdAndDisplayOrder[i].id;
+		let checkBox = document.createElement('input');
+		checkBox.type = "checkbox";
+		checkBox.name = "exportable";
+        checkBox.className = "form-check-input"
+        checkBox.id = "exportable_"+questionsIdAndDisplayOrder[i].id;
+		checkBox.value = questionsIdAndDisplayOrder[i].id;
+		checkBox.checked = questionsIdAndDisplayOrder[i].exportable;
+        let span = document.createElement('span');
+        span.className = "form-check-label"
+        label.appendChild(checkBox);
+        label.appendChild(span);
+        td3.appendChild(label);
+        // create a checkbox
+		let td4 = document.createElement('td');
+        let label2 = document.createElement('label');
+        label2.className = "form-check form-switch";
+        label2.htmlFor = "exportablePdf_"+questionsIdAndDisplayOrder[i].id;
+        let checkBox2 = document.createElement('input');
+		checkBox2.type = "checkbox";
+		checkBox2.name = "exportablePdf";
+        checkBox2.className = "form-check-input";
+		checkBox2.id = "exportablePdf_"+questionsIdAndDisplayOrder[i].id;
+		checkBox2.value = questionsIdAndDisplayOrder[i].id;
+		checkBox2.checked = questionsIdAndDisplayOrder[i].exportablePdf;
+		label2.appendChild(checkBox2);
+        label2.appendChild(span);
+        td4.appendChild(label2);
+		let td5 = document.createElement('td');
+		let input = document.createElement('input');
+		input.type = "number";
+		input.name = "id_question_"+questionsIdAndDisplayOrder[i].id;
+		input.value = questionsIdAndDisplayOrder[i].exportDisplayOrder;
+		input.min = "1";
+		input.max = number_max_order;
+        input.onkeydown = function(e) {
+                return false;
+        };
+		input.id = "export_display_order_"+questionsIdAndDisplayOrder[i].id;
+		input.onchange = function () {
+			assignNewOrder(this.id, this.value);
+		};
+	    td5.appendChild(input);
+		tr.appendChild(td);
+		tr.appendChild(td2);
+		tr.appendChild(td3);
+		tr.appendChild(td4);
+		tr.appendChild(td5);
+		document.getElementById("questionsTableInputs").appendChild(tr);
+	}
+</script>
+-->

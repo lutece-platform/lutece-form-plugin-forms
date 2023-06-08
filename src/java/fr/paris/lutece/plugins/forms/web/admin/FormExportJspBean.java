@@ -37,6 +37,7 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.export.SimplifiedQuestionExport;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -125,21 +126,19 @@ public class FormExportJspBean extends AbstractJspBean
         // List<Question> listQuestions = getListQuestionsWithExportDisplayOrderFixed(formToBeModified.getId( ));
         List<Question> listQuestions = QuestionHome.getListQuestionByIdFormOrderByExportDisplayOrder( formToBeModified.getId( ) );
 
-        HashMap<Integer,Integer> mapIdQuestionOrder = new HashMap<>( );
+        List<String> mapIdQuestionOrder = new ArrayList<>( );
         int questionIndex = 1;
         for(Question question : listQuestions) {
-            // get the index of the question in the list
-
             if(question.getExportDisplayOrder() == 0) {
                 question.setExportDisplayOrder(questionIndex);
             }
-        	mapIdQuestionOrder.put(question.getId(), question.getExportDisplayOrder());
+            SimplifiedQuestionExport simplifiedQuestionExport = new SimplifiedQuestionExport(question.getId(),question.getExportDisplayOrder(), question.getStep().getTitle(), question.getTitle(), question.getEntry().isExportable(), question.getEntry().isExportable());
+
+        	mapIdQuestionOrder.add(simplifiedQuestionExport.toJson());
             questionIndex++;
-            System.out.println("question.getId() : " + question.getId() + " question.getExportDisplayOrder() : " + question.getExportDisplayOrder());
 
         }
-      String questionsIdAndDisplayOrder = mapIdQuestionOrder.toString();
-        questionsIdAndDisplayOrder = questionsIdAndDisplayOrder.replace("{", "").replace("}", "");
+     String questionsIdAndDisplayOrder = mapIdQuestionOrder.toString();
 
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
@@ -246,55 +245,7 @@ public class FormExportJspBean extends AbstractJspBean
     }
     
     // TODO LUT-20544 : futur request method pour le bouton de changement d'ordre pour 1 ligne
-    @Action( ACTION_CHANGE_ORDER_EXPORTABLE_QUESTION )
-    public String doMoveUpExportableQuestion( HttpServletRequest request )
-    {
-    	int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
-    	int nIdQuestion = NumberUtils.toInt( request.getParameter( PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
-    	int nOrderToSet = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_EXPORT_DISPLAY_ORDER + "_" + nIdQuestion), 0 );
-    	
-    	if ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE )
-        {
-    		Question questionToChangeOrder = QuestionHome.findByPrimaryKey( nIdQuestion );
-    		
-    		int nCurrentOrder = questionToChangeOrder.getExportDisplayOrder();
-    		if (nCurrentOrder != nOrderToSet)
-    		{
-        		if (nOrderToSet > nCurrentOrder)
-        		{
-        			List<Question> questionList = QuestionHome.getListQuestionBetweenExportOrders(nIdForm, nCurrentOrder, nOrderToSet);
-        			for (Question question : questionList)
-            		{
-            			if (question.getExportDisplayOrder() != nCurrentOrder)
-            			{
-            				question.setExportDisplayOrder(question.getExportDisplayOrder() - 1);
-            				QuestionHome.update(question);
-            			}
-            		}
-        		}
-        		else
-        		{
-        			List<Question> questionList = QuestionHome.getListQuestionBetweenExportOrders(nIdForm, nOrderToSet, nCurrentOrder);
-        			for (Question question : questionList)
-            		{
-            			if (question.getExportDisplayOrder() != nCurrentOrder)
-            			{
-            				question.setExportDisplayOrder(question.getExportDisplayOrder() + 1);
-            				QuestionHome.update(question);
-            			}
-            		}
-        		}
-        		questionToChangeOrder.setExportDisplayOrder(nOrderToSet);
-        		QuestionHome.update(questionToChangeOrder);
-    		}
-        }
 
-    	Map<String, String> mapParameters = new LinkedHashMap<>( );
-        mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nIdForm ) );
-        mapParameters.put( PARAMETER_ACTIVE_TAB_PANNEL_2, String.valueOf(true));
-        return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
-    }
-    
     // TODO LUT-20544
     private List<Question> getListQuestionsWithExportDisplayOrderFixed( int nIdForm )
     {
