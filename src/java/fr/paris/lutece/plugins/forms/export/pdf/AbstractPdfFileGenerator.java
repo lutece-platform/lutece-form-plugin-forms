@@ -20,10 +20,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
-import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
-import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
@@ -37,11 +35,8 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.export.AbstractFileGenerator;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCamera;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeFile;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -80,19 +75,19 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 		super(fileName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription);
 		_formTitle = formTitle;
 	}
-
-	protected HtmlTemplate generateHtmlFromDefaultTemplate(Map<String, Object> model, FormResponse formResponse) throws Exception
+	
+	protected HtmlTemplate generateHtmlSingleFormResponsesFromTemplate(Map<String, Object> model, FormResponse formResponse) throws Exception
 	{
 		model.put( MARK_FORM_TITLE, _formTitle);
 		List<PdfCell> listPdfCell = new ArrayList<>();
 		listPdfCell.addAll(generateFirstFormResponseInfos(formResponse));
 		listPdfCell.addAll(getPdfCellValueFormsReponse( formResponse ));
-        model.put( MARK_PDF_CELL_LIST, listPdfCell );
-        
-        return AppTemplateService.getTemplate( DEFAULT_TEMPLATE, Locale.getDefault( ), model );
+		model.put( MARK_PDF_CELL_LIST, listPdfCell );
+		
+		return AppTemplateService.getTemplate( DEFAULT_TEMPLATE, Locale.getDefault( ), model );
 	}
 
-	protected HtmlTemplate generateHtmlMultipleFormResponsesFromDefaultTemplate(Map<String, Object> model, List<FormResponse> listFormResponse) throws Exception
+	protected HtmlTemplate generateHtmlMultipleFormResponsesFromTemplate(Map<String, Object> model, List<FormResponse> listFormResponse) throws Exception
 	{
 		model.put( MARK_FORM_TITLE, _formTitle);
 		List<PdfCell> listPdfCell = new ArrayList<>();
@@ -101,11 +96,11 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 			listPdfCell.addAll(generateFirstFormResponseInfos(formResponse));
 			listPdfCell.addAll(getPdfCellValueFormsReponse( formResponse ));
 		}
-        model.put( MARK_PDF_CELL_LIST, listPdfCell );
-        
-        return AppTemplateService.getTemplate( DEFAULT_TEMPLATE, Locale.getDefault( ), model );
+		model.put( MARK_PDF_CELL_LIST, listPdfCell );
+		
+		return AppTemplateService.getTemplate( DEFAULT_TEMPLATE, Locale.getDefault( ), model );
 	}
-	
+
 	private List<PdfCell> generateFirstFormResponseInfos(FormResponse formResponse)
 	{
 		List<PdfCell> pdfCells = new ArrayList<>();
@@ -122,7 +117,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 		
 		return pdfCells;
 	}
-	
+
 	private String formatDateFormResponse(FormResponse formResponse)
 	{
 		if (formResponse != null && formResponse.getUpdate() != null)
