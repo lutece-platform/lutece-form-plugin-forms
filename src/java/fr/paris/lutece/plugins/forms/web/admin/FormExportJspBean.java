@@ -226,30 +226,6 @@ public class FormExportJspBean extends AbstractJspBean
 
         return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
     }
-    
-    // TODO LUT-20544 : futur request method pour le bouton de changement d'ordre pour 1 ligne
-
-    // TODO LUT-20544
-    private List<Question> getListQuestionsWithExportDisplayOrderFixed( int nIdForm )
-    {
-    	List<Question> listQuestions = QuestionHome.getListQuestionByIdFormOrderByExportDisplayOrder( nIdForm );
-    	if (CollectionUtils.isNotEmpty(listQuestions))
-    	{
-    		int firstOrder = listQuestions.get(0).getExportDisplayOrder();
-    		if (firstOrder != 1)
-    		{
-    			int nNewOrder = 1;
-    			for (Question question : listQuestions)
-    			{
-    				question.setExportDisplayOrder(nNewOrder);
-    				QuestionHome.update(question);
-    				nNewOrder++;
-    			}
-    			return QuestionHome.getListQuestionByIdFormOrderByExportDisplayOrder( nIdForm );
-    		}
-    	}
-    	return listQuestions;
-    }
 
     @View( VIEW_CONFIG_REMOVE_EXPORT_CONFIG )
     public String getConfirmRemoveExportConfig( HttpServletRequest request ) throws AccessDeniedException
