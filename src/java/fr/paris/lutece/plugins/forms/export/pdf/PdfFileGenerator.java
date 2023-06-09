@@ -170,7 +170,7 @@ public class PdfFileGenerator extends AbstractPdfFileGenerator
 				}
 				
 				Map<String, Object> model = new HashMap<>( );
-				HtmlTemplate htmltemplate = generateHtmlMultipleFormResponsesFromDefaultTemplate(model, subListFormResponse);
+				HtmlTemplate htmltemplate = generateHtmlMultipleFormResponsesFromTemplate(model, subListFormResponse);
 				
 				String generatedName = generateMultiFormResponsesFileName(subListFormResponse, intStartIndex + 1, intEndIndexExcluded);
 				generatePdfFile(directoryFile, htmltemplate, generatedName);
@@ -191,7 +191,7 @@ public class PdfFileGenerator extends AbstractPdfFileGenerator
 				Map<String, Object> model = new HashMap<>( );
 				
 				FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-				HtmlTemplate htmltemplate = generateHtmlFromDefaultTemplate(model, formResponse);
+				HtmlTemplate htmltemplate = generateHtmlSingleFormResponsesFromTemplate(model, formResponse);
 				
 				String generatedName = generateFileName(formResponse);
 				generatePdfFile(directoryFile, htmltemplate, generatedName);
