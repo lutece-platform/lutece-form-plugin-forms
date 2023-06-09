@@ -8,7 +8,6 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 @Controller(controllerJsp = "ManageOrderExportableQuestion", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_QUESTION_EXPORT_ORDER_MANAGEMENT")
 public class ManageOrderExportableQuestion extends AbstractJspBean{
@@ -30,7 +29,6 @@ public class ManageOrderExportableQuestion extends AbstractJspBean{
                 {
                     List<Question> questionList = QuestionHome.getListQuestionByIdForm(nIdForm);
                     Question questionToChangeOrder2 = new Question();
-                    List<Integer> arrayOrder = new ArrayList<Integer>();
                     questionToChangeOrder.setExportDisplayOrder(nOrderToSet);
                     for (Integer i = 0; i < questionList.size(); i++)
                     {
@@ -41,16 +39,8 @@ public class ManageOrderExportableQuestion extends AbstractJspBean{
                         {
                             questionList.get(i).setExportDisplayOrder(nOrderToSet);
                         }
-                        arrayOrder.add(questionList.get(i).getExportDisplayOrder());
                     }
-
-                    for (Integer i = 1; i < questionList.size() + 1; i++)
-                    {
-                        if (!arrayOrder.contains(i))
-                        {
-                            questionToChangeOrder2.setExportDisplayOrder(i);
-                        }
-                    }
+                    questionToChangeOrder2.setExportDisplayOrder(nCurrentOrder);
                     QuestionHome.update(questionToChangeOrder);
                     QuestionHome.update(questionToChangeOrder2);
                 }
