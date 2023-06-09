@@ -37,7 +37,6 @@ import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.forms.export.SimplifiedQuestionExport;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -123,27 +122,11 @@ public class FormExportJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         
-        // List<Question> listQuestions = getListQuestionsWithExportDisplayOrderFixed(formToBeModified.getId( ));
         List<Question> listQuestions = QuestionHome.getListQuestionByIdFormOrderByExportDisplayOrder( formToBeModified.getId( ) );
-
-        List<String> mapIdQuestionOrder = new ArrayList<>( );
-        int questionIndex = 1;
-        for(Question question : listQuestions) {
-            if(question.getExportDisplayOrder() == 0) {
-                question.setExportDisplayOrder(questionIndex);
-            }
-            SimplifiedQuestionExport simplifiedQuestionExport = new SimplifiedQuestionExport(question.getId(),question.getExportDisplayOrder(), question.getStep().getTitle(), question.getTitle(), question.getEntry().isExportable(), question.getEntry().isExportable());
-
-        	mapIdQuestionOrder.add(simplifiedQuestionExport.toJson());
-            questionIndex++;
-
-        }
-     String questionsIdAndDisplayOrder = mapIdQuestionOrder.toString();
 
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, listQuestions );
-        model.put("questionsIdAndDisplayOrder",questionsIdAndDisplayOrder);
         model.put( MARK_EXPORT_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfigOption( formToBeModified, getLocale( ) ) );
         model.put( MARK_EXPORT_CONFIG_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) ) );
         model.put( MARK_ACTIVE_TAB_PANNEL_2, Boolean.parseBoolean( request.getParameter( PARAMETER_ACTIVE_TAB_PANNEL_2 )));
