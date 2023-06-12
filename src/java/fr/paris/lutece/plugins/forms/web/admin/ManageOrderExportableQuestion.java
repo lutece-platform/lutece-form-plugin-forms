@@ -28,21 +28,20 @@ public class ManageOrderExportableQuestion extends AbstractJspBean{
                 if (nCurrentOrder != nOrderToSet)
                 {
                     List<Question> questionList = QuestionHome.getListQuestionByIdForm(nIdForm);
-                    Question questionToChangeOrder2 = new Question();
                     questionToChangeOrder.setExportDisplayOrder(nOrderToSet);
                     for (Integer i = 0; i < questionList.size(); i++)
                     {
-                        if (nOrderToSet.equals(questionList.get(i).getExportDisplayOrder()) && !nIdQuestion.equals(questionList.get(i).getId()))
+                        if(nOrderToSet >= questionList.get(i).getExportDisplayOrder() && questionList.get(i).getExportDisplayOrder() >= nCurrentOrder && !nIdQuestion.equals(questionList.get(i).getId()))
                         {
-                            questionToChangeOrder2 = questionList.get(i);
-                        } else if (nCurrentOrder.equals(questionList.get(i).getExportDisplayOrder()) && nIdQuestion.equals(questionList.get(i).getId()))
+                            questionList.get(i).setExportDisplayOrder(questionList.get(i).getExportDisplayOrder()-1);
+                            QuestionHome.update(questionList.get(i));
+                        } else if(nOrderToSet <= questionList.get(i).getExportDisplayOrder() && questionList.get(i).getExportDisplayOrder() <= nCurrentOrder && !nIdQuestion.equals(questionList.get(i).getId()))
                         {
-                            questionList.get(i).setExportDisplayOrder(nOrderToSet);
+                            questionList.get(i).setExportDisplayOrder(questionList.get(i).getExportDisplayOrder()+1);
+                            QuestionHome.update(questionList.get(i));
                         }
                     }
-                    questionToChangeOrder2.setExportDisplayOrder(nCurrentOrder);
                     QuestionHome.update(questionToChangeOrder);
-                    QuestionHome.update(questionToChangeOrder2);
                 }
             }
             String strUrl = request.getRequestURL( ).toString();

@@ -95,7 +95,6 @@
 <@input type='hidden' name='id_question_${question.id}' value='${question.id}' />
 <@formGroup>
 <@inputGroup>
-
 <select id='export_display_order' name='export_display_order' class='form-select' onchange="location = this.value;">
     <#list 1..number_max_order as order>
     <#if order == question.exportDisplayOrder>
