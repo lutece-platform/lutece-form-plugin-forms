@@ -9,63 +9,87 @@
 <#assign field = getFieldByCode( entry, "autocomplete" ) >
 <#assign fLabel>${entry.title}<#if entry.mandatory><abbr class="main-warning-color" tabindex="0" title="#i18n{themeparisfr.labelMandatory}">*</abbr></#if></#assign>
 
-<!-- START if we want to display the error message in a alert class -->
+<!-- START if we want to display the error message in a alert class
 <#if entry.errorMessage??>
 <#assign EmptyErrorMessage>${entry.errorMessage}</#assign>
 </#if>
 <script type="module">
 	const errorMessage = "${EmptyErrorMessage}";
-	if(errorMessage != ""){
+	console.log("message"+errorMessage)
+	let input = document.getElementById("${idName}");
+
+	/* if(errorMessage != "" || errorMessage != null || errorMessage != undefined){
 		let input = document.getElementById("${idName}");
 		const submitButton = document.querySelector("button[type='submit']");
 		submitButton.addEventListener("click", function(event) {
 			if( input.value == "" || input.value == null || input.value == undefined ){
-				input.classList.add("error");
+				//input.classList.add("error");
 				const inputId = ` id="empty_alert_${idName}" `
 				const htmlToInsert = "<div "+inputId +`class='alert alert-danger'>${EmptyErrorMessage}</div>`;
 				input.parentNode.insertAdjacentHTML("beforeend", htmlToInsert);
 			}
 		});
+
+	 */
 		document.addEventListener("input", function(event) {
-			if(input.value != "" || input.value != null || input.value != undefined){
+			if(input.value != ""){
 				input.classList.remove("error");
 				document.querySelector(`#empty_alert_${idName}`).remove();
 			}
 		});
-	};
+//	};
 </script>
-<! -- END if we want to display the error message in a alert class -->
-
+-->
 <div class="form-group">
+
 	<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory><span aria-hidden="true"> *</span></#if></label>
-	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-		<!--START if we want to display the error message in a alert class -->
+	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 		<input type="tel" name="${idName}" id="${idName}"
-		<#if entry.mandatory>
+		<#if !entry.mandatory >
 		required
 	</#if>
-	class="form-control input-sm ${entry.CSSClass!}
-	<#if error??>error</#if>"
-value="${(response.toStringValueResponse)!}"
-<#if field??>autocomplete="${field.value!}"</#if>
-<#if placeholder!=''> placeholder='${placeholder}' </#if>>
-<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-<span class="help-block">${entry.helpMessage}</span>
+	class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>"value="${(response.toStringValueResponse)!}"<#if field??>autocomplete="${field.value!}"</#if><#if placeholder!=''> placeholder='${placeholder}' </#if>><#if entry.helpMessage?exists&&entry.helpMessage!=''><span class="help-block">${entry.helpMessage}</span></#if>
+<! -- END if we want to display the error message in a alert class -->
+<!-- START if we want to display the error message in a popup
+<script defer>
+	const errorMessage = "${EmptyErrorMessage}";
+</script>
+<#if entry.errorMessage??>
+<#assign EmptyErrorMessage>${entry.errorMessage}</#assign>
 </#if>
+<div class="form-group">
+	<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory><span aria-hidden="true"> *</span></#if></label>
+	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+		<input type="tel" name="${idName}" id="${idName}"
+		<#if entry.mandatory && EmptyErrorMessage??>
+		required
+		oninvalid="this.setCustomValidity(`${EmptyErrorMessage}`)"
+		oninput="this.setCustomValidity('')"
+	</#if>
+	<#if !entry.mandatory && !EmptyErrorMessage??>
+	required
+</#if>
+class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>"value="${(response.toStringValueResponse)!}"<#if field??>autocomplete="${field.value!}"</#if><#if placeholder!=''> placeholder='${placeholder}' </#if>><#if entry.helpMessage?exists&&entry.helpMessage!=''><span class="help-block">${entry.helpMessage}</span></#if>
+-->
+<! -- END if we want to display the error message in a popup-->
 
 </div>
 
 </div>
+
 <#if list_responses??>
 <#list list_responses as response>
 <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
 <div class="alert alert-danger">
 	<#assign error = response.entry.error>
 	<#if error.mandatoryError>
-	#i18n{forms.message.mandatory.entry}
+	<#if entry.errorMessage?? && entry.errorMessage!="">
+	${entry.errorMessage}
 	<#else>
-	${error.errorMessage}
+	#i18n{forms.message.mandatory.entry}
+</#if>
+<#else>
+${error.errorMessage}
 </#if>
 </div>
 </#if>
