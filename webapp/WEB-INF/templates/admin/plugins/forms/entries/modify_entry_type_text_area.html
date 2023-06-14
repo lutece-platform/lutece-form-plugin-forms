@@ -1,6 +1,6 @@
 <#include "/admin/util/editor/editor.html" />
 <#include "all_entry_commons.html" />
-  
+
 ${breadcrumb_template}
 <@row>
 	<@columns>
@@ -48,9 +48,9 @@ ${breadcrumb_template}
 							<#if field_max_size?number!=-1>
 								<#assign value='${field_max_size?number}' />
 							<#else>
-								<#assign value='' />
+								<#assign value='2000'/>
 							</#if>
-							<@input type='text' name='max_size_enter' id='max_size_enter' value=value />
+						<@input type='text' name='max_size_enter' id='max_size_enter' value=value />
 						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
@@ -90,7 +90,7 @@ ${breadcrumb_template}
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] size='' />
 							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
-						</@formGroup>		
+						</@formGroup>
 					</@fieldSet>
 				</@tform>
 			</@boxBody>

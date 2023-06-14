@@ -1,8 +1,8 @@
 
 <#include "all_entry_commons.html" />
- 
+
 ${breadcrumb_template}
-		
+
 <@row>
 	<@columns>
 		<@box>
@@ -17,7 +17,7 @@ ${breadcrumb_template}
 						</#if>
 						<@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
 						<@input type='hidden' name='id_step' value='${step.id!"0"}' />
-						
+
 						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
 							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
 						</@formGroup>
@@ -46,7 +46,7 @@ ${breadcrumb_template}
 							<@input type='text' name='height' id='height' value=getName('height_text_area',list_param_default_values) />
 						</@formGroup>
 						<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
-							<@input type='text' name='max_size_enter' id='max_size_enter' value=getName('max_size_enter',list_param_default_values) />
+							<@input type='text' name='max_size_enter' id='max_size_enter' value='2000' />
 						</@formGroup>
 						<@formGroup>
 							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
@@ -81,4 +81,3 @@ ${breadcrumb_template}
 <#include "/admin/util/editor/editor.html" />
 <@anonymPattern />
 <@initEditor />
- 
