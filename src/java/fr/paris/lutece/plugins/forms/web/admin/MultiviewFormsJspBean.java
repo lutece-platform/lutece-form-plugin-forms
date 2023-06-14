@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
@@ -155,7 +156,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private transient String _strFormSelectedValue = StringUtils.EMPTY;
     private transient List<IFormPanelDisplay> _listAuthorizedFormPanelDisplay;
     
-    private IAsyncUploadHandler _uploadHandler = AsynchronousUploadHandler.getHandler( );
+    private IAsyncUploadHandler _uploadHandler = FormsAsynchronousUploadHandler.getHandler( );
 
     /**
      * Return the view with the responses of all the forms
@@ -319,7 +320,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         MultiviewConfig config = MultiviewConfig.getInstance( );
         
         List<FileItem> listUniquefileItem = new ArrayList<>();
-        // _uploadHandler.removeSessionFiles( request.getSession( ) );
+        _uploadHandler.removeSessionFiles( request.getSession( ) );
         File fileTemplatePdf = FileHome.findByPrimaryKey(config.getIdFileTemplatePdf());
         if (fileTemplatePdf != null && fileTemplatePdf.getPhysicalFile() != null)
         {
@@ -327,7 +328,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         	if (physicalFileTemplatePdf != null)
         	{
         		FileItem fileItem = new GenAttFileItem( physicalFileTemplatePdf.getValue( ), fileTemplatePdf.getTitle( ) );
-    			// _uploadHandler.addFileItemToUploadedFilesList( fileItem, PARAMETER_UPLOAD_TEMPLATE_PDF, request );
+    			_uploadHandler.addFileItemToUploadedFilesList( fileItem, PARAMETER_UPLOAD_TEMPLATE_PDF, request );
     			listUniquefileItem.add(fileItem);	
         	}
         }
