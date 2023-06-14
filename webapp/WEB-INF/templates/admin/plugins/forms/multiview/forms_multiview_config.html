@@ -1,6 +1,5 @@
 <#include "/admin/plugins/asynchronousupload/upload_commons.html" />
 <@addRequiredJsFiles />
-<script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
 <@row>
     <@columns>
         <@box>
@@ -23,7 +22,7 @@
 						<@input type='number' name='pdf_number_of_response_per_file' id='pdf_number_of_response_per_file' value=multiview_config.numberOfFormResponsesPerPdf min=1 />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.multiview_config.labelUploadPdfTemplate}' helpKey='#i18n{forms.multiview_config.labelUploadPdfTemplate.help}' rows=2>
-						<@addFileInputAndfilesBox fieldName="upload_template" handler=uploadHandler listUploadedFiles=listUniqueFile inputCssClass='' />
+						<@addFileInputAndfilesBox fieldName="upload_template" handler=uploadHandler listUploadedFiles=listUniqueFile!'' inputCssClass='' />
 					</@formGroup>
 					
 					<@formsButton okAction='doSaveMultiviewConfig' viewAction='' />
