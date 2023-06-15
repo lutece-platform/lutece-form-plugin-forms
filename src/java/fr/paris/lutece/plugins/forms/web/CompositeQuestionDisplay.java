@@ -76,7 +76,7 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
- * 
+ *
  * Implementation of ICompositeDisplay for Question
  *
  */
@@ -99,7 +99,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     // Constants
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
     private static final String ILLUSTRATION_IMAGE = "illustration_image";
-    
+
     private Question _question;
     private final FormDisplay _formDisplay;
     private String _strIconName;
@@ -107,7 +107,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     /**
      * Constructor
-     * 
+     *
      * @param formDisplay
      *            the form display
      * @param formResponse
@@ -125,7 +125,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     /**
      * Initializes the composite
-     * 
+     *
      * @param formResponse
      *            the form response
      * @param nIterationNumber
@@ -151,7 +151,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     }
 
     /**
-     * 
+     *
      * @param formResponse
      *            the formResponse
      * @return the current question from the given formResponse
@@ -216,9 +216,9 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             	if( field.getCode( ).equals( ILLUSTRATION_IMAGE ) && field.getValue( ) != null )
             		fieldsList.put( field.getIdField( ), ImageResourceManager.getImageUrl( PUBLIC_IMAGE_RESOURCE, Integer.parseInt( field.getValue( ) ) )  );
             }
-            
+
             _model.put( MARK_FIELDS_LIST_BY_ID_ENTRIES, fieldsList );
-            
+
             strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale, _model, displayType );
 
             _model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
@@ -256,16 +256,16 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                         }
                     }
                 }
-                
+
                 // remove controls from other steps
                 listControl.removeAll(listOtherStepControl);
-                
+
                 _model.put(FormsConstants.MARK_LIST_CONTROL, listControl);
                 _model.put( FormsConstants.MARK_LIST_VALIDATOR, listValidator );
-                
+
                 ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
                 _model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator().getLabel() : LogicalOperator.AND.getLabel()) );
-                if (controlGroup != null && LogicalOperator.OR.getLabel().equals(controlGroup.getLogicalOperator())) {
+                if (controlGroup != null && LogicalOperator.OR.getLabel().equals(controlGroup.getLogicalOperator().getLabel())) {
                 	bOtherStepValidation = nValidControlsCount > 0;
                 } else {
                 	bOtherStepValidation = nNotValidControlsCount == 0;
@@ -283,7 +283,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     /**
      * Finds the responses associated to this instance among the specified list of form question responses
-     * 
+     *
      * @param listFormQuestionResponse
      *            the list of form question responses
      * @return the responses
@@ -311,7 +311,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
 
     /**
      * Finds the template to use for the specified display type
-     * 
+     *
      * @param displayType
      *            the display type
      * @return the template
@@ -385,7 +385,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     }
 
     /**
-     * 
+     *
      * @param listResponse
      *            The current question responses
      * @param displayType
