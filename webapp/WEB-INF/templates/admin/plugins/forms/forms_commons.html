@@ -393,18 +393,29 @@ $( function() {
 						<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
 							<@inputGroup>
 							<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-									<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
+									<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate' />
 									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
 									</@inputGroupItem>
 							</@inputGroup>
 						</@formGroup>
-					</@columns>       
+					</@columns>
+<script type="module">
+	const availabilityStartDate =  new Date('${availabilityStartDatestr}');
+	if(availabilityStartDate.toString() !== 'Invalid Date'){
+	const flatPickerDateTimeInputStartInput = document.getElementById('availabilityStartDate')
+	flatpickr(flatPickerDateTimeInputStartInput,
+			{
+				defaultDate: availabilityStartDate,
+				enableTime: true,
+			});
+	}
+</script>										
 					<@columns xs=12 sm=6>  
 						<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
 							<@inputGroup>
 							<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-									<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
+									<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' />
 									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
 									</@inputGroupItem>
@@ -412,6 +423,17 @@ $( function() {
 						</@formGroup>
 					</@columns>    
 				</@row>
+<script type="module">
+	const  availabilityEndDate =  new Date('${availabilityEndDatestr}');
+	if(availabilityEndDate.toString() !== 'Invalid Date'){
+	const flatPickerDateTimeInputEndInput = document.getElementById('availabilityEndDate')
+	const endDate = flatpickr(flatPickerDateTimeInputEndInput,
+			{
+				defaultDate: availabilityEndDate,
+				enableTime: true,
+			});
+	}
+</script>									
 				<@row>
 					<@columns xs=12 sm=12>
 						<@formGroup labelKey='#i18n{forms.modify_form.labelUnavailableMessage}' helpKey='#i18n{forms.modify_form.labelUnavailableMessage.help}' rows=2>
