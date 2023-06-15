@@ -427,7 +427,7 @@ $( function() {
 	const  availabilityEndDate =  new Date('${availabilityEndDatestr}');
 	if(availabilityEndDate.toString() !== 'Invalid Date'){
 	const flatPickerDateTimeInputEndInput = document.getElementById('availabilityEndDate')
-	const endDate = flatpickr(flatPickerDateTimeInputEndInput,
+	flatpickr(flatPickerDateTimeInputEndInput,
 			{
 				defaultDate: availabilityEndDate,
 				enableTime: true,
