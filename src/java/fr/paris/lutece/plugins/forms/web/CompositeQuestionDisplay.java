@@ -265,7 +265,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 
                 ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
                 _model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator().getLabel() : LogicalOperator.AND.getLabel()) );
-                if (controlGroup != null && LogicalOperator.OR.getLabel().equals(controlGroup.getLogicalOperator())) {
+                if (controlGroup != null && LogicalOperator.OR.getLabel().equals(controlGroup.getLogicalOperator().getLabel())) {
                 	bOtherStepValidation = nValidControlsCount > 0;
                 } else {
                 	bOtherStepValidation = nNotValidControlsCount == 0;
