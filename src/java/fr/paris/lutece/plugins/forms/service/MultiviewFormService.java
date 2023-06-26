@@ -48,6 +48,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
+import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryCartography;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntryGeolocation;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilterForms;
@@ -313,6 +314,11 @@ public final class MultiviewFormService
         if ( column instanceof FormColumnEntryGeolocation )
         {
             ( (FormColumnEntryGeolocation) column ).addEntryCode( question.getCode( ) );
+
+        }
+        if ( column instanceof FormColumnEntryCartography )
+        {
+            ( (FormColumnEntryCartography) column ).addEntryCode( question.getCode( ) );
 
         }
     }
