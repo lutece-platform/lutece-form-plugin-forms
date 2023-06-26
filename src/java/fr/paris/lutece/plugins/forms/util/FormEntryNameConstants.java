@@ -48,6 +48,9 @@ public final class FormEntryNameConstants
     public static final String COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_ADDR = "column_%s_addr_value";
     public static final String COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_X = "column_%s_x_value";
     public static final String COLUMN_ENTRY_GEOLOC_VALUE_PATTERN_Y = "column_%s_y_value";
+    
+    // Cartography Constants
+    public static final String COLUMN_ENTRY_CARTO_VALUE_PATTERN_GEOJSON = "column_%s_geojson_value";
 
     /**
      * Constructor
