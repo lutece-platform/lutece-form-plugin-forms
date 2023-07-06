@@ -478,9 +478,18 @@ public class FormControlJspBean extends AbstractJspBean
             nIdQuestion = FormsConstants.DEFAULT_ID_VALUE;
         } else if ( valSubmit != null && valSubmit.equals( FormsConstants.VALIDATE_QUESTION ) ) {
         	nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
-        } else {
-        	nIdQuestion = _control.getListIdQuestion( ).iterator( ).next( );
         }
+        else
+	    {
+        	if( _control.getListIdQuestion( ) != null && !_control.getListIdQuestion( ).isEmpty( ) )
+	    	{
+	    		nIdQuestion = _control.getListIdQuestion( ).iterator( ).next( );
+	    	}
+	    	else
+	    	{
+	    		nIdQuestion = FormsConstants.DEFAULT_ID_VALUE;
+	    	}
+	    }
 
         if ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE
                 && ( _control.getListIdQuestion( ) == null || _control.getListIdQuestion( ).stream( ).noneMatch( p -> p.equals( nIdQuestion ) ) ) )
