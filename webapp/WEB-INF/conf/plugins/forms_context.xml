@@ -28,6 +28,9 @@
     
     <!-- Services -->
     <bean id="forms.formDatabaseService" class="fr.paris.lutece.plugins.forms.service.FormDatabaseService" />
+
+	<!-- Cache -->
+	<bean id="forms.cacheService" class="fr.paris.lutece.plugins.forms.service.cache.FormsCacheService" init-method="initCache" />
     
     <!-- Export -->
     <bean id="forms.csvExport" class="fr.paris.lutece.plugins.forms.export.csv.CSVExport">

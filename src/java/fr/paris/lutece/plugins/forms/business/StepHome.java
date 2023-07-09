@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -47,6 +48,7 @@ public final class StepHome
 {
     // Static variable pointed at the DAO instance
     private static IStepDAO _dao = SpringContextService.getBean( "forms.stepDAO" );
+    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -66,7 +68,7 @@ public final class StepHome
     public static Step create( Step step )
     {
         _dao.insert( step, _plugin );
-
+        _cache.putInCache( _cache.getStepCacheKey( step.getId( ) ), step );
         return step;
     }
 
@@ -80,7 +82,7 @@ public final class StepHome
     public static Step update( Step step )
     {
         _dao.store( step, _plugin );
-
+        _cache.resetCache( ); // to account for Transition
         return step;
     }
 
@@ -93,6 +95,7 @@ public final class StepHome
     public static void remove( int nKey )
     {
         _dao.delete( nKey, _plugin );
+        _cache.resetCache( ); // to account for Transition
     }
 
     /**
@@ -104,7 +107,14 @@ public final class StepHome
      */
     public static Step findByPrimaryKey( int nKey )
     {
-        return _dao.load( nKey, _plugin );
+        String stepCacheKey = _cache.getStepCacheKey( nKey );
+        Step step = ( Step ) _cache.getFromCache( stepCacheKey );
+        if ( step == null )
+        {
+            step = _dao.load( nKey, _plugin );
+            _cache.putInCache( stepCacheKey, step );
+        }
+        return step;
     }
 
     /**
@@ -116,7 +126,14 @@ public final class StepHome
      */
     public static Step getInitialStep( int nIdForm )
     {
-        return _dao.selectInitialStep( nIdForm, _plugin );
+        String stepCacheKey = _cache.getInitialStepCacheKey( nIdForm );
+        Step step = (Step) _cache.getFromCache( stepCacheKey );
+        if ( step == null )
+        {
+            step = _dao.selectInitialStep( nIdForm, _plugin );
+            _cache.putInCache( stepCacheKey, step );
+        }
+        return step;
     }
 
     /**

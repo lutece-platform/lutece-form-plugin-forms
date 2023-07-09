@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.business;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -47,6 +48,7 @@ public final class FormDisplayHome
 {
     // Static variable pointed at the DAO instance
     private static IFormDisplayDAO _dao = SpringContextService.getBean( "forms.formDisplayDAO" );
+    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -80,7 +82,7 @@ public final class FormDisplayHome
     public static FormDisplay update( FormDisplay formDisplay )
     {
         _dao.store( formDisplay, _plugin );
-
+        _cache.resetCache( );
         return formDisplay;
     }
 
@@ -93,6 +95,7 @@ public final class FormDisplayHome
     public static void remove( int nKey )
     {
         _dao.delete( nKey, _plugin );
+        _cache.resetCache( );
     }
 
     /**
@@ -104,7 +107,13 @@ public final class FormDisplayHome
      */
     public static FormDisplay findByPrimaryKey( int nKey )
     {
-        FormDisplay formDisplay = _dao.load( nKey, _plugin );
+        String cacheKey = _cache.getFormDisplayCacheKey( nKey );
+        FormDisplay formDisplay = ( FormDisplay ) _cache.getFromCache( cacheKey );
+        if ( formDisplay == null )
+        {
+            formDisplay = _dao.load( nKey, _plugin );
+            _cache.putInCache( cacheKey, formDisplay );
+        }
         if ( formDisplay != null )
         {
             initConditionalDisplayForFormDisplay( formDisplay );
@@ -138,7 +147,14 @@ public final class FormDisplayHome
      */
     public static List<FormDisplay> getFormDisplayListByParent( int nIdStep, int nIdParent )
     {
-        List<FormDisplay> result = _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
+        String cacheKey = _cache.getFormDisplayListByParentCacheKey( nIdStep, nIdParent );
+        @SuppressWarnings( "unchecked" )
+        List<FormDisplay> result = ( List<FormDisplay> ) _cache.getFromCache( cacheKey );
+        if ( result == null )
+        {
+            result = _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
+            _cache.putInCache( cacheKey, result );
+        }
         for ( FormDisplay formDisplay : result )
         {
             initConditionalDisplayForFormDisplay( formDisplay );
