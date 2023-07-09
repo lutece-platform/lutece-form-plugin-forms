@@ -130,6 +130,52 @@ public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Fo
      **/
     private boolean _bAccessToResponsesByRole;
 
+    /**
+     * Default constructor
+     */
+    public Form( )
+    {
+        super( );
+    }
+
+    /**
+     * Copy constructor
+     * 
+     * Leaves out dynamic data
+     * 
+     * @param source
+     *            source Form to copy
+     */
+    Form( Form source )
+    {
+        _bAccessToResponsesByRole = source._bAccessToResponsesByRole;
+        _bAuthentificationNeeded = source._bAuthentificationNeeded;
+        _bBackupEnabled = source._bBackupEnabled;
+        _bCaptchaRecap = source._bCaptchaRecap;
+        _bCaptchaStepFinal = source._bCaptchaStepFinal;
+        _bCaptchaStepInitial = source._bCaptchaStepInitial;
+        _bCountResponses = source._bCountResponses;
+        _bDisplaySummary = source._bDisplaySummary;
+        _bOneResponseByUser = source._bOneResponseByUser;
+        _dateAvailabilityEndDate = source._dateAvailabilityEndDate;
+        _dateAvailabilityStartDate = source._dateAvailabilityStartDate;
+        _dateCreation = source._dateCreation;
+        _dateUpdate = source._dateUpdate;
+        _labelFinalButton = source._labelFinalButton;
+        // _listActions = null;
+        _logo = source._logo;
+        // _nCurrentNumberResponse = 0;
+        _nId = source._nId;
+        _nIdCategory = source._nIdCategory;
+        _nIdWorkflow = source._nIdWorkflow;
+        _nMaxNumberResponse = source._nMaxNumberResponse;
+        _strBreadcrumbName = source._strBreadcrumbName;
+        _strDescription = source._strDescription;
+        _strReturnUrl = source._strReturnUrl;
+        _strTitle = source._strTitle;
+        _strUnavailableMessage = source._strUnavailableMessage;
+        _strWorkgroup = source._strWorkgroup;
+    }
 
     /**
      * Returns the Id

@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
@@ -48,6 +49,7 @@ public final class QuestionHome
 {
     // Static variable pointed at the DAO instance
     private static IQuestionDAO _dao = SpringContextService.getBean( "forms.questionDAO" );
+    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -81,7 +83,7 @@ public final class QuestionHome
     public static Question update( Question question )
     {
         _dao.store( question, _plugin );
-
+        _cache.removeKey( _cache.getQuestionCacheKey( question.getId( ) ) );
         return question;
     }
 
@@ -99,6 +101,7 @@ public final class QuestionHome
             EntryHome.remove( questionToDelete.getIdEntry( ) );
         }
         _dao.delete( nKey, _plugin );
+        _cache.removeKey( _cache.getQuestionCacheKey( nKey ) );
     }
 
     /**
@@ -110,7 +113,19 @@ public final class QuestionHome
      */
     public static Question findByPrimaryKey( int nKey )
     {
-        return _dao.load( nKey, _plugin );
+        String cacheKey = _cache.getQuestionCacheKey( nKey );
+        Question question = ( Question ) _cache.getFromCache( cacheKey );
+        if ( question == null )
+        {
+            question = _dao.load( nKey, _plugin );
+            _cache.putInCache( cacheKey, question );
+        }
+        else
+        {
+            question = new Question( question );
+        }
+        // return a copy to prevent dynamic members sharing
+        return question;
     }
 
     /**
