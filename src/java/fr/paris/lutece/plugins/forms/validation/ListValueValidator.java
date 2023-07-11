@@ -130,13 +130,10 @@ public class ListValueValidator extends AbstractValidator
     @Override
     public boolean validate( FormQuestionResponse questionResponse, Control control )
     {
-    	if (CollectionUtils.isEmpty(questionResponse.getEntryResponse()))
-    	{
-    		return false;
-    	}
-        for ( Response response : questionResponse.getEntryResponse( ) )
+    	for ( Response response : questionResponse.getEntryResponse( ) )
         {
-        	if (response.getField() == null || !control.getValue().equals(Integer.toString(response.getField().getIdField())))
+        	if (response.getField() != null && response.getField().getIdField() > 0
+        			&& !control.getValue().equals(Integer.toString(response.getField().getIdField())))
         	{
         		return false;
         	}

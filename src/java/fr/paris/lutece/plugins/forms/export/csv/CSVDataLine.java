@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.util.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -135,6 +136,12 @@ public class CSVDataLine
                         I18nService.getDefaultLocale( ) );
                 if ( strResponseValue != null )
                 {
+                	int nIterationNumber = response.getIterationNumber();
+                	if (nIterationNumber == NumberUtils.INTEGER_MINUS_ONE)
+                	{
+                		nIterationNumber = formQuestionResponse.getQuestion().getIterationNumber();
+                	}
+                	
                 	if (mapResponseValue.containsKey(response.getIterationNumber()))
                 	{
                 		mapResponseValue.get(response.getIterationNumber()).add(strResponseValue);
@@ -143,7 +150,7 @@ public class CSVDataLine
                 	{
                 		List<String> listResponseValue = new ArrayList<>();
                 		listResponseValue.add(strResponseValue);
-                		mapResponseValue.put(response.getIterationNumber(), listResponseValue);
+                		mapResponseValue.put(nIterationNumber, listResponseValue);
                 	}
                 }
             }

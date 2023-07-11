@@ -374,10 +374,10 @@ $( function() {
 					<@input type='text' name='title' value='${form.title!}' />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
-						<@input type='textarea' name='description'>${form.description!}</@input>
+					<@input type='textarea' name='description'>${form.description!}</@input>
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.modify_form.labelCategory}' helpKey='#i18n{forms.modify_form.labelCategory.help}' rows=2>
-						<@select name='id_category' items=categoryList default_value='${form.idCategory!}' />
+					<@select name='id_category' items=categoryList default_value='${form.idCategory!}' />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.modify_form.labelLogo}' helpKey='#i18n{forms.modify_form.labelLogo.help}' rows=2>
 					<@addFileInput fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' cssClass='' multiple=true />
@@ -392,7 +392,7 @@ $( function() {
 					<@columns xs=12 sm=6>   
 						<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
 							<@inputGroup>
-							<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
+							<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?iso_local_nz></#if>
 									<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
 									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
@@ -403,7 +403,7 @@ $( function() {
 					<@columns xs=12 sm=6>  
 						<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
 							<@inputGroup>
-							<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
+							<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?iso_local_nz></#if>
 									<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
 									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
