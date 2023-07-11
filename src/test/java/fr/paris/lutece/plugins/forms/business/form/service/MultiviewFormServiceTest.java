@@ -69,7 +69,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
     }
 
     /**
-     * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)}
+     * Test of the method {@link MultiviewFormService#findActiveFormPanel(List)}
      */
     public void testFindActiveFormPanel( )
     {
@@ -86,7 +86,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
     }
 
     /**
-     * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)} with several panels
+     * Test of the method {@link MultiviewFormService#findActiveFormPanel(List)} with several panels
      */
     public void testFindActiveFormPanelWithSeveralPanels( )
     {
@@ -105,7 +105,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
     }
 
     /**
-     * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)} with null list of
+     * Test of the method {@link MultiviewFormService#findActiveFormPanel(List)} with null list of
      * FormPanelDisplay
      */
     public void testFindActiveFormPanelWithNullList( )
@@ -121,7 +121,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
     }
 
     /**
-     * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)} with empty list of
+     * Test of the method {@link MultiviewFormService#findActiveFormPanel(List)} with empty list of
      * FormPanelDisplay
      */
     public void testFindActiveFormPanelWithEmptyList( )
@@ -137,7 +137,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
     }
 
     /**
-     * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)} with none active panels
+     * Test of the method {@link MultiviewFormService#findActiveFormPanel(List)} with none active panels
      */
     public void testFindActiveFormPanelWithNoneActivePanels( )
     {
@@ -154,7 +154,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
     }
 
     /**
-     * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)} with several active panels
+     * Test of the method {@link MultiviewFormService#findActiveFormPanel(List)} with several active panels
      */
     public void testFindActiveFormPanelWithSeveralActivePanels( )
     {

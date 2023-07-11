@@ -389,7 +389,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         {
             ReferenceList referenceListFilterValues = new ReferenceList( );
 
-            for ( Map.Entry<String, String> entryFilterNameValue : mapFilterNameValues.entrySet( ) )
+            for ( Entry<String, String> entryFilterNameValue : mapFilterNameValues.entrySet( ) )
             {
                 ReferenceItem referenceItem = new ReferenceItem( );
                 referenceItem.setCode( entryFilterNameValue.getKey( ) );
