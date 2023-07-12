@@ -35,10 +35,8 @@ package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -125,7 +123,7 @@ public class FormExportJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         
-        List<Question> listQuestions = QuestionHome.getListQuestionByIdFormOrderByExportDisplayOrder( formToBeModified.getId( ) );
+        List<Question> listQuestions = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
         Collections.sort(listQuestions, Comparator.comparingInt(Question::getExportDisplayOrder));
        Collections.reverse(listQuestions);
        // Set an order to the questions that have no order yet
@@ -150,9 +148,6 @@ public class FormExportJspBean extends AbstractJspBean
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
     }
-
-    private static final String PARAMETER_MANAGE_EXPORT_JSP = "ManageFormExport.jsp";
-    private static final String VIEW_MANAGE_EXPORT_TAB_PANNEL_2 = "manageExportTabPannel2";
 
     @Action( "changeExportDisplayOrder" )
     public String reOrderExportDisplayOrder(HttpServletRequest request) throws IOException {
