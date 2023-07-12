@@ -236,15 +236,5 @@ public final class QuestionHome
     {
         return _dao.selectQuestionsReferenceListByForm( nIdForm, _plugin );
     }
-    
-    public static List<Question> getListQuestionByIdFormOrderByExportDisplayOrder( int nIdForm )
-    {
-    	return _dao.selectQuestionsListByFormOrderByExportDisplayOrder(nIdForm, _plugin);
-    }
-    
-    public static List<Question> getListQuestionBetweenExportOrders( int nIdForm, int nExportOrder1, int nExportOrder2)
-    {
-    	return _dao.selectQuestionsListByFormIdBetweenExportOrders(nIdForm, nExportOrder1, nExportOrder2, _plugin);
-    }
 
 }

@@ -33,9 +33,12 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -123,7 +126,16 @@ public class FormExportJspBean extends AbstractJspBean
         }
         
         List<Question> listQuestions = QuestionHome.getListQuestionByIdFormOrderByExportDisplayOrder( formToBeModified.getId( ) );
-
+        Collections.sort(listQuestions, Comparator.comparingInt(Question::getExportDisplayOrder));
+       Collections.reverse(listQuestions);
+       // Set an order to the questions that have no order yet
+        for (int i = 0; i < listQuestions.size(); i++) {
+           if(listQuestions.get(i).getExportDisplayOrder() == 0) {
+               int newOrder = i + 1;
+        	   listQuestions.get(i).setExportDisplayOrder(newOrder);
+                QuestionHome.update( listQuestions.get(i) );
+           }
+        }
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, listQuestions );
@@ -137,6 +149,47 @@ public class FormExportJspBean extends AbstractJspBean
         }
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
+    }
+
+    private static final String PARAMETER_MANAGE_EXPORT_JSP = "ManageFormExport.jsp";
+    private static final String VIEW_MANAGE_EXPORT_TAB_PANNEL_2 = "manageExportTabPannel2";
+
+    @Action( "changeExportDisplayOrder" )
+    public String reOrderExportDisplayOrder(HttpServletRequest request) throws IOException {
+        Integer nIdForm = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_FORM));
+        Integer nIdQuestion = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_QUESTION));
+        Integer nOrderToSet = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_EXPORT_DISPLAY_ORDER));
+        Question questionToChangeOrder = QuestionHome.findByPrimaryKey(nIdQuestion);
+        Integer nCurrentOrder = questionToChangeOrder.getExportDisplayOrder();
+        List<Question> questionList = QuestionHome.getListQuestionByIdForm(nIdForm);
+        questionToChangeOrder.setExportDisplayOrder(nOrderToSet);
+
+        questionList.stream().filter(question -> question.getId() == nIdQuestion).findFirst().ifPresent(question -> questionList.remove(question));
+        // sort the list
+        Collections.sort(questionList, Comparator.comparingInt(Question::getExportDisplayOrder));
+        Collections.reverse(questionList);
+
+         if(nCurrentOrder > nOrderToSet) {
+            questionList.stream().filter(question -> question.getExportDisplayOrder() >= nOrderToSet && question.getExportDisplayOrder() <= nCurrentOrder).forEach(question -> question.setExportDisplayOrder(question.getExportDisplayOrder() + 1));
+        }
+        else if(nCurrentOrder < nOrderToSet) {
+            if(nOrderToSet == questionList.size()+1) {
+                for (int i = 0; i < questionList.size(); i++) {
+                    questionList.get(i).setExportDisplayOrder(i+1);
+                }
+            } else {
+                questionList.stream().filter(question -> question.getExportDisplayOrder() <= nOrderToSet && question.getExportDisplayOrder() >= nCurrentOrder).forEach(question -> question.setExportDisplayOrder(question.getExportDisplayOrder() - 1));
+            }
+            }
+        questionList.add(questionToChangeOrder);
+
+        // update the list
+        questionList.forEach(question -> QuestionHome.update(question));
+        Map<String, String> mapParameters = new LinkedHashMap<>();
+        mapParameters.put(FormsConstants.PARAMETER_ID_FORM, String.valueOf(nIdForm));
+        mapParameters.put(PARAMETER_ACTIVE_TAB_PANNEL_2, "true");
+
+        return redirect(request, VIEW_MANAGE_EXPORT, mapParameters);
     }
 
     @Action( ACTION_CREATE_EXPORT_CONFIG )

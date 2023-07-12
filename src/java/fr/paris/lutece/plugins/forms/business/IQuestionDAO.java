@@ -198,25 +198,4 @@ public interface IQuestionDAO
      * @return The referenceList which contains the data of all the question objects
      */
     ReferenceList selectQuestionsReferenceListByForm( int nIdForm, Plugin plugin );
-    
-    /**
-     * Load the data of all the question objects by form id and returns them as a list orderred by export_display_order
-     * 
-     * @param nIdForm
-     * @param plugin
-     * @return
-     */
-    List<Question> selectQuestionsListByFormOrderByExportDisplayOrder(int nIdForm, Plugin plugin);
-
-    /**
-     * Load the data of the question objects by form id between 2 export_display_order and returns them as a list
-     * 
-     * @param nIdForm
-     * @param nExportOrder1
-     * @param nExportOrder2
-     * @param plugin
-     * @return
-     */
-	List<Question> selectQuestionsListByFormIdBetweenExportOrders(int nIdForm, int nExportOrder1, int nExportOrder2,
-			Plugin plugin);
 }

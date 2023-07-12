@@ -98,10 +98,10 @@
 <select id='export_display_order' name='export_display_order' class='form-select' onchange="location = this.value;">
     <#list 1..number_max_order as order>
     <#if order == question.exportDisplayOrder>
-    <option value="jsp/admin/plugins/forms/ManageOrderExportableQuestion.jsp?actionName=doChangeOrderExportableQuestion&id_form=${form.id}&id_question=${question.id}&export_display_order=${order}" selected='selected'>${order}</a>
+    <option disabled value="jsp/admin/plugins/forms/ManageFormExport.jsp?action=changeExportDisplayOrder&id_form=${form.id}&id_question=${question.id}&export_display_order=${order}" selected='selected'>${order}</a>
     </option>
     <#else>
-    <option value="jsp/admin/plugins/forms/ManageOrderExportableQuestion.jsp?actionName=doChangeOrderExportableQuestion&id_form=${form.id}&id_question=${question.id}&export_display_order=${order}">${order}</a>
+    <option value="jsp/admin/plugins/forms/ManageFormExport.jsp?action=changeExportDisplayOrder&id_form=${form.id}&id_question=${question.id}&export_display_order=${order}">${order}</a>
     </option>
 </#if>
 </#list>
