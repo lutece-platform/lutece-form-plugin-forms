@@ -1,11 +1,4 @@
 /* Portal admin override 														*/
-/* Override overflow to set sticky aside multiview and head forms management 	*/
-html {  /* Sticky footer styles */ position: relative; min-height: 100%;}
-body{ padding-bottom: 70px; }
-body, .wrapper{ height: 100%; overflow: visible; }
-#admin-wrapper{ margin-bottom: 0 }
-#admin-wrapper .content{ min-height: auto;}
-
 /* Editor Override to prevent toolbar to be under header 						*/
 .mce-fullscreen { z-index: 9000 !important;}
 
