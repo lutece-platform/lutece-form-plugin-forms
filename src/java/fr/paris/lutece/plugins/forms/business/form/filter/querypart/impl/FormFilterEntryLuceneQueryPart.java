@@ -140,7 +140,7 @@ public class FormFilterEntryLuceneQueryPart extends AbstractFormFilterLuceneQuer
      * @param response
      * @return the field name
      */
-    private String getFieldName( fr.paris.lutece.plugins.genericattributes.business.Field responseField )
+    private String getFieldName( Field responseField )
     {
         if ( responseField.getIdField( ) > 0 )
         {

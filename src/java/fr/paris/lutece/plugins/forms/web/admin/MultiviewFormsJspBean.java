@@ -288,7 +288,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      * @param request
      *            The HTTP request
      * @return The multiview config page
-     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     * @throws AccessDeniedException
      */
     @View( value = VIEW_MULTIVIEW_CONFIG )
     public String getMultiviewConfig( HttpServletRequest request ) throws AccessDeniedException

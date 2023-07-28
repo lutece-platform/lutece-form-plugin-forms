@@ -117,7 +117,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
         List<String> listEntryValues = new ArrayList<>( );
         if ( formColumnCell != null && formColumnCell.getFormColumnCellValues( ).size( ) > 0 )
         {
-            for ( java.util.Map.Entry<String, Object> entry : formColumnCell.getFormColumnCellValues( ).entrySet( ) )
+            for ( Map.Entry<String, Object> entry : formColumnCell.getFormColumnCellValues( ).entrySet( ) )
             {
                 Object objEntryValue = entry.getValue( );
                 String objEntryKey = entry.getKey( );
