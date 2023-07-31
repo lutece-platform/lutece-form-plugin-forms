@@ -33,19 +33,18 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
-import fr.paris.lutece.plugins.workflowcore.business.action.Action;
-import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.util.ReferenceList;
-import fr.paris.lutece.util.sql.DAOUtil;
 import java.sql.Statement;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
+
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.util.ReferenceList;
+import fr.paris.lutece.util.sql.DAOUtil;
 
 /**
  * This class provides Data Access methods for Question objects
@@ -65,9 +64,7 @@ public final class QuestionDAO implements IQuestionDAO
     private static final String SQL_QUERY_SELECT_BY_STEP = SQL_QUERY_SELECT_ALL + " WHERE id_step = ?";
     private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title, fq.code, fq.description, fq.id_entry, fq.id_step, fq.is_visible_multiview_global, fq.is_visible_multiview_form_selected , fq.column_title, fq.is_filterable_multiview_global, fq.is_filterable_multiview_form_selected,fq.multiview_column_order,fq.export_display_order FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
     private static final String SQL_QUERY_SELECT_IN = SQL_QUERY_SELECT_ALL + " WHERE id_question IN ( ";
-    private static final String SQL_QUERY_SELECTALL_BY_FORM_ORDER_BY_EXPORT_ORDER = SQL_QUERY_SELECTALL_BY_FORM + " ORDER BY fq.export_display_order ASC";
-    private static final String SQL_QUERY_SELECT_BY_FORM_BETWEEN_EXPORT_ORDERS = SQL_QUERY_SELECTALL_BY_FORM + " AND (fq.export_display_order BETWEEN ? AND ?) ORDER BY fq.export_display_order ASC";
-
+    
     /**
      * {@inheritDoc }
      */
@@ -473,48 +470,5 @@ public final class QuestionDAO implements IQuestionDAO
 
         return question;
     }
-    
-    @Override
-    public List<Question> selectQuestionsListByFormOrderByExportDisplayOrder (int nIdForm, Plugin plugin)
-    {
-    	List<Question> questionList = new ArrayList<>( );
-
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM_ORDER_BY_EXPORT_ORDER, plugin ) )
-        {
-            daoUtil.setInt( 1, nIdForm );
-            daoUtil.executeQuery( );
-
-            while ( daoUtil.next( ) )
-            {
-                questionList.add( dataToObject( daoUtil ) );
-            }
-            for ( Question quest : questionList )
-            {
-
-                quest.setEntry( getQuestionEntry( quest.getIdEntry( ) ) );
-
-            }
-        }
-        return questionList;
-    }
-    
-    @Override
-    public List<Question> selectQuestionsListByFormIdBetweenExportOrders (int nIdForm,  int nExportOrder1, int nExportOrder2, Plugin plugin)
-    {
-    	List<Question> questionList = new ArrayList<>( );
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_FORM_BETWEEN_EXPORT_ORDERS, plugin ) )
-        {
-        	daoUtil.setInt( 1, nIdForm );
-            daoUtil.setInt( 2, nExportOrder1 );
-            daoUtil.setInt( 3, nExportOrder2 );
-            daoUtil.executeQuery( );
-
-            while ( daoUtil.next( ) )
-            {
-                questionList.add( dataToObject( daoUtil ) );
-            }
-        }
-        return questionList;
-    }
-    
+ 
 }
