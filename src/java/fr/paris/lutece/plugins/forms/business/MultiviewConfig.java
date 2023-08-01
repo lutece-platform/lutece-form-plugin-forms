@@ -44,6 +44,7 @@ public class MultiviewConfig
     boolean _bDisplayFormsAssigneeColumn;
     String _strCsvSeparator;
     int _intNumberOfFormResponsesPerPdf;
+    int _nIdFileTemplatePdf;
 
 	/**
      * Private constructor for singleton pattern
@@ -60,6 +61,9 @@ public class MultiviewConfig
         
         String strNumberOfFormResponsesPerPdf = DatastoreService.getDataValue( FormsConstants.DS_KEY_FORM_PDF_NUMBER_OF_RESPONSES_PER_FILE, "1" );
         _intNumberOfFormResponsesPerPdf = Integer.parseInt(strNumberOfFormResponsesPerPdf);
+        
+        String strIdFileTemplatePdf = DatastoreService.getDataValue( FormsConstants.DS_KEY_FORM_ID_FILE_TEMPLATE_PDF, null );
+        _nIdFileTemplatePdf = strIdFileTemplatePdf != null ? Integer.parseInt(strIdFileTemplatePdf) : FormsConstants.DEFAULT_ID_VALUE;
     }
 
 	/**
@@ -141,7 +145,15 @@ public class MultiviewConfig
 		_intNumberOfFormResponsesPerPdf = intNumberOfFormResponsesPerPdf;
 	}
 
-    /**
+    public int getIdFileTemplatePdf() {
+		return _nIdFileTemplatePdf;
+	}
+
+	public void setIdFileTemplatePdf(int nIdFileTemplatePdf) {
+		this._nIdFileTemplatePdf = nIdFileTemplatePdf;
+	}
+
+	/**
      * Save the config
      */
     public void save( )
@@ -154,5 +166,8 @@ public class MultiviewConfig
         
         String strNumberOfFormResponsesPerPdf = Integer.toString(_intNumberOfFormResponsesPerPdf);
         DatastoreService.setDataValue( FormsConstants.DS_KEY_FORM_PDF_NUMBER_OF_RESPONSES_PER_FILE, strNumberOfFormResponsesPerPdf );
+        
+        String strIdFileTemplatePdf = Integer.toString(_nIdFileTemplatePdf);
+        DatastoreService.setDataValue( FormsConstants.DS_KEY_FORM_ID_FILE_TEMPLATE_PDF, strIdFileTemplatePdf );
     }
 }

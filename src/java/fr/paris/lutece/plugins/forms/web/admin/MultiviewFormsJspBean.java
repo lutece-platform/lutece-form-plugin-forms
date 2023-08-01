@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -41,10 +42,14 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadHandler;
+import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.filegenerator.service.TemporaryFileGeneratorService;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -72,6 +77,11 @@ import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListPositionCom
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.FormListTemplateBuilder;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.MultiviewFormUtil;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
+import fr.paris.lutece.plugins.genericattributes.business.GenAttFileItem;
+import fr.paris.lutece.portal.business.file.File;
+import fr.paris.lutece.portal.business.file.FileHome;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
@@ -82,6 +92,8 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
+import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
+import fr.paris.lutece.util.filesystem.FileSystemUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -123,6 +135,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String PARAMETER_DISPLAY_FORMS_PDF_NUMBER_OF_RESPONSES_PER_FILE = "pdf_number_of_response_per_file";
     private static final String PARAMETER_DISPLAY_ASSIGNEE_COLUMN = "display_assignee_column";
     private static final String PARAMETER_CHANGE_PANEL = "change_panel";
+    private static final String PARAMETER_UPLOAD_TEMPLATE_PDF = "upload_template";
 
     // Marks
     private static final String MARK_LOCALE = "locale";
@@ -132,6 +145,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String MARK_FORM_FILTER_LIST = "form_filter_list";
     private static final String MARK_TABLE_TEMPLATE = "table_template";
     private static final String MARK_LIST_FORMAT_EXPORT = "format_export_list";
+    private static final String MARK_LIST_UNIQUE_FILE = "listUniqueFile";
     // Session variables
     private String _strSelectedPanelTechnicalCode = StringUtils.EMPTY;
     private transient List<IFormColumn> _listFormColumn;
@@ -141,6 +155,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private transient IFormPanelDisplay _formPanelDisplayActive;
     private transient String _strFormSelectedValue = StringUtils.EMPTY;
     private transient List<IFormPanelDisplay> _listAuthorizedFormPanelDisplay;
+    
+    private IAsyncUploadHandler _uploadHandler = FormsAsynchronousUploadHandler.getHandler( );
 
     /**
      * Return the view with the responses of all the forms
@@ -302,10 +318,26 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         }
 
         MultiviewConfig config = MultiviewConfig.getInstance( );
+        
+        List<FileItem> listUniquefileItem = new ArrayList<>();
+        _uploadHandler.removeSessionFiles( request.getSession( ) );
+        File fileTemplatePdf = FileHome.findByPrimaryKey(config.getIdFileTemplatePdf());
+        if (fileTemplatePdf != null && fileTemplatePdf.getPhysicalFile() != null)
+        {
+        	PhysicalFile physicalFileTemplatePdf = PhysicalFileHome.findByPrimaryKey(fileTemplatePdf.getPhysicalFile().getIdPhysicalFile());
+        	if (physicalFileTemplatePdf != null)
+        	{
+        		FileItem fileItem = new GenAttFileItem( physicalFileTemplatePdf.getValue( ), fileTemplatePdf.getTitle( ) );
+    			_uploadHandler.addFileItemToUploadedFilesList( fileItem, PARAMETER_UPLOAD_TEMPLATE_PDF, request );
+    			listUniquefileItem.add(fileItem);	
+        	}
+        }
 
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_MULTIVIEW_CONFIG, config );
         model.put( FormsConstants.MARK_FORM_USERASSIGNMENT_ENABLED, PluginService.isPluginEnable( "forms-userassignment" ) );
+        model.put( FormsConstants.MARK_UPLOAD_HANDLER, _uploadHandler );
+    	model.put( MARK_LIST_UNIQUE_FILE, listUniquefileItem );
 
         return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW_CONFIG, model );
     }
@@ -341,6 +373,19 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         String strDisplayFormColumnAssignee = request.getParameter( PARAMETER_DISPLAY_ASSIGNEE_COLUMN );
         config.setDisplayFormsAssigneeColumn( strDisplayFormColumnAssignee != null );
 
+        File fileFromDB = FileHome.findByPrimaryKey(config.getIdFileTemplatePdf());
+        int nIdFile = FormsConstants.DEFAULT_ID_VALUE;
+        if (fileFromDB != null)
+        {
+        	FileHome.remove(fileFromDB.getIdFile());
+        }
+        File fileToUpload = getTemplateFileFromRequest(request);
+        if (fileToUpload != null)
+        {
+        	nIdFile = FileHome.create( fileToUpload );
+        }
+        config.setIdFileTemplatePdf(nIdFile);
+        
         config.save( );
 
         return redirectView( request, VIEW_MULTIVIEW_FORMS );
@@ -609,5 +654,33 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         }
 
         return bIdFormHasChanged;
+    }
+    
+    private File getTemplateFileFromRequest( HttpServletRequest request )
+    {
+    	if (request instanceof MultipartHttpServletRequest)
+    	{
+    		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        	List<FileItem> listUploadedFileItems = multipartRequest.getFileList(PARAMETER_UPLOAD_TEMPLATE_PDF);
+        	if (CollectionUtils.isNotEmpty(listUploadedFileItems))
+        	{
+        		for ( FileItem fileItem : listUploadedFileItems )
+                {
+                	if (fileItem != null)
+                    {
+                    	File file = new File( );
+                        file.setTitle( fileItem.getName( ) );
+                        file.setSize( ( fileItem.getSize( ) < Integer.MAX_VALUE ) ? (int) fileItem.getSize( ) : Integer.MAX_VALUE );
+                        file.setMimeType( FileSystemUtil.getMIMEType( file.getTitle( ) ) );
+
+                        PhysicalFile physicalFile = new PhysicalFile( );
+                        physicalFile.setValue( fileItem.get( ) );
+                        file.setPhysicalFile( physicalFile );
+                        return file;
+                    }
+                }
+        	}
+    	}
+        return null;
     }
 }
