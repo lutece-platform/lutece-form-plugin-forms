@@ -42,7 +42,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
@@ -92,7 +91,6 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
-import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.filesystem.FileSystemUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.url.UrlItem;
@@ -156,7 +154,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private transient String _strFormSelectedValue = StringUtils.EMPTY;
     private transient List<IFormPanelDisplay> _listAuthorizedFormPanelDisplay;
     
-    private IAsyncUploadHandler _uploadHandler = FormsAsynchronousUploadHandler.getHandler( );
+    private IAsyncUploadHandler _uploadHandler = AsynchronousUploadHandler.getHandler( );
 
     /**
      * Return the view with the responses of all the forms
@@ -658,10 +656,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     
     private File getTemplateFileFromRequest( HttpServletRequest request )
     {
-    	if (request instanceof MultipartHttpServletRequest)
-    	{
-    		MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        	List<FileItem> listUploadedFileItems = multipartRequest.getFileList(PARAMETER_UPLOAD_TEMPLATE_PDF);
+	    	_uploadHandler.addFilesUploadedSynchronously( request, PARAMETER_UPLOAD_TEMPLATE_PDF );
+	    	List<FileItem> listUploadedFileItems = _uploadHandler.getListUploadedFiles( PARAMETER_UPLOAD_TEMPLATE_PDF, request.getSession( ) );
         	if (CollectionUtils.isNotEmpty(listUploadedFileItems))
         	{
         		for ( FileItem fileItem : listUploadedFileItems )
@@ -680,7 +676,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                     }
                 }
         	}
-    	}
-        return null;
+        	return null;
     }
 }
