@@ -92,8 +92,8 @@ public class FormExportJspBean extends AbstractJspBean
     private static final String ACTION_REMOVE_EXPORT_CONFIG = "removeExportConfig";
     private static final String ACTION_MOVE_UP_EXPORT_CONFIG = "doMoveUpExportConfig";
     private static final String ACTION_MOVE_DOWN_EXPORT_CONFIG = "doMoveDownExportConfig";
-    private static final String ACTION_MODIFY_EXPORTABLE_QUESTIONS = "modifyExportableQuestions";
-    private static final String ACTION_CHANGE_ORDER_EXPORTABLE_QUESTION = "doChangeOrderExportableQuestion";
+    private static final String ACTION_MODIFY_EXPORTABLE_QUESTION = "modifyExportableQuestion";
+    private static final String ACTION_MODIFY_EXPORT_DISPLAY_ORDER= "modifyExportDisplayOrder";
 
     // Parameters
     private static final String PARAMETER_EXPORT_CONFIG = "export_config";
@@ -149,10 +149,18 @@ public class FormExportJspBean extends AbstractJspBean
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
     }
 
-    @Action( "changeExportDisplayOrder" )
-    public String reOrderExportDisplayOrder(HttpServletRequest request) throws IOException {
+    @Action( ACTION_MODIFY_EXPORT_DISPLAY_ORDER )
+    public String doModifyExportDisplayOrder(HttpServletRequest request) throws AccessDeniedException {
         Integer nIdForm = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_FORM));
         Integer nIdQuestion = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_QUESTION));
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirect( request, VIEW_MANAGE_FORMS );
+        }
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_EXPORT_CONFIG );
+
         Integer nOrderToSet = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_EXPORT_DISPLAY_ORDER));
         Question questionToChangeOrder = QuestionHome.findByPrimaryKey(nIdQuestion);
         Integer nCurrentOrder = questionToChangeOrder.getExportDisplayOrder();
@@ -187,6 +195,37 @@ public class FormExportJspBean extends AbstractJspBean
         return redirect(request, VIEW_MANAGE_EXPORT, mapParameters);
     }
 
+    @Action( ACTION_MODIFY_EXPORTABLE_QUESTION )
+    public String doModifyExportableQuestion (HttpServletRequest request)  throws AccessDeniedException {
+        Integer nIdForm = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_FORM));
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirect( request, VIEW_MANAGE_FORMS );
+        }
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_EXPORT_CONFIG );
+
+        Integer nIdQuestion = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_QUESTION));
+        Question questionToUpdate = QuestionHome.findByPrimaryKey(nIdQuestion);
+        Entry entry = questionToUpdate.getEntry( );
+        if( request.getParameter("exportable_pdf") != null ) {
+            boolean bIsExportablePdf = Boolean.parseBoolean(request.getParameter("exportable_pdf"));
+            _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_EXPORTABLE_PDF, null, String.valueOf( bIsExportablePdf ) );
+        }
+        if( request.getParameter("exportable") != null ) {
+            boolean exportable = Boolean.parseBoolean(request.getParameter("exportable"));
+            _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_EXPORTABLE, null, String.valueOf( exportable ) );
+        }
+
+        QuestionHome.update(questionToUpdate);
+        Map<String, String> mapParameters = new LinkedHashMap<>();
+        mapParameters.put(FormsConstants.PARAMETER_ID_FORM, String.valueOf(nIdForm));
+        mapParameters.put(PARAMETER_ACTIVE_TAB_PANNEL_2, "true");
+
+        return redirect(request, VIEW_MANAGE_EXPORT, mapParameters);
+    };
+
     @Action( ACTION_CREATE_EXPORT_CONFIG )
     public String doCreateExportConfig( HttpServletRequest request ) throws AccessDeniedException
     {
@@ -216,59 +255,6 @@ public class FormExportJspBean extends AbstractJspBean
 
         FormExportConfigHome.create( config );
 
-        Map<String, String> mapParameters = new LinkedHashMap<>( );
-        mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nId ) );
-
-        return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
-    }
-    
-    @Action( ACTION_MODIFY_EXPORTABLE_QUESTIONS )
-    public String modifyExportableQuestions( HttpServletRequest request ) throws AccessDeniedException
-    {
-        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
-        
-        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
-        {
-            return redirect( request, VIEW_MANAGE_FORMS );
-        }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_EXPORT_CONFIG );
-
-        Form formToBeModified = FormHome.findByPrimaryKey( nId );
-
-        if ( formToBeModified == null )
-        {
-            return redirect( request, VIEW_MANAGE_FORMS );
-        }
-        
-        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
-
-        String[ ] questionExportable = request.getParameterValues( "exportable" );
-        String[ ] questionExportablePdf = request.getParameterValues( "exportablePdf" );
-        
-        Set<String> questionExportableSet = new HashSet<>( );
-        if ( questionExportable != null )
-        {
-            questionExportableSet.addAll( Arrays.asList( questionExportable ) );
-        }
-        Set<String> questionExportablePdfSet = new HashSet<>( );
-        if ( questionExportablePdf != null )
-        {
-            questionExportablePdfSet.addAll( Arrays.asList( questionExportablePdf ) );
-        }
-        
-        for ( Question question : questionList )
-        {
-        	question.setExportDisplayOrder( NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_EXPORT_DISPLAY_ORDER + "_" + question.getId( ) ), 0 ) );
-        	QuestionHome.update(question);
-        	
-            boolean exportable = questionExportableSet.contains( String.valueOf( question.getId( ) ) );
-            boolean exportablePdf = questionExportablePdfSet.contains(  String.valueOf( question.getId( ) ) );
-            
-            Entry entry = question.getEntry( );
-            _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_EXPORTABLE, null, String.valueOf( exportable ) );
-            _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_EXPORTABLE_PDF, null, String.valueOf( exportablePdf ) );
-        }
-        
         Map<String, String> mapParameters = new LinkedHashMap<>( );
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nId ) );
 
