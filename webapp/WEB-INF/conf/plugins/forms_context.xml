@@ -317,9 +317,7 @@
 	<bean id="forms.entryTypeGeolocationDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeGeolocDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeGeolocation" />
 	</bean>
-	<bean id="forms.entryTypeCartographyDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeCartographyDisplayService">
-		<constructor-arg  type="java.lang.String" value="forms.entryTypeCartography" />
-	</bean>
+	
 	<bean id="forms.entryTypeImageDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeImage" />
 	</bean>
