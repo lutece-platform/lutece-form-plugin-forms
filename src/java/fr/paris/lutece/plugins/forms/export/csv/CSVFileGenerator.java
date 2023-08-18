@@ -43,8 +43,8 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -116,13 +116,13 @@ public class CSVFileGenerator extends AbstractFileGenerator
             for ( FormResponseItem formResponseItem : listFormResponseItems )
             {
                 count++;
-                FormResponse formResponse = FormResponseHome.findByPrimaryKeyForIndex( formResponseItem.getIdFormResponse( ) );
                 if ( first )
                 {
-                    bos.write( formResponseExport.buildCsvColumnToExport( formResponse ) );
+                    bos.write( formResponseExport.buildCsvColumnToExport( listFormResponseItems ) );
                     bos.newLine( );
                     first = false;
                 }
+                FormResponse formResponse = FormResponseHome.findByPrimaryKeyForIndex( formResponseItem.getIdFormResponse( ) );
                 bos.write( formResponseExport.buildCsvDataToExport( formResponse, findWorkflowState( formResponseItem ) ) );
                 bos.newLine( );
                 if ( count % FLUSH_SIZE == 0 )

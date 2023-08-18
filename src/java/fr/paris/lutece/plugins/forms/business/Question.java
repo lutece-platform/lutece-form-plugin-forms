@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * This is the business class for the object Question
@@ -473,5 +474,22 @@ public class Question implements Serializable, Cloneable
 	public void setExportDisplayOrder(int nExportDisplayOrder) {
 		_nExportDisplayOrder = nExportDisplayOrder;
 	}
+	
+	@Override
+    public boolean equals( Object o )
+    {
+		if ( o == null || this.getClass() != o.getClass())
+		{
+			return false;
+		}
+		Question question = (Question) o;
+		return (this._nId == question.getId()) && (this._nIterationNumber == question.getIterationNumber());
+    }
+	
+	@Override
+    public int hashCode( )
+    {
+		return Objects.hash(this._nId, this._nIterationNumber);
+    }
     
 }
