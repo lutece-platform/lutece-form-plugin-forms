@@ -53,7 +53,7 @@ public class CSVHeaderTest extends TestCase
         header.addHeader( q2 );
         header.addHeader( q3 );
 
-        List<Question> questions = header.getColumnToExport( );
+        List<Question> questions = header.getQuestionColumns( );
 
         assertNotNull( questions );
         assertEquals( 3, questions.size( ) );
@@ -72,7 +72,7 @@ public class CSVHeaderTest extends TestCase
         header.addHeader( q1 );
         header.addHeader( q1_bis );
 
-        List<Question> questions = header.getColumnToExport( );
+        List<Question> questions = header.getQuestionColumns( );
 
         assertNotNull( questions );
         assertEquals( 1, questions.size( ) );
@@ -91,7 +91,7 @@ public class CSVHeaderTest extends TestCase
         header.addHeader( q2 );
         header.addHeader( q1_bis );
 
-        List<Question> questions = header.getColumnToExport( );
+        List<Question> questions = header.getQuestionColumns( );
 
         assertNotNull( questions );
         assertEquals( 3, questions.size( ) );
@@ -114,7 +114,7 @@ public class CSVHeaderTest extends TestCase
         header.addHeader( q1_bis );
         header.addHeader( q1_ter );
 
-        List<Question> questions = header.getColumnToExport( );
+        List<Question> questions = header.getQuestionColumns( );
 
         assertNotNull( questions );
         assertEquals( 4, questions.size( ) );
