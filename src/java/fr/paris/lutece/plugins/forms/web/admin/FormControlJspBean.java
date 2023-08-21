@@ -172,17 +172,18 @@ public class FormControlJspBean extends AbstractJspBean
 
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
-
         Map<String, Object> model = getModel( );
+        if(_controlType == ControlType.TRANSITION) {
+            Transition transition = TransitionHome.findByPrimaryKey( _nIdTarget );
+          model.put( "nextStepTitle", StepHome.findByPrimaryKey( transition.getNextStep() ).getTitle( ) );
+        }
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
-
         model.put( FormsConstants.PARAMETER_CONTROL_TYPE, _controlType.name( ) );
         model.put( FormsConstants.MARK_VALIDATOR_MANAGER, EntryServiceManager.getInstance( ) );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( MARK_LIST_CONTROL, listControl );
-
         Locale locale = getLocale( );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONTROL, locale, model );
 
@@ -496,6 +497,9 @@ public class FormControlJspBean extends AbstractJspBean
         {
             IValidator validator = EntryServiceManager.getInstance( ).getValidator( _control.getValidatorName( ) );
             strValidatorTemplate = validator.getDisplayHtml( _control );
+        }
+        if(_controlType.name() == "TRANSITION") {
+            model.put("nextStepTitle", request.getParameter("nextStepTitle"));
         }
 
         model.put( FormsConstants.MARK_QUESTION, _question );

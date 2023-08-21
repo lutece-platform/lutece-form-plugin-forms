@@ -8,12 +8,19 @@
 <#if control.id gt 0>
 <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='trash' class='pull-right text-danger' color='btn-link' />
 </#if>
+<#if nextStepTitle?? && step.getTitle()??>
+<h3>${step.getTitle()}
+    <@icon style='chevron-right' />
+    ${nextStepTitle}</h3>
+</#if>
 </@boxHeader>
 <@boxBody>
 <@tform method='post' id='modify_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
 <@input type='hidden' id='token' name='token' value='${token}' />
 <@messages errors=errors />
-<@input type="hidden" name='id_step'  value='${id_step!}' />
+
+<@input name='id_step'  value='${id_step!}' />
+
 <@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}' mandatory=true>
 <@inputGroup>
 <@select name='id_question' items=listQuestion default_value='' />
