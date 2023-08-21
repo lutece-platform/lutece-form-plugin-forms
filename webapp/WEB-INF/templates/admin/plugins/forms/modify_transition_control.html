@@ -5,8 +5,9 @@
 </@formBreadCrumb>
 <@box>
 <@boxHeader title='#i18n{forms.modify_transition_control.title}'>
-<#if control.id gt 0>
-<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='trash' class='pull-right text-danger' color='btn-link' />
+<#if control.id gt 0 && !nextStepTitle??>
+<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${transition.getId()}'
+title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='trash' class='pull-right text-danger' color='btn-link' />
 </#if>
 <#if nextStepTitle?? && step.getTitle()??>
 <h3>${step.getTitle()}
