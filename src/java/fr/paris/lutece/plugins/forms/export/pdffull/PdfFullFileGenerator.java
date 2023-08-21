@@ -49,14 +49,12 @@ import org.apache.commons.io.FilenameUtils;
 
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.export.pdf.AbstractPdfFileGenerator;
-import fr.paris.lutece.plugins.forms.export.pdf.FormResponsePdfExport;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.business.file.FileHome;
@@ -123,79 +121,14 @@ public class PdfFullFileGenerator extends AbstractPdfFileGenerator
         return files [0].toPath( );
     }
 
-    @SuppressWarnings("unused")
-	@Deprecated
-    private void writeExportFileDeprecated( Path directoryFile ) throws IOException
-    {
-        FormResponsePdfExport export = new FormResponsePdfExport( );
-
-        List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn,
-                _listFormFilter, _sortConfig );
-
-        _hasMultipleFiles = listFormResponseItems.size( ) > 1;
-        for ( FormResponseItem responseItem : listFormResponseItems )
-        {
-            FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-            String generatedName = generateFileName( formResponse );
-
-            Path pdfFile = directoryFile.resolve( generatedName + ".pdf" );
-            try ( OutputStream outputStream = Files.newOutputStream( pdfFile ) )
-            {
-                export.buildPdfExport( formResponse, outputStream );
-            }
-            
-            // generateAttachments(directoryFile, formResponse, pdfFile, generatedName);
-        }
-    }
-
     private void writeExportFile( Path directoryFile ) throws IOException
     {
         List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn,
                 _listFormFilter, _sortConfig );
         _hasMultipleFiles = listFormResponseItems.size( ) > 1;
-        
-        int intNumberOfFormResponsesPerPdf = MultiviewConfig.getInstance().getNumberOfFormResponsesPerPdf();
-        if (intNumberOfFormResponsesPerPdf > 1)
-        {
-        	generateMultipleFormResponsesPerFile(directoryFile, listFormResponseItems, intNumberOfFormResponsesPerPdf);
-        }
-        else
-        {
-        	generateOneFormResponsePerFile(directoryFile, listFormResponseItems);
-        }
+        generateOneFormResponsePerFile(directoryFile, listFormResponseItems);
     }
-    
-    private void generateMultipleFormResponsesPerFile(Path directoryFile, List<FormResponseItem> listFormResponseItems, int intNumberOfFormResponsesPerPdf) throws IOException
-    {
-    	for (int intStartIndex = 0; intStartIndex < listFormResponseItems.size(); intStartIndex += intNumberOfFormResponsesPerPdf)
-    	{
-    		try {
-				int intEndIndexExcluded = Math.min(intStartIndex + intNumberOfFormResponsesPerPdf, listFormResponseItems.size());
-				List<FormResponseItem> subListFormResponseItems = listFormResponseItems.subList(intStartIndex, intEndIndexExcluded);
-				List<FormResponse> subListFormResponse = new ArrayList<>();
-				
-				for(FormResponseItem responseItem : subListFormResponseItems)
-				{
-					FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-					subListFormResponse.add(formResponse);
-				}
-				
-				Map<String, Object> model = new HashMap<>( );
-				HtmlTemplate htmltemplate = generateHtmlMultipleFormResponsesFromTemplate(model, subListFormResponse);
-				
-				String generatedName = generateMultiFormResponsesFileName(subListFormResponse, intStartIndex + 1, intEndIndexExcluded);
-				Path pdfFile = directoryFile.resolve( generatedName + ".pdf" );
-				generatePdfFile(directoryFile, htmltemplate, generatedName);
-				generateAttachments(directoryFile, subListFormResponse, pdfFile, generatedName);
-			} catch (IOException e) {
-				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
-				throw e;
-			} catch (Exception e) {
-				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
-			}
-    	}
-    }
-    
+
     private void generateOneFormResponsePerFile(Path directoryFile, List<FormResponseItem> listFormResponseItems) throws IOException
     {
     	for ( FormResponseItem responseItem : listFormResponseItems )
@@ -209,23 +142,24 @@ public class PdfFullFileGenerator extends AbstractPdfFileGenerator
 				String generatedName = generateFileName(formResponse);
 				Path pdfFile = directoryFile.resolve( generatedName + ".pdf" );
 				generatePdfFile(directoryFile, htmltemplate, generatedName);
-				
-				List<FormResponse> listUniqueFormResponse = new ArrayList<>();
-				listUniqueFormResponse.add(formResponse);
-				generateAttachments(directoryFile, listUniqueFormResponse, pdfFile, generatedName);
-			} catch (IOException e) {
+				generateAttachments(directoryFile, formResponse, pdfFile, generatedName);
+			}
+        	catch (IOException e)
+        	{
 				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
 				throw e;
-			} catch (Exception e) {
+			}
+        	catch (Exception e)
+        	{
 				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+				throw new IOException(e);
 			}
         }
     }
     
-    
-    private void generateAttachments(Path directoryFile, List<FormResponse> listFormResponse, Path pdfFile, String generatedName) throws IOException, Exception
+    private void generateAttachments(Path directoryFile, FormResponse formResponse, Path pdfFile, String generatedName) throws IOException, Exception
     {
-    	List<Path> listAttachments = writeAndGetAttachments( directoryFile, listFormResponse );
+    	List<Path> listAttachments = writeAndGetAttachments( directoryFile, formResponse );
 
         Path [ ] filesToZip = listAttachments.toArray( new Path [ listAttachments.size( ) + 1] );
         filesToZip [listAttachments.size( )] = pdfFile;
@@ -243,51 +177,54 @@ public class PdfFullFileGenerator extends AbstractPdfFileGenerator
      * Get all attachements in the {@link FormResponse} and write them to disk
      * 
      * @param directoryFile
-     * @param listFormResponse
+     * @param formResponse
      * @return
-     * @throws IOException
+     * @throws IOException, Exception
      */
-    private List<Path> writeAndGetAttachments( Path directoryFile, List<FormResponse> listFormResponse ) throws IOException, Exception
+    private List<Path> writeAndGetAttachments( Path directoryFile, FormResponse formResponse ) throws IOException, Exception
     {
-    	List<Path> listAttachments = new ArrayList<>( );
-    	for(FormResponse formResponse : listFormResponse)
-    	{
-	        List<Response> listResponse = formResponse.getSteps( ).stream( ).flatMap( frs -> frs.getQuestions( ).stream( ) )
-	                .flatMap( fqr -> fqr.getEntryResponse( ).stream( ) ).collect( Collectors.toList( ) );
+        List<Response> listResponse = formResponse.getSteps( ).stream( ).flatMap( frs -> frs.getQuestions( ).stream( ) )
+                .flatMap( fqr -> fqr.getEntryResponse( ).stream( ) ).collect( Collectors.toList( ) );
+        List<String> fileNames = new ArrayList<>( );
+        List<Path> listAttachments = new ArrayList<>( );
+        for ( Response response : listResponse )
+        {
+            if ( response.getFile( ) != null )
+            {
+                fr.paris.lutece.portal.business.file.File coreFile = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
+                if (coreFile == null)
+                {
+                	continue;
+                }
 
-	        List<String> fileNames = new ArrayList<>( );
-	        for ( Response response : listResponse )
-	        {
-	            if ( response.getFile( ) != null )
-	            {
-	                fr.paris.lutece.portal.business.file.File coreFile = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
-	
-	                String filename = coreFile.getTitle( );
-	
-	                long nbFiles = fileNames.stream( ).filter( s -> s.equals( coreFile.getTitle( ) ) ).count( );
-	                if ( nbFiles > 0 )
-	                {
-	                    StringBuilder fileSb = new StringBuilder( );
-	                    fileSb.append( FilenameUtils.removeExtension( filename ) );
-	                    fileSb.append( "_" );
-	                    fileSb.append( ++nbFiles );
-	                    fileSb.append( "." );
-	                    fileSb.append( FilenameUtils.getExtension( filename ) );
-	                    filename = fileSb.toString( );
-	                }
-	                fileNames.add( coreFile.getTitle( ) );
-	
-	                Path attachment = directoryFile.resolve( filename );
-	
-	                PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( coreFile.getPhysicalFile( ).getIdPhysicalFile( ) );
-	                try ( OutputStream outputStream = Files.newOutputStream( attachment ) )
-	                {
-	                    outputStream.write( physicalFile.getValue( ) );
-	                }
-	                listAttachments.add( attachment );
-	            }
-	        }
-    	}
+                String filename = coreFile.getTitle( );
+
+                long nbFiles = fileNames.stream( ).filter( s -> s.equals( coreFile.getTitle( ) ) ).count( );
+                if ( nbFiles > 0 )
+                {
+                    StringBuilder fileSb = new StringBuilder( );
+                    fileSb.append( FilenameUtils.removeExtension( filename ) );
+                    fileSb.append( "_" );
+                    fileSb.append( ++nbFiles );
+                    fileSb.append( "." );
+                    fileSb.append( FilenameUtils.getExtension( filename ) );
+                    filename = fileSb.toString( );
+                }
+                fileNames.add( coreFile.getTitle( ) );
+
+                Path attachment = directoryFile.resolve( filename );
+
+                PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( coreFile.getPhysicalFile( ).getIdPhysicalFile( ) );
+                if (physicalFile != null)
+                {
+                	try ( OutputStream outputStream = Files.newOutputStream( attachment ) )
+                    {
+                        outputStream.write( physicalFile.getValue( ) );
+                    }
+                    listAttachments.add( attachment );
+                }
+            }
+        }
     	return listAttachments;
     }
 }
