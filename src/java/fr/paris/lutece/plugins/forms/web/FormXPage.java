@@ -977,7 +977,14 @@ public class FormXPage extends MVCApplication
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
         FormResponse formResponse = _formResponseManager.getFormResponse( );
-        formResponse.setGuid( "user.getName( )" );
+        if(!form.isAuthentificationNeeded() && form.isBackupEnabled() && user != null)
+        {
+           formResponse.setGuid( request.getParameter( FormsConstants.PARAMETER_ANONYMOUS_TOKEN ) );
+        }
+        if(form.isAuthentificationNeeded() && form.isBackupEnabled())
+        {
+        	formResponse.setGuid( user.getName( ) );
+        }
         formResponse.setUpdateStatus(Timestamp.valueOf(LocalDateTime.now()));
 
         _formService.saveFormForBackup( formResponse );
