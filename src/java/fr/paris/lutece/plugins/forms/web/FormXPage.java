@@ -33,16 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TreeMap;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.portal.service.security.*;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -81,10 +79,6 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
-import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.security.SecurityService;
-import fr.paris.lutece.portal.service.security.SecurityTokenService;
-import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -161,6 +155,7 @@ public class FormXPage extends MVCApplication
     private StepDisplayTree _stepDisplayTree;
     private IBreadcrumb _breadcrumb;
     private boolean _bInactiveStateBypassed;
+    private String anonymousToken;
 
     /**
      * Return the default XPage with the list of all available Form
@@ -944,6 +939,7 @@ public class FormXPage extends MVCApplication
     @Action( value = ACTION_SAVE_FOR_BACKUP )
     public synchronized XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
+        /* add method to save without authentification */
         // CSRF Token control
         if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
@@ -981,7 +977,8 @@ public class FormXPage extends MVCApplication
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
 
         FormResponse formResponse = _formResponseManager.getFormResponse( );
-        formResponse.setGuid( user.getName( ) );
+        formResponse.setGuid( "user.getName( )" );
+        formResponse.setUpdateStatus(Timestamp.valueOf(LocalDateTime.now()));
 
         _formService.saveFormForBackup( formResponse );
 
@@ -1220,6 +1217,12 @@ public class FormXPage extends MVCApplication
             if ( user != null )
             {
                 _formResponseManager = _formService.createFormResponseManagerFromBackUp( form, user.getName( ) );
+            }
+            // this condition is used in case, want the user to be able save a response in backup without being logged
+            else if ( !form.isAuthentificationNeeded( ) &&  anonymousToken != null )
+            {
+                String anonymousToken = request.getParameter( FormsConstants.PARAMETER_ANONYMOUS_TOKEN );
+                _formResponseManager = _formService.createFormResponseManagerFromBackUp( form, anonymousToken );
             }
             else
             {

@@ -103,6 +103,7 @@ public final class FormsConstants
     public static final String MARK_UPLOAD_HANDLER = "uploadHandler";
 
     // Parameters
+    public static final String PARAMETER_ANONYMOUS_TOKEN = "anonymous_token";
     public static final String PARAMETER_PAGE = "page";
     public static final String PARAMETER_ID_FORM = "id_form";
     public static final String PARAMETER_ID_STEP = "id_step";
