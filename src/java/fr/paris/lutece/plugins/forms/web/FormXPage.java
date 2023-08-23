@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -43,19 +45,11 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.business.*;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.business.FormHome;
-import fr.paris.lutece.plugins.forms.business.FormMessage;
-import fr.paris.lutece.plugins.forms.business.FormMessageHome;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.Step;
-import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.exception.FormNotFoundException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.exception.QuestionValidationException;
@@ -156,7 +150,7 @@ public class FormXPage extends MVCApplication
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
     // Attributes
-    private FormResponseManager _formResponseManager;
+    private FormResponseManager _formResponseManager ;
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
     private IBreadcrumb _breadcrumb;
@@ -982,7 +976,7 @@ public class FormXPage extends MVCApplication
 
         FormResponse formResponse = _formResponseManager.getFormResponse( );
         formResponse.setGuid( user.getName( ) );
-
+        formResponse.setUpdateStatus(Timestamp.valueOf(LocalDateTime.now()));
         _formService.saveFormForBackup( formResponse );
 
         return getStepView(  request );
@@ -1025,7 +1019,7 @@ public class FormXPage extends MVCApplication
         FormResponse formResponse = _formResponseManager.getFormResponse( );
 
         _formService.removeFormBackup( formResponse );
-
+        _formResponseManager = new FormResponseManager( formResponse );
         init( form.getId( ) );
 
         return getStepView(  request );
@@ -1214,10 +1208,9 @@ public class FormXPage extends MVCApplication
     private void initFormResponseManager( HttpServletRequest request, Form form )
     {
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-
-        if ( _formResponseManager == null )
+        if ( _formResponseManager == null || !_formResponseManager.getIsResponseLoadedFromBackup())
         {
-            if ( user != null )
+            if ( user != null  && form.isBackupEnabled() )
             {
                 _formResponseManager = _formService.createFormResponseManagerFromBackUp( form, user.getName( ) );
             }

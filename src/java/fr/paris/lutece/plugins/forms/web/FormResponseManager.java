@@ -63,6 +63,8 @@ public class FormResponseManager
 {
     private final List<Step> _listValidatedStep;
     private final FormResponse _formResponse;
+    private boolean _bIsResponseLoadedFromBackup = false;
+
 
     /**
      * Constructor
@@ -159,6 +161,10 @@ public class FormResponseManager
     		updateDate = formResponseFromDB != null ? formResponseFromDB.getUpdate() : null;
     	}
     	return updateDate;
+    }
+
+    public Boolean getIsResponseLoadedFromBackup () {
+    	return _bIsResponseLoadedFromBackup;
     }
 
     /**
