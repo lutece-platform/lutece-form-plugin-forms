@@ -474,17 +474,7 @@ public class FormXPage extends MVCApplication
 
   if(_formResponseManager.getCurrentStep( ) == null)
         {
-     /*       int currentStepId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
-         List<Step> formSteps =         StepHome.getStepsListByForm(_formResponseManager.getFormResponse().getFormId());
-        _currentStep = formSteps.stream().filter(step -> step.getId() == currentStepId).findFirst().get();
-*/
             _currentStep =  FormsResponseUtils.getPreviousStep(Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) ) );
-        //   _formResponseManager.findResponsesFor(_currentStep);
-            try {
-                FormsResponseUtils.fillResponseManagerWithResponses(request, false, _formResponseManager, _stepDisplayTree.getQuestions(), false);
-            } catch (QuestionValidationException exception) {
-                return getStepView(request);
-            }
         } else {
        _currentStep = _formResponseManager.getCurrentStep( );
       }
