@@ -263,7 +263,7 @@ public class FormsResponseUtils
     }
 
     /**
-      * Build previous Step object
+     * From a step, get the previous step with the highest priority
      */
     public static Step getPreviousStep( int nIdCurrentStep )
     {
