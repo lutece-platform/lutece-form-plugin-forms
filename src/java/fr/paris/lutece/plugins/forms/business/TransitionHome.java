@@ -166,7 +166,17 @@ public final class TransitionHome
     {
         return _dao.selectTransitionsListFromStep( nIdStep, _plugin );
     }
-
+    /**
+     * Load the data of all the transition objects from the given step(the next step column of a transition) and returns them as a list
+     *
+     * @param nIdStep
+     *            The identifier of the next step (the step where the transition leads to)
+     * @return the list which contains the data of all the transition objects
+     */
+    public static List<Transition> selectTransitionsListByNextStepIdAndForm( int nIdStep )
+    {
+        return _dao.selectTransitionsListByNextStepIdAndForm( nIdStep, _plugin );
+    }
     /**
      * Load the data of a transition object from the given step and the given priority
      * 

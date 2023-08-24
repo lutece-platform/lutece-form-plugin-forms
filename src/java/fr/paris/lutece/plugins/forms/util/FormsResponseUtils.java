@@ -260,8 +260,23 @@ public class FormsResponseUtils
         }
 
         return null;
-    }   
-    
+    }
+
+    /**
+      * Build previous Step object
+     */
+    public static Step getPreviousStep( int nIdCurrentStep )
+    {
+        List<Transition> listTransition = TransitionHome.selectTransitionsListByNextStepIdAndForm( nIdCurrentStep );
+
+        if ( listTransition.size( ) == 0 )
+        {
+            return null;
+        }
+
+        return StepHome.findByPrimaryKey( listTransition.get( 0 ).getFromStep( ) );
+    }
+
     /**
      * Populate form with Physical File logo and number of response
      * @param form the form object

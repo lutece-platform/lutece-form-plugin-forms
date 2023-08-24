@@ -167,6 +167,9 @@ public class FormResponseManager
     	return _bIsResponseLoadedFromBackup;
     }
 
+    public void setIsResponseLoadedFromBackup (Boolean bIsResponseLoadedFromBackup) {
+    	_bIsResponseLoadedFromBackup = bIsResponseLoadedFromBackup;
+    }
     /**
      * Initializes the steps order
      */
