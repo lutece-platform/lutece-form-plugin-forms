@@ -125,6 +125,17 @@ public interface ITransitionDAO
     List<Transition> selectTransitionsListFromStep( int nIdStep, Plugin plugin );
 
     /**
+     * Load the data of all the transition objects from given step (next step id) and returns them as a list
+     *
+     * @param nIdStep
+     *            The identifier of the Next step (the step where the transition leads to)
+     * @param plugin
+     *            the Plugin
+     * @return The list which contains the data of all the transition objects
+     */
+    List<Transition> selectTransitionsListByNextStepIdAndForm(int nIdStep, Plugin plugin);
+
+    /**
      * Load the data of a transition object from the given step and the given priority
      * 
      * @param nIdStep

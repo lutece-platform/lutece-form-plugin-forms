@@ -474,6 +474,8 @@ public class FormService
         if ( CollectionUtils.isNotEmpty( listFormResponse ) )
         {
             formResponseManager = new FormResponseManager( listFormResponse.get( 0 ) );
+            formResponseManager.setIsResponseLoadedFromBackup(true);
+
         }
         else
         {

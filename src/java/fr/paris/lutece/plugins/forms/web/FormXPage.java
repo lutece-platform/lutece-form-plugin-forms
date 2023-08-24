@@ -472,8 +472,22 @@ public class FormXPage extends MVCApplication
         }
         _formResponseManager.popStep( );
 
-        _currentStep = _formResponseManager.getCurrentStep( );
-
+  if(_formResponseManager.getCurrentStep( ) == null)
+        {
+     /*       int currentStepId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+         List<Step> formSteps =         StepHome.getStepsListByForm(_formResponseManager.getFormResponse().getFormId());
+        _currentStep = formSteps.stream().filter(step -> step.getId() == currentStepId).findFirst().get();
+*/
+            _currentStep =  FormsResponseUtils.getPreviousStep(Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) ) );
+        //   _formResponseManager.findResponsesFor(_currentStep);
+            try {
+                FormsResponseUtils.fillResponseManagerWithResponses(request, false, _formResponseManager, _stepDisplayTree.getQuestions(), false);
+            } catch (QuestionValidationException exception) {
+                return getStepView(request);
+            }
+        } else {
+       _currentStep = _formResponseManager.getCurrentStep( );
+      }
         _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
 
         return  getStepView(  request );
@@ -1019,7 +1033,7 @@ public class FormXPage extends MVCApplication
         FormResponse formResponse = _formResponseManager.getFormResponse( );
 
         _formService.removeFormBackup( formResponse );
-        _formResponseManager = new FormResponseManager( formResponse );
+        _formResponseManager = null;
         init( form.getId( ) );
 
         return getStepView(  request );
@@ -1208,9 +1222,9 @@ public class FormXPage extends MVCApplication
     private void initFormResponseManager( HttpServletRequest request, Form form )
     {
         LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-        if ( _formResponseManager == null || !_formResponseManager.getIsResponseLoadedFromBackup())
+        if ( _formResponseManager == null || !_formResponseManager.getIsResponseLoadedFromBackup() && form.isBackupEnabled())
         {
-            if ( user != null  && form.isBackupEnabled() )
+            if ( user != null )
             {
                 _formResponseManager = _formService.createFormResponseManagerFromBackUp( form, user.getName( ) );
             }

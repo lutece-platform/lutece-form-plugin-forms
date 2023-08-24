@@ -58,6 +58,7 @@ public final class TransitionDAO implements ITransitionDAO
     private static final String SQL_ORDER_BY_PRIORITY = " ORDER BY priority ASC";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_transition FROM forms_transition";
     private static final String SQL_FILTER_BY_STEP = " WHERE t.from_step = ? " + SQL_ORDER_BY_PRIORITY;
+    private static final String SQL_FILTER_BY_NEXT_STEP_ID = " WHERE t.next_step = ? " + SQL_ORDER_BY_PRIORITY;
     private static final String SQL_FILTER_BY_FORM = " WHERE f.id_form = ? " + SQL_ORDER_BY_PRIORITY;
     private static final String SQL_FILTER_BY_STEP_AND_PRIORITY = " WHERE t.from_step = ? AND t.priority = ?";
     private static final String SQL_QUERY_SELECT_MAX_PRIORITY_BY_STEP = " SELECT MAX( t.priority ) FROM forms_transition t WHERE t.from_step = ?";
@@ -221,6 +222,23 @@ public final class TransitionDAO implements ITransitionDAO
         List<Transition> transitionList = new ArrayList<>( );
 
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT + SQL_FILTER_BY_STEP, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdStep );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                transitionList.add( dataToObject( daoUtil ) );
+            }
+        }
+        return transitionList;
+    }
+    @Override
+    public List<Transition> selectTransitionsListByNextStepIdAndForm (int nIdStep, Plugin plugin)
+    {
+        List<Transition> transitionList = new ArrayList<>( );
+
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT + SQL_FILTER_BY_NEXT_STEP_ID, plugin ) )
         {
             daoUtil.setInt( 1, nIdStep );
             daoUtil.executeQuery( );
