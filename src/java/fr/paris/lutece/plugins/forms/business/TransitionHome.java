@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -47,6 +48,7 @@ public final class TransitionHome
 {
     // Static variable pointed at the DAO instance
     private static ITransitionDAO _dao = SpringContextService.getBean( "forms.transitionDAO" );
+    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -71,7 +73,7 @@ public final class TransitionHome
             transition.setPriority( nPriority + 1 );
         }
         _dao.insert( transition, _plugin );
-
+        _cache.resetCache( );
         return transition;
     }
 
@@ -85,6 +87,7 @@ public final class TransitionHome
     public static Transition createWithoutPriorityCalculation( Transition transition )
     {
         _dao.insert( transition, _plugin );
+        _cache.resetCache( );
         return transition;
     }
 
@@ -98,7 +101,7 @@ public final class TransitionHome
     public static Transition update( Transition transition )
     {
         _dao.store( transition, _plugin );
-
+        _cache.resetCache( );
         return transition;
     }
 
@@ -111,6 +114,7 @@ public final class TransitionHome
     public static void remove( int nKey )
     {
         _dao.delete( nKey, _plugin );
+        _cache.resetCache( );
     }
 
     /**
@@ -164,7 +168,15 @@ public final class TransitionHome
      */
     public static List<Transition> getTransitionsListFromStep( int nIdStep )
     {
-        return _dao.selectTransitionsListFromStep( nIdStep, _plugin );
+        String cacheKey = _cache.getTransitionsListFromStepCacheKey( nIdStep );
+        @SuppressWarnings( "unchecked" )
+        List<Transition> transitions = ( List<Transition> ) _cache.getFromCache( cacheKey );
+        if ( transitions == null )
+        {
+            transitions = _dao.selectTransitionsListFromStep( nIdStep, _plugin );
+            _cache.putInCache( cacheKey, transitions );
+        }
+        return transitions;
     }
 
     /**
@@ -198,6 +210,7 @@ public final class TransitionHome
             transition.setPriority( nPriority++ );
             TransitionHome.update( transition );
         }
+        _cache.resetCache( );
     }
 
     /**

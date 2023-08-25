@@ -88,7 +88,7 @@ public class CSVDataLine
         commonData.append( CSVUtil.safeString( form.getTitle( ) ) ).append( csvSeparator );
         commonData.append( CSVUtil.safeString( dateFormat.format( formResponse.getCreation( ) ) ) ).append( csvSeparator );
         commonData.append( CSVUtil.safeString( dateFormat.format( formResponse.getUpdate( ) ) ) ).append( csvSeparator );
-        commonData.append( state ).append( csvSeparator );
+        commonData.append( CSVUtil.safeString( state ) ).append( csvSeparator );
         _commonDataToExport = commonData.toString( );
     }
 

@@ -101,6 +101,7 @@ public final class FormsConstants
     public static final String MARK_ID_CONTROL_GROUP = "id_control_group";
     public static final String MARK_LOGICAL_OPERATOR_LABEL = "logical_operator_label";
     public static final String MARK_REGEX_URL = "regex_url";
+    public static final String MARK_UPLOAD_HANDLER = "uploadHandler";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
@@ -230,6 +231,7 @@ public final class FormsConstants
     public static final String DS_KEY_FORM_ASSIGNEE_COLUMN = "forms.display.form.columnAssignee";
     public static final String DS_KEY_FORM_CSV_SEPARATOR = "forms.display.form.csv.separator";
     public static final String DS_KEY_FORM_PDF_NUMBER_OF_RESPONSES_PER_FILE = "forms.display.form.pdf.number.of.response.per.file";
+    public static final String DS_KEY_FORM_ID_FILE_TEMPLATE_PDF = "forms.display.form.idFile.template.pdf";
 
     // Actions forms
     public static final String ACTION_FORMS_MANAGE_MULTIVIEW_CONFIG = "multiviewConfig";

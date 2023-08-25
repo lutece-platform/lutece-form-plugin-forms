@@ -79,9 +79,14 @@
     $( "#sortable1, #sortable2" ).sortable({
       connectWith: ".connectedSortable"
     }).disableSelection();
+
     $('form').submit(function(){
-	    $('#${idName}').val($( "#sortable2" ).sortable("serialize").replaceAll('&',';'));
-	}); 
+    	if ( $( "#sortable2 li" ).length === 0){
+    		$('#${idName}').val($( "#sortable1" ).sortable("serialize").replaceAll('&',';'));
+    	}else{
+    		$('#${idName}').val($( "#sortable2" ).sortable("serialize").replaceAll('&',';'));
+    	}
+	});
   });
 </script>
 </@formGroup>

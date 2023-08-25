@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -41,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -49,6 +51,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
@@ -76,10 +79,12 @@ public class FormResponseCsvExport
     /**
      * Build the CSV string for column line
      */
-    public String buildCsvColumnToExport( FormResponse formResponse )
+    public String buildCsvColumnToExport( List<FormResponseItem> formResponseItems )
     {
-        List<Step> listSteps = StepHome.getStepsListByForm( formResponse.getFormId( ) );
-        List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( formResponse.getFormId( ) );
+    	List<FormResponse> formResponseList = getFormResponseFromItemList(formResponseItems);
+    	int idForm = formResponseList.get(0).getFormId();
+        List<Step> listSteps = StepHome.getStepsListByForm( idForm );
+        List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( idForm );
 
         List<Step> orderedStepList = StepService.sortStepsWithTransitions( listSteps, listTransitions );
 
@@ -93,7 +98,7 @@ public class FormResponseCsvExport
             {
                 if ( question.isResponseExportable( ) )
                 {
-                    _csvHeader.addHeadersWithIterations(formResponse, question);
+                    _csvHeader.addHeadersWithIterations(question, formResponseList);
                 }
             }
         }
@@ -109,13 +114,27 @@ public class FormResponseCsvExport
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_STATE, I18nService.getDefaultLocale( ) ) ) );
         sbCsvColumn.append( _csvSeparator );
 
-        for ( Question question : _csvHeader.getColumnToExport( ) )
+        for ( Question question : _csvHeader.getQuestionColumns( ) )
         {
-        	boolean bIsIteration = _csvHeader.getListIterationQuestionColumn().contains(question);
+        	boolean bIsIteration = _csvHeader.getIterationsQuestionColumns().contains(question);
             sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question, bIsIteration ) ) ).append( _csvSeparator );
         }
 
         return sbCsvColumn.toString( );
+    }
+    
+    private List<FormResponse> getFormResponseFromItemList(List<FormResponseItem> formResponseItems)
+    {
+    	List<FormResponse> formResponseList = new ArrayList<>();
+    	for (FormResponseItem formResponseItem : formResponseItems)
+    	{
+    		 FormResponse formResponse = FormResponseHome.findByPrimaryKeyForIndex( formResponseItem.getIdFormResponse() );
+    		 if (formResponse != null)
+    		 {
+    			 formResponseList.add(formResponse);
+    		 }
+    	}
+    	return formResponseList;
     }
 
     /**
@@ -141,7 +160,7 @@ public class FormResponseCsvExport
         StringBuilder sbRecordContent = new StringBuilder( );
         sbRecordContent.append( csvDataLine.getCommonDataToExport( ) );
 
-        for ( Question question : _csvHeader.getColumnToExport( ) )
+        for ( Question question : _csvHeader.getQuestionColumns( ) )
         {
             sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) )
                     .append( _csvSeparator );

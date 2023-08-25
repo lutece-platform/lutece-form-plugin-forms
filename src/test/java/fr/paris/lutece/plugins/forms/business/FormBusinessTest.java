@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.test.LuteceTestCase;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the business class test for the object Form
@@ -81,6 +83,8 @@ public class FormBusinessTest extends LuteceTestCase
         form.setAvailabilityStartDate( STARTDATE2 );
         form.setAvailabilityEndDate( ENDDATE2 );
         form.setBreadcrumbName( BREADCRUMB2 );
+        form.setActions( new ArrayList<>( ) );
+        form.setCurrentNumberResponse( 1000 );
         FormHome.update( form );
         formStored = FormHome.findByPrimaryKey( form.getId( ) );
         assertEquals( formStored.getTitle( ), form.getTitle( ) );
@@ -88,9 +92,18 @@ public class FormBusinessTest extends LuteceTestCase
         assertEquals( formStored.getAvailabilityStartDate( ), form.getAvailabilityStartDate( ) );
         assertEquals( formStored.getAvailabilityEndDate( ), form.getAvailabilityEndDate( ) );
         assertEquals( formStored.getBreadcrumbName( ), form.getBreadcrumbName( ) );
+        assertNull( formStored.getActions( ) );
+        assertEquals( 0, formStored.getCurrentNumberResponse( ) );
 
         // List test
-        FormHome.getFormList( );
+        formStored.setActions( new ArrayList<>( ) );
+        formStored.setCurrentNumberResponse( 1000 );
+        List<Form> list = FormHome.getFormList( );
+        assertNotNull( list );
+        list.forEach( f -> {
+            assertNull( f.getActions( ) );
+            assertEquals( 0, f.getCurrentNumberResponse( ) );
+        });
 
         // Delete test
         FormHome.remove( form.getId( ) );

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2022, City of Paris
+ * Copyright (c) 2002-2023, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,36 +33,21 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
-import java.util.List;
+import static org.junit.Assert.assertNotEquals;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
-public interface IFormCategoryDAO
+import fr.paris.lutece.test.LuteceTestCase;
+
+public class QuestionTest extends LuteceTestCase
 {
-
-    /**
-     * {@inheritDoc }
-     */
-    void insert( FormCategory formCategory, Plugin plugin );
-
-    /**
-     * {@inheritDoc }
-     */
-    FormCategory load( int nKey, Plugin plugin );
-
-    /**
-     * {@inheritDoc }
-     */
-    void delete( int nKey, Plugin plugin );
-
-    /**
-     * {@inheritDoc }
-     */
-    void store( FormCategory formCategory, Plugin plugin );
-
-    /**
-     * {@inheritDoc }
-     */
-    List<FormCategory> selectFormCategoryList( Plugin plugin );
-
+    public void testCopy( )
+    {
+        Question orig = new Question( );
+        RandomValueFieldPopulator.randomlyPopulateFields( orig );
+        assertNotEquals( 0, orig.getIterationNumber( ) );
+        Question copy = new Question( orig );
+        assertTrue( EqualsBuilder.reflectionEquals( orig, copy, "_nIterationNumber" ) );
+        assertEquals( 0, copy.getIterationNumber( ) );
+    }
 }

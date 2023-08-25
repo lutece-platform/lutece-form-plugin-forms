@@ -28,6 +28,9 @@
     
     <!-- Services -->
     <bean id="forms.formDatabaseService" class="fr.paris.lutece.plugins.forms.service.FormDatabaseService" />
+
+	<!-- Cache -->
+	<bean id="forms.cacheService" class="fr.paris.lutece.plugins.forms.service.cache.FormsCacheService" init-method="initCache" />
     
     <!-- Export -->
     <bean id="forms.csvExport" class="fr.paris.lutece.plugins.forms.export.csv.CSVExport">
@@ -107,6 +110,7 @@
 			<list>
 				<value type="java.lang.String">forms.entryTypeText</value>
 				<value type="java.lang.String">forms.entryTypeMyLuteceUserattribute</value>
+				<value type="java.lang.String">forms.entryTypeNumber</value>
 			</list>
 		</constructor-arg>
 	</bean>

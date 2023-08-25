@@ -66,7 +66,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the {@link ReferenceItemComparator#compare(fr.paris.lutece.util.ReferenceItem, fr.paris.lutece.util.ReferenceItem)} method with two empty
+     * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with two empty
      * ReferenceItem
      */
     public void testCompareEmptyReferenceItem( )
@@ -81,7 +81,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the {@link ReferenceItemComparator#compare(fr.paris.lutece.util.ReferenceItem, fr.paris.lutece.util.ReferenceItem)} method with the first
+     * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with the first
      * ReferenceItem which is empty
      */
     public void testCompareReferenceItemWithFirstEmpty( )
@@ -97,7 +97,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the {@link ReferenceItemComparator#compare(fr.paris.lutece.util.ReferenceItem, fr.paris.lutece.util.ReferenceItem)} method with the second
+     * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with the second
      * ReferenceItem which is empty
      */
     public void testCompareReferenceItemWithSecondEmpty( )
@@ -113,7 +113,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the {@link ReferenceItemComparator#compare(fr.paris.lutece.util.ReferenceItem, fr.paris.lutece.util.ReferenceItem)} method with the two
+     * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with the two
      * ReferenceItems which have the same name
      */
     public void testCompareReferenceItemSameNames( )
@@ -130,7 +130,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the {@link ReferenceItemComparator#compare(fr.paris.lutece.util.ReferenceItem, fr.paris.lutece.util.ReferenceItem)} method with the first
+     * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with the first
      * ReferenceItem which have a "greater" value than the second ReferenceItem
      */
     public void testCompareReferenceItemFirstGreater( )
@@ -147,7 +147,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
     }
 
     /**
-     * Test for the {@link ReferenceItemComparator#compare(fr.paris.lutece.util.ReferenceItem, fr.paris.lutece.util.ReferenceItem)} method with the second
+     * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with the second
      * ReferenceItem which have a "greater" value than the first ReferenceItem
      */
     public void testCompareReferenceItemSecondGreater( )
