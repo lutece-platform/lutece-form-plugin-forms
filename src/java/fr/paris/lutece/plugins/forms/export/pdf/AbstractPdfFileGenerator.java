@@ -106,16 +106,16 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 	{
 		List<PdfCell> pdfCells = new ArrayList<>();
 		
-		// form response update date
-		PdfCell formResponseDateCell = new PdfCell();
-		formResponseDateCell.setFormResponseDate(formatDateFormResponse(formResponse));
-		pdfCells.add(formResponseDateCell);
-		
 		// form response number
 		PdfCell formResponseNumberCell = new PdfCell();
 		formResponseNumberCell.setFormResponseNumber(formResponse.getId());
 		pdfCells.add(formResponseNumberCell);
 		
+		// form response update date
+		PdfCell formResponseDateCell = new PdfCell();
+		formResponseDateCell.setFormResponseDate(formatDateFormResponse(formResponse));
+		pdfCells.add(formResponseDateCell);
+
 		return pdfCells;
 	}
 
