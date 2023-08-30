@@ -116,26 +116,6 @@ public class PdfFileGenerator extends AbstractPdfFileGenerator
     {
         return _hasMultipleFiles;
     }
-    
-    @SuppressWarnings("unused")
-	@Deprecated
-    private void writeExportFileDeprecated( Path directoryFile ) throws IOException
-    {
-        FormResponsePdfExport export = new FormResponsePdfExport( );
-
-        List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn,
-                _listFormFilter, _sortConfig );
-
-        _hasMultipleFiles = listFormResponseItems.size( ) > 1;
-        for ( FormResponseItem responseItem : listFormResponseItems )
-        {
-            FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-            try ( OutputStream outputStream = Files.newOutputStream( directoryFile.resolve( generateFileName( formResponse ) + ".pdf" ) ) )
-            {
-                export.buildPdfExport( formResponse, outputStream );
-            }
-        }
-    }
 
     private void writeExportFile( Path directoryFile ) throws IOException
     {

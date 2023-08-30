@@ -27,6 +27,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.Group;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
+import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
@@ -47,6 +48,9 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.plugins.html2pdf.service.PdfConverterService;
 import fr.paris.lutece.plugins.html2pdf.service.PdfConverterServiceException;
 import fr.paris.lutece.portal.business.file.File;
+import fr.paris.lutece.portal.business.file.FileHome;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -60,7 +64,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 	protected static final String CONSTANT_MIME_TYPE_PDF = "application/pdf";
 	protected static final String EXTENSION_PDF = ".pdf";
 	protected static final String LOG_ERROR_PDF_EXPORT_GENERATION = "Error during PDF export generation";
-	protected static final String DEFAULT_TEMPLATE = "admin/plugins/forms/pdf/form_response_summary.html";
+	protected static final String DEFAULT_TEMPLATE = "admin/plugins/forms/pdf/default_template_export_pdf.html";
 	
 	private static final String KEY_LABEL_YES = "portal.util.labelYes";
     private static final String KEY_LABEL_NO = "portal.util.labelNo";
@@ -84,8 +88,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 		listPdfCell.addAll(generateFirstFormResponseInfos(formResponse));
 		listPdfCell.addAll(getPdfCellValueFormsReponse( formResponse ));
 		model.put( MARK_PDF_CELL_LIST, listPdfCell );
-		
-		return AppTemplateService.getTemplate( DEFAULT_TEMPLATE, Locale.getDefault( ), model );
+		return getTemplateExportPDF(model);
 	}
 
 	protected HtmlTemplate generateHtmlMultipleFormResponsesFromTemplate(Map<String, Object> model, List<FormResponse> listFormResponse) throws Exception
@@ -98,8 +101,22 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 			listPdfCell.addAll(getPdfCellValueFormsReponse( formResponse ));
 		}
 		model.put( MARK_PDF_CELL_LIST, listPdfCell );
-		
-		return AppTemplateService.getTemplate( DEFAULT_TEMPLATE, Locale.getDefault( ), model );
+		return getTemplateExportPDF(model);
+	}
+	
+	private HtmlTemplate getTemplateExportPDF(Map<String, Object> model)
+	{
+		File templateFile = FileHome.findByPrimaryKey(MultiviewConfig.getInstance().getIdFileTemplatePdf());
+		if (templateFile != null && templateFile.getPhysicalFile() != null)
+		{
+			PhysicalFile physicalTemplateFile = PhysicalFileHome.findByPrimaryKey(templateFile.getPhysicalFile().getIdPhysicalFile());
+			if (physicalTemplateFile != null)
+			{
+				String strTemplateContent = new String(physicalTemplateFile.getValue());
+				return AppTemplateService.getTemplateFromStringFtl(strTemplateContent, Locale.getDefault(), model);
+			}
+		}
+		return AppTemplateService.getTemplate(DEFAULT_TEMPLATE, Locale.getDefault(), model);
 	}
 
 	private List<PdfCell> generateFirstFormResponseInfos(FormResponse formResponse)
