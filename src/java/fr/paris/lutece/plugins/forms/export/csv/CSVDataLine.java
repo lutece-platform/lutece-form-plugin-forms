@@ -114,7 +114,7 @@ public class CSVDataLine
             {
             	_mapDataToExport.put(question.getId( ), new HashMap<>());
             }
-            _mapDataToExport.get(question.getId()).put(iteration, CSVUtil.safeString( sbReponseValues.toString( ) ));
+            _mapDataToExport.get(question.getId()).put(iteration, sbReponseValues.toString() );
         }
     }
     
