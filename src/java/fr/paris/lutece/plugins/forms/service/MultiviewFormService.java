@@ -292,9 +292,11 @@ public final class MultiviewFormService
                 {
                     IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( question.getEntry( ).getEntryType( ) );
                     IFormColumn column = displayService.getFormColumn( ++nPosition, question.getColumnTitle( ) );
-                    addEntryCodeToColumn( column, question );
-
-                    mapColumns.put( column.getFormColumnTitle( locale ), column );
+                    if (column != null)
+                    {
+                    	addEntryCodeToColumn( column, question );
+                        mapColumns.put( column.getFormColumnTitle( locale ), column );
+                    }
                 }
                 else
                 {
