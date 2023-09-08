@@ -323,7 +323,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         if (fileTemplatePdf != null && fileTemplatePdf.getPhysicalFile() != null)
         {
         	PhysicalFile physicalFileTemplatePdf = PhysicalFileHome.findByPrimaryKey(fileTemplatePdf.getPhysicalFile().getIdPhysicalFile());
-        	if (physicalFileTemplatePdf != null)
+        	if (physicalFileTemplatePdf != null && physicalFileTemplatePdf.getValue() != null)
         	{
         		FileItem fileItem = new GenAttFileItem( physicalFileTemplatePdf.getValue( ), fileTemplatePdf.getTitle( ) );
     			_uploadHandler.addFileItemToUploadedFilesList( fileItem, PARAMETER_UPLOAD_TEMPLATE_PDF, request );
