@@ -544,7 +544,8 @@ public class FormControlJspBean extends AbstractJspBean
             IValidator validator = EntryServiceManager.getInstance( ).getValidator( _control.getValidatorName( ) );
             strValidatorTemplate = validator.getDisplayHtml( _control );
         }
-        if(_controlType.name() == "TRANSITION") {
+        if(_controlType.name().equals("TRANSITION"))
+        {
             model.put("nextStepTitle", request.getParameter("nextStepTitle"));
         }
 
