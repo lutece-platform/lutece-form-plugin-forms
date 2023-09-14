@@ -396,12 +396,13 @@ public class FormControlJspBean extends AbstractJspBean
     @View( VIEW_MODIFY_CONTROL )
     public String getModifyControl( HttpServletRequest request )
     {
+
         if ( _step == null )
         {
-            int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-
+            int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
+
 
         if ( _controlType != ControlType.CONDITIONAL && _control == null )
         {
@@ -446,10 +447,10 @@ public class FormControlJspBean extends AbstractJspBean
         	valSubmit = request.getParameter( FormsConstants.PARAMETER_VIEW_MODIFY_CONTROL );
         }
         
-        int idStep = _step.getId( );
-        if ( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) != null )
-        {
-            idStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+       if(_step == null)
+       {
+            int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+            _step = StepHome.findByPrimaryKey( nIdStep );
         }
 
         boolean bStepChanged = false;
@@ -459,7 +460,7 @@ public class FormControlJspBean extends AbstractJspBean
         }
 
         ReferenceList referenceListQuestion = new ReferenceList( );
-        for ( Question question : QuestionHome.getQuestionsListByStep( idStep ) )
+        for ( Question question : QuestionHome.getQuestionsListByStep( _step.getId() ) )
         {
 
             referenceListQuestion.addItem( question.getId( ), question.getTitle( ) );
@@ -552,7 +553,8 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_CONTROL_TEMPLATE, strValidatorTemplate );
         model.put( FormsConstants.MARK_CONTROL, _control );
-        model.put( FormsConstants.MARK_TARGET_ID_STEP, idStep );
+        model.put( FormsConstants.MARK_ID_STEP, _nIdTarget );
+        model.put( FormsConstants.MARK_TARGET_ID_STEP, _step.getId() );
         model.put( FormsConstants.MARK_TARGET_ID_QUESTION, nIdQuestion );
         model.put( FormsConstants.MARK_QUESTION_LIST, referenceListQuestion );
         model.put( FormsConstants.MARK_AVAILABLE_STEPS, StepHome.getStepReferenceListByForm( _step.getIdForm( ) ) );
