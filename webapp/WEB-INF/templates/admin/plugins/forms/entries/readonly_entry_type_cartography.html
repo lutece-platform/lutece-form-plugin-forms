@@ -10,9 +10,6 @@
         <#if getResponseContainingTheFieldWithCode( list_responses, "DataLayer" )?? >
         <#assign datalayer = getResponseContainingTheFieldWithCode( list_responses, "DataLayer" ).toStringValueResponse >
         </#if>
-        
-           Coordonnée : ${coordinate!}
-           Datalayer : ${datalayer!}
         </@p>
         <#include "/skin/plugins/carto/manage_map.html" />
     </@columns>
@@ -38,15 +35,19 @@
 	}
 	else if ( geojson["geometry"]["type"] == "Polygon" ) {
 	    var coordinates = geojson["geometry"]["coordinates"];
-	    var polygon = L.polygon(coordinates ).addTo(map);
+	    var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
+	    var polygon = L.polygon(inverseCoord ).addTo(map);
 	    var bounds = polygon.getBounds()
-		map.fitBounds(bounds)
+		map.fitBounds(bounds);
+	    map.setZoom(15);
 	}
 	else if ( geojson["geometry"]["type"] == "Polyline" ) {
 	    var coordinates = geojson["geometry"]["coordinates"];
-	    var polyline = L.polyline(coordinates ).addTo(map);
+	    var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
+	    var polyline = L.polyline(inverseCoord ).addTo(map);
 	    var bounds = polyline.getBounds()
-		map.fitBounds(bounds)
+		map.fitBounds(bounds);
+	    map.setZoom(15);
 	}
 
   </script>          

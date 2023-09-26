@@ -34,10 +34,6 @@ ${breadcrumb_template}
 						<@formGroup labelFor='map_provider' labelKey='#i18n{forms.createEntry.mapProvider}' mandatory=true>
 							<@select name='map_provider' id='map_provider' items=entryTypeService.mapProvidersRefList default_value='-1' />
 						</@formGroup>
-						<!-- champs mode d’édition (suggestPOI, ligne, polygone)  -->
-						<@formGroup labelFor='edit_mode' labelKey='#i18n{forms.createEntry.editMode}'>
-							<@select name='edit_mode' items=entryTypeService.editModeRefList default_value='-1' />
-						</@formGroup>
 						<!-- view number  -->
 						<@formGroup labelFor='view_number' labelKey='#i18n{forms.createEntry.viewNumber}'>
 							<@input type='text' name='view_number' id='view_number' value='' maxlength=255 />
