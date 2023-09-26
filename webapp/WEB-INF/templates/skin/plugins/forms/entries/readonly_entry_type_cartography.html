@@ -10,22 +10,11 @@
         <#if getResponseContainingTheFieldWithCode( list_responses, "DataLayer" )?? >
         <#assign datalayer = getResponseContainingTheFieldWithCode( list_responses, "DataLayer" ).toStringValueResponse >
         </#if>
-        
-           Coordonnée : ${coordinate!}
-           Datalayer : ${datalayer!}
         </@p>
         <#include "/skin/plugins/carto/manage_map.html" />
     </@columns>
 </@row>        
 
-<link href="js/plugins/leaflet/leaflet/leaflet.css" rel="stylesheet" />
-<link href="js/plugins/leaflet/leaflet/MarkerCluster.css" rel="stylesheet" />
-<link href="js/plugins/leaflet/leaflet/MarkerCluster.Default.css" rel="stylesheet" />
-<link href="js/admin/plugins/carto/leaflet.draw.css" rel="stylesheet"></script>
-<script type="text/javascript" src="js/plugins/leaflet/leaflet/leaflet.js"></script>
-<script type="text/javascript" src="js/plugins/leaflet/leaflet/leaflet.markercluster.js"></script>
-<script type="text/javascript" src="js/admin/plugins/carto/leaflet.draw.js"></script>
-<script type="text/javascript" src="js/admin/plugins/carto/BoundaryCanvas.js"></script>
 <script>
 
 $(window).on('load', function(){
@@ -40,11 +29,13 @@ $(window).on('load', function(){
     }
     else if ( geojson["geometry"]["type"] == "Polygon" ) {
         var coordinates = geojson["geometry"]["coordinates"];
-        var polygon = L.polygon(coordinates ).addTo(map);
+        var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
+        var polygon = L.polygon(inverseCoord ).addTo(map);
     }
     else if ( geojson["geometry"]["type"] == "Polyline" ) {
         var coordinates = geojson["geometry"]["coordinates"];
-        var polyline = L.polyline(coordinates ).addTo(map);
+        var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
+        var polyline = L.polyline(inverseCoord ).addTo(map);
     }
     
 });
