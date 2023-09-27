@@ -134,6 +134,7 @@ public class FormControlJspBean extends AbstractJspBean
     private static final String MARK_LOGICAL_OPERATORS_LIST = "logicalOperators";
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
+    private static final String MARK_NEXT_STEP_TITLE = "nextStepTitle";
 
     private static final String PARAMETER_PAGE_INDEX = "page_index";
 
@@ -178,7 +179,7 @@ public class FormControlJspBean extends AbstractJspBean
         Map<String, Object> model = getModel( );
         if(_controlType == ControlType.TRANSITION) {
             Transition transition = TransitionHome.findByPrimaryKey( _nIdTarget );
-          model.put( "nextStepTitle", StepHome.findByPrimaryKey( transition.getNextStep() ).getTitle( ) );
+          model.put( MARK_NEXT_STEP_TITLE, StepHome.findByPrimaryKey( transition.getNextStep() ).getTitle( ) );
         }
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
@@ -544,8 +545,9 @@ public class FormControlJspBean extends AbstractJspBean
             IValidator validator = EntryServiceManager.getInstance( ).getValidator( _control.getValidatorName( ) );
             strValidatorTemplate = validator.getDisplayHtml( _control );
         }
-        if(_controlType.name() == "TRANSITION") {
-            model.put("nextStepTitle", request.getParameter("nextStepTitle"));
+        if(_controlType.name().equals("TRANSITION"))
+        {
+            model.put(MARK_NEXT_STEP_TITLE, request.getParameter(MARK_NEXT_STEP_TITLE));
         }
 
         model.put( FormsConstants.MARK_QUESTION, _question );
