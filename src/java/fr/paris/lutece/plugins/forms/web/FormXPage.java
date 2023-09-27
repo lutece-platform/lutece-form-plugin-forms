@@ -969,22 +969,21 @@ public class FormXPage extends MVCApplication
 
         checkAuthentication( form, request );
 
-        try
+        if(form.isBackupEnabled())
         {
-        	FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
+            try {
+                FormsResponseUtils.fillResponseManagerWithResponses(request, false, _formResponseManager, _stepDisplayTree.getQuestions(), false);
+            } catch (QuestionValidationException e) {
+                return getStepView(request);
+            }
+
+            LuteceUser user = SecurityService.getInstance().getRegisteredUser(request);
+
+            FormResponse formResponse = _formResponseManager.getFormResponse();
+            formResponse.setGuid(user.getName());
+
+            _formService.saveFormForBackup(formResponse);
         }
-        catch( QuestionValidationException e )
-        {
-        	return getStepView(  request );
-        }
-
-        LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
-
-        FormResponse formResponse = _formResponseManager.getFormResponse( );
-        formResponse.setGuid( user.getName( ) );
-
-        _formService.saveFormForBackup( formResponse );
-
         return getStepView(  request );
     }
 
