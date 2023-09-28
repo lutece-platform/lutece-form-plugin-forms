@@ -178,7 +178,7 @@ public class FormControlJspBean extends AbstractJspBean
         Map<String, Object> model = getModel( );
         if(_controlType == ControlType.TRANSITION) {
             Transition transition = TransitionHome.findByPrimaryKey( _nIdTarget );
-          model.put( "nextStepTitle", StepHome.findByPrimaryKey( transition.getNextStep() ).getTitle( ) );
+            model.put( "nextStepTitle", StepHome.findByPrimaryKey( transition.getNextStep() ).getTitle( ) );
         }
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
