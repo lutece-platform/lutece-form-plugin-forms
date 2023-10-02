@@ -34,3 +34,9 @@ DELETE FROM core_datastore WHERE entity_key='core.cache.status.formsCacheService
 INSERT INTO core_datastore VALUES ( 'core.cache.status.formsCacheService.timeToLiveSeconds', '86400' );
 DELETE FROM core_datastore WHERE entity_key='core.cache.status.formsCacheService.overflowToDisk';
 INSERT INTO core_datastore VALUES ( 'core.cache.status.formsCacheService.overflowToDisk', '0' );
+
+--
+-- Dumping data for table `core_admin_role_resource`
+--
+INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (1,'forms_manager','GLOBAL_FORMS_ACTION','','');
+
