@@ -1,15 +1,105 @@
 <#if filter_list?has_content>
-	<#assign params=''>
-	<#if filter_name != 'search_form'>
-		<#assign params='onchange="this.form.submit()" multiple'>
-	</#if>
-	<@formGroup formStyle='inline' labelClass='sr-only' class='forms-filter' labelFor=filter_name labelKey='${filter_label!}'>
-		<@select name=filter_name id=filter_name items=null class='form-select selectpicker' params='onchange="this.form.submit()"' multiple=1>
-			<#list filter_list as item>
-				<#assign optSelected=false >
-				<#if filter_list_value?has_content && filter_list_value?split(";")?seq_contains(item.code) ><#assign optSelected=true ></#if>
-				<@option label=item.name! value=item.code selected=optSelected  />
-			</#list>
-		</@select>
-	</@formGroup>
-</#if>
+<@formGroup class='forms-filter'>
+<#assign filterCodes = filter_list?map(filter -> filter.code) >
+<#assign filterCodes = filterCodes?join(";") >
+<label class=" mr-2" for="${filter_name!}_button">
+    ${filter_label!}
+</label>
+<div class="input-group">
+    <div id="${filter_name!}_button" class="btn btn-outline-primary">
+        <p><i class="fa fa-filter"></i>${filter_label!}</p>
+    </div>
+    <div id="${filter_name!}_checkboxes_group" class="border border-primary rounded p-3 overflow-auto bg-white"
+         style="display: none; position: absolute; max-height: 350px; z-index: 999; width: max-content">
+        <p class="text-primary"><i class="fa fa-filter"></i>${filter_label!}</p>
+        <#list filter_list as item>
+            <#assign optSelected=false >
+            <#if filter_list_value?has_content && filter_list_value?split(";")?seq_contains(item.code) ><#assign optSelected=true ></#if>
+            <#if item?index == 0>
+                <div>
+                    <input name="${filter_name!}" class="form-check-input" type="checkbox" id="all_${filter_name!}"
+                           <#if optSelected>checked</#if> >
+                    <p id="select_all_filters" class="form-check-label d-inline">
+                        #i18n{forms.multiviewForms.form_filter.select_all}
+                    </p>
+                </div>
+            <#else>
+                <div>
+                    <input name="${filter_name!}" class="form-check-input" type="checkbox" value="${item.code}"
+                           id="${item.name!}" <#if optSelected>checked</#if> >
+                    <label class="form-check-label d-inline" for="${item.name!}">
+                        ${item.name!}
+                    </label>
+                </div>
+            </#if>
+        </#list>
+        </@formGroup>
+        </#if>
+    </div>
+</div>
+<script>
+    let filterName = "${filter_name!}";
+    let openFilterButton = document.getElementById(filterName + "_button");
+    let filterInputGroup = document.getElementById(filterName + "_checkboxes_group");
+    const open = () => {
+        filterInputGroup.style.display = "block";
+        openFilterButton.style.display = "none";
+        openFilterButton.classList.add('open-button');
+        filterInputGroup.classList.add('open-banner');
+        setInputAndListener()
+    }
+    const close = () => {
+        filterInputGroup.style.display = "none";
+        openFilterButton.style.display = "block";
+        openFilterButton.classList.remove('open-button');
+        filterInputGroup.classList.remove('open-banner');
+    }
+    openFilterButton.addEventListener('mousedown', () => {
+        if (!openFilterButton.classList.contains('open-button')) {
+            open()
+        }
+    });
+    document.body.addEventListener('mousedown', (e) => {
+        let isClickInsideButton = openFilterButton.contains(e.target);
+        let isClickInsideBanner = filterInputGroup.contains(e.target);
+
+        if (!isClickInsideBanner && !isClickInsideButton) {
+            close();
+        }
+    });
+
+    function setInputAndListener() {
+        const checkboxes = filterInputGroup.querySelectorAll('input[type=checkbox]');
+        let filterCodes = "${filterCodes!}";
+        filterCodes = filterCodes.split(";");
+        filterCodes.shift()
+        let allChecked = true;
+        for (let i = 0; i < checkboxes.length; i++) {
+            let checkbox = checkboxes[i];
+            if (checkbox.name === filterName) {
+                if (i === 0) {
+                    checkbox.value = filterCodes.join(";");
+                }
+                if (i !== 0 && allChecked && !checkbox.checked) {
+                    allChecked = false;
+                    document.getElementById("select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.select_all}";
+
+                }
+                if (i === checkboxes.length - 1 && allChecked) {
+                    checkboxes[0].value = "";
+                    checkboxes[0].name = "";
+                    document.getElementById("select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.unselect_all}";
+                }
+                checkbox.addEventListener('change', function (ev) {
+                    let form = ev.target.form;
+                    if (ev.target.value === "") {
+                        for (let i = 1; i < checkboxes.length; i++) {
+                            checkboxes[i].checked = false;
+                        }
+                    }
+                    form.submit();
+                });
+            }
+        }
+    }
+</script>
