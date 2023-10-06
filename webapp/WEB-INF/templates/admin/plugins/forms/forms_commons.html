@@ -479,6 +479,12 @@ $( function() {
 				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
 					<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
 				</@formGroup>
+			</@fieldSet>
+			<!-- workgroup -->
+			<@fieldSet legend='#i18n{forms.modify_form.workgroup.label}'>
+				<@formGroup labelKey='#i18n{forms.modify_form.workgroup.label}' rows=2>
+					<@select name='workgroup' items=workgroup_list default_value='${form.workgroup!workgroup_key_default_value}' />
+				</@formGroup>
 			</@fieldSet> 
 			<#if workflow_list?has_content && workflow_list?size gt 1>
 				<@fieldSet legend='#i18n{forms.modify_form.workflow.label}'>

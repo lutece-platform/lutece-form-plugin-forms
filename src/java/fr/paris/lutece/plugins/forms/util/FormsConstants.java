@@ -102,6 +102,7 @@ public final class FormsConstants
     public static final String MARK_LOGICAL_OPERATOR_LABEL = "logical_operator_label";
     public static final String MARK_REGEX_URL = "regex_url";
     public static final String MARK_UPLOAD_HANDLER = "uploadHandler";
+    public static final String MARK_DEFAULT_VALUE_WORKGROUP_KEY = "workgroup_key_default_value";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";
