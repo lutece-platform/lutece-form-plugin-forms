@@ -55,6 +55,7 @@ import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.service.IMultiviewMapProvider;
 import fr.paris.lutece.plugins.forms.web.form.column.display.IFormColumnDisplay;
+import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisplayEntryCartography;
 import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisplayEntryGeolocation;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
@@ -134,14 +135,24 @@ public final class FormListTemplateBuilder
             // We optimize by building the full lineTemplate list only when a map is used
             // (it is used for the popups). If not, we build only the paginated list.
             Optional<FormColumnDisplayEntryGeolocation> maybeFirstGeolocColumn = findFirstGeolocColumnDisplay( listFormColumnDisplay );
+            Optional<FormColumnDisplayEntryCartography> maybeFirstCartoColumn = findFirstCartographyColumnDisplay( listFormColumnDisplay );
             Optional<IMultiviewMapProvider> maybeMapProvider = getMapProvider( );
             List<FormColumnLineTemplate> listFormColumnLineTemplatePaginated;
-            if ( maybeFirstGeolocColumn.isPresent( ) && maybeMapProvider.isPresent( ) )
+            if ( ( maybeFirstGeolocColumn.isPresent( ) && maybeMapProvider.isPresent( ) ) || maybeFirstCartoColumn.isPresent( ) )
             {
                 List<FormColumnLineTemplate> listFormColumnLineTemplate = buildFormColumnLineTemplateList( listFormColumnDisplay, listFormResponseItem,
                         locale );
-                List<String> listGeoJsonPoints = buildGeoJsonPointsList( maybeFirstGeolocColumn.get( ), listFormResponseItem, listFormColumnLineTemplate,
-                        strRedirectionDetailsBaseUrl );
+                List<String> listGeoJsonPoints = new ArrayList<>( );
+                if ( maybeFirstCartoColumn.isPresent( ) )
+            	{
+            		listGeoJsonPoints.addAll( buildGeoJsonList( maybeFirstCartoColumn.get( ), listFormResponseItem, listFormColumnLineTemplate,
+                          strRedirectionDetailsBaseUrl ) );
+            	}
+                if ( maybeFirstGeolocColumn.isPresent( ) )
+                {
+                	listGeoJsonPoints.addAll ( buildGeoJsonPointsList( maybeFirstGeolocColumn.get( ), listFormResponseItem, listFormColumnLineTemplate,
+                        strRedirectionDetailsBaseUrl ) );
+                }
                 model.put( MARK_FROM_RESPONSE_GEOJSON_POINT_LIST, listGeoJsonPoints );
                 model.put( MARK_MULTIVIEWMAP, maybeMapProvider.get( ).getMapTemplate( ) );
 
@@ -237,6 +248,32 @@ public final class FormListTemplateBuilder
         catch( JsonProcessingException e )
         {
             throw new AppException( "Error creating json for formResponseItem idFormResponse=" + formResponseItem.getIdFormResponse( ), e );
+        }
+    }
+    
+    private static List<String> buildGeoJsonList( FormColumnDisplayEntryCartography geolocFormColumnDisplay, List<FormResponseItem> listFormResponseItem,
+            List<FormColumnLineTemplate> listFormColumnLineTemplate, String strRedirectionDetailsBaseUrl )
+    {
+        return IntStream
+                .range( 0, listFormResponseItem.size( ) ).mapToObj( i -> buildResponseItemGeoJson( geolocFormColumnDisplay, listFormResponseItem.get( i ),
+                        listFormColumnLineTemplate.get( i ), strRedirectionDetailsBaseUrl ) )
+                .filter( Optional::isPresent ).map( Optional::get ).collect( Collectors.toList( ) );
+    }
+
+    private static Optional<String> buildResponseItemGeoJson( FormColumnDisplayEntryCartography formColumnDisplayEntryCartography,
+            FormResponseItem formResponseItem, FormColumnLineTemplate formColumnlineTemplate, String strRedirectionDetailsBaseUrl )
+    {
+        int nColumnCellPosition = columnDisplayPositionToCellIndex( formColumnDisplayEntryCartography.getPosition( ) );
+        FormColumnCell geolocFormColumnCell = formResponseItem.getFormColumnCellValues( ).get( nColumnCellPosition );
+        Object strGeoJSONCoordinate = formColumnDisplayEntryCartography.buildGeoJsonString( geolocFormColumnCell );
+
+        if ( strGeoJSONCoordinate != null  )
+        {
+        	return Optional.of( String.valueOf( strGeoJSONCoordinate ) );
+        }
+        else
+        {
+        	return Optional.empty( );
         }
     }
 
@@ -463,5 +500,23 @@ public final class FormListTemplateBuilder
     {
         return listFormColumnDisplay.stream( ).filter( FormColumnDisplayEntryGeolocation.class::isInstance )
                 .map( FormColumnDisplayEntryGeolocation.class::cast ).findFirst( );
+    }
+    
+    /**
+     * Get the first carto column display if it exists.
+     *
+     * Note: this could be replaced with a method to choose the cartocolumn if we wanted. Note: this could also be replaced with something to return geojson
+     * multipoints.
+     *
+     * @param listFormColumnDisplay
+     *            The list of all form column display to retrieve the header template from
+     * @param strSortUrl
+     *            The url to use for sort a column (can be null)
+     * @return the list of all form column header template
+     */
+    private static Optional<FormColumnDisplayEntryCartography> findFirstCartographyColumnDisplay( List<IFormColumnDisplay> listFormColumnDisplay )
+    {
+        return listFormColumnDisplay.stream( ).filter( FormColumnDisplayEntryCartography.class::isInstance )
+                .map( FormColumnDisplayEntryCartography.class::cast ).findFirst( );
     }
 }

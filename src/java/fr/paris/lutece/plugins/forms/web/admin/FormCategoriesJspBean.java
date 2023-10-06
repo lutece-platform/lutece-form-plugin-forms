@@ -136,7 +136,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the html code of the formCategory form
-     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     * @throws AccessDeniedException
      *             the possible AccessDeniedException
      */
     @View( VIEW_CREATE_CATEGORY )

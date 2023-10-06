@@ -35,11 +35,9 @@ package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,8 +48,12 @@ import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeFile;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeGalleryImage;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -74,6 +76,12 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
     
     private static final List<Class<?>> FILTERABLE_LIST = Arrays.asList( FILTERABLE );
     
+    private static final Class<?> [ ] NON_DISPLAYABLE = {
+            EntryTypeAutomaticFileReading.class, EntryTypeFile.class, EntryTypeGalleryImage.class, EntryTypeImage.class
+    };
+    
+    private static final List<Class<?>> NON_DISPLAYABLE_LIST = Arrays.asList( NON_DISPLAYABLE );
+    
     // Templates
     private static final String TEMPLATE_MANAGE_MULTIVIEW_CONFIG = "/admin/plugins/forms/manage_multiview_config.html";
 
@@ -88,6 +96,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
     private static final String MARK_FORM = "form";
     private static final String MARK_FILTERABLE_QUESTIONLIST = "filterableQuestionList";
     private static final String MARK_QUESTIONLIST = "questionList";
+    private static final String MARK_NON_DISPLAYABLE_QUESTIONLIST = "nonDisplayableQuestionList";
     
     // Actions
     private static final String ACTION_MANAGE_MULTIVIEW = "manageMultiviewConfig";
@@ -117,6 +126,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         
         List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
         List<Question> filterableQuestionList = new ArrayList<>( );
+        List<Question> nonDisplayableQuestionList = new ArrayList<>( );
 
         for ( Question question : questionList )
         {
@@ -125,12 +135,17 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
             {
                 filterableQuestionList.add( question );
             }
+            if ( NON_DISPLAYABLE_LIST.contains( entryTypeService.getClass() ))
+            {
+            	nonDisplayableQuestionList.add(question);
+            }
         }
         
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, questionList );
         model.put( MARK_FILTERABLE_QUESTIONLIST, filterableQuestionList );
+        model.put( MARK_NON_DISPLAYABLE_QUESTIONLIST, nonDisplayableQuestionList );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MANAGE_MULTIVIEW ) );
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_MULTIVIEW_CONFIG, model );

@@ -34,12 +34,14 @@
 package fr.paris.lutece.plugins.forms.business;
 
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class provides instances management methods (create, find, ...) for Form objects
@@ -48,6 +50,7 @@ public final class FormHome
 {
     // Static variable pointed at the DAO instance
     private static IFormDAO _dao = SpringContextService.getBean( "forms.formDAO" );
+    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -67,7 +70,7 @@ public final class FormHome
     public static Form create( Form form )
     {
         _dao.insert( form, _plugin );
-
+        _cache.putInCache( _cache.getFormCacheKey( form.getId( ) ), form );
         return form;
     }
 
@@ -81,7 +84,7 @@ public final class FormHome
     public static Form update( Form form )
     {
         _dao.store( form, _plugin );
-
+        _cache.putInCache( _cache.getFormCacheKey( form.getId( ) ), form );
         return form;
     }
 
@@ -94,6 +97,7 @@ public final class FormHome
     public static void remove( int nKey )
     {
         _dao.delete( nKey, _plugin );
+        _cache.removeKey( _cache.getFormCacheKey( nKey ) );
     }
 
     /**
@@ -105,7 +109,19 @@ public final class FormHome
      */
     public static Form findByPrimaryKey( int nKey )
     {
-        return _dao.load( nKey, _plugin );
+        String formCacheKey = _cache.getFormCacheKey( nKey );
+        Form form = ( Form ) _cache.getFromCache( formCacheKey );
+        if ( form == null )
+        {
+            form = _dao.load( nKey, _plugin );
+            _cache.putInCache( formCacheKey, form );
+        }
+        else
+        {
+            // return a copy to prevent dynamic members sharing
+            form = new Form( form );
+        }
+        return form;
     }
 
     /**
@@ -115,7 +131,16 @@ public final class FormHome
      */
     public static List<Form> getFormList( )
     {
-        return _dao.selectFormsList( _plugin );
+        String cacheKey = _cache.getFormListCacheKey( );
+        @SuppressWarnings( "unchecked" )
+        List<Form> formList = ( List<Form> ) _cache.getFromCache( cacheKey );
+        if ( formList == null )
+        {
+            formList = _dao.selectFormsList( _plugin );
+            _cache.putInCache( cacheKey, formList );
+        }
+        // return copies to prevent dynamic members sharing
+        return formList.stream( ).map( f -> new Form( f ) ).collect( Collectors.toList( ) );
     }
     
     /**

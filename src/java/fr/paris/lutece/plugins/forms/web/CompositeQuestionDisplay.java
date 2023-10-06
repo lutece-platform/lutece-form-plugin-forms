@@ -210,6 +210,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             _model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
             _model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
             _model.put( MARK_COMPLETENESS_FO, displayType == DisplayType.COMPLETE_FRONTOFFICE );
+            _model.put( FormsConstants.MARK_REGEX_URL, FormsConstants.DEFAULT_REGEX_URL );
 
             for( Field field : FieldHome.getFieldListByIdEntry( _question.getEntry().getIdEntry( ) ) )
             {
@@ -265,7 +266,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
                 
                 ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
                 _model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator().getLabel() : LogicalOperator.AND.getLabel()) );
-                if (controlGroup != null && LogicalOperator.OR.getLabel().equals(controlGroup.getLogicalOperator())) {
+                if (controlGroup != null && LogicalOperator.OR.getLabel().equals(controlGroup.getLogicalOperator().getLabel())) {
                 	bOtherStepValidation = nValidControlsCount > 0;
                 } else {
                 	bOtherStepValidation = nNotValidControlsCount == 0;

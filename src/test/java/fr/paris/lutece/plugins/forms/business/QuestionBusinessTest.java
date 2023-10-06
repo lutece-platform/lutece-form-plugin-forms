@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.util.List;
+
 import fr.paris.lutece.test.LuteceTestCase;
 
 /**
@@ -71,14 +73,20 @@ public class QuestionBusinessTest extends LuteceTestCase
         question.setTitle( TITLE2 );
         question.setDescription( DESCRIPTION2 );
         question.setIdEntry( IDENTRY2 );
+        question.setIterationNumber( 1000 );
         QuestionHome.update( question );
         questionStored = QuestionHome.findByPrimaryKey( question.getId( ) );
         assertEquals( questionStored.getTitle( ), question.getTitle( ) );
         assertEquals( questionStored.getDescription( ), question.getDescription( ) );
         assertEquals( questionStored.getIdEntry( ), question.getIdEntry( ) );
+        assertEquals( 0, questionStored.getIterationNumber( ) );
 
         // List test
-        QuestionHome.getQuestionsList( );
+        List<Question> list = QuestionHome.getQuestionsList( );
+        assertNotNull( list );
+        list.forEach( q -> {
+            assertEquals( 0, q.getIterationNumber( ) );
+        });
 
         // Delete test
         QuestionHome.remove( question.getId( ) );

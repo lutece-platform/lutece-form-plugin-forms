@@ -1,36 +1,37 @@
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<#if getError( list_responses, entry )?? >
-		<#assign error = getError( list_responses, entry ) >
-	</#if>
-	<#if getResponse( list_responses, entry )?? >
-		<#assign response = getResponse( list_responses, entry ) >
-	</#if>
-	<#assign idName = buildEntryName( entry, entry_iteration_number )>
-	<#assign field = getFieldByCode( entry, "autocomplete" ) >
-	<#assign fLabel>${entry.title}<#if entry.mandatory><abbr class="main-warning-color" tabindex="0" title="#i18n{themeparisfr.labelMandatory}">*</abbr></#if></#assign>
-
-	<div class="form-group">
-		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory><span aria-hidden="true"> *</span></#if></label>	
-		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-			<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-			<input type="tel" name="${idName}" id="${idName}" <#if entry.mandatory>required</#if> class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>" value="${(response.toStringValueResponse)!}" <#if field??>autocomplete="${field.value!}"</#if> <#if placeholder!=''> placeholder='${placeholder}' </#if>>
-        <#if entry.helpMessage?exists&&entry.helpMessage!=''>
-			<span class="help-block">${entry.helpMessage}</span>
-        </#if>
-		</div>
+<#if getError( list_responses, entry )?? >
+<#assign error = getError( list_responses, entry ) >
+</#if>
+<#if getResponse( list_responses, entry )?? >
+<#assign response = getResponse( list_responses, entry ) >
+</#if>
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign field = getFieldByCode( entry, "autocomplete" ) >
+<#assign fLabel>${entry.title}<#if entry.mandatory><abbr class="main-warning-color" tabindex="0" title="#i18n{themeparisfr.labelMandatory}">*</abbr></#if></#assign>
+<div class="form-group">
+	<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory><span aria-hidden="true"> *</span></#if></label>
+	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6"><#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+		<input type="tel" name="${idName}" id="${idName}"<#if !entry.mandatory > required</#if> class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>"value="${(response.toStringValueResponse)!}"<#if field??>autocomplete="${field.value!}"</#if><#if placeholder!=''> placeholder='${placeholder}' </#if>><#if entry.helpMessage?exists&&entry.helpMessage!=''><span class="help-block">${entry.helpMessage}</span></#if>
     </div>
-	<#if list_responses??>
-		<#list list_responses as response>
-			<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-				<div class="alert alert-danger">
-				<#assign error = response.entry.error>
-				<#if error.mandatoryError>
-					#i18n{forms.message.mandatory.entry}
-				<#else>
-					${error.errorMessage}
-				</#if>
-				</div>
-			</#if>
-		</#list>
-	</#if>
+
+</div>
+
+<#if list_responses??>
+<#list list_responses as response>
+<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+<div class="alert alert-danger">
+	<#assign error = response.entry.error>
+	<#if error.mandatoryError>
+	<#if entry.errorMessage?? && entry.errorMessage!="">
+	${entry.errorMessage}
+	<#else>
+	#i18n{forms.message.mandatory.entry}
+</#if>
+<#else>
+${error.errorMessage}
+</#if>
+</div>
+</#if>
+</#list>
+</#if>
 </#if>

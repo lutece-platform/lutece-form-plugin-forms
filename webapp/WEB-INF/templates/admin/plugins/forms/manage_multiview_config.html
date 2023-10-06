@@ -1,4 +1,14 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#function isQuestionTypeFileOrImg question questions_list >
+	<#if questions_list?has_content>
+		<#list questions_list as question_item>
+			<#if question_item.id = question.id>
+  				<#return true>
+  			</#if>
+  		</#list>
+	</#if>
+	<#return false>
+</#function>
 <@row>
 	<@columns>
 		<@box color='primary'>
@@ -35,14 +45,26 @@
 													<@td>${question.step.title!}</@td>
 													<@td>${question.title!}</@td>
 													<@td>
-														<@formGroup>
-													    	<@checkBox orientation='switch' labelFor='is_visible_multiview_global_${question.id}' name='is_visible_multiview_global_${question.id}' value='1' checked=question.isVisibleMultiviewGlobal()/>
-														</@formGroup>
+														<#if isQuestionTypeFileOrImg(question, nonDisplayableQuestionList)>
+										  					<@formGroup helpKey='#i18n{forms.modify_question.nonDisplayable.question.help}'>
+														    	<@checkBox disabled=true orientation='switch' labelFor='is_visible_multiview_global_${question.id}' name='is_visible_multiview_global_${question.id}' value='0' checked=false/>
+															</@formGroup>
+										  				<#else>
+										  					<@formGroup>
+														    	<@checkBox orientation='switch' labelFor='is_visible_multiview_global_${question.id}' name='is_visible_multiview_global_${question.id}' value='1' checked=question.isVisibleMultiviewGlobal()/>
+															</@formGroup>
+										  				</#if>
 													</@td>
 													<@td>
-														<@formGroup>
-													    	<@checkBox orientation='switch' labelFor='is_visible_multiview_form_selected_${question.id}' name='is_visible_multiview_form_selected_${question.id}' value='1' checked=question.isVisibleMultiviewFormSelected() />
-														</@formGroup>
+														<#if isQuestionTypeFileOrImg(question, nonDisplayableQuestionList)>
+															<@formGroup helpKey='#i18n{forms.modify_question.nonDisplayable.question.help}'>
+														    	<@checkBox disabled=true orientation='switch' labelFor='is_visible_multiview_form_selected_${question.id}' name='is_visible_multiview_form_selected_${question.id}' value='0' checked=false />
+															</@formGroup>
+														<#else>
+															<@formGroup>
+														    	<@checkBox orientation='switch' labelFor='is_visible_multiview_form_selected_${question.id}' name='is_visible_multiview_form_selected_${question.id}' value='1' checked=question.isVisibleMultiviewFormSelected() />
+															</@formGroup>
+														</#if>
 													</@td>
 													<@td>
 														<@formGroup>

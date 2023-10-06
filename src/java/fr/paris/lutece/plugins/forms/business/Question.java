@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.portal.service.util.AppLogService;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * This is the business class for the object Question
@@ -87,6 +88,43 @@ public class Question implements Serializable, Cloneable
     private int _nMultiviewColumnOrder;
     
     private int _nExportDisplayOrder;
+
+    /**
+     * Default constructor
+     */
+    public Question( )
+    {
+        super( );
+    }
+
+    /**
+     * Copy constructor
+     * 
+     * Leaves out dynamic data
+     * 
+     * @param source
+     *            Question to copy
+     */
+    public Question( Question source )
+    {
+        _bIsFiltrableMultiviewFormSelected = source._bIsFiltrableMultiviewFormSelected;
+        _bIsFiltrableMultiviewGlobal = source._bIsFiltrableMultiviewGlobal;
+        _bIsVisible = source._bIsVisible;
+        _bIsVisibleMultiviewFormSelected = source._bIsVisibleMultiviewFormSelected;
+        _bIsVisibleMultiviewGlobal = source._bIsVisibleMultiviewGlobal;
+        _entry = source._entry;
+        _nExportDisplayOrder = source._nExportDisplayOrder;
+        _nId = source._nId;
+        _nIdEntry = source._nIdEntry;
+        _nIdStep = source._nIdStep;
+        // _nIterationNumber = 0;
+        _nMultiviewColumnOrder = source._nMultiviewColumnOrder;
+        _step = source._step;
+        _strCode = source._strCode;
+        _strColumnTitle = source._strColumnTitle;
+        _strDescription = source._strDescription;
+        _strTitle = source._strTitle;
+    }
 
     /**
      * Returns the Id
@@ -473,5 +511,22 @@ public class Question implements Serializable, Cloneable
 	public void setExportDisplayOrder(int nExportDisplayOrder) {
 		_nExportDisplayOrder = nExportDisplayOrder;
 	}
+	
+	@Override
+    public boolean equals( Object o )
+    {
+		if ( o == null || this.getClass() != o.getClass())
+		{
+			return false;
+		}
+		Question question = (Question) o;
+		return (this._nId == question.getId()) && (this._nIterationNumber == question.getIterationNumber());
+    }
+	
+	@Override
+    public int hashCode( )
+    {
+		return Objects.hash(this._nId, this._nIterationNumber);
+    }
     
 }

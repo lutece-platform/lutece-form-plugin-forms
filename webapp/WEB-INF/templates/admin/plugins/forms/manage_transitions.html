@@ -54,7 +54,7 @@
                                         <@th sm=1 align='center' title='#i18n{forms.manage_questions.columnCondition}' hide=['xs']><@icon style='question'/></@th>
                                         <@th sm=4>#i18n{forms.manageForm.columnActions}
                                         <#if !step.final>               
-                                            <@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}' title='#i18n{forms.manage_transitions.buttonAdd}' params='data-toggle="modal" data-target="#transitionModal" data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}" data-modal-title="#i18n{forms.create_transition.title}"'><@icon style='plus-square' /></@link>
+                                         <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}' title='#i18n{forms.manage_transitions.buttonAdd}' params='data-toggle="modal" data-target="#transitionModal" data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}" data-modal-title="#i18n{forms.create_transition.title}"' buttonIcon='plus' size='sm' />
                                         </#if>
                                         </@th>
                                     </tr>

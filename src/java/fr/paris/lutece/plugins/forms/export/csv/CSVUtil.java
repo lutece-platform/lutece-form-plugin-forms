@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
-import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Question;
 
@@ -84,6 +84,9 @@ public final class CSVUtil
      */
     static String safeString( String strValue )
     {
-        return StringEscapeUtils.escapeCsv( strValue );
+    	if (strValue == null) {
+    		strValue = StringUtils.EMPTY;
+    	}
+    	return "\"" + strValue + "\"";
     }
 }

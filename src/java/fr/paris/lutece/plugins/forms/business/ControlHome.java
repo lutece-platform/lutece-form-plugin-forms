@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.business;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -47,6 +48,7 @@ public final class ControlHome
 {
     // Static variable pointed at the DAO instance
     private static IControlDAO _dao = SpringContextService.getBean( "forms.controlDAO" );
+    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -71,7 +73,7 @@ public final class ControlHome
 
             _dao.insert( control.getId( ), idQuestion, _plugin );
         }
-
+        _cache.putInCache( _cache.getControlCacheKey( control.getId( ) ), control );
         return control;
     }
 
@@ -79,6 +81,7 @@ public final class ControlHome
     {
 
         _dao.insert( nIdcontrol, nIdQuestion, strValue, _plugin );
+        _cache.resetCache( );
     }
 
     /**
@@ -98,6 +101,7 @@ public final class ControlHome
 
             _dao.insert( control.getId( ), nIdQuestion, _plugin );
         }
+        _cache.resetCache( );
         return control;
     }
 
@@ -111,6 +115,7 @@ public final class ControlHome
     {
         _dao.deleteControlQuestion( nKey, _plugin );
         _dao.delete( nKey, _plugin );
+        _cache.resetCache( );
     }
 
     /**
@@ -122,6 +127,7 @@ public final class ControlHome
     public static void removeMappingControl( int nKey )
     {
         _dao.deleteControlQuestionValue( nKey, _plugin );
+        _cache.resetCache( );
     }
 
     /**
@@ -137,10 +143,10 @@ public final class ControlHome
         List<Control> listControl = _dao.selectControlByControlTargetAndType( nIdControlTarget, controlType, _plugin );
         for ( Control ctrl : listControl )
         {
-
             _dao.deleteControlQuestion( ctrl.getId( ), _plugin );
         }
         _dao.deleteByControlTarget( nIdControlTarget, controlType, _plugin );
+        _cache.resetCache( );
     }
 
     /**
@@ -152,12 +158,17 @@ public final class ControlHome
      */
     public static Control findByPrimaryKey( int nKey )
     {
-        Control control = _dao.load( nKey, _plugin );
-        if ( control != null )
+        String controlCacheKey = _cache.getControlCacheKey( nKey );
+        Control control = ( Control ) _cache.getFromCache( controlCacheKey );
+        if ( control == null )
         {
-            control.setListIdQuestion( _dao.loadIdQuestions( nKey, _plugin ) );
+            control = _dao.load( nKey, _plugin );
+            if ( control != null )
+            {
+                control.setListIdQuestion( _dao.loadIdQuestions( nKey, _plugin ) );
+            }
+            _cache.putInCache( controlCacheKey, control );
         }
-
         return control;
     }
 
@@ -202,14 +213,21 @@ public final class ControlHome
      */
     public static List<Control> getControlByControlTargetAndType( int nIdControlTarget, ControlType controlType )
     {
-        List<Control> listControl = _dao.selectControlByControlTargetAndType( nIdControlTarget, controlType, _plugin );
-        for ( Control ctrl : listControl )
+        String cacheKey = _cache.getControlByControlTargetAndTypeCacheKey( nIdControlTarget, controlType );
+        @SuppressWarnings( "unchecked" )
+        List<Control> listControl = ( List<Control> ) _cache.getFromCache( cacheKey );
+        if ( listControl == null )
         {
-            ctrl.setListIdQuestion( _dao.loadIdQuestions( ctrl.getId( ), _plugin ) );
+            listControl = _dao.selectControlByControlTargetAndType( nIdControlTarget, controlType, _plugin );
+            for ( Control ctrl : listControl )
+            {
+                ctrl.setListIdQuestion( _dao.loadIdQuestions( ctrl.getId( ), _plugin ) );
+            }
+            _cache.putInCache( cacheKey, listControl );
         }
         return listControl;
     }
-    
+
     /**
      * Return the number of controls linked to the display
      * 
@@ -237,10 +255,17 @@ public final class ControlHome
      */
     public static List<Control> getControlByQuestionAndType( int nIdQuestion, String strControlType )
     {
-        List<Control> listControl = _dao.selectControlByQuestionAndType( nIdQuestion, strControlType, _plugin );
-        for ( Control ctrl : listControl )
+        String cacheKey = _cache.getControlByQuestionAndTypeCacheKey( nIdQuestion, strControlType );
+        @SuppressWarnings( "unchecked" )
+        List<Control> listControl = ( List<Control> ) _cache.getFromCache( cacheKey );
+        if ( listControl == null )
         {
-            ctrl.setListIdQuestion( _dao.loadIdQuestions( ctrl.getId( ), _plugin ) );
+            listControl = _dao.selectControlByQuestionAndType( nIdQuestion, strControlType, _plugin );
+            for ( Control ctrl : listControl )
+            {
+                ctrl.setListIdQuestion( _dao.loadIdQuestions( ctrl.getId( ), _plugin ) );
+            }
+            _cache.putInCache( cacheKey, listControl );
         }
         return listControl;
     }

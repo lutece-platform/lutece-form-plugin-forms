@@ -28,6 +28,9 @@
     
     <!-- Services -->
     <bean id="forms.formDatabaseService" class="fr.paris.lutece.plugins.forms.service.FormDatabaseService" />
+
+	<!-- Cache -->
+	<bean id="forms.cacheService" class="fr.paris.lutece.plugins.forms.service.cache.FormsCacheService" init-method="initCache" />
     
     <!-- Export -->
     <bean id="forms.csvExport" class="fr.paris.lutece.plugins.forms.export.csv.CSVExport">
@@ -107,6 +110,7 @@
 			<list>
 				<value type="java.lang.String">forms.entryTypeText</value>
 				<value type="java.lang.String">forms.entryTypeMyLuteceUserattribute</value>
+				<value type="java.lang.String">forms.entryTypeNumber</value>
 			</list>
 		</constructor-arg>
 	</bean>
@@ -160,6 +164,13 @@
         </property>
     </bean>
 	<bean id="forms.entryTypeGeolocation" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeGeolocation" >
+        <property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.defaultGeolocAnonymizationType" />
+            </list>
+        </property>
+    </bean>
+    <bean id="forms.entryTypeCartography" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCartography" >
         <property name="anonymizationTypes">
             <list>
                 <ref bean="genericattributes.defaultGeolocAnonymizationType" />
@@ -306,6 +317,7 @@
 	<bean id="forms.entryTypeGeolocationDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeGeolocDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeGeolocation" />
 	</bean>
+	
 	<bean id="forms.entryTypeImageDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeImage" />
 	</bean>
@@ -370,6 +382,9 @@
 	</bean>
 	<bean id="forms.entryTypeGeolocationDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeGeolocation" />
+	</bean>
+	<bean id="forms.entryTypeCartographyDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeCartography" />
 	</bean>
 	<bean id="forms.entryTypeGroupDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeGroup" />

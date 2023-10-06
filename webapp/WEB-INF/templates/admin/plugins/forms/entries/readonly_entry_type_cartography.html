@@ -1,0 +1,52 @@
+<@row>
+    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+    <@columns sm=9>
+        <@p>
+        <#assign coordinate = "" >
+        <#assign datalayer = "" >
+        <#if getResponseContainingTheFieldWithCode( list_responses, "coordinates_geojson" )?? >
+        <#assign coordinate = getResponseContainingTheFieldWithCode( list_responses, "coordinates_geojson" ).toStringValueResponse >
+        </#if>
+        <#if getResponseContainingTheFieldWithCode( list_responses, "DataLayer" )?? >
+        <#assign datalayer = getResponseContainingTheFieldWithCode( list_responses, "DataLayer" ).toStringValueResponse >
+        </#if>
+        
+           Coordonnée : ${coordinate!}
+           Datalayer : ${datalayer!}
+        </@p>
+        <#include "/skin/plugins/carto/manage_map.html" />
+    </@columns>
+</@row>        
+
+<script>
+
+	//Retrieve the map object.
+	var map = mapsPlaceholder.pop();
+	
+	var geojson = ${coordinate};
+	var center;
+		
+	if ( geojson["geometry"]["type"] == "Point" ) {
+	    var coordinates = geojson["geometry"]["coordinates"];
+	    var marker = L.marker([coordinates[1],coordinates[0]]).addTo(map);
+	    var lat = geojson["geometry"]["coordinates"][1];
+		var lon = geojson["geometry"]["coordinates"][0];
+		center = new L.LatLng(lat, lon);
+		map.panTo(center);
+		map.setZoom(15);
+
+	}
+	else if ( geojson["geometry"]["type"] == "Polygon" ) {
+	    var coordinates = geojson["geometry"]["coordinates"];
+	    var polygon = L.polygon(coordinates ).addTo(map);
+	    var bounds = polygon.getBounds()
+		map.fitBounds(bounds)
+	}
+	else if ( geojson["geometry"]["type"] == "Polyline" ) {
+	    var coordinates = geojson["geometry"]["coordinates"];
+	    var polyline = L.polyline(coordinates ).addTo(map);
+	    var bounds = polyline.getBounds()
+		map.fitBounds(bounds)
+	}
+
+  </script>          

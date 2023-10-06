@@ -152,7 +152,7 @@ public class FormControlJspBean extends AbstractJspBean
 
     /**
      * Build the Manage View
-     * 
+     *
      * @param request
      *            The HTTP request
      * @return The page
@@ -175,17 +175,18 @@ public class FormControlJspBean extends AbstractJspBean
 
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
-
         Map<String, Object> model = getModel( );
+        if(_controlType == ControlType.TRANSITION) {
+            Transition transition = TransitionHome.findByPrimaryKey( _nIdTarget );
+            model.put( "nextStepTitle", StepHome.findByPrimaryKey( transition.getNextStep() ).getTitle( ) );
+        }
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
-
         model.put( FormsConstants.PARAMETER_CONTROL_TYPE, _controlType.name( ) );
         model.put( FormsConstants.MARK_VALIDATOR_MANAGER, EntryServiceManager.getInstance( ) );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( MARK_LIST_CONTROL, listControl );
-
         Locale locale = getLocale( );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONTROL, locale, model );
 
@@ -194,7 +195,7 @@ public class FormControlJspBean extends AbstractJspBean
 
     /**
      * Set the retrieved parameters
-     * 
+     *
      * @param request
      *            The http request
      */
@@ -210,7 +211,7 @@ public class FormControlJspBean extends AbstractJspBean
     }
 
     /**
-     * 
+     *
      * @param request
      *            The http request
      */
@@ -227,15 +228,15 @@ public class FormControlJspBean extends AbstractJspBean
             _control.setIdControlTarget( _nIdTarget );
 
             if ( _controlType.equals( ControlType.VALIDATION )
-            		|| _controlType.equals( ControlType.CONDITIONAL ) )
+                    || _controlType.equals( ControlType.CONDITIONAL ) )
             {
                 Set<Integer> listQuestion = new HashSet<>( );
                 listQuestion.add( _nIdTarget );
                 _control.setListIdQuestion( listQuestion );
                 if (_controlType.equals( ControlType.CONDITIONAL ))
                 {
-	                int nIdControlGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL_GROUP ), 0 );
-	                _control.setIdControlGroup(nIdControlGroup);
+                    int nIdControlGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL_GROUP ), 0 );
+                    _control.setIdControlGroup(nIdControlGroup);
                 }
             }
         }
@@ -250,20 +251,20 @@ public class FormControlJspBean extends AbstractJspBean
             _strControlTemplate = TEMPLATE_MODIFY_TRANSITION_CONTROL;
         }
         else
-            if ( _controlType.equals( ControlType.VALIDATION ) )
-            {
-                _strControlTemplate = TEMPLATE_MODIFY_QUESTION_CONTROL;
-            }
+        if ( _controlType.equals( ControlType.VALIDATION ) )
+        {
+            _strControlTemplate = TEMPLATE_MODIFY_QUESTION_CONTROL;
+        }
         else if ( _controlType.equals( ControlType.CONDITIONAL ) )
-            {
-                _strControlTemplate = TEMPLATE_MODIFY_CONDITION_CONTROL;
-            }
+        {
+            _strControlTemplate = TEMPLATE_MODIFY_CONDITION_CONTROL;
+        }
 
     }
-    
+
     /**
      * display the Manage Condition Control View
-     * 
+     *
      * @param request
      *            The HTTP request
      * @return The page
@@ -271,36 +272,36 @@ public class FormControlJspBean extends AbstractJspBean
     @View( value = VIEW_MANAGE_CONDITION_CONTROL, defaultView = true )
     public String getManageConditionControl( HttpServletRequest request )
     {
-    	if (!FormsConstants.PARAMETER_VALIDATE_LOGICAL_OPERATOR.equals(request.getParameter(FormsConstants.PARAMETER_VIEW_MODIFY_LOGICAL_OPERATOR))) {
-    		clearAttributes( );
-    		retrieveParameters( request );
-    	}
+        if (!FormsConstants.PARAMETER_VALIDATE_LOGICAL_OPERATOR.equals(request.getParameter(FormsConstants.PARAMETER_VIEW_MODIFY_LOGICAL_OPERATOR))) {
+            clearAttributes( );
+            retrieveParameters( request );
+        }
 
         if ( _step == null || _controlType == null )
         {
             return redirectToViewManageForm( request );
         }
-    	
-    	List<Control> listControl = ControlHome.getControlByControlTargetAndType( _nIdTarget, _controlType );
-    	List<ConditionControl> listConditionControl = new ArrayList<>();
-    	int nIdControlGroup = 0;
-    	for (Control control : listControl) {
-    		if (nIdControlGroup == 0) {
-    			nIdControlGroup = control.getIdControlGroup();
-    		}
-    		Question targetQuestion = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) );
+
+        List<Control> listControl = ControlHome.getControlByControlTargetAndType( _nIdTarget, _controlType );
+        List<ConditionControl> listConditionControl = new ArrayList<>();
+        int nIdControlGroup = 0;
+        for (Control control : listControl) {
+            if (nIdControlGroup == 0) {
+                nIdControlGroup = control.getIdControlGroup();
+            }
+            Question targetQuestion = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) );
             Step targetStep = StepHome.findByPrimaryKey( targetQuestion.getIdStep( ) );
-    		ConditionControl conditionControl = new ConditionControl(targetStep.getTitle(), targetQuestion.getTitle(), control);
-    		listConditionControl.add(conditionControl);
-    	}
+            ConditionControl conditionControl = new ConditionControl(targetStep.getTitle(), targetQuestion.getTitle(), control);
+            listConditionControl.add(conditionControl);
+        }
 
         LocalizedPaginator<ConditionControl> paginator = new LocalizedPaginator<>( listConditionControl, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
-        
+
         _strCurrentPageIndex = AbstractPaginator.getPageIndex( request, AbstractPaginator.PARAMETER_PAGE_INDEX, _strCurrentPageIndex );
         _nItemsPerPage = AbstractPaginator.getItemsPerPage( request, AbstractPaginator.PARAMETER_ITEMS_PER_PAGE, _nItemsPerPage, _nDefaultItemsPerPage );
-    	
-    	Map<String, Object> model = getModel( );
+
+        Map<String, Object> model = getModel( );
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
 
@@ -315,38 +316,38 @@ public class FormControlJspBean extends AbstractJspBean
         ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
         String strLogicalOperatorParam = request.getParameter(FormsConstants.PARAMETER_LOGICAL_OPERATOR);
         if (strLogicalOperatorParam != null) {
-        	LogicalOperator logicalOperator = LogicalOperator.valueOf(strLogicalOperatorParam.toUpperCase());
-        	updateControlGroup(listConditionControl, controlGroup, logicalOperator);
+            LogicalOperator logicalOperator = LogicalOperator.valueOf(strLogicalOperatorParam.toUpperCase());
+            updateControlGroup(listConditionControl, controlGroup, logicalOperator);
         }
         model.put( FormsConstants.MARK_ID_CONTROL_GROUP, (controlGroup != null ? controlGroup.getId() : null) );
         model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator().getLabel() : LogicalOperator.AND.getLabel()) );
         model.put( MARK_LIST_CONDITION_CONTROL, listConditionControl );
-        
-    	Locale locale = getLocale( );
+
+        Locale locale = getLocale( );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_CONDITION_CONTROL, locale, model );
 
         return getAdminPage( templateList.getHtml( ) );
     }
-    
+
     private void updateControlGroup(List<ConditionControl> listConditionControl, ControlGroup controlGroup, LogicalOperator logicalOperator)
     {
-    	if (logicalOperator != null) {
-        	if (controlGroup != null) {
-        		controlGroup.setLogicalOperator(logicalOperator);
-        		controlGroup = ControlGroupHome.update(controlGroup);
-        	} else {
-        		controlGroup = new ControlGroup();
-        		controlGroup.setLogicalOperator(logicalOperator);
-        		controlGroup = ControlGroupHome.create(controlGroup);
-        	}
-        	
-        	for (ConditionControl conditionalControl : listConditionControl) {
-        		Control control = conditionalControl.getControl();
-        		control.setIdControlGroup(controlGroup.getId());
-        		control = ControlHome.update(control);
-        		conditionalControl.setControl(control);
-        	}
-        	
+        if (logicalOperator != null) {
+            if (controlGroup != null) {
+                controlGroup.setLogicalOperator(logicalOperator);
+                controlGroup = ControlGroupHome.update(controlGroup);
+            } else {
+                controlGroup = new ControlGroup();
+                controlGroup.setLogicalOperator(logicalOperator);
+                controlGroup = ControlGroupHome.create(controlGroup);
+            }
+
+            for (ConditionControl conditionalControl : listConditionControl) {
+                Control control = conditionalControl.getControl();
+                control.setIdControlGroup(controlGroup.getId());
+                control = ControlHome.update(control);
+                conditionalControl.setControl(control);
+            }
+
         }
     }
 
@@ -363,7 +364,7 @@ public class FormControlJspBean extends AbstractJspBean
         {
             initControl( request );
         }
-        
+
         if ( _control == null && !retrieveControlFromRequest( request ) )
         {
             return redirectToViewManageForm( request );
@@ -371,10 +372,10 @@ public class FormControlJspBean extends AbstractJspBean
 
         Map<String, Object> model = getModel( );
         _strControlTitle = I18nService.getLocalizedString( INFO_CONDITION_TITLE, request.getLocale( ) );
-        
+
         if ( _control != null )
         {
-        	buildControlModel( request, model );
+            buildControlModel( request, model );
         }
         else
         {
@@ -397,8 +398,7 @@ public class FormControlJspBean extends AbstractJspBean
     {
         if ( _step == null )
         {
-            int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), FormsConstants.DEFAULT_ID_VALUE );
-
+            int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
             _step = StepHome.findByPrimaryKey( nIdStep );
         }
 
@@ -428,7 +428,7 @@ public class FormControlJspBean extends AbstractJspBean
 
     /**
      * Build the model for Create and Modify Control views
-     * 
+     *
      * @param request
      *            the Http request
      * @param model
@@ -437,28 +437,28 @@ public class FormControlJspBean extends AbstractJspBean
     private void buildControlModel( HttpServletRequest request, Map<String, Object> model )
     {
         String strValidatorName = request.getParameter( FormsConstants.PARAMETER_VALIDATOR_NAME );
-        
+
         String valSubmit;
         if ( _controlType == ControlType.CONDITIONAL) {
-        	valSubmit = request.getParameter( FormsConstants.PARAMETER_VIEW_MODIFY_CONDITION_CONTROL );
+            valSubmit = request.getParameter( FormsConstants.PARAMETER_VIEW_MODIFY_CONDITION_CONTROL );
         } else {
-        	valSubmit = request.getParameter( FormsConstants.PARAMETER_VIEW_MODIFY_CONTROL );
+            valSubmit = request.getParameter( FormsConstants.PARAMETER_VIEW_MODIFY_CONTROL );
         }
-        
-        int idStep = _step.getId( );
-        if ( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) != null )
+
+        if(_step == null)
         {
-            idStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+            int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+            _step = StepHome.findByPrimaryKey( nIdStep );
         }
 
         boolean bStepChanged = false;
         if ( valSubmit != null && valSubmit.equals( FormsConstants.VALIDATE_STEP ) )
         {
-        	bStepChanged = true;
+            bStepChanged = true;
         }
 
         ReferenceList referenceListQuestion = new ReferenceList( );
-        for ( Question question : QuestionHome.getQuestionsListByStep( idStep ) )
+        for ( Question question : QuestionHome.getQuestionsListByStep( _step.getId() ) )
         {
 
             referenceListQuestion.addItem( question.getId( ), question.getTitle( ) );
@@ -477,9 +477,18 @@ public class FormControlJspBean extends AbstractJspBean
             _control.setListIdQuestion( null );
             nIdQuestion = FormsConstants.DEFAULT_ID_VALUE;
         } else if ( valSubmit != null && valSubmit.equals( FormsConstants.VALIDATE_QUESTION ) ) {
-        	nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
-        } else {
-        	nIdQuestion = _control.getListIdQuestion( ).iterator( ).next( );
+            nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), FormsConstants.DEFAULT_ID_VALUE );
+        }
+        else
+        {
+            if( _control.getListIdQuestion( ) != null && !_control.getListIdQuestion( ).isEmpty( ) )
+            {
+                nIdQuestion = _control.getListIdQuestion( ).iterator( ).next( );
+            }
+            else
+            {
+                nIdQuestion = FormsConstants.DEFAULT_ID_VALUE;
+            }
         }
 
         if ( nIdQuestion != FormsConstants.DEFAULT_ID_VALUE
@@ -534,12 +543,16 @@ public class FormControlJspBean extends AbstractJspBean
             IValidator validator = EntryServiceManager.getInstance( ).getValidator( _control.getValidatorName( ) );
             strValidatorTemplate = validator.getDisplayHtml( _control );
         }
+        if(_controlType.name() == "TRANSITION") {
+            model.put("nextStepTitle", request.getParameter("nextStepTitle"));
+        }
 
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_CONTROL_TEMPLATE, strValidatorTemplate );
         model.put( FormsConstants.MARK_CONTROL, _control );
-        model.put( FormsConstants.MARK_TARGET_ID_STEP, idStep );
+        model.put( FormsConstants.MARK_ID_STEP, _nIdTarget );
+        model.put( FormsConstants.MARK_TARGET_ID_STEP, _step.getId() );
         model.put( FormsConstants.MARK_TARGET_ID_QUESTION, nIdQuestion );
         model.put( FormsConstants.MARK_QUESTION_LIST, referenceListQuestion );
         model.put( FormsConstants.MARK_AVAILABLE_STEPS, StepHome.getStepReferenceListByForm( _step.getIdForm( ) ) );
@@ -636,8 +649,8 @@ public class FormControlJspBean extends AbstractJspBean
         {
             ControlHome.remove( _control.getId( ) );
             if (ControlType.CONDITIONAL.getLabel().equals(_control.getControlType())
-            		&& ControlHome.getControlCountByControlTargetAndType(_control.getIdControlTarget(), ControlType.CONDITIONAL) == 0) {
-            	ControlGroupHome.remove(_control.getIdControlGroup());
+                    && ControlHome.getControlCountByControlTargetAndType(_control.getIdControlTarget(), ControlType.CONDITIONAL) == 0) {
+                ControlGroupHome.remove(_control.getIdControlGroup());
             }
             ControlListenerManager.notifyListenersControlRemoval( _control, request );
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_REMOVED );
@@ -666,10 +679,10 @@ public class FormControlJspBean extends AbstractJspBean
 
     /**
      * Retrieve the control object from request parameter
-     * 
+     *
      * @param request
      *            The request
-     * 
+     *
      * @return false if an error occurred, true otherwise
      */
     private boolean retrieveControlFromRequest( HttpServletRequest request )
@@ -691,7 +704,7 @@ public class FormControlJspBean extends AbstractJspBean
 
     /**
      * Validate the Control field values
-     * 
+     *
      * @param request
      *            the Http request
      * @return True if the control is valid
@@ -749,7 +762,7 @@ public class FormControlJspBean extends AbstractJspBean
     }
 
     /**
-     * 
+     *
      * @param request
      *            The Http request
      * @return the return URL string

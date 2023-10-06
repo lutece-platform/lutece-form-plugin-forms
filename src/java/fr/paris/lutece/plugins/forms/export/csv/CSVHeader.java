@@ -48,16 +48,16 @@ import fr.paris.lutece.plugins.forms.business.Question;
  */
 public class CSVHeader
 {
-    private final List<Question> _listQuestionColumn;
-    private final List<Question> _listIterationQuestionColumn;
+    private final List<Question> _listQuestionColumns;
+    private final List<Question> _listIterationQuestionColumns;
 
     /**
      * Constructor
      */
     public CSVHeader( )
     {
-        _listQuestionColumn = new ArrayList<>( );
-        _listIterationQuestionColumn = new ArrayList<>();
+        _listQuestionColumns = new ArrayList<>();
+        _listIterationQuestionColumns = new ArrayList<>();
     }
 
     /**
@@ -68,7 +68,7 @@ public class CSVHeader
      */
     public void addHeader( Question question )
     {
-        ListIterator<Question> listIterator = _listQuestionColumn.listIterator( );
+        ListIterator<Question> listIterator = _listQuestionColumns.listIterator( );
         boolean foundQuestionWithSameId = false;
         while ( listIterator.hasNext( ) )
         {
@@ -95,30 +95,39 @@ public class CSVHeader
                     return;
                 }
         }
-        _listQuestionColumn.add( question );
+        _listQuestionColumns.add( question );
     }
     
-    public void addHeadersWithIterations(FormResponse formResponse, Question question)
+    public void addHeadersWithIterations(Question question, List<FormResponse> formResponseList)
     {
-    	List<FormQuestionResponse> formQuestionResponseList = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion(formResponse.getId(), question.getId());
-    	for (FormQuestionResponse formQuestionResponse : formQuestionResponseList)
+    	for (FormResponse formResponse : formResponseList)
     	{
-    		_listQuestionColumn.add( formQuestionResponse.getQuestion() );
-    		if (formQuestionResponseList.size() > 1) {
-    			_listIterationQuestionColumn.add(formQuestionResponse.getQuestion());
-    		}
+    		List<FormQuestionResponse> formQuestionResponseList = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion(formResponse.getId(), question.getId());
+    		for (FormQuestionResponse formQuestionResponse : formQuestionResponseList)
+        	{
+    			if (!_listQuestionColumns.contains(formQuestionResponse.getQuestion()))
+    			{
+    				_listQuestionColumns.add(formQuestionResponse.getQuestion());
+    			}
+				
+        		if (formQuestionResponseList.size() > 1 && !_listIterationQuestionColumns.contains(formQuestionResponse.getQuestion()))
+        		{
+        			_listIterationQuestionColumns.add(formQuestionResponse.getQuestion());
+        		}
+        	}
     	}
     }
 
     /**
      * @return the _listFinalColumnToExport
      */
-    public List<Question> getColumnToExport( )
+    public List<Question> getQuestionColumns( )
     {
-        return new ArrayList<>( _listQuestionColumn );
+        return _listQuestionColumns;
     }
 
-	public List<Question> getListIterationQuestionColumn() {
-		return new ArrayList<>( _listIterationQuestionColumn );
+	public List<Question> getIterationsQuestionColumns() 
+	{
+		return _listIterationQuestionColumns;
 	}
 }

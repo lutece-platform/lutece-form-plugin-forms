@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -44,6 +45,7 @@ public final class FormMessageHome
 {
     // Static variable pointed at the DAO instance
     private static IFormMessageDAO _dao = SpringContextService.getBean( "forms.formMessageDAO" );
+    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -63,7 +65,7 @@ public final class FormMessageHome
     public static FormMessage create( FormMessage formMessage )
     {
         _dao.insert( formMessage, _plugin );
-
+        _cache.putInCache( _cache.getFormMessageByFormCacheKey( formMessage.getIdForm( ) ), formMessage );
         return formMessage;
     }
 
@@ -77,7 +79,7 @@ public final class FormMessageHome
     public static FormMessage update( FormMessage formMessage )
     {
         _dao.store( formMessage, _plugin );
-
+        _cache.putInCache( _cache.getFormMessageByFormCacheKey( formMessage.getIdForm( ) ), formMessage );
         return formMessage;
     }
 
@@ -90,6 +92,7 @@ public final class FormMessageHome
     public static void remove( int nKey )
     {
         _dao.delete( nKey, _plugin );
+        _cache.resetCache( );
     }
 
     /**
@@ -101,6 +104,7 @@ public final class FormMessageHome
     public static void removeByForm( int nIdForm )
     {
         _dao.deleteByForm( nIdForm, _plugin );
+        _cache.removeKey( _cache.getFormMessageByFormCacheKey( nIdForm ) );
     }
 
     /**
@@ -124,6 +128,13 @@ public final class FormMessageHome
      */
     public static FormMessage findByForm( int nIdForm )
     {
-        return _dao.selectByForm( nIdForm, _plugin );
+        String cacheKey = _cache.getFormMessageByFormCacheKey( nIdForm );
+        FormMessage formMessage = ( FormMessage ) _cache.getFromCache( cacheKey );
+        if ( formMessage == null )
+        {
+            formMessage = _dao.selectByForm( nIdForm, _plugin );
+            _cache.putInCache( cacheKey, formMessage );
+        }
+        return formMessage;
     }
 }

@@ -280,7 +280,7 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the html code of the form form
-     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     * @throws AccessDeniedException
      *             the possible AccessDeniedException
      */
     @View( VIEW_CREATE_FORM )
@@ -377,7 +377,7 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the html code to confirm
-     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     * @throws AccessDeniedException
      *             Access denied exception if user isn't authorized
      */
     @View( VIEW_CONFIRM_REMOVE_FORM )
@@ -464,7 +464,7 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the jsp URL to display the form to manage forms
-     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     * @throws AccessDeniedException
      *             AccessDeniedException if user isn't authorized to delete the form
      */
     @Action( ACTION_REMOVE_FORM )
@@ -505,7 +505,7 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return The HTML form to update info
-     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     * @throws AccessDeniedException
      *             Access denied exception if the user isn't authorized to view the form config page
      */
     @View( VIEW_MODIFY_FORM )
@@ -632,7 +632,7 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return The HTML form to update info
-     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     * @throws AccessDeniedException
      *             Access denied exception if the user isn't authorized to view the form config page
      */
     @View( VIEW_MODIFY_PUBLICATION )
@@ -673,7 +673,7 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return The Jsp URL of the process result
-     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     * @throws AccessDeniedException
      *             AccessDeniedException if the user isn'y authorized to process the modification of params of a form
      */
     @Action( ACTION_MODIFY_FORM )
@@ -754,7 +754,7 @@ public class FormJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return The Jsp URL of the process result
-     * @throws fr.paris.lutece.portal.service.admin.AccessDeniedException
+     * @throws AccessDeniedException
      *             AccessDeniedException if the user isn'y authorized to process the modification of params of a form
      */
     @Action( ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION )

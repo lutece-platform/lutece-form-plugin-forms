@@ -1,48 +1,49 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-      <h3 class="panel-title">${step.title}</h3>
+        <h3 class="panel-title">${step.title}</h3>
     </div>
     <div id="step-content" class="panel-body">
-    ${stepContent}
-    <#if display_captcha>${captcha}</#if>
-    </div>
-  <div class="panel-footer">
-  	<input type="hidden" name="token" value = "${token}">
-	<input name="page" value="forms" type="hidden">
-	<input name="id_form" value="${step.idForm}" type="hidden">
-	<#if !step.initial><button class="btn btn-primary btn-sm" name="action_doReturnStep"  type="submit" >#i18n{forms.step.previous}</button></#if>
-	<#if step.final>
-      <#if form.displaySummary >
-        <button class="btn btn-primary btn-sm" name="action_formResponseSummary"  type="submit">#i18n{forms.step.see.summary}</button>
-      <#else>
-      	<#assign label_button="#i18n{forms.step.save}" />
-      	<#if form.labelFinalButton?has_content>
-      		<#assign label_button=form.labelFinalButton />
-      	</#if>
-        <button class="btn btn-primary btn-sm" name="action_doSaveResponse"  type="submit">${label_button}</button>
-      </#if>
-	<#else>
-	  <button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit">#i18n{forms.step.next}</button>
-	</#if>
-	<#if user?? && form.backupEnabled>
-		<button class="btn btn-info btn-sm pull-right" name="action_doResetBackup"  type="submit" >#i18n{forms.step.resetResponse}</button>
-		<button class="btn btn-info btn-sm pull-right" name="action_doSaveForBackup"  type="submit" >#i18n{forms.step.saveResponse}</button>
-    </#if>
-  </div>
+        ${stepContent}
+        <#if display_captcha>${captcha}</#if>
+</div>
+<div class="panel-footer">
+    <input type="hidden" name="token" value = "${token}">
+    <input name="page" value="forms" type="hidden">
+    <input name="id_form" value="${step.idForm}" type="hidden">
+    <input name="id_step" value="${step.id}" type="hidden">
+    <#if !step.initial><button class="btn btn-primary btn-sm" name="action_doReturnStep"  type="submit" >#i18n{forms.step.previous}</button></#if>
+<#if step.final>
+<#if form.displaySummary >
+<button class="btn btn-primary btn-sm" name="action_formResponseSummary"  type="submit">#i18n{forms.step.see.summary}</button>
+<#else>
+<#assign label_button="#i18n{forms.step.save}" />
+<#if form.labelFinalButton?has_content>
+<#assign label_button=form.labelFinalButton />
+</#if>
+<button class="btn btn-primary btn-sm" name="action_doSaveResponse"  type="submit">${label_button}</button>
+</#if>
+<#else>
+<button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit">#i18n{forms.step.next}</button>
+</#if>
+<#if user?? && form.backupEnabled>
+<button class="btn btn-info btn-sm pull-right" name="action_doResetBackup"  type="submit" >#i18n{forms.step.resetResponse}</button>
+<button class="btn btn-info btn-sm pull-right" name="action_doSaveForBackup"  type="submit" >#i18n{forms.step.saveResponse}</button>
+</#if>
+</div>
 </div>
 <script>
-  $( function() {
-     /* Check if step-group has all field hidden due to conditionnal behavior */
-    $(".step-group").each( function(){
-      var count_field = $(this).find( '.form-group').length,
-        count_cond =  $(this).find( 'div[class*="display_field_"]' ).length,
-        count_cond_visible = $(this).find( 'div[class*="display_field_"]:visible' ).length;
-       
-      if( count_field == count_cond &&  count_cond > 0 &&  count_cond_visible==0 ){
-        $(this).toggle();
-        $(this).addClass('step-group-collapsible');
-      }
+    $( function() {
+        /* Check if step-group has all field hidden due to conditionnal behavior */
+        $(".step-group").each( function(){
+            var count_field = $(this).find( '.form-group').length,
+                count_cond =  $(this).find( 'div[class*="display_field_"]' ).length,
+                count_cond_visible = $(this).find( 'div[class*="display_field_"]:visible' ).length;
+
+            if( count_field == count_cond &&  count_cond > 0 &&  count_cond_visible==0 ){
+                $(this).toggle();
+                $(this).addClass('step-group-collapsible');
+            }
+        });
     });
-  });
-  </script>
+</script>
   
