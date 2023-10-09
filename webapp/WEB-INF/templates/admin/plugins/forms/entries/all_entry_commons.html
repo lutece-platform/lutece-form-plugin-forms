@@ -15,8 +15,10 @@ changeVisilityConfirmFieldTitle();
 function changeVisibilityRefListSelect(){
     if( document.getElementById( "use_ref_list" ).checked ){
     	$('#use_ref_list_group').show();
+    	$('#select_ref_list').prop("required", true);
     } else {
         $('#use_ref_list_group').hide();
+        $('#select_ref_list').prop("required", false);
     }
 } 
 changeVisibilityRefListSelect();
