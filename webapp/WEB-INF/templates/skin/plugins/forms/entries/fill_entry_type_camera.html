@@ -47,8 +47,18 @@
 			<#list list_responses as response>
 				<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
 					<#assign error = response.entry.error>
-					<div class="alert alert-danger"><#if error.mandatoryError>#i18n{form.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
-				</#if>
+					  <div class="alert alert-danger">
+					    <#if error.mandatoryError>
+						<#if error.errorMessage??>
+						  ${error.errorMessage}
+     					        <#else>
+						  #i18n{forms.message.mandatory.entry}
+					        </#if>
+					    <#else>
+                                              ${error.errorMessage}
+                                            </#if>
+                                        </div>
+			        </#if>
 			</#list>
 		</#if>
 	</div>
