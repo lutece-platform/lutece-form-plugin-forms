@@ -14,13 +14,13 @@
 		<#else>
 			<#assign imageType= "png">
 		</#if>
-		
+
 		<#assign field_width=getFieldValueByCode( entry, "width")>
-		<#if field_width?number &gt; 0> 
+		<#if field_width?number &gt; 0>
 			<#assign width= field_width?number>
 		</#if>
 		<#assign field_height=getFieldValueByCode( entry, "height")>
-		<#if field_height?number &gt; 0> 
+		<#if field_height?number &gt; 0>
 			<#assign height= field_height?number>
 		</#if>
 		<div  class="row">
@@ -34,8 +34,8 @@
 				<div id="canvas-wrapper${entry.idEntry}" class="cam-wrapper">
 					<canvas id="canvas${entry.idEntry}" width="${width}" height="${height}" ></canvas>
 					<button type="button" id="clear${entry.idEntry}" class="btn btn-danger btn-cam" title="#i18n{portal.util.labelDelete}">
-						<i class="fa fa-times" ></i> 
-					</button>							
+						<i class="fa fa-times" ></i>
+					</button>
 				</div>
 				<input type="hidden"  id="${idName}" name="${idName}" width="${width}" height="${height}" <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??> value="${response.toStringValueResponse}"</#if><#if response.entry.error??> class="error"</#if></#if></#list><#else>value="" </#if> class="${entry.CSSClass!}">
 	        </div>
@@ -47,8 +47,16 @@
 			<#list list_responses as response>
 				<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
 					<#assign error = response.entry.error>
-					<div class="alert alert-danger"><#if error.mandatoryError>#i18n{form.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
-				</#if>
+					<div class="alert alert-danger">
+						<#if error.mandatoryError>
+						<#if error.errorMessage??>
+						  ${error.errorMessage}
+     					<#else>
+						  #i18n{forms.message.mandatory.entry}
+					    </#if>
+					    </#if>
+                    </div>
+               </#if>
 			</#list>
 		</#if>
 	</div>
@@ -66,19 +74,19 @@
 			photo${entry.idEntry} = document.querySelector('#attribute${entry.idEntry}'),
 			img = new Image(),
 			mediaConfig${entry.idEntry} = { video: true };
-	
+
 		canvasWrapper${entry.idEntry}.style.display = "none";
 		canvas${entry.idEntry}.style.display = "none";
 		img.src = photo${entry.idEntry}.value;
-	
+
 		img.onload = function() {
 			context${entry.idEntry}.drawImage( img, 0, 0, ${width}, ${height} );
-		}	   
-	
+		}
+
 		var errBack = function(e) {
 			console.log('An error has occurred!', e)
 		};
-	
+
 		// Put video listeners into place
 		if(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 			navigator.mediaDevices.getUserMedia(mediaConfig${entry.idEntry}).then(function(stream) {
@@ -103,13 +111,13 @@
 				video.play();
 			}, errBack);
 		}
-		
+
 		// Trigger photo take
 		document.getElementById('snap${entry.idEntry}').addEventListener('click', function(ev) {
 			canvas${entry.idEntry}.style.display = "block";
 			canvasWrapper${entry.idEntry}.style.display = "flex";
 			context${entry.idEntry}.drawImage( video, 0, 0, ${width}, ${height});
-		
+
 			var data${entry.idEntry} = canvas${entry.idEntry}.toDataURL('image/${imageType}',1);
 			if(video.src != null && video.src !="" ){
 				photo${entry.idEntry}.setAttribute('value', data${entry.idEntry});
@@ -120,7 +128,7 @@
 			sessionStorage.setItem('data${entry.idEntry}', data${entry.idEntry}  );
 			ev.preventDefault();
 		});
-		
+
 		// Trigger photo remove
 		document.getElementById('clear${entry.idEntry}').addEventListener('click', function(ev) {
 			context${entry.idEntry}.clearRect( 0, 0, ${width}, ${height});
