@@ -54,7 +54,9 @@
      					<#else>
 						  #i18n{forms.message.mandatory.entry}
 					    </#if>
-					    </#if>
+					    <#else>
+                          ${error.errorMessage}
+                        </#if>
                     </div>
                </#if>
 			</#list>
