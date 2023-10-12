@@ -974,10 +974,10 @@ $( function(){
 	${title}
 	<div class="btn-sort-group" role="group" aria-label="Tri">
 		<@aButton hideTitle=['all'] color='' style="" class="btn-sort asc" href="${sort_url}true#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.asc}" >
-			<@icon style='sort-up fa-fw' />
+		   <@icon style='arrows-up fa-fw' />
 		</@aButton>	
-		<@aButton hideTitle=['all'] color='' style="" class="btn-sort desc" href="${sort_url}false#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.desc}">	
-			<@icon style='sort-down fa-fw' />
+		<@aButton hideTitle=['all'] color='' style="" class="btn-sort desc" href="${sort_url}false#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.desc}">
+        	<@icon style='arrows-down fa-fw' />
 		</@aButton>	
 	</div>
 </th>
