@@ -987,6 +987,10 @@ public class FormXPage extends MVCApplication
         }
 
         checkAuthentication( form, request );
+
+        if(form.isBackupEnabled())
+        {
+
         if(_formResponseManager.getCurrentStep() == null) {
             _formResponseManager.add(StepHome.getInitialStep(form.getId()));
         }
@@ -1007,7 +1011,8 @@ public class FormXPage extends MVCApplication
         _formService.saveFormForBackup( formResponse );
         _formResponseManager.setFormResponseUpdateDate( formResponse.getUpdateStatus( ) );
         _formResponseManager.setIsResponseLoadedFromBackup(false);
-
+        _formService.saveFormForBackup(formResponse);
+        }
         return getStepView(  request );
     }
 
