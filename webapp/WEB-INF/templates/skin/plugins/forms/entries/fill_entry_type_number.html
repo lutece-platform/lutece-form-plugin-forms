@@ -40,6 +40,10 @@
 					<#if placeholder!=''>
 						placeholder='${placeholder}'
 					</#if>
+					<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
+					<#if field_autocomplete?? && field_autocomplete.value??>
+						autocomplete="${field_autocomplete.value}"
+					</#if>
 				class="${entry.CSSClass!} "	/>
 				<#if suffix!=''>
 					<span class="input-group-addon">${suffix}</span>
