@@ -21,8 +21,7 @@
     <@input type='hidden' name='maxNumberResponse' value='form.maxNumberResponse!\'0\'' />
     <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' rows=2>
         <@inputGroup>
-            <#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-			<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
+            <@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value=form.availabilityStartDate />
             <@inputGroupItem type='text'>
                 <@icon style='calendar' />
             </@inputGroupItem>
@@ -30,8 +29,7 @@
     </@formGroup>
     <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' rows=2>
         <@inputGroup>
-          <#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?string["yyyy-MM-dd HH:mm:ss"]></#if>
-		  <@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
+            <@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value=form.availabilityEndDate />
             <@inputGroupItem type='text'>
                 <@icon style='calendar' />
             </@inputGroupItem>
