@@ -38,6 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 import fr.paris.lutece.plugins.forms.web.form.filter.IFilterable;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
 
+import java.util.Locale;
+
 /**
  * Interface for the Filter associated to a FormColumnDisplay
  */
@@ -75,9 +77,9 @@ public interface IFormFilterDisplay extends IFilterable, IFormListPosition
 
     /**
      * Build the Template of the FormFilterDisplay
-     * 
-     * @param request
-     *            The HttpServletRequest to use to build the template of the filter
+     *
+     * @param request The HttpServletRequest to use to build the template of the filter
+     * @param locale The locale to use for i18n labels in the template
      */
-    void buildTemplate( HttpServletRequest request );
+    void buildTemplate(HttpServletRequest request, Locale locale);
 }

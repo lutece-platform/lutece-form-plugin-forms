@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.form.filter.display.impl;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -123,14 +124,14 @@ public class FormFilterDisplaySearchedText extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public void buildTemplate( HttpServletRequest request )
+    public void buildTemplate(HttpServletRequest request, Locale locale)
     {
         Map<String, Object> model = new LinkedHashMap<>( );
         String strSearchedText = request.getParameter( PARAMETER_SEARCHED_TEXT );
         model.put( MARK_SEARCHED_TEXT, strSearchedText );
         model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
-        model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( request.getLocale( ) ) );
-        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
+        model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( locale ) );
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), locale, model );
 
         _strTemplate = htmlTemplate.getHtml( );
     }

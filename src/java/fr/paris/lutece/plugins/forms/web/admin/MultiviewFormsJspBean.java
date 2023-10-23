@@ -187,7 +187,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Build the template of each form filter display
         if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
         {
-            _listFormFilterDisplay.stream( ).forEach( formFilterDisplay -> formFilterDisplay.buildTemplate( request ) );
+            _listFormFilterDisplay.stream( ).forEach( formFilterDisplay -> formFilterDisplay.buildTemplate( request , getLocale()) );
             Collections.sort( _listFormFilterDisplay, new FormListPositionComparator( ) );
         }
 

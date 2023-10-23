@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.web.form.filter.display.impl;
 
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -104,7 +105,7 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public void buildTemplate( HttpServletRequest request )
+    public void buildTemplate(HttpServletRequest request, Locale locale)
     {
         String strTemplateResult = StringUtils.EMPTY;
 
@@ -114,8 +115,8 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
         addDateRange( model );
 
         model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
-        model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( request.getLocale( ) ) );
-        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
+        model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( locale ) );
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), locale, model );
         if ( htmlTemplate != null )
         {
             strTemplateResult = htmlTemplate.getHtml( );
