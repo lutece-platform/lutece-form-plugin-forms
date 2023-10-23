@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -128,7 +129,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public void buildTemplate( HttpServletRequest request )
+    public void buildTemplate(HttpServletRequest request, Locale locale)
     {
         AdminUser user = AdminUserService.getAdminUser( request );
         ReferenceList refListForms = createReferenceList( user );
@@ -138,7 +139,7 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
         {
             Map<String, Object> model = new LinkedHashMap<>( );
             model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM, refListForms.get( 0 ).getCode( ) );
-            HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( FORM_FORMS_FILTER_UNIQUE_TEMPLATE_NAME, request.getLocale( ), model );
+            HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( FORM_FORMS_FILTER_UNIQUE_TEMPLATE_NAME, locale, model );
             if ( htmlTemplate != null )
             {
                 strTemplateResult = htmlTemplate.getHtml( );
@@ -153,11 +154,11 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
                 model.put( MARK_FILTER_LIST_VALUE, getValue( ) );
                 model.put( MARK_FILTER_NAME, FormMultiviewFormsNameConstants.PARAMETER_ID_FORM );
                 model.put( MARK_FILTER_CONFIG, getFormFilter( ).getFormFilterConfiguration( ) );
-                model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( request.getLocale( ) ) );
+                model.put( MARK_FILTER_LABEL, getFormFilter( ).getFormFilterConfiguration( ).getFormFilterLabel( locale ) );
                 model.put( FormMultiviewFormsNameConstants.PARAMETER_PREVIOUS_ID_FORM,
                         request.getParameter( FormMultiviewFormsNameConstants.PARAMETER_ID_FORM ) );
 
-                HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), request.getLocale( ), model );
+                HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( getBaseTemplate( ), locale, model );
                 if ( htmlTemplate != null )
                 {
                     strTemplateResult = htmlTemplate.getHtml( );

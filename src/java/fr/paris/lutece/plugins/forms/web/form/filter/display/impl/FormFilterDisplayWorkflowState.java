@@ -38,6 +38,7 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -118,7 +119,7 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public void buildTemplate( HttpServletRequest request )
+    public void buildTemplate(HttpServletRequest request, Locale locale)
     {
         // If no form has been selected we will return an empty list
         ReferenceList referenceList = new ReferenceList( );

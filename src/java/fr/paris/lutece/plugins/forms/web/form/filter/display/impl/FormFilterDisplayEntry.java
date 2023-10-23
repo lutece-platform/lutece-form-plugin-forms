@@ -120,10 +120,10 @@ public class FormFilterDisplayEntry extends AbstractFormFilterDisplay
      * {@inheritDoc}
      */
     @Override
-    public void buildTemplate( HttpServletRequest request )
+    public void buildTemplate(HttpServletRequest request, Locale locale)
     {
         String strParameterName = buildElementName( PARAMETER_ENTRY_VALUE_PATTERN );
-        manageFilterTemplate( request, createReferenceList( request.getLocale( ) ), strParameterName );
+        manageFilterTemplate( request, createReferenceList( locale ), strParameterName );
     }
 
     /**
