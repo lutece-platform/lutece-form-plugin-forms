@@ -2,10 +2,10 @@
 <@formGroup formStyle='inline' groupStyle='addons' labelClass='sr-only'  id='search-text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}' labelFor='searched_text' labelKey='#i18n{forms.multiviewForms.labelFilter.searchText}'>
     <@inputGroup>
         <@input name='searched_text' id='searched_text' size='sm' value=previous_searched_text placeHolder='#i18n{forms.multiviewForms.labelFilter.searchText}' />
-        <@inputGroupItem>
+        <@inputGroupItem type='text'>
             <@formHelp style=''>#i18n{forms.multiviewForms.labelFilter.searchText.tooltip}</@formHelp>
         </@inputGroupItem>   
-        <@inputGroupItem>
+		<@inputGroupItem type='btn'>
             <@button type='submit' id='btn_search' buttonIcon='search' title='#i18n{forms.multiviewForms.labelFilter.searchText}' hideTitle=['all']  />
         </@inputGroupItem>   
     </@inputGroup>

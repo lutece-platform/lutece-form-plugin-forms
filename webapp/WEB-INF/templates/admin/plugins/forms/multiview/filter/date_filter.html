@@ -5,7 +5,7 @@
     <@input type='hidden' name='formsFilterDate' value='${filter_config.getFormFilterName()!""}' />
 	<@inputGroup>
         <@input type='text' size='sm' name=filter_config.getFormFilterName()!'' id=filter_config.getFormFilterName()!'' value=filter_list_value!'' placeHolder=filter_label  />
-        <@inputGroupItem>
+        <@inputGroupItem type='btn'>
             <@button buttonIcon='calendar' color='primary' />
 		</@inputGroupItem>    
     </@inputGroup>
