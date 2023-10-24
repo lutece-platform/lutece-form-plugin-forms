@@ -970,7 +970,7 @@ $( function(){
 });
 </script>
 </#macro>
-<#macro headerSort field title jsp_url attribute id=''>
+<#macro headerSort field title jsp_url attribute id='' hide=[]>
 <#-- Element visibility -->
 <#local displayTitleClass = displaySettings(hide,'inline') />
 <#if jsp_url?contains("?")>
