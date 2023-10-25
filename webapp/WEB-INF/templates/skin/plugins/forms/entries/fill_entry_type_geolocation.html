@@ -11,6 +11,7 @@
 <#assign yValue = "" />
 <#assign geometryValue = "" />
 <#assign hasError = false />
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#if getError( list_responses, entry )?? >
 	<#assign error = getError( list_responses, entry ) >
 	<#if error?? && error.isDisplayableError>
