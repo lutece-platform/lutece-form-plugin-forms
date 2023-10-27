@@ -94,16 +94,8 @@ public class VerticalBreadcrumb implements IBreadcrumb
     @Override
     public String getTopHtml( HttpServletRequest request, FormResponseManager formResponseManager )
     {
-        Step currentStep = formResponseManager.getValidatedSteps( ).get( formResponseManager.getValidatedSteps( ).size( ) - 1 );
-
-        List<Step> listStep = StepHome.getStepsListByForm( currentStep.getIdForm( ) );
-
-        int nCurrentStepIndex = getCurrentStepIndex( listStep, currentStep.getId( ) );
-
-        listStep.subList( nCurrentStepIndex, listStep.size( ) ).clear( );
-
         Map<String, Object> model = new HashMap<>( );
-        model.put( FormsConstants.MARK_LIST_STEPS, listStep );
+        model.put( FormsConstants.MARK_LIST_STEPS, formResponseManager.getValidatedSteps( ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
 
         return template.getHtml( );
@@ -113,21 +105,8 @@ public class VerticalBreadcrumb implements IBreadcrumb
      * {@inheritDoc}
      */
     @Override
-    public String getBottomHtml( HttpServletRequest request, FormResponseManager formResponseManager )
-    {
-        Step currentStep = formResponseManager.getValidatedSteps( ).get( formResponseManager.getValidatedSteps( ).size( ) - 1 );
-
-        List<Step> listStep = StepHome.getStepsListByForm( currentStep.getIdForm( ) );
-
-        int nCurrentStepIndex = getCurrentStepIndex( listStep, currentStep.getId( ) );
-
-        listStep.subList( 0, nCurrentStepIndex + 1 ).clear( );
-
-        Map<String, Object> model = new HashMap<>( );
-        model.put( FormsConstants.MARK_LIST_STEPS, listStep );
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_BREADCRUMB_HTML, I18nService.getDefaultLocale( ), model );
-
-        return template.getHtml( );
+    public String getBottomHtml( HttpServletRequest request, FormResponseManager formResponseManager ) {
+        return null;
     }
 
     /**
