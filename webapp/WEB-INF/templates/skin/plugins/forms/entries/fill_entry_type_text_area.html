@@ -6,7 +6,9 @@
 		<#assign field_width=getFieldValueByCode( entry, "width")>
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
 		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+		<#if getFieldByCode( entry, "autocomplete")??>
 		<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
+		</#if>
 		<#if has_error>
 			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="alert alert-danger form-control" 
 				<#if placeholder!=''> placeholder='${placeholder}' </#if>
