@@ -37,7 +37,9 @@
 							 value="" 
 						</#if>
 					</#if>
+				<#if getFieldByCode( entry, "autocomplete")??>
 					<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
+				</#if>
 					<#if field_autocomplete?? && field_autocomplete.value??>
 						autocomplete="${field_autocomplete.value}"
 					</#if>
