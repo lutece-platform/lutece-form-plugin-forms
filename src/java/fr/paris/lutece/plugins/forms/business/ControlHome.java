@@ -73,7 +73,7 @@ public final class ControlHome
 
             _dao.insert( control.getId( ), idQuestion, _plugin );
         }
-        _cache.putInCache( _cache.getControlCacheKey( control.getId( ) ), control );
+        _cache.resetCache( );
         return control;
     }
 

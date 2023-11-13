@@ -20,9 +20,9 @@
                     <@td sm=6>${validator.validatorDisplayName}</@td>
                     <@td sm=3>
                         <#if nextStepTitle??>
-                            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}&nextStepTitle=${nextStepTitle}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
+                            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id!}&nextStepTitle=${nextStepTitle!}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
                         <#else>
-                            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}&nextStepTitle=${nextStepTitle}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
+                            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_control=${control.id}&id_step=${step.id!}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
                         </#if>
                     </@td>
                     <@td sm=3>
@@ -42,9 +42,9 @@
 </@modalBody>
 <@modalFooter>
     <#if nextStepTitle??>
-        <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id}&nextStepTitle=${nextStepTitle}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
+        <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id!}&nextStepTitle=${nextStepTitle!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
     <#else>
-        <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
+        <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&id_step=${step.id!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
     </#if>
 </@modalFooter>
 
