@@ -33,27 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-
-import org.apache.commons.lang3.StringUtils;
-
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.FormResponseStep;
-import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
-import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.QuestionHome;
-import fr.paris.lutece.plugins.forms.business.Step;
-import fr.paris.lutece.plugins.forms.business.StepHome;
-import fr.paris.lutece.plugins.forms.business.Transition;
-import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.business.*;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
-import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import org.apache.commons.lang3.StringUtils;
+import java.util.*;
 
 /**
  * 
@@ -75,33 +59,45 @@ public class FormResponseCsvExport
     {
         _csvSeparator = MultiviewConfig.getInstance( ).getCsvSeparator( );
     }
-
-    /**
-     * Build the CSV string for column line
+    /*
+     * Sort list of FormResponse by question export order
      */
+    public List<FormResponse> sortFormResponseListByQuestionExportDisplayOrder(List<FormResponse> formResponseList,  List<Question> listQuestions)
+    {
+     List <FormResponse> sortedFormResponseList = new ArrayList<>();
+        HashMap<Integer, FormResponse> mapFormResponse = new HashMap<>();
+        for (int i = 0; i < listQuestions.size(); i++)
+        {
+            Question question = listQuestions.get(i);
+                for (FormResponse formResponse : formResponseList)
+                {
+                    mapFormResponse.put(question.getExportDisplayOrder(), formResponse);
+                }
+        }
+        for (Integer key : mapFormResponse.keySet())
+        {
+            sortedFormResponseList.add(mapFormResponse.get(key));
+        }
+        return sortedFormResponseList;
+    }
+        /**
+         * Build the CSV string for column line
+         */
     public String buildCsvColumnToExport( List<FormResponseItem> formResponseItems )
     {
     	List<FormResponse> formResponseList = getFormResponseFromItemList(formResponseItems);
     	int idForm = formResponseList.get(0).getFormId();
-        List<Step> listSteps = StepHome.getStepsListByForm( idForm );
-        List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( idForm );
+        List<Question> listQuestions = QuestionHome.getListQuestionByIdForm(idForm);
+        formResponseList = sortFormResponseListByQuestionExportDisplayOrder(formResponseList, listQuestions);
+        listQuestions.sort(Comparator.comparingInt(Question::getExportDisplayOrder));
 
-        List<Step> orderedStepList = StepService.sortStepsWithTransitions( listSteps, listTransitions );
-
-        for ( Step step : orderedStepList )
-        {
-            List<Question> questionList = QuestionHome.getQuestionsListByStep( step.getId( ) );
-            if (questionList != null) {
-            	questionList.sort(Comparator.comparingInt(Question::getExportDisplayOrder));
-            }
-            for ( Question question : questionList )
+        for ( Question question : listQuestions )
             {
                 if ( question.isResponseExportable( ) )
                 {
                     _csvHeader.addHeadersWithIterations(question, formResponseList);
                 }
             }
-        }
 
         StringBuilder sbCsvColumn = new StringBuilder( );
 
