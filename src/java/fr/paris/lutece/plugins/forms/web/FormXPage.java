@@ -267,7 +267,7 @@ public class FormXPage extends MVCApplication
     public synchronized XPage getStepView( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         String paramInit = request.getParameter( FormsConstants.PARAMETER_INIT );
-        if ( FormsConstants.PARAMETER_INIT.equals( paramInit ) )
+        if ( Boolean.parseBoolean( paramInit ) )
         {
             init( request );
         }
@@ -361,7 +361,7 @@ public class FormXPage extends MVCApplication
                 SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
             }
         }
-        IsRequestComingFromAction = false;
+        IsRequestComingFromAction = true;
         XPage xPage = getXPage( TEMPLATE_VIEW_STEP, getLocale( request ), model );
         xPage.setTitle( strTitleForm );
         xPage.setPathLabel( strPathForm );
@@ -895,6 +895,8 @@ public class FormXPage extends MVCApplication
             // why are we here as we didn't try to save any backup ? So instead of throwing the error, we redirect.
             AppLogService.error("FormXPage l 897 : " + MESSAGE_ERROR_TOKEN );
             _currentStep = StepHome.findByPrimaryKey(Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_STEP)));
+            List<String> errorList = new ArrayList<>( );
+            _currentStep = FormsResponseUtils.getNextStep( _currentStep.getId( ), errorList, _formResponseManager );
             return getStepView(  request );
         }
 
@@ -1311,6 +1313,7 @@ public class FormXPage extends MVCApplication
         _stepDisplayTree = null;
         _breadcrumb = null;
         _bInactiveStateBypassed = false;
+        IsRequestComingFromAction = false;
         FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
     }
 
@@ -1326,6 +1329,7 @@ public class FormXPage extends MVCApplication
         _formResponseManager = null;
         _stepDisplayTree = null;
         _breadcrumb = null;
+        IsRequestComingFromAction = false;
     }
 
     /**
