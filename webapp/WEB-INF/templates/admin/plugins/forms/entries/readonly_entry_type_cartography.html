@@ -31,10 +31,9 @@
 		center = new L.LatLng(lat, lon);
 		map.panTo(center);
 		map.setZoom(15);
-
 	}
 	else if ( geojson["geometry"]["type"] == "Polygon" ) {
-	    var coordinates = geojson["geometry"]["coordinates"];
+	    var coordinates = geojson["geometry"]["coordinates"][0];
 	    var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
 	    var polygon = L.polygon(inverseCoord ).addTo(map);
 	    var bounds = polygon.getBounds()
@@ -49,5 +48,9 @@
 		map.fitBounds(bounds);
 	    map.setZoom(15);
 	}
+	
+	setTimeout(function () {
+		   map.invalidateSize(true);
+		}, 100);
 
   </script>          

@@ -28,7 +28,7 @@ $(window).on('load', function(){
         var marker = L.marker([coordinates[1],coordinates[0]]).addTo(map);
     }
     else if ( geojson["geometry"]["type"] == "Polygon" ) {
-        var coordinates = geojson["geometry"]["coordinates"];
+        var coordinates = geojson["geometry"]["coordinates"][0];
         var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
         var polygon = L.polygon(inverseCoord ).addTo(map);
     }
