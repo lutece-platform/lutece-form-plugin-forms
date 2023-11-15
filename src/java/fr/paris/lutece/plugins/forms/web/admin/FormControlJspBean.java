@@ -81,6 +81,9 @@ import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
+import java.util.Arrays;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDate;
 
 /**
  * This class provides the user interface to manage Form controls ( manage, create, modify, remove )
@@ -541,6 +544,13 @@ public class FormControlJspBean extends AbstractJspBean
         if ( StringUtils.isNotEmpty( _control.getValidatorName( ) ) )
         {
             IValidator validator = EntryServiceManager.getInstance( ).getValidator( _control.getValidatorName( ) );
+
+            String[] dateValidators = {"forms.dateInferiorValidator", "forms.dateSuperiorValidator"};
+            if (Arrays.asList(dateValidators).contains(validator.getValidatorBeanName())){
+                String formattedDate = formatDate(_control.getValue());
+                _control.setValue(formattedDate);
+            }
+
             strValidatorTemplate = validator.getDisplayHtml( _control );
         }
         if(_controlType.name() == "TRANSITION") {
@@ -811,5 +821,15 @@ public class FormControlJspBean extends AbstractJspBean
         clearAttributes( );
 
         return url.getUrl( );
+    }
+
+    public static String formatDate(String inputDate) {
+
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDate date = LocalDate.parse(inputDate, inputFormatter);
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        String formattedDate = date.format(outputFormatter);
+
+        return formattedDate;
     }
 }
