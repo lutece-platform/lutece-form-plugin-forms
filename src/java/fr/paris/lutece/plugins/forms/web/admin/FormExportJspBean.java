@@ -33,14 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
-import java.io.IOException;
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -62,6 +54,11 @@ import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.url.UrlItem;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 @Controller( controllerJsp = "ManageFormExport.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormExportJspBean extends AbstractJspBean
@@ -166,24 +163,15 @@ public class FormExportJspBean extends AbstractJspBean
         Integer nCurrentOrder = questionToChangeOrder.getExportDisplayOrder();
         List<Question> questionList = QuestionHome.getListQuestionByIdForm(nIdForm);
         questionToChangeOrder.setExportDisplayOrder(nOrderToSet);
-
-        questionList.stream().filter(question -> question.getId() == nIdQuestion).findFirst().ifPresent(question -> questionList.remove(question));
-        // sort the list
-        Collections.sort(questionList, Comparator.comparingInt(Question::getExportDisplayOrder));
-        Collections.reverse(questionList);
-
-         if(nCurrentOrder > nOrderToSet) {
-            questionList.stream().filter(question -> question.getExportDisplayOrder() >= nOrderToSet && question.getExportDisplayOrder() <= nCurrentOrder).forEach(question -> question.setExportDisplayOrder(question.getExportDisplayOrder() + 1));
-        }
-        else if(nCurrentOrder < nOrderToSet) {
-            if(nOrderToSet == questionList.size()+1) {
-                for (int i = 0; i < questionList.size(); i++) {
-                    questionList.get(i).setExportDisplayOrder(i+1);
-                }
-            } else {
-                questionList.stream().filter(question -> question.getExportDisplayOrder() <= nOrderToSet && question.getExportDisplayOrder() >= nCurrentOrder).forEach(question -> question.setExportDisplayOrder(question.getExportDisplayOrder() - 1));
+        int isOrderExportDecrementing = (nCurrentOrder > nOrderToSet) ? 1 : -1;
+        questionList.forEach(question -> {
+            int order = question.getExportDisplayOrder();
+            if ((nCurrentOrder > nOrderToSet && order >= nOrderToSet && order <= nCurrentOrder) ||
+                    (nCurrentOrder <= nOrderToSet && order <= nOrderToSet && order >= nCurrentOrder)) {
+                question.setExportDisplayOrder(order + isOrderExportDecrementing);
             }
-            }
+        });
+
         questionList.add(questionToChangeOrder);
 
         // update the list
