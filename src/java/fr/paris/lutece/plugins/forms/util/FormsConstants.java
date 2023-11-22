@@ -251,6 +251,8 @@ public final class FormsConstants
     public static final String SEPARATOR_UNDERSCORE = "_";
     public static final String SEPARATOR_SEMICOLON = ";";
     public static final String END_OF_LINE = "\n";
+    public static final String FO_LOGIN_PAGE_PARAMETERS = "forms.frontOffice.loginPage.parameters";
+
 
 
     /**

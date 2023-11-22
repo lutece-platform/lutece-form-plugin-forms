@@ -33,51 +33,18 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.springframework.transaction.annotation.Transactional;
-
 import fr.paris.lutece.api.user.User;
-import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.business.FormDisplay;
-import fr.paris.lutece.plugins.forms.business.FormHome;
-import fr.paris.lutece.plugins.forms.business.FormMessageHome;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.FormResponseStep;
-import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
-import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.Step;
-import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.business.*;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.service.workflow.IFormWorkflowService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
-import fr.paris.lutece.plugins.forms.web.CompositeGroupDisplay;
-import fr.paris.lutece.plugins.forms.web.CompositeQuestionDisplay;
-import fr.paris.lutece.plugins.forms.web.FormResponseManager;
-import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
-import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
+import fr.paris.lutece.plugins.forms.web.*;
 import fr.paris.lutece.plugins.forms.web.admin.MultiviewFormResponseDetailsJspBean;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
-import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeGalleryImage;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeImage;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
-import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.plugins.genericattributes.business.*;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.*;
 import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
 import fr.paris.lutece.portal.business.event.ResourceEvent;
 import fr.paris.lutece.portal.business.file.FileHome;
@@ -88,6 +55,13 @@ import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.sql.TransactionManager;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This is the service class related to the form
@@ -465,16 +439,20 @@ public class FormService
      *            The form
      * @param strUserGuid
      *            The user guid
+     * @param formResponseManager
+     *
      * @return the created {@code FormResponseManager} object
      */
-    public FormResponseManager createFormResponseManagerFromBackUp( Form form, String strUserGuid )
+    public FormResponseManager createFormResponseManagerFromBackUp( Form form, String strUserGuid, FormResponseManager formResponseManager )
     {
-        FormResponseManager formResponseManager = null;
         List<FormResponse> listFormResponse = FormResponseHome.getFormResponseByGuidAndForm( strUserGuid, form.getId( ), true );
         if ( CollectionUtils.isNotEmpty( listFormResponse ) )
         {
             formResponseManager = new FormResponseManager( listFormResponse.get( 0 ) );
-            formResponseManager.setIsResponseLoadedFromBackup(true);
+        }
+        else if ( formResponseManager != null &&  CollectionUtils.isEmpty( listFormResponse ) )
+        {
+            return formResponseManager;
         }
         else
         {
