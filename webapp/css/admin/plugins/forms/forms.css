@@ -191,7 +191,12 @@
 .step.step-done > .step-title > .container > h1 span{ margin-left:.75rem; color: #656d77; }
 .step.step-done > .step-title > .container > h1:before { content: url('data:image/svg+xml,%3csvg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="rgb(255,255,255)" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="9" /><path d="M9 12l2 2l4 -4" /%3e%3c/svg%3e'); background-color: #656d77; color: #fff; padding: 1.185rem 1.75rem; top: 0; position: relative; }
 /* RESPONSIVE FIX 											*/
-/* Small Devices, Tablets 									*/
+/* Small Devices, Tablets
+							*/
+@media only screen and (min-width:600px) and (max-width:992px) {
+	ul#info-right {display:flex; flex-direction:row; flex-wrap:wrap; justify-content:space-between;}
+	ul#info-right li {flex-grow: 0; flex-shrink: 0; flex-basis: 49%;}
+}
 @media only screen and (max-width :768px) {
 	#step-toc .nav-pills span{ width: 50px; }
 	#multiview-no-forms { height: auto }
