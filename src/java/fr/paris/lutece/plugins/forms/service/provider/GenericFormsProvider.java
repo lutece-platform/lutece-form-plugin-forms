@@ -79,6 +79,7 @@ public abstract class GenericFormsProvider implements IProvider
     private static final String MESSAGE_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.update_date";
     private static final String MESSAGE_STATUS = "forms.marker.provider.url.detail.reponse.status";
     private static final String MESSAGE_STATUS_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.status_update_date";
+    private static final String MESSAGE_FORM = "forms.marker.provider.url.detail.reponse.form";
 
     // PROPERTY
     private static final String PROPERTY_LUTECE_ADMIN_PROD_URL = "lutece.admin.prod.url";
@@ -96,6 +97,7 @@ public abstract class GenericFormsProvider implements IProvider
     public static final String PARAMETER_ID_FORM_RESPONSES = "id_form_response";
     public static final String PARAMETER_ID_FORM_RESPONSES_FO = "id_response";
     public static final String PARAMETER_PAGE_FORM_RESPONSE = "formsResponse";
+    private static final String FORM_TITLE = "form_title";
 
     // FIELDS
     protected final FormResponse _formResponse;
@@ -233,11 +235,14 @@ public abstract class GenericFormsProvider implements IProvider
         statusMarker.setDescription( I18nService.getLocalizedString( MESSAGE_STATUS, I18nService.getDefaultLocale( ) ) );
         InfoMarker updateStatusDateMarker = new InfoMarker( MARK_STATUS_UPDATE_DATE );
         updateStatusDateMarker.setDescription( I18nService.getLocalizedString( MESSAGE_STATUS_UPDATE_DATE, I18nService.getDefaultLocale( ) ) );
+        InfoMarker formTitleMarker = new InfoMarker( FORM_TITLE );
+        formTitleMarker.setDescription( I18nService.getLocalizedString( MESSAGE_FORM, I18nService.getDefaultLocale( ) ) );
         
         collectionNotifyMarkers.add( creationDateMarker );
         collectionNotifyMarkers.add( updateDateMarker );
         collectionNotifyMarkers.add( statusMarker );
         collectionNotifyMarkers.add( updateStatusDateMarker );
+        collectionNotifyMarkers.add( formTitleMarker );
         
         return collectionNotifyMarkers;
     }
