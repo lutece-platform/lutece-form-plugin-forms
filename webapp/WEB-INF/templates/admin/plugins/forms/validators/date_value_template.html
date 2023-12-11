@@ -3,6 +3,9 @@
 		<@inputGroupItem type='text'>
 			<@icon style='calendar' />
 		</@inputGroupItem>
-		<@input type='date' name='value' id='date' value='${control_value!}' />
+			<#if control_value?has_content>
+				<#assign date_value = control_value?datetime("yyyy-MM-dd HH:mm:ss")/>
+			</#if>
+		<@input type='date' name='value' id='date' value=date_value! />
 	</@inputGroup>
 </@formGroup>
