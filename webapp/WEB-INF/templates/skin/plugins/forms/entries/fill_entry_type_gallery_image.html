@@ -12,10 +12,10 @@
 		</#if>
 		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}" id="label${entry.idEntry}">${entry.title}<#if entry.mandatory>	*</#if></label>
 		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<p class="help-block">${entry.helpMessage}</p>
-			</#if>
 			<@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected/>
+			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+				<span class="help-block">${entry.helpMessage}</span>
+			</#if>
 			<#if list_responses?? && list_responses?has_content>
 				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 				<#assign response_error = list_responses[0]/>
