@@ -33,15 +33,17 @@
  */
 package fr.paris.lutece.plugins.forms.export.pdf;
 
-import java.util.List;
-
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
+import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * This class performs a PDF export
@@ -54,6 +56,7 @@ public class PDFExport implements IFormatExport
     private final String _strFormatExportName;
     private final String _strFormatExportDisplayName;
     private final String _strFormatExportDescription;
+    public HttpServletRequest request;
 
     /**
      * Constructor of the PatternValidator
@@ -99,10 +102,12 @@ public class PDFExport implements IFormatExport
         return CONSTANT_MIME_TYPE_PDF;
     }
 
+
+
+
+
     @Override
-    public IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormItemSortConfig sortConfig )
-    {
-        return new PdfFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription );
+    public IFileGenerator createFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, HttpServletRequest request, Form form) {
+        return new PdfFileGenerator(formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription, request, form);
     }
 }

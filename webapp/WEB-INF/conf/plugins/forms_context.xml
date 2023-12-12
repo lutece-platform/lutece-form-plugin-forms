@@ -38,7 +38,7 @@
     	<constructor-arg type="java.lang.String" index="1" value="forms.export.csv.name" />
         <constructor-arg type="java.lang.String" index="2" value="forms.export.csv.description" />
     </bean>
-    
+
     <bean id="forms.pdfExport" class="fr.paris.lutece.plugins.forms.export.pdf.PDFExport">
         <constructor-arg type="java.lang.String" index="0" value="forms.pdfExport" />
         <constructor-arg type="java.lang.String" index="1" value="forms.export.pdf.name" />

@@ -33,41 +33,37 @@
  */
 package fr.paris.lutece.plugins.forms.export.pdf;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
+import fr.paris.lutece.plugins.forms.business.*;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
-import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
-import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
+import fr.paris.lutece.plugins.html2pdf.service.PdfConverterServiceException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.file.FileUtil;
-import fr.paris.lutece.util.html.HtmlTemplate;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class PdfFileGenerator extends AbstractPdfFileGenerator
 {
     private static final boolean ZIP_EXPORT = Boolean.parseBoolean( AppPropertiesService.getProperty( "forms.export.pdf.zip", "false" ) );
     
     private boolean _hasMultipleFiles = false;
+
+
     
-    protected PdfFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormItemSortConfig sortConfig, String fileDescription )
+    protected PdfFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+                               FormItemSortConfig sortConfig, String fileDescription, HttpServletRequest request, Form form)
     {
-        super( FileUtil.normalizeFileName( formName ), formName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription );
+        super( FileUtil.normalizeFileName( formName ), formName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, request, form );
     }
 
     @Override
@@ -119,69 +115,69 @@ public class PdfFileGenerator extends AbstractPdfFileGenerator
 
     private void writeExportFile( Path directoryFile ) throws IOException
     {
-        List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn,
-                _listFormFilter, _sortConfig );
-        _hasMultipleFiles = listFormResponseItems.size( ) > 1;
-        
-        int intNumberOfFormResponsesPerPdf = MultiviewConfig.getInstance().getNumberOfFormResponsesPerPdf();
-        if (intNumberOfFormResponsesPerPdf > 1)
+        List<Question> listQuestions = QuestionHome.getListQuestionByIdForm(_form.getId());
+        listQuestions.sort(Comparator.comparingInt(Question::getExportDisplayOrder));
+        List<FormResponse> listResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm(_form.getId());
+        listResponse.removeIf(FormResponse::isFromSave);
+        listResponse.sort(Comparator.comparing(FormResponse::getCreation));
+        List<List<FormQuestionResponse>>  formQuestionResponseList = new ArrayList<>();
+        _hasMultipleFiles = true;
+
+        for (int i = 0; i < listResponse.size(); i++)
         {
-        	generateMultipleFormResponsesPerFile(directoryFile, listFormResponseItems, intNumberOfFormResponsesPerPdf);
+            if(!listResponse.get(i).isFromSave())
+            {
+              formQuestionResponseList.add(FormQuestionResponseHome.getFormQuestionResponseListByFormResponse(listResponse.get(i).getId()));
+            }
+        }
+        int intNumberOfFormResponsesPerPdf = MultiviewConfig.getInstance().getNumberOfFormResponsesPerPdf();
+        String customTemplate = getTemplateExportPDF();
+        String strTemplateResponses ;
+        String strTemplateCover = null;
+        boolean isCustomTemplate = false;
+        if(customTemplate != null)
+        {
+            strTemplateResponses = customTemplate;
+            isCustomTemplate = true;
         }
         else
         {
-        	generateOneFormResponsePerFile(directoryFile, listFormResponseItems);
+                strTemplateResponses = generateTemplateForPdfExportResponses(_form, listQuestions);
+                strTemplateCover = generateTemplateForPdfExportCoverPage(_form, listResponse);
         }
-    }
-    
-    private void generateMultipleFormResponsesPerFile(Path directoryFile, List<FormResponseItem> listFormResponseItems, int intNumberOfFormResponsesPerPdf) throws IOException
-    {
-    	for (int intStartIndex = 0; intStartIndex < listFormResponseItems.size(); intStartIndex += intNumberOfFormResponsesPerPdf)
-    	{
-    		try {
-				int intEndIndexExcluded = Math.min(intStartIndex + intNumberOfFormResponsesPerPdf, listFormResponseItems.size());
-				List<FormResponseItem> subListFormResponseItems = listFormResponseItems.subList(intStartIndex, intEndIndexExcluded);
-				List<FormResponse> subListFormResponse = new ArrayList<>();
-				
-				for(FormResponseItem responseItem : subListFormResponseItems)
-				{
-					FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-					subListFormResponse.add(formResponse);
-				}
-				
-				Map<String, Object> model = new HashMap<>( );
-				HtmlTemplate htmltemplate = generateHtmlMultipleFormResponsesFromTemplate(model, subListFormResponse);
-				
-				String generatedName = generateMultiFormResponsesFileName(subListFormResponse, intStartIndex + 1, intEndIndexExcluded);
-				generatePdfFile(directoryFile, htmltemplate, generatedName);
-			} catch (IOException e) {
-				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
-				throw e;
-			} catch (Exception e) {
-				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
-			}
-    	}
-    }
-    
-    private void generateOneFormResponsePerFile(Path directoryFile, List<FormResponseItem> listFormResponseItems) throws IOException
-    {
-    	for ( FormResponseItem responseItem : listFormResponseItems )
+        if ( intNumberOfFormResponsesPerPdf == 0)
         {
-        	try {
-				Map<String, Object> model = new HashMap<>( );
-				
-				FormResponse formResponse = FormResponseHome.findByPrimaryKey( responseItem.getIdFormResponse( ) );
-				HtmlTemplate htmltemplate = generateHtmlSingleFormResponsesFromTemplate(model, formResponse);
-				
-				String generatedName = generateFileName(formResponse);
-				generatePdfFile(directoryFile, htmltemplate, generatedName);
-			} catch (IOException e) {
-				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
-				throw e;
-			} catch (Exception e) {
-				AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
-			}
+            intNumberOfFormResponsesPerPdf = formQuestionResponseList.size();
+        }
+        if(intNumberOfFormResponsesPerPdf > formQuestionResponseList.size())
+        {
+            intNumberOfFormResponsesPerPdf = formQuestionResponseList.size();
+        }
+        int numberOfLoop = formQuestionResponseList.size() / intNumberOfFormResponsesPerPdf;
+        if(formQuestionResponseList.size() % intNumberOfFormResponsesPerPdf != 0){
+            numberOfLoop++;
+        }
+        int startRange = 0;
+        int endRange = intNumberOfFormResponsesPerPdf;
+        for (int i = 0; i < numberOfLoop; i++)
+        {
+            if(i == numberOfLoop - 1)
+            {
+                endRange = formQuestionResponseList.size();
+            }
+            String fileName = _form.getTitle() + "_" + startRange + "_" + endRange;
+            generatedPdfForRangeOfFormResponses(directoryFile, strTemplateResponses, listQuestions, listResponse, formQuestionResponseList.subList(startRange, endRange), startRange, fileName,isCustomTemplate);
+            startRange = endRange;
+            endRange += intNumberOfFormResponsesPerPdf;
+        }
+        if(strTemplateCover != null )
+        {
+            try {
+                String fileName = _form.getTitle() + "_cover";
+                generatePdfFile(directoryFile,strTemplateCover, fileName, isCustomTemplate);
+            } catch (PdfConverterServiceException e) {
+                AppLogService.error( "Error generating pdf for cover", e );
+            }
         }
     }
-
 }

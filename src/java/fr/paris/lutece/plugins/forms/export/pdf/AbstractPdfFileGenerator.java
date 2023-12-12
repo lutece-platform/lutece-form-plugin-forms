@@ -1,35 +1,6 @@
 package fr.paris.lutece.plugins.forms.export.pdf;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Entities.EscapeMode;
-
-import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
-import fr.paris.lutece.plugins.forms.business.FormDisplay;
-import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponseStep;
-import fr.paris.lutece.plugins.forms.business.Group;
-import fr.paris.lutece.plugins.forms.business.GroupHome;
-import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
-import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.*;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -39,7 +10,7 @@ import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCamera;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeFile;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeTermsOfService;
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.service.provider.GenericFormsProvider;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeComment;
@@ -47,276 +18,197 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServ
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.html2pdf.service.PdfConverterService;
 import fr.paris.lutece.plugins.html2pdf.service.PdfConverterServiceException;
+import fr.paris.lutece.plugins.workflowcore.service.provider.InfoMarker;
 import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
-import fr.paris.lutece.portal.service.file.FileService;
-import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities.EscapeMode;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 	
 	protected static final String CONSTANT_MIME_TYPE_PDF = "application/pdf";
 	protected static final String EXTENSION_PDF = ".pdf";
 	protected static final String LOG_ERROR_PDF_EXPORT_GENERATION = "Error during PDF export generation";
-	protected static final String DEFAULT_TEMPLATE = "admin/plugins/forms/pdf/default_template_export_pdf.html";
-	
 	private static final String KEY_LABEL_YES = "portal.util.labelYes";
     private static final String KEY_LABEL_NO = "portal.util.labelNo";
-    
-    // markers
-    private static final String MARK_PDF_CELL_LIST = "list_pdf_cell";
-    private static final String MARK_FORM_TITLE = "form_title";
+
+    private static final String LINK_MESSAGE_FO = "forms.export.pdf.label.link_FO";
+    private static final String LINK_MESSAGE_BO = "forms.export.pdf.label.link_BO";
+    private static final String PUBLISHED = "forms.export.pdf.published";
+    private static final String NOT_PUBLISHED = "forms.export.pdf.unpublished";
+    private static final String RESPONSE_CREATED = "forms.export.formResponse.form.date.creation";
+    private static final String RESPONSE_UPDATED = "forms.export.formResponse.form.date.update";
+    private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
+    private static final String MESSAGE_EXPORT_FORM_STATE = "forms.export.formResponse.form.state";
+
+    private static final String RESPONSE_NUMBER = "response_number";
     
     protected final String _formTitle;
-	
-	protected AbstractPdfFileGenerator(String fileName, String formTitle, FormPanel formPanel, List<IFormColumn> listFormColumn,
-			List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String fileDescription) {
-		super(fileName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription);
+    protected HttpServletRequest _request;
+    protected String _fileDescription;
+    protected String _fileName;
+    protected FormPanel _formPanel;
+    protected List<IFormColumn> _listFormColumn;
+    protected List<FormFilter> _listFormFilter;
+    protected FormItemSortConfig _sortConfig;
+    protected Form _form;
+
+    protected AbstractPdfFileGenerator(String fileName, String formTitle, FormPanel formPanel, List<IFormColumn> listFormColumn,
+			List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String fileDescription, HttpServletRequest request, Form form) {
+		super(fileName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, request, form);
 		_formTitle = formTitle;
+        _request = request;
+        _fileDescription = fileDescription;
+        _fileName = fileName;
+        _formPanel = formPanel;
+        _listFormColumn = listFormColumn;
+        _listFormFilter = listFormFilter;
+        _sortConfig = sortConfig;
+        _form = form;
 	}
-	
-	protected HtmlTemplate generateHtmlSingleFormResponsesFromTemplate(Map<String, Object> model, FormResponse formResponse) throws Exception
-	{
-		model.put( MARK_FORM_TITLE, _formTitle);
-		List<PdfCell> listPdfCell = new ArrayList<>();
-		listPdfCell.addAll(generateFirstFormResponseInfos(formResponse));
-		listPdfCell.addAll(getPdfCellValueFormsReponse( formResponse ));
-		model.put( MARK_PDF_CELL_LIST, listPdfCell );
-		return getTemplateExportPDF(model);
-	}
-
-	protected HtmlTemplate generateHtmlMultipleFormResponsesFromTemplate(Map<String, Object> model, List<FormResponse> listFormResponse) throws Exception
-	{
-		model.put( MARK_FORM_TITLE, _formTitle);
-		List<PdfCell> listPdfCell = new ArrayList<>();
-		for (FormResponse formResponse : listFormResponse)
-		{
-			listPdfCell.addAll(generateFirstFormResponseInfos(formResponse));
-			listPdfCell.addAll(getPdfCellValueFormsReponse( formResponse ));
-		}
-		model.put( MARK_PDF_CELL_LIST, listPdfCell );
-		return getTemplateExportPDF(model);
-	}
-	
-	private HtmlTemplate getTemplateExportPDF(Map<String, Object> model)
-	{
-		File templateFile = FileHome.findByPrimaryKey(MultiviewConfig.getInstance().getIdFileTemplatePdf());
-		if (templateFile != null && templateFile.getPhysicalFile() != null)
-		{
-			PhysicalFile physicalTemplateFile = PhysicalFileHome.findByPrimaryKey(templateFile.getPhysicalFile().getIdPhysicalFile());
-			if (physicalTemplateFile != null)
-			{
-				String strTemplateContent = new String(physicalTemplateFile.getValue());
-				return AppTemplateService.getTemplateFromStringFtl(strTemplateContent, Locale.getDefault(), model);
-			}
-		}
-		return AppTemplateService.getTemplate(DEFAULT_TEMPLATE, Locale.getDefault(), model);
-	}
-
-	private List<PdfCell> generateFirstFormResponseInfos(FormResponse formResponse)
-	{
-		List<PdfCell> pdfCells = new ArrayList<>();
-		
-		// form response number
-		PdfCell formResponseNumberCell = new PdfCell();
-		formResponseNumberCell.setFormResponseNumber(formResponse.getId());
-		pdfCells.add(formResponseNumberCell);
-		
-		// form response update date
-		PdfCell formResponseDateCell = new PdfCell();
-		formResponseDateCell.setFormResponseDate(formatDateFormResponse(formResponse));
-		pdfCells.add(formResponseDateCell);
-
-		return pdfCells;
-	}
-
-	private String formatDateFormResponse(FormResponse formResponse)
-	{
-		if (formResponse != null && formResponse.getUpdate() != null)
-		{
-			DateFormat dateFormat = new SimpleDateFormat( AppPropertiesService.getProperty( FormsConstants.PROPERTY_EXPORT_FORM_DATE_CREATION_FORMAT ), Locale.getDefault( ) );
-			return dateFormat.format( formResponse.getUpdate( ) );
-		}
-		return null;
-		
-	}
-	
-	/**
-     * Gets the pdf cell value forms reponse.
-     *
-     * @param formresponse
-     *            the formresponse
-     * @return the pdf cell value forms reponse
-     */
-    private List<PdfCell> getPdfCellValueFormsReponse( FormResponse formresponse )
+    protected String getTemplateExportPDF()
     {
-        List<PdfCell> listContent = new ArrayList<>( );
-
-        // Filters the FormResponseStep with at least one question exportable in pdf
-        List<FormResponseStep> filteredList = formresponse.getSteps( ).stream( ).filter(
-                frs -> frs.getQuestions( ).stream( ).map( FormQuestionResponse::getQuestion ).map( Question::getEntry ).anyMatch( Entry::isExportablePdf ) )
-                .collect( Collectors.toList( ) );
-        for ( FormResponseStep formResponseStep : filteredList )
+        File templateFile = FileHome.findByPrimaryKey(MultiviewConfig.getInstance().getIdFileTemplatePdf());
+        if (templateFile != null && templateFile.getPhysicalFile() != null)
         {
-            listContent.addAll( createCellsForStep( formResponseStep ) );
-        }
-
-        return listContent;
-    }
-    
-    /**
-     * Creates the cells for step.
-     *
-     * @param formResponseStep
-     *            the form response step
-     * @return the list
-     */
-    private List<PdfCell> createCellsForStep( FormResponseStep formResponseStep )
-    {
-        Step step = formResponseStep.getStep( );
-
-        List<FormDisplay> listStepFormDisplay = FormDisplayHome.getFormDisplayListByParent( step.getId( ), 0 );
-
-        List<PdfCell> listContent = new ArrayList<>( );
-        
-        // add step title
-        PdfCell stepCell = new PdfCell( );
-        stepCell.setStep(step.getTitle());
-        listContent.add(stepCell);
-        
-        for ( FormDisplay formDisplay : listStepFormDisplay )
-        {
-            if ( CompositeDisplayType.GROUP.getLabel( ).equals( formDisplay.getCompositeType( ) ) )
+            PhysicalFile physicalTemplateFile = PhysicalFileHome.findByPrimaryKey(templateFile.getPhysicalFile().getIdPhysicalFile());
+            if (physicalTemplateFile != null)
             {
-                List<PdfCell> listContentGroup = createCellsForGroup( formResponseStep, formDisplay );
-                listContent.addAll( listContentGroup );
-            }
-            else
-            {
-                PdfCell cell = createPdfCellNoGroup( formResponseStep, formDisplay );
-                if ( cell != null )
-                {
-                    listContent.add( cell );
-                }
-            }
-        }
-        return listContent;
-    }
-    
-    /**
-     * Creates the cells for group.
-     *
-     * @param formResponseStep
-     *            the form response step
-     * @param formDisplay
-     *            the form display
-     * @return the list
-     */
-    private List<PdfCell> createCellsForGroup( FormResponseStep formResponseStep, FormDisplay formDisplay )
-    {
-        List<PdfCell> listContent = new ArrayList<>( );
-        
-        Group group = GroupHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
-        String groupName = group.getTitle( );
-
-        List<FormDisplay> listGroupDisplay = FormDisplayHome.getFormDisplayListByParent( formResponseStep.getStep( ).getId( ), formDisplay.getId( ) );
-        for ( int ite = 0; ite < group.getIterationMax( ); ite++ )
-        {
-        	// add group cell
-        	if ( group.getIterationMax( ) > 1 )
-            {
-                int iteration = ite + 1;
-                groupName += " (" + iteration + ")";
-            }
-        	PdfCell groupCell = new PdfCell( );
-        	groupCell.setGroup( groupName );
-        	listContent.add(groupCell);
-        	
-            for ( FormDisplay formDisplayGroup : listGroupDisplay )
-            {
-                PdfCell cell = createPdfCell( formResponseStep, formDisplayGroup, ite );
-                if ( cell != null )
-                {
-                    listContent.add( cell );
-                }
-            }
-        }
-        return listContent;
-    }
-
-    /**
-     * Creates the pdf cell no group.
-     *
-     * @param formResponseStep
-     *            the form response step
-     * @param formDisplay
-     *            the form display
-     * @return the pdf cell
-     */
-    private PdfCell createPdfCellNoGroup( FormResponseStep formResponseStep, FormDisplay formDisplay )
-    {
-        return createPdfCell( formResponseStep, formDisplay, 0 );
-    }
-
-    /**
-     * Creates the pdf cell.
-     *
-     * @param formResponseStep
-     *            the form response step
-     * @param formDisplay
-     *            the form display
-     * @param iterationNumber
-     *            the iteration number
-     * @return the pdf cell
-     */
-    private PdfCell createPdfCell( FormResponseStep formResponseStep, FormDisplay formDisplay, int iterationNumber )
-    {
-        FormQuestionResponse formQuestionResponse = formResponseStep.getQuestions( ).stream( )
-                .filter( fqr -> fqr.getQuestion( ).getEntry( ).isExportablePdf( ) )
-                .filter( fqr -> fqr.getQuestion( ).getId( ) == formDisplay.getCompositeId( ) )
-                .filter( fqr -> fqr.getQuestion( ).getIterationNumber( ) == iterationNumber ).findFirst( ).orElse( null );
-
-        if ( formQuestionResponse != null )
-        {
-            String key = formQuestionResponse.getQuestion( ).getTitle( );
-            List<String> listResponseValue = getResponseValue( formQuestionResponse, iterationNumber );
-            if ( CollectionUtils.isNotEmpty( listResponseValue ) )
-            {
-                PdfCell cell = new PdfCell( );
-                cell.setTitle( key );
-                cell.setValue( listResponseValue.stream( ).filter( StringUtils::isNotEmpty ).collect( Collectors.joining( ";" ) ) );
-                return cell;
+                return new String(physicalTemplateFile.getValue());
+            } else {
+                AppLogService.error(LOG_ERROR_PDF_EXPORT_GENERATION + " : " + "Physical file not found for file " + templateFile.getTitle());
             }
         }
         return null;
     }
-    
+
+    public String generateTemplateForPdfExportResponses (Form form,  List<Question> listQuestions )
+    {
+        String space = "                ";
+        String freemarkerOpenBracket = "${";
+        String freemarkerCloseBracket = "}";
+        Document document = new Document("");
+
+        String InfoMessageResponseCreated = I18nService.getLocalizedString( RESPONSE_CREATED, I18nService.getDefaultLocale( ));
+        String InfoMessageResponseUpdated = I18nService.getLocalizedString( RESPONSE_UPDATED, I18nService.getDefaultLocale( ));
+        String InfoMessageResponseState = I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_STATE, I18nService.getDefaultLocale( ));
+        String InfoMessageFormTitle = I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_TITLE, I18nService.getDefaultLocale( ));
+        Element div = document.appendElement("div");
+        div.addClass("response_container");
+
+        div.appendElement("h1").text(InfoMessageFormTitle+ " : " + form.getTitle()   + space + "# " + "$$" + RESPONSE_NUMBER + "$$");
+        div.appendElement("h3").text(InfoMessageResponseCreated+ " : " + freemarkerOpenBracket + "creation_date!" + freemarkerCloseBracket);
+        div.appendElement("h3").text(InfoMessageResponseUpdated+ " : " + freemarkerOpenBracket + "update_date!" + freemarkerCloseBracket);
+        div.appendElement("h3").text(InfoMessageResponseState + " : " + freemarkerOpenBracket + "status!" + freemarkerCloseBracket);
+        Element table = div.appendElement("table");
+        Element tbody = table.appendElement("tbody");
+
+        int numRows = listQuestions.size();
+
+        for (int i = 0; i < numRows; i++)
+        {
+            Element row = tbody.appendElement("tr");
+            Element cellTitle = row.appendElement("td");
+            cellTitle.text(listQuestions.get(i).getTitle() + " : ");
+            Element cellResponse = row.appendElement("td");
+            cellResponse.text(freemarkerOpenBracket+"position_"+listQuestions.get(i).getEntry().getIdEntry()+"!"+freemarkerCloseBracket);
+        }
+        return document.outerHtml();
+    }
+
+    public String appendDefaultStyleToPdf(String template)
+    {
+        Document doc = Jsoup.parse( template );
+        Element head = doc.head();
+        Element style = head.appendElement("style");
+        style.appendText("body {font-family: sans-serif; border-collapse: collapse; width: 100%;}");
+        style.appendText("td, th {padding: 8px;}");
+        style.appendText("tr:nth-child(even){background-color: #f2f2f2;}");
+        style.appendText("th {padding-top: 12px; padding-bottom: 12px; text-align: center; background-color: #04AA6D; color: white;}");
+        style.appendText("h1 {text-align: center;}");
+        style.appendText("h2 {text-align: center;}");
+        style.appendText("#form_responses {margin-top: 50px; margin-bottom: 50px;}");
+        style.appendText("a {color: #000000;}");
+        style.appendText("a:visited {color: #800080;}");
+        style.appendText("a:hover {color: #0000FF;}");
+        style.appendText(".response_container {margin-left: 10px; margin-right: 10px;margin-top: 50px; margin-bottom: 50px; border: 1px solid #ddd; padding: 8px;}");
+
+        return doc.outerHtml();
+    }
+    public String generateTemplateForPdfExportCoverPage (Form form, List<FormResponse> listResponse )
+    {
+        List<String> listBaseUrl = getBaseUrl();
+        String  adminBaseUrl = listBaseUrl.get(1);
+        Document document = new Document("");
+        Element html = document.appendElement("html");
+        Element head = html.appendElement("head");
+        Element body = html.appendElement("body");
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"));
+        head.appendElement("title").text( form.getTitle()+ " - "  +  now );
+        head.appendElement("meta").attr("charset", "UTF-8");
+        Element h1 = body.appendElement("h1");
+        h1.text(form.getTitle() + " - "  +  now );
+
+        Element table = body.appendElement("table");
+        Element tbody = table.appendElement("tbody");
+        for (int i = 0; i < listResponse.size(); i++) {
+            Element row = tbody.appendElement("tr");
+            Element cellTitle = row.appendElement("td");
+            cellTitle.text(I18nService.getLocalizedString( RESPONSE_NUMBER, I18nService.getDefaultLocale( )) + " " + (i+1));
+            Element cellResponse = row.appendElement("td");
+            String linkMessageBO = I18nService.getLocalizedString( LINK_MESSAGE_BO, Locale.getDefault( ) );
+            Element linkBO = cellResponse.appendElement("a");
+            linkBO.attr("href",adminBaseUrl+"jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?view=view_form_response_details&id_form_response=" + listResponse.get(i).getId( ));
+            linkBO.text(linkMessageBO);
+        }
+        Element div = body.appendElement("div");
+        div.id("form_responses");
+
+        return document.outerHtml();
+    }
+
+
+
     /**
      * Gets the response value.
      *
      * @param formQuestionResponse
      *            the form question response
-     * @param iteration
-     *            the iteration
-     * @return the response value
+     * @return List<String> response value
      */
-    private List<String> getResponseValue( FormQuestionResponse formQuestionResponse, int iteration )
+    public List<String> getResponseValue( FormQuestionResponse formQuestionResponse )
     {
-        Entry entry = formQuestionResponse.getQuestion( ).getEntry( );
 
-        IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
+        IEntryTypeService entryTypeService ;
         List<String> listResponseValue = new ArrayList<>( );
+        if(formQuestionResponse != null && formQuestionResponse.getQuestion( ) != null && formQuestionResponse.getQuestion( ).getEntry( ) != null && formQuestionResponse.getEntryResponse() != null)
+        {
+            Entry entry = formQuestionResponse.getQuestion( ).getEntry( );
+            entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
         if ( entryTypeService instanceof AbstractEntryTypeComment )
         {
             return listResponseValue;
         }
-
         if ( entryTypeService instanceof EntryTypeTermsOfService )
         {
             boolean aggrement = formQuestionResponse.getEntryResponse( ).stream( )
@@ -336,49 +228,185 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
         }
         for ( Response response : formQuestionResponse.getEntryResponse( ) )
         {
-            if ( response.getIterationNumber( ) != -1 && response.getIterationNumber( ) != iteration )
+            if ((entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera))
             {
-                continue;
-            }
-
-            String strResponseValue = entryTypeService.getResponseValueForRecap( entry, null, response, I18nService.getDefaultLocale( ) );
-
-            if ( ( entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera ) && strResponseValue != null )
-            {
-                if ( response.getFile( ) != null )
+                PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey(Integer.parseInt(response.getFile().getFileKey()));
+                if (response.getFile() != null)
                 {
-                    IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
-                    fr.paris.lutece.portal.business.file.File fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
-                    
-                    String encoded = StringUtils.EMPTY;
-                    if(fileImage != null && fileImage.getPhysicalFile() != null)
+                    if (physicalFile != null)
                     {
-                    	encoded = Base64.getEncoder( ).encodeToString( fileImage.getPhysicalFile( ).getValue( ) );
+                        String encoded = Base64.getEncoder().encodeToString(physicalFile.getValue());
+                        listResponseValue.add("<div style=\"margin-top: 10px; margin-bottom: 10px;\">"
+                                + "<center><img src=\"data:image/jpeg;base64, " + encoded + " \" width=\"500px\" height=\"auto\" /></center> "
+                                + "</div>"
+                        );
+                    } else {
+                        listResponseValue.add(StringUtils.EMPTY);
                     }
-                    listResponseValue.add( "<img src=\"data:image/jpeg;base64, " + encoded + " \" width=\"100px\" height=\"100px\" /> " );
+                }
+            } else if (entryTypeService instanceof EntryTypeFile && response.getFile() != null)
+            {
+                fr.paris.lutece.portal.business.file.File file = FileHome.findByPrimaryKey(Integer.parseInt(response.getFile().getFileKey()));
+                if (file != null) {
+                    String space = "                ";
+                    String textInFileLink = file.getTitle() + space + file.getSize() + "Bytes" + space + file.getMimeType() + space + file.getDateCreation().toLocalDateTime().toString();
+                    String htmlDisplayFile = "<center><p>" + textInFileLink + "</p></center>";
+                    listResponseValue.add(htmlDisplayFile);
                 }
             }
-            if ( entryTypeService instanceof EntryTypeFile && response.getFile( ) != null )
+            else
             {
-                IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
-                File fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
-                listResponseValue.add( fileImage != null ? fileImage.getTitle( ) : StringUtils.EMPTY);
+                String strResponseValue = entryTypeService.getResponseValueForExport(entry, null, response, I18nService.getDefaultLocale());
+                if (strResponseValue != null) {
+                    listResponseValue.add(strResponseValue);
+                }
             }
-
-            if ( strResponseValue != null )
-            {
-                listResponseValue.add( strResponseValue );
-            }
+         }
         }
-
+        if(listResponseValue.isEmpty())
+        {
+            listResponseValue.add(StringUtils.EMPTY);
+        }
         return listResponseValue;
     }
-    
-    protected void generatePdfFile(Path directoryFile, HtmlTemplate htmltemplate, String fileName) throws PdfConverterServiceException, IOException
+    public  HashMap<Integer, FormQuestionResponse>  formResponseListToHashmap( List<FormQuestionResponse>  formQuestionResponseList)
     {
-    	try ( OutputStream outputStream = Files.newOutputStream( directoryFile.resolve( fileName + EXTENSION_PDF ) ) )
+        HashMap<Integer, FormQuestionResponse> formResponseListByEntryId = new HashMap<>();
+        for (int i = 0; i < formQuestionResponseList.size(); i++)
         {
-        	Document doc = Jsoup.parse( htmltemplate.getHtml( ), UTF_8 );
+            int idEntry = formQuestionResponseList.get(i).getQuestion().getIdEntry();
+            if(formResponseListByEntryId.containsKey(idEntry))
+            {
+                // This is to had the response to the hashmap when there are iterations in the form (one than one time the same entry)
+                List <Response> presentResponses = formResponseListByEntryId.get(formQuestionResponseList.get(i).getQuestion().getIdEntry()).getEntryResponse();
+                List <Response> newResponses = formQuestionResponseList.get(i).getEntryResponse();
+                presentResponses.addAll(newResponses);
+                formQuestionResponseList.get(i).setEntryResponse(presentResponses);
+                formResponseListByEntryId.put(idEntry, formQuestionResponseList.get(i));
+            }
+            else
+            {
+                formResponseListByEntryId.put(idEntry, formQuestionResponseList.get(i));
+            }
+        }
+        return formResponseListByEntryId;
+    }
+    /**
+     * Fill template with form question response.
+     *
+     * @param template
+     *            the template
+     * @param formQuestionResponseList
+     *            the form question response list
+     * @param listQuestions
+     *            the list questions
+     * @return the html template
+     */
+    protected HtmlTemplate fillTemplateWithFormQuestionResponse (String template, List<FormQuestionResponse> formQuestionResponseList, List<Question> listQuestions, FormResponse formResponse)
+    {
+        Map<String, Object> model = new HashMap<>();
+        Collection<InfoMarker> collectionNotifyMarkers = GenericFormsProvider.getProviderMarkerDescriptions(_form);
+        model = markersToModel(model, collectionNotifyMarkers, formQuestionResponseList, formResponse);
+        return AppTemplateService.getTemplateFromStringFtl(template, Locale.getDefault(), model);
+    }
+    protected List<String> getBaseUrl()
+    {
+
+        String baseUrl = AppPathService.getProdUrl(_request);
+        String adminBaseUrl = "";
+        if(AppPropertiesService.getProperty( "lutece.admin.prod.url") != null)
+        {
+            adminBaseUrl = AppPropertiesService.getProperty( "lutece.admin.prod.url" );
+        }
+        else
+        {
+            AppLogService.info( "lutece.admin.prod.url property not found" );
+            adminBaseUrl = baseUrl;
+        }
+        List<String> listBaseUrl = new ArrayList<>();
+        listBaseUrl.add(baseUrl);
+        listBaseUrl.add(adminBaseUrl);
+        return listBaseUrl;
+    }
+    protected Map<String, Object> markersToModel(Map<String, Object> model, Collection<InfoMarker> collectionInfoMarkers, List<FormQuestionResponse> formQuestionResponseList, FormResponse formResponse)
+    {
+        HashMap<Integer, FormQuestionResponse> formResponseListByEntryId = formResponseListToHashmap(formQuestionResponseList);
+        List<String> listBaseUrl = getBaseUrl();
+        String  baseUrl = listBaseUrl.get(0);
+        String  adminBaseUrl = listBaseUrl.get(1);
+        for ( InfoMarker infoMarker : collectionInfoMarkers )
+        {
+            model.put( infoMarker.getMarker(), infoMarker.getValue() );
+            if(infoMarker.getMarker().contains("position_"))
+            {
+                String position = infoMarker.getMarker().replace("position_", "");
+                int positionInt = Integer.parseInt(position);
+                List<String> responseValue = getResponseValue(formResponseListByEntryId.get(positionInt));
+                String responseValueString = "";
+                for (String response : responseValue)
+                {
+                    responseValueString += response + " ";
+                }
+                model.put( infoMarker.getMarker(), responseValueString );
+
+            }
+            if(infoMarker.getMarker().equals("url_admin_forms_response_detail"))
+            {
+                String linkMessage = I18nService.getLocalizedString( LINK_MESSAGE_BO, Locale.getDefault( ) );
+                model.put( infoMarker.getMarker(), "<a href=\""+ adminBaseUrl+"/jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?view=view_form_response_details&id_form_response=" + formResponse.getId( ) + "\">" + linkMessage + "</a>" );
+            }
+            if(infoMarker.getMarker().equals("url_fo_forms_response_detail"))
+            {
+                String linkMessage = I18nService.getLocalizedString( LINK_MESSAGE_FO, Locale.getDefault( ) );
+                model.put( infoMarker.getMarker(), "<a href=\""+ baseUrl+"/jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=" + formResponse.getId( ) + "\">" + linkMessage + "</a>" );
+            }
+            if(infoMarker.getMarker().equals("creation_date"))
+            {
+                String creationDate = formResponse.getCreation( ).toLocalDateTime().toString();
+                String[] parts = creationDate.split("T");
+                String date = parts[0];
+                String time = parts[1];
+                model.put( infoMarker.getMarker(), date + " " + time );
+            }
+            if(infoMarker.getMarker().equals("update_date"))
+            {
+                String updateDate = formResponse.getUpdate( ).toLocalDateTime().toString();
+                String[] parts = updateDate.split("T");
+                String date = parts[0];
+                String time = parts[1];
+                model.put( infoMarker.getMarker(), date + " " + time );
+            }
+            if(infoMarker.getMarker().equals("status"))
+            {
+                if(formResponse.isPublished()) {
+                    String published = I18nService.getLocalizedString( PUBLISHED, Locale.getDefault( ) );
+                    model.put( infoMarker.getMarker(), published );
+                } else {
+                    String notPublished = I18nService.getLocalizedString( NOT_PUBLISHED, Locale.getDefault( ) );
+                    model.put( infoMarker.getMarker(), notPublished );
+                }
+            }
+            if(infoMarker.getMarker().equals("update_date_status"))
+            {
+                String updateDate = formResponse.getUpdateStatus( ).toLocalDateTime().toString();
+                String[] parts = updateDate.split("T");
+                String date = parts[0];
+                String time = parts[1];
+                model.put( infoMarker.getMarker(), date + " " + time );
+            }
+        }
+        return model;
+    }
+
+
+    protected void generatePdfFile(Path directoryFile, String strFilledTemplate, String fileName, boolean isCustomTemplate ) throws PdfConverterServiceException, IOException
+    {
+        try ( OutputStream outputStream = Files.newOutputStream( directoryFile.resolve( fileName + EXTENSION_PDF ) ) )
+        {
+            if(!isCustomTemplate){
+                strFilledTemplate = appendDefaultStyleToPdf(strFilledTemplate);
+            }
+            Document doc = Jsoup.parse( strFilledTemplate, UTF_8 );
             doc.outputSettings( ).syntax( Document.OutputSettings.Syntax.xml );
             doc.outputSettings( ).escapeMode( EscapeMode.base.xhtml );
             doc.outputSettings( ).charset( UTF_8 );
@@ -390,6 +418,31 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
             AppLogService.error( "Error generating pdf for file " + fileName, e );
             throw e;
         }
+    }
+    protected void generatedPdfForRangeOfFormResponses ( Path directoryFile, String strTemplateResponses, List<Question> listQuestions, List<FormResponse> listResponse, List<List<FormQuestionResponse>> formQuestionResponseList, int startRange, String fileName, boolean isCustomTemplate) throws IOException
+    {
+        try {
+            String strFilledTemplate = "";
+            for (int i = 0; i < formQuestionResponseList.size(); i++) {
+                List<FormQuestionResponse> formQuestionResponseList1 = formQuestionResponseList.get(i);
+                HtmlTemplate filledTemplate = fillTemplateWithFormQuestionResponse(strTemplateResponses, formQuestionResponseList1, listQuestions, listResponse.get(i));
+                String strSingleTemplate = "";
+                if (filledTemplate.getHtml().contains("$$response_number$$")) {
+                    strSingleTemplate = filledTemplate.getHtml().replace("$$response_number$$", String.valueOf(startRange+i + 1));
+
+                } else {
+                    strSingleTemplate = filledTemplate.getHtml();
+                }
+                strFilledTemplate += strSingleTemplate;
+            }
+            generatePdfFile(directoryFile, strFilledTemplate, fileName, isCustomTemplate);
+        } catch (IOException e) {
+            AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+            throw e;
+        } catch (Exception e) {
+            AppLogService.error( LOG_ERROR_PDF_EXPORT_GENERATION, e );
+        }
+
     }
 
 }

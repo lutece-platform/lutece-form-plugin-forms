@@ -33,19 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang3.StringUtils;
-
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
@@ -94,6 +81,15 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.filesystem.FileSystemUtil;
 import fr.paris.lutece.util.html.AbstractPaginator;
 import fr.paris.lutece.util.url.UrlItem;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.lang.Integer.parseInt;
 
 /**
  * Controller which manage the multiview of responses of all Forms
@@ -131,6 +127,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String PARAMETER_DISPLAY_FORMS_TITLE_COLUMN = "display_forms_title_column";
     private static final String PARAMETER_DISPLAY_FORMS_CSV_SEPARATOR = "csv_separator";
     private static final String PARAMETER_DISPLAY_FORMS_PDF_NUMBER_OF_RESPONSES_PER_FILE = "pdf_number_of_response_per_file";
+    private static final String PARAMETER_DISPLAY_FORMS_PDF_ALL_OF_RESPONSES_PER_FILE = "pdf_all_of_responses_per_file";
     private static final String PARAMETER_DISPLAY_ASSIGNEE_COLUMN = "display_assignee_column";
     private static final String PARAMETER_CHANGE_PANEL = "change_panel";
     private static final String PARAMETER_UPLOAD_TEMPLATE_PDF = "upload_template";
@@ -283,12 +280,12 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         if ( formatExport != null )
         {
-            int idForm = Integer.parseInt( strIdForm );
+            int idForm = parseInt( strIdForm );
             Form form = FormHome.findByPrimaryKey( idForm );
             List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
             TemporaryFileGeneratorService.getInstance( ).generateFile( formatExport.createFileGenerator( form.getTitle( ),
-                    _formPanelDisplayActive.getFormPanel( ), _listFormColumn, listFormFilter, _formItemSortConfig ), user );
+                    _formPanelDisplayActive.getFormPanel( ), _listFormColumn, listFormFilter, _formItemSortConfig, request, form ), user);
         }
         addInfo( "forms.export.async.message", getLocale( ) );
 
@@ -361,10 +358,14 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         MultiviewConfig config = MultiviewConfig.getInstance( );
 
         config.setCsvSeparator( request.getParameter( PARAMETER_DISPLAY_FORMS_CSV_SEPARATOR ) );
-        
-        String strNumberOfFormResponsesPerPdf = request.getParameter( PARAMETER_DISPLAY_FORMS_PDF_NUMBER_OF_RESPONSES_PER_FILE );
-        config.setNumberOfFormResponsesPerPdf(Integer.parseInt(strNumberOfFormResponsesPerPdf));
-
+        if( request.getParameter( PARAMETER_DISPLAY_FORMS_PDF_NUMBER_OF_RESPONSES_PER_FILE ) != null)
+        {
+        	config.setNumberOfFormResponsesPerPdf(parseInt(request.getParameter( PARAMETER_DISPLAY_FORMS_PDF_NUMBER_OF_RESPONSES_PER_FILE )));
+        }
+        else
+        {
+        	config.setNumberOfFormResponsesPerPdf(0);
+        }
         String strDisplayFormColumnTitle = request.getParameter( PARAMETER_DISPLAY_FORMS_TITLE_COLUMN );
         config.setDisplayFormsTitleColumn( strDisplayFormColumnTitle != null );
 
@@ -428,7 +429,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         Integer nIdForm = null;
         try
         {
-            nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+            nIdForm = parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
         }
         catch( NumberFormatException e )
         {

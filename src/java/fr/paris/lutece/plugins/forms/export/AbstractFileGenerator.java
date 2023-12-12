@@ -33,15 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.export;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -53,6 +44,15 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.util.file.FileUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class AbstractFileGenerator implements IFileGenerator
 {
@@ -73,6 +73,8 @@ public abstract class AbstractFileGenerator implements IFileGenerator
 
     private List<FormExportConfig> _configList = null;
     private Form _form;
+    protected HttpServletRequest _request;
+
 
     /**
      * Constructor
@@ -80,7 +82,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
      * @param _listFormResponseItems
      */
     protected AbstractFileGenerator( String fileName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormItemSortConfig sortConfig, String fileDescription )
+            FormItemSortConfig sortConfig, String fileDescription, HttpServletRequest request, Form form )
     {
         _fileName = StringUtils.substring( fileName, 0, MAX_NAME_LENGTH ) + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_TIMESTAMP ) );
         _formPanel = formPanel;
@@ -88,6 +90,8 @@ public abstract class AbstractFileGenerator implements IFileGenerator
         _listFormFilter = new ArrayList<>( listFormFilter );
         _sortConfig = sortConfig;
         _fileDescription = fileDescription;
+        _request = request;
+        _form = form;
     }
 
     @Override
@@ -112,10 +116,9 @@ public abstract class AbstractFileGenerator implements IFileGenerator
         return FileUtil.normalizeFileName( nameValues.stream( ).collect( Collectors.joining( "_" ) ) );
     }
     
-    protected String generateMultiFormResponsesFileName(List<FormResponse> listFormResponse, int startRange, int endRange)
+    protected String generateMultiFormResponsesFileName( int startRange, int endRange)
     {
-    	Form form = listFormResponse.get(0) != null ? FormHome.findByPrimaryKey(listFormResponse.get(0).getFormId()) : null;
-    	String formTitle = form != null ? form.getTitle() : "";
+    	String formTitle = _form != null ? _form.getTitle() : "";
     	return StringUtils.substring( formTitle, 0, MAX_NAME_LENGTH ) + "_" + startRange + "-" + endRange + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_DATE ) );
     }
     

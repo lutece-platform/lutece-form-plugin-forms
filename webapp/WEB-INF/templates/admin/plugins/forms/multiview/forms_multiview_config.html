@@ -20,8 +20,10 @@
 						</@formGroup>
 					</#if>
 					<@formGroup labelFor='pdf_number_of_response_per_file' labelKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile}'>
-						<@input type='number' name='pdf_number_of_response_per_file' id='pdf_number_of_response_per_file' value=multiview_config.numberOfFormResponsesPerPdf min=1 />
-					</@formGroup>
+						 <@input type='number' name='pdf_number_of_response_per_file' id='pdf_number_of_response_per_file' value=multiview_config.numberOfFormResponsesPerPdf min=1 />
+                         <label for='pdf_all_of_responses_per_file' id='pdf_all_of_responses_per_file_label' >#i18n{forms.multiview_config.labelDisplayColumnPdfAllOfResponsesPerFile}</label>
+                         <input type='checkbox' name='pdf_all_of_responses_per_file' id='pdf_all_of_responses_per_file' />
+                      </@formGroup>
 					<@formGroup labelKey='#i18n{forms.multiview_config.labelUploadPdfTemplate}' helpKey='#i18n{forms.multiview_config.labelUploadPdfTemplate.help}' rows=2>
 						<@addFileInputAndfilesBox fieldName="upload_template" handler=uploadHandler listUploadedFiles=listUniqueFile!'' inputCssClass='' />
 					</@formGroup>
@@ -32,3 +34,24 @@
         </@box>
     </@columns>
 </@row>
+<script type="text/javascript">
+	window.onload = function(){
+		const inputIdNumberOfResponsePerFile = "pdf_number_of_response_per_file";
+		const inputIdAllOfResponsesPerFile = "pdf_all_of_responses_per_file";
+
+		if(document.getElementById(inputIdNumberOfResponsePerFile).value === "0")
+		{
+			document.getElementById(inputIdAllOfResponsesPerFile).checked = true;
+			document.getElementById(inputIdNumberOfResponsePerFile).disabled = true;
+		}
+		window.addEventListener('change', function(){
+			if(document.getElementById(inputIdAllOfResponsesPerFile).checked)
+			{
+				document.getElementById(inputIdNumberOfResponsePerFile).disabled = true;
+			} else
+			{
+				document.getElementById(inputIdNumberOfResponsePerFile).disabled = false;
+			}
+		});
+	}
+</script>

@@ -33,21 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.filter.display.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -60,6 +45,14 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.ReferenceList;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the IFormFilterDisplay interface for the filter on workflow state
@@ -189,8 +182,7 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
 
         if ( form != null && form.getIdWorkflow( ) > ID_WORKFLOW_UNSET )
         {
-            listWorkflowState
-                    .addAll( WorkflowService.getInstance( ).getAllStateByWorkflow( form.getIdWorkflow( ), (User) AdminUserService.getAdminUser( request ) ) );
+            listWorkflowState.addAll( WorkflowService.getInstance( ).getAllStateByWorkflow( form.getIdWorkflow( ), (User) AdminUserService.getAdminUser( request ) ) );
         }
 
         return listWorkflowState;
