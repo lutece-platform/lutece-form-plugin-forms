@@ -2,7 +2,7 @@
 <#assign field_width=getFieldValueByCode( entry, "width")>
 <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
 <#assign field=getFieldByCode( entry, "text_config")>
-<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
+<#assign field_autocomplete = getFieldByCode(entry, "autocomplete")!{}>
 
 <#if field_autocomplete?? && field_autocomplete.value??>
 	<#assign autocomplete = "autocomplete=${field_autocomplete.value}" />

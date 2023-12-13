@@ -3,7 +3,7 @@
 <#assign field_min=getFieldByCode( entry, "min")>
 <#assign field_max=getFieldByCode( entry, "max")>
 <#assign suffix = '' >
-<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
+<#assign field_autocomplete = getFieldByCode(entry, "autocomplete")!{}>
 <#if entry.fields?? && entry.fields?has_content>
 	<#assign suffix = getFieldValueByCode( entry, 'suffix') >
 </#if>
