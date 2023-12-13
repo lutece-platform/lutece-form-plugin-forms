@@ -2,7 +2,7 @@
 <#assign field_height=getFieldValueByCode( entry, "height") />
 <#assign idName = buildEntryName( entry, entry_iteration_number ) />
 <#assign field_richtext=getFieldValueByCode( entry, "richtext") />
-<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
+<#assign field_autocomplete = getFieldByCode(entry, "autocomplete")!{}>
 <#assign richtext = false />
 <#if field_richtext == 'true'>
 	<#assign richtext = true />

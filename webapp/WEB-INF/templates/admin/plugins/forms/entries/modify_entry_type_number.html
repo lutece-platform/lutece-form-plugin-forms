@@ -41,11 +41,9 @@ ${breadcrumb_template}
 							<@input type='text' name='placeholder' id='placeholder' value=placeholder maxlength=100 />
 						</@formGroup>
 						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.createEntry.labelAutocomplete}' helpKey='#i18n{forms.createEntry.labelHelpMessageAutocomplete}'>
-						<#if getFieldByCode( entry, "autocomplete")??>
-							<#assign field_autocomplete=getFieldByCode( entry, "autocomplete" ) >
-							<@input type='text' name='autocomplete' id='autocomplete' value="${field_autocomplete.value?if_exists}" params=' list="autocompleteList"' />
+						<#assign field_autocomplete = getFieldByCode(entry, "autocomplete")!{}>
+						<@input type='text' name='autocomplete' id='autocomplete' value="${field_autocomplete.value?if_exists}" params=' list="autocompleteList"' />
 							<datalist id="autocompleteList"><option value="off"><option value="on"></datalist>
-						</#if>
 						</@formGroup>
 						<#assign config=getFieldByCode( entry, "text_config")>
 						<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
