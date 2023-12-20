@@ -51,7 +51,7 @@
 			numberAddressInput.type = 'hidden';
 			numberAddressInput.id = 'number_iteration_geolocation';
 			numberAddressInput.name = 'number_iteration_geolocation';
-			document.getElementById('summary_validate').appendChild(numberAddressInput);
+			document.getElementsByTagName('div')[0].appendChild(numberAddressInput);
 			document.getElementById('number_iteration_geolocation').value = iterationNumber;
 		} else {
 			document.getElementById('number_iteration_geolocation').value = iterationNumber;
@@ -64,8 +64,8 @@
 				let lon = 2.35;
 				let hasMarker = false;
 				if (document.getElementById(prefix + '_x').value !== "" && document.getElementById(prefix + '_y').value !== "") {
-					lat = document.getElementById(prefix + '_x').value;
-					lon = document.getElementById(prefix + '_y').value;
+					lat = document.getElementById(prefix + '_y').value;
+					lon = document.getElementById(prefix + '_x').value;
 					hasMarker = true;
 				}
 				const iterationData = {
