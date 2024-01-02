@@ -26,7 +26,6 @@ import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +34,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Entities.EscapeMode;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -64,7 +62,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
     private static final String RESPONSE_NUMBER = "response_number";
     
     protected final String _formTitle;
-    protected HttpServletRequest _request;
+    protected String _baseUrl;
     protected String _fileDescription;
     protected String _fileName;
     protected FormPanel _formPanel;
@@ -74,10 +72,10 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
     protected Form _form;
 
     protected AbstractPdfFileGenerator(String fileName, String formTitle, FormPanel formPanel, List<IFormColumn> listFormColumn,
-			List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String fileDescription, HttpServletRequest request, Form form) {
-		super(fileName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, request, form);
+			List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String fileDescription, String baseUrl, Form form) {
+		super(fileName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, baseUrl, form);
 		_formTitle = formTitle;
-        _request = request;
+        _baseUrl = baseUrl;
         _fileDescription = fileDescription;
         _fileName = fileName;
         _formPanel = formPanel;
@@ -312,7 +310,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
     protected List<String> getBaseUrl()
     {
 
-        String baseUrl = AppPathService.getProdUrl(_request);
+        String baseUrl = _baseUrl;
         String adminBaseUrl = "";
         if(AppPropertiesService.getProperty( "lutece.admin.prod.url") != null)
         {

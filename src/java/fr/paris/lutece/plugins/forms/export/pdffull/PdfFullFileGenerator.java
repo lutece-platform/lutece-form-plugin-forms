@@ -47,7 +47,6 @@ import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.file.FileUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,8 +60,8 @@ public class PdfFullFileGenerator extends AbstractPdfFileGenerator {
     private boolean _hasMultipleFiles = false;
 
     protected PdfFullFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-                                   FormItemSortConfig sortConfig, String fileDescription, HttpServletRequest request, Form form) {
-        super(FileUtil.normalizeFileName(formName), formName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, request, form);
+                                   FormItemSortConfig sortConfig, String fileDescription, String baseUrl, Form form) {
+        super(FileUtil.normalizeFileName(formName), formName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, baseUrl, form);
     }
 
     @Override

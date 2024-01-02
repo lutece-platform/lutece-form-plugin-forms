@@ -75,6 +75,7 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -255,6 +256,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         GlobalFormsAction multiviewExportAction = GlobalFormsActionHome.selectGlobalFormActionByCode( FormsConstants.ACTION_FORMS_EXPORT_RESPONSES,
                 FormsPlugin.getPlugin( ), request.getLocale( ) );
         AdminUser user = AdminUserService.getAdminUser( request );
+        String baseUrl = AppPathService.getProdUrl( request );
+
         if ( !RBACService.isAuthorized( (RBACResource) multiviewExportAction, GlobalFormsAction.PERMISSION_PERFORM_ACTION, (User) user ) )
         {
             throw new AccessDeniedException( UNAUTHORIZED );
@@ -285,7 +288,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
             TemporaryFileGeneratorService.getInstance( ).generateFile( formatExport.createFileGenerator( form.getTitle( ),
-                    _formPanelDisplayActive.getFormPanel( ), _listFormColumn, listFormFilter, _formItemSortConfig, request, form ), user);
+                    _formPanelDisplayActive.getFormPanel( ), _listFormColumn, listFormFilter, _formItemSortConfig, baseUrl, form ), user);
         }
         addInfo( "forms.export.async.message", getLocale( ) );
 

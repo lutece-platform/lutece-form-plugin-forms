@@ -47,7 +47,6 @@ import fr.paris.lutece.util.file.FileUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -73,7 +72,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
 
     private List<FormExportConfig> _configList = null;
     private Form _form;
-    protected HttpServletRequest _request;
+    protected String _baseUrl;
 
 
     /**
@@ -82,7 +81,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
      * @param _listFormResponseItems
      */
     protected AbstractFileGenerator( String fileName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormItemSortConfig sortConfig, String fileDescription, HttpServletRequest request, Form form )
+            FormItemSortConfig sortConfig, String fileDescription, String baseUrl, Form form )
     {
         _fileName = StringUtils.substring( fileName, 0, MAX_NAME_LENGTH ) + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_TIMESTAMP ) );
         _formPanel = formPanel;
@@ -90,7 +89,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
         _listFormFilter = new ArrayList<>( listFormFilter );
         _sortConfig = sortConfig;
         _fileDescription = fileDescription;
-        _request = request;
+        _baseUrl = baseUrl;
         _form = form;
     }
 

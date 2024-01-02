@@ -43,7 +43,6 @@ import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.util.file.FileUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public class PdfFullExport implements IFormatExport
@@ -89,9 +88,9 @@ public class PdfFullExport implements IFormatExport
 
     @Override
     public IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormItemSortConfig sortConfig, HttpServletRequest request, Form form )
+            FormItemSortConfig sortConfig, String baseUrl, Form form )
     {
-        return new PdfFullFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription, request, form);
+        return new PdfFullFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription, baseUrl, form);
     }
 
 }

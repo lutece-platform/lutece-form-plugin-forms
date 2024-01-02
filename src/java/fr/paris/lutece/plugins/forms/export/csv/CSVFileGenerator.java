@@ -48,7 +48,6 @@ import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstant
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.file.FileUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -71,10 +70,10 @@ public class CSVFileGenerator extends AbstractFileGenerator
      * 
      * @param _listFormResponseItems
      */
-    public CSVFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormItemSortConfig sortConfig, String fileDescription, HttpServletRequest request, Form form )
+    public CSVFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+                            FormItemSortConfig sortConfig, String fileDescription, String baseUrl, Form form )
     {
-        super( FileUtil.normalizeFileName( formName ), formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, request, form );
+        super( FileUtil.normalizeFileName( formName ), formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, baseUrl, form );
     }
 
     @Override

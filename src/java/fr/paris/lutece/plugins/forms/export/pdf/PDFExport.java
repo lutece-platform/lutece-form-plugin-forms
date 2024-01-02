@@ -42,7 +42,6 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -56,7 +55,6 @@ public class PDFExport implements IFormatExport
     private final String _strFormatExportName;
     private final String _strFormatExportDisplayName;
     private final String _strFormatExportDescription;
-    public HttpServletRequest request;
 
     /**
      * Constructor of the PatternValidator
@@ -107,7 +105,7 @@ public class PDFExport implements IFormatExport
 
 
     @Override
-    public IFileGenerator createFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, HttpServletRequest request, Form form) {
-        return new PdfFileGenerator(formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription, request, form);
+    public IFileGenerator createFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String baseUrl, Form form) {
+        return new PdfFileGenerator(formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription, baseUrl, form);
     }
 }

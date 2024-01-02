@@ -40,7 +40,6 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -74,9 +73,9 @@ public interface IFormatExport
      * @param listFormColumn
      * @param listFormFilter
      * @param sortConfig
-     * @param request
+     * @param baseUrl
      * @param form
      * @return
      */
     IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormItemSortConfig sortConfig, HttpServletRequest request, Form form);}
+            FormItemSortConfig sortConfig, String baseUrl, Form form);}
