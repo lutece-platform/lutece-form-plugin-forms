@@ -18,7 +18,7 @@
 		<#if response?? && response.responseValue??>
 			<#assign default=response.responseValue?number?number_to_date?iso_local>
 		<#elseif field.valueTypeDate?? >
-			<#assign default=field.valueTypeDate?iso_local>
+			<#assign default=field.valueTypeDate>
 		</#if>
 		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 		<@input type='date' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' defaultDate=default placeHolder=placeholder />
