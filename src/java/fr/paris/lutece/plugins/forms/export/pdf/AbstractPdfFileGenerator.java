@@ -58,32 +58,25 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
     private static final String RESPONSE_UPDATED = "forms.export.formResponse.form.date.update";
     private static final String MESSAGE_EXPORT_FORM_TITLE = "forms.export.formResponse.form.title";
     private static final String MESSAGE_EXPORT_FORM_STATE = "forms.export.formResponse.form.state";
-
+    private static final String PATTERN_TIMESTAMP = "_yyyy-MM-dd-HH-mm-ss";
+    private static final int MAX_NAME_LENGTH = 250 - PATTERN_TIMESTAMP.length( );
     private static final String RESPONSE_NUMBER = "response_number";
     
     protected final String _formTitle;
-    protected String _baseUrl;
     protected String _fileDescription;
     protected String _fileName;
     protected FormPanel _formPanel;
-    protected List<IFormColumn> _listFormColumn;
-    protected List<FormFilter> _listFormFilter;
-    protected FormItemSortConfig _sortConfig;
     protected Form _form;
 
-    protected AbstractPdfFileGenerator(String fileName, String formTitle, FormPanel formPanel, List<IFormColumn> listFormColumn,
-			List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String fileDescription, String baseUrl, Form form) {
-		super(fileName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, baseUrl, form);
-		_formTitle = formTitle;
-        _baseUrl = baseUrl;
-        _fileDescription = fileDescription;
-        _fileName = fileName;
+    protected AbstractPdfFileGenerator(String fileName, String formTitle, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String fileDescription) {
+        super(fileName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription);
+        _formTitle = formTitle;
+        _fileName = StringUtils.substring( fileName, 0, MAX_NAME_LENGTH ) + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_TIMESTAMP ) );
         _formPanel = formPanel;
-        _listFormColumn = listFormColumn;
-        _listFormFilter = listFormFilter;
-        _sortConfig = sortConfig;
-        _form = form;
-	}
+        _form = FormHome.findByPrimaryKey(FormResponseHome.findByPrimaryKey(_formPanel.getFormResponseItemList().get(0).getIdFormResponse()).getFormId());
+        _fileDescription = fileDescription;
+    }
+
     protected String getTemplateExportPDF()
     {
         File templateFile = FileHome.findByPrimaryKey(MultiviewConfig.getInstance().getIdFileTemplatePdf());
@@ -155,8 +148,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
     }
     public String generateTemplateForPdfExportCoverPage (Form form, List<FormResponse> listResponse )
     {
-        List<String> listBaseUrl = getBaseUrl();
-        String  adminBaseUrl = listBaseUrl.get(1);
+        String  adminBaseUrl = getAdminBaseUrl();
         Document document = new Document("");
         Element html = document.appendElement("html");
         Element head = html.appendElement("head");
@@ -173,11 +165,21 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
             Element row = tbody.appendElement("tr");
             Element cellTitle = row.appendElement("td");
             cellTitle.text(I18nService.getLocalizedString( RESPONSE_NUMBER, I18nService.getDefaultLocale( )) + " " + (i+1));
-            Element cellResponse = row.appendElement("td");
+            if(!getAdminBaseUrl().equals(StringUtils.EMPTY))
+            {
+            Element cellResponseLink = row.appendElement("td");
             String linkMessageBO = I18nService.getLocalizedString( LINK_MESSAGE_BO, Locale.getDefault( ) );
-            Element linkBO = cellResponse.appendElement("a");
+            Element linkBO = cellResponseLink.appendElement("a");
             linkBO.attr("href",adminBaseUrl+"jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?view=view_form_response_details&id_form_response=" + listResponse.get(i).getId( ));
             linkBO.text(linkMessageBO);
+            }
+            Element cellCreationDate = row.appendElement("td");
+            row.appendElement("td");
+            String creationDate = listResponse.get(i).getCreation( ).toLocalDateTime().toString();
+            String[] parts = creationDate.split("T");
+            String date = parts[0];
+            String time = parts[1];
+            cellCreationDate.text(I18nService.getLocalizedString( RESPONSE_CREATED, I18nService.getDefaultLocale( )) + " : " + date + " " + time);
         }
         Element div = body.appendElement("div");
         div.id("form_responses");
@@ -307,10 +309,9 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
         model = markersToModel(model, collectionNotifyMarkers, formQuestionResponseList, formResponse);
         return AppTemplateService.getTemplateFromStringFtl(template, Locale.getDefault(), model);
     }
-    protected List<String> getBaseUrl()
+    protected String getAdminBaseUrl()
     {
 
-        String baseUrl = _baseUrl;
         String adminBaseUrl = "";
         if(AppPropertiesService.getProperty( "lutece.admin.prod.url") != null)
         {
@@ -319,19 +320,14 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
         else
         {
             AppLogService.info( "lutece.admin.prod.url property not found" );
-            adminBaseUrl = baseUrl;
         }
-        List<String> listBaseUrl = new ArrayList<>();
-        listBaseUrl.add(baseUrl);
-        listBaseUrl.add(adminBaseUrl);
-        return listBaseUrl;
+
+        return adminBaseUrl;
     }
     protected Map<String, Object> markersToModel(Map<String, Object> model, Collection<InfoMarker> collectionInfoMarkers, List<FormQuestionResponse> formQuestionResponseList, FormResponse formResponse)
     {
         HashMap<Integer, FormQuestionResponse> formResponseListByEntryId = formResponseListToHashmap(formQuestionResponseList);
-        List<String> listBaseUrl = getBaseUrl();
-        String  baseUrl = listBaseUrl.get(0);
-        String  adminBaseUrl = listBaseUrl.get(1);
+        String adminBaseUrl = getAdminBaseUrl();
         for ( InfoMarker infoMarker : collectionInfoMarkers )
         {
             model.put( infoMarker.getMarker(), infoMarker.getValue() );
@@ -350,13 +346,15 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
             }
             if(infoMarker.getMarker().equals("url_admin_forms_response_detail"))
             {
-                String linkMessage = I18nService.getLocalizedString( LINK_MESSAGE_BO, Locale.getDefault( ) );
-                model.put( infoMarker.getMarker(), "<a href=\""+ adminBaseUrl+"/jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?view=view_form_response_details&id_form_response=" + formResponse.getId( ) + "\">" + linkMessage + "</a>" );
-            }
-            if(infoMarker.getMarker().equals("url_fo_forms_response_detail"))
-            {
-                String linkMessage = I18nService.getLocalizedString( LINK_MESSAGE_FO, Locale.getDefault( ) );
-                model.put( infoMarker.getMarker(), "<a href=\""+ baseUrl+"/jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=" + formResponse.getId( ) + "\">" + linkMessage + "</a>" );
+                if(!getAdminBaseUrl().equals(StringUtils.EMPTY))
+                {
+                    String linkMessage = I18nService.getLocalizedString( LINK_MESSAGE_BO, Locale.getDefault( ) );
+                    model.put( infoMarker.getMarker(), "<a href=\""+ adminBaseUrl+"/jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?view=view_form_response_details&id_form_response=" + formResponse.getId( ) + "\">" + linkMessage + "</a>" );
+                }
+                else
+                {
+                    model.put( infoMarker.getMarker(), StringUtils.EMPTY );
+                }
             }
             if(infoMarker.getMarker().equals("creation_date"))
             {

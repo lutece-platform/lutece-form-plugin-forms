@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.forms.export.pdf;
 
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
-import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -58,7 +57,7 @@ public class PDFExport implements IFormatExport
 
     /**
      * Constructor of the PatternValidator
-     * 
+     *
      * @param strFormatExportName
      *            The export format bean name
      * @param strFormatExportDisplayName
@@ -100,12 +99,10 @@ public class PDFExport implements IFormatExport
         return CONSTANT_MIME_TYPE_PDF;
     }
 
-
-
-
-
     @Override
-    public IFileGenerator createFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String baseUrl, Form form) {
-        return new PdfFileGenerator(formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription, baseUrl, form);
+    public IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+                                               FormItemSortConfig sortConfig )
+    {
+        return new PdfFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription );
     }
 }

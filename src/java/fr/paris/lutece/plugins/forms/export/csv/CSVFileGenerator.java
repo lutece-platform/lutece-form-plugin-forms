@@ -33,7 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
-import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
@@ -67,13 +66,13 @@ public class CSVFileGenerator extends AbstractFileGenerator
 
     /**
      * Constructor
-     * 
+     *
      * @param _listFormResponseItems
      */
-    public CSVFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-                            FormItemSortConfig sortConfig, String fileDescription, String baseUrl, Form form )
+    public CSVFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+                             FormItemSortConfig sortConfig, String fileDescription )
     {
-        super( FileUtil.normalizeFileName( formName ), formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, baseUrl, form );
+        super( FileUtil.normalizeFileName( formName ), formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription );
     }
 
     @Override

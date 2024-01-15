@@ -31,12 +31,46 @@
  *
  * License 1.0
  */
+/*
+ * Copyright (c) 2002-2022, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.forms.export;
 
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
@@ -72,16 +106,14 @@ public abstract class AbstractFileGenerator implements IFileGenerator
 
     private List<FormExportConfig> _configList = null;
     private Form _form;
-    protected String _baseUrl;
-
 
     /**
      * Constructor
-     * 
+     *
      * @param _listFormResponseItems
      */
     protected AbstractFileGenerator( String fileName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormItemSortConfig sortConfig, String fileDescription, String baseUrl, Form form )
+                                     FormItemSortConfig sortConfig, String fileDescription )
     {
         _fileName = StringUtils.substring( fileName, 0, MAX_NAME_LENGTH ) + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_TIMESTAMP ) );
         _formPanel = formPanel;
@@ -89,8 +121,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
         _listFormFilter = new ArrayList<>( listFormFilter );
         _sortConfig = sortConfig;
         _fileDescription = fileDescription;
-        _baseUrl = baseUrl;
-        _form = form;
+        _form = FormHome.findByPrimaryKey(FormResponseHome.findByPrimaryKey(_formPanel.getFormResponseItemList().get(0).getIdFormResponse()).getFormId());
     }
 
     @Override
@@ -114,11 +145,13 @@ public abstract class AbstractFileGenerator implements IFileGenerator
         }
         return FileUtil.normalizeFileName( nameValues.stream( ).collect( Collectors.joining( "_" ) ) );
     }
-    
-    protected String generateMultiFormResponsesFileName( int startRange, int endRange)
+
+    protected String generateMultiFormResponsesFileName(List<FormResponse> listFormResponse, int startRange, int endRange)
     {
-    	String formTitle = _form != null ? _form.getTitle() : "";
-    	return StringUtils.substring( formTitle, 0, MAX_NAME_LENGTH ) + "_" + startRange + "-" + endRange + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_DATE ) );
+        Form form = listFormResponse.get(0) != null ? FormHome.findByPrimaryKey(listFormResponse.get(0).getFormId()) : null;
+        String formTitle = form != null ? form.getTitle() : "";
+        return StringUtils.substring( formTitle, 0, MAX_NAME_LENGTH ) + "_" + startRange + "-" + endRange + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_DATE ) );
     }
-    
+
 }
+

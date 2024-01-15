@@ -57,12 +57,9 @@ public class PdfFileGenerator extends AbstractPdfFileGenerator
     
     private boolean _hasMultipleFiles = false;
 
-
-    
-    protected PdfFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-                               FormItemSortConfig sortConfig, String fileDescription, String baseUrl, Form form)
+    public PdfFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String fileDescription)
     {
-        super( FileUtil.normalizeFileName( formName ), formName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription, baseUrl, form );
+        super( FileUtil.normalizeFileName( formName ), formName, formPanel, listFormColumn, listFormFilter, sortConfig, fileDescription);
     }
 
     @Override

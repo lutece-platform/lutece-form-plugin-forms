@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.forms.export;
 
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
-import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -43,39 +42,39 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import java.util.List;
 
 /**
- * 
+ *
  * Interface for export formats of formResponses
  */
 public interface IFormatExport
 {
     /**
-     * 
+     *
      * @return the FormatExport bean name
      */
     String getFormatExportBeanName( );
 
     /**
-     * 
+     *
      * @return the FormatExport display name
      */
     String getFormatExportDisplayName( );
 
     /**
-     * 
+     *
      * @return the FormatExport display name
      */
     String getFormatContentType( );
 
     /**
      * Creates the {@link IFileGenerator}.
-     * 
+     *
      * @param formPanel
      * @param listFormColumn
      * @param listFormFilter
      * @param sortConfig
-     * @param baseUrl
-     * @param form
      * @return
      */
     IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormItemSortConfig sortConfig, String baseUrl, Form form);}
+                                        FormItemSortConfig sortConfig );
+}
+

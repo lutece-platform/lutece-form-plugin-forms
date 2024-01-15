@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.forms.export.pdffull;
 
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
-import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -87,10 +86,9 @@ public class PdfFullExport implements IFormatExport
     }
 
     @Override
-    public IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
-            FormItemSortConfig sortConfig, String baseUrl, Form form )
-    {
-        return new PdfFullFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription, baseUrl, form);
+    public IFileGenerator createFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, FormItemSortConfig sortConfig) {
+        return new PdfFullFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription);
+
     }
 
 }

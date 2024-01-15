@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.forms.export.csv;
 
 import fr.paris.lutece.plugins.filegenerator.service.IFileGenerator;
-import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -43,6 +42,7 @@ import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 import java.util.List;
+
 /**
  * This class performs a CSV export
  *
@@ -57,7 +57,7 @@ public class CSVExport implements IFormatExport
 
     /**
      * Constructor of the PatternValidator
-     * 
+     *
      * @param strFormatExportName
      *            The export format bean name
      * @param strFormatExportDisplayName
@@ -65,7 +65,7 @@ public class CSVExport implements IFormatExport
      * @param strFormatExportDescription
      *            The export format description
      */
-    public CSVExport( String strFormatExportName, String strFormatExportDisplayName, String strFormatExportDescription)
+    public CSVExport( String strFormatExportName, String strFormatExportDisplayName, String strFormatExportDescription )
     {
         _strFormatExportName = strFormatExportName;
         _strFormatExportDisplayName = I18nService.getLocalizedString( strFormatExportDisplayName, I18nService.getDefaultLocale( ) );
@@ -100,7 +100,9 @@ public class CSVExport implements IFormatExport
     }
 
     @Override
-    public IFileGenerator createFileGenerator(String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, FormItemSortConfig sortConfig, String baseUrl, Form form) {
-        return new CSVFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription, baseUrl, form );
+    public IFileGenerator createFileGenerator( String formName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+                                               FormItemSortConfig sortConfig )
+    {
+        return new CSVFileGenerator( formName, formPanel, listFormColumn, listFormFilter, sortConfig, _strFormatExportDescription );
     }
 }
