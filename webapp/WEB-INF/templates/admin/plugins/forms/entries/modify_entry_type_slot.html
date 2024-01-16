@@ -1,0 +1,54 @@
+<#include "all_entry_commons.html" />
+<#include "/admin/util/editor/editor.html" />
+
+${breadcrumb_template}
+<@row>
+    <@columns>
+		<@box>
+			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
+			<@boxBody>
+				<@tform id='modifyEntryForm' action="${action}">
+					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
+						<@input type='hidden' name='id_step' value='${step.id}' />
+						<@input type='hidden' name='id_question' value='${question.id}' />
+						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
+						</@formGroup>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+						</@formGroup>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
+							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
+						</@formGroup>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
+							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
+						</@formGroup>
+						<@formGroup>
+							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory labelKey='#i18n{forms.createEntry.labelMandatory}' />
+						</@formGroup>
+						<@formGroup>
+							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
+						</@formGroup>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+						</@formGroup>
+						<@input type='hidden' id='token' name='token' value='${token}' />
+						<@formGroup>
+							<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' hideTitle=['xs','sm'] />
+							<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' hideTitle=['xs','sm'] />
+							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+						</@formGroup>
+					</@fieldSet>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
+<@initEditor />

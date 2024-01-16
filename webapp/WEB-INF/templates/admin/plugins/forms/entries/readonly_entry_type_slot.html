@@ -1,0 +1,12 @@
+<@row>
+	<@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+	<@columns sm=9>
+		<ul class="list-unstyled">
+			<#list list_responses?chunk(2) as row>
+				<#assign beginHour = row[0].toStringValueResponse>
+				<#assign endHour = row[1].toStringValueResponse>
+				<li>#i18n{forms.message.slot.preposition.from} ${beginHour} #i18n{forms.message.slot.preposition.to} ${endHour}</li>
+			</#list>
+		</ul>
+	</@columns>
+</@row>

@@ -1,0 +1,17 @@
+<#if !entry.onlyDisplayInBack || is_completeness_bo>
+<div class="form-group">
+    <#assign idName = 'attribute' + entry.idEntry>
+    <label class="control-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+    <div id="divSlot_${idName}">
+        <div class="slot-entry">
+            <#if list_responses?has_content>
+                <#list list_responses?chunk(2) as row>
+					<#assign beginHour = row[0].toStringValueResponse>
+					<#assign endHour = row[1].toStringValueResponse>
+					<li>#i18n{message.slot.preposition.from} ${beginHour} #i18n{forms.message.slot.preposition.to} ${endHour}</li>
+				</#list>
+            </#if>
+        </div>
+    </div>
+</div>
+</#if>
