@@ -1,0 +1,55 @@
+<#if !entry.onlyDisplayInBack || is_completeness_bo>
+	<#assign hasError = false />
+	<#if getError( list_responses, entry )?? >
+		<#assign error = getError( list_responses, entry ) >
+		<#if error?? && error.isDisplayableError>
+			<#assign hasError = true />
+		</#if>
+	</#if>
+	<div class="form-group">
+		<#assign idName = buildEntryName( entry, entry_iteration_number )>
+		<label class="control-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div id="${idName}">
+			<div class="slot-entry">
+				<#if list_responses?has_content>
+					<#list list_responses?chunk(2) as row>
+						<label>#i18n{forms.message.slot.preposition.from}</label>
+						<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" value="${row[0].toStringValueResponse!}" <#if entry.mandatory> required</#if> />
+						<label>#i18n{forms.message.slot.preposition.to}</label>
+						<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" value="${row[1].toStringValueResponse!}" <#if entry.mandatory> required</#if> />
+					</#list>
+					<#if hasError>
+						<div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
+					</#if>
+				<#else>
+					<label>#i18n{forms.message.slot.preposition.from}</label>
+					<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" min="00:00" max="23:59" <#if entry.mandatory> required</#if> />
+					<label>#i18n{forms.message.slot.preposition.to}</label>
+					<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" min="00:00" max="23:59" <#if entry.mandatory> required</#if> />
+					<#if hasError>
+						<div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
+					</#if>
+				</#if>
+			</div>
+		</div>
+		</br>
+		<#if entry.helpMessage?exists && entry.helpMessage != ''>
+			<span class="help-block">${entry.helpMessage}</span>
+		</#if>
+	</div>
+</#if>
+
+<style>
+	.slot-entry {
+		display: flex;
+		align-items: center;
+	}
+
+	.slot-entry > * {
+		margin-right: 10px;
+	}
+
+	.slot-entry > *:last-child {
+		margin-right: 0;
+	}
+</style>
