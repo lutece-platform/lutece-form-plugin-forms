@@ -82,7 +82,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     protected AbstractFileGenerator( String fileName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormItemSortConfig sortConfig, String fileDescription )
     {
-        _fileName = StringUtils.substring( fileName, 0, MAX_NAME_LENGTH ) + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_TIMESTAMP ) );
+        _fileName = StringUtils.substring( fileName.replace("/","_"), 0, MAX_NAME_LENGTH ) + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_TIMESTAMP ) );
         _formPanel = formPanel;
         _listFormColumn = new ArrayList<>( listFormColumn );
         _listFormFilter = new ArrayList<>( listFormFilter );
