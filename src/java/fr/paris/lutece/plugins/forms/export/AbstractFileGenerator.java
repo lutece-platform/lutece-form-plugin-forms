@@ -109,13 +109,13 @@ public abstract class AbstractFileGenerator implements IFileGenerator
         {
             nameValues.add( String.valueOf( response.getId( ) ) );
         }
-        return FileUtil.normalizeFileName( nameValues.stream( ).collect( Collectors.joining( "_" ) ) );
+        return FileUtil.normalizeFileName( nameValues.stream( ).collect( Collectors.joining( "_" ) ) ).replace("/", "_");
     }
     
     protected String generateMultiFormResponsesFileName(List<FormResponse> listFormResponse, int startRange, int endRange)
     {
     	Form form = listFormResponse.get(0) != null ? FormHome.findByPrimaryKey(listFormResponse.get(0).getFormId()) : null;
-    	String formTitle = form != null ? form.getTitle() : "";
+    	String formTitle = form != null ? _fileName : "";
     	return StringUtils.substring( formTitle, 0, MAX_NAME_LENGTH ) + "_" + startRange + "-" + endRange + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_DATE ) );
     }
     
