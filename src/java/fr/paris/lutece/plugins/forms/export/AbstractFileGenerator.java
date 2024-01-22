@@ -82,7 +82,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     protected AbstractFileGenerator( String fileName, FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormItemSortConfig sortConfig, String fileDescription )
     {
-        _fileName = StringUtils.substring( fileName.replace("/","_"), 0, MAX_NAME_LENGTH ) + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_TIMESTAMP ) );
+        _fileName = StringUtils.substring( FileUtil.normalizeFileName( fileName ), 0, MAX_NAME_LENGTH ) + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_TIMESTAMP ) );
         _formPanel = formPanel;
         _listFormColumn = new ArrayList<>( listFormColumn );
         _listFormFilter = new ArrayList<>( listFormFilter );
@@ -116,7 +116,7 @@ public abstract class AbstractFileGenerator implements IFileGenerator
     {
     	Form form = listFormResponse.get(0) != null ? FormHome.findByPrimaryKey(listFormResponse.get(0).getFormId()) : null;
     	String formTitle = form != null ? form.getTitle() : "";
-    	return StringUtils.substring( formTitle, 0, MAX_NAME_LENGTH ) + "_" + startRange + "-" + endRange + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_DATE ) );
+    	return StringUtils.substring( FileUtil.normalizeFileName( formTitle ), 0, MAX_NAME_LENGTH ) + "_" + startRange + "-" + endRange + LocalDateTime.now( ).format( DateTimeFormatter.ofPattern( PATTERN_DATE ) );
     }
     
 }
