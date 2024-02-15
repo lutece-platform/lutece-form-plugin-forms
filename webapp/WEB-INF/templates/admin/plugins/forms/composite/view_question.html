@@ -26,15 +26,15 @@
 
 		var bOtherStepValidated = true;
 		<#if other_step_validation??>
-				<#if other_step_validation>
-		$('.display_field_${question.id!''}_${question.iterationNumber}').show();
-		$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
-		<#else>
-		$('.display_field_${question.id!''}_${question.iterationNumber}').hide();
-		$('#${question.id}_${question.iterationNumber}').val('');
-		bOtherStepValidated = false;
-	</#if>
-	</#if>
+            <#if other_step_validation>
+                $('.display_field_${question.id!''}_${question.iterationNumber}').show();
+                $('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
+            <#else>
+                $('.display_field_${question.id!''}_${question.iterationNumber}').hide();
+                $('#${question.id}_${question.iterationNumber}').val('');
+                bOtherStepValidated = false;
+	        </#if>
+	    </#if>
 
 		<#list list_control as control>
 		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
@@ -45,6 +45,13 @@
 			<#list list_control as itemControl>
 			var displayItemControl = ${itemControl.listIdQuestion[0]} + "_" + ${question.iterationNumber},
 					input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
+            stepGroup = $('.display_field_${question.id!''}_${question.iterationNumber}').parentsUntil('.step-content');
+            stepGroup.each( function(){
+                if( $(this).hasClass('step-group-collapsible') ){
+                    hasCollapse=$(this).find("div[class*='display_field_']").not(".control_invalid").length == 0,
+                        toCollapse=$(this);
+                }
+            });
 			var inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
 			// AND condition : if at least 1 control value isn't present, do not display question
 			if($("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid")
