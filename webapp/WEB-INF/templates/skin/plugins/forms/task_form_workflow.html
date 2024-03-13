@@ -1,20 +1,18 @@
-<div class="row" >
-	<div>
-		<div class="box" >
-			<div class="box-header with-border" >
-				<h2 class="box-title">#i18n{forms.tasks_form_workflow.title}</h2>
-				<div class="box-body">
-					<form class="form-horizontal" id="form-validate"  action='jsp/site/Portal.jsp?page=formsResponse' method='post' params='enctype="multipart/form-data"'>
-						<input type='hidden' name='id_action' value='${id_action}' />
-						<input type='hidden' name='id_response' value='${id_form_response}' />
-						<input type="hidden" name="token" value = "${token}">
-						${tasks_form}
-						<div class="form-group">
-							<button class="btn btn-primary btn-sm" name="action_doSaveTaskForm"  type="submit" >#i18n{workflow.tasks_form_test_workflow.button_save}</button>
-							<button class="btn btn-primary btn-sm" name="action_doCancelTaskForm"  type="submit" formnovalidate >#i18n{workflow.tasks_form_test_workflow.button_cancel}</button>
-						</div>
-					</form>
-				</div>
+<div class="row">
+	<div class="col">>
+		<div class="card">
+			<h2 class="card-header">#i18n{forms.tasks_form_workflow.title}</h2>
+			<div class="card-body">
+				<form class="form-horizontal" id="form-validate"  action='jsp/site/Portal.jsp?page=formsResponse' method='post' params='enctype="multipart/form-data"'>
+					<input type='hidden' name='id_action' value='${id_action}' />
+					<input type='hidden' name='id_response' value='${id_form_response}' />
+					<input type="hidden" name="token" value = "${token}">
+					${tasks_form}
+					<div class="mb-3 row">
+						<button class="btn btn-primary btn-sm" name="action_doSaveTaskForm" type="submit" >#i18n{workflow.tasks_form_test_workflow.button_save}</button>
+						<button class="btn btn-primary btn-sm" name="action_doCancelTaskForm" type="submit" formnovalidate >#i18n{workflow.tasks_form_test_workflow.button_cancel}</button>
+					</div>
+				</form>
 			</div>
 		</div>
 	</div>

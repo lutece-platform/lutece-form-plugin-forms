@@ -1,13 +1,13 @@
 <#assign width=640>
 <#assign height=480>
 
-<div class="form-group">
+<div class="mb-3 row">
 	<#assign idName = 'attribute' + entry.idEntry>
 	<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
 		<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
 	</#if>
-	<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+	<label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+	<div class="col-md-6">
 		<#assign field_image_type=getFieldByCode( entry, "image_type")>
 		<#if field_image_type?? >
 			<#assign imageType= field_image_type.value>
@@ -24,7 +24,7 @@
 			<#assign height= field_height?number>
 		</#if>
 		<div  class="row">
-			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+			<div class="col-md-6">
 				<div id="video-wrapper${entry.idEntry}" class="cam-wrapper">
 					<video id="video" width="${width}" height="${height}" autoplay ></video>
 					<button type="button" id="snap${entry.idEntry}" class="btn btn-primary btn-cam">
@@ -37,27 +37,27 @@
 						<i class="fa fa-times" ></i> 
 					</button>							
 				</div>
-				<input type="hidden"  id="${idName}" name="${idName}" width="${width}" height="${height}" <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??> value="${response.toStringValueResponse}"</#if><#if response.entry.error??> class="error"</#if></#if></#list><#else>value="" </#if> class="${entry.CSSClass!}">
+				<input type="hidden"  id="${idName}" name="${idName}" width="${width}" height="${height}" <#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry><#if response.toStringValueResponse??> value="${response.toStringValueResponse}"</#if><#if response.entry.error??> class="is-invalid"</#if></#if></#list><#else>value="" </#if> class="${entry.CSSClass!}">
 	        </div>
 		</div>
 		<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-		<span class="help-block">${entry.helpMessage}</span>
+		<span class="form-control-plaintext">${entry.helpMessage}</span>
 		</#if>
 		<#if list_responses??>
 			<#list list_responses as response>
 				<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
 					<#assign error = response.entry.error>
-					  <div class="alert alert-danger">
+					<div class="alert alert-danger" role="alert">
 					    <#if error.mandatoryError>
 						<#if error.errorMessage??>
 						  ${error.errorMessage}
-     					        <#else>
+							<#else>
 						  #i18n{forms.message.mandatory.entry}
 					        </#if>
 					    <#else>
-                                              ${error.errorMessage}
-                                            </#if>
-                                        </div>
+							${error.errorMessage}
+						</#if>
+					</div>
 			        </#if>
 			</#list>
 		</#if>

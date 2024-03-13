@@ -1,5 +1,3 @@
-
-
 <#if !entry.onlyDisplayInBack>
 	<#if mylutece_user_login?? && mylutece_user_infos_list?has_content>
 	    <fieldset>
@@ -9,8 +7,8 @@
 	        </#list>
 	    </fieldset>
 	<#else>
-		<div class="form-group ${entry.CSSClass!}">
-	        <label class="col-xs-12 col-sm-3 control-label">
+		<div class="mb-3 row ${entry.CSSClass!}">
+	        <label class="col-md-3 col-form-label">
 	            ${entry.title!''}
 	        </label>
 	        <#if list_responses?has_content>
@@ -18,9 +16,9 @@
 	            <#list list_responses as response>
 	                <#if first>
 	                    <#assign first = false>
-	                    <div class="col-xs-12 col-sm-9">
+	                    <div class="col-md-6">
 	                <#else>
-	                    <div class="col-xs-12 col-sm-9 col-sm-offset-3">
+	                    <div class="col-md-6 offset-md-6">
 	                </#if>
 	                <#if form_response?? && response.entry??>
 	                    <a href="jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}">

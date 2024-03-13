@@ -2,7 +2,7 @@
 <#assign indexIteration=0>
 <#assign nbIterationMin=group.iterationMin>
 <div class="row step-group">
-	<div class="col-sm-12">
+	<div class="col-12">
 	<hr>			
 	<#list groupContent as childrenHtml>
 		<#assign indexIteration = ( childrenHtml?index / nbBaseChildren )?int />
@@ -13,15 +13,15 @@
 		<#if indexGroup != indexIteration>
 			<#if group.description!=''>
 				<div class="row">
-					<div class="col-xs-12 col-sm-12">
-						<div class="col-xs-12 hidden-sm hidden-md hidden-lg">
+					<div class="col-12">
+						<div class="col-12 d-block d-sm-none">
 							<span class="helpBoxButton visible-xs" role="button" id="">?</span>
 							<div class="helpBox xs" style="display:none;">${group.description}</div>
 						</div>
 					</div>
 				</div>
 			</#if>
-			<fieldset class="<#if id_display??> display_field_${id_display} hidden</#if>" style="position:relative;">
+			<fieldset class="<#if id_display??> display_field_${id_display} d-none</#if>" style="position:relative;">
 				<legend>${group.title} <#if indexIteration &gt; 0>(${indexIteration+1})</#if>
 				<#if group.description!=''>
 					<div class="helpBox">${group.description}</div>
@@ -41,10 +41,10 @@
 	</div>		
 </div>	
 <div class="row">
-	<div class="col-xs-12 col-sm-offset-7 col-sm-5">	
+	<div class="col-12 col-sm-5 offset-sm-7">
 	<#if isIterable >
 		<div class="add-iteration">
-			<button class="btn btn-primary btn-block" name="action_addIteration" value="${id_group}" type="submit">
+			<button class="btn btn-primary" name="action_addIteration" value="${id_group}" type="submit">
 				<span class="fa fa-plus-circle"></span> ${group.iterationAddLabel!}
 			</button>
 		</div>	

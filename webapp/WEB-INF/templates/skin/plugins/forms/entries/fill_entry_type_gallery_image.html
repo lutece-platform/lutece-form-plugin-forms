@@ -1,5 +1,5 @@
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<div class="form-group">
+	<div class="mb-3 row">
 		<#assign idName = 'attribute' + entry.idEntry>
 		<#assign codeGallery = getFieldByCode(entry,'code_gallery').value >
 		<#assign idFileSelected = ''>
@@ -10,17 +10,17 @@
 				</#if>
 			</#list>
 		</#if>
-		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}" id="label${entry.idEntry}">${entry.title}<#if entry.mandatory>	*</#if></label>
-		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+		<label class="col-md-3 col-form-label" for="${idName}" id="label${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-md-6">
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<p class="help-block">${entry.helpMessage}</p>
+				<p class="form-control-plaintext">${entry.helpMessage}</p>
 			</#if>
 			<@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected/>
 			<#if list_responses?? && list_responses?has_content>
-				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+				<div class="col-md-6">
 				<#assign response_error = list_responses[0]/>
 					<#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
-						<div class="alert alert-danger">
+						<div class="alert alert-danger" role="alert">
 							<#assign error = response_error.entry.error>
 							<#if error.mandatoryError>
 								#i18n{forms.message.mandatory.entry}

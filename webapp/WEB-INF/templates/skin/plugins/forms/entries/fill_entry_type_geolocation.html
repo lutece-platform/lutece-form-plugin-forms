@@ -21,7 +21,7 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign iterationNumber = entry_iteration_number?c >
 <#if entry.mapProvider??>
-	<div class="form-group ${entry.mapProvider.key!}">
+	<div class="mb-3 row ${entry.mapProvider.key!}">
 		<label for="${idName}">${entry.title}<#if entry.mandatory><span class="main-warning-color" aria-hidden="true"> *</span></#if></label>
 		<#if list_responses?? && list_responses?has_content>
 			<#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse />

@@ -1,5 +1,3 @@
-
-
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 	<#macro getTextAreaContent responseContent has_error entry >
 		<#assign field_height=getFieldValueByCode( entry, "height")>
@@ -10,7 +8,7 @@
 		<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
 		</#if>
 		<#if has_error>
-			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="alert alert-danger form-control" 
+			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="form-control is-invalid" 
 				<#if placeholder!=''> placeholder='${placeholder}' </#if>
 				<#if field_autocomplete?? && field_autocomplete.value??> autocomplete="${field_autocomplete.value}"</#if>>${responseContent}</textarea>
 		<#else>
@@ -20,10 +18,10 @@
 		</#if>
 	</#macro>
 	
-	<div class="form-group">
+	<div class="mb-3 row">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+		<label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-md-6">
 			<#assign field=getFieldByCode( entry, "text_config")>
 				<#if list_responses?? && list_responses?has_content>
 					<#list list_responses as response>
@@ -43,7 +41,7 @@
 					</#if>
 				</#if>
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="help-block">${entry.helpMessage}</span>
+				<span class="form-control-plaintext">${entry.helpMessage}</span>
 			</#if>
 		</div>
 	</div>
@@ -51,7 +49,7 @@
 	<#if list_responses??>
 		<#list list_responses as response>
 		<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-		<div class="alert alert-danger">
+		<div class="alert alert-danger" role="alert">
 			<#assign error = response.entry.error>
 			<#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if>
 		</div>

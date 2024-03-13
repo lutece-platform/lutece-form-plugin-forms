@@ -1,5 +1,3 @@
-
-
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 <#assign cpt=0>
 
@@ -11,8 +9,8 @@
 			</#if>
 		</#list>
 	</#if>
-	<div class="form-group<#if hasError> has-error</#if>">
-		<label class="control-label col-xs-12 ${entry.CSSClass!}" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory>	*</#if></label>
+	<div class="mb-3 row">
+		<label class="control-label col-xs-12 ${entry.CSSClass!}" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
 		<div class="col-xs-12 col-sm-8 col-md-6">
 			<#assign inLine = entry.fieldInLine>
 			<#list entry.fields as field>
@@ -25,14 +23,15 @@
 							<div class="checkbox-above">
 						</#if>
 						<input type="checkbox" name="${idName}" id="${idName}_${field.idField}" value="${field.idField}"
+							<#if hasError> class="is-invalid"</#if>
 							<#if list_responses?? && list_responses?has_content>
 								<#list list_responses as response>
 									<#if response.entry.idEntry == entry.idEntry && response.field??>
-										<#if response.field.idField == field.idField>checked="checked"</#if>
+										<#if response.field.idField == field.idField> checked="checked" </#if>
 									</#if>
 								</#list>
 							<#else>
-								<#if field.defaultValue>checked="checked" </#if>
+								<#if field.defaultValue> checked="checked" </#if>
 							</#if>
 							<#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
 								<#assign idName = 'div'>
@@ -51,7 +50,7 @@
 						</#if>
 						</label>
 						<#if !entry.fieldInLine&&entry.helpMessage?exists&&entry.helpMessage!=''>
-							<span class="help-block">${entry.helpMessage}</span>
+							<span class="form-control-plaintext">${entry.helpMessage}</span>
 						</#if>
 						<#if entry.fieldInLine != true></div></#if>		
 						
@@ -66,13 +65,13 @@
 				</#list>
 				
 				<#if entry.fieldInLine&&entry.helpMessage?exists&&entry.helpMessage!=''>
-					<span class="help-block">${entry.helpMessage}</span>
+					<span class="form-control-plaintext">${entry.helpMessage}</span>
 				</#if>
 
                <#if list_responses??>
                  <#list list_responses as response>
                    <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-                      <div class="alert alert-danger">
+                      <div class="alert alert-danger" role="alert">
 	                     <#assign error = response.entry.error>
 	                        <#if error.mandatoryError>
 						      <#if entry.errorMessage?? && entry.errorMessage!="">

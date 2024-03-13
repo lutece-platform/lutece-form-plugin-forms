@@ -1,11 +1,11 @@
 <#if !entry.onlyDisplayInBack>
-	<div class="form-group">
-	    <label class="col-xs-12 col-sm-3 control-label">
+	<div class="mb-3 row">
+	    <label class="col-md-3 col-form-label">
 	        ${entry.title!''}
 	    </label>
 	    <#if list_responses?has_content>
 	        <#list list_responses?sort_by('sortOrder') as response>
-                <div class="col-xs-12 col-sm-9">
+                <div class="col-md-6">
                 ${response.sortOrder}:
 	            <#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>
 	            	${entryTypeService.getResponseValueForRecap(null, null, response, null)}

@@ -1,45 +1,44 @@
-
-<div class="form-group">
-	<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-			<div class="table-responsive">
-				<table class="table table-striped">
-			<#assign x=getFieldValueByCode(entry, "array_row")?number>
-			<#list 1..x+1 as i>
-			  <tr>
-				<#assign y=getFieldValueByCode(entry, "array_column")?number>
-				<#list 1..y+1 as j>
-			  	<td>
-					<#assign title="">
-					<#assign inputValue = "">
-					<#list entry.fields as field>
-						<#assign value=i+"_"+j>
-						<#if field.value == value>
-							<#assign title=field.title!>
-							<#if list_responses??>
-								<#list list_responses as response>
-									<#if response.field?has_content && response.field.value == value && response.toStringValueResponse?has_content>
-										<#assign inputValue = response.toStringValueResponse>
-									</#if>
-								</#list>
-							</#if>
+<div class="mb-3 row">
+	<label class="col-md-3 col-form-label" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
+	<div class="col-md-6">
+		<div class="table-responsive">
+			<table class="table table-striped">
+		<#assign x=getFieldValueByCode(entry, "array_row")?number>
+		<#list 1..x+1 as i>
+				<tr>
+			<#assign y=getFieldValueByCode(entry, "array_column")?number>
+			<#list 1..y+1 as j>
+					<td>
+				<#assign title="">
+				<#assign inputValue = "">
+				<#list entry.fields as field>
+					<#assign value=i+"_"+j>
+					<#if field.value == value>
+						<#assign title=field.title!>
+						<#if list_responses??>
+							<#list list_responses as response>
+								<#if response.field?has_content && response.field.value == value && response.toStringValueResponse?has_content>
+									<#assign inputValue = response.toStringValueResponse>
+								</#if>
+							</#list>
 						</#if>
-					</#list>
-			  		<#if j==1 && i!=1>
-					    ${title!}
-				  	<#elseif i == 1 && j != 1>
-					    ${title!}
-				  	<#elseif i == 1 && j == 1>
-				  		<b>${entry.comment}</b>
-				  	<#else>
-				  		<#assign idName = 'nIt' + entry_iteration_number +  '_response_' + i + '_' + j>
-				  		<input id="${idName}" name="${idName}" value="${inputValue}" type="text" class="form-control input-sm" />
-				  	</#if>
-			  	</td>
-			  	</#list>
-			  </tr>
-			</#list>  
-				</table>
-			</div>
+					</#if>
+				</#list>
+				<#if j==1 && i!=1>
+					${title!}
+				<#elseif i == 1 && j != 1>
+					${title!}
+				<#elseif i == 1 && j == 1>
+					<b>${entry.comment}</b>
+				<#else>
+					<#assign idName = 'nIt' + entry_iteration_number +  '_response_' + i + '_' + j>
+					<input id="${idName}" name="${idName}" value="${inputValue}" type="text" class="form-control input-sm" />
+				</#if>
+					</td>
+			</#list>
+				</tr>
+		</#list>  
+			</table>
 		</div>
+	</div>
 </div>

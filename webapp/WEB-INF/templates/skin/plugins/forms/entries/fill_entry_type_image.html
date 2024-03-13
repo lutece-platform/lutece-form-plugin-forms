@@ -3,28 +3,28 @@
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 	<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 	<#assign nbFiles=getMaxFiles(entry)>
-	<div class="form-group">
+	<div class="mb-3 row">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}" id="label${entry.idEntry}">${entry.title}<#if entry.mandatory>	*</#if></label>
-		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+		<label class="col-md-3 col-form-label" for="${idName}" id="label${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-md-6">
 			<#assign fieldName=idName >
 			<#assign cssClass=entry.CSSClass!'' >
 			<#if list_responses??>
 				<#list list_responses as response>
 					<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-						<#assign cssClass='error' >
+						<#assign cssClass='is-invalid' >
 						<#break>
 					</#if>
 				</#list>
 			</#if>
 			<@addFileInput fieldName=fieldName handler=uploadHandler cssClass=cssClass multiple=true />
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="help-block">${entry.helpMessage}</span>
+				<span class="form-control-plaintext">${entry.helpMessage}</span>
 			</#if>
 			<#if list_responses?? && list_responses?has_content>
 				<#assign response_error = list_responses[0]>
 				<#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
-					<div class="alert alert-danger">
+					<div class="alert alert-danger" role="alert">
 						<#assign error = response_error.entry.error>
 						<#if error.mandatoryError>
 							#i18n{forms.message.mandatory.entry}

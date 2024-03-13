@@ -1,8 +1,6 @@
 <@messages errors=errors warnings=warnings infos=infos />
-<div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">${formResponse.id}</h3>
-    </div>
+<div class="card">
+    <h3 class="card-header">${formResponse.id}</h3>
 </div>
 <#list formResponse.steps as formQuestionResponseSteps>
 	<#list formQuestionResponseSteps.questions as questionResponse>

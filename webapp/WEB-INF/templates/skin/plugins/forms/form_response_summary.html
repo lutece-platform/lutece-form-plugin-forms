@@ -1,5 +1,5 @@
  <@messages warnings=warnings />
- <form class="form-horizontal" id="summary_validate" action="jsp/site/Portal.jsp?page=forms" method="post">
+ <form id="summary_validate" action="jsp/site/Portal.jsp?page=forms" method="post">
  <input name="id_form" value="${id_form}" type="hidden" />
   <div id="form-response-summary" class="box-body">
   	<#if form.countResponses>#i18n{forms.createEntry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
@@ -12,17 +12,17 @@
   		${captcha}
   	</#if>
   </div>
-  <div class="panel-footer">
+  <div class="card-footer">
   	<#assign label_button="#i18n{forms.summary.validate}" />
   	<#if form.labelFinalButton?has_content>
   		<#assign label_button=form.labelFinalButton />
   	</#if>
   	<input type="hidden" name="token" value = "${token}">
     <button type="submit" class="btn btn-primary btn-sm"  name="action_doSaveResponseSummary" >
-      <i class="glyphicon glyphicon-ok"></i>&nbsp;${label_button}
+      <i class="fa fa-check"></i>&nbsp;${label_button}
     </button>
 	<a class="btn btn-default btn-sm" href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${id_form}" title="#i18n{forms.summary.step.previous}">
-		<i class="glyphicon glyphicon-remove-circle"></i>&nbsp;<span class="">#i18n{forms.summary.step.previous}</span>
+		<i class="fa fa-times"></i>&nbsp;<span class="">#i18n{forms.summary.step.previous}</span>
 	</a>
   </div>
 </form>

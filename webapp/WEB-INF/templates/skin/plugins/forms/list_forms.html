@@ -1,14 +1,14 @@
 <h2>#i18n{form.xpage.listForms.pagetitle}</h2> 
-	<#list form_list as form>
-		<#if form.active>
-			 <ul>
-				<li>
-					<#if form.logo??>
-						<img class="img-fluid thumbnail" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt=""/>
-					</#if>
-					<a href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" >${form.title}</a> <#if form.countResponses>(${form.currentNumberResponse} #i18n{form.xpage.response.label})</#if>
-				</li>
-			</ul>
+<#list form_list as form>
+	<#if form.active>
+ <ul>
+	<li>
+		<#if form.logo??>
+			<img class="img-fluid thumbnail" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt=""/>
 		</#if>
-	</#list>
+		<a href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" >${form.title}</a> <#if form.countResponses>(${form.currentNumberResponse} #i18n{form.xpage.response.label})</#if>
+	</li>
+</ul>
+	</#if>
+</#list>
   

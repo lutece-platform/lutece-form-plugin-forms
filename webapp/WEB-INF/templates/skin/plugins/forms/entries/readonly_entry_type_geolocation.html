@@ -1,7 +1,8 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign iterationNumber = entry_iteration_number?c >
 <#if !entry.onlyDisplayInBack>
-	<@formGroup labelFor='${idName}_address' labelKey='${entry.title}' helpKey=entry.helpMessage mandatory=entry.mandatory>
+	<div class="mb-3 row">
+		<label class="col-md-3 col-form-label" for="${idName}_address">${entry.title}<#if entry.mandatory> *</#if></label>
 		<#assign responseX = "" >
 		<#assign responseY = "" >
 		<#if getResponseContainingTheFieldWithCode( list_responses, "address" )?? >
@@ -33,7 +34,8 @@
 				<input type="hidden" name="leafletMap"/>
 			</#if>
 		</#if>
-	</@formGroup>
+		<span class="form-control-plaintext">${entry.helpMessage}</span>
+	</div>
 </#if>
 
 

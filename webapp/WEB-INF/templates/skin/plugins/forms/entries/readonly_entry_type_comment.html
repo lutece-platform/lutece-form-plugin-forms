@@ -1,8 +1,8 @@
 <#if !entry.onlyDisplayInBack>
-	<div class="form-group">
-	    <label class="control-label col-xs-12 col-sm-3" for=""></label>
-	    <div class="col-xs-12 col-sm-9">
-	        <p class="help-block">${entry.comment}</p>
+	<div class="mb-3 row">
+	    <label class="col-md-3 col-form-label" for=""></label>
+	    <div class="col-md-6">
+	        <p class="form-control-plaintext">${entry.comment}</p>
 	        <#if url_download_fo??>
 				<a href="${url_download_fo}">${filename}</a>
 			</#if>

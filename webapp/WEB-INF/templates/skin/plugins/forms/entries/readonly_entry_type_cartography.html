@@ -1,7 +1,7 @@
-<@row>
-    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
-    <@columns sm=9>
-        <@p>
+<div class="mb-3 row">
+	<label class="col-md-3 col-form-label">${entry.title!''}</label>
+	<div class="col-md-6">
+        <p>
         <#assign coordinate = "" >
         <#assign datalayer = "" >
         <#if getResponseContainingTheFieldWithCode( list_responses, "coordinates_geojson" )?? >
@@ -10,33 +10,32 @@
         <#if getResponseContainingTheFieldWithCode( list_responses, "DataLayer" )?? >
         <#assign datalayer = getResponseContainingTheFieldWithCode( list_responses, "DataLayer" ).toStringValueResponse >
         </#if>
-        </@p>
+        </p>
         <#include "/skin/plugins/carto/manage_map.html" />
-    </@columns>
-</@row>        
+    </div>
+</div>	
 
 <script>
-
-$(window).on('load', function(){
-    // Retrieve the map object.
-    var map = mapsPlaceholder.pop();
-    
-    var geojson = ${coordinate};
-   	
-   	if ( geojson["geometry"]["type"] == "Point" ) {
-        var coordinates = geojson["geometry"]["coordinates"];
-        var marker = L.marker([coordinates[1],coordinates[0]]).addTo(map);
-    }
-    else if ( geojson["geometry"]["type"] == "Polygon" ) {
-        var coordinates = geojson["geometry"]["coordinates"][0];
-        var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
-        var polygon = L.polygon(inverseCoord ).addTo(map);
-    }
-    else if ( geojson["geometry"]["type"] == "Polyline" ) {
-        var coordinates = geojson["geometry"]["coordinates"];
-        var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
-        var polyline = L.polyline(inverseCoord ).addTo(map);
-    }
-    
-});
-  </script>          
+	$(window).on('load', function(){
+		// Retrieve the map object.
+		var map = mapsPlaceholder.pop();
+		
+		var geojson = ${coordinate};
+		
+		if ( geojson["geometry"]["type"] == "Point" ) {
+			var coordinates = geojson["geometry"]["coordinates"];
+			var marker = L.marker([coordinates[1],coordinates[0]]).addTo(map);
+		}
+		else if ( geojson["geometry"]["type"] == "Polygon" ) {
+			var coordinates = geojson["geometry"]["coordinates"][0];
+			var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
+			var polygon = L.polygon(inverseCoord ).addTo(map);
+		}
+		else if ( geojson["geometry"]["type"] == "Polyline" ) {
+			var coordinates = geojson["geometry"]["coordinates"];
+			var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
+			var polyline = L.polyline(inverseCoord ).addTo(map);
+		}
+		
+	});
+</script>          

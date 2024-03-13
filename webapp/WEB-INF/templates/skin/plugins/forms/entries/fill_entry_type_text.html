@@ -1,7 +1,5 @@
-
-
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<div class="form-group">
+	<div class="mb-3 row">
     <#if getFieldByCode( entry, "illustration_image")??>
     <#assign illustration_image_entry=getFieldByCode( entry, "illustration_image")>
     <#assign image_id = illustration_image_entry.value>
@@ -12,10 +10,10 @@
     </#list>
     </#if>
    	</div>
-	<div class="form-group">
+	<div class="mb-3 row">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-			<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+			<label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+			<div class="col-md-6">
 				<#assign field_width=getFieldValueByCode( entry, "width" )>
 				<#assign field=getFieldByCode( entry, "text_config")>
 					<input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field_width?number &gt; 0>style="width:${field_width?number}px;"</#if> 
@@ -26,7 +24,7 @@
 								value="${response.toStringValueResponse}"
 							</#if>
 							<#if response.entry.error??>
-								class="error"
+								class="is-invalid"
 							</#if>
 							</#if>
 						</#list>
@@ -54,7 +52,7 @@
 				class="${entry.CSSClass!} "	/>
 					
 				<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-					<span class="help-block">${entry.helpMessage}</span>
+					<span class="form-control-plaintext">${entry.helpMessage}</span>
 				</#if>
 			</div>
 	</div>
@@ -63,7 +61,7 @@
 <#list list_responses as response>
 <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
 <#assign error = response.entry.error>
-<div class="alert alert-danger">
+<div class="alert alert-danger" role="alert">
 	<#if error.mandatoryError>
 	<#if entry.errorMessage?? && entry.errorMessage!="">
 	${entry.errorMessage}
@@ -76,17 +74,17 @@
 </#if>
 	<#assign confirmField=getFieldByCode( entry, "confirm_field")>
 	<#if confirmField.value?boolean >
-		<div class="form-group">
+		<div class="mb-3 row">
 			<#assign idName =  buildEntryName( entry, entry_iteration_number )>
 			<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
 				<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
 			</#if>
-			<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}_confirm_field">${confirmField.title}<#if entry.mandatory> *</#if></label>
+			<label class="col-md-3 col-form-label" for="${idName}_confirm_field">${confirmField.title}<#if entry.mandatory> *</#if></label>
 			<#assign field_width=getFieldValueByCode( entry, "width")>
 			<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
 			<#assign field=getFieldByCode( entry, "text_config")>
 			<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
-			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+			<div class="col-md-6">
 				<input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field_width?number}" value="" <#if field_max_size?number!=-1>maxlength="${field_max_size?number}"</#if> <#if field_autocomplete??>autocomplete="${field_autocomplete.value?if_exists}"</#if> />
 			</div>
 		</div>

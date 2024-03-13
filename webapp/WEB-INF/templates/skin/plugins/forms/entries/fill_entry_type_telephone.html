@@ -8,14 +8,14 @@
 	<#assign idName = buildEntryName( entry, entry_iteration_number )>
 	<#assign fLabel>${entry.title}<#if entry.mandatory><abbr class="main-warning-color" tabindex="0" title="#i18n{themeparisfr.labelMandatory}">*</abbr></#if></#assign>
 	
-	<div class="form-group">
-		<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory><span aria-hidden="true"> *</span></#if></label>
-		<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+	<div class="mb-3 row">
+		<label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory><span aria-hidden="true"> *</span></#if></label>
+		<div class="col-md-6">
 			<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 			<#assign field = getFieldByCode( entry, "autocomplete" ) >
-			<input type="tel" name="${idName}" id="${idName}"<#if !entry.mandatory > required</#if> class="form-control input-sm ${entry.CSSClass!} <#if error??>error</#if>"value="${(response.toStringValueResponse)!}"<#if field??>autocomplete="${field.value!}"</#if><#if placeholder!=''> placeholder='${placeholder}' </#if>>
+			<input type="tel" name="${idName}" id="${idName}"<#if !entry.mandatory > required</#if> class="form-control input-sm ${entry.CSSClass!}<#if error??> is-invalid</#if>" value="${(response.toStringValueResponse)!}"<#if field??>autocomplete="${field.value!}"</#if><#if placeholder!=''> placeholder='${placeholder}' </#if>>
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="help-block">${entry.helpMessage}</span>
+				<span class="form-control-plaintext">${entry.helpMessage}</span>
 			</#if>
 	    </div>
 	</div>
@@ -23,7 +23,7 @@
 	<#if list_responses??>
 		<#list list_responses as response>
 			<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-				<div class="alert alert-danger">
+				<div class="alert alert-danger" role="alert">
 					<#assign error = response.entry.error>
 					<#if error.mandatoryError>
 						<#if entry.errorMessage?? && entry.errorMessage!="">

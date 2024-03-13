@@ -4,12 +4,13 @@
 		<#assign suffix = getFieldValueByCode( entry, 'suffix') >
 	</#if>
 				
-	<div class="form-group">
+	<div class="mb-3 row">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-			<label class="control-label col-xs-12 col-sm-12 col-md-3 col-lg-3" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-			<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 input-group">
+		<label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-md-6">
+			<div class="input-group">
 				<#assign field=getFieldByCode( entry, "text_config")>
-					<input type="number" class="form-contr ol input-sm" name="${idName}" id="${idName}"
+					<input type="number" class="form-control input-sm" name="${idName}" id="${idName}"
 					<#if list_responses?has_content>
 						<#list list_responses as response>
 						<#if response.entry.idEntry == entry.idEntry>
@@ -17,7 +18,7 @@
 								value="${response.toStringValueResponse}"
 							</#if>
 							<#if response.entry.error??>
-								class="error"
+								class="is-invalid"
 							</#if>
 							</#if>
 						</#list>
@@ -48,19 +49,20 @@
 					</#if>
 				class="${entry.CSSClass!} "	/>
 				<#if suffix!=''>
-					<span class="input-group-addon">${suffix}</span>
-				</#if>
-				<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-					<span class="help-block">${entry.helpMessage}</span>
+					<span class="input-group-text">${suffix}</span>
 				</#if>
 			</div>
+			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+				<span class="form-control-plaintext">${entry.helpMessage}</span>
+			</#if>
+		</div>
 	</div>
 
 	<#if list_responses??>
 		<#list list_responses as response>
 			<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
 				<#assign error = response.entry.error>
-				<div class="alert alert-danger"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
+				<div class="alert alert-danger" role="alert"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
 			</#if>
 		</#list>
 	</#if>
