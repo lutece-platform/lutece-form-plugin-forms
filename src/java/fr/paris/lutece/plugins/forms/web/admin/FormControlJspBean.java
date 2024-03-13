@@ -42,6 +42,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -227,17 +229,22 @@ public class FormControlJspBean extends AbstractJspBean
             _control.setControlType( _controlType.getLabel( ) );
             _control.setIdControlTarget( _nIdTarget );
 
-            if ( _controlType.equals( ControlType.VALIDATION )
-                    || _controlType.equals( ControlType.CONDITIONAL ) )
+            if ( ControlType.VALIDATION.equals( _controlType )
+                    || ControlType.CONDITIONAL.equals( _controlType ) )
             {
                 Set<Integer> listQuestion = new HashSet<>( );
-                listQuestion.add( _nIdTarget );
-                _control.setListIdQuestion( listQuestion );
-                if (_controlType.equals( ControlType.CONDITIONAL ))
+                if ( ControlType.CONDITIONAL.equals( _controlType ) )
                 {
+                    FormDisplay formDisplay = FormDisplayHome.findByPrimaryKey( _nIdTarget );
+                    listQuestion.add( formDisplay.getCompositeId( ) );
                     int nIdControlGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL_GROUP ), 0 );
                     _control.setIdControlGroup(nIdControlGroup);
                 }
+                else
+                {
+                    listQuestion.add( _nIdTarget );
+                }
+                _control.setListIdQuestion( listQuestion );
             }
         }
         else
@@ -246,16 +253,16 @@ public class FormControlJspBean extends AbstractJspBean
             _step = StepHome.findByPrimaryKey( _question.getIdStep( ) );
         }
 
-        if ( _controlType.equals( ControlType.TRANSITION ) )
+        if ( ControlType.TRANSITION.equals( _controlType ) )
         {
             _strControlTemplate = TEMPLATE_MODIFY_TRANSITION_CONTROL;
         }
         else
-        if ( _controlType.equals( ControlType.VALIDATION ) )
+        if ( ControlType.VALIDATION.equals( _controlType ) )
         {
             _strControlTemplate = TEMPLATE_MODIFY_QUESTION_CONTROL;
         }
-        else if ( _controlType.equals( ControlType.CONDITIONAL ) )
+        else if ( ControlType.CONDITIONAL.equals( _controlType ) )
         {
             _strControlTemplate = TEMPLATE_MODIFY_CONDITION_CONTROL;
         }
@@ -776,7 +783,8 @@ public class FormControlJspBean extends AbstractJspBean
         {
             case CONDITIONAL:
                 strTargetJsp = FormsConstants.JSP_MANAGE_QUESTIONS;
-                Question question = QuestionHome.findByPrimaryKey( _control.getIdControlTarget() );
+                FormDisplay formDisplay = FormDisplayHome.findByPrimaryKey( _control.getIdControlTarget( ) );
+                Question question = QuestionHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
                 _step = StepHome.findByPrimaryKey( question.getIdStep( ) );
                 nIdStep = _step.getId( );
                 break;
