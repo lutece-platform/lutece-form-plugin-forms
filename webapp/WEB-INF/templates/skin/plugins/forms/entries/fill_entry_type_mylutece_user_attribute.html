@@ -3,8 +3,8 @@
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 	<#assign idName = buildEntryName( entry, entry_iteration_number )>
 	<div class="mb-3 row ${entry.CSSClass!}">
-		<label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-md-6">
+		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-12">
 			<#if user??>
 				<span class="${entry.CSSClass!} form-control-plaintext" >${user.getUserInfo(fieldMyLuteceAttributeName.value)}</span>
 			</#if>

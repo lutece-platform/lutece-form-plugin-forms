@@ -1,13 +1,13 @@
 <div class="mb-3 row ${entry.cssClass!}">
-    <label class="col-md-3 col-form-label">${entry.title!''}</label>
+    <label class="col-12 col-form-label">${entry.title!''}</label>
     <#if list_responses?has_content>
     <#assign first = true>
     <#list list_responses as response>
         <#if first>
             <#assign first = false>
-            <div class="col-md-6">
+            <div class="col-12">
         <#else>
-            <div class="col-md-6 offset-md-6">
+            <div class="col-12">
         </#if>
         ${entryTypeService.getResponseValueForRecap(entry,nullArg,response,nullArg)!''}
         </div>

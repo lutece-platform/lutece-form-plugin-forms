@@ -2,7 +2,7 @@
 <#assign iterationNumber = entry_iteration_number?c >
 <#if !entry.onlyDisplayInBack>
 	<div class="mb-3 row">
-		<label class="col-md-3 col-form-label" for="${idName}_address">${entry.title}<#if entry.mandatory> *</#if></label>
+		<label class="col-12 col-form-label" for="${idName}_address">${entry.title}<#if entry.mandatory> *</#if></label>
 		<#assign responseX = "" >
 		<#assign responseY = "" >
 		<#if getResponseContainingTheFieldWithCode( list_responses, "address" )?? >

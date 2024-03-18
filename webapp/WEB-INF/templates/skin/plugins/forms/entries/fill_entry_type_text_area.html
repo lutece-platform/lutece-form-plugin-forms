@@ -20,8 +20,8 @@
 	
 	<div class="mb-3 row">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-		<label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-md-6">
+		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-12">
 			<#assign field=getFieldByCode( entry, "text_config")>
 				<#if list_responses?? && list_responses?has_content>
 					<#list list_responses as response>

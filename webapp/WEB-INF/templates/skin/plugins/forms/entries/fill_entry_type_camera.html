@@ -6,8 +6,8 @@
 	<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
 		<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
 	</#if>
-	<label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-	<div class="col-md-6">
+	<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+	<div class="col-12">
 		<#assign field_image_type=getFieldByCode( entry, "image_type")>
 		<#if field_image_type?? >
 			<#assign imageType= field_image_type.value>
@@ -24,7 +24,7 @@
 			<#assign height= field_height?number>
 		</#if>
 		<div  class="row">
-			<div class="col-md-6">
+			<div class="col-12">
 				<div id="video-wrapper${entry.idEntry}" class="cam-wrapper">
 					<video id="video" width="${width}" height="${height}" autoplay ></video>
 					<button type="button" id="snap${entry.idEntry}" class="btn btn-primary btn-cam">

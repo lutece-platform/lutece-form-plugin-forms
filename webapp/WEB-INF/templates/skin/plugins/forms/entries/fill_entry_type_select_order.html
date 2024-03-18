@@ -3,8 +3,8 @@
 		<script src="js/admin/jquery/jquery-ui.min.js"></script>
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
 		<input type='hidden' name='${idName}' id='${idName}'>
-		<label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-md-6">	 
+		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-12">	 
 			<ul id="sortable1" class="connectedSortable ${entry.CSSClass!}">
 				<#if list_responses??>
 					<#list list_responses as response>

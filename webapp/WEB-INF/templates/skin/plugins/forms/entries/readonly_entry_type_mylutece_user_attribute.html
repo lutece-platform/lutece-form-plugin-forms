@@ -8,7 +8,7 @@
 	    </fieldset>
 	<#else>
 		<div class="mb-3 row ${entry.CSSClass!}">
-	        <label class="col-md-3 col-form-label">
+	        <label class="col-12 col-form-label">
 	            ${entry.title!''}
 	        </label>
 	        <#if list_responses?has_content>
@@ -16,9 +16,9 @@
 	            <#list list_responses as response>
 	                <#if first>
 	                    <#assign first = false>
-	                    <div class="col-md-6">
+	                    <div class="col-12">
 	                <#else>
-	                    <div class="col-md-6 offset-md-6">
+	                    <div class="col-md-12">
 	                </#if>
 	                <#if form_response?? && response.entry??>
 	                    <a href="jsp/admin/plugins/forms/DoVisualisationMyLuteceUser.jsp?id_form_response=${form_response.id}&amp;id_entry=${response.entry.idEntry}">

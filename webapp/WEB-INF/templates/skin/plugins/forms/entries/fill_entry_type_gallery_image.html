@@ -10,14 +10,14 @@
 				</#if>
 			</#list>
 		</#if>
-		<label class="col-md-3 col-form-label" for="${idName}" id="label${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-md-6">
+		<label class="col-12 col-form-label" for="${idName}" id="label${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-12">
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 				<p class="form-control-plaintext">${entry.helpMessage}</p>
 			</#if>
 			<@galleryImage codeGallery=codeGallery inputName=idName idFileSelected=idFileSelected/>
 			<#if list_responses?? && list_responses?has_content>
-				<div class="col-md-6">
+				<div class="col-12">
 				<#assign response_error = list_responses[0]/>
 					<#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
 						<div class="alert alert-danger" role="alert">

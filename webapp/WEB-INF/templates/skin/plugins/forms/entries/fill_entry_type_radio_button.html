@@ -13,8 +13,8 @@
 	${entry.CSSClass!}
 	
 		<div class="mb-3 row">
-			<label class="col-md-3 col-form-label" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
-			<div class="col-md-6">
+			<label class="col-12 col-form-label" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
+			<div class="col-12">
 			<#assign inLine = entry.fieldInLine>
 			<#list entry.fields as field>
 				<#if field.code == 'answer_choice'>

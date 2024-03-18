@@ -1,6 +1,6 @@
 <#if !entry.onlyDisplayInBack>
 	<div class="mb-3 row">
-	    <label class="col-md-3 col-form-label form-response-details-label">
+	    <label class="col-12 col-form-label form-response-details-label">
 	        ${entry.title!''}
 	    </label>
 	    <#if list_responses?has_content>
@@ -8,9 +8,9 @@
 	        <#list list_responses as response>
 	            <#if first>
 	                <#assign first = false>
-	                <div class="col-md-6">
+	                <div class="col-12">
 	            <#else>
-	                <div class="col-md-6 offset-md-6">
+	                <div class="col-12">
 	            </#if>
 	            <#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>
 	            	${entryTypeService.getResponseValueForRecap(null, null, response, null)}

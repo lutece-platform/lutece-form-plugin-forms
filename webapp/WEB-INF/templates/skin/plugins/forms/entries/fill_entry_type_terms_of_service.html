@@ -8,7 +8,7 @@
 </#if>
 
 <div class="mb-3 row">
-	<div class="col-md-6 offset-md-3">
+	<div class="col-12">
 		<input type="checkbox" name="${name}" id="${name}_${fieldAgreement.idField}" value="${fieldAgreement.idField}" <#if responseAgreement?? && responseAgreement.toStringValueResponse == "true">checked="checked" </#if> class="${entry.CSSClass!}<#if error?? > is-invalid</#if>" />
 		<#assign fieldLink = getFieldByCode( entry, "link" ) >
 		<a href="jsp/site/RunStandaloneApp.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}" onclick="javascript:openFormsTermsOfService(this.href); return false;" target="_blank">${fieldLink.value}</a>

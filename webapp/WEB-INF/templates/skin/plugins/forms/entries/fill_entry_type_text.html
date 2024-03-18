@@ -12,8 +12,8 @@
    	</div>
 	<div class="mb-3 row">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-			<label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-			<div class="col-md-6">
+			<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+			<div class="col-12">
 				<#assign field_width=getFieldValueByCode( entry, "width" )>
 				<#assign field=getFieldByCode( entry, "text_config")>
 					<input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field_width?number &gt; 0>style="width:${field_width?number}px;"</#if> 
@@ -79,12 +79,12 @@
 			<#if entry_iteration_number?has_content && entry_iteration_number gt 0>
 				<#assign idName = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
 			</#if>
-			<label class="col-md-3 col-form-label" for="${idName}_confirm_field">${confirmField.title}<#if entry.mandatory> *</#if></label>
+			<label class="col-12 col-form-label" for="${idName}_confirm_field">${confirmField.title}<#if entry.mandatory> *</#if></label>
 			<#assign field_width=getFieldValueByCode( entry, "width")>
 			<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
 			<#assign field=getFieldByCode( entry, "text_config")>
 			<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
-			<div class="col-md-6">
+			<div class="col-12">
 				<input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field_width?number}" value="" <#if field_max_size?number!=-1>maxlength="${field_max_size?number}"</#if> <#if field_autocomplete??>autocomplete="${field_autocomplete.value?if_exists}"</#if> />
 			</div>
 		</div>

@@ -5,8 +5,8 @@
 	<#assign nbFiles=getMaxFiles(entry)>
 	<div class="mb-3 row">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-		<label class="col-md-3 col-form-label" for="${idName}" id="label${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-md-6">
+		<label class="col-12 col-form-label" for="${idName}" id="label${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-12">
 			<#assign fieldName=idName >
 			<#assign cssClass=entry.CSSClass!'' >
 			<#if list_responses??>

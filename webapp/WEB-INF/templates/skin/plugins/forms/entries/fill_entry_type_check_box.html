@@ -10,8 +10,8 @@
 		</#list>
 	</#if>
 	<div class="mb-3 row">
-		<label class="control-label col-xs-12 ${entry.CSSClass!}" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-xs-12 col-sm-8 col-md-6">
+		<label class="col-12 col-form-label ${entry.CSSClass!}" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-12">
 			<#assign inLine = entry.fieldInLine>
 			<#list entry.fields as field>
 				<#if field.code == 'answer_choice'>

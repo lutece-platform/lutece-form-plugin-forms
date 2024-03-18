@@ -8,8 +8,8 @@
   
   <div class="mb-3 row">
     <#assign idName = buildEntryName( entry, entry_iteration_number )>
-    <label class="col-md-3 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>	
-    <div class="col-md-6">
+    <label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>	
+    <div class="col-12">
       <div class="input-group">
         <span class="input-group-text"><i class="fa fa-calendar fa-lg"></i></span>
         <#assign field_default = getFieldByCode( entry, "default_date_value" ) >
