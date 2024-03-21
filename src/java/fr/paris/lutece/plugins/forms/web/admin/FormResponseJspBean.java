@@ -55,6 +55,8 @@ public class FormResponseJspBean extends AbstractJspBean
 	private static final String ACTION_GO_TO_STEP = "doGoToStep";
 	private static final String ACTION_FORM_RESPONSE_SUMMARY = "formResponseSummary";
 	private static final String ACTION_SAVE_FORM_RESPONSE_SUMMARY = "doSaveResponseSummary";
+    private static final String ACTION_ADD_ITERATION = "addIteration";
+    private static final String ACTION_REMOVE_ITERATION = "removeIteration";
 	
 	// Templates
 	private static final String TEMPLATE_VIEW_STEP = "/admin/plugins/forms/step_view.html";
@@ -70,6 +72,9 @@ public class FormResponseJspBean extends AbstractJspBean
     private static final String STEP_HTML_MARKER = "stepContent";
     private static final String MARK_FORM_TITLE = "formTitle";
     private static final String MARK_LIST_SUMMARY_STEP_DISPLAY = "list_summary_step_display";
+
+    // Message
+    private static final String MESSAGE_ERROR_REMOVE_ITERATION = "forms.error.remove.iteration";
     
     // Other
     private Controller _controller = getClass( ).getAnnotation( Controller.class );
@@ -403,7 +408,82 @@ public class FormResponseJspBean extends AbstractJspBean
         
     	return doSaveResponse(request, form);
     }
-    
+
+    /**
+     * Adds an iteration
+     *
+     * @param request
+     *            the request
+     * @return the XPage
+     */
+    @Action( value = ACTION_ADD_ITERATION )
+    public synchronized String doAddIteration( HttpServletRequest request )
+    {
+        try
+        {
+            FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
+        }
+        catch( FormNotFoundException | QuestionValidationException exception )
+        {
+            return getStepView(  request );
+        }
+
+        int nIdGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_ADD_ITERATION ),
+                FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nIdGroup != FormsConstants.DEFAULT_ID_VALUE )
+        {
+            _stepDisplayTree.iterate( nIdGroup );
+        }
+
+        return getStepView(  request );
+    }
+
+    /**
+     * Remove an iteration
+     *
+     * @param request
+     *            the request
+     * @return the XPage
+     */
+    @Action( value = ACTION_REMOVE_ITERATION )
+    public synchronized String doRemoveIteration( HttpServletRequest request )
+    {
+        try
+        {
+            FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
+        }
+        catch( FormNotFoundException | QuestionValidationException exception )
+        {
+            return getStepView(  request );
+        }
+
+
+        String strIterationInfo = request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_REMOVE_ITERATION );
+
+        int nIdGroupParent;
+        int nIndexIteration;
+
+        if ( strIterationInfo != null ){
+            String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
+
+            nIdGroupParent = Integer.parseInt( arrayIterationInfo [0] );
+            nIndexIteration = Integer.parseInt( arrayIterationInfo [1] );
+        } else {
+            addError( MESSAGE_ERROR_REMOVE_ITERATION, getLocale() );
+            return redirectView( request, VIEW_ERROR );
+        }
+
+        String [ ] arrayIterationInfo = strIterationInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
+
+        _stepDisplayTree.removeIteration( request, nIdGroupParent, nIndexIteration );
+
+        return getStepView(  request );
+    }
+
+
+
+
     /**
      * initialize the object.
      */

@@ -1,13 +1,34 @@
-<#if visible>
-	<#assign fieldsetClass=''>
-	<#if id_display??>
-		<#assign fieldsetClass='display_field_${id_display}'>
-	</#if>
+<#assign fieldsetClass=''>
+<#assign indexGroup=-1>
+<#assign indexIteration=0>
+<#assign nbIterationMin=group.iterationMin>
+<#if id_display??>
+	<#assign fieldsetClass='display_field_${id_display}'>
+</#if>
+<#if isIterable>
+	<@div class="step-group">
+		<#list groupContent as childrenHtml>
+			<#assign indexIteration = ( childrenHtml?index / nbBaseChildren )?int />
+			<#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />
+			<#if nbTotalIteration gt nbIterationMin>
+				<@button type='submit' class='link-action' params=' formnovalidate name="action_removeIteration" value="${group.id}_${indexIteration}"'>
+					${group.iterationRemoveLabel!''}
+				</@button>
+			</#if>
+			<#if isIterable && indexIteration = nbTotalIteration - 1>
+				<@button type='submit' class='link-action' params='formnovalidate value="${id_group}" name="action_addIteration" '>
+					${group.iterationAddLabel!}
+				</@button>
+			</#if>
+			${childrenHtml}
+		</#list>
+	</@div>
+<#else>
 	<@fieldSet class=fieldsetClass legend=group.title >
-		<div class="form-group-value-content">
+		<@div class="form-group-value-content">
 			<#list groupContent as childrenHtml>
 				${childrenHtml}
 			</#list>
-	    </div>
+		</@div>
 	</@fieldSet>
 </#if>
