@@ -423,7 +423,7 @@ public class FormResponseJspBean extends AbstractJspBean
         {
             FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
         }
-        catch( FormNotFoundException | QuestionValidationException exception )
+        catch( QuestionValidationException exception )
         {
             return getStepView(  request );
         }
@@ -453,7 +453,7 @@ public class FormResponseJspBean extends AbstractJspBean
         {
             FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
         }
-        catch( FormNotFoundException | QuestionValidationException exception )
+        catch( QuestionValidationException exception )
         {
             return getStepView(  request );
         }
