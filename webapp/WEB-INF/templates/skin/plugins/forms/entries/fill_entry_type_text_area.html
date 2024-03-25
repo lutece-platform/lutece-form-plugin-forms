@@ -23,37 +23,36 @@
 		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
 		<div class="col-12">
 			<#assign field=getFieldByCode( entry, "text_config")>
-				<#if list_responses?? && list_responses?has_content>
-					<#list list_responses as response>
-						<#if response.entry.idEntry == entry.idEntry && response.toStringValueResponse??>
-							<#if response.entry.error??>
-								<@getTextAreaContent responseContent=response.toStringValueResponse has_error=true entry=entry />
-							<#else>
-								<@getTextAreaContent responseContent=response.toStringValueResponse has_error=false entry=entry />
-							</#if>
+			<#if list_responses?? && list_responses?has_content>
+				<#list list_responses as response>
+					<#if response.entry.idEntry == entry.idEntry && response.toStringValueResponse??>
+						<#if response.entry.error??>
+							<@getTextAreaContent responseContent=response.toStringValueResponse has_error=true entry=entry />
+						<#else>
+							<@getTextAreaContent responseContent=response.toStringValueResponse has_error=false entry=entry />
 						</#if>
-					</#list>
-				<#else>
-					<#if field.value?exists>
-						<@getTextAreaContent responseContent=field.value has_error=false entry=entry />
-					<#else>
-						<@getTextAreaContent responseContent="" has_error=false entry=entry />
 					</#if>
+				</#list>
+			<#else>
+				<#if field.value?exists>
+					<@getTextAreaContent responseContent=field.value has_error=false entry=entry />
+				<#else>
+					<@getTextAreaContent responseContent="" has_error=false entry=entry />
 				</#if>
+			</#if>
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="form-control-plaintext">${entry.helpMessage}</span>
 			</#if>
+			<#if list_responses??>
+				<#list list_responses as response>
+				<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+				<span class="invalid-feedback">
+					<#assign error = response.entry.error>
+					<#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if>
+				</span>
+				</#if>
+				</#list>
+			</#if>
 		</div>
 	</div>
-	
-	<#if list_responses??>
-		<#list list_responses as response>
-		<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-		<div class="alert alert-danger" role="alert">
-			<#assign error = response.entry.error>
-			<#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if>
-		</div>
-		</#if>
-		</#list>
-	</#if>
 </#if>

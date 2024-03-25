@@ -27,7 +27,7 @@
 					<label>#i18n{forms.message.slot.preposition.to}</label>
 					<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" min="00:00" max="23:59" <#if entry.mandatory> required</#if> />
 					<#if hasError>
-						<div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
+						<span class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></span>
 					</#if>
 				</#if>
 			</div>

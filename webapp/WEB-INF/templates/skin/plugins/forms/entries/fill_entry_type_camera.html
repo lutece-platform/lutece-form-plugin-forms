@@ -47,7 +47,7 @@
 			<#list list_responses as response>
 				<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
 					<#assign error = response.entry.error>
-					<div class="alert alert-danger" role="alert">
+					<span class="invalid-feedback">
 					    <#if error.mandatoryError>
 						<#if error.errorMessage??>
 						  ${error.errorMessage}
@@ -57,7 +57,7 @@
 					    <#else>
 							${error.errorMessage}
 						</#if>
-					</div>
+					</span>
 			        </#if>
 			</#list>
 		</#if>

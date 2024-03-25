@@ -12,66 +12,66 @@
    	</div>
 	<div class="mb-3 row">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-			<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-			<div class="col-12">
-				<#assign field_width=getFieldValueByCode( entry, "width" )>
-				<#assign field=getFieldByCode( entry, "text_config")>
-					<input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field_width?number &gt; 0>style="width:${field_width?number}px;"</#if> 
-					<#if list_responses?has_content>
-						<#list list_responses as response>
-						<#if response.entry.idEntry == entry.idEntry>
-							<#if response.toStringValueResponse??>
-								value="${response.toStringValueResponse}"
-							</#if>
-							<#if response.entry.error??>
-								class="is-invalid"
-							</#if>
-							</#if>
-						</#list>
-					<#else>
-						<#if field.value?exists>
-							value="${field.value}" 
-						<#else>
-							 value="" 
+		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
+		<div class="col-12">
+			<#assign field_width=getFieldValueByCode( entry, "width" )>
+			<#assign field=getFieldByCode( entry, "text_config")>
+				<input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field_width?number &gt; 0>style="width:${field_width?number}px;"</#if> 
+				<#if list_responses?has_content>
+					<#list list_responses as response>
+					<#if response.entry.idEntry == entry.idEntry>
+						<#if response.toStringValueResponse??>
+							value="${response.toStringValueResponse}"
 						</#if>
+						<#if response.entry.error??>
+							class="is-invalid"
+						</#if>
+						</#if>
+					</#list>
+				<#else>
+					<#if field.value?exists>
+						value="${field.value}" 
+					<#else>
+						 value="" 
 					</#if>
-					<#if getFieldByCode( entry, "autocomplete")??>
-					<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
-					</#if>
-					<#if field_autocomplete?? && field_autocomplete.value??>
-						autocomplete="${field_autocomplete.value}"
-					</#if>
-					<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
-					<#if field_max_size?number!=-1>
-						maxlength="${field_max_size?number}"
-					</#if>
-					<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-					<#if placeholder!=''> 
-						placeholder='${placeholder}'
-					</#if>
-				class="${entry.CSSClass!} "	/>
-					
-				<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-					<span class="form-control-plaintext">${entry.helpMessage}</span>
 				</#if>
-			</div>
+				<#if getFieldByCode( entry, "autocomplete")??>
+				<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
+				</#if>
+				<#if field_autocomplete?? && field_autocomplete.value??>
+					autocomplete="${field_autocomplete.value}"
+				</#if>
+				<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
+				<#if field_max_size?number!=-1>
+					maxlength="${field_max_size?number}"
+				</#if>
+				<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+				<#if placeholder!=''> 
+					placeholder='${placeholder}'
+				</#if>
+			class="${entry.CSSClass!} "	/>
+				
+			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+				<span class="form-control-plaintext">${entry.helpMessage}</span>
+			</#if>
+			<#if list_responses??>
+			<#list list_responses as response>
+			<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+			<#assign error = response.entry.error>
+			<span class="invalid-feedback">
+				<#if error.mandatoryError>
+				<#if entry.errorMessage?? && entry.errorMessage!="">
+				${entry.errorMessage}
+				<#else>
+				#i18n{forms.message.mandatory.entry}
+			</#if>
+			<#else>${error.errorMessage}</#if></span>
+			</#if>
+			</#list>
+			</#if>
+		</div>
 	</div>
 
-<#if list_responses??>
-<#list list_responses as response>
-<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-<#assign error = response.entry.error>
-<div class="alert alert-danger" role="alert">
-	<#if error.mandatoryError>
-	<#if entry.errorMessage?? && entry.errorMessage!="">
-	${entry.errorMessage}
-	<#else>
-	#i18n{forms.message.mandatory.entry}
-</#if>
-<#else>${error.errorMessage}</#if></div>
-</#if>
-</#list>
-</#if>
 	<#assign confirmField=getFieldByCode( entry, "confirm_field")>
 	<#if confirmField.value?boolean >
 		<div class="mb-3 row">

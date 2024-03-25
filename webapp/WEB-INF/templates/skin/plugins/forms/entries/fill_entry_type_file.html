@@ -30,14 +30,14 @@
 			<#if list_responses?? && list_responses?has_content>
 				<#assign response_error = list_responses[0]>
 				<#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
-					<div class="alert alert-danger" role="alert">
+					<span class="invalid-feedback">
 						<#assign error = response_error.entry.error>
 						<#if error.mandatoryError>
 							#i18n{forms.message.mandatory.entry}
 						<#else>
 							${error.errorMessage}
 						</#if>
-					</div>
+					</span>
 				</#if>
 			</#if>
 		</div>		
