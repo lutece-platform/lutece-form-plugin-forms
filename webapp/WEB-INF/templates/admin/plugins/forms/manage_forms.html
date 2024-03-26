@@ -3,8 +3,8 @@
 		<@box color='primary'>
             <@boxHeader title='#i18n{forms.manageForm.title}' class='is-align-items-center' boxTools=true>
                 <#if permission_create_forms>
-                    <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm'] class='card-header-icon' color='secondary' />
-                	<@aButton title='#i18n{forms.manageForm.buttonImport}' buttonIcon='upload' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] class='card-header-icon' color='secondary' />
+                    <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm'] class='card-header-icon' color='primary' />
+                	<@aButton title='#i18n{forms.manageForm.buttonImport}' buttonIcon='upload' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] class='card-header-icon' color='primary' />
                 </#if>
             </@boxHeader>
 			<@boxBody>
@@ -14,8 +14,8 @@
                         <@headerSort field='title' title='#i18n{forms.manageForm.columnTitle}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='title' />
                         <@th>#i18n{forms.manageForm.columnActions}</@th>
                         <!--@th hide=['xs']>#i18n{forms.manageForm.columnPeriodDisponibility}</@th-->
-                        <@headerSort field='period_disponibility' title='#i18n{forms.manageForm.columnPeriodDisponibility}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='period_disponibility' hide=['xs'] />
-                        <@headerSort field='creation_date' title='#i18n{forms.manageForm.columnCreationDate}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='creation_date' />
+                        <@headerSort field='period_disponibility' title='#i18n{forms.manageForm.columnPeriodDisponibility}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='period_disponibility' hide=['xs','sm'] />
+                        <@headerSort field='creation_date' title='#i18n{forms.manageForm.columnCreationDate}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='creation_date' hide=['xs','sm','md'] />
                     </@tr>
                     <#list form_list as form>
                     	<#assign can_publish=false>
@@ -32,7 +32,7 @@
 								<#else>
 									${form.title}
                                 </#if>
-                                <@div hide=['sm','md','lg','xl','xxl']>
+                                <@div hide=['md','lg','xl','xxl']>
                                     #i18n{forms.manageForm.columnPeriodDisponibility} : 
                                     <#setting locale=locale.language>
                                     <#if form.active>
@@ -86,7 +86,7 @@
                                 	<@aButton href='jsp/admin/plugins/kibana/KibanaDashboard.jsp?view=dashboard&tab=FormsDataSource_${form.id}' title='#i18n{forms.manageForm.stats.label}' hideTitle=['all'] params='target="_blank"' buttonIcon='chart-area' size='sm' color='info' />
                                 </#if>
                             </@td>
-                            <@td hide=['xs']>
+                            <@td hide=['xs','sm']>
                             	<#if can_publish>
 	                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' params='data-toggle="modal" data-target="#pubModal" data-url="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"'>
 	                                    <#setting locale=locale.language>
@@ -131,7 +131,7 @@
 	                                    </#if>
 	                             </#if>   
                             </@td>
-                            <@td>
+                            <@td hide=['xs','sm','md']>
                             	${form.creationDate}
                             </@td>
                         </@tr>
