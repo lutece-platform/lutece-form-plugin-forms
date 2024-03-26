@@ -45,3 +45,5 @@ INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_use
 (121, 'Liste triable', 0, 0, 0, 'forms.entryTypeSelectOrder', 'list-ol', 'forms',20,0);
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin,display_order,inactive) VALUES
 (122, 'Galerie image', 0, 0, 0, 'forms.entryTypeGalleryImage', 'image', 'forms',21,0);
+INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin,display_order,inactive) VALUES
+(124, 'Creneau horaire', 0, 0, 0, 'forms.entryTypeSlot', 'calendar', 'forms',22,0);
