@@ -150,7 +150,7 @@
 .forms-questions td .btn-link{ white-space: normal; text-align: left;}
 
 /* Fields - Aside  											*/
-#sticky-container{ min-height: 450vh; }
+#sticky-container{ min-height: 100vh; }
 #info-right{ position: -webkit-sticky;	position: sticky; top: 60px }
 #info-right h2{ font-size: 140%; color:#1d98f6; border-bottom: 1px solid #555 }
 #info-right .img-action{ position: absolute; left: 20px; width:24px }
