@@ -154,7 +154,7 @@ public final class FormListTemplateBuilder
                         strRedirectionDetailsBaseUrl ) );
                 }
                 model.put( MARK_FROM_RESPONSE_GEOJSON_POINT_LIST, listGeoJsonPoints );
-                model.put( MARK_MULTIVIEWMAP, maybeMapProvider.get( ).getMapTemplate( ) );
+                model.put( MARK_MULTIVIEWMAP, maybeMapProvider.isPresent() ? maybeMapProvider.get( ).getMapTemplate( ) : null );
 
                 listFormColumnLineTemplatePaginated = buildFormColumnLineTemplateList( listFormColumnLineTemplate, listIdFormResponsePaginated );
             }
