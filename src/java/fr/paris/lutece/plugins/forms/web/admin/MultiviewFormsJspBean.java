@@ -507,7 +507,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             }
 
             // Build the template of the form list panel
-            formPanelDisplay.buildTemplate( getLocale( ) );
+            formPanelDisplay.buildTemplate( request, getLocale( ) );
         }
     }
     

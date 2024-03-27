@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.forms.web.form.panel.display;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
+
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;
@@ -108,7 +110,9 @@ public interface IFormPanelDisplay extends IFormListPosition
      * 
      * @param locale
      *            The locale used to build the template
+     * @param request
+     *            The HttpServletRequest used to build the template
      * @return the built template of the FormPanelDisplay
      */
-    String buildTemplate( Locale locale );
+    String buildTemplate( HttpServletRequest request, Locale locale );
 }

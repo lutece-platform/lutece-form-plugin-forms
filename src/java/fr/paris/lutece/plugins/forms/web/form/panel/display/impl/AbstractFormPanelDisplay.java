@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -48,6 +50,9 @@ import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPane
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+
+import static fr.paris.lutece.plugins.forms.util.FormsConstants.MARK_ID_FORM;
+import static fr.paris.lutece.plugins.forms.util.FormsConstants.PARAMETER_ID_FORM;
 
 /**
  * Abstract class for FormPanelDisplay class
@@ -191,7 +196,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay
      * {@inheritDoc}
      */
     @Override
-    public String buildTemplate( Locale locale )
+    public String buildTemplate( HttpServletRequest request, Locale locale )
     {
         String strTechnicalCode = StringUtils.EMPTY;
         String strTitle = StringUtils.EMPTY;
@@ -208,6 +213,7 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay
         model.put( MARK_PANEL_TECHNICAL_CODE, strTechnicalCode );
         model.put( MARK_PANEL_TITLE, I18nService.getLocalizedString( strTitle, locale ) );
         model.put( MARK_PANEL_FORM_RESPONSE_NUMBER, getFormResponseNumber( ) );
+        model.put( MARK_ID_FORM, request.getParameter( PARAMETER_ID_FORM ) );
 
         String strFormPanelDisplayTemplate = AppTemplateService.getTemplate( TEMPLATE_MULTIVIEW_FORM_PANEL, locale, model ).getHtml( );
         _strTemplate = strFormPanelDisplayTemplate;
