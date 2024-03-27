@@ -1,1 +1,3 @@
-<@tabLink active=panel_active href='jsp/admin/plugins/forms/MultiviewForms.jsp?plugin_name=forms&selected_panel=${panel_technical_code}&change_panel=true' title='${panel_title}'><@tag color='primary' class='ml-1 ms-1'>${panel_formResponseNumber}</@tag></@tabLink>
+<#assign hrefValue>jsp/admin/plugins/forms/MultiviewForms.jsp?plugin_name=forms&selected_panel=${panel_technical_code}&change_panel=true</#assign>
+<#if id_form?? && id_form?has_content><#assign hrefValue>${hrefValue}&id_form=${id_form}</#assign></#if>
+<@tabLink active=panel_active href='${hrefValue}' title='${panel_title}'><@tag color='primary' class='ml-1 ms-1'>${panel_formResponseNumber}</@tag></@tabLink>
