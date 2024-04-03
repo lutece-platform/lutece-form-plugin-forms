@@ -43,6 +43,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeComment;
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeUpload;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.html2pdf.service.PdfConverterService;
@@ -334,6 +335,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
             return listResponseValue;
 
         }
+        
         for ( Response response : formQuestionResponse.getEntryResponse( ) )
         {
             if ( response.getIterationNumber( ) != -1 && response.getIterationNumber( ) != iteration )
@@ -343,26 +345,9 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 
             String strResponseValue = entryTypeService.getResponseValueForRecap( entry, null, response, I18nService.getDefaultLocale( ) );
 
-            if ( ( entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera ) && strResponseValue != null )
+            if ( StringUtils.isEmpty( strResponseValue ) && entryTypeService instanceof AbstractEntryTypeUpload && response.getFile( ) != null )
             {
-                if ( response.getFile( ) != null )
-                {
-                    IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
-                    fr.paris.lutece.portal.business.file.File fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
-                    
-                    String encoded = StringUtils.EMPTY;
-                    if(fileImage != null && fileImage.getPhysicalFile() != null)
-                    {
-                    	encoded = Base64.getEncoder( ).encodeToString( fileImage.getPhysicalFile( ).getValue( ) );
-                    }
-                    listResponseValue.add( "<img src=\"data:image/jpeg;base64, " + encoded + " \" width=\"100px\" height=\"100px\" /> " );
-                }
-            }
-            if ( entryTypeService instanceof EntryTypeFile && response.getFile( ) != null )
-            {
-                IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
-                File fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
-                listResponseValue.add( fileImage != null ? fileImage.getTitle( ) : StringUtils.EMPTY);
+                strResponseValue = getResponseValueOfFileType( response.getFile( ), entryTypeService );
             }
 
             if ( strResponseValue != null )
@@ -372,6 +357,34 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
         }
 
         return listResponseValue;
+    }
+    
+    private String getResponseValueOfFileType( File responseFile, IEntryTypeService entryTypeService )
+    {
+    	String strResponseValue = null;
+    	
+    	if ( StringUtils.isNumeric( responseFile.getFileKey( ) ) )
+	    {
+    		File file = FileHome.findByPrimaryKey( Integer.parseInt( responseFile.getFileKey( ) ) );
+    		if ( file != null )
+    		{
+    			if ( ( entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera ) )
+        		{
+        		    String encoded = StringUtils.EMPTY;
+                    if ( file.getPhysicalFile( ) != null )
+                    {
+                        encoded = Base64.getEncoder( ).encodeToString( file.getPhysicalFile( ).getValue( ) );
+                    }
+                    strResponseValue =  "<img src=\"data:image/jpeg;base64, " + encoded + " \" width=\"100px\" height=\"100px\" /> ";
+        		}
+        		else if ( entryTypeService instanceof EntryTypeFile )
+        		{
+        		    strResponseValue = file.getTitle( );
+        		}
+    		}
+	    }
+    	
+    	return strResponseValue;
     }
     
     protected void generatePdfFile(Path directoryFile, HtmlTemplate htmltemplate, String fileName) throws PdfConverterServiceException, IOException
