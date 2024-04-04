@@ -33,18 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.service.provider;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
@@ -52,26 +40,34 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCamera;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeFile;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeGalleryImage;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.admin.MultiviewFormResponseDetailsJspBean;
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
-import fr.paris.lutece.plugins.workflowcore.service.provider.IProvider;
 import fr.paris.lutece.plugins.workflowcore.service.provider.InfoMarker;
-import fr.paris.lutece.portal.service.file.FileService;
-import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
+import fr.paris.lutece.portal.business.file.File;
+import fr.paris.lutece.portal.business.file.FileHome;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
+import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
-
-public abstract class GenericFormsProvider implements IProvider
-{
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
+public abstract class GenericFormsProvider {
     // MESSAGE
     private static final String MESSAGE_DESCRIPTION = "forms.marker.provider.url.admin.detail.reponse.description";
     private static final String MESSAGE_FO_DESCRIPTION = "forms.marker.provider.url.fo.detail.reponse.description";
@@ -91,6 +87,8 @@ public abstract class GenericFormsProvider implements IProvider
     private static final String MARK_UPDATE_DATE = "update_date";
     private static final String MARK_STATUS = "status";
     private static final String MARK_STATUS_UPDATE_DATE = "update_date_status";
+    private static final String MARK_BASE_URL = "base_url";
+    private static final String MARKER_DESCRIPTION_BASE64 = "base64";
     // PARAMETERS
     public static final String PARAMETER_VIEW_FORM_RESPONSE_DETAILS = "view_form_response_details";
     public static final String PARAMETER_VIEW_FORM_RESPONSE_DETAILS_FO = "formResponseView";
@@ -103,102 +101,104 @@ public abstract class GenericFormsProvider implements IProvider
     protected final FormResponse _formResponse;
     private final HttpServletRequest _request;
 
-    public GenericFormsProvider( ResourceHistory resourceHistory, HttpServletRequest request )
-    {
+    public GenericFormsProvider(ResourceHistory resourceHistory, HttpServletRequest request) {
         // Get the form response from the resourceHistory
-        _formResponse = FormResponseHome.findByPrimaryKey( resourceHistory.getIdResource( ) );
+        _formResponse = FormResponseHome.findByPrimaryKey(resourceHistory.getIdResource());
         _request = request;
     }
 
-    @Override
-    public String provideDemandId( )
-    {
-        return String.valueOf( _formResponse.getId( ) );
-    }
 
-    @Override
-    public String provideDemandSubtypeId( )
-    {
-        return null;
-    }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Collection<InfoMarker> provideMarkerValues( )
-    {
-        Collection<InfoMarker> result = new ArrayList<>( );
+      public static Map<String, InfoMarker> provideMarkerValues( FormResponse formResponse, HttpServletRequest request ){
+        Map<String, InfoMarker> result = new HashMap<>( );
 
-        List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( _formResponse.getId( ) );
-
-        Map<Integer, InfoMarker> markers = new HashMap<>( );
-        for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
-        {
-            InfoMarker notifyMarker = markers.computeIfAbsent( formQuestionResponse.getQuestion( ).getId( ),
-                    ( k ) -> new InfoMarker( MARK_POSITION + formQuestionResponse.getQuestion( ).getId( ) ) );
-            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( formQuestionResponse.getQuestion( ).getEntry( ) );
-            String value = "";
-            if ( entryTypeService instanceof EntryTypeComment )
-            {
-                Entry entry = formQuestionResponse.getQuestion( ).getEntry( );
-                Field fieldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
-                if ( fieldFile != null )
-                {
-                    IFileStoreServiceProvider fileStoreprovider = FileService.getInstance( ).getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
-
-                    Map<String, String> additionnalData = new HashMap<>( );
-                    additionnalData.put( FileService.PARAMETER_RESOURCE_ID, String.valueOf( entry.getIdResource( ) ) );
-                    additionnalData.put( FileService.PARAMETER_RESOURCE_TYPE, Form.RESOURCE_TYPE );
-                    additionnalData.put( FileService.PARAMETER_PROVIDER, fileStoreprovider.getName( ) );
-
-                    value = fileStoreprovider.getFileDownloadUrlFO( fieldFile.getValue( ), additionnalData );
+        List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) );
+        Boolean bExportImageBase64 = AppPropertiesService.getPropertyBoolean("forms.export.image.base64", false);
+          for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse ) {
+            InfoMarker marker = new InfoMarker(MARK_POSITION + formQuestionResponse.getQuestion().getId());
+            IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService(formQuestionResponse.getQuestion().getEntry());
+            if (entryTypeService instanceof EntryTypeComment || entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera || entryTypeService instanceof EntryTypeGalleryImage || entryTypeService instanceof EntryTypeFile || entryTypeService instanceof EntryTypeAutomaticFileReading) {
+                List<fr.paris.lutece.plugins.genericattributes.business.Response> responses = formQuestionResponse.getEntryResponse();
+                for (int i = 0; i < responses.size(); i++) {
+                    if (responses.get(i).getFile() != null) {
+                        File file = FileHome.findByPrimaryKey(responses.get(i).getFile().getIdFile());
+                        if (entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera || entryTypeService instanceof EntryTypeGalleryImage) {
+                            // if property forms.export.image.base64 is true
+                            if (bExportImageBase64) {
+                                PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey(file.getPhysicalFile().getIdPhysicalFile());
+                                byte[] bytes = physicalFile.getValue();
+                                String strBase64 = java.util.Base64.getEncoder().encodeToString(bytes);
+                                responses.get(i).setResponseValue(strBase64);
+                            }
+                        }
+                        responses.get(i).setFile(file);
+                    }
                 }
             }
-            else
-                if ( CollectionUtils.isNotEmpty( formQuestionResponse.getEntryResponse( ) ) )
-                {
-                    value = formQuestionResponse.getEntryResponse( ).stream( ).map(
-                            response -> entryTypeService.getResponseValueForRecap( formQuestionResponse.getQuestion( ).getEntry( ), _request, response, null ) )
-                            .filter( StringUtils::isNotEmpty ).collect( Collectors.joining( ", " ) );
-                }
-            if ( notifyMarker.getValue( ) == null )
-            {
-                notifyMarker.setValue( value );
+            // in case of multiple FormQuestionResponse for the same question (when there is an iteration), we merge them into one FormQuestionResponse and update the marker
+            if(result.containsKey(MARK_POSITION + formQuestionResponse.getQuestion().getId())){
+                InfoMarker existingMarker = result.get(MARK_POSITION + formQuestionResponse.getQuestion().getId());
+                FormQuestionResponse existingFormQuestionResponse = (FormQuestionResponse) existingMarker.getValue();
+                List<Response> existingResponses = existingFormQuestionResponse.getEntryResponse();
+                List<Response> newResponses = formQuestionResponse.getEntryResponse();
+                List<Response> allResponses = new ArrayList<>();
+                allResponses.addAll(existingResponses);
+                allResponses.addAll(newResponses);
+                existingFormQuestionResponse.setEntryResponse(allResponses);
+                existingMarker.setValue(existingFormQuestionResponse);
+                result.replace(MARK_POSITION + formQuestionResponse.getQuestion().getId(), existingMarker);
+            } else {
+                marker.setValue(formQuestionResponse);
+                result.put(MARK_POSITION + formQuestionResponse.getQuestion().getId(), marker);
             }
-            else
-            {
-                notifyMarker.setValue( notifyMarker.getValue( ) + "<br>" + value );
-            }
-            AppLogService.debug( "Adding infomarker " + notifyMarker.getMarker( ) + "=" + notifyMarker.getValue( ) );
         }
-        result.addAll( markers.values( ) );
+          InfoMarker markerBaseUrl = new InfoMarker(MARK_BASE_URL);
+          markerBaseUrl.setValue(AppPathService.getBaseUrl(request));
+            result.put(MARK_BASE_URL, markerBaseUrl);
 
-        InfoMarker notifyMarkerAdminUrl = new InfoMarker( MARK_URL_ADMIN_RESPONSE );
-        UrlItem adminUrl = new UrlItem( AppPropertiesService.getProperty( PROPERTY_LUTECE_ADMIN_PROD_URL ) + MultiviewFormResponseDetailsJspBean.CONTROLLER_JSP_NAME_WITH_PATH );
-        adminUrl.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS );
-        adminUrl.addParameter( PARAMETER_ID_FORM_RESPONSES, _formResponse.getId( ) );
-        notifyMarkerAdminUrl.setValue( adminUrl.getUrl( ) );
-        result.add( notifyMarkerAdminUrl );
-        
-        InfoMarker notifyMarkerFOUrl = new InfoMarker( MARK_URL_FO_RESPONSE );
-        UrlItem url = new UrlItem( AppPathService.getProdUrl( _request ) + AppPathService.getPortalUrl( ) );
-        url.addParameter( FormsConstants.PARAMETER_PAGE, PARAMETER_PAGE_FORM_RESPONSE );
-        url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS_FO );
-        url.addParameter( PARAMETER_ID_FORM_RESPONSES_FO, _formResponse.getId( ) );
-        notifyMarkerFOUrl.setValue( url.getUrl( ) );
-        result.add( notifyMarkerFOUrl );
-        
-        InfoMarker creationDateMarker = new InfoMarker( MARK_CREATION_DATE );
-        creationDateMarker.setValue( _formResponse.getCreation( ).toString( ) );
-        InfoMarker updateDateMarker = new InfoMarker( MARK_UPDATE_DATE );
-        updateDateMarker.setValue( _formResponse.getCreation( ).toString( ) );
-        InfoMarker statusMarker = new InfoMarker( MARK_STATUS );
-        statusMarker.setValue( String.valueOf( _formResponse.isPublished( ) ) );
-        InfoMarker updateStatusDateMarker = new InfoMarker( MARK_STATUS_UPDATE_DATE );
-        updateStatusDateMarker.setValue( _formResponse.getUpdateStatus( ).toString( ) );
-        return result;
-    }
+          InfoMarker markerBase64 = new InfoMarker(MARKER_DESCRIPTION_BASE64);
+          markerBase64.setValue(bExportImageBase64);
+          result.put(MARKER_DESCRIPTION_BASE64, markerBase64);
+
+          InfoMarker markerAdminUrl = new InfoMarker( MARK_URL_ADMIN_RESPONSE );
+          UrlItem adminUrl = new UrlItem( AppPathService.getProdUrl( request ) + AppPathService.getAdminMenuUrl( ) );
+          adminUrl.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS );
+          adminUrl.addParameter( PARAMETER_ID_FORM_RESPONSES, formResponse.getId( ) );
+          markerAdminUrl.setValue( adminUrl.getUrl( ) );
+          result.put( MARK_URL_ADMIN_RESPONSE, markerAdminUrl );
+
+          InfoMarker markerFOUrl = new InfoMarker( MARK_URL_FO_RESPONSE );
+          UrlItem url = new UrlItem( AppPathService.getProdUrl( request ) + AppPathService.getPortalUrl( ) );
+          url.addParameter( FormsConstants.PARAMETER_PAGE, PARAMETER_PAGE_FORM_RESPONSE );
+          url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS_FO );
+          url.addParameter( PARAMETER_ID_FORM_RESPONSES_FO, formResponse.getId( ) );
+          markerFOUrl.setValue( url.getUrl( ) );
+          result.put( MARK_URL_FO_RESPONSE, markerFOUrl );
+
+          InfoMarker creationDateMarker = new InfoMarker( MARK_CREATION_DATE );
+          creationDateMarker.setValue( formResponse.getCreation( ) );
+            result.put( MARK_CREATION_DATE, creationDateMarker );
+
+          InfoMarker updateDateMarker = new InfoMarker( MARK_UPDATE_DATE );
+          updateDateMarker.setValue( formResponse.getCreation( ) );
+            result.put( MARK_UPDATE_DATE, updateDateMarker );
+          InfoMarker statusMarker = new InfoMarker( MARK_STATUS );
+          statusMarker.setValue( String.valueOf( formResponse.isPublished( ) ) );
+            result.put( MARK_STATUS, statusMarker );
+
+          InfoMarker updateStatusDateMarker = new InfoMarker( MARK_STATUS_UPDATE_DATE );
+          updateStatusDateMarker.setValue( formResponse.getUpdateStatus( ) );
+            result.put( MARK_STATUS_UPDATE_DATE, updateStatusDateMarker );
+
+          InfoMarker formTitleMarker = new InfoMarker( FORM_TITLE );
+          formTitleMarker.setValue(fr.paris.lutece.plugins.forms.business.FormHome.findByPrimaryKey(formResponse.getFormId()).getTitle());
+          result.put(FORM_TITLE, formTitleMarker );
+
+          return result;
+      }
 
     /**
      * Get the collection of InfoMarker, for the given form
