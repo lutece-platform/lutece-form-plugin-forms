@@ -437,7 +437,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_COPY, request, ACTION_CREATE_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_FORM );
         checkWorkgroupPermission(nId, request);
         
         if ( nId != FormsConstants.DEFAULT_ID_VALUE )
