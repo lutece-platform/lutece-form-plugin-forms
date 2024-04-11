@@ -38,12 +38,9 @@ import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
@@ -56,6 +53,11 @@ import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPane
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.FormDisplayFactory;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -120,6 +122,12 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
             {
                 List<Integer> listIdFormResponse = listFormResponseItem.stream( ).map( FormResponseItem::getIdFormResponse ).collect( Collectors.toList( ) );
                 bIsUserAuthorizedOnFormResponse = listIdFormResponse.contains( nIdFormResponse );
+            }
+            if(bIsUserAuthorizedOnFormResponse) {
+                User user = AdminUserService.getAdminUser(request);
+                FormResponse formResponse = FormResponseHome.findByPrimaryKey(nIdFormResponse);
+                Form form = FormHome.findByPrimaryKey(formResponse.getFormId());
+                bIsUserAuthorizedOnFormResponse = AdminWorkgroupService.isAuthorized(form, user);
             }
         }
 
