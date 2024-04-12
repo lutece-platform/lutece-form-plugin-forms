@@ -132,6 +132,24 @@
             </list>
         </constructor-arg>
     </bean>
+    <bean id="forms.numberInferiorValidator" class="fr.paris.lutece.plugins.forms.validation.NumberInferiorValidator">
+        <constructor-arg type="java.lang.String" index="0" value="forms.numberInferiorValidator" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.validator.number.inf.name" />
+        <constructor-arg index="2" >
+            <list>
+                <value type="java.lang.String">forms.entryTypeNumber</value>
+            </list>
+        </constructor-arg>
+    </bean>
+    <bean id="forms.numberSuperiorValidator" class="fr.paris.lutece.plugins.forms.validation.NumberSuperiorValidator">
+        <constructor-arg type="java.lang.String" index="0" value="forms.numberSuperiorValidator" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.validator.number.sup.name" />
+        <constructor-arg index="2" >
+            <list>
+                <value type="java.lang.String">forms.entryTypeNumber</value>
+            </list>
+        </constructor-arg>
+    </bean>
 	
 	<!-- Breadcrumb -->
     <bean id="forms.horizontalBreadcrumb" class="fr.paris.lutece.plugins.forms.web.breadcrumb.HorizontalBreadcrumb">
