@@ -38,11 +38,14 @@ import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.i
 import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.IFormPanelDisplayInitializer;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.impl.FormPanelFormResponseDisplayInitializer;
 
+import javax.servlet.http.HttpServletRequest;
 /**
  * Implementation of the IFormPanelInitializer associated to the panel Form Response
  */
 public class FormPanelFormResponseInitializer extends AbstractFormPanelInitializer
 {
+    public javax.servlet.http.HttpServletRequest _request;
+
     @Override
     public IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( )
     {
@@ -53,5 +56,10 @@ public class FormPanelFormResponseInitializer extends AbstractFormPanelInitializ
     public IFormPanelDisplayInitializer getFormPanelDisplayInitializer( )
     {
         return new FormPanelFormResponseDisplayInitializer( );
+    }
+
+    @Override
+    public fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart(HttpServletRequest request) {
+        return new FormPanelFormResponseInitializerQueryPart(_request);
     }
 }

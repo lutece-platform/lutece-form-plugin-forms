@@ -48,7 +48,7 @@ public interface IFormListDAO
 {
     /**
      * Populate the FormPanel with the values returned by the SQL query results
-     * 
+     *
      * @param formPanel
      *            The FormPanel used to retrieve the values of the FormColumn
      * @param listFormColumn
@@ -64,6 +64,9 @@ public interface IFormListDAO
      */
     void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
             FormItemSortConfig sortConfig );
+
+    void populateFormColumns(fr.paris.lutece.plugins.forms.business.form.panel.FormPanel formPanel, java.util.List<fr.paris.lutece.plugins.forms.business.form.column.IFormColumn> listFormColumn, java.util.List<fr.paris.lutece.plugins.forms.business.form.filter.FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+                             fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig sortConfig, javax.servlet.http.HttpServletRequest request);
 
     /**
      * Search the Lucene Index.

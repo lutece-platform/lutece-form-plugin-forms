@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.i
 import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.IFormPanelDisplayInitializer;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.impl.FormPanelFormsDisplayInitializer;
 
+import javax.servlet.http.HttpServletRequest;
 /**
  * Implementation of the IFormPanelInitializer to allow the use of the FormResponse and Form for a Panel
  */
@@ -47,6 +48,11 @@ public class FormPanelFormsInitializer extends AbstractFormPanelInitializer
     public IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( )
     {
         return new FormPanelFormsInitializerQueryPart( );
+    }
+    @Override
+    public IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( HttpServletRequest request )
+    {
+        return new FormPanelFormsInitializerQueryPart(request);
     }
 
     @Override

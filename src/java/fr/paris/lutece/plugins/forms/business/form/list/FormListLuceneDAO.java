@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.business.form.list;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 
@@ -84,6 +85,20 @@ public class FormListLuceneDAO implements IFormListDAO
 
         formPanel.setFormResponseItemList( listFormResponseItem );
     }
+    @Override
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+                                     FormItemSortConfig sortConfig, HttpServletRequest request )
+    {
+        // To retrieve the values to display on the table we must have a FormPanel and a list of FormColumn
+        if ( formPanel == null || CollectionUtils.isEmpty( listFormColumn ) )
+        {
+            return;
+        }
+
+        List<FormResponseItem> listFormResponseItem = searchFormResponseItem( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig, request );
+
+        formPanel.setFormResponseItemList( listFormResponseItem );
+    }
 
     @Override
     public List<FormResponseItem> searchAllFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
@@ -100,6 +115,35 @@ public class FormListLuceneDAO implements IFormListDAO
 
         // Build the list of query part from the formPanel, the list of columns and the list of filters
         List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart = buildFormPanelInitializerQueryPartList( formPanel, listQueryParametersValues );
+        List<IFormColumnQueryPart> listFormColumnQueryPart = buildformColumnQueryPartList( listFormColumn );
+        List<IFormFilterQueryPart> listFormFilterQueryPart = buildFormFilterQueryPartList( listFormFilter, listQueryParametersValues );
+
+        List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
+
+        for ( FormResponseSearchItem formResponseSearchItem : _formSearchEngine.getSearchResults( listFormPanelInitializerQueryPart, listFormColumnQueryPart,
+                listFormFilterQueryPart, sortConfig, nStartIndex, nPageSize, formPanel ) )
+        {
+            // Create a FormResponseItem sppfor the current result line
+            FormResponseItem formResponseItem = createFormResponseItem( formResponseSearchItem );
+            listFormResponseItem.add( formResponseItem );
+
+            for ( IFormColumnQueryPart formColumnQueryPart : listFormColumnQueryPart )
+            {
+                FormColumnCell formColumnCell = formColumnQueryPart.getFormColumnCell( formResponseSearchItem );
+                formResponseItem.addFormColumnCell( formColumnCell );
+            }
+        }
+
+        return listFormResponseItem;
+    }
+    private List<FormResponseItem> searchFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
+                                                           int nStartIndex, int nPageSize, FormItemSortConfig sortConfig, HttpServletRequest request )
+    {
+        // Create the list of all values of the parameter to used
+        List<String> listQueryParametersValues = new ArrayList<>( );
+
+        // Build the list of query part from the formPanel, the list of columns and the list of filters
+        List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart = buildFormPanelInitializerQueryPartList( formPanel, listQueryParametersValues, request );
         List<IFormColumnQueryPart> listFormColumnQueryPart = buildformColumnQueryPartList( listFormColumn );
         List<IFormFilterQueryPart> listFormFilterQueryPart = buildFormFilterQueryPartList( listFormFilter, listQueryParametersValues );
 
@@ -169,6 +213,38 @@ public class FormListLuceneDAO implements IFormListDAO
 
         return listFormPanelInitializerQueryPart;
     }
+    /**
+     * Build the list of all FormPanelInitializerQueryPart associate to all the FormPanelInitializer to retrieve from the given FormPanel
+     *
+     * @param formPanel
+     *            The FormPanel used to retrieve the list of all FormPanelInitializer to retrieve the list of FormPanelInitializerQueryPart
+     * @param listQueryParametersValue
+     *            The list of all parameter values to used to fill the DAOUtil statement
+     * @return the list of all FormPanelInitializerQueryPart associate to all the FormPanelInitializer to retrieve from the given FormPanel
+     */
+    private static List<IFormPanelInitializerQueryPart> buildFormPanelInitializerQueryPartList( FormPanel formPanel, List<String> listQueryParametersValue, HttpServletRequest request )
+    {
+        List<IFormPanelInitializerQueryPart> listFormPanelInitializerQueryPart = new ArrayList<>( );
+
+        IFormPanelConfiguration formPanelConfiguration = formPanel.getFormPanelConfiguration( );
+
+        if ( formPanelConfiguration != null && !CollectionUtils.isEmpty( formPanel.getListFormPanelInitializer( ) ) )
+        {
+            List<IFormPanelInitializer> listFormPanelInitializer = formPanel.getListFormPanelInitializer( );
+
+            for ( IFormPanelInitializer formPanelInitializer : listFormPanelInitializer )
+            {
+                IFormPanelInitializerQueryPart formPanelInitializerQueryPart = retrieveFormPanelInitializerQueryPart( formPanelInitializer,
+                        listQueryParametersValue, request );
+                if ( formPanelInitializerQueryPart != null )
+                {
+                    listFormPanelInitializerQueryPart.add( formPanelInitializerQueryPart );
+                }
+            }
+        }
+
+        return listFormPanelInitializerQueryPart;
+    }
 
     /**
      * Retrieve the IformPanelInitializerQueryPart associate to the givenFormPanelInitializer
@@ -200,6 +276,36 @@ public class FormListLuceneDAO implements IFormListDAO
 
         return formPanelInitializerQueryPartResult;
     }
+    /**
+     * Retrieve the IformPanelInitializerQueryPart associate to the givenFormPanelInitializer
+     *
+     * @param formPanelInitializer
+     *            The formPanelInitializer used to retrieve the associated IFormPanelInitializerQueryPart
+     * @param listQueryParametersPositionValue
+     *            The list of all parameter values to used to fill the DAOUtil statement
+     * @return the IFormPanelInitializerQueryPart associate to the given FormPanelInitializer or null if not found
+     */
+    private static IFormPanelInitializerQueryPart retrieveFormPanelInitializerQueryPart( IFormPanelInitializer formPanelInitializer, List<String> listQueryParametersPositionValue , HttpServletRequest request)
+    {
+        IFormPanelInitializerQueryPart formPanelInitializerQueryPartResult = null;
+
+        if ( formPanelInitializer != null )
+        {
+            formPanelInitializerQueryPartResult = formPanelInitializer.getIFormPanelInitializerQueryPart( request );
+
+            if ( formPanelInitializerQueryPartResult != null )
+            {
+                FormParameters formParameters = formPanelInitializer.getFormParameters( );
+                formPanelInitializerQueryPartResult.buildFormPanelInitializerQuery( formParameters );
+
+                List<String> listUsedParametersValues = formParameters.getListUsedParametersValue( );
+                listQueryParametersPositionValue.addAll( listUsedParametersValues );
+            }
+        }
+
+        return formPanelInitializerQueryPartResult;
+    }
+
 
     /**
      * Build the list of IFormColumnQueryPart to use for build the global query from the given list of IFormColumn

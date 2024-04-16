@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer;
 
+import javax.servlet.http.HttpServletRequest;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.IFormPanelDisplayInitializer;
@@ -63,6 +64,8 @@ public interface IFormPanelInitializer
      * @return
      */
     IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( );
+    IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( HttpServletRequest request );
+
 
     /**
      * Get an {@link IFormPanelDisplayInitializer} associated with this IFormPanelInitializer.

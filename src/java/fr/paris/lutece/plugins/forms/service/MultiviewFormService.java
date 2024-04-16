@@ -75,6 +75,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Service dedicated to managing of the multiview of forms
@@ -119,6 +120,27 @@ public final class MultiviewFormService
     {
         FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
         formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig );
+    }
+    /**
+     * Populate the given FormPanel with the information from the given list of FormColumns and FormFilters
+     *
+     * @param formPanel
+     *            The FormPanel used to retrieve the values of the FormColumns
+     * @param listFormColumn
+     *            The list of all FormColumn to use to be populated
+     * @param listFormFilter
+     *            The list of FormFilter to use for retrieving the data of the columns to populate
+     * @param nStartIndex
+     *            The start index of doc to load
+     * @param nPageSize
+     *            The size of page of docs to load
+     * @param sortConfig
+     */
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+                                     FormItemSortConfig sortConfig, HttpServletRequest request )
+    {
+        FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
+        formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig, request );
     }
 
     public List<FormResponseItem> searchAllListFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,

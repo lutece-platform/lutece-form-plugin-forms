@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
 
+import javax.servlet.http.HttpServletRequest;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 
 /**
@@ -40,6 +41,12 @@ import fr.paris.lutece.plugins.forms.business.form.FormParameters;
  */
 public class FormPanelFormResponseInitializerQueryPart extends AbstractFormPanelInitializerQueryPart
 {
+    public FormPanelFormResponseInitializerQueryPart(HttpServletRequest request) {
+        super();
+    }
+    public FormPanelFormResponseInitializerQueryPart() {
+        super();
+    }
     /**
      * {@inheritDoc}
      */

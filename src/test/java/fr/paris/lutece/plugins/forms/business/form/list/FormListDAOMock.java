@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.business.form.list;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
@@ -68,6 +69,21 @@ public class FormListDAOMock implements IFormListDAO
     public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
             FormItemSortConfig sortConfig )
     {
+        List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
+
+        for ( Integer nIdFormResponse : _listIdAuthorizedFormResponse )
+        {
+            FormResponseItem formResponseItem = new FormResponseItem( );
+            formResponseItem.setIdFormResponse( nIdFormResponse );
+
+            listFormResponseItem.add( formResponseItem );
+        }
+
+        formPanel.setFormResponseItemList( listFormResponseItem );
+    }
+
+    @Override
+    public void populateFormColumns(fr.paris.lutece.plugins.forms.business.form.panel.FormPanel formPanel, java.util.List<fr.paris.lutece.plugins.forms.business.form.column.IFormColumn> listFormColumn, java.util.List<fr.paris.lutece.plugins.forms.business.form.filter.FormFilter> listFormFilter, int nStartIndex, int nPageSize, fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig sortConfig, HttpServletRequest request) {
         List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
 
         for ( Integer nIdFormResponse : _listIdAuthorizedFormResponse )

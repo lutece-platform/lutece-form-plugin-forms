@@ -497,7 +497,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
             // Populate the FormColumns from the information of the list of FormResponseItem
             // of the given FormPanel
-            MultiviewFormService.getInstance( ).populateFormColumns( formPanel, _listFormColumn, listFormFilter, nIndexStart, nPageSize, sortConfig );
+            MultiviewFormService.getInstance( ).populateFormColumns( formPanel, _listFormColumn, listFormFilter, nIndexStart, nPageSize, sortConfig, request );
 
             // Associate for each FormColumnDisplay its FormColumnValues if the panel is
             // active
