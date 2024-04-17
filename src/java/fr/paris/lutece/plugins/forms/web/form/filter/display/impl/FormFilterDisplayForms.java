@@ -45,6 +45,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
@@ -134,6 +135,27 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
         AdminUser user = AdminUserService.getAdminUser( request );
         ReferenceList refListForms = createReferenceList( user );
         String strTemplateResult = StringUtils.EMPTY;
+        List <Form> formList = getFormsList( );
+        formList = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( formList, user );
+        // check if refListForms.code is in formList
+        for (int i = 0; i < refListForms.size(); i++)
+        {
+            boolean found = false;
+            Integer code = Integer.parseInt(refListForms.get(i).getCode());
+            for (int j = 0; j < formList.size(); j++)
+            {
+                if (code.equals(formList.get(j).getId()))
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+            {
+                refListForms.remove(i);
+                i--;
+            }
+        }
 
         if ( refListForms.size( ) == 2 )
         {
