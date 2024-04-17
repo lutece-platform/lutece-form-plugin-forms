@@ -134,6 +134,23 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
         AdminUser user = AdminUserService.getAdminUser( request );
         ReferenceList refListForms = createReferenceList( user );
         String strTemplateResult = StringUtils.EMPTY;
+        List <Form> formList = getFormsList( );
+        formList = (java.util.List<fr.paris.lutece.plugins.forms.business.Form>) fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService.getAuthorizedCollection( formList, user );
+        // check if refListForms.code is in formList
+        for (int i = 0; i < refListForms.size(); i++) {
+            boolean found = false;
+            Integer code = Integer.parseInt(refListForms.get(i).getCode());
+            for (int j = 0; j < formList.size(); j++) {
+                if (code.equals(formList.get(j).getId())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                refListForms.remove(i);
+                i--;
+            }
+        }
 
         if ( refListForms.size( ) == 2 )
         {
