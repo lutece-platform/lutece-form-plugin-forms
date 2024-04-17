@@ -789,7 +789,7 @@ public class FormControlJspBean extends AbstractJspBean
                 nIdStep = _step.getId( );
                 break;
             case TRANSITION:
-                strTargetJsp = FormsConstants.JSP_MANAGE_CONTROLS;
+                strTargetJsp = FormsConstants.JSP_MANAGE_TRANSITIONS;
                 Transition transition = TransitionHome.findByPrimaryKey( _control.getIdControlTarget( ) );
                 nIdStep = transition.getFromStep( );
                 break;
