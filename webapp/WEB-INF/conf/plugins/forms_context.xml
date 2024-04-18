@@ -574,7 +574,7 @@
     <bean id="forms.entryTypeSlotDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeSlot" />
     </bean>
-    <bean id="forms.entryTypeSlotDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
+    <bean id="forms.entryTypeSlotDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeSlot" />
     </bean>
 </beans>
