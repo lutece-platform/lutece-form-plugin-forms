@@ -33,8 +33,12 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import static fr.paris.lutece.plugins.forms.util.FormsConstants.MARK_ID_FORM;
+import static fr.paris.lutece.plugins.forms.util.FormsConstants.PARAMETER_ID_FORM;
+
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -507,7 +511,9 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             }
 
             // Build the template of the form list panel
-            formPanelDisplay.buildTemplate( request, getLocale( ) );
+            Map<String, Object> data = new HashMap<>( );
+            data.put( MARK_ID_FORM, request.getParameter( PARAMETER_ID_FORM ) );
+            formPanelDisplay.buildTemplate( data, getLocale( ) );
         }
     }
     

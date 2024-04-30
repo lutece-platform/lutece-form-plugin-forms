@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -191,12 +190,21 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay
     {
         _formPanel = formPanel;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String buildTemplate( Locale locale )
+    {
+    	return buildTemplate( null, locale );
+    }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public String buildTemplate( HttpServletRequest request, Locale locale )
+    public String buildTemplate( Map<String, Object> data, Locale locale )
     {
         String strTechnicalCode = StringUtils.EMPTY;
         String strTitle = StringUtils.EMPTY;
@@ -213,7 +221,11 @@ public abstract class AbstractFormPanelDisplay implements IFormPanelDisplay
         model.put( MARK_PANEL_TECHNICAL_CODE, strTechnicalCode );
         model.put( MARK_PANEL_TITLE, I18nService.getLocalizedString( strTitle, locale ) );
         model.put( MARK_PANEL_FORM_RESPONSE_NUMBER, getFormResponseNumber( ) );
-        model.put( MARK_ID_FORM, request.getParameter( PARAMETER_ID_FORM ) );
+        
+        if ( data != null && data.get( PARAMETER_ID_FORM ) != null )
+        {
+        	model.put( MARK_ID_FORM, data.get( PARAMETER_ID_FORM ) );
+        }
 
         String strFormPanelDisplayTemplate = AppTemplateService.getTemplate( TEMPLATE_MULTIVIEW_FORM_PANEL, locale, model ).getHtml( );
         _strTemplate = strFormPanelDisplayTemplate;
