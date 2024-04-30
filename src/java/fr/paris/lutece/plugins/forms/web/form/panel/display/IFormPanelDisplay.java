@@ -126,6 +126,6 @@ public interface IFormPanelDisplay extends IFormListPosition
      */
     default String buildTemplate( Map<String, Object> data, Locale locale )
     {
-    	return null;
+    	throw new UnsupportedOperationException( "The method buildTemplate( Map<String, Object>, Locale ) is not implemented yet." );
     }
 }
