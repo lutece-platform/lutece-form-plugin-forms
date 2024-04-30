@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web.form.panel.display;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
@@ -102,13 +103,29 @@ public interface IFormPanelDisplay extends IFormListPosition
      * @return the list of FormItem of the FormPanelDisplay
      */
     List<FormResponseItem> getFormResponseItemList( );
-
+    
     /**
      * Build the template of the FormPanelDisplay
      * 
      * @param locale
      *            The locale used to build the template
      * @return the built template of the FormPanelDisplay
+     * @deprecated Use buildTemplate( Map<String, Object>, Locale ) instead
      */
+    @Deprecated
     String buildTemplate( Locale locale );
+
+    /**
+     * Build the template of the FormPanelDisplay
+     * 
+     * @param data
+     *            The data used to build the template
+     * @param locale
+     *            The locale used to build the template
+     * @return the built template of the FormPanelDisplay
+     */
+    default String buildTemplate( Map<String, Object> data, Locale locale )
+    {
+    	throw new UnsupportedOperationException( "The method buildTemplate( Map<String, Object>, Locale ) is not implemented yet." );
+    }
 }
