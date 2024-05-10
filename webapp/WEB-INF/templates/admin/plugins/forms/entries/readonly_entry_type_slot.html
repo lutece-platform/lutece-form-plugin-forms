@@ -2,11 +2,21 @@
 	<@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
 	<@columns sm=9>
 		<ul class="list-unstyled">
-			<#list list_responses?chunk(2) as row>
-				<#assign beginHour = row[0].toStringValueResponse>
-				<#assign endHour = row[1].toStringValueResponse>
-				<li>#i18n{forms.message.slot.preposition.from} ${beginHour} #i18n{forms.message.slot.preposition.to} ${endHour}</li>
-			</#list>
+			<#if list_responses?has_content>
+				<#assign beginHourCode = "begin_hour">
+				<#assign endHourCode = "end_hour">
+				<#-- Filtrer et trouver les objets Response correspondants -->
+				<#list list_responses as response>
+					<#if response.field.code == beginHourCode>
+						<#assign beginHour = response.toStringValueResponse>
+					</#if>
+					<#if response.field.code == endHourCode>
+						<#assign endHour = response.toStringValueResponse>
+					</#if>
+				</#list>
+
+				<li>#i18n{message.slot.preposition.from} ${beginHour} #i18n{forms.message.slot.preposition.to} ${endHour}</li>
+			</#if>
 		</ul>
 	</@columns>
 </@row>
