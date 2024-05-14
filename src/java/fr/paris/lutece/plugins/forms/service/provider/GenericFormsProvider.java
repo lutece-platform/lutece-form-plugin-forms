@@ -47,7 +47,7 @@ import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeFile;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeGalleryImage;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.web.admin.MultiviewFormResponseDetailsJspBean;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
@@ -141,33 +141,33 @@ public abstract class GenericFormsProvider {
             // in case of multiple FormQuestionResponse for the same question (when there is an iteration), we merge them into one FormQuestionResponse and update the marker
             if(result.containsKey(MARK_POSITION + formQuestionResponse.getQuestion().getId())){
                 InfoMarker existingMarker = result.get(MARK_POSITION + formQuestionResponse.getQuestion().getId());
-                FormQuestionResponse existingFormQuestionResponse = (FormQuestionResponse) existingMarker.getValue();
+                FormQuestionResponse existingFormQuestionResponse = (FormQuestionResponse) existingMarker.getData();
                 List<Response> existingResponses = existingFormQuestionResponse.getEntryResponse();
                 List<Response> newResponses = formQuestionResponse.getEntryResponse();
                 List<Response> allResponses = new ArrayList<>();
                 allResponses.addAll(existingResponses);
                 allResponses.addAll(newResponses);
                 existingFormQuestionResponse.setEntryResponse(allResponses);
-                existingMarker.setValue(existingFormQuestionResponse);
+                existingMarker.setData(existingFormQuestionResponse);
                 result.replace(MARK_POSITION + formQuestionResponse.getQuestion().getId(), existingMarker);
             } else {
-                marker.setValue(formQuestionResponse);
+                marker.setData(formQuestionResponse);
                 result.put(MARK_POSITION + formQuestionResponse.getQuestion().getId(), marker);
             }
         }
           InfoMarker markerBaseUrl = new InfoMarker(MARK_BASE_URL);
-          markerBaseUrl.setValue(AppPathService.getBaseUrl(request));
+          markerBaseUrl.setData(AppPathService.getBaseUrl(request));
             result.put(MARK_BASE_URL, markerBaseUrl);
 
           InfoMarker markerBase64 = new InfoMarker(MARKER_DESCRIPTION_BASE64);
-          markerBase64.setValue(bExportImageBase64);
+          markerBase64.setData(bExportImageBase64);
           result.put(MARKER_DESCRIPTION_BASE64, markerBase64);
 
           InfoMarker markerAdminUrl = new InfoMarker( MARK_URL_ADMIN_RESPONSE );
           UrlItem adminUrl = new UrlItem( AppPathService.getProdUrl( request ) + AppPathService.getAdminMenuUrl( ) );
           adminUrl.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS );
           adminUrl.addParameter( PARAMETER_ID_FORM_RESPONSES, formResponse.getId( ) );
-          markerAdminUrl.setValue( adminUrl.getUrl( ) );
+          markerAdminUrl.setData( adminUrl.getUrl( ) );
           result.put( MARK_URL_ADMIN_RESPONSE, markerAdminUrl );
 
           InfoMarker markerFOUrl = new InfoMarker( MARK_URL_FO_RESPONSE );
@@ -175,26 +175,26 @@ public abstract class GenericFormsProvider {
           url.addParameter( FormsConstants.PARAMETER_PAGE, PARAMETER_PAGE_FORM_RESPONSE );
           url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS_FO );
           url.addParameter( PARAMETER_ID_FORM_RESPONSES_FO, formResponse.getId( ) );
-          markerFOUrl.setValue( url.getUrl( ) );
+          markerFOUrl.setData( url.getUrl( ) );
           result.put( MARK_URL_FO_RESPONSE, markerFOUrl );
 
           InfoMarker creationDateMarker = new InfoMarker( MARK_CREATION_DATE );
-          creationDateMarker.setValue( formResponse.getCreation( ) );
+          creationDateMarker.setData( formResponse.getCreation( ) );
             result.put( MARK_CREATION_DATE, creationDateMarker );
 
           InfoMarker updateDateMarker = new InfoMarker( MARK_UPDATE_DATE );
-          updateDateMarker.setValue( formResponse.getCreation( ) );
+          updateDateMarker.setData( formResponse.getCreation( ) );
             result.put( MARK_UPDATE_DATE, updateDateMarker );
           InfoMarker statusMarker = new InfoMarker( MARK_STATUS );
-          statusMarker.setValue( String.valueOf( formResponse.isPublished( ) ) );
+          statusMarker.setData( String.valueOf( formResponse.isPublished( ) ) );
             result.put( MARK_STATUS, statusMarker );
 
           InfoMarker updateStatusDateMarker = new InfoMarker( MARK_STATUS_UPDATE_DATE );
-          updateStatusDateMarker.setValue( formResponse.getUpdateStatus( ) );
+          updateStatusDateMarker.setData( formResponse.getUpdateStatus( ) );
             result.put( MARK_STATUS_UPDATE_DATE, updateStatusDateMarker );
 
           InfoMarker formTitleMarker = new InfoMarker( FORM_TITLE );
-          formTitleMarker.setValue(fr.paris.lutece.plugins.forms.business.FormHome.findByPrimaryKey(formResponse.getFormId()).getTitle());
+          formTitleMarker.setData(FormHome.findByPrimaryKey(formResponse.getFormId()).getTitle());
           result.put(FORM_TITLE, formTitleMarker );
 
           return result;
