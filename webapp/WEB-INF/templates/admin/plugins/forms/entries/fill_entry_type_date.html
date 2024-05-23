@@ -20,7 +20,7 @@
 		<#if default_today_date?? && default_today_date.value?boolean>
 			<#assign default= toDay>
 		<#elseif response?? && response.responseValue??>
-			<#assign default=response.responseValue?number?number_to_date?iso_local>
+			<#assign default=response.responseValue?number?number_to_date>
 		<#elseif field.valueTypeDate?? >
 			<#assign default=field.valueTypeDate>
 		</#if>
