@@ -12,20 +12,34 @@
 		<div id="${idName}">
 			<div class="slot-entry">
 				<#if list_responses?has_content>
+					<#assign beginHourCode = "begin_hour">
+					<#assign endHourCode = "end_hour">
 					<#list list_responses?chunk(2) as row>
+						<#if row[0].field.code == beginHourCode>
+							<#assign beginHour = row[0].toStringValueResponse>
+						</#if>
+						<#if row[1].field.code == beginHourCode>
+							<#assign beginHour = row[1].toStringValueResponse>
+						</#if>
+						<#if row[0].field.code == endHourCode>
+							<#assign endHour = row[0].toStringValueResponse>
+						</#if>
+						<#if row[1].field.code == endHourCode>
+							<#assign endHour = row[1].toStringValueResponse>
+						</#if>
 						<label>#i18n{forms.message.slot.preposition.from}</label>
-						<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" value="${row[0].toStringValueResponse!}" <#if entry.mandatory> required</#if> />
+						<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" value="${beginHour!}" />
 						<label>#i18n{forms.message.slot.preposition.to}</label>
-						<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" value="${row[1].toStringValueResponse!}" <#if entry.mandatory> required</#if> />
+						<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" value="${endHour!}" />
 					</#list>
 					<#if hasError>
 						<div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
 					</#if>
 				<#else>
 					<label>#i18n{forms.message.slot.preposition.from}</label>
-					<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" min="00:00" max="23:59" <#if entry.mandatory> required</#if> />
+					<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" min="00:00" max="23:59" />
 					<label>#i18n{forms.message.slot.preposition.to}</label>
-					<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" min="00:00" max="23:59" <#if entry.mandatory> required</#if> />
+					<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" min="00:00" max="23:59" />
 					<#if hasError>
 						<span class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></span>
 					</#if>
