@@ -13,9 +13,13 @@
 </#if>
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory htmlRequired=false >
     <@inputGroup>
+		<#assign default_today_date=getFieldByCode( entry, "default_today_date")>
 		<#assign field = getFieldByCode( entry, "default_date_value" )>
 		<#assign default=''>
-		<#if response?? && response.responseValue??>
+		<#assign toDay = .now?string("yyyy-MM-dd")>
+		<#if default_today_date?? && default_today_date.value?boolean>
+			<#assign default= toDay>
+		<#elseif response?? && response.responseValue??>
 			<#assign default=response.responseValue?number?number_to_date?iso_local>
 		<#elseif field.valueTypeDate?? >
 			<#assign default=field.valueTypeDate>
