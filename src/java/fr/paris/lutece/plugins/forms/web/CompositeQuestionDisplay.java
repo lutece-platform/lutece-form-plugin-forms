@@ -65,6 +65,7 @@ import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -193,15 +194,16 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
         String strQuestionTemplate = StringUtils.EMPTY;
         Map<Integer, String> fieldsList = new HashMap<>( );
+        Entry entry = _question.getEntry( );
 
-        if ( _question.getEntry( ) == null )
+        if ( entry == null )
         {
             return strQuestionTemplate;
         }
 
-        IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( _question.getEntry( ).getEntryType( ) );
+        IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( entry.getEntryType( ) );
 
-        if ( displayService != null )
+        if ( displayService != null && isCompositeEnabled( entry, listFormQuestionResponse, displayType ) )
         {
             List<Response> listResponse = findResponses( listFormQuestionResponse );
             setQuestionVisibility( listResponse, displayType );
@@ -280,6 +282,46 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
 
         return strQuestionTemplate;
+    }
+    
+    private boolean isCompositeEnabled( Entry entry, List<FormQuestionResponse> listFormQuestionResponse, DisplayType displayType )
+    {
+    	boolean isCompositeEnabled = true;
+        Field disabledField = entry.getFieldByCode( IEntryTypeService.FIELD_DISABLED );
+        
+        if ( disabledField != null && Boolean.parseBoolean( disabledField.getValue( ) ) )
+        {
+        	switch( displayType.getMode( ) )
+            {
+                case EDITION:
+                	isCompositeEnabled = false;
+                    break;
+                case READONLY:
+                	isCompositeEnabled = isResponseValueExiste( listFormQuestionResponse );
+                    break;
+                default: // Nothing to do
+            }
+        }
+
+        return isCompositeEnabled;
+    }
+    
+    private boolean isResponseValueExiste( List<FormQuestionResponse> listFormQuestionResponse )
+    {
+    	boolean isResponseValueExiste = false;
+    	
+        if ( CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
+        {
+        	List<Response> listResponse = findResponses( listFormQuestionResponse );
+        	
+        	if ( CollectionUtils.isNotEmpty( listResponse ) 
+        			&& listResponse.stream( ).anyMatch( response -> StringUtils.isNotBlank( response.getResponseValue( ) ) ) )
+        	{
+        		isResponseValueExiste = true;
+        	}
+        }
+        
+        return isResponseValueExiste;
     }
 
     /**

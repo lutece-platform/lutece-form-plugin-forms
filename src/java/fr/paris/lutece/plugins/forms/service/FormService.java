@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,6 +73,7 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.business.ResponseFilter;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeGalleryImage;
@@ -603,5 +605,24 @@ public class FormService
         {
             FieldHome.update( GenericAttributesUtils.createOrUpdateField( entry, fieldName, title, value ) );
         }
+    }
+
+    /**
+     * Get the responses which verify the filter
+     * 
+     * @param responseFilter
+     *            the filter
+     * @return the list of responses
+     */
+    public List<Response> getResponseList( ResponseFilter responseFilter )
+    {
+    	List<Response> responseList = new ArrayList<>( );
+    	
+    	if ( responseFilter != null )
+    	{
+    		responseList = ResponseHome.getResponseList( responseFilter );
+    	}
+    	
+    	return responseList;
     }
 }
