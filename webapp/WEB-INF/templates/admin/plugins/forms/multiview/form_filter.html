@@ -1,7 +1,6 @@
 <#if filter_list?has_content>
 <@formGroup formStyle='' class='forms-filter'>
-<#assign filterCodes = filter_list?map(filter -> filter.code) >
-<#assign filterCodes = filterCodes?join(";") >
+<#assign filterCodes = filter_list?filter(f -> f.code != '-1')?map(f -> f.code)?join(";") >
 <@div class="dropdown">
 	<button class="btn btn-primary dropdown-toggle" type="button" id="${filter_name!}_button" data-bs-toggle="dropdown" aria-expanded="false">
 		${filter_label!}
@@ -15,7 +14,7 @@
 					<div class="dropdown-item">
 						<div class="form-check">
 							<input name="${filter_name!}" class="form-check-input" type="checkbox" id="all_${filter_name!}"
-							   <#if optSelected>checked</#if> >
+							   <#if optSelected>checked</#if> value="${filterCodes}">
 							<p id="${filter_name!}_select_all_filters" class="form-check-label d-inline">
 								#i18n{forms.multiviewForms.form_filter.select_all}
 							</p>
@@ -47,16 +46,10 @@
 
     function setInputAndListener(filterName) {
         const checkboxes = document.getElementById(filterName + "_checkboxes_group").querySelectorAll('input[type=checkbox]');
-        let filterCodes = "${filterCodes!}";
-        filterCodes = filterCodes.split(";");
-        filterCodes.shift()
         let allChecked = true;
         for (let i = 0; i < checkboxes.length; i++) {
             let checkbox = checkboxes[i];
             if (checkbox.name === filterName) {
-                if (i === 0) {
-                    checkbox.value = filterCodes.join(";");
-                }
                 if (i !== 0 && allChecked && !checkbox.checked) {
                     allChecked = false;
                     document.getElementById(filterName + "_select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.select_all}";
