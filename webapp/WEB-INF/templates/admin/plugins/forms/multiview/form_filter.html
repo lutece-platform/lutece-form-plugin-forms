@@ -1,94 +1,64 @@
 <#if filter_list?has_content>
-<@formGroup class='forms-filter'>
-<#assign filterCodes = filter_list?map(filter -> filter.code) >
-<#assign filterCodes = filterCodes?join(";") >
-<label class=" mr-2" for="${filter_name!}_button">
-    ${filter_label!}
-</label>
-<div class="input-group">
-    <div id="${filter_name!}_button" class="btn btn-outline-primary">
-        <p><i class="fa fa-filter"></i>${filter_label!}</p>
-    </div>
-    <div id="${filter_name!}_checkboxes_group" class="border border-primary rounded p-3 overflow-auto bg-white"
-         style="display: none; position: absolute; max-height: 350px; z-index: 999; width: max-content">
-        <p class="text-primary"><i class="fa fa-filter"></i>${filter_label!}</p>
-        <#list filter_list as item>
-            <#assign optSelected=false >
-            <#if filter_list_value?has_content && filter_list_value?split(";")?seq_contains(item.code) ><#assign optSelected=true ></#if>
-            <#if item?index == 0>
-                <div>
-                    <input name="${filter_name!}" class="form-check-input" type="checkbox" id="all_${filter_name!}"
-                           <#if optSelected>checked</#if> >
-                    <p id="select_all_filters" class="form-check-label d-inline">
-                        #i18n{forms.multiviewForms.form_filter.select_all}
-                    </p>
-                </div>
-            <#else>
-                <div>
-                    <input name="${filter_name!}" class="form-check-input" type="checkbox" value="${item.code}"
-                           id="${item.name!}" <#if optSelected>checked</#if> >
-                    <label class="form-check-label d-inline" for="${item.name!}">
-                        ${item.name!}
-                    </label>
-                </div>
-            </#if>
-        </#list>
-        </@formGroup>
-        </#if>
-    </div>
-</div>
+<@formGroup formStyle='' class='forms-filter'>
+<#assign filterCodes = filter_list?filter(f -> f.code != '-1')?map(f -> f.code)?join(";") >
+<@div class="dropdown">
+	<button class="btn btn-primary dropdown-toggle" type="button" id="${filter_name!}_button" data-bs-toggle="dropdown" aria-expanded="false">
+		${filter_label!}
+	</button>
+	<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="${filter_name!}_checkboxes_group">
+		<#list filter_list as item>
+			<#assign optSelected=false >
+			<#if filter_list_value?has_content && filter_list_value?split(";")?seq_contains(item.code) ><#assign optSelected=true ></#if>
+			<#if item?index == 0>
+				<li>
+					<div class="dropdown-item">
+						<div class="form-check">
+							<input name="${filter_name!}" class="form-check-input" type="checkbox" id="all_${filter_name!}"
+							   <#if optSelected>checked</#if> value="${filterCodes}">
+							<p id="${filter_name!}_select_all_filters" class="form-check-label d-inline">
+								#i18n{forms.multiviewForms.form_filter.select_all}
+							</p>
+						</div>
+					</div>
+				</li>
+			<#else>
+				<li>
+					<div class="dropdown-item">
+						<div class="form-check">
+							<input name="${filter_name!}" class="form-check-input" type="checkbox" value="${item.code}"
+							   id="${item.name!}" <#if optSelected>checked</#if> >
+							<label class="form-check-label d-inline" for="${item.name!}">
+								${item.name!}
+							</label>
+						</div>
+					</div>
+				</li>
+			</#if>
+		</#list>
+	</ul>
+</@div>
+</@formGroup>
+</#if>
 <script>
-    let filterName = "${filter_name!}";
-    let openFilterButton = document.getElementById(filterName + "_button");
-    let filterInputGroup = document.getElementById(filterName + "_checkboxes_group");
-    const open = () => {
-        filterInputGroup.style.display = "block";
-        openFilterButton.style.display = "none";
-        openFilterButton.classList.add('open-button');
-        filterInputGroup.classList.add('open-banner');
-        setInputAndListener()
-    }
-    const close = () => {
-        filterInputGroup.style.display = "none";
-        openFilterButton.style.display = "block";
-        openFilterButton.classList.remove('open-button');
-        filterInputGroup.classList.remove('open-banner');
-    }
-    openFilterButton.addEventListener('mousedown', () => {
-        if (!openFilterButton.classList.contains('open-button')) {
-            open()
-        }
-    });
-    document.body.addEventListener('mousedown', (e) => {
-        let isClickInsideButton = openFilterButton.contains(e.target);
-        let isClickInsideBanner = filterInputGroup.contains(e.target);
+	document.getElementById("${filter_name!}_button").addEventListener('mousedown', () => {
+	    setInputAndListener("${filter_name!}")
+	});
 
-        if (!isClickInsideBanner && !isClickInsideButton) {
-            close();
-        }
-    });
-
-    function setInputAndListener() {
-        const checkboxes = filterInputGroup.querySelectorAll('input[type=checkbox]');
-        let filterCodes = "${filterCodes!}";
-        filterCodes = filterCodes.split(";");
-        filterCodes.shift()
+    function setInputAndListener(filterName) {
+        const checkboxes = document.getElementById(filterName + "_checkboxes_group").querySelectorAll('input[type=checkbox]');
         let allChecked = true;
         for (let i = 0; i < checkboxes.length; i++) {
             let checkbox = checkboxes[i];
             if (checkbox.name === filterName) {
-                if (i === 0) {
-                    checkbox.value = filterCodes.join(";");
-                }
                 if (i !== 0 && allChecked && !checkbox.checked) {
                     allChecked = false;
-                    document.getElementById("select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.select_all}";
+                    document.getElementById(filterName + "_select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.select_all}";
 
                 }
                 if (i === checkboxes.length - 1 && allChecked) {
                     checkboxes[0].value = "";
                     checkboxes[0].name = "";
-                    document.getElementById("select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.unselect_all}";
+                    document.getElementById(filterName + "_select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.unselect_all}";
                 }
                 checkbox.addEventListener('change', function (ev) {
                     let form = ev.target.form;
