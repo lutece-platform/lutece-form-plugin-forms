@@ -675,7 +675,7 @@ public class FormXPage extends MVCApplication
         }
         catch( FormNotFoundException | QuestionValidationException exception )
         {
-            return getStepView(  request );
+            return redirectView( request, VIEW_STEP );
         }
 
         return doSaveResponse( request, form );
