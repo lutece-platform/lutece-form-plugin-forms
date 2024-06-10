@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.validation;
 
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,6 +49,7 @@ public abstract class AbstractValidator implements IValidator
     protected final String _strValidatorName;
     protected final String _strDisplayName;
     protected List<String> _listAvailableEntryType;
+    protected Locale _locale;
 
     /**
      * Constructor of the AbstractValidator
@@ -61,9 +63,27 @@ public abstract class AbstractValidator implements IValidator
      */
     public AbstractValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
+        this( strValidatorName, strValidatorDisplayName, listAvailableEntryType, I18nService.getDefaultLocale( ) );
+    }
+    
+    /**
+     * Constructor of the AbstractValidator
+     * 
+     * @param strValidatorName
+     *            The validator bean name
+     * @param strValidatorDisplayName
+     *            The validator display name
+     * @param listAvailableEntryType
+     *            The list of available entrytype
+     * @param locale
+     *            The locale
+     */
+    public AbstractValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType, Locale locale )
+    {
         _strValidatorName = strValidatorName;
-        _strDisplayName = I18nService.getLocalizedString( strValidatorDisplayName, I18nService.getDefaultLocale( ) );
+        _strDisplayName = I18nService.getLocalizedString( strValidatorDisplayName, locale );
         _listAvailableEntryType = listAvailableEntryType;
+        _locale = locale;
     }
 
     @Override
@@ -133,6 +153,16 @@ public abstract class AbstractValidator implements IValidator
     {
 
         return StringUtils.EMPTY;
+    }
+    
+    /**
+     * Get locale
+     * 
+     * @return The Locale
+     */
+    protected Locale getLocale( )
+    {
+        return _locale;
     }
 
 }
