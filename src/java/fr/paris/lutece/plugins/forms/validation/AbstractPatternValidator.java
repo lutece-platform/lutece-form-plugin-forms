@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
@@ -46,7 +45,6 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.regularexpression.business.RegularExpressionHome;
 import fr.paris.lutece.portal.business.regularexpression.RegularExpression;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.regularexpression.IRegularExpressionService;
@@ -85,7 +83,7 @@ public abstract class AbstractPatternValidator extends AbstractValidator
         model.put( FormsConstants.PARAMETER_REF_LIST_VALUE, refListRegularExpression );
         model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
 
-        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
+        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, _locale, model );
 
         return htmlTemplateQuestion.getHtml( );
     }
@@ -94,7 +92,7 @@ public abstract class AbstractPatternValidator extends AbstractValidator
     public String getJavascriptValidation( )
     {
         Map<String, Object> model = new HashMap<>( );
-        return AppTemplateService.getTemplate( TEMPLATE_JS_FUNCTION, I18nService.getDefaultLocale( ), model ).getHtml( );
+        return AppTemplateService.getTemplate( TEMPLATE_JS_FUNCTION, _locale, model ).getHtml( );
     }
 
     @Override
