@@ -37,8 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
@@ -47,7 +45,6 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -116,7 +113,7 @@ public class ListValueValidator extends AbstractValidator
         model.put( FormsConstants.PARAMETER_REF_LIST_VALUE, refListValue );
         model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
 
-        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
+        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, _locale, model );
 
         return htmlTemplateQuestion.getHtml( );
     }
@@ -145,7 +142,7 @@ public class ListValueValidator extends AbstractValidator
     public String getJavascriptValidation( )
     {
         Map<String, Object> model = new HashMap<>( );
-        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, I18nService.getDefaultLocale( ), model );
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, _locale, model );
 
         return htmlTemplate.getHtml( );
     }
