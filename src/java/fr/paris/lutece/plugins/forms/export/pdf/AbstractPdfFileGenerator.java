@@ -1,5 +1,4 @@
 package fr.paris.lutece.plugins.forms.export.pdf;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -12,13 +11,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities.EscapeMode;
-
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
@@ -57,7 +54,9 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.util.html.HtmlTemplate;
+
 
 public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
 	
@@ -164,7 +163,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
                 .collect( Collectors.toList( ) );
         for ( FormResponseStep formResponseStep : filteredList )
         {
-            listContent.addAll( createCellsForStep( formResponseStep ) );
+            listContent.addAll( createCellsForStep( formResponseStep, formresponse ) );
         }
 
         return listContent;
@@ -177,7 +176,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
      *            the form response step
      * @return the list
      */
-    private List<PdfCell> createCellsForStep( FormResponseStep formResponseStep )
+    private List<PdfCell> createCellsForStep( FormResponseStep formResponseStep, FormResponse formResponse  )
     {
         Step step = formResponseStep.getStep( );
 
@@ -194,7 +193,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
         {
             if ( CompositeDisplayType.GROUP.getLabel( ).equals( formDisplay.getCompositeType( ) ) )
             {
-                List<PdfCell> listContentGroup = createCellsForGroup( formResponseStep, formDisplay );
+                List<PdfCell> listContentGroup = createCellsForGroup( formResponseStep, formDisplay, formResponse );
                 listContent.addAll( listContentGroup );
             }
             else
@@ -218,7 +217,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
      *            the form display
      * @return the list
      */
-    private List<PdfCell> createCellsForGroup( FormResponseStep formResponseStep, FormDisplay formDisplay )
+    private List<PdfCell> createCellsForGroup( FormResponseStep formResponseStep, FormDisplay formDisplay, FormResponse formrResponse )
     {
         List<PdfCell> listContent = new ArrayList<>( );
         
@@ -226,27 +225,28 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
         String groupName = group.getTitle( );
 
         List<FormDisplay> listGroupDisplay = FormDisplayHome.getFormDisplayListByParent( formResponseStep.getStep( ).getId( ), formDisplay.getId( ) );
-        for ( int ite = 0; ite < group.getIterationMax( ); ite++ )
-        {
-        	// add group cell
-        	if ( group.getIterationMax( ) > 1 )
-            {
-                int iteration = ite + 1;
-                groupName += " (" + iteration + ")";
-            }
-        	PdfCell groupCell = new PdfCell( );
-        	groupCell.setGroup( groupName );
-        	listContent.add(groupCell);
-        	
-            for ( FormDisplay formDisplayGroup : listGroupDisplay )
-            {
-                PdfCell cell = createPdfCell( formResponseStep, formDisplayGroup, ite );
-                if ( cell != null )
-                {
-                    listContent.add( cell );
-                }
-            }
-        }
+
+        List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByFormResponse(formrResponse.getId());
+   if(listFormQuestionResponse != null && !listFormQuestionResponse.isEmpty()) {
+       for (int ite = 0; ite < listFormQuestionResponse.size(); ite++) {
+           int iteration = ite + 1;
+           String groupePlusIte = groupName + " (" + iteration + ")";
+           PdfCell groupCell = new PdfCell();
+           groupCell.setGroup(groupePlusIte);
+           // if the group is not displayed yet and the group has responses, we add it to the list of cells the group is displayed only once
+           boolean isGroupIterationDisplayed = false;
+           for (int i = 0; i < listGroupDisplay.size(); i++) {
+               PdfCell cell = createPdfCell(formResponseStep, listGroupDisplay.get(i), ite);
+               if (cell != null) {
+                   if (!isGroupIterationDisplayed) {
+                       listContent.add(groupCell);
+                       isGroupIterationDisplayed = true;
+                   }
+                   listContent.add(cell);
+               }
+           }
+       }
+   }
         return listContent;
     }
 
