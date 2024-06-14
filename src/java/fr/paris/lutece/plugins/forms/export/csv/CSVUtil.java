@@ -74,6 +74,24 @@ public final class CSVUtil
 
         return strColumnName;
     }
+    /**
+     * Builds the column name for the specified question
+     *
+     * @param question
+     *            the question
+     * @param  iteration number
+     * @return the column name
+     */
+    public static String buildColumnName( String questionTitle, int iterationNumber )
+    {
+        String strColumnName = questionTitle;
+
+
+            strColumnName = new StringBuilder( questionTitle ).append( ITERATION_PREFIX ).append( iterationNumber + 1)
+                    .append( ITERATION_SUFFIX ).toString( );
+
+        return strColumnName;
+    }
 
     /**
      * Make the specified value safe for the CSV export
