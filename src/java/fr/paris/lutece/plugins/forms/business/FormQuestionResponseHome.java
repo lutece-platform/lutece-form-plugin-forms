@@ -284,4 +284,17 @@ public final class FormQuestionResponseHome
         completeWithQuestion( res );
         return res;
     }
+
+    /**
+     * Find the maximum iteration number for a given question
+     *
+     * @param nIdQuestion
+     *            The identifier of the Question
+     *            The Plugin to use to execute the query
+     * @return the maximum iteration number
+     */
+    public static int findMaxIterationNumber( int nIdQuestion )
+    {
+        return _dao.findMaxIterationNumberByQuestion( nIdQuestion, _plugin );
+    }
 }

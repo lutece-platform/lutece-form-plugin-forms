@@ -33,11 +33,17 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
-import fr.paris.lutece.plugins.forms.business.*;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
+import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
+import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import org.apache.commons.lang3.StringUtils;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
@@ -59,45 +65,11 @@ public class FormResponseCsvExport
     {
         _csvSeparator = MultiviewConfig.getInstance( ).getCsvSeparator( );
     }
-    /*
-     * Sort list of FormResponse by question export order
-     */
-    public List<FormResponse> sortFormResponseListByQuestionExportDisplayOrder(List<FormResponse> formResponseList,  List<Question> listQuestions)
-    {
-     List <FormResponse> sortedFormResponseList = new ArrayList<>();
-        HashMap<Integer, FormResponse> mapFormResponse = new HashMap<>();
-        for (int i = 0; i < listQuestions.size(); i++)
-        {
-            Question question = listQuestions.get(i);
-                for (FormResponse formResponse : formResponseList)
-                {
-                    mapFormResponse.put(question.getExportDisplayOrder(), formResponse);
-                }
-        }
-        for (Integer key : mapFormResponse.keySet())
-        {
-            sortedFormResponseList.add(mapFormResponse.get(key));
-        }
-        return sortedFormResponseList;
-    }
         /**
          * Build the CSV string for column line
          */
-    public String buildCsvColumnToExport( List<FormResponseItem> formResponseItems )
+    public String buildCsvColumnToExport( List<Question> listQuestions)
     {
-    	List<FormResponse> formResponseList = getFormResponseFromItemList(formResponseItems);
-    	int idForm = formResponseList.get(0).getFormId();
-        List<Question> listQuestions = QuestionHome.getListQuestionByIdForm(idForm);
-        formResponseList = sortFormResponseListByQuestionExportDisplayOrder(formResponseList, listQuestions);
-        listQuestions.sort(Comparator.comparingInt(Question::getExportDisplayOrder));
-
-        for ( Question question : listQuestions )
-            {
-                if ( question.isResponseExportable( ) )
-                {
-                    _csvHeader.addHeadersWithIterations(question, formResponseList);
-                }
-            }
 
         StringBuilder sbCsvColumn = new StringBuilder( );
 
@@ -109,17 +81,22 @@ public class FormResponseCsvExport
         sbCsvColumn.append( _csvSeparator );
         sbCsvColumn.append( CSVUtil.safeString( I18nService.getLocalizedString( MESSAGE_EXPORT_FORM_STATE, I18nService.getDefaultLocale( ) ) ) );
         sbCsvColumn.append( _csvSeparator );
-
-        for ( Question question : _csvHeader.getQuestionColumns( ) )
+        List<String> listColumnNames =   _csvHeader.getListColumnNameToExport( listQuestions );
+        for (int i = 0; i < listColumnNames.size( ); i++)
         {
-        	boolean bIsIteration = _csvHeader.getIterationsQuestionColumns().contains(question);
-            sbCsvColumn.append( CSVUtil.safeString( CSVUtil.buildColumnName( question, bIsIteration ) ) ).append( _csvSeparator );
-        }
+            sbCsvColumn.append( CSVUtil.safeString( listColumnNames.get( i ) ) );
+            sbCsvColumn.append( _csvSeparator );
 
+        }
+        Map <ArrayList<Integer>, Question> mapQuestionAndIterationColumn =   _csvHeader.getColumnNumberForQuestions( listQuestions );
+        // sort the map by the column number
+        mapQuestionAndIterationColumn = CSVHeader.sortByColumnNumber(mapQuestionAndIterationColumn);
+        // set the mapQuestionAndIterationColumn in the CSVHeader so it can be used in the buildCsvDataToExport method
+        _csvHeader.setMapQuestionAndIterationColumn(mapQuestionAndIterationColumn);
         return sbCsvColumn.toString( );
     }
-    
-    private List<FormResponse> getFormResponseFromItemList(List<FormResponseItem> formResponseItems)
+
+    public static List<FormResponse> getFormResponseFromItemList(List<FormResponseItem> formResponseItems)
     {
     	List<FormResponse> formResponseList = new ArrayList<>();
     	for (FormResponseItem formResponseItem : formResponseItems)
@@ -134,33 +111,79 @@ public class FormResponseCsvExport
     }
 
     /**
-     * Build the CSV string for all data lines
+     * Build mapQuestionData (a map with the question id as key and a list of responses as value) for all data lines
+     * @param formResponse
+     * @param csvDataLine
+     * @return mapQuestionData
      */
-    public String buildCsvDataToExport( FormResponse formResponse, String state )
+    public Map<Integer, List<String>> buildMapQuestionDataToExport( FormResponse formResponse,  CSVDataLine csvDataLine)
     {
-        CSVDataLine csvDataLine = new CSVDataLine( formResponse, state, _csvSeparator );
-
-        for ( FormResponseStep formResponseStep : formResponse.getSteps( ) )
-        {
-            for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
-            {
-                if ( formQuestionResponse.getQuestion( ).isResponseExportable( ) )
-                {
-                    csvDataLine.addData( formQuestionResponse );
+        // one mapQuestionData item per Question containing a list of responses (one response per iteration)
+        Map<Integer, List<String>> mapQuestionData = new java.util.HashMap<>( );
+        for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ))) {
+            if(formQuestionResponse != null && formQuestionResponse.getQuestion() != null) {
+                Integer questionId = formQuestionResponse.getQuestion().getId();
+                List<String> responseValue = csvDataLine.responseToIterationsStrings(formQuestionResponse);
+                if (responseValue != null && !responseValue.isEmpty()) {
+                    String responseValueString = String.join(" ", responseValue);
+                    if (mapQuestionData.containsKey(questionId)) {
+                        List<String> listResponse = mapQuestionData.get(questionId);
+                        listResponse.add(responseValueString);
+                        mapQuestionData.put(questionId, listResponse);
+                    } else {
+                        List<String> listResponse = new ArrayList<>();
+                        listResponse.add(responseValueString);
+                        mapQuestionData.put(questionId, listResponse);
+                    }
                 }
             }
         }
+        return mapQuestionData;
+    }
 
+    /**
+     * Append the response to the CSV data line (StringBuilder sbResponse)
+     * @param mapQuestionData
+     * @param questionIterationKey
+     * @param mapQuestionAndIterationColumn
+     * @param sbResponse
+     * @return void
+     */
+    public void appendResponseToCsvDataLine(Map<Integer, List<String>> mapQuestionData, ArrayList<Integer> questionIterationKey, Map <ArrayList<Integer>, Question> mapQuestionAndIterationColumn, StringBuilder sbResponse)
+    {
+        Integer questionID = mapQuestionAndIterationColumn.get(questionIterationKey).getId();
+        List<String> listResponse = mapQuestionData.get(questionID);
+        int maxIterationNumber = questionIterationKey.get(1) + 1;
+        // check not null && not empty
+        for (int i = 0; i < maxIterationNumber; i++) {
+            // check if the question is in the mapQuestionData and if the size of the list(iteration for this response) is greater than the iteration number of the column
+            if (mapQuestionData.containsKey(questionID) && listResponse.size() > i) {
+                sbResponse.append(CSVUtil.safeString(listResponse.get(i))).append(_csvSeparator);
+            } else {
+                sbResponse.append(CSVUtil.safeString("")).append(_csvSeparator);
+            }
+        }
+    }
+    /**
+     * Build the CSV string for all data lines
+     */
+    public String buildCsvDataToExport( FormResponse formResponse, String state)
+    {
+        CSVDataLine csvDataLine = new CSVDataLine( formResponse, state, _csvSeparator );
+        StringBuilder sbResponse = new StringBuilder( );
+        // one mapQuestionData item per Question containing a list of responses (one response per iteration)
+        Map<Integer, List<String>> mapQuestionData = buildMapQuestionDataToExport( formResponse, csvDataLine );
+        Map <ArrayList<Integer>, Question> mapQuestionAndIterationColumn = _csvHeader.getMapQuestionAndIterationColumn();
+        if(mapQuestionAndIterationColumn != null && !mapQuestionAndIterationColumn.isEmpty()) {
+            for (ArrayList<Integer> questionIterationKey : mapQuestionAndIterationColumn.keySet()) {
+               appendResponseToCsvDataLine(mapQuestionData, questionIterationKey, mapQuestionAndIterationColumn, sbResponse);
+            }
+        }
         StringBuilder sbCsvData = new StringBuilder( );
 
         StringBuilder sbRecordContent = new StringBuilder( );
         sbRecordContent.append( csvDataLine.getCommonDataToExport( ) );
-
-        for ( Question question : _csvHeader.getQuestionColumns( ) )
-        {
-            sbRecordContent.append( CSVUtil.safeString( Objects.toString( csvDataLine.getDataToExport( question ), StringUtils.EMPTY ) ) )
-                    .append( _csvSeparator );
-        }
+        sbRecordContent.append( sbResponse.toString( ) );
 
         sbCsvData.append( sbRecordContent.toString( ) );
 
