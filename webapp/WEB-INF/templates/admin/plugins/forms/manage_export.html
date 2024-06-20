@@ -66,6 +66,23 @@
 
 <@input type='hidden' id='token' name='token' value='${token}' />
 <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+    <#if export_all?? && export_all>
+<label class="form-label col-sm-12 col-lg-3 form-label text-right " for="export_all">#i18n{forms.modify_form.export.config.exportAllNone}</label>
+<label class="form-check form-switch" >
+    <input type="checkBox" class="form-check-input" name='export_all' id='export_all' value='false' checked
+           data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&id_form=${form.id}&export_all=false&exportable=false&token=${token}"
+           onclick="location.replace(this.dataset.query);"
+    />
+    <#else>
+    <label class="form-label col-sm-12 col-lg-3 form-label text-right " for="export_all">#i18n{forms.modify_form.export.config.exportAllQuestions}</label>
+    <label class="form-check form-switch" >
+    <input type="checkBox" class="form-check-input" name='export_all' id='export_all' value='true'
+           data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&id_form=${form.id}&export_all=true&exportable=false&token=${token}"
+           onclick="location.replace(this.dataset.query);"
+    />
+</#if>
+<span class="form-check-label"></span>
+</label>
 <@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
 <@tr>
 <@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>
