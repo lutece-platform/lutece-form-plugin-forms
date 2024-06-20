@@ -83,6 +83,7 @@ public class FormExportJspBean extends AbstractJspBean
     private static final String MARK_QUESTIONLIST = "questionList";
     private static final String MARK_ACTIVE_TAB_PANNEL_2 = "activeTabPannel2"; 
     private static final String MARK_NUMBER_MAX_ORDER = "number_max_order";
+    private static final String MARK_EXPORT_ALL = "export_all";
     
     // Actions
     private static final String ACTION_CREATE_EXPORT_CONFIG = "createExportConfig";
@@ -98,6 +99,7 @@ public class FormExportJspBean extends AbstractJspBean
     private static final String PARAMETER_ID_QUESTION = "id_question";
     private static final String PARAMETER_ACTIVE_TAB_PANNEL_2 = "activeTabPannel2";
     private static final String MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG = "forms.modify_form.message.confirmRemoveExportConfig";
+    private static final String PARAMETER_EXPORT_ALL = "export_all";
 
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     
@@ -123,6 +125,7 @@ public class FormExportJspBean extends AbstractJspBean
         List<Question> listQuestions = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
         Collections.sort(listQuestions, Comparator.comparingInt(Question::getExportDisplayOrder));
        Collections.reverse(listQuestions);
+       Boolean exportAllQuestions = true;
        // Set an order to the questions that have no order yet
         for (int i = 0; i < listQuestions.size(); i++) {
            if(listQuestions.get(i).getExportDisplayOrder() == 0) {
@@ -130,6 +133,9 @@ public class FormExportJspBean extends AbstractJspBean
         	   listQuestions.get(i).setExportDisplayOrder(newOrder);
                 QuestionHome.update( listQuestions.get(i) );
            }
+            if(exportAllQuestions && !listQuestions.get(i).getEntry().isExportable() || !listQuestions.get(i).getEntry().isExportablePdf()) {
+                exportAllQuestions = false;
+            }
         }
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
@@ -142,6 +148,7 @@ public class FormExportJspBean extends AbstractJspBean
         {
         	model.put( MARK_NUMBER_MAX_ORDER, listQuestions.size());
         }
+        model.put( MARK_EXPORT_ALL, exportAllQuestions);
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_EXPORT, model );
     }
@@ -193,7 +200,7 @@ public class FormExportJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_EXPORT_CONFIG );
-
+        if( request.getParameter(FormsConstants.PARAMETER_ID_QUESTION) != null ) {
         Integer nIdQuestion = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_QUESTION));
         Question questionToUpdate = QuestionHome.findByPrimaryKey(nIdQuestion);
         Entry entry = questionToUpdate.getEntry( );
@@ -207,6 +214,17 @@ public class FormExportJspBean extends AbstractJspBean
         }
 
         QuestionHome.update(questionToUpdate);
+        }
+        if( request.getParameter(PARAMETER_EXPORT_ALL) != null ) {
+            boolean exportAll = Boolean.parseBoolean(request.getParameter(PARAMETER_EXPORT_ALL));
+            List<Question> questionList = QuestionHome.getListQuestionByIdForm(nIdForm);
+            questionList.forEach(question -> {
+                Entry entry = question.getEntry();
+                _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_EXPORTABLE, null, String.valueOf( exportAll ) );
+                _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_EXPORTABLE_PDF, null, String.valueOf( exportAll ) );
+                QuestionHome.update(question);
+            });
+        }
         Map<String, String> mapParameters = new LinkedHashMap<>();
         mapParameters.put(FormsConstants.PARAMETER_ID_FORM, String.valueOf(nIdForm));
         mapParameters.put(PARAMETER_ACTIVE_TAB_PANNEL_2, "true");
