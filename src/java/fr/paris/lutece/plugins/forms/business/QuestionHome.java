@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
@@ -40,6 +41,8 @@ import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -252,4 +255,24 @@ public final class QuestionHome
         return _dao.selectQuestionsReferenceListByForm( nIdForm, _plugin );
     }
 
+    /**
+     * Load the data of question object for the given form and returns them in display order
+     *
+     * @param nIdForm
+     *          The form primary key
+     * @return the question list sorted in display order
+     */
+    public static List<Question> getQuestionListByIdFormInQuestionOrder( int nIdForm ){
+        List<Question> listQuestions = new ArrayList<>(  );
+        List<Step> listSteps = StepHome.getStepsListByForm( nIdForm );
+        List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( nIdForm );
+        listSteps = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+
+        for ( Step step : listSteps ){
+            List<FormDisplay> listFormDisplay = FormDisplayHome.getFormDisplayListByParent( step.getId(), 0 );
+            listFormDisplay.sort( Comparator.comparingInt( FormDisplay::getDisplayOrder ) );
+            listFormDisplay.forEach( question -> listQuestions.add( QuestionHome.findByPrimaryKey( question.getCompositeId() ) ) );
+        }
+        return listQuestions;
+    }
 }

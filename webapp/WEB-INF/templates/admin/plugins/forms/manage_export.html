@@ -76,7 +76,7 @@
 </@tr>
 
 <@tableHeadBodySeparator />
-<#list questionList?sort_by('exportDisplayOrder') as question>
+<#list questionList as question>
 <@tr>
 <@td>${question.step.title!}</@td>
 <@td>${question.title!}</@td>
