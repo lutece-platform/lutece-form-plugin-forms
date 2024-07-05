@@ -116,7 +116,7 @@ public class CSVFileGenerator extends AbstractFileGenerator
             List<FormResponse> formResponseList = FormResponseCsvExport.getFormResponseFromItemList(listFormResponseItems);
             if(formResponseList != null && !formResponseList.isEmpty()) {
                 int idForm = formResponseList.get(0).getFormId();
-                List<Question> listQuestions = QuestionHome.getListQuestionByIdForm(idForm);
+                List<Question> listQuestions = QuestionHome.getQuestionListByIdFormInQuestionOrder(idForm);
             bos.write(formResponseExport.buildCsvColumnToExport(listQuestions));
             bos.newLine();
                   for (FormResponse formResponse : formResponseList) {

@@ -120,17 +120,8 @@ public class FormExportJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         
-        List<Question> listQuestions = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
-        Collections.sort(listQuestions, Comparator.comparingInt(Question::getExportDisplayOrder));
-       Collections.reverse(listQuestions);
-       // Set an order to the questions that have no order yet
-        for (int i = 0; i < listQuestions.size(); i++) {
-           if(listQuestions.get(i).getExportDisplayOrder() == 0) {
-               int newOrder = i + 1;
-        	   listQuestions.get(i).setExportDisplayOrder(newOrder);
-                QuestionHome.update( listQuestions.get(i) );
-           }
-        }
+        List<Question> listQuestions = QuestionHome.getQuestionListByIdFormInQuestionOrder( formToBeModified.getId( ) );
+
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, listQuestions );
