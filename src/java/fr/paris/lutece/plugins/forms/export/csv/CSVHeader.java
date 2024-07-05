@@ -115,7 +115,6 @@ public class CSVHeader
         {
             return listQuestionNameColumnToExport;
         }
-        listQuestions.sort((q1, q2) -> q1.getExportDisplayOrder() - q2.getExportDisplayOrder());
         for (int i = 0; i < listQuestions.size(); i++) {
             Question question = listQuestions.get(i);
             if ( question.isResponseExportable( ) ) {
@@ -151,22 +150,13 @@ public class CSVHeader
             Question question = listQuestions.get(i);
             if ( question.isResponseExportable( ) ) {
                 int formQuestionResponseWithMaxIte = FormQuestionResponseHome.findMaxIterationNumber(question.getId());
-                if(formQuestionResponseWithMaxIte > 0)
-                {                     ArrayList<Integer> columnCountAndQuestionIteration = new ArrayList<>();
-                        columnCountAndQuestionIteration.add(question.getExportDisplayOrder());
-                        columnCountAndQuestionIteration.add(formQuestionResponseWithMaxIte);
-                    _mapQuestionAndIterationColumn.put(columnCountAndQuestionIteration, question);
-                }
-                else
-                {
-                    ArrayList<Integer> columnCountAndQuestionIteration = new ArrayList<>();
-                    columnCountAndQuestionIteration.add(question.getExportDisplayOrder());
-                    columnCountAndQuestionIteration.add(0);
-                    _mapQuestionAndIterationColumn.put(columnCountAndQuestionIteration, question);
-                }
+                ArrayList<Integer> columnCountAndQuestionIteration = new ArrayList<>();
+                columnCountAndQuestionIteration.add(i);
+                columnCountAndQuestionIteration.add(formQuestionResponseWithMaxIte);
+                _mapQuestionAndIterationColumn.put(columnCountAndQuestionIteration, question);
             }
         }
-       return _mapQuestionAndIterationColumn;
+        return _mapQuestionAndIterationColumn;
     }
 
     /**
