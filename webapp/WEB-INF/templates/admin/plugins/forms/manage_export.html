@@ -76,6 +76,9 @@
 </@tr>
 
 <@tableHeadBodySeparator />
+<div class="d-flex justify-content-end">
+    <@aButton href='jsp/admin/plugins/forms/ManageFormExport.jsp?action=doSetDefaultOrder&id_form=${form.id}&token=${token}' title='#i18n{forms.modify_form.action.setDefaultOrder}' hideTitle=['xs','sm'] buttonIcon='arrow-up' color='primary' size='m' />
+</div>
 <#list questionList as question>
 <@tr>
 <@td>${question.step.title!}</@td>
