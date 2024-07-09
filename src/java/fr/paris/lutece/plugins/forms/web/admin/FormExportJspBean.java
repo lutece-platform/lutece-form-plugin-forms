@@ -91,6 +91,7 @@ public class FormExportJspBean extends AbstractJspBean
     private static final String ACTION_MOVE_DOWN_EXPORT_CONFIG = "doMoveDownExportConfig";
     private static final String ACTION_MODIFY_EXPORTABLE_QUESTION = "modifyExportableQuestion";
     private static final String ACTION_MODIFY_EXPORT_DISPLAY_ORDER= "modifyExportDisplayOrder";
+    private static final String ACTION_SET_DEFAULT_ORDER = "doSetDefaultOrder";
 
     // Parameters
     private static final String PARAMETER_EXPORT_CONFIG = "export_config";
@@ -203,7 +204,7 @@ public class FormExportJspBean extends AbstractJspBean
         mapParameters.put(PARAMETER_ACTIVE_TAB_PANNEL_2, "true");
 
         return redirect(request, VIEW_MANAGE_EXPORT, mapParameters);
-    };
+    }
 
     @Action( ACTION_CREATE_EXPORT_CONFIG )
     public String doCreateExportConfig( HttpServletRequest request ) throws AccessDeniedException
@@ -385,5 +386,33 @@ public class FormExportJspBean extends AbstractJspBean
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( idForm ) );
 
         return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
+    }
+
+    /**
+     * Set ExportDisplayOrder property of the questions to the apparition in form order
+     */
+    @Action( ACTION_SET_DEFAULT_ORDER )
+    public String doSetDefaultDisplayOrder(HttpServletRequest request) throws AccessDeniedException
+    {
+        Integer nIdForm = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_FORM));
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirect( request, VIEW_MANAGE_FORMS );
+        }
+       checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_EXPORT_CONFIG );
+
+        List<Question> questionList = QuestionHome.getQuestionListByIdFormInQuestionOrder(nIdForm);
+        for (int i = 0; i < questionList.size();i++){
+            questionList.get( i ).setExportDisplayOrder( i+1 );
+        }
+        // update the list
+        questionList.forEach( QuestionHome::update );
+        Map<String, String> mapParameters = new LinkedHashMap<>();
+        mapParameters.put(FormsConstants.PARAMETER_ID_FORM, String.valueOf(nIdForm));
+        mapParameters.put(PARAMETER_ACTIVE_TAB_PANNEL_2, "true");
+
+        return redirect(request, VIEW_MANAGE_EXPORT, mapParameters);
     }
 }
