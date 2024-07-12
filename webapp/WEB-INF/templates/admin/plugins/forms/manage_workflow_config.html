@@ -18,7 +18,7 @@
 								<@th params='data-field="complete"'>#i18n{forms.createEntry.labelResponsesComplete}</@th>
 							</@tr>
 							<@tableHeadBodySeparator />	
-							<#list questionList?sort_by('id') as question>
+							<#list questionList as question>
 								<@tr>
 									<@td>${question.step.title!}</@td>
 									<@td>${question.title!}</@td>
