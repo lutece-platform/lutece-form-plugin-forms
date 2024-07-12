@@ -125,7 +125,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         
-        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
+        List<Question> questionList = QuestionHome.getQuestionListByIdFormInQuestionOrder( formToBeModified.getId( ) );
         List<Question> filterableQuestionList = new ArrayList<>( );
         List<Question> nonDisplayableQuestionList = new ArrayList<>( );
 
