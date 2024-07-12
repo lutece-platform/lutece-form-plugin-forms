@@ -100,7 +100,7 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         
-        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
+        List<Question> questionList = QuestionHome.getQuestionListByIdFormInQuestionOrder( formToBeModified.getId( ) );
         
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
