@@ -30,7 +30,7 @@
 										<@td>${question.title!}</@td>
 										<@td>
 											<#assign status><#if question?has_content && question.published!>Publié<#else>Non publié</#if></#assign>
-											<@formGroup labelFor='published' labelKey=status labelClass='text-white'>
+											<@formGroup labelFor='published' labelKey=status>
 	                							<@checkBox orientation='switch' name='questionPublished' id='${question.id}' value='${question.id}' checked=(question?has_content && question.published!) />
 	            							</@formGroup>
 										</@td>
