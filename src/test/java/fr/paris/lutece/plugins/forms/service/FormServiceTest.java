@@ -1,3 +1,36 @@
+/*
+ * Copyright (c) 2002-2024, City of Paris
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice
+ *     and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright notice
+ *     and the following disclaimer in the documentation and/or other materials
+ *     provided with the distribution.
+ *
+ *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
+ *     contributors may be used to endorse or promote products derived from
+ *     this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * License 1.0
+ */
 package fr.paris.lutece.plugins.forms.service;
 
 import java.sql.Timestamp;
@@ -32,6 +65,7 @@ import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
+import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.test.LuteceTestCase;
 
@@ -82,6 +116,8 @@ public class FormServiceTest extends LuteceTestCase {
     protected void setUp( ) throws Exception
     {
         super.setUp( );
+        
+        PluginService.getPlugin( FormsPlugin.PLUGIN_NAME ).install( );
         _formService = SpringContextService.getBean( FormService.BEAN_NAME );
         createForm( FORM_TITLE );
         initFormResponse( );
@@ -104,10 +140,9 @@ public class FormServiceTest extends LuteceTestCase {
     	MockHttpServletRequest request = new MockHttpServletRequest( );
     	request.getSession( true ).setAttribute( ATTRIBUTE_ADMIN_USER, getUserAdmin( ) );
     	
-    	EntryHome.create(_response.getEntry( ) );
     	ResponseHome.create( _response );
         
-    	assertEquals( true, _formService.isFileAccessAuthorized( request, _response.getIdResponse( ), Integer.valueOf( _response.getFile( ).getFileKey( ) ) ) );
+    	assertTrue( _formService.isFileAccessAuthorized( request, _response.getIdResponse( ), Integer.valueOf( _response.getFile( ).getFileKey( ) ) ) );
     }
     
 	
@@ -145,6 +180,8 @@ public class FormServiceTest extends LuteceTestCase {
         entry.setResourceType( RESOURCE_TYPE );
         entry.setIdResource( _form.getId( ) );
         
+        EntryHome.create( entry );
+        
         initResponse( entry );
         List<Response> listResponses = new ArrayList<>( Arrays.asList( _response ) );
 
@@ -170,7 +207,6 @@ public class FormServiceTest extends LuteceTestCase {
         _formResponse.setGuid( DEFAULT_GUID.toString( ) );
         _formResponse.setUpdate( TIMESTAMP_NOW );
         _formResponse.setSteps( listFormResponseStep );
-
     }
 	
 	/**
