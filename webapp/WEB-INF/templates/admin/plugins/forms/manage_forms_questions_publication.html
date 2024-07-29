@@ -24,7 +24,7 @@
 									<@th params='data-sortable="true" data-field="status"'>#i18n{forms.manage_question_response.status} (Publi&eacute; / Non publi&eacute;)</@th>
 								</@tr>
 								<@tableHeadBodySeparator />	
-								<#list questionList?sort_by('id') as question>
+								<#list questionList as question>
 									<@tr>
 										<@td>${question.step.title!}</@td>
 										<@td>${question.title!}</@td>
