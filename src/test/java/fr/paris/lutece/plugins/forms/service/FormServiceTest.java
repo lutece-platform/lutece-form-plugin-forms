@@ -119,13 +119,13 @@ public class FormServiceTest extends LuteceTestCase {
         
         PluginService.getPlugin( FormsPlugin.PLUGIN_NAME ).install( );
         _formService = SpringContextService.getBean( FormService.BEAN_NAME );
-        createForm( FORM_TITLE );
-        initFormResponse( );
     }
     
     @Test
     public void testSaveForm( ) 
     {
+    	createForm( FORM_TITLE );
+    	initFormResponse( );
     	_formService.saveForm( _form, _formResponse );
     	
     	FormResponse formResponseLoaded = FormResponseHome.findByPrimaryKey( _formResponse.getId( ) );
@@ -139,6 +139,10 @@ public class FormServiceTest extends LuteceTestCase {
     {
     	MockHttpServletRequest request = new MockHttpServletRequest( );
     	request.getSession( true ).setAttribute( ATTRIBUTE_ADMIN_USER, getUserAdmin( ) );
+    	
+    	createForm( FORM_TITLE );
+    	Entry entry = createEntry( );
+        initResponse( entry );
     	
     	ResponseHome.create( _response );
         
@@ -167,24 +171,13 @@ public class FormServiceTest extends LuteceTestCase {
 	 */
 	private void initFormResponse( )
     {
-        Step step = createStep();
+        Entry entry = createEntry( );
 
-        EntryType entryTypeText = new EntryType( );
-        entryTypeText.setIdType( ENTRY_TYPE_FILE_ID );
-        entryTypeText.setTitle( ENTRY_TYPE_TITLE );
-        entryTypeText.setBeanName( BEAN_NAME_ENTRY_TYPE_FILE );
-
-        Entry entry = new Entry( );
-        entry.setIndexed( true );
-        entry.setEntryType( entryTypeText );
-        entry.setResourceType( RESOURCE_TYPE );
-        entry.setIdResource( _form.getId( ) );
-        
-        EntryHome.create( entry );
-        
         initResponse( entry );
         List<Response> listResponses = new ArrayList<>( Arrays.asList( _response ) );
 
+        Step step = createStep( );
+        
         Question question = createQuestion( entry, step );
 
         List<FormQuestionResponse> listFormQuestionResponse = new ArrayList<>( );
@@ -214,7 +207,7 @@ public class FormServiceTest extends LuteceTestCase {
 	 * 
 	 * @return the step created
 	 */
-	private Step createStep()
+	private Step createStep( )
 	{
 		Step step = new Step( );
 		step.setTitle( DEFAULT_STEP_TITLE );
@@ -224,6 +217,29 @@ public class FormServiceTest extends LuteceTestCase {
         step.setFinal( true );
 
         return StepHome.create( step );
+	}
+	
+	/**
+	 * create an entry
+	 * 
+	 * @return the entry created
+	 */
+	private Entry createEntry( )
+	{
+		EntryType entryTypeText = new EntryType( );
+        entryTypeText.setIdType( ENTRY_TYPE_FILE_ID );
+        entryTypeText.setTitle( ENTRY_TYPE_TITLE );
+        entryTypeText.setBeanName( BEAN_NAME_ENTRY_TYPE_FILE );
+
+        Entry entry = new Entry( );
+        entry.setIndexed( true );
+        entry.setEntryType( entryTypeText );
+        entry.setResourceType( RESOURCE_TYPE );
+        entry.setIdResource( _form.getId( ) );
+        
+        EntryHome.create( entry );
+        
+        return entry;
 	}
 	
 	/**
