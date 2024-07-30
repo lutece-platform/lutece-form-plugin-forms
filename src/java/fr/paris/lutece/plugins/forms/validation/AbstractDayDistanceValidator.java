@@ -4,7 +4,6 @@ import fr.paris.lutece.plugins.forms.business.Control;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -15,8 +14,6 @@ import java.util.Map;
 
 public abstract class AbstractDayDistanceValidator extends AbstractValidator
 {
-
-    // TODO
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/day_distance_value_template.html";
 
     private static final String MARK_LABEL = "label_key";
@@ -31,9 +28,9 @@ public abstract class AbstractDayDistanceValidator extends AbstractValidator
      * @param strValidatorDisplayName
      *         The validator display name
      * @param listAvailableEntryType
-     *         The list of available entrytype
+     *         The list of available entryType
      */
-    public AbstractDayDistanceValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
+    protected AbstractDayDistanceValidator( String strValidatorName, String strValidatorDisplayName, List<String> listAvailableEntryType )
     {
         super( strValidatorName, strValidatorDisplayName, listAvailableEntryType );
     }
@@ -46,7 +43,7 @@ public abstract class AbstractDayDistanceValidator extends AbstractValidator
         model.put( MARK_LABEL, getLabelKey( ) );
         model.put( MARK_HELP, getHelpKey( ) );
 
-        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
+        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, _locale, model );
 
         return htmlTemplateQuestion.getHtml( );
     }
