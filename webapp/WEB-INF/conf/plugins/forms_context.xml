@@ -103,6 +103,24 @@
 			</list>
 		</constructor-arg>
 	</bean>
+	<bean id="forms.listMinResponseValidator" class="fr.paris.lutece.plugins.forms.validation.ListMinResponseValidator">
+		<constructor-arg  type="java.lang.String" index="0" value="forms.listMinResponseValidator" />
+		<constructor-arg type="java.lang.String" index="1" value="forms.validator.listMinResponseValidator.name" />
+		<constructor-arg index="2" >
+			<list>
+				<value type="java.lang.String">forms.entryTypeCheckBox</value>
+			</list>
+		</constructor-arg>
+	</bean>
+	<bean id="forms.listExactResponseValidator" class="fr.paris.lutece.plugins.forms.validation.ListExactResponseValidator">
+		<constructor-arg  type="java.lang.String" index="0" value="forms.listExactResponseValidator" />
+		<constructor-arg type="java.lang.String" index="1" value="forms.validator.listExactResponseValidator.name" />
+		<constructor-arg index="2" >
+			<list>
+				<value type="java.lang.String">forms.entryTypeCheckBox</value>
+			</list>
+		</constructor-arg>
+	</bean>
 	<bean id="forms.uniqueValidator" class="fr.paris.lutece.plugins.forms.validation.UniqueValidator">
     	<constructor-arg type="java.lang.String" index="0" value="forms.uniqueValidator" />
     	<constructor-arg type="java.lang.String" index="1" value="forms.validator.unique.name" />
