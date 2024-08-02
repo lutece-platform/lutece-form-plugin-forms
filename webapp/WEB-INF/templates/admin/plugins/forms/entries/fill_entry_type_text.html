@@ -1,3 +1,14 @@
+<div class="mb-3 row w-75 mx-auto">
+	<#if getFieldByCode( entry, "illustration_image")??>
+		<#assign illustration_image_entry=getFieldByCode( entry, "illustration_image")>
+		<#assign image_id = illustration_image_entry.value>
+		<#list fields_list_by_id_entries as key, value>
+		<#if key = illustration_image_entry.idField>
+			<@img value illustration_image_entry.title illustration_image_entry.title />
+		</#if>
+		</#list>
+	</#if>
+</div>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign field_width=getFieldValueByCode( entry, "width")>
 <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
