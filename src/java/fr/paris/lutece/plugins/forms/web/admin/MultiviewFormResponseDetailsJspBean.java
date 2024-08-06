@@ -77,10 +77,8 @@ import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.form.response.view.FormResponseViewModelProcessorFactory;
 import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewModelProcessor;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
-import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
-import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -144,6 +142,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String MARK_WORKFLOW_STATE = "workflow_state";
     private static final String MARK_WORKFLOW_ACTION_LIST = "workflow_action_list";
     private static final String MARK_ADMIN_DEPOSITARY = "admin_depositary";
+    private static final String MARK_PROCESS_ACTION_CONFIRMATION = "process_action_confirmation";
 
     // Messages
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
@@ -154,6 +153,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
     private final transient IFormsMultiviewAuthorizationService _formsMultiviewAuthorizationService = SpringContextService
             .getBean( FormsMultiviewAuthorizationService.BEAN_NAME );
+    private String _strProcessActionConfirmation = null;
 
     /**
      * Return the page with the details of a form response
@@ -205,6 +205,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         {
             _mapFilterValues = fillFilterMapValues( request );
         }
+        else
+        {
+        	model.put( MARK_PROCESS_ACTION_CONFIRMATION, _strProcessActionConfirmation );
+        }
+
         populateModelWithFilterValues( _mapFilterValues, model );
 
         return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_VIEW_FORM_RESPONSE, model );
@@ -475,6 +480,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
                 workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale,
                         bIsAutomaticAction, getUser( ) );
+                _strProcessActionConfirmation = workflowService.getDisplayProcessActionConfirmation(nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, getLocale(), null);
             }
             else
             {
@@ -522,6 +528,10 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 if ( strError != null )
                 {
                     return redirect( request, strError );
+                }
+                else
+                {
+                	_strProcessActionConfirmation = workflowService.getDisplayProcessActionConfirmation(nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, getLocale(), null);
                 }
             }
             catch( AppException e )
