@@ -41,9 +41,11 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -608,21 +610,68 @@ public class FormService
     }
 
     /**
-     * Get the responses which verify the filter
+     * Check if responses exist for a composite (question or group of questions)
+     * 
+     * @param formDisplay
+     *            the form display
+     * @param nIdEntry
+     *            the entry id
+     * @return true if responses exist, false otherwise
+     */
+    public boolean existCompositeResponses( FormDisplay formDisplay, int nIdEntry )
+    {
+        boolean existCompositeResponses = false;
+        
+        if ( CollectionUtils.isEmpty( FormResponseHome.selectAllFormResponsesUncompleteByIdForm( formDisplay.getFormId( ) ) ) )
+        {
+            return false;
+        }
+        
+        if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) )
+        {
+    	    List<Question> questionsList = new ArrayList<>( );
+            ICompositeDisplay composite = formDisplayToComposite( formDisplay, null, 0 );
+            composite.addQuestions( questionsList );
+        	
+            if ( CollectionUtils.isNotEmpty( questionsList ) )
+            {
+        	    List<Integer> idEntryList = questionsList.stream( ).map( Question::getIdEntry ).collect( Collectors.toList( ) );
+        	    ResponseFilter responsefilter = new ResponseFilter( );
+        	    responsefilter.setListIdEntry( idEntryList );
+        		
+        	    existCompositeResponses = existsFilledResponse( responsefilter );
+            }
+        }
+        else if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) && nIdEntry > 0 )
+        {
+    	    ResponseFilter responsefilter = new ResponseFilter( );
+            responsefilter.setIdEntry( nIdEntry );
+            
+            existCompositeResponses = existsFilledResponse( responsefilter );
+        }
+        
+        return existCompositeResponses;
+    }
+    
+    /**
+     * Check if any response value filled exists for a question
      * 
      * @param responseFilter
-     *            the filter
-     * @return the list of responses
+     *            the response filter
+     * @return true if a response filled exist, false otherwise
      */
-    public List<Response> getResponseList( ResponseFilter responseFilter )
+    private boolean existsFilledResponse( ResponseFilter responseFilter )
     {
-    	List<Response> responseList = new ArrayList<>( );
+    	boolean existsFilledResponse = false ;
     	
-    	if ( responseFilter != null )
-    	{
-    		responseList = ResponseHome.getResponseList( responseFilter );
-    	}
+    	List<Response> responseList = ResponseHome.getResponseList( responseFilter );
+
+		if ( CollectionUtils.isNotEmpty( responseList ) 
+				&& responseList.stream( ).anyMatch( response -> StringUtils.isNotBlank( response.getResponseValue( ) ) ) )
+		{
+			existsFilledResponse = true;
+		}
     	
-    	return responseList;
+    	return existsFilledResponse;
     }
 }

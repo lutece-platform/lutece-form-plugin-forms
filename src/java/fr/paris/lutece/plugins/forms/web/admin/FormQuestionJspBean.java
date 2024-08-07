@@ -69,8 +69,6 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
-import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.plugins.genericattributes.business.ResponseFilter;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
@@ -126,7 +124,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 
     // Markers
     private static final String MARK_FIELDS_LIST_BY_ID_ENTRIES = "fields_list_by_id_entries";
-    private static final String MARK_ID_QUESTION_ENTRY_MAP = "idQuestionEntryMap";
+    private static final String MARK_QUESTION_ENTRY_MAP = "questionEntryMap";
 
     // Constants
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
@@ -168,7 +166,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_QUESTION ) );
-        model.put( MARK_ID_QUESTION_ENTRY_MAP, getIdQuestionEntryMap( listICompositeDisplay ) );
+        model.put( MARK_QUESTION_ENTRY_MAP, getQuestionEntryMap( listICompositeDisplay ) );
 
         setPageTitleProperty( StringUtils.EMPTY );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_QUESTIONS, locale, model );
@@ -568,7 +566,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
         
-        if ( isCompositeHasResponses( nIdEntry ) )
+        if ( _formService.existCompositeResponses( _formDisplay, nIdEntry ) )
         {
         	boolean bIsQuestion = CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) );
         	String strMessage = bIsQuestion ? MESSAGE_CANT_REMOVE_ENTRY_RESOURCES_ATTACHED : MESSAGE_CANT_REMOVE_GROUP_RESOURCES_ATTACHED;
@@ -586,51 +584,6 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
                 AdminMessage.TYPE_CONFIRMATION );
 
         return redirect( request, strMessageUrl );
-    }
-    
-    private boolean isCompositeHasResponses( int nIdEntry )
-    {
-    	boolean isCompositeHasResponses = false ;
-    	
-    	if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) ) && nIdEntry > 0 )
-        {
-    	    ResponseFilter responsefilter = new ResponseFilter( );
-            responsefilter.setIdEntry( nIdEntry );
-            
-            isCompositeHasResponses = isExisteQuestionFilled( responsefilter );
-        }
-    	else if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) ) )
-        {
-    	    List<Question> questionsList = new ArrayList<>( );
-            ICompositeDisplay composite = _formService.formDisplayToComposite( _formDisplay, null, 0 );
-            composite.addQuestions( questionsList );
-        	
-            if ( CollectionUtils.isNotEmpty( questionsList ) )
-            {
-        	    List<Integer> idEntryList = questionsList.stream( ).map( Question::getIdEntry ).collect( Collectors.toList( ) );
-        	    ResponseFilter responsefilter = new ResponseFilter( );
-        	    responsefilter.setListIdEntry( idEntryList );
-        		
-        	    isCompositeHasResponses = isExisteQuestionFilled( responsefilter );
-            }
-        }
-    	
-    	return isCompositeHasResponses;
-    }
-    
-    private boolean isExisteQuestionFilled( ResponseFilter responsefilter )
-    {
-    	boolean isExisteQuestionFilled = false ;
-    	
-    	List<Response> responseList = _formService.getResponseList( responsefilter );
-
-		if ( CollectionUtils.isNotEmpty(responseList) 
-				&& responseList.stream( ).anyMatch( response -> StringUtils.isNotBlank( response.getResponseValue( ) ) ) )
-		{
-			isExisteQuestionFilled = true;
-		}
-    	
-    	return isExisteQuestionFilled;
     }
 
     private String getConfirmMessageRemoveQuestion( Form form, FormDisplay formDisplay )
@@ -796,14 +749,14 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     }
     
     /**
-     * Modify the field attribute disabled
+     * change the deactivation of a question
      * 
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
      */
-    @Action( value = ACTION_MODIFY_FIELD_DISABLED )
-    public String doModifyFieldDisabled( HttpServletRequest request )
+    @Action( value = ACTION_DISABLE_QUESTION )
+    public String doToggleQuestionDisabled( HttpServletRequest request )
     {
     	int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
     	int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), INTEGER_MINUS_ONE );
@@ -815,10 +768,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         	
             if ( entry != null )
             {
-                Field disabledField = entry.getFieldByCode( IEntryTypeService.FIELD_DISABLED );
-                boolean valueField = disabledField != null ? !Boolean.parseBoolean( disabledField.getValue( ) ) : false;
+                boolean bFieldDisabled = entry.isDisabled( );
                 
-                _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_DISABLED, null, Boolean.toString( valueField ) );
+                _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_DISABLED, null, Boolean.toString( !bFieldDisabled ) );
                 
                 getFormDatabaseService( ).updateQuestion( questionToUpdate );
             }
@@ -834,7 +786,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      *            list of compositeDisplay objects
      * @return map
      */
-    private Map<String, Entry> getIdQuestionEntryMap( List<ICompositeDisplay> listICompositeDisplay )
+    private Map<String, Entry> getQuestionEntryMap( List<ICompositeDisplay> listICompositeDisplay )
     {
     	Map<String, Entry> questionEntryMap = new HashMap<>( );
     	

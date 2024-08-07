@@ -97,7 +97,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     protected static final String ACTION_MODIFY_GROUP = "modifyGroup";
     protected static final String ACTION_DUPLICATE_QUESTION = "duplicateQuestion";
     protected static final String ACTION_SAVE_QUESTION = "saveQuestion";
-    protected static final String ACTION_MODIFY_FIELD_DISABLED = "modifyFieldDisabled";
+    protected static final String ACTION_DISABLE_QUESTION = "disableQuestion";
 
     // Views
     protected static final String VIEW_CREATE_GROUP = "createGroup";
