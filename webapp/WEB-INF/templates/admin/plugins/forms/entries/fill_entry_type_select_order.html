@@ -1,4 +1,6 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign sortableListType=getFieldValueByCode( entry, "sortable_list_type" )>
+<#assign isMultiListSelection = (sortableListType?? && sortableListType=='1')>
 <#if entry.helpMessage?exists&&entry.helpMessage!=''>
   <#assign helpKey=entry.helpMessage />
 </#if>
@@ -12,81 +14,146 @@
 	<#assign inputClass = entry.CSSClass! />
 </#if>
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' groupStyle=groupStyle!'' mandatory=entry.mandatory htmlRequired=false >
-    <script src="js/admin/jquery/jquery-ui.min.js"></script>
-    <@input type='hidden' name='${idName}' id='${idName}'  />
-    <ul id="sortable1" class="connectedSortable ${inputClass}"
-		<#if list_responses??>
-			<#list list_responses as response>
-				<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
-					class="error"
-					<#break>
-				</#if>
-			</#list>
-		</#if>	>
-		<#list entry.fields as field>
-			<#if field.code == 'answer_choice'>
-				<#assign notSelected=true />
-				<#if list_responses?has_content>
-					<#list list_responses as response>
-						<#if response.entry.idEntry == entry.idEntry && response.field??>
-							<#if response.field.idField == field.idField>
-								<#assign notSelected=false />
+	<#if isMultiListSelection>
+		<@row class='mt-3'>
+		    <@input type='hidden' name='${idName}' id='${idName}' />
+		    <#assign hasErrors=false>
+				<@columns sm=6>
+					<@box>
+						<@boxHeader title='#i18n{forms.createEntry.sortableList.availableItems}' />
+						<@boxBody class='p-3'>
+							<@listGroup id='sortable1' class="connectedSortable ${inputClass}" params='style="min-height:10rem;"'>
+								<#list entry.fields as field>
+									<#if field.code == 'answer_choice'>
+										<#assign isSelected=false />
+										<#if list_responses?has_content>
+											<#list list_responses as response>
+												<#if response.entry.idEntry == entry.idEntry && response.field??>
+													<#if response.field.idField == field.idField>
+														<#assign isSelected=true />
+													</#if>
+												</#if>
+											</#list>
+										</#if>
+										<#if !isSelected>
+											<@listGroupItem id='field_${field.idField}'
+												class='ui-state-default d-flex justify-content-between'>
+												${field.title}
+											</@listGroupItem>
+										</#if>
+									</#if>
+								</#list>
+							</@listGroup>
+						</@boxBody>
+					</@box>
+				</@columns>
+				<@columns sm=6>
+					<#assign hasErrors=false />
+					<@box>
+						<@boxHeader title='#i18n{forms.createEntry.sortableList.selectedItems}' />
+						<@boxBody class='p-3'>
+							<@listGroup id='sortable2' class="connectedSortable ${inputClass}" params='style="min-height:10rem;"'>
+								<#if list_responses?has_content>
+									<#list list_responses?sort_by('sortOrder') as response>
+										<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
+											<#assign hasErrors=true />
+											<#break>
+										<#else>
+											<#list entry.fields as field>
+												<#if response.field.idField == field.idField>
+													<@listGroupItem id='field_${field.idField}'
+														class='ui-state-default justify-content-between d-flex justify-content-between'>
+														${field.title}
+													</@listGroupItem>
+												</#if>
+											</#list>
+										</#if>
+									</#list>
+								</#if>
+							</@listGroup>
+						</@boxBody>
+					</@box>
+				</@columns>
+				<#if hasErrors>
+					<@alert color='danger'>#i18n{forms.message.mandatory.entry}</@alert>
+			    </#if>
+		    <script>
+				$(function () {
+					$("#sortable1, #sortable2").sortable({
+						connectWith: ".connectedSortable"
+					}).disableSelection();
+
+					$('form').submit(function () {
+						$('#${idName}').val($("#sortable2").sortable("serialize").replaceAll('&', ';'));
+					});
+				});
+			</script>
+		</@row>
+	<#else>
+		<@row class='mt-3'>
+		    <@input type='hidden' name='${idName}' id='${idName}' />
+		    <#assign hasErrors=false>
+			<@columns sm=12>
+				<@listGroup id='sortable1' class="connectedSortable ${inputClass}">
+					<#list entry.fields as field>
+						<#if field.code == 'answer_choice'>
+							<#assign isSelected=false />
+							<#if list_responses?has_content>
+								<#list list_responses as response>
+									<#if response.entry.idEntry == entry.idEntry && response.field??>
+										<#if response.field.idField == field.idField>
+											<#assign isSelected=true />
+										</#if>
+									</#if>
+								</#list>
+							</#if>
+							<#if !isSelected>
+								<@listGroupItem id='field_${field.idField}'
+									class='ui-state-default d-flex justify-content-between'>
+									${field.title}
+								</@listGroupItem>
 							</#if>
 						</#if>
 					</#list>
-				</#if>
-				<#if notSelected>
-					 <li class="ui-state-default" id="field_${field.idField}">${field.title}</li>
-				</#if>
-			</#if>
-		</#list>
-	</ul>
-	<ul id="sortable2" class="connectedSortable ${inputClass}">
-		<#if list_responses??>
-			<#list list_responses as response>
-				<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
-					class="error"
-					<#break>
-				</#if>
-			</#list>
-		</#if>	>
-		<#if list_responses?has_content>
-			<#list list_responses?sort_by('sortOrder') as response>
-				<#list entry.fields as field>
-					<#if response.field.idField == field.idField>
-						<li class="ui-state-default" id="field_${field.idField}">${field.title}</li>
+				</@listGroup>
+				<@listGroup id='sortable2' class="connectedSortable ${inputClass}">
+					<#if list_responses?has_content>
+						<#list list_responses?sort_by('sortOrder') as response>
+							<#if response.entry.idEntry==entry.idEntry && response.entry.error??>
+								<#assign hasErrors=true />
+								<#break>
+							<#else>
+								<#list entry.fields as field>
+									<#if response.field.idField == field.idField>
+										<@listGroupItem id='field_${field.idField}'
+											class='ui-state-default justify-content-between d-flex justify-content-between'>
+											${field.title}
+										</@listGroupItem>
+									</#if>
+								</#list>
+							</#if>
+						</#list>
 					</#if>
-				</#list>
-			</#list>
-		</#if>
-	</ul>
-    <#if list_responses??>
-      <#list list_responses as response>
-        <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-          <@alert color='danger'>
-            <#assign error = response.entry.error>
-            <#if error.mandatoryError>
-              #i18n{forms.message.mandatory.entry}
-            <#else>
-              ${error.errorMessage}
-            </#if>
-          </@alert>
-        </#if>
-      </#list>
-    </#if>
-    <script>
-  $( function() {
-    $( "#sortable1, #sortable2" ).sortable({
-      connectWith: ".connectedSortable"
-    }).disableSelection();
+				</@listGroup>
+			</@columns>
+			<#if hasErrors>
+				<@alert color='danger'>#i18n{forms.message.mandatory.entry}</@alert>
+		    </#if>
+		    <script>
+				$(function () {
+					$("#sortable1, #sortable2").sortable({
+						connectWith: ".connectedSortable"
+					}).disableSelection();
 
-    $('form').submit(function(){
-    	if ( $( "#sortable2 li" ).length === 0){
-    		$('#${idName}').val($( "#sortable1" ).sortable("serialize").replaceAll('&',';'));
-    	}else{
-    		$('#${idName}').val($( "#sortable2" ).sortable("serialize").replaceAll('&',';'));
-    	}
-	});
-  });
-</script>
+					$('form').submit(function () {
+						if ($("#sortable2 li").length === 0) {
+							$('#${idName}').val($("#sortable1").sortable("serialize").replaceAll('&', ';'));
+						} else {
+							$('#${idName}').val($("#sortable2").sortable("serialize").replaceAll('&', ';'));
+						}
+					});
+				});
+			</script>
+		</@row>
+	</#if>
 </@formGroup>
