@@ -12,10 +12,14 @@
     <div class="col-12">
       <div class="input-group">
         <span class="input-group-text"><i class="fa fa-calendar fa-lg"></i></span>
+        <#assign default_today_date=getFieldByCode( entry, "default_today_date")>
         <#assign field_default = getFieldByCode( entry, "default_date_value" ) >
         <#assign placeholder = getFieldValueByCode(entry, "placeholder") >
         <#assign default=''>
-		<#if response?? && response.responseValue??>
+        <#assign toDay = .now?string("yyyy-MM-dd")>
+        <#if default_today_date?? && default_today_date.value?boolean>
+            <#assign default= toDay>
+		<#elseif response?? && response.responseValue??>
 			<#assign default=response.responseValue?number?number_to_date?iso_local>
 		<#elseif field_default.valueTypeDate?? >
 			<#assign default=field_default.valueTypeDate?iso_local>

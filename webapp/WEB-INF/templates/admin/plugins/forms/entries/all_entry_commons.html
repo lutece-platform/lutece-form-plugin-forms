@@ -36,6 +36,20 @@ function changeVisilityAnonymizePattern(){
 changeVisilityAnonymizePattern();
 </script>
 </#macro>
+
+<#macro toDayDate>
+<script type="text/javascript">
+    function changeVisibilityDateValue(){
+        if( document.getElementById( "default_today_date" ).checked ){
+            $('#default_date_group').hide();
+        } else {
+            $('#default_date_group').show();
+        }
+    }
+    changeVisibilityDateValue();
+</script>
+</#macro>
+
 <#--- MACRO formBox --->
 <#macro formBox entry stepid questionid title='' action='jsp/admin/plugins/forms/ManageQuestions.jsp' editable=true display=true rows=2>
 <@box>
