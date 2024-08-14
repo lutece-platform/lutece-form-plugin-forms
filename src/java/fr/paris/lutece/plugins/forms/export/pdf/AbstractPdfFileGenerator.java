@@ -49,6 +49,7 @@ import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.file.FileService;
+import fr.paris.lutece.portal.service.file.FileServiceException;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -348,7 +349,12 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
                 if ( response.getFile( ) != null )
                 {
                     IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
-                    fr.paris.lutece.portal.business.file.File fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
+                    fr.paris.lutece.portal.business.file.File fileImage = null;
+					try {
+						fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
+					} catch (FileServiceException e) {
+						AppLogService.error(e);
+					}
                     
                     String encoded = StringUtils.EMPTY;
                     if(fileImage != null && fileImage.getPhysicalFile() != null)
@@ -361,7 +367,12 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
             if ( entryTypeService instanceof EntryTypeFile && response.getFile( ) != null )
             {
                 IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
-                File fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
+                File fileImage = null;
+				try {
+					fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
+				} catch (FileServiceException e) {
+					AppLogService.error(e);
+				}
                 listResponseValue.add( fileImage != null ? fileImage.getTitle( ) : StringUtils.EMPTY);
             }
 
