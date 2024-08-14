@@ -67,6 +67,7 @@ import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.file.FileServiceException;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -499,8 +500,12 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         Field oldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
         if ( oldFile != null )
         {
-            _fileStoreProvider.delete( oldFile.getValue( ) );
-            FieldHome.remove( oldFile.getIdField( ) );
+            try {
+				_fileStoreProvider.delete( oldFile.getValue( ) );
+				FieldHome.remove( oldFile.getIdField( ) );
+			} catch (FileServiceException e) {
+				AppLogService.error(e);
+			}
         }
 
         Map<String, String> additionalParameters = new HashMap<>( );
