@@ -48,6 +48,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
@@ -117,6 +119,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     // Messages
     private static final String MESSAGE_CANT_REMOVE_ENTRY_RESOURCES_ATTACHED = "forms.message.cantRemoveEntry.resourceAttached";
     private static final String MESSAGE_CANT_REMOVE_GROUP_RESOURCES_ATTACHED = "forms.message.cantRemoveGroup.resourceAttached";
+    private static final String MESSAGE_CANT_REMOVE_ENTRY_CONDITION_ATTACHED = "forms.message.cantRemoveEntry.conditionAttached";
 
     // Warning messages
     private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
@@ -573,6 +576,10 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         	
         	return redirect( request, AdminMessageService.getMessageUrl( request, strMessage, AdminMessage.TYPE_STOP ) );
         }
+        else if ( existsCondtionalControlUsingQuestion( _formDisplay ) )
+        {
+            return redirect( request, AdminMessageService.getMessageUrl( request, MESSAGE_CANT_REMOVE_ENTRY_CONDITION_ATTACHED, AdminMessage.TYPE_STOP ) );
+        }
 
         String strMessage = getConfirmMessageRemoveQuestion( _form, _formDisplay );
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_COMPOSITE ) );
@@ -614,6 +621,26 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 
             }
         return strMessage;
+    }
+    
+    /**
+     * check that a conditional control using a question exists
+     * 
+     * @param formDisplay
+     *            The form dispay
+     * @return true if a conditional control exists, false otherwise
+     */
+    private boolean existsCondtionalControlUsingQuestion( FormDisplay formDisplay )
+    {
+        boolean existsCondtionalControl = false;
+
+        if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) )
+        {
+            existsCondtionalControl = CollectionUtils.isNotEmpty(ControlHome.getControlByQuestionAndType( 
+            		formDisplay.getCompositeId( ), ControlType.CONDITIONAL.getLabel( ) ) );
+        }
+        
+        return existsCondtionalControl;
     }
 
     /**
