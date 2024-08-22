@@ -770,7 +770,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             {
                 boolean bFieldDisabled = entry.isDisabled( );
                 
-                _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_DISABLED, null, Boolean.toString( !bFieldDisabled ) );
+                _formService.saveOrUpdateField( entry, IEntryTypeService.QUESTION_DISABLED, null, Boolean.toString( !bFieldDisabled ) );
                 
                 getFormDatabaseService( ).updateQuestion( questionToUpdate );
             }

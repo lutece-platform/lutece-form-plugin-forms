@@ -298,7 +298,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private boolean isQuestionEnabled( Entry entry, List<FormQuestionResponse> listFormQuestionResponse, DisplayType displayType )
     {
     	boolean isQuestionEnabled = true;
-        Field disabledField = entry.getFieldByCode( IEntryTypeService.FIELD_DISABLED );
+        Field disabledField = entry.getFieldByCode( IEntryTypeService.QUESTION_DISABLED );
         
         if ( disabledField != null && Boolean.parseBoolean( disabledField.getValue( ) ) )
         {
