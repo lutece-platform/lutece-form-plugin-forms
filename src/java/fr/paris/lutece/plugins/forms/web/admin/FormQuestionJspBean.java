@@ -71,7 +71,9 @@ import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.file.FileServiceException;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.message.AdminMessage;
@@ -121,6 +123,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     // Warning messages
     private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
     private static final String WARNING_CONFIRM_REMOVE_GROUP_ANY_QUESTIONS_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveGroup.formActive";
+    private static final String WARNING_INSUFFICIENT_RIGHTS_LEVEL_TO_DELETE_COMPOSITE = "forms.warning.deleteComposite.insufficientRightsLevel";
 
     // Markers
     private static final String MARK_FIELDS_LIST_BY_ID_ENTRIES = "fields_list_by_id_entries";
@@ -130,7 +133,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
     private static final String ILLUSTRATION_IMAGE = "illustration_image";
     private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
-
+    private static final int TECHNICAL_ADMIN_RIGHT_LEVEL = 0;
     private Form _form;
 
     /**
@@ -566,7 +569,12 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
         
-        if ( _formService.existCompositeResponses( _formDisplay, nIdEntry ) )
+        AdminUser adminUser = AdminUserService.getAdminUser( request );
+        if ( adminUser != null && adminUser.getUserLevel( ) != TECHNICAL_ADMIN_RIGHT_LEVEL )
+        {
+        	return redirect( request, AdminMessageService.getMessageUrl( request, WARNING_INSUFFICIENT_RIGHTS_LEVEL_TO_DELETE_COMPOSITE, AdminMessage.TYPE_STOP ) );
+        }
+        else if ( _formService.existCompositeResponses( _formDisplay, nIdEntry ) )
         {
         	boolean bIsQuestion = CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) );
         	String strMessage = bIsQuestion ? MESSAGE_CANT_REMOVE_ENTRY_RESOURCES_ATTACHED : MESSAGE_CANT_REMOVE_GROUP_RESOURCES_ATTACHED;
