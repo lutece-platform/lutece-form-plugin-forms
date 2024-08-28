@@ -33,16 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
 import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponseHome;
+import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
@@ -53,7 +46,15 @@ import fr.paris.lutece.plugins.forms.export.AbstractFileGenerator;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.forms.util.FormMultiviewWorkflowStateNameConstants;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.file.FileUtil;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 
 /**
  * FileGeneratro form Csv Export.
@@ -105,7 +106,6 @@ public class CSVFileGenerator extends AbstractFileGenerator
     {
         FormResponseCsvExport formResponseExport = new FormResponseCsvExport( );
 
-        boolean first = true;
         int count = 0;
 
         try ( BufferedWriter bos = Files.newBufferedWriter( tempFile, StandardCharsets.UTF_8 ) )
@@ -113,25 +113,26 @@ public class CSVFileGenerator extends AbstractFileGenerator
             bos.write( UTF8_BOM );
             List<FormResponseItem> listFormResponseItems = MultiviewFormService.getInstance( ).searchAllListFormResponseItem( _formPanel, _listFormColumn,
                     _listFormFilter, _sortConfig );
-            for ( FormResponseItem formResponseItem : listFormResponseItems )
-            {
-                count++;
-                if ( first )
-                {
-                    bos.write( formResponseExport.buildCsvColumnToExport( listFormResponseItems ) );
-                    bos.newLine( );
-                    first = false;
-                }
-                FormResponse formResponse = FormResponseHome.findByPrimaryKeyForIndex( formResponseItem.getIdFormResponse( ) );
-                bos.write( formResponseExport.buildCsvDataToExport( formResponse, findWorkflowState( formResponseItem ) ) );
-                bos.newLine( );
-                if ( count % FLUSH_SIZE == 0 )
-                {
-                    bos.flush( );
-                }
-            }
+            List<FormResponse> formResponseList = FormResponseCsvExport.getFormResponseFromItemList(listFormResponseItems);
+            if(formResponseList != null && !formResponseList.isEmpty()) {
+                int idForm = formResponseList.get(0).getFormId();
+                List<Question> listQuestions = QuestionHome.getQuestionListByIdFormInQuestionOrder(idForm);
+            bos.write(formResponseExport.buildCsvColumnToExport(listQuestions));
+            bos.newLine();
+                  for (FormResponse formResponse : formResponseList) {
+                      count++;
+                      FormResponseItem formResponseItem = listFormResponseItems.stream().filter(item -> item.getIdFormResponse() == formResponse.getId()).findFirst().orElse(null);
+                      bos.write(formResponseExport.buildCsvDataToExport(formResponse, findWorkflowState(formResponseItem)));
+                      bos.newLine();
+                      if (count % FLUSH_SIZE == 0) {
+                          bos.flush();
+                      }
+                  }
+              }
             bos.flush( );
-        }
+          } catch (Exception e) {
+            AppLogService.error("Error during CSV export", e.getMessage());
+          }
     }
 
     private String findWorkflowState( FormResponseItem formResponseItem )

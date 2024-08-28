@@ -33,23 +33,25 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
+import fr.paris.lutece.plugins.forms.business.Question;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.ListIterator;
-
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
-import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.business.Question;
-
+import java.util.Map;
+import java.util.stream.Collectors;
 /**
  * This class represents a CSV header
  *
  */
 public class CSVHeader
 {
+    Map <ArrayList<Integer>, Question> _mapQuestionAndIterationColumn = new HashMap<>();
     private final List<Question> _listQuestionColumns;
-    private final List<Question> _listIterationQuestionColumns;
+    private int _numberOfQuestionColumns;
 
     /**
      * Constructor
@@ -57,8 +59,10 @@ public class CSVHeader
     public CSVHeader( )
     {
         _listQuestionColumns = new ArrayList<>();
-        _listIterationQuestionColumns = new ArrayList<>();
+        _numberOfQuestionColumns = 0;
+        _mapQuestionAndIterationColumn = new HashMap<>();
     }
+
 
     /**
      * Adds the header for the specified question
@@ -66,6 +70,7 @@ public class CSVHeader
      * @param question
      *            the question to add
      */
+    @Deprecated
     public void addHeader( Question question )
     {
         ListIterator<Question> listIterator = _listQuestionColumns.listIterator( );
@@ -97,26 +102,104 @@ public class CSVHeader
         }
         _listQuestionColumns.add( question );
     }
-    
-    public void addHeadersWithIterations(Question question, List<FormResponse> formResponseList)
+
+    /**
+     * Builds the list of column names to export
+     * @param listQuestions
+     * @return the list of column names to export
+     */
+   public List<String> getListColumnNameToExport(List<Question> listQuestions)
     {
-    	for (FormResponse formResponse : formResponseList)
-    	{
-    		List<FormQuestionResponse> formQuestionResponseList = FormQuestionResponseHome.findFormQuestionResponseByResponseQuestion(formResponse.getId(), question.getId());
-    		for (FormQuestionResponse formQuestionResponse : formQuestionResponseList)
-        	{
-    			if (!_listQuestionColumns.contains(formQuestionResponse.getQuestion()))
-    			{
-    				_listQuestionColumns.add(formQuestionResponse.getQuestion());
-    			}
-				
-        		if (formQuestionResponseList.size() > 1 && !_listIterationQuestionColumns.contains(formQuestionResponse.getQuestion()))
-        		{
-        			_listIterationQuestionColumns.add(formQuestionResponse.getQuestion());
-        		}
-        	}
-    	}
+        List <String> listQuestionNameColumnToExport = new ArrayList<>();
+        if(listQuestions == null || listQuestions.isEmpty())
+        {
+            return listQuestionNameColumnToExport;
+        }
+        for (int i = 0; i < listQuestions.size(); i++) {
+            Question question = listQuestions.get(i);
+            if ( question.isResponseExportable( ) ) {
+                int formQuestionResponseWithMaxIte = FormQuestionResponseHome.findMaxIterationNumber(question.getId());
+                if(formQuestionResponseWithMaxIte > 0)
+                {
+                    for (int j = 0; j < formQuestionResponseWithMaxIte + 1; j++) {
+                        listQuestionNameColumnToExport.add(CSVUtil.buildColumnName(question.getTitle(), j));
+                    }
+                }
+                else
+                {
+                    listQuestionNameColumnToExport.add(question.getTitle());
+                }
+            }
+        }
+        return listQuestionNameColumnToExport;
     }
+
+    /**
+     * Returns the the question(and iterations) associated to the specified column index
+     * @param listQuestions
+     * @return the map of column index and question(and iterations)
+     */
+    public Map <ArrayList<Integer>, Question> getColumnNumberForQuestions(List<Question> listQuestions)
+    {
+        _mapQuestionAndIterationColumn = new HashMap<>();
+        if(listQuestions == null || listQuestions.isEmpty())
+        {
+            return _mapQuestionAndIterationColumn;
+        }
+        for (int i = 0; i < listQuestions.size(); i++) {
+            Question question = listQuestions.get(i);
+            if ( question.isResponseExportable( ) ) {
+                int formQuestionResponseWithMaxIte = FormQuestionResponseHome.findMaxIterationNumber(question.getId());
+                ArrayList<Integer> columnCountAndQuestionIteration = new ArrayList<>();
+                columnCountAndQuestionIteration.add(i);
+                columnCountAndQuestionIteration.add(formQuestionResponseWithMaxIte);
+                _mapQuestionAndIterationColumn.put(columnCountAndQuestionIteration, question);
+            }
+        }
+        return _mapQuestionAndIterationColumn;
+    }
+
+    /**
+     * Sorts the map by the first item of the key (column number) and then by the second item of the key (iteration number)
+     * @param mapQuestionAndIterationColumn
+     *
+     * @return the sorted map
+     */
+    public static <K extends List<Integer>, V> Map<K, V> sortByColumnNumber(Map<K, V> map) {
+        if(map == null || map.isEmpty())
+        {
+            return map;
+        }
+             return map.entrySet()
+                    .stream()
+                    .sorted(Comparator.comparingInt(entry -> entry.getKey().get(0)))
+                    .collect(Collectors.toMap(
+                            Map.Entry::getKey,
+                            Map.Entry::getValue,
+                            (e1, e2) -> e1,
+                            LinkedHashMap::new
+                    ));
+
+
+    }
+
+    /**
+     * @return the _mapQuestionAndIterationColumn
+     */
+   public Map <ArrayList<Integer>, Question> getMapQuestionAndIterationColumn()
+    {
+        return _mapQuestionAndIterationColumn;
+    }
+
+    /**
+     * Set the map of question and iteration column
+     * @param mapQuestionAndIterationColumn
+     */
+    public void setMapQuestionAndIterationColumn(Map <ArrayList<Integer>, Question> mapQuestionAndIterationColumn)
+    {
+        _mapQuestionAndIterationColumn = mapQuestionAndIterationColumn;
+    }
+
 
     /**
      * @return the _listFinalColumnToExport
@@ -126,8 +209,4 @@ public class CSVHeader
         return _listQuestionColumns;
     }
 
-	public List<Question> getIterationsQuestionColumns() 
-	{
-		return _listIterationQuestionColumns;
-	}
 }

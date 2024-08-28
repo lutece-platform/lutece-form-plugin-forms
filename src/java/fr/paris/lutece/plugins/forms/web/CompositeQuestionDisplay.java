@@ -65,6 +65,7 @@ import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -193,15 +194,16 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     {
         String strQuestionTemplate = StringUtils.EMPTY;
         Map<Integer, String> fieldsList = new HashMap<>( );
+        Entry entry = _question.getEntry( );
 
-        if ( _question.getEntry( ) == null )
+        if ( entry == null )
         {
             return strQuestionTemplate;
         }
 
-        IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( _question.getEntry( ).getEntryType( ) );
+        IEntryDisplayService displayService = EntryServiceManager.getInstance( ).getEntryDisplayService( entry.getEntryType( ) );
 
-        if ( displayService != null )
+        if ( displayService != null && isQuestionEnabled( entry, listFormQuestionResponse, displayType ) )
         {
             List<Response> listResponse = findResponses( listFormQuestionResponse );
             setQuestionVisibility( listResponse, displayType );
@@ -280,6 +282,64 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
 
         return strQuestionTemplate;
+    }
+    
+    /**
+     * Check if the question is enabled so that it can be displayed in the form
+     * 
+     * @param entry
+     *            the entry
+     * @param listFormQuestionResponse
+     *            the list of form question responses
+     * @param displayType
+     *            the display type
+     * @return true if the question is enabled, false otherwise
+     */
+    private boolean isQuestionEnabled( Entry entry, List<FormQuestionResponse> listFormQuestionResponse, DisplayType displayType )
+    {
+    	boolean isQuestionEnabled = true;
+        Field disabledField = entry.getFieldByCode( IEntryTypeService.FIELD_DISABLED );
+        
+        if ( disabledField != null && Boolean.parseBoolean( disabledField.getValue( ) ) )
+        {
+        	switch( displayType.getMode( ) )
+            {
+                case EDITION:
+                	isQuestionEnabled = false;
+                    break;
+                case READONLY:
+                	isQuestionEnabled = existsResponseFilled( listFormQuestionResponse );
+                    break;
+                default: // Nothing to do
+            }
+        }
+
+        return isQuestionEnabled;
+    }
+    
+    /**
+     * Check if a response value filled exists to a question 
+     * 
+     * @param listFormQuestionResponse
+     *            the list of form question responses
+     * @return true if a response value filled exists, false otherwise
+     */
+    private boolean existsResponseFilled( List<FormQuestionResponse> listFormQuestionResponse )
+    {
+    	boolean existsResponseFilled = false;
+    	
+        if ( CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
+        {
+        	List<Response> listResponse = findResponses( listFormQuestionResponse );
+        	
+        	if ( CollectionUtils.isNotEmpty( listResponse ) 
+        			&& listResponse.stream( ).anyMatch( response -> StringUtils.isNotBlank( response.getResponseValue( ) ) ) )
+        	{
+        		existsResponseFilled = true;
+        	}
+        }
+        
+        return existsResponseFilled;
     }
 
     /**

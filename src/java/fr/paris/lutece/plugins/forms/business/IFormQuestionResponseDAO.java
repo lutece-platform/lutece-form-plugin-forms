@@ -183,4 +183,15 @@ public interface IFormQuestionResponseDAO
      * @param plugin
      */
     void completeListWithEntryResponses( List<FormQuestionResponse> formQuestionResponsesList, Plugin plugin );
+
+    /**
+     * Find the maximum iteration number for a given question
+     *
+     * @param nIdQuestion
+     *            The identifier of the Question
+     * @param plugin
+     *            The Plugin to use to execute the query
+     * @return the maximum iteration number
+     */
+    int findMaxIterationNumberByQuestion(int nIdQuestion, fr.paris.lutece.portal.service.plugin.Plugin plugin);
 }

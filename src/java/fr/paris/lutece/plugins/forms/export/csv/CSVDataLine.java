@@ -33,20 +33,6 @@
  */
 package fr.paris.lutece.plugins.forms.export.csv;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.util.CollectionUtils;
-
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -57,6 +43,16 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
 /**
  * This class represents a CSV line
@@ -92,42 +88,19 @@ public class CSVDataLine
         _commonDataToExport = commonData.toString( );
     }
 
-    /**
-     * 
-     * @param formQuestionResponse
-     *            The data to add
-     */
-    public void addData( FormQuestionResponse formQuestionResponse )
-    {
-        Question question = formQuestionResponse.getQuestion( );
-        Map<Integer, List<String>> mapIterationsResponseValue = responseToIterationsStrings( formQuestionResponse );
-        StringBuilder sbReponseValues = new StringBuilder( );
-        
-        for (Entry<Integer, List<String>> entry : mapIterationsResponseValue.entrySet())
-        {
-        	Integer iteration = entry.getKey();
-        	for ( String strResponseValue : entry.getValue() )
-            {
-                sbReponseValues.append( strResponseValue ).append( RESPONSE_SEPARATOR );
-            }
-            if ( !_mapDataToExport.containsKey( question.getId( ) ) )
-            {
-            	_mapDataToExport.put(question.getId( ), new HashMap<>());
-            }
-            _mapDataToExport.get(question.getId()).put(iteration, sbReponseValues.toString() );
-        }
-    }
+
     
-    private Map<Integer, List<String>> responseToIterationsStrings(FormQuestionResponse formQuestionResponse)
+    public   List<String> responseToIterationsStrings(FormQuestionResponse formQuestionResponse)
     {
-    	Map<Integer, List<String>> mapResponseValue = new HashMap<>();
+        List<String> listResponseValue = new ArrayList<>();
     	fr.paris.lutece.plugins.genericattributes.business.Entry entry = formQuestionResponse.getQuestion().getEntry();
-    	
     	String strExportFieldsPrefix = entry.getEntryType().getBeanName() != null ? entry.getEntryType().getBeanName() : StringUtils.EMPTY;
     	
     	String strExportFieldsList = AppPropertiesService.getProperty( strExportFieldsPrefix + FormsConstants.PROPERTY_EXPORT_FIELD_LIST_PREFIX , null );
     	List<String> exportFieldsList = StringUtils.isEmpty(strExportFieldsList) ? new ArrayList<>() : Arrays.asList( strExportFieldsList.split( CONSTANT_COMMA ) );
-    	
+        // check not null && not empty
+      if(formQuestionResponse.getEntryResponse( ) != null && !formQuestionResponse.getEntryResponse( ).isEmpty())
+        {
         for ( Response response : formQuestionResponse.getEntryResponse( ) )
         {
         	if ( CollectionUtils.isEmpty(exportFieldsList) || exportFieldsList.contains(response.getField().getCode()))
@@ -136,26 +109,12 @@ public class CSVDataLine
                         I18nService.getDefaultLocale( ) );
                 if ( strResponseValue != null )
                 {
-                	int nIterationNumber = response.getIterationNumber();
-                	if (nIterationNumber == NumberUtils.INTEGER_MINUS_ONE)
-                	{
-                		nIterationNumber = formQuestionResponse.getQuestion().getIterationNumber();
-                	}
-                	
-                	if (mapResponseValue.containsKey(response.getIterationNumber()))
-                	{
-                		mapResponseValue.get(response.getIterationNumber()).add(strResponseValue);
-                	}
-                	else
-                	{
-                		List<String> listResponseValue = new ArrayList<>();
-                		listResponseValue.add(strResponseValue);
-                		mapResponseValue.put(nIterationNumber, listResponseValue);
-                	}
+                    listResponseValue.add( strResponseValue );
                 }
             }
         }
-        return mapResponseValue;
+        }
+        return listResponseValue;
     }
 
     /**

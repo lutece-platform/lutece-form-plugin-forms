@@ -5,30 +5,29 @@
 <#if id_display??>
 	<#assign fieldsetClass='display_field_${id_display}'>
 </#if>
-<#if isIterable>
-	<@div class="step-group">
-		<#list groupContent as childrenHtml>
-			<#assign indexIteration = ( childrenHtml?index / nbBaseChildren )?int />
-			<#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />
-			<#if nbTotalIteration gt nbIterationMin>
-				<@button type='submit' class='link-action' params=' formnovalidate name="action_removeIteration" value="${group.id}_${indexIteration}"'>
+<@div class="step-group">
+	<#list groupContent as childrenHtml>
+		<#assign indexIteration = ( childrenHtml?index / nbBaseChildren )?int />
+		<#if indexGroup != indexIteration>
+			<fieldset class="<#if id_display??> display_field_${id_display} d-none</#if>" style="position:relative;">
+			<legend>${group.title} <#if indexIteration &gt; 0>(${indexIteration+1})</#if></legend>
+			<#assign indexGroup=indexIteration>
+			<#if indexIteration gte nbIterationMin>
+				<@button type='submit' class='btn btn-danger' params=' formnovalidate name="action_removeIteration" value="${group.id}_${indexIteration}"'>
 					${group.iterationRemoveLabel!''}
 				</@button>
 			</#if>
-			<#if isIterable && indexIteration = nbTotalIteration - 1>
-				<@button type='submit' class='link-action' params='formnovalidate value="${id_group}" name="action_addIteration" '>
-					${group.iterationAddLabel!}
-				</@button>
-			</#if>
-			${childrenHtml}
-		</#list>
-	</@div>
-<#else>
-	<@fieldSet class=fieldsetClass legend=group.title >
-		<@div class="form-group-value-content">
-			<#list groupContent as childrenHtml>
-				${childrenHtml}
-			</#list>
-		</@div>
-	</@fieldSet>
-</#if>
+		</#if>
+		${childrenHtml}
+		</fieldset>
+	</#list>
+</@div>
+<@div class="row">
+	<#if isIterable >
+		<div class="add-iteration">
+			<@button type='submit' class='link-action' params='formnovalidate value="${id_group}" name="action_addIteration" '>
+				${group.iterationAddLabel!}
+			</@button>
+		</div>	
+	</#if>
+</@div>
