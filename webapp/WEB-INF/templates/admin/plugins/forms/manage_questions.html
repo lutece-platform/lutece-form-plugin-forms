@@ -84,26 +84,16 @@
 												<#if composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content><@icon style='check' /></#if>
 											</@td>
                                             <@td hide=['xs','sm'] sm=4>
-                                            	<#assign idEntry=-1>
                                                 <#if group>
                                                     <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyGroup}' buttonIcon='pencil' size='sm' />
                                                 <#else>
-													<#if questionEntryMap?? && questionEntryMap?has_content>
-														<#assign entry=questionEntryMap[composite.formDisplay.compositeId?c] />
-														<#if entry??><#assign idEntry>${entry.idEntry}</#assign></#if>
-													</#if>
                                                     <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyQuestion}' buttonIcon='pencil' size='sm' />
 													<@button type='button' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL"' title='#i18n{forms.manage_questions.action.condition}' hideTitle=['all'] buttonIcon='question' size='sm' />
 													<@button type='button' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION"' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='check' size='sm' />
 													<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=duplicateQuestion&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&token=${token}' class='btn-into'  title='#i18n{forms.manage_questions.action.copy}' buttonIcon='copy' size='sm' />
-													<#if entry?? && entry.disabled>
-														<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=disableQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.enable}' class='btn-into' buttonIcon='play' size='sm' />
-													<#else>
-														<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=disableQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.disable}' class='btn-into' buttonIcon='stop' size='sm' />
-													</#if>
 												</#if>
 												<@button type='button' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}"' title='#i18n{forms.manage_questions.action.move}' hideTitle=['all'] buttonIcon='sort' size='sm' />
-												<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}&id_entry=${idEntry}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' size='sm' /> 
+												<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' size='sm' /> 
 									        </@td>
                                             <@td sm=1><#if group><@icon style='minus-square' class='text-primary group-toggle' /></#if></@td>
                                         </@tr>

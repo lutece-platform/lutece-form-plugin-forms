@@ -73,6 +73,9 @@ ${breadcrumb_template}
 						<@formGroup labelFor='illustration_image' labelKey='#i18n{forms.createEntry.labelIllustrationPicture}' helpKey='#i18n{forms.createEntry.labelIllustrationPictureHelp}'>
 							<@input type='file' id='illustration_image'  name='illustration_image' />
 						</@formGroup>
+						<@formGroup labelFor='disable_question' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
+						    <@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' />
+						</@formGroup>
 						${question_create_template!}
 						<@formGroup>
 							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' />
