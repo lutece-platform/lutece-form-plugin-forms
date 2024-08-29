@@ -56,7 +56,11 @@ import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
+import fr.paris.lutece.portal.service.file.FileService;
+import fr.paris.lutece.portal.service.file.FileServiceException;
+import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * The display service for entry type file
@@ -139,30 +143,43 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
         List<Response> listResponse = retrieveResponseListFromModel( model );
         List<FileItem> listFiles = new ArrayList<>( );
+
+
         for ( Response response : listResponse )
         {
             if ( response.getFile( ) != null )
             {
-                if ( StringUtils.isNotEmpty( response.getFile( ).getFileKey( ) ) )
-                {
-                    File file = FileHome.findByPrimaryKey( response.getFile( ).getIdFile( ) );
-                    PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( file.getPhysicalFile( ).getIdPhysicalFile( ) );
-                    FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
-                    ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
-                            + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
-                            request );
-                    listFiles.add( fileItem );
+                try {
+                    if ( StringUtils.isNotEmpty( response.getFile( ).getFileKey( ) ) )
+                    {
+                        IFileStoreServiceProvider fss = FileService.getInstance( ).getFileStoreServiceProvider( response.getFile( ).getOrigin( ) );
+                        File file = fss.getFile( response.getFile( ).getFileKey( ) );
+
+                        file.setUrl(displayType.isFront( ) ? fss.getFileDownloadUrlFO( file.getFileKey()) : fss.getFileDownloadUrlBO(file.getFileKey()));
+
+                        PhysicalFile physicalFile = file.getPhysicalFile();
+                        FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
+                        ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
+                                + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
+                                request );
+                        listFiles.add( fileItem );
+                    }
+                    else if ( response.getFile( ).getPhysicalFile( ) != null )
+                    {
+                        FileItem fileItem = new GenAttFileItem( response.getFile( ).getPhysicalFile( ).getValue( ), response.getFile( ).getTitle( ) );
+                        ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
+                                + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
+                                request );
+                        listFiles.add( fileItem );
+                    }
                 }
-                else if ( response.getFile( ).getPhysicalFile( ) != null )
+                catch (FileServiceException e) 
                 {
-                    FileItem fileItem = new GenAttFileItem( response.getFile( ).getPhysicalFile( ).getValue( ), response.getFile( ).getTitle( ) );
-                    ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
-                            + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
-                            request );
-                    listFiles.add( fileItem );
+                    AppLogService.error("Error getting file from file store service provider", e);
                 }
             }
         }
+
         model.put( "listFiles", listFiles );
         return AppTemplateService.getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, service, model ) )
                 .getHtml( );
@@ -180,6 +197,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
      * @param model
      *            The model to populate
      * @return the template of the given Entry with its Response value
+     * @throws FileServiceException 
      */
     private String getEntryResponseValueTemplateDisplay( Entry entry, DisplayType displayType, Locale locale, Map<String, Object> model )
     {
@@ -193,7 +211,17 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
                 File file = response.getFile( );
                 if ( file != null && file.getPhysicalFile( ) == null )
                 {
-                    response.setFile( FileHome.findByPrimaryKey( file.getIdFile( ) ) );
+                    try {
+                        IFileStoreServiceProvider fss = FileService.getInstance( ).getFileStoreServiceProvider( response.getFile().getOrigin() );
+                        file = fss.getFile(file.getFileKey() );
+
+                        file.setUrl(displayType.isFront( ) ? fss.getFileDownloadUrlFO( file.getFileKey()) : fss.getFileDownloadUrlBO(file.getFileKey()));
+
+                        response.setFile( file );
+                    }
+                    catch (FileServiceException e) {
+                        AppLogService.error("Error getting file from file store service provider", e);
+                    }
                 }
             }
         }

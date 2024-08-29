@@ -6,7 +6,7 @@
             <@p>
             <#if response.file?exists>
 		<#if response.file.fileKey?exists>
-		        <@link href='jsp/admin/plugins/forms/FormsDownloadFile.jsp?id_file=${response.file.idFile}&id_response=${response.idResponse}'>
+		        <@link href='${response.file.url}'>
 		            ${response.file.title}(${response.file.size} O)
 		        </@link>
 		<#else>
