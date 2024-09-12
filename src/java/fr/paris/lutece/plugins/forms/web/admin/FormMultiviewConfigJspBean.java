@@ -53,6 +53,7 @@ import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeFile;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeGalleryImage;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeIdentityPicker;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
@@ -71,7 +72,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
     private static final long serialVersionUID = -2505310758526626253L;
 
     private static final Class<?> [ ] FILTERABLE = {
-            EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeDate.class
+            EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeDate.class, EntryTypeIdentityPicker.class
     };
     
     private static final List<Class<?>> FILTERABLE_LIST = Arrays.asList( FILTERABLE );

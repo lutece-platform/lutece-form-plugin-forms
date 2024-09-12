@@ -190,6 +190,21 @@
     <!-- EntryType -->
     <bean id="forms.entryTypeCheckBox" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox" />
 	<bean id="forms.entryTypeComment" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment" />
+	<bean id="forms.entryTypeIdentityPicker" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeIdentityPicker" >
+	<property name="anonymizationTypes">
+            <list>
+                <ref bean="genericattributes.entryIdAnonymizationType" />
+                <ref bean="genericattributes.entryCodeAnonymizationType" />
+                <ref bean="genericattributes.responseIdAnonymizationType" />
+                <ref bean="forms.formIdAnonymizationType" />
+                <ref bean="forms.stepIdAnonymizationType" />
+                <ref bean="forms.questionTitleAnonymizationType" />
+                <ref bean="genericattributes.randomGuidAnonymizationType" />
+                <ref bean="genericattributes.randomNumberAnonymizationType" />
+                <ref bean="genericattributes.defaultValueAnonymizationType" />
+            </list>
+        </property>
+    </bean>
 	<bean id="forms.entryTypeDate" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate">
         <property name="anonymizationTypes">
             <list>
@@ -410,6 +425,9 @@
 	<bean id="forms.entryTypeTelephoneNumberDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeTelephoneDisplayService">
 		<constructor-arg  type="java.lang.String" value="forms.entryTypeTelephoneNumber" />
 	</bean>
+	<bean id="forms.entryTypeIdentityPickerDisplayService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIdentityPickerDisplayService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeIdentityPicker" />
+	</bean>
 	
 	<!-- DataService -->
 	<bean id="forms.entryTypeCheckBoxDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeIterableDataService">
@@ -481,6 +499,9 @@
     <bean id="forms.entryTypeCameraDataService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDataService">
         <constructor-arg  type="java.lang.String" value="forms.entryTypeCamera" />
     </bean>
+    <bean id="forms.entryTypeIdentityPickerService" class="fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDataService">
+		<constructor-arg  type="java.lang.String" value="forms.entryTypeIdentityPicker" />
+	</bean>
 		
 	<bean id="forms.asynchronousUploadHandler" class="fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler" />
 	

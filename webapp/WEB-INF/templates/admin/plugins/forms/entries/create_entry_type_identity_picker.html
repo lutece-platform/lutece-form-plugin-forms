@@ -1,0 +1,92 @@
+<#include "all_entry_commons.html" />
+
+${breadcrumb_template}
+<@row>
+	<@columns>
+		<@box>
+			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
+			<@boxBody>
+				<@tform method="post" name="manage_entries" action="${action}" enctype="multipart/form-data">
+					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
+						<@input type='hidden' name='width' id='width' value='0' />
+						<#if entry.fieldDepend?exists>
+							<@input type='hidden' name='id_field' value='${entry.fieldDepend.idField}' />
+						</#if>
+						<@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
+						<@input type='hidden' name='id_step' value='${step.id!"0"}' />
+						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
+						</@formGroup>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+							<@input type='text' name='title' id='title' value='' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+							<@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
+						</@formGroup>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
+							<@input type='textarea' name='help_message' id='help_message' rows=2></@input>
+						</@formGroup>
+						
+						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelIdentityAttributes}'>
+							<@select name='identity_attribute' size='lg' multiple=10 items=entryTypeService.identityAttributesRefList id='identity_attribute' sort=true />
+						</@formGroup>
+						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelCreate}'>
+							<@checkBox orientation='switch' name='create_identity' id='create_identity' value='1' checked=getChecked('create_identity',list_param_default_values) />
+						</@formGroup>
+						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelModify}'>
+							<@checkBox orientation='switch' name='modify_identity' id='modify_identity' value='1' checked=getChecked('modify_identity',list_param_default_values) />
+						</@formGroup>
+						<@formGroup labelFor='storage' labelKey='#i18n{forms.createEntry.labelStorageIdentity}'>
+							<@checkBox orientation='switch' name='storage_identity' id='storage_identity' value='1' checked=getChecked('storage_identity',list_param_default_values) />
+						</@formGroup>
+						
+						<@formGroup labelFor='placeholder' labelKey='#i18n{forms.createEntry.labelPlaceholder}'>
+							<@input type='text' name='placeholder' id='placeholder' value='' maxlength=100 />
+						</@formGroup>
+						<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
+							<@input type='text' name='value' id='value' />
+						</@formGroup>
+						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
+							<@checkBox orientation='switch' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
+						</@formGroup>
+						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}'>
+							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2></@input>
+						</@formGroup>
+						<@formGroup>
+							<@checkBox orientation='switch' labelFor='confirm_field' labelKey='#i18n{forms.createEntry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' params='onchange="javascript:changeVisilityConfirmFieldTitle();"' />
+						</@formGroup>
+						<@formGroup labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.createEntry.labelConfirmFieldTitle}' >
+							<@input type='text' name='confirm_field_title' id='confirm_field_title' maxlength=255 />
+						</@formGroup>
+						<@formGroup>
+							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
+						</@formGroup>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
+						</@formGroup>
+						<@formGroup>
+							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
+						</@formGroup>
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
+						</@formGroup>
+						${question_create_template!}
+						<@formGroup>
+							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' />
+							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+						</@formGroup>
+					</@fieldSet>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>   
+<#include "/admin/util/editor/editor.html" />
+<@confirmField />
+<@anonymPattern />
+<@initEditor />
+ 

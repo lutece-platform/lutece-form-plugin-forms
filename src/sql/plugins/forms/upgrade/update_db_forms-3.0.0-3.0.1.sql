@@ -1,0 +1,2 @@
+INSERT INTO genatt_entry_type (title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin,display_order,inactive) VALUES
+('Identity picker',0,0,0,'forms.entryTypeIdentityPicker','map-marked-alt','forms',16,0);

@@ -1,0 +1,42 @@
+<#include "/admin/plugins/identitypicker/identitypicker.ftl" />
+<@row>
+    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+    <@columns sm=9>
+    <#assign storage=getFieldByCode( entry, "storage_identity")>
+	<#if storage.value?boolean>
+		<#assign checkedValueStorage = true />
+	<#else>
+		<#assign checkedValueStorage = false />
+	</#if>
+	
+    <#if list_responses?has_content>
+    <#if checkedValueStorage>
+	    <#assign cpt=0>
+        <#list list_responses?sort_by('sortOrder') as response>
+            <#if response.toStringValueResponse?matches(regex_url)>
+                <@p>
+                    <@link href=response.toStringValueResponse! class='url' title='${response.toStringValueResponse!} - #i18n{portal.site.portal_footer.newWindow}' target='_blank'>${response.toStringValueResponse!''}</@link>
+                </@p>
+            <#else>
+            	<#if cpt != 0 >
+               	   <@p>${lstAttributes[cpt - 1]} : ${response.toStringValueResponse!''}</@p>
+               </#if>
+               
+            </#if>
+            <#assign cpt=cpt+1>
+        </#list>
+    <#else>
+               
+     		   <#assign cptAttributes=0>           
+                <#list lstAttributes as attribute>
+			<@p>
+				${lstAttributes[cptAttributes]} : <span id="my-form-${attribute}" class="me-2"></span>
+			</@p>
+            <#assign cptAttributes=cptAttributes+1>
+		</#list>
+		<@identityPicker fieldMappings=JSONAttributes cuid=list_responses[0].toStringValueResponse  autoFill=true btnLabel='Voir identité'/>
+    </#if>
+    </#if>
+    
+    </@columns>
+</@row>

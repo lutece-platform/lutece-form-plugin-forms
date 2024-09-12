@@ -1,0 +1,69 @@
+<#include "/admin/plugins/identitypicker/identitypicker.ftl" />
+<#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#assign field_width=getFieldValueByCode( entry, "width")>
+<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
+<#assign field=getFieldByCode( entry, "text_config")>
+<#assign field_autocomplete = getFieldByCode(entry, "autocomplete")!{}>
+
+<#if field_autocomplete?? && field_autocomplete.value??>
+	<#assign autocomplete = "autocomplete=${field_autocomplete.value}" />
+<#else>
+	<#assign autocomplete = "" />
+</#if>
+
+<#if list_responses?has_content>
+	<#list list_responses as response>
+		<#if response.entry.idEntry == entry.idEntry>
+			<#if response.toStringValueResponse??>
+				<#assign inputValue = response.toStringValueResponse />
+			</#if>
+			<#if response.entry.error??>
+				<#assign groupStyle = 'error' />
+			</#if>
+		</#if>
+	</#list>
+<#else>
+	<#if field.value?exists>
+		<#assign inputValue = field.value />
+	<#else>
+		<#assign inputValue = '' />
+	</#if>
+</#if>
+<#if field_max_size?number!=-1>
+	<#assign maxlength = field_max_size?number />
+</#if>
+
+<@input type="hidden" id="field_customer_id" name="field_customer_id" />
+
+<#list lstAttributes as attribute>
+	<@formGroup labelFor='${attribute}' labelKey='${attribute}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' >
+		<@input type="text" id="my-form-${attribute}" readonly=true name="${attribute}" />
+	</@formGroup>
+</#list>
+
+<@formGroup labelFor='idpicker' labelKey='idpicker' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' >
+	<@identityPicker fieldMappings=JSONAttributes creation=bCreateIdentity?boolean update=bModifyIdentity?boolean/>
+</@formGroup>
+
+
+<#if list_responses??>
+  <#list list_responses as response>
+    <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+      <#assign error = response.entry.error>
+      <@alert color='danger'><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></@alert>
+    </#if>
+  </#list>
+</#if>
+<#assign confirmField=getFieldByCode( entry, "confirm_field")>
+<#if confirmField.value?boolean>
+	<#assign idName = buildEntryName( entry, entry_iteration_number )>
+	<@formGroup labelFor='${idName}_confirm_field' labelKey='${confirmField.title}' mandatory=entry.mandatory htmlRequired=false >
+    <#assign field_width=getFieldValueByCode( entry, "width")>
+    <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
+    <#assign field=getFieldByCode( entry, "text_config")>
+	<#if field_max_size?number!=-1>
+		<#assign maxlength = field_max_size?number />
+	</#if>
+		<@input type='text' name='${idName}_confirm_field' id='${idName}_confirm_field' inputSize=field_width?number value='' maxlength=maxlength!0/>
+    </@formGroup>
+</#if>
