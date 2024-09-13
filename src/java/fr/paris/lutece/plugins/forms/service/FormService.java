@@ -57,6 +57,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.business.Question;
+import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
@@ -614,11 +615,9 @@ public class FormService
      * 
      * @param formDisplay
      *            the form display
-     * @param nIdEntry
-     *            the entry id
      * @return true if responses exist, false otherwise
      */
-    public boolean existCompositeResponses( FormDisplay formDisplay, int nIdEntry )
+    public boolean existCompositeResponses( FormDisplay formDisplay )
     {
         boolean existCompositeResponses = false;
         
@@ -629,25 +628,30 @@ public class FormService
         
         if ( CompositeDisplayType.GROUP.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) )
         {
-    	    List<Question> questionsList = new ArrayList<>( );
+            List<Question> questionsList = new ArrayList<>( );
             ICompositeDisplay composite = formDisplayToComposite( formDisplay, null, 0 );
             composite.addQuestions( questionsList );
-        	
+            
             if ( CollectionUtils.isNotEmpty( questionsList ) )
             {
-        	    List<Integer> idEntryList = questionsList.stream( ).map( Question::getIdEntry ).collect( Collectors.toList( ) );
-        	    ResponseFilter responsefilter = new ResponseFilter( );
-        	    responsefilter.setListIdEntry( idEntryList );
-        		
-        	    existCompositeResponses = existsFilledResponse( responsefilter );
+                List<Integer> idEntryList = questionsList.stream( ).map( Question::getIdEntry ).collect( Collectors.toList( ) );
+                ResponseFilter responsefilter = new ResponseFilter( );
+                responsefilter.setListIdEntry( idEntryList );
+                
+                existCompositeResponses = existsFilledResponse( responsefilter );
             }
         }
-        else if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) && nIdEntry > 0 )
+        else if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) )
         {
-    	    ResponseFilter responsefilter = new ResponseFilter( );
-            responsefilter.setIdEntry( nIdEntry );
+            Question question = QuestionHome.findByPrimaryKey( formDisplay.getCompositeId( ) );
             
-            existCompositeResponses = existsFilledResponse( responsefilter );
+            if ( question != null && question.getIdEntry( ) > 0 )
+            {
+                ResponseFilter responsefilter = new ResponseFilter( );
+                responsefilter.setIdEntry( question.getIdEntry( ) );
+                
+                existCompositeResponses = existsFilledResponse( responsefilter );
+            }
         }
         
         return existCompositeResponses;
