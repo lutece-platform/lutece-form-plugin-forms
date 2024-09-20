@@ -109,10 +109,4 @@ public class EntryTypeComment extends AbstractEntryTypeComment implements IRespo
     {
         return false;
     }
-
-    @Override
-    protected IFileStoreServiceProvider getFileStoreServiceProvider( )
-    {
-        return FileService.getInstance( ).getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
-    }
 }
