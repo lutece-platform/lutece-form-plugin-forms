@@ -1,6 +1,7 @@
 <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <@addRequiredJsFiles />
-<script type="text/javascript" src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
+<script src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
+<script src="js/jquery/plugins/forms/moment.min.js" ></script>
 <script>
 function getInputElement(displayControl){
 var types = ['input','select','textarea'];
@@ -37,7 +38,6 @@ else {
 }
 }
 </script>
-
 <form id="form-validate" action="jsp/site/Portal.jsp?page=forms" method="post" enctype="multipart/form-data">
 	<#if form.logo??>
 		<img id="form_logo" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt=""/>

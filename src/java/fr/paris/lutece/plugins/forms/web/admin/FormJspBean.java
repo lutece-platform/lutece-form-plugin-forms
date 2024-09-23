@@ -604,7 +604,7 @@ public class FormJspBean extends AbstractJspBean
         
         checkWorkgroupPermission(formToBeModified, request);
 
-        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
+        List<Question> questionList = QuestionHome.getQuestionListByIdFormInQuestionOrder( formToBeModified.getId( ) );
 
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );

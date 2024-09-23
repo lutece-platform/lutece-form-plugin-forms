@@ -119,6 +119,9 @@ ${breadcrumb_template}
 						<@formGroup labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.createEntry.labelConfirmFieldTitle}'>
 							<@input type='text' name='confirm_field_title' id='confirm_field_title' value='${confirmFieldTitle!}'  maxlength=255 />
 						</@formGroup>
+						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
+						    <@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' checked=entry.disabled />
+						</@formGroup>
 						${question_modify_template!}
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />

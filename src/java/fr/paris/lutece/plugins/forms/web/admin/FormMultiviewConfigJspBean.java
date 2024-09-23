@@ -102,6 +102,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
     private static final String ACTION_MANAGE_MULTIVIEW = "manageMultiviewConfig";
     private static final String ACTION_MODIFY_FILTERABLE_QUESTIONS = "modifyFilterableQuestions";
     private static final String ACTION_MODIFY_VISIBLE_QUESTIONS = "modifyVisibleQuestions";
+    private static final String ACTION_SET_DEFAULT_ORDER = "doSetDefaultOrder";
 
     // Parameters
     
@@ -124,7 +125,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_FORMS );
         }
         
-        List<Question> questionList = QuestionHome.getListQuestionByIdForm( formToBeModified.getId( ) );
+        List<Question> questionList = QuestionHome.getQuestionListByIdFormInQuestionOrder( formToBeModified.getId( ) );
         List<Question> filterableQuestionList = new ArrayList<>( );
         List<Question> nonDisplayableQuestionList = new ArrayList<>( );
 
@@ -222,4 +223,29 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
 
         return redirect( request, VIEW_MANAGE_MULTIVIEW, mapParameters );
     }
+
+    @Action( ACTION_SET_DEFAULT_ORDER )
+    public String doSetDefaultDisplayOrder(HttpServletRequest request) throws AccessDeniedException
+    {
+        Integer nIdForm = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_FORM));
+        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            return redirect( request, VIEW_MANAGE_FORMS );
+        }
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_MANAGE_MULTIVIEW );
+
+        List<Question> questionList = QuestionHome.getQuestionListByIdFormInQuestionOrder(nIdForm);
+        for (int i = 0; i < questionList.size();i++){
+            questionList.get( i ).setMultiviewColumnOrder( i+1 );
+        }
+        // update the list
+        questionList.forEach( QuestionHome::update );
+        Map<String, String> mapParameters = new LinkedHashMap<>();
+        mapParameters.put(FormsConstants.PARAMETER_ID_FORM, String.valueOf(nIdForm));
+
+        return redirect(request, VIEW_MANAGE_MULTIVIEW, mapParameters);
+    }
 }
+

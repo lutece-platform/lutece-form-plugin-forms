@@ -33,27 +33,25 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
+import fr.paris.lutece.plugins.forms.business.ControlHome;
+import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
-import fr.paris.lutece.plugins.forms.business.Question;
-import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
@@ -117,6 +115,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     // Messages
     private static final String MESSAGE_CANT_REMOVE_ENTRY_RESOURCES_ATTACHED = "forms.message.cantRemoveEntry.resourceAttached";
     private static final String MESSAGE_CANT_REMOVE_GROUP_RESOURCES_ATTACHED = "forms.message.cantRemoveGroup.resourceAttached";
+    private static final String MESSAGE_CANT_REMOVE_ENTRY_CONDITION_ATTACHED = "forms.message.cantRemoveEntry.conditionAttached";
 
     // Warning messages
     private static final String WARNING_CONFIRM_REMOVE_QUESTION_FORM_ACTIVE = "forms.warning.deleteComposite.confirmRemoveQuestion.formActive";
@@ -124,7 +123,6 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 
     // Markers
     private static final String MARK_FIELDS_LIST_BY_ID_ENTRIES = "fields_list_by_id_entries";
-    private static final String MARK_QUESTION_ENTRY_MAP = "questionEntryMap";
 
     // Constants
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
@@ -166,7 +164,6 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         model.put( FormsConstants.MARK_ENTRY_TYPE_REF_LIST, FormsEntryUtils.initListEntryType( ) );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
         model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_QUESTION ) );
-        model.put( MARK_QUESTION_ENTRY_MAP, getQuestionEntryMap( listICompositeDisplay ) );
 
         setPageTitleProperty( StringUtils.EMPTY );
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_QUESTIONS, locale, model );
@@ -537,7 +534,6 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     {
         int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
         int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), INTEGER_MINUS_ONE );
-        int nIdEntry = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY ), INTEGER_MINUS_ONE );
 
         if ( nIdStep == INTEGER_MINUS_ONE || nIdDisplay == INTEGER_MINUS_ONE )
         {
@@ -566,12 +562,16 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
             _formDisplay = FormDisplayHome.findByPrimaryKey( nIdDisplay );
         }
         
-        if ( _formService.existCompositeResponses( _formDisplay, nIdEntry ) )
+        if ( _formService.existCompositeResponses( _formDisplay ) )
         {
-        	boolean bIsQuestion = CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) );
-        	String strMessage = bIsQuestion ? MESSAGE_CANT_REMOVE_ENTRY_RESOURCES_ATTACHED : MESSAGE_CANT_REMOVE_GROUP_RESOURCES_ATTACHED;
-        	
-        	return redirect( request, AdminMessageService.getMessageUrl( request, strMessage, AdminMessage.TYPE_STOP ) );
+            boolean bIsQuestion = CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( _formDisplay.getCompositeType( ) );
+            String strMessage = bIsQuestion ? MESSAGE_CANT_REMOVE_ENTRY_RESOURCES_ATTACHED : MESSAGE_CANT_REMOVE_GROUP_RESOURCES_ATTACHED;
+            
+            return redirect( request, AdminMessageService.getMessageUrl( request, strMessage, AdminMessage.TYPE_STOP ) );
+        }
+        else if ( existsCondtionalControlUsingQuestion( _formDisplay ) )
+        {
+            return redirect( request, AdminMessageService.getMessageUrl( request, MESSAGE_CANT_REMOVE_ENTRY_CONDITION_ATTACHED, AdminMessage.TYPE_STOP ) );
         }
 
         String strMessage = getConfirmMessageRemoveQuestion( _form, _formDisplay );
@@ -614,6 +614,26 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 
             }
         return strMessage;
+    }
+    
+    /**
+     * check that a conditional control using a question exists
+     * 
+     * @param formDisplay
+     *            The form dispay
+     * @return true if a conditional control exists, false otherwise
+     */
+    private boolean existsCondtionalControlUsingQuestion( FormDisplay formDisplay )
+    {
+        boolean existsCondtionalControl = false;
+
+        if ( CompositeDisplayType.QUESTION.getLabel( ).equalsIgnoreCase( formDisplay.getCompositeType( ) ) )
+        {
+            existsCondtionalControl = CollectionUtils.isNotEmpty(ControlHome.getControlByQuestionAndType( 
+            		formDisplay.getCompositeId( ), ControlType.CONDITIONAL.getLabel( ) ) );
+        }
+        
+        return existsCondtionalControl;
     }
 
     /**
@@ -746,63 +766,6 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         addInfo( INFO_MOVE_COMPOSITE_SUCCESSFUL, getLocale( ) );
 
         return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, nIdStepTarget );
-    }
-    
-    /**
-     * change the deactivation of a question
-     * 
-     * @param request
-     *            The HTTP request
-     * @return The URL to go after performing the action
-     */
-    @Action( value = ACTION_DISABLE_QUESTION )
-    public String doToggleQuestionDisabled( HttpServletRequest request )
-    {
-    	int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ), INTEGER_MINUS_ONE );
-    	int nIdQuestion = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ), INTEGER_MINUS_ONE );
-
-        if ( nIdQuestion != INTEGER_MINUS_ONE )
-        {
-            Question questionToUpdate = QuestionHome.findByPrimaryKey( nIdQuestion );
-            Entry entry = questionToUpdate.getEntry( );	
-        	
-            if ( entry != null )
-            {
-                boolean bFieldDisabled = entry.isDisabled( );
-                
-                _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_DISABLED, null, Boolean.toString( !bFieldDisabled ) );
-                
-                getFormDatabaseService( ).updateQuestion( questionToUpdate );
-            }
-        }
-
-        return redirect( request, VIEW_MANAGE_QUESTIONS, FormsConstants.PARAMETER_ID_STEP, nIdStep );
-    }
-    
-    /**
-     * Get a map of an association of an id of question and an entry
-     * 
-     * @param listICompositeDisplay
-     *            list of compositeDisplay objects
-     * @return map
-     */
-    private Map<String, Entry> getQuestionEntryMap( List<ICompositeDisplay> listICompositeDisplay )
-    {
-    	Map<String, Entry> questionEntryMap = new HashMap<>( );
-    	
-    	if ( CollectionUtils.isNotEmpty( listICompositeDisplay ) )
-    	{
-    		List<Question> questionsList = new ArrayList<>( );
-    		    	
-            for ( ICompositeDisplay composite : listICompositeDisplay )
-            {
-                composite.addQuestions( questionsList );
-            }
-    		
-            questionEntryMap = questionsList.stream( ).distinct( ).collect( Collectors.toMap( q -> String.valueOf( q.getId( ) ), Question::getEntry ) );
-    	}
-    	
-    	return questionEntryMap;
     }
 
     @Override

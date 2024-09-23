@@ -51,6 +51,9 @@ ${breadcrumb_template}
 						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
 						</@formGroup>
+						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
+							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' />
+						</@formGroup>
 						<@input type='hidden' id='token' name='token' value='${token}' />
 						<@formGroup>
 							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
