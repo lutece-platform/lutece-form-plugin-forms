@@ -77,10 +77,8 @@ import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.form.response.view.FormResponseViewModelProcessorFactory;
 import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewModelProcessor;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
-import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
-import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -178,7 +176,12 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( formResponse.getFormId( ) ),
                 FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) getUser( ) );
         boolean bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( request, nIdFormResponse );
-
+        if(bAuthorizedRecord)
+        {
+            int nIdForm = formResponse.getFormId( );
+            Form form = FormHome.findByPrimaryKey(nIdForm);
+            bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponseWithinWorkgroup( request, form );
+        }
         if ( !bRBACAuthorization || !bAuthorizedRecord )
         {
             throw new AccessDeniedException( MESSAGE_ACCESS_DENIED );

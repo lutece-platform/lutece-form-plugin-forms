@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.service;
 
 import javax.servlet.http.HttpServletRequest;
+import fr.paris.lutece.plugins.forms.business.Form;
 
 /**
  * Forms service for managing the authorization on access form response from the multiview page
@@ -51,4 +52,7 @@ public interface IFormsMultiviewAuthorizationService
      * @return the boolean which tell if the connected user is authorized to access the form response or not
      */
     boolean isUserAuthorizedOnFormResponse( HttpServletRequest request, int nIdFormResponse );
+
+
+    boolean isUserAuthorizedOnFormResponseWithinWorkgroup(HttpServletRequest request, Form form);
 }

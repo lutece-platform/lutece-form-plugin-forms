@@ -55,9 +55,6 @@ import fr.paris.lutece.plugins.forms.web.form.FormDisplayFactory;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.plugins.forms.business.FormResponse;
-import fr.paris.lutece.plugins.forms.business.FormResponseHome;
-import fr.paris.lutece.plugins.forms.business.FormHome;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -123,16 +120,27 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
                 List<Integer> listIdFormResponse = listFormResponseItem.stream( ).map( FormResponseItem::getIdFormResponse ).collect( Collectors.toList( ) );
                 bIsUserAuthorizedOnFormResponse = listIdFormResponse.contains( nIdFormResponse );
             }
-            if(bIsUserAuthorizedOnFormResponse) {
-                User user = AdminUserService.getAdminUser(request);
-                FormResponse formResponse = FormResponseHome.findByPrimaryKey(nIdFormResponse);
-                Form form = FormHome.findByPrimaryKey(formResponse.getFormId());
-                bIsUserAuthorizedOnFormResponse = AdminWorkgroupService.isAuthorized(form, user);
-            }
         }
 
         return bIsUserAuthorizedOnFormResponse;
     }
+
+    /**
+     * Check if the user is authorized to access the form response within workgroup constraints
+     *
+     * @param request
+     *           The request to use to determine if the user can access the details of the given form response
+     * @param form
+     *          The Form
+     * @return true if the user is authorized to access the form response, false otherwise
+     */
+    @Override
+    public boolean isUserAuthorizedOnFormResponseWithinWorkgroup(HttpServletRequest request, Form form)
+    {
+        User user = AdminUserService.getAdminUser(request);
+        return  AdminWorkgroupService.isAuthorized(form, user);
+    }
+
 
     /**
      * Build a form response id filter from an id response
