@@ -32,7 +32,16 @@ ${breadcrumb_template}
 						<@formGroup labelFor='placeholder' labelKey='#i18n{forms.createEntry.labelPlaceholder}'>
 							<@input type='text' name='placeholder' id='placeholder' value=placeholder maxlength=100 />
 						</@formGroup>
-						<@formGroup labelFor='date' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
+						<@formGroup>
+								<#assign default_today_date=getFieldByCode( entry, "default_today_date")>
+								<#if default_today_date.value?boolean>
+									<#assign checkedToDay = true />
+								<#else>
+									<#assign checkedToDay = false />
+								</#if>
+							<@checkBox orientation='switch' labelFor='default_today_date' labelKey='#i18n{forms.createEntry.defaultTodayDate}' name='default_today_date' id='default_today_date' value='1' params='onchange="javascript:changeVisibilityDateValue();"' checked=checkedToDay/>
+						</@formGroup>
+						<@formGroup id="default_date_group" labelFor='date' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
 							<#assign field = getFieldByCode( entry, "default_date_value" ) >
 							<@inputGroup>
 								<@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
@@ -91,3 +100,4 @@ ${breadcrumb_template}
 </@row>
 <@anonymPattern />
 <@initEditor />
+<@toDayDate />
