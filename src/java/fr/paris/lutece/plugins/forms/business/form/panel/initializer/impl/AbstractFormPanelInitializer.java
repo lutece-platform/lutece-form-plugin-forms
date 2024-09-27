@@ -35,7 +35,8 @@ package fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
-
+import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
+import fr.paris.lutece.api.user.User;
 /**
  * Abstract class for implementation of the IFormPanelInitializer interface
  */
@@ -61,4 +62,6 @@ public abstract class AbstractFormPanelInitializer implements IFormPanelInitiali
     {
         _formParameters = formParameters;
     }
+    public abstract IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart(User user);
+
 }

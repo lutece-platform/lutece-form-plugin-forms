@@ -38,12 +38,9 @@ import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
@@ -56,6 +53,8 @@ import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPane
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.form.FormDisplayFactory;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
+import fr.paris.lutece.plugins.forms.business.Form;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -125,6 +124,23 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
 
         return bIsUserAuthorizedOnFormResponse;
     }
+
+    /**
+     * Check if the user is authorized to access the form response within workgroup constraints
+     *
+     * @param request
+     *           The request to use to determine if the user can access the details of the given form response
+     * @param form
+     *          The Form
+     * @return true if the user is authorized to access the form response, false otherwise
+     */
+    @Override
+    public boolean isUserAuthorizedOnFormResponseWithinWorkgroup(HttpServletRequest request, Form form)
+    {
+        User user = AdminUserService.getAdminUser(request);
+        return  AdminWorkgroupService.isAuthorized(form, user);
+    }
+
 
     /**
      * Build a form response id filter from an id response
