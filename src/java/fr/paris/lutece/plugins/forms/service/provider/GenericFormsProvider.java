@@ -85,6 +85,8 @@ public abstract class GenericFormsProvider {
 	private static final String MARK_BASE_URL = "base_url";
 	private static final String MARKER_DESCRIPTION_BASE64 = "base64";
 	private static final String MARKER_FORM_TITLE = "form_title";
+	private static final String MARK_CREATION_TIME = "creation_time";
+	private static final String MARK_UPDATE_TIME = "update_time";
 	
 	// URL PARAMETERS
 	private static final String PARAMETER_VIEW_FORM_RESPONSE_DETAILS = "view_form_response_details";
@@ -101,6 +103,9 @@ public abstract class GenericFormsProvider {
     private static final String MESSAGE_I18N_STATUS = "forms.marker.provider.url.detail.reponse.status";
     private static final String MESSAGE_I18N_STATUS_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.status_update_date";
     private static final String MESSAGE_I18N_FORM = "forms.marker.provider.url.detail.reponse.form";
+	private static final String MESSAGE_I18N_CREATION_TIME = "forms.marker.provider.url.detail.reponse.creation_time";
+	private static final String MESSAGE_I18N_UPDATE_TIME = "forms.marker.provider.url.detail.reponse.update_time";
+
 
 	/**
 	 * provide forms values as model (map)
@@ -257,6 +262,10 @@ public abstract class GenericFormsProvider {
         updateStatusDateMarker.setDescription( MESSAGE_I18N_STATUS_UPDATE_DATE );
         InfoMarker formTitleMarker = new InfoMarker( MARKER_FORM_TITLE );
         formTitleMarker.setDescription( MESSAGE_I18N_FORM );
+		InfoMarker creationTimeMarker = new InfoMarker( MARK_CREATION_TIME );
+		creationTimeMarker.setDescription( MESSAGE_I18N_CREATION_TIME );
+		InfoMarker updateTimeMarker = new InfoMarker( MARK_UPDATE_TIME );
+		updateTimeMarker.setDescription( MESSAGE_I18N_UPDATE_TIME );
         
         descriptionMarkersList.add( markerAdminURl );
         descriptionMarkersList.add( markerFoUrl );
@@ -265,6 +274,8 @@ public abstract class GenericFormsProvider {
         descriptionMarkersList.add( statusMarker );
         descriptionMarkersList.add( updateStatusDateMarker );
         descriptionMarkersList.add( formTitleMarker );
+		descriptionMarkersList.add( creationTimeMarker );
+		descriptionMarkersList.add( updateTimeMarker );
         
         return descriptionMarkersList;
     }
