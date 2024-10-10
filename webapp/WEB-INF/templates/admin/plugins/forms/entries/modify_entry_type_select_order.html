@@ -51,6 +51,14 @@ ${breadcrumb_template}
                         <@formGroup>
                             <@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1'  labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
                         </@formGroup>
+                        <@formGroup labelKey='#i18n{forms.createEntry.labelSortableListType}' labelClass='mb-3' rows=2>
+							<#assign sortableListType=getFieldValueByCode( entry, "sortable_list_type" ) />
+							<#if !sortableListType?has_content>
+								<#assign sortableListType='0' />
+							</#if>
+							<@radioButton name='sortable_list_type' id='sortable_list_type_simple' value='0' labelKey='#i18n{forms.createEntry.labelSimpleSortableList}' labelFor='sortable_list_type_simple' checked=(sortableListType='0') />
+							<@radioButton name='sortable_list_type' id='sortable_list_type_selection' value='1' labelKey='#i18n{forms.createEntry.labelSelectSortableList}' labelFor='sortable_list_type_selection' checked=(sortableListType='1') />
+						</@formGroup>
 			            <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>

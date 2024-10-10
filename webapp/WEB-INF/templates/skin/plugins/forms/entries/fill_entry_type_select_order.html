@@ -1,60 +1,61 @@
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 	<div class="mb-3 row">
 		<script src="js/admin/jquery/jquery-ui.min.js"></script>
+		<#assign sortableListType=getFieldValueByCode( entry, "sortable_list_type" ) />
+		<#assign isMultiListSelection = (sortableListType?? && sortableListType=='1')>
+		<#assign multiListStyle = '' />
+		<#if isMultiListSelection>
+			<#assign multiListStyle = 'style="border: 1px solid #eee; min-height:10rem; padding:1rem;"' />
+		</#if>
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
 		<input type='hidden' name='${idName}' id='${idName}'>
 		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-12">	 
-			<ul id="sortable1" class="connectedSortable ${entry.CSSClass!}">
-				<#if list_responses??>
-					<#list list_responses as response>
-						<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
-							class="is-invalid"
-							<#break>
-						</#if>
-					</#list>
-				</#if>
-				<#list entry.fields as field>
-					<#if field.code == 'answer_choice'>
-						<#assign notSelected=true />
-						<#if list_responses?has_content>
-							<#list list_responses as response>
-								<#if response.entry.idEntry == entry.idEntry && response.field??>
-									<#if response.field.idField == field.idField>
-										<#assign notSelected=false />
-									</#if>
+		<#if isMultiListSelection>
+			<div class="col-6">
+			<label class="col-form-label" for="sortable1">#i18n{forms.createEntry.sortableList.availableItems}</label>
+		<#else>
+			<div class="col-12">
+		</#if>
+		<ul id="sortable1" class="connectedSortable ${entry.CSSClass!}" ${multiListStyle}>
+			<#list entry.fields as field>
+				<#if field.code == 'answer_choice'>
+					<#assign notSelected=true />
+					<#if list_responses?has_content>
+						<#list list_responses as response>
+							<#if response.entry.idEntry == entry.idEntry && response.field??>
+								<#if response.field.idField == field.idField>
+									<#assign notSelected=false />
 								</#if>
-							</#list>
-						</#if>
-						<#if notSelected>
-							 <li class="ui-state-default" id="field_${field.idField}">${field.title}</li>
-						</#if>
+							</#if>
+						</#list>
 					</#if>
-				</#list>
-				</ul>
- 
-				<ul id="sortable2" class="connectedSortable ${entry.CSSClass!}">
-				<#if list_responses??>
-					<#list list_responses as response>
-						<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
-							class="is-invalid"
-							<#break>
-						</#if>
-					</#list>
+					<#if notSelected>
+						 <li class="ui-state-default" id="field_${field.idField}">${field.title}</li>
+					</#if>
 				</#if>
-				<#if list_responses?has_content>
-					<#list list_responses?sort_by('sortOrder') as response>
+			</#list>
+		</ul>
+		<#if isMultiListSelection>
+			</div>
+			<div class="col-6">
+			<label class="col-form-label" for="sortable2">#i18n{forms.createEntry.sortableList.selectedItems}</label>
+		</#if>
+		<ul id="sortable2" class="connectedSortable ${entry.CSSClass!}" ${multiListStyle}>
+			<#if list_responses?has_content>
+				<#list list_responses?sort_by('sortOrder') as response>
+					<#if isMultiListSelection && response.entry.idEntry == entry.idEntry && response.entry.error??>
+						<#assign hasErrors=true />
+						<#break>
+					<#else>
 						<#list entry.fields as field>
 							<#if response.field.idField == field.idField>
 								<li class="ui-state-default" id="field_${field.idField}">${field.title}</li>
 							</#if>
 						</#list>
-					</#list>
-				</#if>
-			</ul>
-			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="form-control-plaintext">${entry.helpMessage}</span>
+					</#if>
+				</#list>
 			</#if>
+		</ul>
 			<#if list_responses??>
 				<#list list_responses as response>
 					<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
@@ -70,20 +71,34 @@
 				</#list>
 			</#if>
 		</div>
+		<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+			<span class="form-control-plaintext">${entry.helpMessage}</span>
+		</#if>
 	</div>
 	<script>
-  $( function() {
-    $( "#sortable1, #sortable2" ).sortable({
-      connectWith: ".connectedSortable"
-    }).disableSelection();
+		$(function () {
+			$("#sortable1, #sortable2").sortable({
+				connectWith: ".connectedSortable"
+			}).disableSelection();
 
-    $('form').submit(function(){
-    	if ( $( "#sortable2 li" ).length === 0){
-    		$('#${idName}').val($( "#sortable1" ).sortable("serialize").replaceAll('&',';'));
-    	}else{
-    		$('#${idName}').val($( "#sortable2" ).sortable("serialize").replaceAll('&',';'));
-    	}
-	});
-  });
-</script>
+			$('form').submit(function () {
+				// If we are using the selection/sorting from one list to another
+				if ( "${isMultiListSelection?c}" === "true" ) {
+					// Only retrieve the selected items from the 2nd list
+					$('#${idName}').val($("#sortable2").sortable("serialize").replaceAll('&', ';'));
+				}
+				// If we are using the standard single list, with sorting only
+				else {
+					// Retrieve the items from the original/main list
+					if ($("#sortable2 li").length === 0) {
+						$('#${idName}').val($("#sortable1").sortable("serialize").replaceAll('&', ';'));
+					}
+					// Retrieve the items from the list containing the user's selection
+					else {
+						$('#${idName}').val($("#sortable2").sortable("serialize").replaceAll('&', ';'));
+					}
+				}
+			});
+		});
+	</script>
 </#if>
