@@ -73,18 +73,35 @@ ${breadcrumb_template}
 <@initEditor />
 <@anonymPattern />
 <script>
-<#noparse>
+	<#noparse>
 
-</#noparse>
-$( function(){
-	var byteSize = $('#file_max_size').val();
-		byteSize = prettySize( byteSize );
-		$('#file_max_size_pretty').html( byteSize );
-	$('#file_max_size').on('keyup', function(){
-		var byteSize = $(this).val();
-		byteSize = prettySize( byteSize );
-		$('#file_max_size_pretty').html( byteSize );
-	});
-});
+    </#noparse>
+    $(function() {
+        var byteSize = $('#file_max_size').val();
+        byteSize = prettySize(byteSize);
+        $('#file_max_size_pretty').html(byteSize);
+
+        $('#file_max_size').on('keyup', function() {
+            var byteSize = $(this).val();
+            byteSize = prettySize(byteSize);
+            $('#file_max_size_pretty').html(byteSize);
+        });
+
+        // Set max_files value to 1 if only display on BO
+        function checkOnlyDisplayInBack() {
+            if ($('#only_display_in_back').is(':checked')) {
+                $('#max_files').val(1);
+                $('#max_files').prop('readonly', true);
+            } else {
+                $('#max_files').val('');
+                $('#max_files').prop('readonly', false);
+            }
+        }
+
+        checkOnlyDisplayInBack();
+        $('#only_display_in_back').change(function() {
+            checkOnlyDisplayInBack();
+        });
+    });
 </script>
- 
+
