@@ -3,8 +3,9 @@
 		<#assign response_error = list_responses[0]>
 		<#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
 			<#assign hasError = true />
+		</#if>
 	</#if>
-	<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
+	<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
 	<#assign idName = buildEntryName( entry, entry_iteration_number )>
   <#assign nbFiles = entry.getFieldByCode('max_files').value >
   <#assign maxFileSize = entry.getFieldByCode('file_max_size').value >
@@ -68,4 +69,3 @@ $( function(){
   </#if>
 });
 </script>
-</#if>
