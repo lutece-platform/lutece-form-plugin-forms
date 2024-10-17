@@ -103,7 +103,7 @@ import fr.paris.lutece.util.url.UrlItem;
  * Controller which manage the multiview of responses of all Forms
  */
 @Controller( controllerJsp = "MultiviewForms.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MULTIVIEW" )
-public class MultiviewFormsJspBean extends AbstractJspBean
+public class MultiviewFormsJspBean extends AbstractMultiviewFormJspBean
 {
     // Generated serial UID
     private static final long serialVersionUID = 2122079505317782087L;
@@ -245,6 +245,11 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         model.put( MARK_FORM_PANEL_LIST, _listAuthorizedFormPanelDisplay );
         model.put( MARK_CURRENT_SELECTED_PANEL, _strSelectedPanelTechnicalCode );
         model.put( MARK_LIST_FORMAT_EXPORT, ExportServiceManager.getInstance( ).getRefListFormatExport( ) );
+        
+        if ( request.getParameter( PARAMETER_BACK_FROM_ACTION ) != null )
+        {
+        	addActionConfirmationToModel( request, model );
+        }
 
         return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW, model );
     }
