@@ -85,6 +85,7 @@ public abstract class GenericFormsProvider {
 	private static final String MARK_BASE_URL = "base_url";
 	private static final String MARKER_DESCRIPTION_BASE64 = "base64";
 	private static final String MARKER_FORM_TITLE = "form_title";
+	private static final String MARK_URL_FO_FILES_LINK = "url_fo_forms_files_link";
 	
 	// URL PARAMETERS
 	private static final String PARAMETER_VIEW_FORM_RESPONSE_DETAILS = "view_form_response_details";
@@ -92,6 +93,7 @@ public abstract class GenericFormsProvider {
 	private static final String PARAMETER_ID_FORM_RESPONSES = "id_form_response";
 	private static final String PARAMETER_ID_FORM_RESPONSES_FO = "id_response";
 	private static final String PARAMETER_PAGE_FORM_RESPONSE = "formsResponse";
+	private static final String PARAMETER_VIEW_FORM_FILES_LINK_FO = "formFileView";
 	
     // Infomarkers description I18n keys
     private static final String MESSAGE_I18N_DESCRIPTION = "forms.marker.provider.url.admin.detail.reponse.description";
@@ -101,6 +103,7 @@ public abstract class GenericFormsProvider {
     private static final String MESSAGE_I18N_STATUS = "forms.marker.provider.url.detail.reponse.status";
     private static final String MESSAGE_I18N_STATUS_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.status_update_date";
     private static final String MESSAGE_I18N_FORM = "forms.marker.provider.url.detail.reponse.form";
+	private static final String MESSAGE_I18N_FO_FILE_LINK = "forms.marker.provider.url.fo.file.link";
 
 	/**
 	 * provide forms values as model (map)
@@ -190,6 +193,12 @@ public abstract class GenericFormsProvider {
 			url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS_FO );
 			url.addParameter( PARAMETER_ID_FORM_RESPONSES_FO, formResponse.getId( ) );
 			model.put( MARK_URL_FO_RESPONSE, url.getUrl( ) );
+
+			UrlItem urlFilesLinkFo = new UrlItem( AppPathService.getProdUrl( request ) + AppPathService.getPortalUrl( ) );
+			urlFilesLinkFo.addParameter( FormsConstants.PARAMETER_PAGE, PARAMETER_PAGE_FORM_RESPONSE );
+			urlFilesLinkFo.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_FILES_LINK_FO );
+			urlFilesLinkFo.addParameter( PARAMETER_ID_FORM_RESPONSES_FO, formResponse.getId( ) );
+			model.put( MARK_URL_FO_FILES_LINK, url.getUrl( ) );
 		}
 
 		return model;
@@ -257,6 +266,8 @@ public abstract class GenericFormsProvider {
         updateStatusDateMarker.setDescription( MESSAGE_I18N_STATUS_UPDATE_DATE );
         InfoMarker formTitleMarker = new InfoMarker( MARKER_FORM_TITLE );
         formTitleMarker.setDescription( MESSAGE_I18N_FORM );
+		InfoMarker markerFoFileUrl = new InfoMarker( MARK_URL_FO_FILES_LINK );
+		markerFoFileUrl.setDescription( MESSAGE_I18N_FO_FILE_LINK );
         
         descriptionMarkersList.add( markerAdminURl );
         descriptionMarkersList.add( markerFoUrl );
@@ -265,6 +276,7 @@ public abstract class GenericFormsProvider {
         descriptionMarkersList.add( statusMarker );
         descriptionMarkersList.add( updateStatusDateMarker );
         descriptionMarkersList.add( formTitleMarker );
+		descriptionMarkersList.add( markerFoFileUrl );
         
         return descriptionMarkersList;
     }

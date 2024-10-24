@@ -38,9 +38,19 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseStep;
+import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
+import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
+import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeFileDisplayService;
+import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.portal.business.file.File;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
@@ -97,6 +107,7 @@ public class FormResponseXPage extends MVCApplication
 
     // Views
     public static final String VIEW_FORM_RESPONSE = "formResponseView";
+    public static final String VIEW_FORM_FILE = "formFileView";
 
     // Actions
     private static final String ACTION_PROCESS_ACTION = "doProcessAction";
@@ -104,6 +115,7 @@ public class FormResponseXPage extends MVCApplication
 
     // Templates
     private static final String TEMPLATE_VIEW_FORM_RESPONSE = "/skin/plugins/forms/view_form_response.html";
+    private static final String TEMPLATE_VIEW_FORM_FILE = "/skin/plugins/forms/view_form_file.html";
     private static final String TEMPLATE_TASK_FORM_RESPONSE = "/skin/plugins/forms/task_form_workflow.html";
 
     // Marks
@@ -111,6 +123,7 @@ public class FormResponseXPage extends MVCApplication
     private static final String MARK_ID_FORM_RESPONSE = "id_form_response";
     private static final String MARK_ID_ACTION = "id_action";
     private static final String MARK_TASK_FORM = "tasks_form";
+    private static final String MARK_LIST_FILE = "listFiles";
 
     // Parameters
     private static final String PARAMETER_ID_ACTION = "id_action";
@@ -136,6 +149,50 @@ public class FormResponseXPage extends MVCApplication
         xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );
 
         return xPage;
+    }
+
+    @View( value = VIEW_FORM_FILE, defaultView = false )
+    public XPage getFormFileView( HttpServletRequest request ) throws SiteMessageException
+    {
+        Locale locale = getLocale( request );
+        FormResponse formResponse = findFormResponseFrom( request );
+        List<Response> listResponse = new ArrayList<Response>();
+        if("true".equals(request.getParameter(FormsConstants.PARAMETER_ACTION_SUCCESS)))
+        {
+            addInfo( MESSAGE_ACTION_SUCCESS,getLocale(request) );
+        }
+        Map<String, Object> model = getModel( );
+        model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
+        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_PROCESS_ACTION ) );
+        for (FormResponseStep step: formResponse.getSteps() ){
+            listResponse.addAll(findResponses(step.getQuestions()));
+        }
+        model.put( FormsConstants.MARK_QUESTION_LIST_RESPONSES, listResponse );
+
+        formResponse.getSteps().stream()
+                .flatMap(step -> step.getQuestions().stream())
+                .filter(fqr -> fqr.getQuestion().getEntry().isOnlyDisplayInBack())
+                .forEach(fqr -> {
+                    IEntryDisplayService displayService = EntryServiceManager.getInstance()
+                            .getEntryDisplayService(fqr.getQuestion().getEntry().getEntryType());
+                    if (displayService instanceof EntryTypeFileDisplayService) {
+                        displayService.getEntryTemplateDisplay(request, fqr.getQuestion().getEntry(), locale, model, DisplayType.READONLY_FRONTOFFICE);
+                    }
+                });
+
+        List<File> listFiles = formResponse.getSteps().stream()
+                .flatMap(step -> step.getQuestions().stream())
+                .flatMap(fqr -> fqr.getEntryResponse().stream())
+                .map(Response::getFile)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        model.put( MARK_LIST_FILE, listFiles );
+        XPage xPage = getXPage( TEMPLATE_VIEW_FORM_FILE, getLocale( request ), model );
+        xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
+        xPage.setPathLabel( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PATHLABEL, locale ) );
+
+           return xPage;
     }
 
     @fr.paris.lutece.portal.util.mvc.commons.annotations.Action( value = ACTION_PROCESS_ACTION )
@@ -301,5 +358,20 @@ public class FormResponseXPage extends MVCApplication
         }
         
         return formResponse;
+    }
+
+    private List<Response> findResponses(List<FormQuestionResponse> listFormQuestionResponse )
+    {
+        List<Response> listResponse = new ArrayList<>( );
+
+        if ( listFormQuestionResponse != null )
+        {
+            for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
+            {
+                    listResponse.addAll(formQuestionResponse.getEntryResponse( ));
+            }
+        }
+
+        return listResponse;
     }
 }
