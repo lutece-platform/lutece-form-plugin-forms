@@ -171,7 +171,6 @@ public class FormResponseXPage extends MVCApplication
 
         formResponse.getSteps().stream()
                 .flatMap(step -> step.getQuestions().stream())
-                .filter(fqr -> fqr.getQuestion().getEntry().isOnlyDisplayInBack())
                 .forEach(fqr -> {
                     IEntryDisplayService displayService = EntryServiceManager.getInstance()
                             .getEntryDisplayService(fqr.getQuestion().getEntry().getEntryType());
@@ -182,6 +181,7 @@ public class FormResponseXPage extends MVCApplication
 
         List<File> listFiles = formResponse.getSteps().stream()
                 .flatMap(step -> step.getQuestions().stream())
+                .filter(fqr -> fqr.getQuestion().getEntry().isOnlyDisplayInBack())
                 .flatMap(fqr -> fqr.getEntryResponse().stream())
                 .map(Response::getFile)
                 .filter(Objects::nonNull)
