@@ -1,1 +1,22 @@
-<#-- Nothing to display -->
+<#if getError( list_responses, entry )?? >
+  <#assign error = getError( list_responses, entry ) >
+</#if>
+<#assign name = buildEntryName( entry, entry_iteration_number )>
+<#assign fieldAgreement = getFieldByCode( entry, "agreement" ) >
+<#if list_responses?? && getResponseContainingTheFieldWithCode( list_responses, "agreement" )?? >
+  <#assign responseAgreement = getResponseContainingTheFieldWithCode( list_responses, "agreement" ) >
+</#if>
+<#assign checked = false />
+<#if responseAgreement?? && responseAgreement.toStringValueResponse == "true"><#assign checked = true /></#if>
+<#assign style = 'inline' />
+
+<@div class="mb-3 row">
+	<@div class="col-12">
+		<@checkBox name="${name}" id="${name}_${fieldAgreement.idField}" value="${fieldAgreement.idField}" checked=checked orientation=style class="${entry.CSSClass!}<#if error?? > is-invalid</#if>" />
+		<#assign fieldLink = getFieldByCode( entry, "link" ) >
+		<@link href='jsp/site/RunStandaloneApp.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}' params='onclick="javascript:openFormsTermsOfService(this.href); return false;"' target='_blank'>${fieldLink.value}</@link>
+		<#if error?? && error.isDisplayableError>
+		  <@span class="invalid-feedback"><#if error.mandatoryError>${error.errorMessage}</#if></@span>
+		</#if>
+	</@div>
+</@div>
