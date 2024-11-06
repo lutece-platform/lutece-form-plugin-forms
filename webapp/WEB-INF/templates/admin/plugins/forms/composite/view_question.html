@@ -87,8 +87,33 @@
 			}
 		});
 		input${control.id}_${question.iterationNumber}.change();
+        toggleRequiredAttributesByVisibility();
 	</#list>
 	});
+
+
+/**
+ * Toggles the "required" attribute on input fields based on their visibility.
+ * If an input field is hidden (determined by a CSS class or style), the "required" attribute is removed,
+ * preventing validation errors from occurring on non-visible fields during form submission.
+ * This function helps ensure that only visible fields are validated as required.
+ */
+ function toggleRequiredAttributesByVisibility() {
+    $("div[displayControl]").each(function () {
+        var $input = $(this).find("input, select, textarea");
+
+        // Check if this element is visible or has the class "control_invalid"
+        if ($(this).hasClass("control_invalid") || $(this).is(":hidden")) {
+            // If hidden or marked invalid, remove required
+            $input.removeAttr("required");
+        } else {
+            // If visible, add required based on initial configuration
+            if ($input.attr("data-mandatory") === "true") {
+                $input.attr("required", "required");
+            }
+        }
+    });
+}
 </script>
 <#else>
 <input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='${question.id}_${question.iterationNumber}' hidden />
