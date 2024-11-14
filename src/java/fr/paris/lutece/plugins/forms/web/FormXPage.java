@@ -894,9 +894,7 @@ public class FormXPage extends MVCApplication
             // if you go to step 2, then you log in (as you didn't save any backup), the token is invalided
             // why are we here as we didn't try to save any backup ? So instead of throwing the error, we redirect.
             AppLogService.error("FormXPage l 897 : " + MESSAGE_ERROR_TOKEN );
-            _currentStep = StepHome.findByPrimaryKey(Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_STEP)));
-            List<String> errorList = new ArrayList<>( );
-            _currentStep = FormsResponseUtils.getNextStep( _currentStep.getId( ), errorList, _formResponseManager );
+            _currentStep = null;
             return getStepView(  request );
         }
 
@@ -1258,6 +1256,14 @@ public class FormXPage extends MVCApplication
             if ( user != null  && form.isBackupEnabled() )
             {
                 _formResponseManager = _formService.createFormResponseManagerFromBackUp( form, user.getName( ) );
+                if( _formResponseManager.getCurrentStep( ) != null )
+                {
+                    _currentStep = _formResponseManager.getCurrentStep( );
+                }
+                else
+                {
+                    _currentStep = StepHome.getInitialStep( form.getId( ) );
+                }
             }
             else
             {
