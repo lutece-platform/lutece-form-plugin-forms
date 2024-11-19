@@ -66,6 +66,8 @@ public class FormResponseSearchItem extends SearchItem
     public static final String FIELD_SELECT_SUFFIX = "_select";
     public static final String FIELD_SELECT_TITLE = "_select_title";
     public static final String FIELD_PUBLISHED = "published";
+    public static final String FIELD_DATA_LAYER = "DataLayer";
+    public static final String FIELD_ROLE_USER = "RoleUser";
 
     private static final int INTEGER_MINUS_ONE = -1;
 
