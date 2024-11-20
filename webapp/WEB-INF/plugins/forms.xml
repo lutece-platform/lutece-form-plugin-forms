@@ -123,5 +123,20 @@
 
     <!-- Portlet parameters -->
     <portlets>
+        <portlet>
+            <portlet-class>fr.paris.lutece.plugins.forms.business.portlet.FormsListPortletHome</portlet-class>
+            <portlet-type-id>FORMS_LIST_PORTLET</portlet-type-id>
+            <portlet-type-name>forms.portlet.formsList.name</portlet-type-name>
+            <portlet-creation-url>plugins/forms/CreateFormsListPortlet.jsp</portlet-creation-url>
+            <portlet-update-url>plugins/forms/ModifyFormsListPortlet.jsp</portlet-update-url>
+            <portlet-create-action-url>plugins/forms/DoCreateFormsListPortlet.jsp</portlet-create-action-url>
+            <portlet-modify-action-url>plugins/forms/DoModifyFormsListPortlet.jsp</portlet-modify-action-url>
+            <portlet-create-script-template>/admin/portlet/script_create_portlet.html</portlet-create-script-template>
+            <portlet-modify-script-template>/admin/portlet/script_modify_portlet.html</portlet-modify-script-template>
+            <portlet-create-specific-template/>
+            <portlet-modify-specific-template/>
+            <portlet-create-specific-form-template/>
+            <portlet-modify-specific-form-template/>
+        </portlet>
 	</portlets>
 </plug-in>
