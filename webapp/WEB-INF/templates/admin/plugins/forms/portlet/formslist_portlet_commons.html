@@ -1,0 +1,117 @@
+<#macro formsListPortlet >
+<@row id='forms-portlet' class='mt-3'>
+  <@columns sm=6>
+    <@box>
+        <@boxHeader title='#i18n{forms.portlet.formsList.titleAvailableFormsList}' boxTools=true />
+        <@boxBody class='p-3'>
+            <@listGroup id='form-available' params='style="min-height:15rem;"'>
+              <#list available_forms_list as form>
+                <@listGroupItem id=form.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params='draggable="true" tabindex="0"'>
+                  <@span>${form.title}</@span> <@icon style='arrows-move ms-auto' />
+                </@listGroupItem>
+              </#list>
+            </@listGroup>
+        </@boxBody>
+    </@box>
+  </@columns>
+  <@columns sm=6>
+    <@box>
+        <@boxHeader title='#i18n{forms.portlet.formsList.titlePublishedFormsList}' />
+        <@boxBody class='p-3'>
+            <@listGroup id='form-published' params='style="min-height:15rem;"'>
+                <#list published_forms_list as form>
+                    <@listGroupItem id=form.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params='draggable="true" tabindex="0"'>
+                      <@span>${form.title}</@span> <@icon style='arrows-move ms-auto' />
+                    </@listGroupItem>
+                </#list>
+            </@listGroup>
+        </@boxBody>
+    </@box>   
+  </@columns>
+</@row>
+<script>
+  let alreadySubmitted = false;
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const form = document.getElementById('form-portlet');
+
+    form.addEventListener('submit', (e) => {
+      if (alreadySubmitted) {
+        e.preventDefault();
+        return;
+      }
+      alreadySubmitted = true;
+    });
+  });
+</script>
+<script type="module">
+import {
+    LuteceDraggable
+} from './themes/shared/modules/luteceDraggable.js';
+
+const baseUrl = document.getElementsByTagName('base')[0].href;
+
+function moveItem( sourceList, targetList ) {
+    const selectedItem = sourceList.querySelector(':hover');
+    if ( selectedItem ){
+        const newItem = selectedItem.cloneNode(true);
+        targetList.appendChild(newItem);
+        sourceList.removeChild(selectedItem);
+    }
+    return selectedItem.id
+}
+
+document.addEventListener( "DOMContentLoaded", function(){
+    const formAvailable = document.querySelector("#form-available");
+    const formPublished = document.querySelector("#form-published"); 
+
+    formAvailable.addEventListener('dblclick', (e => {
+        const formId = moveItem( formAvailable, formPublished )
+        doAddForm( formId );
+    }))
+  
+    formPublished.addEventListener('dblclick', (e => {
+        const formId = moveItem( formPublished, formAvailable )
+        doDeleteForm( formId );
+    }))
+  
+    setFormsListDraggable( );
+});
+
+function setFormsListDraggable( ){
+    const formAvailable = document.querySelector("#form-available");
+    const formPublished = document.querySelector("#form-published");
+    
+    const containers = document.querySelectorAll('#forms-portlet .list-group');
+    const draggables = Array.from(containers).flatMap(container => [...container.children]);
+    const AdminHomeDraggable = new LuteceDraggable( draggables, containers );
+      
+    AdminHomeDraggable.on('dragover', (event) => {
+        formPublished.classList.add('bg-gray');
+    });
+    
+    AdminHomeDraggable.on('dragged', (event) => {
+        event.preventDefault();
+        
+        const itemId = event.target.id;
+        const droppedItem = document.getElementById(itemId);
+        const parentItem = droppedItem.parentElement.id;
+        
+        const itemIndex = Array.from( formPublished.children ).indexOf( droppedItem );
+        
+        if( itemIndex >= 0 ){
+            doAddForm( itemId );
+        } else {
+            doDeleteForm( itemId )
+        }
+    });
+}
+
+async function doAddForm( formId ){
+  await fetch(`<#noparse>${baseUrl}jsp/admin/plugins/forms/DoUpdateFormsList.jsp?form_id=${formId}&action=add</#noparse>`)
+}
+
+async function doDeleteForm( formId ) {
+  await fetch(`<#noparse>${baseUrl}jsp/admin/plugins/forms/DoUpdateFormsList.jsp?form_id=${formId}&action=remove</#noparse>`)
+}
+</script>
+</#macro>

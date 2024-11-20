@@ -46,3 +46,8 @@ INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id
 --
 INSERT INTO core_dashboard(dashboard_name, dashboard_column, dashboard_order) VALUES('FORMS', 3, 2);
 
+--
+-- Dumping data for table core_portlet_type
+--
+DELETE FROM core_portlet_type where id_portlet_type = 'FORMS_LIST_PORTLET';
+INSERT INTO core_portlet_type (id_portlet_type,name,url_creation,url_update,home_class,plugin_name,url_docreate,create_script,create_specific,create_specific_form,url_domodify,modify_script,modify_specific,modify_specific_form,icon_name) VALUES ('FORMS_LIST_PORTLET','forms.portlet.formsList.name','plugins/forms/CreateFormsListPortlet.jsp','plugins/forms/ModifyFormsListPortlet.jsp','fr.paris.lutece.plugins.forms.business.portlet.FormsListPortletHome','forms','plugins/forms/DoCreateFormsListPortlet.jsp','/admin/portlet/script_create_portlet.html','/admin/plugins/forms/portlet/create_portlet_formslist.html','','plugins/forms/DoModifyFormsListPortlet.jsp','/admin/portlet/script_modify_portlet.html','/admin/plugins/forms/portlet/modify_portlet_formslist.html','','list-details');

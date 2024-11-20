@@ -288,3 +288,11 @@ CREATE TABLE forms_control_group (
 	logical_operator varchar(50) NOT NULL,
 	PRIMARY KEY (id_control_group)
 );
+
+
+DROP TABLE IF EXISTS forms_list_portlet;
+CREATE TABLE forms_list_portlet (
+	id_portlet int NOT NULL,
+	id_form int default 0 NOT NULL,
+	PRIMARY KEY (id_portlet,id_form)
+);

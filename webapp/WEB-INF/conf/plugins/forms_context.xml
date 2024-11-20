@@ -25,6 +25,7 @@
     <bean id="forms.indexerActionDAO" class="fr.paris.lutece.plugins.forms.business.form.search.IndexerActionDAO" />
     <bean id="forms.formExportConfigDao" class="fr.paris.lutece.plugins.forms.business.export.FormExportConfigDao" />
     <bean id="forms.formCategoryDAO" class="fr.paris.lutece.plugins.forms.business.FormCategoryDAO" />
+    <bean id="forms.formsListPortletDAO"  class="fr.paris.lutece.plugins.forms.business.portlet.FormsListPortletDAO" />
     
     <!-- Services -->
     <bean id="forms.formDatabaseService" class="fr.paris.lutece.plugins.forms.service.FormDatabaseService" />
