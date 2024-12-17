@@ -87,9 +87,78 @@
 			}
 		});
 		input${control.id}_${question.iterationNumber}.change();
+        toggleRequiredAttributesByVisibility();
 	</#list>
 	});
+
+
+/**
+ * Toggles the "required" attribute on input fields based on their visibility.
+ * If an input field is hidden (determined by a CSS class or style), the "required" attribute is removed,
+ * preventing validation errors from occurring on non-visible fields during form submission.
+ * This function helps ensure that only visible fields are validated as required.
+ */
+ function toggleRequiredAttributesByVisibility() {
+    $("div[displayControl]").each(function () {
+        var $input = $(this).find("input, select, textarea");
+
+        // Check if this element is visible or has the class "control_invalid"
+        if ($(this).hasClass("control_invalid") || $(this).is(":hidden")) {
+            // If hidden or marked invalid, remove required
+            $input.removeAttr("required");
+        } else {
+            // If visible, add required based on initial configuration
+            if ($input.attr("data-mandatory") === "true") {
+                $input.attr("required", "required");
+            }
+        }
+    });
+}
 </script>
 <#else>
 <input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='${question.id}_${question.iterationNumber}' hidden />
 </#if>
+<script>
+function getInputElement( displayControl ){
+	var types = ['input','select','textarea'];
+	var elm = null;
+	for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++){
+		elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
+	}
+	if( elm.is('input') ){
+		elm = $('input[name="' + elm.attr('name') + '"]');
+	}
+	return elm;
+}
+
+function getFieldValue( elm ){
+	if(elm.is(':radio')){
+		var input = $('input[name="' + elm.attr('name') + '"]:checked');
+		return input.val();
+	} else if (elm.is(':checkbox'))	{
+		var resultChecked = [];
+		for(var i=0;i< elm.length;i++){
+			if (elm [i].checked){
+				resultChecked.push(elm[i].value);
+			}
+		}
+		return resultChecked;
+	} else if (elm.is('select')) {
+		return elm[0].options[elm[0].selectedIndex].value;
+	}
+	//add other specific implementations here
+	else {
+		return elm.val();
+	}
+}
+
+$( function() {
+	$("button[name='action_addIteration']").on("click", function() {
+		var target = "#last_" + $(this).attr("value");
+		var form = $(this).closest("form");
+		var newUrl = form.attr("action").replace(/#current_step$/,target);
+		form.attr("action",newUrl);
+	});
+});
+</script>
+<script type="text/javascript" src="js/jquery/plugins/moment.min.js"></script>
