@@ -64,16 +64,20 @@ import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
+import fr.paris.lutece.portal.service.file.FileService;
+import fr.paris.lutece.portal.service.file.FileServiceException;
+import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.url.UrlItem;
 
 public abstract class GenericFormsProvider {
-	
+
 	// PROPERTY
 	private static final String PROPERTY_EXPORT_IMAGES_IN_BASE64 = "forms.export.image.base64";
-	
+
 	// MARKS
 	private static final String MARK_POSITION = "position_";
 	private static final String MARK_URL_ADMIN_RESPONSE = "url_admin_forms_response_detail";
@@ -85,26 +89,29 @@ public abstract class GenericFormsProvider {
 	private static final String MARK_BASE_URL = "base_url";
 	private static final String MARKER_DESCRIPTION_BASE64 = "base64";
 	private static final String MARKER_FORM_TITLE = "form_title";
-	
+	private static final String MARK_URL_FO_FILES_LINK = "url_fo_forms_files_link";
+
 	// URL PARAMETERS
 	private static final String PARAMETER_VIEW_FORM_RESPONSE_DETAILS = "view_form_response_details";
 	private static final String PARAMETER_VIEW_FORM_RESPONSE_DETAILS_FO = "formResponseView";
 	private static final String PARAMETER_ID_FORM_RESPONSES = "id_form_response";
 	private static final String PARAMETER_ID_FORM_RESPONSES_FO = "id_response";
 	private static final String PARAMETER_PAGE_FORM_RESPONSE = "formsResponse";
-	
-    // Infomarkers description I18n keys
-    private static final String MESSAGE_I18N_DESCRIPTION = "forms.marker.provider.url.admin.detail.reponse.description";
-    private static final String MESSAGE_I18N_FO_DESCRIPTION = "forms.marker.provider.url.fo.detail.reponse.description";
-    private static final String MESSAGE_I18N_CREATION_DATE = "forms.marker.provider.url.detail.reponse.creation_date";
-    private static final String MESSAGE_I18N_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.update_date";
-    private static final String MESSAGE_I18N_STATUS = "forms.marker.provider.url.detail.reponse.status";
-    private static final String MESSAGE_I18N_STATUS_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.status_update_date";
-    private static final String MESSAGE_I18N_FORM = "forms.marker.provider.url.detail.reponse.form";
+	private static final String PARAMETER_VIEW_FORM_FILES_LINK_FO = "formFileView";
+
+	// Infomarkers description I18n keys
+	private static final String MESSAGE_I18N_DESCRIPTION = "forms.marker.provider.url.admin.detail.reponse.description";
+	private static final String MESSAGE_I18N_FO_DESCRIPTION = "forms.marker.provider.url.fo.detail.reponse.description";
+	private static final String MESSAGE_I18N_CREATION_DATE = "forms.marker.provider.url.detail.reponse.creation_date";
+	private static final String MESSAGE_I18N_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.update_date";
+	private static final String MESSAGE_I18N_STATUS = "forms.marker.provider.url.detail.reponse.status";
+	private static final String MESSAGE_I18N_STATUS_UPDATE_DATE = "forms.marker.provider.url.detail.reponse.status_update_date";
+	private static final String MESSAGE_I18N_FORM = "forms.marker.provider.url.detail.reponse.form";
+	private static final String MESSAGE_I18N_FO_FILE_LINK = "forms.marker.provider.url.fo.file.link";
 
 	/**
 	 * provide forms values as model (map)
-	 * 
+	 *
 	 * @param formResponse
 	 * @param request
 	 * @return the model map
@@ -115,58 +122,73 @@ public abstract class GenericFormsProvider {
 
 		List<FormQuestionResponse> listFormQuestionResponse = FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( formResponse.getId( ) );
 		Boolean bExportImageBase64 = AppPropertiesService.getPropertyBoolean( PROPERTY_EXPORT_IMAGES_IN_BASE64, false);
-		
+
 		for ( FormQuestionResponse formQuestionResponse : listFormQuestionResponse )
 		{
 			IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService(formQuestionResponse.getQuestion().getEntry());
-			
-			if ( entryTypeService instanceof EntryTypeComment || entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera || entryTypeService instanceof EntryTypeGalleryImage || entryTypeService instanceof EntryTypeFile || entryTypeService instanceof EntryTypeAutomaticFileReading) 
+
+			if ( entryTypeService instanceof EntryTypeComment || entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera || entryTypeService instanceof EntryTypeGalleryImage || entryTypeService instanceof EntryTypeFile || entryTypeService instanceof EntryTypeAutomaticFileReading)
 			{
 				List<fr.paris.lutece.plugins.genericattributes.business.Response> responses = formQuestionResponse.getEntryResponse( );
-				for (int i = 0; i < responses.size(); i++) 
+				for (int i = 0; i < responses.size(); i++)
 				{
-					if (responses.get(i).getFile() != null) 
+					if (responses.get(i).getFile() != null)
 					{
 						File file = FileHome.findByPrimaryKey( responses.get(i).getFile().getIdFile( ) );
-						if (entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera || entryTypeService instanceof EntryTypeGalleryImage) 
+						if (entryTypeService instanceof EntryTypeImage || entryTypeService instanceof EntryTypeCamera || entryTypeService instanceof EntryTypeGalleryImage)
 						{
 							// if property forms.export.image.base64 is true
-							if (bExportImageBase64) 
+							if (bExportImageBase64)
 							{
 								PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey(file.getPhysicalFile().getIdPhysicalFile());
 								byte[] bytes = physicalFile.getValue();
 								String strBase64 = java.util.Base64.getEncoder().encodeToString(bytes);
 								responses.get(i).setResponseValue(strBase64);
 							}
+						} else if (entryTypeService instanceof EntryTypeFile) {
+
+							if ( file != null && file.getPhysicalFile( ) == null )
+							{
+								try {
+									IFileStoreServiceProvider fss = FileService.getInstance( ).getFileStoreServiceProvider( file.getOrigin() );
+									file = fss.getFile(file.getFileKey() );
+
+									file.setUrl(fss.getFileDownloadUrlFO( file.getFileKey()));
+
+								}
+								catch (FileServiceException e) {
+									AppLogService.error("Error getting file from file store service provider", e);
+								}
+							}
 						}
 						responses.get(i).setFile(file);
 					}
 				}
 			}
-			
-			// in case of multiple FormQuestionResponse for the same question (when there is an iteration), 
+
+			// in case of multiple FormQuestionResponse for the same question (when there is an iteration),
 			// we merge them into one FormQuestionResponse and update the marker
 			String strMultipleFormQuestionResponseKey = MARK_POSITION + formQuestionResponse.getQuestion().getId( ) ;
 			if (model.containsKey( strMultipleFormQuestionResponseKey ) )
 			{
 				FormQuestionResponse existingFormQuestionResponse = (FormQuestionResponse) model.get( strMultipleFormQuestionResponseKey );
-				
+
 				List<Response> existingResponses = existingFormQuestionResponse.getEntryResponse();
 				List<Response> newResponses = formQuestionResponse.getEntryResponse();
 				List<Response> allResponses = new ArrayList<>();
-				
+
 				allResponses.addAll(existingResponses);
 				allResponses.addAll(newResponses);
-				
+
 				existingFormQuestionResponse.setEntryResponse(allResponses);
 				model.replace( strMultipleFormQuestionResponseKey, existingFormQuestionResponse);
-			} 
-			else 
+			}
+			else
 			{
 				model.put( strMultipleFormQuestionResponseKey , formQuestionResponse);
 			}
 		}
-		
+
 		// Additional markers
 		model.put( MARKER_DESCRIPTION_BASE64, bExportImageBase64 );
 		model.put( MARK_CREATION_DATE, formResponse.getCreation( )  );
@@ -174,22 +196,28 @@ public abstract class GenericFormsProvider {
 		model.put( MARK_STATUS, formResponse.isPublished( ) );
 		model.put( MARK_STATUS_UPDATE_DATE, formResponse.getUpdateStatus( )  );
 		model.put( MARKER_FORM_TITLE, FormHome.findByPrimaryKey( formResponse.getFormId( ) ).getTitle( ) );
-		
+
 		// request may be null in case of daemon execution
 		if ( request != null )
 		{
 			model.put( MARK_BASE_URL, AppPathService.getBaseUrl( request ) );
-		
+
 			UrlItem adminUrl = new UrlItem( AppPathService.getProdUrl( request ) + AppPathService.getAdminMenuUrl( ) );
 			adminUrl.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS );
 			adminUrl.addParameter( PARAMETER_ID_FORM_RESPONSES, formResponse.getId( ) );
 			model.put( MARK_URL_ADMIN_RESPONSE, adminUrl.getUrl( )  );
-	
+
 			UrlItem url = new UrlItem( AppPathService.getProdUrl( request ) + AppPathService.getPortalUrl( ) );
 			url.addParameter( FormsConstants.PARAMETER_PAGE, PARAMETER_PAGE_FORM_RESPONSE );
 			url.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_RESPONSE_DETAILS_FO );
 			url.addParameter( PARAMETER_ID_FORM_RESPONSES_FO, formResponse.getId( ) );
 			model.put( MARK_URL_FO_RESPONSE, url.getUrl( ) );
+
+			UrlItem urlFilesLinkFo = new UrlItem( AppPathService.getProdUrl( request ) + AppPathService.getPortalUrl( ) );
+			urlFilesLinkFo.addParameter( FormsConstants.PARAMETER_PAGE, PARAMETER_PAGE_FORM_RESPONSE );
+			urlFilesLinkFo.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, PARAMETER_VIEW_FORM_FILES_LINK_FO );
+			urlFilesLinkFo.addParameter( PARAMETER_ID_FORM_RESPONSES_FO, formResponse.getId( ) );
+			model.put( MARK_URL_FO_FILES_LINK, url.getUrl( ) );
 		}
 
 		return model;
@@ -198,7 +226,7 @@ public abstract class GenericFormsProvider {
 
 	/**
 	 * Get the question titles as model, for the given form
-	 * 
+	 *
 	 * @param form
 	 *            The form
 	 * @return the map of markers
@@ -208,64 +236,67 @@ public abstract class GenericFormsProvider {
 		Map<String, Object> model = new HashMap<>( );
 
 		if (form != null )
-		{	
+		{
 			List<Question> listFormQuestions = QuestionHome.getListQuestionByIdForm( form.getId( ) );
-	
+
 			for ( Question formQuestion : listFormQuestions )
 			{
 				model.put( MARK_POSITION + formQuestion.getId( ), formQuestion.getTitle( ) );
 			}
 		}
-		
+
 		return model;
 	}
-	
-	  /**
-     * Get the reference list of available InfoMarkers
-     * 
-     * @param form
-     *            The form
-     * @return the collection of the Markers
-     */
-    public static Collection<InfoMarker> getProviderMarkerDescriptions( Form form )
-    {
-        Collection<InfoMarker> descriptionMarkersList = new ArrayList<>( );
-        
-        if ( form != null )
-        {
-	        List<Question> listFormQuestions = QuestionHome.getListQuestionByIdForm( form.getId( ) );
-	
-	        for ( Question formQuestion : listFormQuestions )
-	        {
-	            InfoMarker marker = new InfoMarker( MARK_POSITION + formQuestion.getId( ) );
-	            marker.setDescription( formQuestion.getTitle( ) );
-	            descriptionMarkersList.add( marker );
-	        }
-        }
-        
-        InfoMarker markerAdminURl = new InfoMarker( MARK_URL_ADMIN_RESPONSE );
-        markerAdminURl.setDescription( MESSAGE_I18N_DESCRIPTION );
-        InfoMarker markerFoUrl = new InfoMarker( MARK_URL_FO_RESPONSE );
-        markerFoUrl.setDescription( MESSAGE_I18N_FO_DESCRIPTION );
-        InfoMarker creationDateMarker = new InfoMarker( MARK_CREATION_DATE );
-        creationDateMarker.setDescription( MESSAGE_I18N_CREATION_DATE );
-        InfoMarker updateDateMarker = new InfoMarker( MARK_UPDATE_DATE );
-        updateDateMarker.setDescription( MESSAGE_I18N_UPDATE_DATE );
-        InfoMarker statusMarker = new InfoMarker( MARK_STATUS );
-        statusMarker.setDescription( MESSAGE_I18N_STATUS );
-        InfoMarker updateStatusDateMarker = new InfoMarker( MARK_STATUS_UPDATE_DATE );
-        updateStatusDateMarker.setDescription( MESSAGE_I18N_STATUS_UPDATE_DATE );
-        InfoMarker formTitleMarker = new InfoMarker( MARKER_FORM_TITLE );
-        formTitleMarker.setDescription( MESSAGE_I18N_FORM );
-        
-        descriptionMarkersList.add( markerAdminURl );
-        descriptionMarkersList.add( markerFoUrl );
-        descriptionMarkersList.add( creationDateMarker );
-        descriptionMarkersList.add( updateDateMarker );
-        descriptionMarkersList.add( statusMarker );
-        descriptionMarkersList.add( updateStatusDateMarker );
-        descriptionMarkersList.add( formTitleMarker );
-        
-        return descriptionMarkersList;
-    }
+
+	/**
+	 * Get the reference list of available InfoMarkers
+	 *
+	 * @param form
+	 *            The form
+	 * @return the collection of the Markers
+	 */
+	public static Collection<InfoMarker> getProviderMarkerDescriptions( Form form )
+	{
+		Collection<InfoMarker> descriptionMarkersList = new ArrayList<>( );
+
+		if ( form != null )
+		{
+			List<Question> listFormQuestions = QuestionHome.getListQuestionByIdForm( form.getId( ) );
+
+			for ( Question formQuestion : listFormQuestions )
+			{
+				InfoMarker marker = new InfoMarker( MARK_POSITION + formQuestion.getId( ) );
+				marker.setDescription( formQuestion.getTitle( ) );
+				descriptionMarkersList.add( marker );
+			}
+		}
+
+		InfoMarker markerAdminURl = new InfoMarker( MARK_URL_ADMIN_RESPONSE );
+		markerAdminURl.setDescription( MESSAGE_I18N_DESCRIPTION );
+		InfoMarker markerFoUrl = new InfoMarker( MARK_URL_FO_RESPONSE );
+		markerFoUrl.setDescription( MESSAGE_I18N_FO_DESCRIPTION );
+		InfoMarker creationDateMarker = new InfoMarker( MARK_CREATION_DATE );
+		creationDateMarker.setDescription( MESSAGE_I18N_CREATION_DATE );
+		InfoMarker updateDateMarker = new InfoMarker( MARK_UPDATE_DATE );
+		updateDateMarker.setDescription( MESSAGE_I18N_UPDATE_DATE );
+		InfoMarker statusMarker = new InfoMarker( MARK_STATUS );
+		statusMarker.setDescription( MESSAGE_I18N_STATUS );
+		InfoMarker updateStatusDateMarker = new InfoMarker( MARK_STATUS_UPDATE_DATE );
+		updateStatusDateMarker.setDescription( MESSAGE_I18N_STATUS_UPDATE_DATE );
+		InfoMarker formTitleMarker = new InfoMarker( MARKER_FORM_TITLE );
+		formTitleMarker.setDescription( MESSAGE_I18N_FORM );
+		InfoMarker markerFoFileUrl = new InfoMarker( MARK_URL_FO_FILES_LINK );
+		markerFoFileUrl.setDescription( MESSAGE_I18N_FO_FILE_LINK );
+
+		descriptionMarkersList.add( markerAdminURl );
+		descriptionMarkersList.add( markerFoUrl );
+		descriptionMarkersList.add( creationDateMarker );
+		descriptionMarkersList.add( updateDateMarker );
+		descriptionMarkersList.add( statusMarker );
+		descriptionMarkersList.add( updateStatusDateMarker );
+		descriptionMarkersList.add( formTitleMarker );
+		descriptionMarkersList.add( markerFoFileUrl );
+
+		return descriptionMarkersList;
+	}
 }

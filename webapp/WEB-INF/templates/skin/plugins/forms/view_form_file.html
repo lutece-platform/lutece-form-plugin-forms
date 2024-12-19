@@ -1,0 +1,19 @@
+<@messages errors=errors warnings=warnings infos=infos />
+<div class="card">
+	<h3 class="card-header">${formResponse.id} </h3>
+</div>
+
+
+<#list listFiles as fileResp>
+<div class="row">
+
+	<div class="col-sm-9">
+		<p>
+			<a href="${fileResp.url}">
+				${fileResp.title} (${fileResp.size} o)
+
+			</a>
+		</p>
+	</div>
+</#list>
+
