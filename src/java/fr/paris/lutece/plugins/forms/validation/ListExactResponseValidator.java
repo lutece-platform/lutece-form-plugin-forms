@@ -42,6 +42,7 @@ import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
  * 
@@ -74,8 +75,8 @@ public class ListExactResponseValidator extends AbstractValidator
     {
         Map<String, Object> model = new HashMap<>( ); 
         model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
-        
-        return AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model ).getHtml( );
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, _locale, model );
+        return htmlTemplate.getHtml( );
     }
 
     @Override
@@ -87,7 +88,8 @@ public class ListExactResponseValidator extends AbstractValidator
     @Override
     public String getJavascriptValidation( )
     {
-        return AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, I18nService.getDefaultLocale( ), new HashMap<>( ) ).getHtml( );
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, _locale, new HashMap<>( ) );
+        return htmlTemplate.getHtml( );
     }
 
     @Override
