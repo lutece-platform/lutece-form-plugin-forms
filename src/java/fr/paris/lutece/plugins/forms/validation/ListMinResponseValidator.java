@@ -74,8 +74,8 @@ public class ListMinResponseValidator extends AbstractValidator
     {
         Map<String, Object> model = new HashMap<>( ); 
         model.put( FormsConstants.PARAMETER_CONTROL_VALUE, control.getValue( ) );
-        
-        return AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model ).getHtml( );
+
+        return AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, _locale, model ).getHtml( );
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ListMinResponseValidator extends AbstractValidator
     @Override
     public String getJavascriptValidation( )
     {
-        return AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, I18nService.getDefaultLocale( ), new HashMap<>( ) ).getHtml( );
+        return AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, _locale, new HashMap<>( ) ).getHtml( );
     }
 
     @Override

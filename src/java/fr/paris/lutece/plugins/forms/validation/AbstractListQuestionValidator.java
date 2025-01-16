@@ -106,7 +106,7 @@ public abstract class AbstractListQuestionValidator extends AbstractValidator
         model.put( FormsConstants.PARAMETER_REF_LIST_VALUE, referenceListQuestion );
         model.put( FormsConstants.PARAMETER_REF_LIST_FIELD, _listAvailableFieldControl );
 
-        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, I18nService.getDefaultLocale( ), model );
+        HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( TEMPLATE_DISPLAY_HTML, _locale, model );
 
         return htmlTemplateQuestion.getHtml( );
     }
@@ -115,7 +115,7 @@ public abstract class AbstractListQuestionValidator extends AbstractValidator
     public String getJavascriptValidation( )
     {
         Map<String, Object> model = new HashMap<>( );
-        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, I18nService.getDefaultLocale( ), model );
+        HtmlTemplate htmlTemplate = AppTemplateService.getTemplate( TEMPLATE_JAVASCRIPT, _locale, model );
 
         return htmlTemplate.getHtml( );
     }
