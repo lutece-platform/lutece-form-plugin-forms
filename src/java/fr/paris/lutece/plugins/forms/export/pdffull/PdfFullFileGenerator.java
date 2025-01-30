@@ -197,20 +197,18 @@ public class PdfFullFileGenerator extends AbstractPdfFileGenerator
                 	continue;
                 }
 
+                String baseFilename = FilenameUtils.removeExtension( coreFile.getTitle( ) );
+                String extension = FilenameUtils.getExtension( coreFile.getTitle( ) );
                 String filename = coreFile.getTitle( );
 
-                long nbFiles = fileNames.stream( ).filter( s -> s.equals( coreFile.getTitle( ) ) ).count( );
-                if ( nbFiles > 0 )
+                int index = 1;
+                while (fileNames.contains(filename))
                 {
-                    StringBuilder fileSb = new StringBuilder( );
-                    fileSb.append( FilenameUtils.removeExtension( filename ) );
-                    fileSb.append( "_" );
-                    fileSb.append( ++nbFiles );
-                    fileSb.append( "." );
-                    fileSb.append( FilenameUtils.getExtension( filename ) );
-                    filename = fileSb.toString( );
+                    filename = baseFilename + "_" + index + "." + extension;
+                    index++;
                 }
-                fileNames.add( coreFile.getTitle( ) );
+
+                fileNames.add(filename);
 
                 Path attachment = directoryFile.resolve( filename );
 
