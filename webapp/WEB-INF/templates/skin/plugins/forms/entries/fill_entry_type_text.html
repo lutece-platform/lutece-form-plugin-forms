@@ -16,27 +16,13 @@
 		<div class="col-12">
 			<#assign field_width=getFieldValueByCode( entry, "width" )>
 			<#assign field=getFieldByCode( entry, "text_config")>
-				<input type="text" class="form-control input-sm" name="${idName}" id="${idName}" <#if field_width?number &gt; 0>style="width:${field_width?number}px;"</#if> 
-				<#if list_responses?has_content>
-					<#list list_responses as response>
-					<#if response.entry.idEntry == entry.idEntry>
-						<#if response.toStringValueResponse??>
-							value="${response.toStringValueResponse}"
-						</#if>
-						<#if response.entry.error??>
-							class="is-invalid"
-						</#if>
-						</#if>
-					</#list>
-				<#else>
-					<#if field.value?exists>
-						value="${field.value}" 
-					<#else>
-						 value="" 
-					</#if>
+			<#assign inputClass="form-control input-sm" />
+			<#assign params>
+				<#if entry.mandatory>
+					required 
 				</#if>
 				<#if getFieldByCode( entry, "autocomplete")??>
-				<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
+					<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
 				</#if>
 				<#if field_autocomplete?? && field_autocomplete.value??>
 					autocomplete="${field_autocomplete.value}"
@@ -49,7 +35,27 @@
 				<#if placeholder!=''> 
 					placeholder='${placeholder}'
 				</#if>
-			class="${entry.CSSClass!} "	/>
+			</#assign>
+			<#if list_responses?has_content>
+				<#list list_responses as response>
+				<#if response.entry.idEntry == entry.idEntry>
+					<#if response.toStringValueResponse??>
+						<#assign inputValue=response.toStringValueResponse />
+					</#if>
+					<#if response.entry.error??>
+						<#assign inputClass += ' is-invalid' />
+					</#if>
+					</#if>
+				</#list>
+			<#else>
+				<#if field.value?exists>
+					<#assign inputValue = field.value />
+				<#else>
+					 <#assign inputValue = '' />
+				</#if>
+			</#if>
+
+			<input type="text" class="${inputClass} ${entry.CSSClass!}" name="${idName}" id="${idName}" value="${inputValue}" <#if field_width?number &gt; 0>style="width:${field_width?number}px;"</#if> ${params} />
 				
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="form-control-plaintext">${entry.helpMessage}</span>

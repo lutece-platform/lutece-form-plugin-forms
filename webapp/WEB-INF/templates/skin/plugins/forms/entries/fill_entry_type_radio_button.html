@@ -29,7 +29,7 @@
 								<@img url=field.fileImage.url title=field.title alt=field.title params='width="100" height="100"' />
 								<div class="radiobutton-above">
 							</#if> 
-							<input type="radio" id="${idName}_${field.idField}" name="${idName}" value="${field.idField}"
+							<input type="radio" id="${idName}_${field.idField}" name="${idName}" value="${field.idField}"<#if entry.mandatory> required</#if>
 							<#if list_responses?? && list_responses?has_content>
 								<#list list_responses as response>
 									<#if response.entry.idEntry == entry.idEntry && response.field??>

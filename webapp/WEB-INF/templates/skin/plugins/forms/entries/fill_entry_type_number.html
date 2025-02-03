@@ -10,24 +10,10 @@
 		<div class="col-12">
 			<div class="input-group">
 				<#assign field=getFieldByCode( entry, "text_config")>
-					<input type="number" class="form-control input-sm" name="${idName}" id="${idName}"
-					<#if list_responses?has_content>
-						<#list list_responses as response>
-						<#if response.entry.idEntry == entry.idEntry>
-							<#if response.toStringValueResponse??>
-								value="${response.toStringValueResponse}"
-							</#if>
-							<#if response.entry.error??>
-								class="is-invalid"
-							</#if>
-							</#if>
-						</#list>
-					<#else>
-						<#if field.value??>
-							value="${field.value}" 
-						<#else>
-							 value="" 
-						</#if>
+				<#assign inputClass="form-control input-sm" />
+				<#assign params>
+					<#if entry.mandatory>
+						required 
 					</#if>
 					<#assign field_min=getFieldByCode( entry, "min")>
 					<#if field_min.value??>
@@ -47,7 +33,26 @@
 					<#if field_autocomplete?? && field_autocomplete.value??>
 						autocomplete="${field_autocomplete.value}"
 					</#if>
-				class="${entry.CSSClass!} "	/>
+				</#assign>
+				<#if list_responses?has_content>
+					<#list list_responses as response>
+					<#if response.entry.idEntry == entry.idEntry>
+						<#if response.toStringValueResponse??>
+							<#assign inputValue = response.toStringValueResponse />
+						</#if>
+						<#if response.entry.error??>
+							<#assign inputValue += 'is-invalid' />
+						</#if>
+						</#if>
+					</#list>
+				<#else>
+					<#if field.value??>
+						<#assign inputValue = field.value />
+					<#else>
+						 <#assign inputValue = '' />
+					</#if>
+				</#if>
+				<input type="number" class="${inputClass} ${entry.CSSClass!}" name="${idName}" id="${idName}" value="${inputValue}" ${params} />
 				<#if suffix!=''>
 					<span class="input-group-text">${suffix}</span>
 				</#if>

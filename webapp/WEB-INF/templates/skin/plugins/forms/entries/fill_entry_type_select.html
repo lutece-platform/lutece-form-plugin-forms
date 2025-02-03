@@ -2,17 +2,17 @@
 	<div class="mb-3 row">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
 		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-12">	 
-			<select class="form-control input-sm" name="${idName}" id="${idName}"
-				<#if list_responses??>
-					<#list list_responses as response>
-						<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
-							class="is-invalid"
-							<#break>
-						</#if>
-					</#list>
-					class="${entry.CSSClass!}"
-				</#if>	>
+		<div class="col-12">
+			<#assign inputClass = '${entry.CSSClass!}' />
+			<#if list_responses??>
+				<#list list_responses as response>
+					<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
+						<#assign inputClass = 'is-invalid' />
+						<#break>
+					</#if>
+				</#list>
+			</#if>
+			<select class="form-control input-sm ${inputClass}" name="${idName}" id="${idName}"<#if entry.mandatory> required</#if>>
 				<option value="">#i18n{form.xpage.form.noValue}</option>
 				<#list entry.fields as field>
 					<#if field.code == 'answer_choice'>
