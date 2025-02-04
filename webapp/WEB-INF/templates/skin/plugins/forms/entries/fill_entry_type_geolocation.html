@@ -34,12 +34,10 @@
 			</#if>
 		</#if>
 		<#if editModeValue == "" || editModeValue == "Address" || editModeValue == "Adresse" >
-			<input type="text" class="form-control form-geoloc <#if hasError> is-invalid</#if> address-autocomplete"
-				   name="${idName}_address" id="${idName}_address" value="${addressValue!}">
+			<input type="text" class="form-control form-geoloc<#if hasError> is-invalid</#if> address-autocomplete" name="${idName}_address" id="${idName}_address" value="${addressValue!}"<#if entry.mandatory> required</#if> />
 			<div id="labelAutocomplete"></div>
 		<#else>
-			<input type="hidden" name="${idName}_address" id="${idName}"
-				   value="${addressValue!}" <#if !entry.mandatory > required</#if> >
+			<input type="hidden" name="${idName}_address" id="${idName}" value="${addressValue!}" <#if !entry.mandatory > required</#if> >
 		</#if>
 		<input type="hidden" name="${idName}_idAddress" id="${idName}_idAddress" value="${idAddressValue!}">
 		<input type="hidden" name="${idName}_x" id="${idName}_x" value="${xValue!}">
