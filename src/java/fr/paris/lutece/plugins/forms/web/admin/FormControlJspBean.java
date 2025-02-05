@@ -452,6 +452,11 @@ public class FormControlJspBean extends AbstractJspBean
             valSubmit = request.getParameter( FormsConstants.PARAMETER_VIEW_MODIFY_CONTROL );
         }
 
+        if ( _controlType == ControlType.CONDITIONAL && valSubmit != null && valSubmit.equals( FormsConstants.VALIDATE_STEP ) ) {
+            int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
+            _step = StepHome.findByPrimaryKey( nIdStep );
+        }
+
         if(_step == null)
         {
             int nIdStep = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
