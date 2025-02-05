@@ -21,7 +21,7 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign iterationNumber = entry_iteration_number?c >
 <#if entry.mapProvider??>
-	<div class="mb-3 row ${entry.mapProvider.key!}">
+	<div class="mb-3 row ${entry.mapProvider.key!}  ${entry.CSSClass!}">
 		<label for="${idName}">${entry.title}<#if entry.mandatory><span class="main-warning-color" aria-hidden="true"> *</span></#if></label>
 		<#if list_responses?? && list_responses?has_content>
 			<#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse />
@@ -75,12 +75,11 @@
 					} else {
 						document.getElementById('number_iteration_geolocation').value = iterationNumber;
 					}
-					let currStep = $('.step-current .step-content'),
+					let currStep = $('#step-content'),
 							hasCheckAdr = currStep.find('.checkaddress').length;
 					if (hasCheckAdr > 0) {
-						currStep.addClass('checkadress');
-						currStep.find('[name="action_doSaveStep"]').attr('disabled', 'disabled');
-					}
+                        currStep.addClass('checkadress');
+                    }
 
 					var jAdresse = $('#${idName}_address');
 					var jAdresseId = $('#${idName}_idAddress');
@@ -108,6 +107,8 @@
 						jAdresse.addClass('wssuggest');
 						jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
 						$('[name="action_doSaveStep"]').removeAttr('disabled');
+                        $('[name="action_doSaveResponse"]').removeAttr('disabled');
+                        $('[name="action_formResponseSummary"]').removeAttr('disabled');
 					}
 
 					if (hasCheckAdr > 0) {
@@ -120,19 +121,33 @@
 						jAdresse.on('keyup', (e) => {
 							if ($(e.target).hasClass('wssuggest')) {
 								$(e.target).removeClass('wssuggest').removeClass('wsvalidated');
-								$('.btn-action').attr('disabled', 'disabled');
+								$('[name="action_doSaveStep"]').attr('disabled', 'disabled');
+                                $('[name="action_doSaveResponse"]').attr('disabled', 'disabled');
+                                $('[name="action_formResponseSummary"]').attr('disabled', 'disabled');
 							}
 						});
 
 						jAdresse.on('blur', (e) => {
+							if ($(e.target).val().trim() === '') {
+                                $(e.target).removeClass('is-invalid').next('.invalid-feedback').remove();
+                                $('[name="action_doSaveStep"]').removeAttr('disabled');
+                                $('[name="action_doSaveResponse"]').removeAttr('disabled');
+                                $('[name="action_formResponseSummary"]').removeAttr('disabled');
+                                return;
+                            }
+
 							if (!$(e.target).hasClass('wssuggest')) {
 								$(e.target).addClass('is-invalid');
 								$(e.target).next('.invalid-feedback').length === 0 ? $(e.target).after('<div class="invalid-feedback">#i18n{forms.message.geolocation.checkAdress}</div>') : '';
-								$('.btn-action').attr('disabled', 'disabled');
+								$('[name="action_doSaveStep"]').attr('disabled','disabled');
+                                $('[name="action_doSaveResponse"]').attr('disabled','disabled');
+                                $('[name="action_formResponseSummary"]').attr('disabled','disabled');
 								$(e.target).focus();
 							} else {
 								$(e.target).addClass('wsvalidated').removeClass('wssuggest').removeClass('is-invalid').next('.invalid-feedback').remove();
-								$('.btn-action').removeAttr('disabled');
+								$('[name="action_doSaveStep"]').removeAttr('disabled');
+                                $('[name="action_doSaveResponse"]').removeAttr('disabled');
+                                $('[name="action_formResponseSummary"]').removeAttr('disabled');
 								sessionStorage.setItem('wsvalidated_${entry.idEntry}', 'done');
 							}
 						});
