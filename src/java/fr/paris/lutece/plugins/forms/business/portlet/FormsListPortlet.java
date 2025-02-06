@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2024, City of Paris
+ * Copyright (c) 2002-2025, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -10,7 +10,7 @@
  *     and the following disclaimer.
  *
  *  2. Redistributions in binary form must reproduce the above copyright notice
- *     and the following disclaimer in the Formsation and/or other materials
+ *     and the following disclaimer in the documentation and/or other materials
  *     provided with the distribution.
  *
  *  3. Neither the name of 'Mairie de Paris' nor 'Lutece' nor the names of its
