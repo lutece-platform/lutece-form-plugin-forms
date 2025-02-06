@@ -262,7 +262,8 @@ public final class QuestionHome
      *          The form primary key
      * @return the question list sorted in display order
      */
-    public static List<Question> getQuestionListByIdFormInQuestionOrder( int nIdForm ){
+    public static List<Question> getQuestionListByIdFormInQuestionOrder( int nIdForm )
+    {
         List<Question> listQuestions = new ArrayList<>(  );
         List<Step> listSteps = StepHome.getStepsListByForm( nIdForm );
         List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( nIdForm );
@@ -271,8 +272,33 @@ public final class QuestionHome
         for ( Step step : listSteps ){
             List<FormDisplay> listFormDisplay = FormDisplayHome.getFormDisplayListByParent( step.getId(), 0 );
             listFormDisplay.sort( Comparator.comparingInt( FormDisplay::getDisplayOrder ) );
-            listFormDisplay.forEach( question -> listQuestions.add( QuestionHome.findByPrimaryKey( question.getCompositeId() ) ) );
+            listFormDisplay.forEach( composite -> {
+                if(composite.getCompositeType().equals( "question" ) )
+                {
+                    listQuestions.add( QuestionHome.findByPrimaryKey( composite.getCompositeId() ) );
+                }
+                else if(composite.getCompositeType().equals( "group" ) )
+                {
+                    listQuestions.addAll( getQuestionListFromFormDisplayCompositeTypeGroup( composite ) );
+                }
+             } );
         }
+        return listQuestions;
+
+    }
+
+    private static List<Question> getQuestionListFromFormDisplayCompositeTypeGroup ( FormDisplay composite )
+    {
+        List<Question> listQuestions = new ArrayList<>(  );
+
+        List<FormDisplay> listFormDisplayGroup = FormDisplayHome.getFormDisplayListByParent( composite.getStepId(), composite.getCompositeId() );
+        listFormDisplayGroup.sort( Comparator.comparingInt( FormDisplay::getDisplayOrder ) );
+        listFormDisplayGroup.forEach( compositeGroup -> {
+            if(compositeGroup.getCompositeType().equals( "question" ) )
+            {
+                listQuestions.add( QuestionHome.findByPrimaryKey( compositeGroup.getCompositeId() ) );
+            }
+        } );
         return listQuestions;
     }
 }
