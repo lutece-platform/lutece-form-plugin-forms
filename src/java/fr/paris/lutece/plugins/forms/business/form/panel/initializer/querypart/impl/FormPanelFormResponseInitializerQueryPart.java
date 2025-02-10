@@ -40,6 +40,12 @@ import fr.paris.lutece.plugins.forms.business.form.FormParameters;
  */
 public class FormPanelFormResponseInitializerQueryPart extends AbstractFormPanelInitializerQueryPart
 {
+
+    public FormPanelFormResponseInitializerQueryPart( )
+    {
+        super( );
+    }
+
     /**
      * {@inheritDoc}
      */
