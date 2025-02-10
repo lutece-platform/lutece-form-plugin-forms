@@ -68,6 +68,8 @@ import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -119,6 +121,31 @@ public final class MultiviewFormService
     {
         FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
         formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig );
+    }
+
+    /**
+     * Populate the given FormPanel with the information from the given list of FormColumns and FormFilters
+     *
+     * @param formPanel
+     *            The FormPanel used to retrieve the values of the FormColumns
+     * @param listFormColumn
+     *            The list of all FormColumn to use to be populated
+     * @param listFormFilter
+     *            The list of FormFilter to use for retrieving the data of the columns to populate
+     * @param nStartIndex
+     *            The start index of doc to load
+     * @param nPageSize
+     *            The size of page of docs to load
+     * @param sortConfig
+     *            The comparator config used for sorting
+     * @param user
+     *            The current user
+     */
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+            FormItemSortConfig sortConfig, User user )
+    {
+        FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
+        formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig, user );
     }
 
     public List<FormResponseItem> searchAllListFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
@@ -191,13 +218,13 @@ public final class MultiviewFormService
             }
         }
 
-        // Then add global columns from config questions
-        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
-                : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
+        // Get the List of questions the user is authorized to access
+        List<Question> listQuestions = getQuestionListFromAuthorizedForms( nIdForm, user );
 
         // Sort questions by multiview order
         listQuestions.sort( Comparator.comparing( Question::getMultiviewColumnOrder ) );
 
+        // Then add global columns from config questions
         addColumnFromConfig( mapFormColumns, listQuestions, true, locale );
 
         if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )
@@ -257,10 +284,10 @@ public final class MultiviewFormService
             }
         }
 
-        // Then add the global question-based for Filters
-        List<Question> listQuestions = ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE ) ? QuestionHome.getQuestionsListUncomplete( )
-                : QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
+        // Get the List of questions the user is authorized to access
+        List<Question> listQuestions = getQuestionListFromAuthorizedForms( nIdForm, user );
 
+        // Then add the global question-based for Filters
         addFilterFromConfig( mapFormFilter, listQuestions, listFormColumn, true, locale );
 
         if ( nIdForm != null && nIdForm != FormsConstants.DEFAULT_ID_VALUE )
@@ -380,5 +407,44 @@ public final class MultiviewFormService
 
             }
         }
+    }
+
+    /**
+     * Get the List of questions from the Forms that are part of the User's workgroups
+     * 
+     * @param nIdForm
+     *            The Form being processed. Can be null or -1 if there are multiple Forms
+     * @param user
+     *            The current User
+     * @return a List of Question objects
+     */
+    private List<Question> getQuestionListFromAuthorizedForms( Integer nIdForm, User user )
+    {
+        List<Question> listQuestions = new ArrayList<>( );
+
+        // Retrieve the authorized List of Forms (same workgroups as the User)
+        List<Form> listForms = FormHome.getFormList( );
+        listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, user );
+
+        // If there are multiple Forms to check
+        if ( nIdForm == null || nIdForm == FormsConstants.DEFAULT_ID_VALUE )
+        {
+            // Retrieve the questions from all the Forms
+            for ( Form authorizedForm : listForms )
+            {
+                listQuestions.addAll( QuestionHome.getListQuestionByIdFormUncomplete( authorizedForm.getId( ) ) );
+            }
+        }
+        // If only one Form has to be checked
+        else
+        {
+            // If the given Form is part of the authorized Forms
+            if ( listForms.stream( ).anyMatch( form -> form.getId( ) == nIdForm ) )
+            {
+                // Retrieve the List of questions from the specified Form
+                listQuestions = QuestionHome.getListQuestionByIdFormUncomplete( nIdForm );
+            }
+        }
+        return listQuestions;
     }
 }

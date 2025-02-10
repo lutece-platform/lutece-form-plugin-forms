@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.business.form.list;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import java.util.List;
 
@@ -64,6 +65,27 @@ public interface IFormListDAO
      */
     void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
             FormItemSortConfig sortConfig );
+
+    /**
+     * Populate the FormPanel with the values returned by the SQL query results
+     *
+     * @param formPanel
+     *            The FormPanel used to retrieve the values of the FormColumn
+     * @param listFormColumn
+     *            The list of FormColumn to populate
+     * @param listFormFilter
+     *            The list of FormFilter used for filtering the data to retrieve
+     * @param nStartIndex
+     *            The start index of doc that all will become FormResponseItem
+     * @param nPageSize
+     *            The number of doc to load for pagination purpose
+     * @param sortConfig
+     *            The comparator config
+     * @param user
+     *            The current user
+     */
+    void populateFormColumns( FormPanel formPanel, java.util.List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+            FormItemSortConfig sortConfig, User user );
 
     /**
      * Search the Lucene Index.

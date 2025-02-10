@@ -33,8 +33,24 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl;
 
+import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
+import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.lucene.document.IntPoint;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BooleanQuery.Builder;
 import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.Query;
 
 /**
  * Implementation of the FormPanelInitializerQueryPart associate to the FormPanelFormsInitializer
@@ -48,6 +64,36 @@ public class FormPanelFormsInitializerQueryPart extends AbstractFormPanelInitial
     {
         super( );
         setFormPanelInitializerSelectQuery( new MatchAllDocsQuery( ) );
+    }
+
+    /**
+     * Constructor used to build a query that selects the Forms that the user can access
+     * 
+     * @param user
+     *            The HTTP user
+     */
+    public FormPanelFormsInitializerQueryPart( User user )
+    {
+        super( );
+
+        // Get the List of all available Forms
+        List<Form> listForms = FormHome.getFormList( );
+        // Only keep the Forms that can be accessed by the current user
+        listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, user );
+
+        // Create Lucene queries to retrieve the Forms that match the specified IDs
+        List<Query> queries = listForms.stream( ).map( form -> IntPoint.newExactQuery( FormsConstants.PARAMETER_ID_FORM, form.getId( ) ) )
+                .collect( Collectors.toList( ) );
+
+        // Create a Lucene Builder for Boolean Queries
+        Builder builder = new BooleanQuery.Builder( );
+        // Add all the created queries that will be applied
+        queries.forEach( query -> builder.add( query, BooleanClause.Occur.SHOULD ) );
+
+        // Initialize the Query used to retrieve specific Forms
+        Query queryForms = builder.build( );
+
+        setFormPanelInitializerSelectQuery( queryForms );
     }
 
     /**
