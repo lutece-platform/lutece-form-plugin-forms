@@ -507,6 +507,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Retrieve the list of all FormFilter
         List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
+        User user = (User) AdminUserService.getAdminUser( request );
+
         // Check in filters if the columns list has to be fetch again
         reloadFormColumnList( listFormFilter, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
         if ( formSelectedAsChanged( request ) )
@@ -522,7 +524,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
             // Populate the FormColumns from the information of the list of FormResponseItem
             // of the given FormPanel
-            MultiviewFormService.getInstance( ).populateFormColumns( formPanel, _listFormColumn, listFormFilter, nIndexStart, nPageSize, sortConfig );
+            MultiviewFormService.getInstance( ).populateFormColumns( formPanel, _listFormColumn, listFormFilter, nIndexStart, nPageSize, sortConfig, user );
 
             // Associate for each FormColumnDisplay its FormColumnValues if the panel is
             // active

@@ -185,6 +185,14 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                 FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) getUser( ) );
         boolean bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( request, nIdFormResponse );
 
+        // If the current user is not part of this Form's workgroup then deny them access to the form's responses
+        if ( bAuthorizedRecord )
+        {
+            int nIdForm = formResponse.getFormId( );
+            Form form = FormHome.findByPrimaryKey( nIdForm );
+            bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponseWithinWorkgroup( request, form );
+        }
+
         if ( !bRBACAuthorization || !bAuthorizedRecord )
         {
             throw new AccessDeniedException( MESSAGE_ACCESS_DENIED );
