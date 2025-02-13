@@ -102,7 +102,9 @@ public abstract class AbstractValidator implements IValidator
         	}
         	else
         	{
-        		if ( questionResponse.getQuestion( ).getId( ) == control.getIdControlTarget( ) && !validate( questionResponse, control ) )
+                if ( control.getListIdQuestion() != null
+                        && control.getListIdQuestion().contains( questionResponse.getQuestion( ).getId( ) )
+                        && !validate( questionResponse, control ) )
                 {
 
                     return false;
