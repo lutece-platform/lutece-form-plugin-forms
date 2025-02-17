@@ -1082,6 +1082,7 @@ public class FormXPage extends MVCApplication
         FormResponse formResponse = _formResponseManager.getFormResponse( );
 
         _formService.removeFormBackup( formResponse );
+        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
         _formResponseManager = null;
 
         init( form.getId( ) );
