@@ -144,6 +144,10 @@ public class FormXPage extends MVCApplication
     private static final String MARK_FORM_LIST = "form_list";
     private static final String MARK_DISPLAY_CAPTCHA = "display_captcha";
     private static final String MARK_CAPTCHA = "captcha";
+    private static final String LAST_INIT_STATE = "last_init_state";
+    private static final String SKIP_RESET_SESSIONDATA = "skip_reset_sessiondata";
+    private static final String IS_ACCESSCONTROL_REDIRECTION = "is_accesscontrol_redirection";
+
 
     // Other
     private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
@@ -341,10 +345,26 @@ public class FormXPage extends MVCApplication
 
             if ( !_formResponseManager.getFormResponse( ).isFromSave( ) && !bypassInactiveState( form, request ) )
             {
+                if ( request.getSession().getAttribute( IS_ACCESSCONTROL_REDIRECTION ) != null )
+                {
+                    request.setAttribute( SKIP_RESET_SESSIONDATA, true );
+                    request.getSession( ).removeAttribute( IS_ACCESSCONTROL_REDIRECTION );
+                }
+
+                Boolean lastInitState = ( Boolean ) request.getSession( ).getAttribute( LAST_INIT_STATE );
+                boolean isResetNeeded = Boolean.parseBoolean( paramInit ) && Boolean.TRUE.equals( lastInitState ) && request.getAttribute(SKIP_RESET_SESSIONDATA  ) == null;
+                request.getSession( ).setAttribute( LAST_INIT_STATE, Boolean.parseBoolean( paramInit ) );
+
+                if ( isResetNeeded )
+                {
+                    AccessControlService.getInstance( ).cleanSessionData( request, form.getId( ), Form.RESOURCE_TYPE );
+                }
+
                 XPage accessControlPage = AccessControlService.getInstance( ).doExecuteAccessControl( request, form.getId( ), Form.RESOURCE_TYPE,
                         _formResponseManager );
                 if ( accessControlPage != null )
                 {
+                    request.getSession( ).setAttribute( IS_ACCESSCONTROL_REDIRECTION, true );
                     return accessControlPage;
                 }
             }
@@ -366,7 +386,6 @@ public class FormXPage extends MVCApplication
         XPage xPage = getXPage( TEMPLATE_VIEW_STEP, getLocale( request ), model );
         xPage.setTitle( strTitleForm );
         xPage.setPathLabel( strPathForm );
-
         return xPage;
     }
 
