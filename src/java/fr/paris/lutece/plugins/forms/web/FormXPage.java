@@ -324,8 +324,12 @@ public class FormXPage extends MVCApplication
             if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
             {
                 String strActionNextStep = request.getParameter( "action_" + ACTION_SAVE_STEP );
-                if (strActionNextStep == null && _formResponseManager.getCurrentStep() != null) {
-
+                String strActionAddIteration = request.getParameter( "action_" + ACTION_ADD_ITERATION );
+                String strActionRemoveIteration = request.getParameter( "action_" + ACTION_REMOVE_ITERATION );
+                if (strActionNextStep == null
+                        && strActionAddIteration == null
+                        && strActionRemoveIteration == null
+                        && _formResponseManager.getCurrentStep() != null) {
                     _currentStep = _formResponseManager.getCurrentStep( );
                     _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
                 }
