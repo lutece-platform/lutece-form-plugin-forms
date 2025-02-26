@@ -97,7 +97,6 @@ public class FormExportJspBean extends AbstractJspBean
     // Parameters
     private static final String PARAMETER_EXPORT_CONFIG = "export_config";
     private static final String PARAMETER_ID_CONFIG = "id_config";
-    private static final String PARAMETER_ID_QUESTION = "id_question";
     private static final String PARAMETER_ACTIVE_TAB_PANNEL_2 = "activeTabPannel2";
     private static final String MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG = "forms.modify_form.message.confirmRemoveExportConfig";
     private static final String PARAMETER_EXPORT_ALL = "export_all";
