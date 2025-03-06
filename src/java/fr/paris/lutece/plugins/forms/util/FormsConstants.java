@@ -103,6 +103,7 @@ public final class FormsConstants
     public static final String MARK_REGEX_URL = "regex_url";
     public static final String MARK_UPLOAD_HANDLER = "uploadHandler";
     public static final String MARK_DEFAULT_VALUE_WORKGROUP_KEY = "workgroup_key_default_value";
+    public static final String MARK_HAS_BACKUP_RESPONSE = "hasBackupResponse";
 
     // Parameters
     public static final String PARAMETER_PAGE = "page";

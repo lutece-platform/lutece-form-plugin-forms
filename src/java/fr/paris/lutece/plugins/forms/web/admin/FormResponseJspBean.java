@@ -183,6 +183,8 @@ public class FormResponseJspBean extends AbstractJspBean
             
             Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
             modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
+            // Set whether the current form's responses are from a backed up save or not
+            modelForStep.put( FormsConstants.MARK_HAS_BACKUP_RESPONSE, _formResponseManager.getFormResponse( ).isFromSave( ) );
             _stepDisplayTree.addModel( modelForStep );
 
             getFormStepModel( form, request, model  );       

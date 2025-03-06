@@ -336,6 +336,7 @@ public class FormXPage extends MVCApplication
                 Object [ ] args = {
                         _formResponseManager.getFormResponseUpdateDate(),
                 };
+
                 model.put( FormsConstants.MARK_INFO, I18nService.getLocalizedString( FormsConstants.MESSAGE_LOAD_BACKUP, args, getLocale( request ) ) );
             }
 
@@ -448,7 +449,10 @@ public class FormXPage extends MVCApplication
     {
         Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
         modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
+        // Set whether the current form's responses are from a backed up save or not
+        modelForStep.put( FormsConstants.MARK_HAS_BACKUP_RESPONSE, _formResponseManager.getFormResponse( ).isFromSave( ) );
         _stepDisplayTree.addModel( modelForStep );
+
         FormsResponseUtils.populateFormWithLogoAndNumberResponse(form);
         model.put( FormsConstants.MARK_FORM, form );
         model.put( STEP_HTML_MARKER,

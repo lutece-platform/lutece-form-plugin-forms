@@ -25,7 +25,9 @@
 	</#if>
 	<#if user?? && form.backupEnabled>
 		<div class="d-grid d-md-flex justify-content-md-end">
-			<button class="btn btn-info btn-sm me-md-1" name="action_doResetBackup" type="submit" >#i18n{forms.step.resetResponse}</button>
+			<#if hasBackupResponse>
+				<button class="btn btn-info btn-sm me-md-1" name="action_doResetBackup" type="submit" >#i18n{forms.step.resetResponse}</button>
+			</#if>
 			<button class="btn btn-info btn-sm" name="action_doSaveForBackup" type="submit" >#i18n{forms.step.saveResponse}</button>
 		</div>
 	</#if>
