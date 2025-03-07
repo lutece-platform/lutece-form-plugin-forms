@@ -162,11 +162,23 @@ public class FormResponseJspBean extends AbstractJspBean
                 _breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
             }
             initFormResponseManager( form, getUser().getAccessCode( ) );
-            
+
+            // Check if the current Form response is loaded from saved progress
             if ( _formResponseManager.getFormResponse( ).isFromSave( ) )
             {
-                _currentStep = _formResponseManager.getCurrentStep( );
-                _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+                // Actions that require the page to be reloaded with new step, components, fields, etc.
+                String strActionNextStep = request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_SAVE_STEP );
+                String strActionAddIteration = request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_ADD_ITERATION );
+                String strActionRemoveIteration = request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_REMOVE_ITERATION );
+
+                // Check if the page is being loaded after the user saved their progress
+                if ( strActionNextStep == null && strActionAddIteration == null && strActionRemoveIteration == null
+                        && _formResponseManager.getCurrentStep( ) != null )
+                {
+                    // Make sure to retrieve the current step's data, components, fields, etc., when loading the page
+                    _currentStep = _formResponseManager.getCurrentStep( );
+                    _stepDisplayTree = new StepDisplayTree( _currentStep.getId( ), _formResponseManager.getFormResponse( ) );
+                }
 
                 Object [ ] args = {
                         _formResponseManager.getFormResponseUpdateDate(),
