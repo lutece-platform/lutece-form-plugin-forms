@@ -23,14 +23,16 @@
 					toCollapse=$(this);
 				}
 			});
-			
+			var displayField = $('.display_field_${question.id!''}_${question.iterationNumber}');
 			var bOtherStepValidated = true;
 			<#if other_step_validation??>
 				<#if other_step_validation>
-					$('.display_field_${question.id!''}_${question.iterationNumber}').show();
+					displayField.show();
 					$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
 				<#else>
-		 			$('.display_field_${question.id!''}_${question.iterationNumber}').hide();
+		 			displayField.hide();
+					displayField.find("[required]").attr("requireddisabled","");
+					displayField.find("[required]").removeAttr("required");
 					$('#${question.id}_${question.iterationNumber}').val('');
 					bOtherStepValidated = false;
 				</#if>
@@ -70,13 +72,17 @@
 					</#if>
 					if(bIsQuestionDisplayed)
 					{
-						$('.display_field_${question.id!''}_${question.iterationNumber}').removeClass("control_invalid");
-						$('.display_field_${question.id!''}_${question.iterationNumber}').show();
+						displayField.removeClass("control_invalid");
+						displayField.show();
+						displayField.find("[requireddisabled]").attr("required","");
+						displayField.find("[requireddisabled]").removeAttr("requireddisabled");
 						if( hasCollapse ){ toCollapse.show() }; // Show parent group if is in a collapse step-group
 						$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
 					} else {
-						$('.display_field_${question.id!''}_${question.iterationNumber}').addClass("control_invalid");
-						$('.display_field_${question.id!''}_${question.iterationNumber}').hide();
+						displayField.addClass("control_invalid");
+						displayField.hide();
+						displayField.find("[required]").attr("requireddisabled","");
+						displayField.find("[required]").removeAttr("required");
 						if( hasCollapse ){ toCollapse.hide(); } // Hide parent group if is in a collapse step-group
 						$('#${question.id}_${question.iterationNumber}').val('');
 					}
