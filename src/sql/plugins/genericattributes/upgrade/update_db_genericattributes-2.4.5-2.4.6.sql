@@ -6,3 +6,6 @@ INSERT INTO genatt_field ( id_entry, title, code, VALUE, default_value )
 	INNER JOIN genatt_entry_type t ON t.id_type = e.id_type
 	WHERE e.resource_type = 'FORMS_FORM'
 	AND t.class_name = 'forms.entryTypeSelectOrder';
+
+INSERT INTO genatt_entry_type (title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin,display_order,inactive) VALUES
+    ('Session',0,0,0,'forms.entryTypeSession','user','forms',23,0);
