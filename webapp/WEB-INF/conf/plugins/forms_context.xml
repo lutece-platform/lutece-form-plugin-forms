@@ -256,7 +256,8 @@
 	<bean id="forms.entryTypeRadioButton" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton" />
 	<bean id="forms.entryTypeSelect" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect" />
     <bean id="forms.entryTypeSelectOrder" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelectOrder" />
-	<bean id="forms.entryTypeText" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeText" >
+    <bean id="forms.entryTypeSession" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSession" />
+    <bean id="forms.entryTypeText" class="fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeText" >
         <property name="anonymizationTypes">
             <list>
                 <ref bean="genericattributes.entryIdAnonymizationType" />
