@@ -137,6 +137,25 @@ public final class StepHome
     }
 
     /**
+     * Returns the initial step of the given form id
+     *
+     * @param nIdForm
+     *            The step form primary key
+     * @return the initial step of the given form id
+     */
+    public static Step getFinalStep( int nIdForm )
+    {
+        String stepCacheKey = _cache.getFinalStepCacheKey( nIdForm );
+        Step step = (Step) _cache.getFromCache( stepCacheKey );
+        if ( step == null )
+        {
+            step = _dao.selectFinalStep( nIdForm, _plugin );
+            _cache.putInCache( stepCacheKey, step );
+        }
+        return step;
+    }
+
+    /**
      * Load the data of all the step objects and returns them as a list
      * 
      * @return the list which contains the data of all the step objects

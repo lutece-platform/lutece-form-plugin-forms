@@ -254,6 +254,8 @@ public class FormStepJspBean extends AbstractJspBean
             _step.setInitial( true );
         }
 
+        _step.setFinal( true );
+
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
@@ -265,10 +267,7 @@ public class FormStepJspBean extends AbstractJspBean
         List<Step> stepList = StepHome.getStepsListByForm( nIdForm );
         for ( Step step : stepList )
         {
-            if ( !step.isFinal( ) )
-            {
-                stepRefList.addItem( step.getId( ), step.getTitle( ) );
-            }
+            stepRefList.addItem( step.getId( ), step.getTitle( ) );
         }
 
         model.put( MARK_STEP_LIST, stepRefList );
@@ -294,6 +293,13 @@ public class FormStepJspBean extends AbstractJspBean
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _step.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
         checkWorkgroupPermission(_step.getIdForm( ), request);
+
+        Step finalStep = StepHome.getFinalStep( _step.getIdForm( ) );
+        if ( finalStep != null )
+        {
+            finalStep.setFinal( false );
+            StepHome.update( finalStep );
+        }
 
         StepHome.create( _step );
         addInfo( INFO_STEP_CREATED, getLocale( ) );
