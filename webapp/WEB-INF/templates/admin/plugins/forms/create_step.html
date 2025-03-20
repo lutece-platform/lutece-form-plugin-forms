@@ -1,17 +1,18 @@
+
 <@box>
     <@boxHeader title='#i18n{forms.manageForm.pageTitle}' />
     <@boxBody>
         <@tform method='post' name='create_step' id='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp' params=' target="_top"'>
         	<@input type='hidden' id='token' name='token" value="${token}' />
             <@input type='hidden' id='id_form' name='id_form" value="${step.idForm}' />
-            <@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true>
+            <@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true  rows=2 >
                  <@input type='text' name='title' id='step-title' value='${step.title!?replace(\'- hidden\',\'\')}' />
             </@formGroup>
             <@formGroup helpKey='#i18n{forms.modify_step.labelShowTitle.help}' rows=2>
                 <@checkBox labelKey='#i18n{forms.modify_step.labelShowTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=true />
             </@formGroup>
-            <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}' >
-                 <@input type='textarea' name='description' rows=2 >${step.description!}</@input>
+            <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}'  rows=2 >
+                 <@input type='textarea' name='description'>${step.description!}</@input>
             </@formGroup>
             <@row>
                 <@columns>
@@ -83,5 +84,4 @@ document.addEventListener('DOMContentLoaded', function(e) {
     }
 });
 </script>
-
 <@toastr infos=infos warnings=warnings errors=errors />
