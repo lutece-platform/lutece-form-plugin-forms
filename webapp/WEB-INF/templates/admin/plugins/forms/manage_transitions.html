@@ -1,14 +1,8 @@
 
 <#include "/admin/plugins/forms/edit_step_tabs.html" />
-
 <#assign isOnlyOneStep=0>
-<#if step.initial>
-	<#assign isOnlyOneStep=isOnlyOneStep+1>
-</#if>
-<#if step.final>
-	<#assign isOnlyOneStep=isOnlyOneStep+1>
-</#if>
-
+<#if step.initial><#assign isOnlyOneStep=isOnlyOneStep+1></#if>
+<#if step.final><#assign isOnlyOneStep=isOnlyOneStep+1></#if>
 <@row>
     <@columns>
         <@box>
@@ -25,14 +19,16 @@
                     <@tabPanel id='manageStep' active=true>
                         <@row>
                             <@columns sm=4>
-                                <@tform method='post' name='modify_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
+                                <@tform method='post' name='modify_step' id='modify_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
                                 	<@input type='hidden' id='token' name='token' value='${token}' />
                                     <@messages errors=errors />
                                     <@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
                                     <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
-									
                                     <@formGroup labelKey='#i18n{forms.modify_step.labelTitle}' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true rows=2>
-                                        <@input type='text' name='title' value='${step.title!}' />
+                                        <@input type='text' name='title' id='step-title' value='${step.title!?replace(\'- hidden\',\'\')}' />
+                                    </@formGroup>
+                                    <@formGroup helpKey='#i18n{forms.modify_step.labelShowTitle.help}' rows=2>
+                                        <@checkBox labelKey='#i18n{forms.modify_step.labelShowTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=!step.title?ends_with('hidden') />
                                     </@formGroup>
                                     <@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}' rows=2>
                                         <@input type='textarea' name='description'>${step.description!}</@input>
@@ -90,52 +86,59 @@
         </@box>
     </@columns>
 </@row>
-
 <@formModal id='transitionModal' />
-
 <link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
 <script src="js/jquery/plugins/toastr/toastr.min.js"></script>
-
 <script>
 var steps=false, isOpen=false;    
-$( function(){
-    $('.btn-iframe').click( function(e){
+document.addEventListener('DOMContentLoaded', function(e) {
+    document.querySelector('#modify_step').addEventListener('submit', function(e) {
+        if ( !document.querySelector('#show-step-title').checked && document.querySelector('#step-title').value.indexOf('hidden') === -1 ) {
+            document.querySelector('#step-title').value = document.querySelector('#step-title').value  + ' - hidden';
+        } 
+    });
+
+    if (e.target.closest('.btn-iframe')) {
         e.preventDefault();
-        var iff = $('body').find('#iframe-forms');
-        iff.remove();
-        if( !isOpen ){
-            $(this).parents('tr').after('<tr id="iframe-forms" class="open"><td colspan="4"><iframe id="modalIframe" src="' + $(this).attr('href') + '"><i class="fa fa-5x fa-sync fa-spin"></i></iframe></td></tr>' );
-            isOpen=true;
+        
+        const existingIframe = document.getElementById('iframe-forms');
+        if (existingIframe) {
+            existingIframe.remove();
+        }
+        
+        if (!isOpen) {
+            const buttonRow = e.target.closest('tr');
+            const newRow = document.createElement('tr');
+            newRow.id = 'iframe-forms';
+            newRow.className = 'open';
+            newRow.innerHTML = <#noparse>`<td colspan="4"><iframe id="modalIframe" src="${e.target.closest('a').getAttribute('href')}"><i class="bi bi-arrow-repeat spinner"></i></iframe></td>`</#noparse>;
+            
+            buttonRow.parentNode.insertBefore(newRow, buttonRow.nextSibling);
+            isOpen = true;
         } else {
-            isOpen=false;
+            isOpen = false;
         }
-    });
+    }
 	
-	$('button.btn-modal').click( function(e){
-		var iframeUrl = $(this).data("url");
-		$("#transitionModal").find("#modalIframe").attr("src",iframeUrl);
+    document.querySelectorAll('button.btn-modal').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const iframeUrl = this.getAttribute('data-url');
+            document.querySelector('#transitionModal #modalIframe').setAttribute('src', iframeUrl);
+        });
     });
 
-    if( $('#initial').prop('checked') && $('#final').prop('checked') ){
-        steps=true; 
-    } 
+    if (document.getElementById('initial').checked && document.getElementById('final').checked) {
+        steps = true;
+    }
     
-    $('#initial').change( function(){
-        if( $('#initial').prop('checked') && $('#final').prop('checked') ){
-            steps=true; 
-        }  else {
-            steps=false; 
-        }
-    })
-
-    $('#final').change( function(){
-        if( $('#initial').prop('checked') && $('#final').prop('checked') ){
-            steps=true; 
-        }  else {
-            steps=false; 
-        }
-    })
-
+    document.getElementById('initial').addEventListener('change', function() {
+        steps = document.getElementById('initial').checked && document.getElementById('final').checked;
+    });
+    
+    document.getElementById('final').addEventListener('change', function() {
+        steps = document.getElementById('initial').checked && document.getElementById('final').checked;
+    });
+/*
     toastr.options.closeButton = true;
     toastr.options.timeOut = 0;
     toastr.options.extendedTimeOut = 0;
@@ -158,27 +161,31 @@ $( function(){
             toastr.info("${info.message}", "");
         </#list>	
     </#if>
-    
-    $("#tr-msg").hide();
+    */
+    document.getElementById('tr-msg').classList.add('d-none');
 
     <#if isOnlyOneStep=2>
-        toastr.info('#i18n{forms.manage_transitions.info.multiple.step}');
-        $("#transitions").hide();
-        $("#tr-msg").show();
+        // toastr.info('#i18n{forms.manage_transitions.info.multiple.step}');
+        document.getElementById('transitions').classList.add('d-none');
+        document.getElementById('tr-msg').classList.remove('d-none');
     </#if>
 	
-    $("#final").change( function(){
-        if ( $(this).prop('checked') ){
-            $("#transitions").hide();
-            $("#tr-msg").show();
-            if( steps ) {
-			    toastr.warning("#i18n{forms.manage_transitions.warning.final}"); 
+    document.getElementById('final').addEventListener('change', function() {
+        const transitionsTable = document.getElementById('transitions');
+        const trMsg = document.getElementById('tr-msg');
+        
+        if (this.checked) {
+            transitionsTable.classList.add('d-none');
+            trMsg.classList.remove('d-none');
+            
+            if (steps) {
+                // toastr.warning("#i18n{forms.manage_transitions.warning.final}");
             } else {
-			    toastr.warning("#i18n{forms.manage_transitions.info.step.initial.final}");
-            }   
+                // toastr.warning("#i18n{forms.manage_transitions.info.step.initial.final}");
+            }
         } else {
-            $("#transitions").show();
-            $("#tr-msg").hide();
+            transitionsTable.classList.remove('d-none');
+            trMsg.classList.add('d-none');
             toastr.clear();
         }
     });

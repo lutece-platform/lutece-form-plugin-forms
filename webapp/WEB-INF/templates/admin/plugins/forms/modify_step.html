@@ -13,6 +13,9 @@
 					<@formGroup labelKey='#i18n{forms.modify_step.labelTitle}' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true>
 						<@input type='text' name='title' value='${step.title!}' />
 					</@formGroup>
+					<@formGroup helpKey='#i18n{forms.modify_step.labelShowTitle.help}' rows=2>
+						<@checkBox labelKey='#i18n{forms.modify_step.labelShowTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=!step.title?ends_with('hidden') />
+					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}'>
 						<@input type='textarea' name='description'>${step.description!}</@input>
 					</@formGroup>
@@ -28,10 +31,26 @@
         </@tabs>
     </@boxBody>
 </@box>
-
 <script>
-$('#pubModal .content-header').hide();
-$('#pubModal #admin-wrapper').css( 'margin', '0' );
-$('#pubModal header').hide();
-$('#pubModal footer').hide();
+document.addEventListener('DOMContentLoaded', function() {
+	// Form submission handler
+	document.querySelector('#modify_step').addEventListener('submit', function(e) {
+		const showTitleCheckbox = document.querySelector('#show-step-title');
+		const titleField = document.querySelector('input[name="title"]');
+		
+		if (!showTitleCheckbox.checked && !titleField.value.includes('hidden')) {
+			titleField.value = titleField.value + ' - hidden';
+		}
+	});
+	
+	// Hide elements in the modal
+	const pubModal = document.querySelector('#pubModal');
+	if (pubModal) {
+		pubModal.querySelectorAll('.content-header').forEach(el => el.style.display = 'none');
+		const adminWrapper = pubModal.querySelector('#admin-wrapper');
+		if (adminWrapper) adminWrapper.style.margin = '0';
+		pubModal.querySelectorAll('header').forEach(el => el.style.display = 'none');
+		pubModal.querySelectorAll('footer').forEach(el => el.style.display = 'none');
+	}
+});
 </script>
