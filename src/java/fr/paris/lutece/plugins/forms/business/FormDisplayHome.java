@@ -68,7 +68,7 @@ public final class FormDisplayHome
     public static FormDisplay create( FormDisplay formDisplay )
     {
         _dao.insert( formDisplay, _plugin );
-
+        _cache.resetCache( );
         return formDisplay;
     }
 
