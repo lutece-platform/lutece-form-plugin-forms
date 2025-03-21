@@ -363,7 +363,7 @@ $( function() {
 });
 </script>
 </#macro>
-<#macro formModel>
+<#macro formModel type='update'>
 	<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
 	<@addRequiredJsFiles />
 	<script type="text/javascript" src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${uploadHandler.handlerName}" ></script>
@@ -471,7 +471,8 @@ $( function() {
 					<@input type='text' name='labelFinalButton' value='${form.labelFinalButton!}' />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' hideLabel=['all'] helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
-					<@checkBox labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=(form?has_content && form.displaySummary) />
+					<#if type='create'><#local isSummary=true ><#else><#local isSummary=(form?has_content && form.displaySummary)></#if>
+					<@checkBox labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=isSummary />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
 					<@checkBox labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
