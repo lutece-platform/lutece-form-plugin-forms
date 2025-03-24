@@ -23,7 +23,7 @@
 					</#if>
 				</#list>
 			</#if>
-			<@addFileInput fieldName=fieldName handler=uploadHandler cssClass=cssClass submitBtnName='action_doSynchronousUploadDocument' multiple=true />
+			<@addFileInput fieldName=fieldName handler=uploadHandler cssClass=cssClass submitBtnName='action_doSynchronousUploadDocument' multiple=true hasError=hasError required=entry.mandatory />
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="form-control-plaintext">${entry.helpMessage}</span>
 			</#if>
