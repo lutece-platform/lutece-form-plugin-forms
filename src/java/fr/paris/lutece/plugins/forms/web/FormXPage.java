@@ -291,6 +291,12 @@ public class FormXPage extends MVCApplication
             return null;
         }
 
+        if ( !isFinalStepExist( nIdForm ) )
+        {
+            SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_NO_FINAL_STEP, SiteMessage.TYPE_ERROR );
+            return null;
+        }
+
         Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );
         checkAuthentication( form, request );
 
@@ -1394,13 +1400,24 @@ public class FormXPage extends MVCApplication
     }
 
     /**
-     * ckeck if the session has expired
+     * check if the session has expired
      *
      *
      */
     private boolean isSessionLost( )
     {
         return ( _currentStep == null && _formResponseManager == null && _stepDisplayTree == null && _breadcrumb == null );
+    }
+
+    /**
+     * check if the final step exist
+     *
+     * @param nIdForm
+     *            id form
+     */
+    private boolean isFinalStepExist( int nIdForm )
+    {
+        return StepHome.getFinalStep(nIdForm) != null;
     }
 
 }

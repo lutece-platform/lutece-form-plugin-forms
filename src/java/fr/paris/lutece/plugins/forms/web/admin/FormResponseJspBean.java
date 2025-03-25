@@ -147,6 +147,12 @@ public class FormResponseJspBean extends AbstractJspBean
            	return redirectView(request, VIEW_ERROR );
         }
 
+        if ( !isFinalStepExist( nIdForm ) )
+        {
+            addError( FormsConstants.MESSAGE_ERROR_NO_FINAL_STEP, getLocale( ) );
+            return redirectView(request, VIEW_ERROR );
+        }
+
         Form form = FormHome.findByPrimaryKey( _currentStep.getIdForm( ) );    
        if ( !(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
        {
@@ -746,5 +752,16 @@ public class FormResponseJspBean extends AbstractJspBean
 
             return url.getUrl( );
         }
+    }
+
+    /**
+     * check if the final step exist
+     *
+     * @param nIdForm
+     *            id form
+     */
+    private boolean isFinalStepExist( int nIdForm )
+    {
+        return StepHome.getFinalStep(nIdForm) != null;
     }
 }
