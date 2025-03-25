@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><plug-in>
     <name>forms</name>
     <class>fr.paris.lutece.plugins.forms.service.FormsPlugin</class>
-    <version>3.0.1-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
@@ -10,7 +10,7 @@
     <provider>forms.plugin.provider</provider>
     <provider-url>http://lutece.paris.fr</provider-url>
     <icon-url>images/admin/skin/feature_default_icon.png</icon-url>
-    <copyright>Copyright (c) 2018 Mairie de Paris</copyright>
+    <copyright>Copyright (c) 2025 Ville de Paris</copyright>
     <db-pool-required>1</db-pool-required>
 
     <core-version-dependency>
