@@ -1,12 +1,11 @@
 <#include "all_entry_commons.html" />
-
 ${breadcrumb_template}
 <@row>
 	<@columns>
 		<@box>
 			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
-				<@tform method="post" name="manage_entries" action="${action}">
+				<@tform id='form-number' method="post" name="manage_entries" action="${action}">
 					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<@input type='hidden' name='width' id='width' value='0' />
@@ -59,6 +58,13 @@ ${breadcrumb_template}
 						<@formGroup>
 							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
 						</@formGroup>
+						<@formGroup labelFor='entry_step' labelKey='#i18n{forms.createEntry.labelStep}' helpKey='#i18n{forms.createEntry.labelStepHelp}'>
+							<@row>
+								<@columns sm=12 md=2>
+									<@input type='number' name='entry_step' id='entry_step' min=0 />
+								</@columns>
+							</@row>
+						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
@@ -88,4 +94,16 @@ ${breadcrumb_template}
 </@row>   
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
- 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	const form = document.getElementById('form-number');
+	form.addEventListener('submit', function () {
+		const entryStepInput = document.getElementById('entry_step');
+		const entryCssClass = document.getElementById('css_class');
+		const value = parseInt(entryStepInput.value, 10);
+		if (!isNaN(value) && value >= 0) {
+			entryCssClass.value += <#noparse>` step-${value}`</#noparse> ;
+		} 
+	});
+});
+</script>

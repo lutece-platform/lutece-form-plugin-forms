@@ -9,7 +9,7 @@ ${breadcrumb_template}
 		<@box>
 			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
-				<@tform action="${action}">
+				<@tform id='form-number' action=action>
 					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
 						<@input type='hidden' name='id_step' value='${step.id}' />
@@ -64,6 +64,13 @@ ${breadcrumb_template}
 						<@formGroup labelFor='max' labelKey='#i18n{forms.createEntry.labelMax}'>
 							<@input type='number' name='max' id='max' value='${maxField.value!}' />
 						</@formGroup>
+						<@formGroup labelFor='entry_step' labelKey='#i18n{forms.createEntry.labelStep}' helpKey='#i18n{forms.createEntry.labelStepHelp}'>
+							<@row>
+								<@columns sm=12 md=2>
+									<@input type='number' name='entry_step' id='entry_step' step=60 min=0 max=1440 />
+								</@columns>
+							</@row>
+						</@formGroup>
 						<@formGroup>
 							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
 						</@formGroup>
@@ -110,3 +117,30 @@ ${breadcrumb_template}
 </@row>
 <@initEditor />
 <@anonymPattern />
+<script>
+function setStep(c,i){
+	// Extract step value from CSS class if it exists
+	const cssClassValue = c.value;
+	const stepClassRegex = /step-(\d+)/;
+	const match = cssClassValue.match(stepClassRegex);
+	if (match && match[1]) {
+		i.value = match[1];
+		c.value = c.value.replace( <#noparse>`step-${match[1]}`</#noparse>, '');
+	} 
+}
+document.addEventListener('DOMContentLoaded', function () {
+	const form = document.getElementById('form-number');
+	const entryCssClass = document.getElementById('css_class');
+	const entryStepInput = document.getElementById('entry_step');
+
+	// Extract step value from CSS class if it exists
+	setStep(entryCssClass, entryStepInput);
+	
+	form.addEventListener('submit', function () {
+		const value = parseInt(entryStepInput.value, 10);
+		if (!isNaN(value) && value >= 0) {
+			entryCssClass.value += <#noparse>` step-${value}`</#noparse> ;
+		} 
+	});
+});
+</script>
