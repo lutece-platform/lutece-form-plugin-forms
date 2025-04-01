@@ -9,7 +9,7 @@
                  <@input type='text' name='title' id='step-title' value='${step.title!?replace(\'- hidden\',\'\')}' />
             </@formGroup>
             <@formGroup helpKey='#i18n{forms.modify_step.labelShowTitle.help}' rows=2>
-                <@checkBox labelKey='#i18n{forms.modify_step.labelShowTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=true />
+                <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelShowTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=true />
             </@formGroup>
             <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}'  rows=2 >
                  <@input type='textarea' name='description'>${step.description!}</@input>
@@ -17,12 +17,12 @@
             <@row>
                 <@columns>
                     <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' hideLabel=['all'] rows=2>
-                        <@checkBox labelFor='initial'labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+                        <@checkBox orientation='switch' labelFor='initial'labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
                     </@formGroup>
                 </@columns>
                 <@columns>
                     <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all'] rows=2>
-                        <@checkBox labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+                        <@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
                     </@formGroup>
                 </@columns>
             </@row>

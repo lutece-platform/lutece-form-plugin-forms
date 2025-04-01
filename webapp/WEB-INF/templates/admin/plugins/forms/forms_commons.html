@@ -472,10 +472,10 @@ $( function() {
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' hideLabel=['all'] helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
 					<#if type='create'><#local isSummary=true ><#else><#local isSummary=(form?has_content && form.displaySummary)></#if>
-					<@checkBox labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=isSummary />
+					<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=isSummary />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
-					<@checkBox labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
+					<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
 					<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
@@ -504,13 +504,13 @@ $( function() {
 			<#if is_active_captcha>
 				<@fieldSet legend='#i18n{forms.modify_form.captcha.label}'>
 					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' hideLabel=['all'] id='labelCaptchaStepInitial' helpKey='#i18n{forms.modify_form.labelCaptchaStepInitial.help}'  rows=2>
-						<@checkBox labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' labelFor='captchaStepInitial' name='captchaStepInitial' value='1' checked=(form?has_content && form.captchaStepInitial) />
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' labelFor='captchaStepInitial' name='captchaStepInitial' value='1' checked=(form?has_content && form.captchaStepInitial) />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' hideLabel=['all'] id='labelCaptchaStepFinal' helpKey='#i18n{forms.modify_form.labelCaptchaStepFinal.help}'  rows=2>
-						<@checkBox labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' labelFor='captchaStepFinal' name='captchaStepFinal' value='1' checked=(form?has_content && form.captchaStepFinal) />
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' labelFor='captchaStepFinal' name='captchaStepFinal' value='1' checked=(form?has_content && form.captchaStepFinal) />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' hideLabel=['all'] id='labelCaptchaRecap' helpKey='#i18n{forms.modify_form.labelCaptchaRecap.help}'  rows=2>
-						<@checkBox labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' labelFor='captchaRecap' name='captchaRecap' value='1' checked=(form?has_content && form.captchaRecap) />
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' labelFor='captchaRecap' name='captchaRecap' value='1' checked=(form?has_content && form.captchaRecap) />
 					</@formGroup>
 				</@fieldSet> 
 			</#if>
@@ -523,7 +523,7 @@ $( function() {
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-					<h4 class="modal-title">Etapes ${form.title}</h4>
+					<h3 class="h4 modal-title">Etapes ${form.title}</h4>
 			</div>
 			<div class="modal-body" style="height:80vh;">
 				<iframe src="" style="position:absolute;left:0; top:0; height:80vh; bottom:0; width:100%; padding:0;"></iframe>
@@ -538,10 +538,28 @@ $( function() {
 <script src="js/admin/plugins/forms/vis/vis.min.js"></script>
 <script src="js/admin/plugins/forms/vis/jspdf.min.js"></script>
 <script>
-	$( function(){
-		$("#renderNetwork").toggle();
-		$(".state-actions").toggle();
-		$(".state").nextAll().hide();
+	document.addEventListener('DOMContentLoaded', function() {
+		// Toggle visibility of the network render element
+		const renderNetwork = document.getElementById('renderNetwork');
+		if (renderNetwork) {
+			renderNetwork.style.display = 'none';
+		}
+		
+		// Toggle visibility of state action elements
+		const stateActions = document.querySelectorAll('.state-actions');
+		stateActions.forEach(element => {
+			element.style.display = 'none';
+		});
+		
+		// Hide all siblings after state elements
+		const states = document.querySelectorAll('.state');
+		states.forEach(state => {
+			let sibling = state.nextElementSibling;
+			while (sibling) {
+				sibling.style.display = 'none';
+				sibling = sibling.nextElementSibling;
+			}
+		});
 	});
 
 	var base64Img = null;
@@ -549,11 +567,37 @@ $( function() {
     	base64Img = base64; 
 	});
 
-	$("#toggleMap").click( function( e ){
+	document.getElementById('toggleMap').addEventListener('click', function(e) {
 		e.preventDefault();
-		$("#list").fadeToggle();
-		$("#renderNetwork").fadeToggle();
-		$(this).children('i').toggleClass('fa-project-diagram').toggleClass('fa-list-alt');
+		
+		const listElement = document.getElementById('list');
+		const renderNetworkElement = document.getElementById('renderNetwork');
+		
+		// Toggle with opacity transition
+		if (listElement.style.display !== 'none') {
+			listElement.style.opacity = '0';
+			setTimeout(() => {
+				listElement.style.display = 'none';
+				renderNetworkElement.style.display = 'block';
+				setTimeout(() => {
+					renderNetworkElement.style.opacity = '1';
+				}, 10);
+			}, 300);
+		} else {
+			renderNetworkElement.style.opacity = '0';
+			setTimeout(() => {
+				renderNetworkElement.style.display = 'none';
+				listElement.style.display = 'block';
+				setTimeout(() => {
+					listElement.style.opacity = '1';
+				}, 10);
+			}, 300);
+		}
+		
+		// Toggle icon classes
+		const iconElement = this.querySelector('i');
+		iconElement.classList.toggle('fa-project-diagram');
+		iconElement.classList.toggle('fa-list-alt');
 	});
 
     // create an array with nodes
@@ -706,21 +750,21 @@ $( function() {
     }
 	
 	/* Bouton choix de l'orientation pour une représentation hiérachique */
-	$( "#direction > select" ).change(function() {
-		var di = $(this).val();
-		draw( true, di );
+	document.querySelector("#direction > select").addEventListener("change", function() {
+		const di = this.value;
+		draw(true, di);
 	});
 
 	// Sauve les positions
-	$("#save_network").click( function(){
+	document.getElementById("save_network").addEventListener("click", function() {
 		saveNetwork();
 	});
 
 	// Récupère les positions depuis localStorage
-	$("#get_network").click( function(){
-		var savedNodesPosition = getStoredPositions();
-		setNodesPosition( savedNodesPosition );
-		draw( false, 'UD' );
+	document.getElementById("get_network").addEventListener("click", function() {
+		const savedNodesPosition = getStoredPositions();
+		setNodesPosition(savedNodesPosition);
+		draw(false, 'UD');
 	});
 	
 	// Sauve les positions dans localStorage

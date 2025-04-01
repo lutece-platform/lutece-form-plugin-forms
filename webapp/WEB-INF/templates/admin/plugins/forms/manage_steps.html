@@ -31,7 +31,8 @@
 							<#list step_list as step>
 								<@tr>
 									<@td>
-										<@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='${step.title}'>${step.title}</@link>
+										<#assign stepTitle>${step.title?replace('- hidden','')}</#assign>
+										<@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title=stepTitle >${stepTitle}</@link>
 										<#if step.initial><@tag color='info'>#i18n{forms.manage_steps.columnInitial}</@tag> <#assign hasInitial=1 > </#if>
 										<#if step.final><@tag color='info'>#i18n{forms.manage_steps.columnFinal}</@tag> <#assign hasFinal=1 ></#if>
 									</@td>
