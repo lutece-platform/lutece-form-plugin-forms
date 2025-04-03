@@ -63,6 +63,8 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.editor.RichTextContentService;
+import fr.paris.lutece.portal.service.editor.RichTextParsingException;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -175,7 +177,11 @@ public class FormResponseXPage extends MVCApplication
                     IEntryDisplayService displayService = EntryServiceManager.getInstance()
                             .getEntryDisplayService(fqr.getQuestion().getEntry().getEntryType());
                     if (displayService instanceof EntryTypeFileDisplayService) {
-                        displayService.getEntryTemplateDisplay(request, fqr.getQuestion().getEntry(), locale, model, DisplayType.READONLY_FRONTOFFICE);
+                        try {
+                            RichTextContentService.getContent( displayService.getEntryTemplateDisplay(request, fqr.getQuestion().getEntry(), locale, model, DisplayType.READONLY_FRONTOFFICE) );
+                        } catch (RichTextParsingException e) {
+                            AppLogService.error( e.getMessage(), e );
+                        }
                     }
                 });
 
