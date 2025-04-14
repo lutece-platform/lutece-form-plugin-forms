@@ -38,8 +38,8 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * Factory for all FormPanel
@@ -54,7 +54,7 @@ public class FormPanelFactory
      */
     public FormPanelFactory( )
     {
-        _listFormPanelConfiguration = SpringContextService.getBeansOfType( IFormPanelConfiguration.class );
+        _listFormPanelConfiguration = CDI.current().select( IFormPanelConfiguration.class ).stream( ).toList( );
     }
 
     /**

@@ -42,21 +42,22 @@ import fr.paris.lutece.plugins.forms.service.search.IFormSearchIndexer;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.test.LuteceTestCase;
+import jakarta.inject.Inject;
+
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
 
 //@RunWith( SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations={"classpath:/conf/plugins/forms_context.xml"})
-@Ignore
+@Disabled
 public class LuceneFormSearchTest extends LuteceTestCase
 {
     private static final Timestamp TIMESTAMP_NOW = Timestamp.valueOf( LocalDateTime.now( ) );
@@ -77,19 +78,10 @@ public class LuceneFormSearchTest extends LuteceTestCase
     // Entry type
     private static final String BEAN_NAME_ENTRY_TYPE_TEXT = "forms.entryTypeText";
 
+    @Inject
     private IFormSearchIndexer _formFormSearchIndexer;
+    @Inject
     private IFormSearchEngine _formFormSearchEngine;
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void setUp( ) throws Exception
-    {
-        super.setUp( );
-        _formFormSearchIndexer = SpringContextService.getBean( "forms.luceneFormsSearchIndexer" );
-        _formFormSearchEngine = SpringContextService.getBean( "forms.luceneFormsSearchEngine" );
-    }
 
     /**
      * Create a form
@@ -152,14 +144,5 @@ public class LuceneFormSearchTest extends LuteceTestCase
         formResponse.setSteps( listFormResponseStep );
 
         return formResponse;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void tearDown( ) throws Exception
-    {
-        super.tearDown( );
     }
 }

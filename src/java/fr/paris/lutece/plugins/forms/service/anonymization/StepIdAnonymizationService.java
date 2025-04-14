@@ -38,10 +38,12 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.anonymization.AbstractTextAnonymizationService;
 import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryTypeAnonymisationService;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * {@link IEntryTypeAnonymisationService} that replace the wildcard by the step id.
  */
+@ApplicationScoped
 public class StepIdAnonymizationService extends AbstractTextAnonymizationService
 {
     @Override

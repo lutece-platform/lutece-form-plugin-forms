@@ -37,7 +37,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -46,10 +49,10 @@ import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryAnonymizationType;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeGalleryImage;
-import fr.paris.lutece.plugins.genericattributes.service.file.FileService;
+import fr.paris.lutece.plugins.genericattributes.service.file.GenericAttributeFileService;
 import fr.paris.lutece.portal.business.file.File;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.url.UrlItem;
 
@@ -58,6 +61,8 @@ import fr.paris.lutece.util.url.UrlItem;
  * EntryTypeGalleryImage
  *
  */
+@ApplicationScoped
+@Named( "forms.entryTypeGalleryImage" )
 public class EntryTypeGalleryImage extends AbstractEntryTypeGalleryImage implements IResponseComparator
 {
     /**
@@ -72,6 +77,14 @@ public class EntryTypeGalleryImage extends AbstractEntryTypeGalleryImage impleme
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_gallery_image.html";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_gallery_image.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_gallery_image.html";
+
+    @Inject
+    public void addAnonymizationTypes(
+        @Named("genericattributes.fileDeleteAnonymizationType") IEntryAnonymizationType fileDeleteAnonymizationType,
+        @Named("genericattributes.fileReplaceAnonymizationType") IEntryAnonymizationType fileReplaceAnonymizationType ) 
+    {
+        setAnonymizationTypes( List.of( fileDeleteAnonymizationType, fileReplaceAnonymizationType ) );
+    }
 
     /**
      * {@inheritDoc}
@@ -147,8 +160,7 @@ public class EntryTypeGalleryImage extends AbstractEntryTypeGalleryImage impleme
         {
             if ( response.getFile( ) != null )
             {
-                FileService fileService = SpringContextService.getBean( FileService.BEAN_SERVICE );
-                File file = fileService.findByPrimaryKey( response.getFile( ).getIdFile( ), true );
+                File file = GenericAttributeFileService.getInstance( ).load( response.getFile( ).getFileKey (), response.getFile( ).getOrigin( ) );
 
                 if ( ( file != null ) && ( file.getPhysicalFile( ) != null ) && ( file.getPhysicalFile( ).getValue( ) != null ) )
                 {

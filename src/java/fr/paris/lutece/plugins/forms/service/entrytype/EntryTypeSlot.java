@@ -36,9 +36,13 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeSlot;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 import java.util.List;
 
+@ApplicationScoped
+@Named( "forms.entryTypeSlot" )
 public class EntryTypeSlot extends AbstractEntryTypeSlot implements IResponseComparator
 {
     /**

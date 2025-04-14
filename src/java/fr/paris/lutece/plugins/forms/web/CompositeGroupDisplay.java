@@ -40,7 +40,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -57,7 +58,6 @@ import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
@@ -88,7 +88,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
 
     private static final String DEFAULT_GROUP_ICON = "indent";
 
-    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    private static FormService _formService = CDI.current( ).select( FormService.class ).get( );
     private int _nIterationNumber;
     private int _nNbBaseChildren;
 

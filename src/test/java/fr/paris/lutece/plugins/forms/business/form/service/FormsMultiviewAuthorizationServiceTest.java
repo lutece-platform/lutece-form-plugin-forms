@@ -34,16 +34,17 @@
 package fr.paris.lutece.plugins.forms.business.form.service;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import fr.paris.lutece.test.mocks.MockHttpServletRequest;
+import jakarta.inject.Inject;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateCreationMock;
@@ -67,15 +68,15 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 {
     // Variables
     private FormPanel _formPanel;
+    @Inject
     private FormColumnFactory _formColumnFactory;
 
     /**
      * {@inheritDoc}
      */
-    @Before
+    @BeforeEach
     public void setUp( ) throws Exception
     {
-        super.setUp( );
 
         List<String> listFormPanelInitializerName = new ArrayList<>( );
         listFormPanelInitializerName.add( "fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl.FormPanelFormsInitializer" );
@@ -89,22 +90,13 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         listFormColumn.add( new FormColumnFormsMock( 1, "form" ) );
         listFormColumn.add( new FormColumnFormResponseDateCreationMock( 2, "date creation" ) );
         listFormColumn.add( new FormColumnWorkflowStateMock( 3, "workflow state" ) );
-        _formColumnFactory = new FormColumnFactory( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @After
-    public void tearDown( ) throws Exception
-    {
-        super.tearDown( );
     }
 
     /**
      * Test of the method {@link FormsMultiviewAuthorizationService#isUserAuthorizedOnFormResponse(request,int)} on a form response on which the user is
      * authorized
      */
+    @Test
     public void testIsUserAthorizedOnFormResponseOnAuthorizedFormResponse( )
     {
         int nIdFormResponse = 3;
@@ -123,6 +115,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
      * Test of the method {@link FormsMultiviewAuthorizationService#isUserAuthorizedOnFormResponse(request,int)} on a form response on which the user is not
      * authorized
      */
+    @Test
     public void testIsUserAthorizedOnFormResponseOnUnauthorizedFormResponse( )
     {
         int nIdFormResponse = 6;
@@ -140,6 +133,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
     /**
      * Test of the method {@link FormsMultiviewAuthorizationService#isUserAuthorizedOnFormResponse(request,int)} with a bad id for a form response
      */
+    @Test
     public void testIsUserAthorizedWithBadIdFormResponse( )
     {
         int nIdFormResponse = -1;
@@ -157,6 +151,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
     /**
      * Test of the method {@link FormsMultiviewAuthorizationService#isUserAuthorizedOnFormResponse(request,int)} with an empty panel
      */
+    @Test
     public void testIsUserAthorizedWithEmptyPanel( )
     {
         int nIdFormResponse = 2;

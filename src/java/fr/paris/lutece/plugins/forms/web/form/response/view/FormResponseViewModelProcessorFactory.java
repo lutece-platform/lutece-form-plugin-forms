@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.forms.web.form.response.view;
 
 import java.util.List;
 
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * Factory used to retrieve all the implementation of the IFormResponseViewModelProcessor
@@ -43,8 +43,7 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 public class FormResponseViewModelProcessorFactory
 {
     // Variables
-    private final List<IFormResponseViewModelProcessor> _listFormResponseViewModelProcessor = SpringContextService
-            .getBeansOfType( IFormResponseViewModelProcessor.class );
+    private final List<IFormResponseViewModelProcessor> _listFormResponseViewModelProcessor = CDI.current( ).select( IFormResponseViewModelProcessor.class ).stream( ).toList( ); 
 
     /**
      * Return the list of all FormResponseViewModelProcessor

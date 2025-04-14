@@ -42,18 +42,25 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
-import org.springframework.util.ReflectionUtils;
-import org.springframework.util.ReflectionUtils.FieldCallback;
-
 public class RandomValueFieldPopulator
 {
-
     private final static Random random = new Random( );
     private static final int DATE_WINDOW_MILLIS = 10000;
 
     public void populate( Object object )
     {
-        ReflectionUtils.doWithFields( object.getClass( ), new RandomValueFieldSetterCallback( object ) );
+    	Field[] fields = object.getClass( ).getDeclaredFields( );
+        for (Field field : fields)
+        {
+        	try 
+        	{
+        		new RandomValueFieldSetterCallback( object ).doWith( field );
+            }
+        	catch ( IllegalAccessException e )
+        	{
+                // Skip fields that cannot be accessed
+            }
+        }
     }
 
     public static void randomlyPopulateFields( Object object )
@@ -61,7 +68,7 @@ public class RandomValueFieldPopulator
         new RandomValueFieldPopulator( ).populate( object );
     }
 
-    private static class RandomValueFieldSetterCallback implements FieldCallback
+    private static class RandomValueFieldSetterCallback
     {
         private Object targetObject;
 
@@ -70,7 +77,6 @@ public class RandomValueFieldPopulator
             this.targetObject = targetObject;
         }
 
-        @Override
         public void doWith( Field field ) throws IllegalAccessException
         {
             Class<?> fieldType = field.getType( );
@@ -79,7 +85,7 @@ public class RandomValueFieldPopulator
                 Object value = generateRandomValue( fieldType );
                 if ( value != null )
                 {
-                    ReflectionUtils.makeAccessible( field );
+                	field.setAccessible(true);
                     field.set( targetObject, value );
                 }
             }

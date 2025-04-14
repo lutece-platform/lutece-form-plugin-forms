@@ -35,21 +35,24 @@ package fr.paris.lutece.plugins.forms.service.cache;
 
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
-import fr.paris.lutece.portal.business.event.EventRessourceListener;
-import fr.paris.lutece.portal.business.event.ResourceEvent;
+import fr.paris.lutece.plugins.genericattributes.business.EntryEvent;
 import fr.paris.lutece.portal.service.cache.AbstractCacheableService;
-import fr.paris.lutece.portal.service.event.ResourceEventManager;
+import fr.paris.lutece.portal.service.event.EventAction;
+import fr.paris.lutece.portal.service.event.Type;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 
-public class FormsCacheService extends AbstractCacheableService implements EventRessourceListener
+@ApplicationScoped
+public class FormsCacheService extends AbstractCacheableService<String, Object>
 {
 
     private static final String CACHE_NAME = "formsCacheService";
 
-    @Override
+    @PostConstruct
     public void initCache( )
     {
-        super.initCache( );
-        ResourceEventManager.register( this );
+    	initCache( CACHE_NAME, String.class, Object.class );
     }
 
     @Override
@@ -131,31 +134,25 @@ public class FormsCacheService extends AbstractCacheableService implements Event
         return new StringBuilder( "FormMessage-by-Form:" ).append( nIdForm ).toString( );
     }
 
-    @Override
-    public void addedResource( ResourceEvent event )
+    public void addedResource( @Observes @Type(EventAction.CREATE) EntryEvent event )
     {
         handleEvent( event );
     }
 
-    @Override
-    public void deletedResource( ResourceEvent event )
+    public void deletedResource( @Observes @Type(EventAction.REMOVE) EntryEvent event )
     {
         handleEvent( event );
     }
 
-    @Override
-    public void updatedResource( ResourceEvent event )
+    public void updatedResource( @Observes @Type(EventAction.UPDATE) EntryEvent event )
     {
         handleEvent( event );
     }
 
-    private void handleEvent( ResourceEvent event )
+    private void handleEvent( EntryEvent event )
     {
-        if ( Form.RESOURCE_TYPE.equals( event.getTypeResource( ) ) )
+        if ( Form.RESOURCE_TYPE.equals( event.getResourceType( ) ) )
         {
-            // FIXME GenericAttributes sends events inside a transaction.
-            // this cache reset should really happen after the transaction
-            // but Lutece lacks TransactionSynchronisation infrastructure
             resetCache( );
         }
     }

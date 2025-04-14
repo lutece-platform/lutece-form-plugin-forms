@@ -38,8 +38,8 @@ import java.util.List;
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * This class provides instances management methods (create, find, ...) for FormDisplay objects
@@ -47,8 +47,8 @@ import fr.paris.lutece.util.ReferenceList;
 public final class FormDisplayHome
 {
     // Static variable pointed at the DAO instance
-    private static IFormDisplayDAO _dao = SpringContextService.getBean( "forms.formDisplayDAO" );
-    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
+    private static IFormDisplayDAO _dao = CDI.current( ).select( IFormDisplayDAO.class ).get( );
+    private static FormsCacheService _cache = CDI.current( ).select( FormsCacheService.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -108,11 +108,11 @@ public final class FormDisplayHome
     public static FormDisplay findByPrimaryKey( int nKey )
     {
         String cacheKey = _cache.getFormDisplayCacheKey( nKey );
-        FormDisplay formDisplay = ( FormDisplay ) _cache.getFromCache( cacheKey );
+        FormDisplay formDisplay = ( FormDisplay ) _cache.get( cacheKey );
         if ( formDisplay == null )
         {
             formDisplay = _dao.load( nKey, _plugin );
-            _cache.putInCache( cacheKey, formDisplay );
+            _cache.put( cacheKey, formDisplay );
         }
         if ( formDisplay != null )
         {
@@ -149,11 +149,11 @@ public final class FormDisplayHome
     {
         String cacheKey = _cache.getFormDisplayListByParentCacheKey( nIdStep, nIdParent );
         @SuppressWarnings( "unchecked" )
-        List<FormDisplay> result = ( List<FormDisplay> ) _cache.getFromCache( cacheKey );
+        List<FormDisplay> result = ( List<FormDisplay> ) _cache.get( cacheKey );
         if ( result == null )
         {
             result = _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
-            _cache.putInCache( cacheKey, result );
+            _cache.put( cacheKey, result );
         }
         for ( FormDisplay formDisplay : result )
         {

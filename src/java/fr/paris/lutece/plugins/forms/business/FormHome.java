@@ -37,8 +37,8 @@ import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,8 +49,8 @@ import java.util.stream.Collectors;
 public final class FormHome
 {
     // Static variable pointed at the DAO instance
-    private static IFormDAO _dao = SpringContextService.getBean( "forms.formDAO" );
-    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
+    private static IFormDAO _dao = CDI.current( ).select( IFormDAO.class ).get( );
+    private static FormsCacheService _cache = CDI.current( ).select( FormsCacheService.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -70,7 +70,7 @@ public final class FormHome
     public static Form create( Form form )
     {
         _dao.insert( form, _plugin );
-        _cache.putInCache( _cache.getFormCacheKey( form.getId( ) ), form );
+        _cache.put( _cache.getFormCacheKey( form.getId( ) ), form );
         return form;
     }
 
@@ -84,7 +84,7 @@ public final class FormHome
     public static Form update( Form form )
     {
         _dao.store( form, _plugin );
-        _cache.putInCache( _cache.getFormCacheKey( form.getId( ) ), form );
+        _cache.put( _cache.getFormCacheKey( form.getId( ) ), form );
         return form;
     }
 
@@ -97,7 +97,7 @@ public final class FormHome
     public static void remove( int nKey )
     {
         _dao.delete( nKey, _plugin );
-        _cache.removeKey( _cache.getFormCacheKey( nKey ) );
+        _cache.remove( _cache.getFormCacheKey( nKey ) );
     }
 
     /**
@@ -110,11 +110,11 @@ public final class FormHome
     public static Form findByPrimaryKey( int nKey )
     {
         String formCacheKey = _cache.getFormCacheKey( nKey );
-        Form form = ( Form ) _cache.getFromCache( formCacheKey );
+        Form form = ( Form ) _cache.get( formCacheKey );
         if ( form == null )
         {
             form = _dao.load( nKey, _plugin );
-            _cache.putInCache( formCacheKey, form );
+            _cache.put( formCacheKey, form );
         }
         else
         {
@@ -133,11 +133,11 @@ public final class FormHome
     {
         String cacheKey = _cache.getFormListCacheKey( );
         @SuppressWarnings( "unchecked" )
-        List<Form> formList = ( List<Form> ) _cache.getFromCache( cacheKey );
+        List<Form> formList = ( List<Form> ) _cache.get( cacheKey );
         if ( formList == null )
         {
             formList = _dao.selectFormsList( _plugin );
-            _cache.putInCache( cacheKey, formList );
+            _cache.put( cacheKey, formList );
         }
         // return copies to prevent dynamic members sharing
         return formList.stream( ).map( f -> new Form( f ) ).collect( Collectors.toList( ) );

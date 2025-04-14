@@ -44,10 +44,10 @@ import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
 import fr.paris.lutece.plugins.forms.web.FormResponseData;
 import fr.paris.lutece.portal.service.security.LuteceUser;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.sql.TransactionManager;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * FormResponseService
@@ -61,7 +61,7 @@ public class FormResponseService
 
     private FormResponseService( )
     {
-        _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+        _formService = CDI.current( ).select( FormService.class ).get( );	
     }
 
     public static FormResponseService getInstance( )

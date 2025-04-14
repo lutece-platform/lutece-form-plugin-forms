@@ -33,8 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.service.listener;
 
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.RemovalListenerService;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * QuestionRemovalListenerService
@@ -57,6 +58,6 @@ public final class QuestionRemovalListenerService
      */
     public static RemovalListenerService getService( )
     {
-        return SpringContextService.getBean( BEAN_QUESTION_REMOVAL_SERVICE );
+        return CDI.current( ).select( RemovalListenerService.class, NamedLiteral.of( BEAN_QUESTION_REMOVAL_SERVICE ) ).get( );
     }
 }

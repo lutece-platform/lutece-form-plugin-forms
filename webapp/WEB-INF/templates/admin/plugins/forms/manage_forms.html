@@ -70,7 +70,7 @@
                                         	<#assign can_publish=true>
                                             <#assign params='data-toggle="modal" data-target="#pubModal" data-url="${action.url}&id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"' />
                                         </#if>
-                                        <@aButton href='${action.url}&id_form=${form.id}&token=${token}' title='${action.name}' hideTitle=['all'] color='${color}' class='${perm}' buttonIcon=action.iconUrl params=params size='sm' />
+                                        <@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' hideTitle=['all'] color='${color}' class='${perm}' buttonIcon=action.iconUrl params=params size='sm' />
                                     </#list>
                                 </#if>
                                 <#if form.active>
@@ -151,7 +151,6 @@
 	<@modalHeader modalTitle='#i18n{forms.manageForm.buttonImport}' />
 	<@modalBody>
 		<@tform class='form' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageForms.jsp' params='enctype="multipart/form-data"'>
-			<@input type="hidden" name="token" value = "${token}" />
 			<@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
 				<@input type='file' name='json_file'/>
 			</@formGroup>

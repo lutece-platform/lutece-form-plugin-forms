@@ -282,9 +282,6 @@ $( function(){
 </#macro>     
 <#macro formModal id='pubModal' title=''>
 <@modal id='${id}'>
-	<#if token??>
-		<@input type='hidden' id='token' name='token' value='${token}' />
-	</#if>
 	<@modalHeader />
     <iframe id="modalIframe" src=""></iframe>
 </@modal>

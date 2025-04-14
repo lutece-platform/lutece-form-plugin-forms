@@ -36,8 +36,8 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 
@@ -47,8 +47,8 @@ import java.util.List;
 public final class TransitionHome
 {
     // Static variable pointed at the DAO instance
-    private static ITransitionDAO _dao = SpringContextService.getBean( "forms.transitionDAO" );
-    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
+    private static ITransitionDAO _dao = CDI.current( ).select( ITransitionDAO.class ).get( );
+    private static FormsCacheService _cache = CDI.current( ).select( FormsCacheService.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -170,11 +170,11 @@ public final class TransitionHome
     {
         String cacheKey = _cache.getTransitionsListFromStepCacheKey( nIdStep );
         @SuppressWarnings( "unchecked" )
-        List<Transition> transitions = ( List<Transition> ) _cache.getFromCache( cacheKey );
+        List<Transition> transitions = ( List<Transition> ) _cache.get( cacheKey );
         if ( transitions == null )
         {
             transitions = _dao.selectTransitionsListFromStep( nIdStep, _plugin );
-            _cache.putInCache( cacheKey, transitions );
+            _cache.put( cacheKey, transitions );
         }
         return transitions;
     }

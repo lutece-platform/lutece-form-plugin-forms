@@ -57,7 +57,6 @@ import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilt
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.FormFilterFormsConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.filter.configuration.IFormFilterConfiguration;
 import fr.paris.lutece.plugins.forms.business.form.list.FormListFacade;
-import fr.paris.lutece.plugins.forms.business.form.list.FormListLuceneDAO;
 import fr.paris.lutece.plugins.forms.business.form.list.IFormListDAO;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
@@ -67,7 +66,8 @@ import fr.paris.lutece.plugins.forms.web.entrytype.EntryTypeDefaultDisplayServic
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -117,14 +117,14 @@ public final class MultiviewFormService
     public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
             FormItemSortConfig sortConfig )
     {
-        FormListFacade formListFacade = SpringContextService.getBean( FormListFacade.BEAN_NAME );
+        FormListFacade formListFacade = CDI.current( ).select( FormListFacade.class ).get( );
         formListFacade.populateFormColumns( formPanel, listFormColumn, listFormFilter, nStartIndex, nPageSize, sortConfig );
     }
 
     public List<FormResponseItem> searchAllListFormResponseItem( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter,
             FormItemSortConfig sortConfig )
     {
-        IFormListDAO formListDAO = SpringContextService.getBean( FormListLuceneDAO.BEAN_NAME );
+        IFormListDAO formListDAO = CDI.current( ).select( IFormListDAO.class ).get( );
         return formListDAO.searchAllFormResponseItem( formPanel, listFormColumn, listFormFilter, sortConfig );
     }
 
@@ -164,7 +164,7 @@ public final class MultiviewFormService
     }
 
     /**
-     * Get the form columns list from spring and multiview conf
+     * Get the form columns list from CDI container and multiview conf
      * 
      * @param nIdForm
      * @return the form columns list
@@ -173,8 +173,8 @@ public final class MultiviewFormService
     {
         Map<String, IFormColumn> mapFormColumns = new LinkedHashMap<>( );
 
-        // Retrieve all the column Spring beans
-        List<IFormColumn> listFormColumns = SpringContextService.getBeansOfType( IFormColumn.class );
+        // Retrieve all the column CDI beans
+        List<IFormColumn> listFormColumns = CDI.current( ).select( IFormColumn.class ).stream( ).collect( Collectors.toList( ) );
 
         Collections.sort( listFormColumns, new FormColumnComparator( ) ); // sort by position
         listFormColumns.forEach( column -> mapFormColumns.put( column.getFormColumnTitle( locale ), column ) );
@@ -220,7 +220,7 @@ public final class MultiviewFormService
     }
 
     /**
-     * Get the form columns list from spring and multiview conf
+     * Get the form columns list from CDI container and multiview conf
      * 
      * @param nIdForm
      * @return the form columns list
@@ -230,7 +230,9 @@ public final class MultiviewFormService
         Map<String, FormFilter> mapFormFilter = new HashMap<>( );
 
         // First add the XML-based filters
-        for ( IFormFilterConfiguration formFilterConfiguration : SpringContextService.getBeansOfType( IFormFilterConfiguration.class ) )
+        List<IFormFilterConfiguration> formFilterConfigurations = CDI.current().select( IFormFilterConfiguration.class ).stream( ).toList( );
+        
+        for ( IFormFilterConfiguration formFilterConfiguration : formFilterConfigurations )
         {
             FormFilter formFilter;
             if ( formFilterConfiguration instanceof FormFilterFormsConfiguration )

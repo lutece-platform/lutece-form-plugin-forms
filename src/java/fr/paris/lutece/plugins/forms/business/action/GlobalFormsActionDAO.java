@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.business.action;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.Locale;
 /**
  * GlobalFormsActionDAO
  */
+@ApplicationScoped
 public class GlobalFormsActionDAO implements IGlobalFormsActionDAO
 {
     private static final String SQL_QUERY_SELECT_ALL_ACTIONS = "SELECT a.code, a.name_key, a.description_key, a.action_url, a.icon_url FROM forms_global_action a ";

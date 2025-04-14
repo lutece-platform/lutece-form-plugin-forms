@@ -36,7 +36,13 @@ package fr.paris.lutece.plugins.forms.web.admin;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletRequest;
+
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -62,14 +68,14 @@ import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.breadcrumb.IBreadcrumb;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.security.SecurityTokenService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.url.UrlItem;
 
+@SessionScoped
+@Named
 @Controller( controllerJsp = "ManageFormResponse.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormResponseJspBean extends AbstractJspBean
 {
@@ -110,8 +116,11 @@ public class FormResponseJspBean extends AbstractJspBean
     private static final String MESSAGE_ERROR_REMOVE_ITERATION = "forms.error.remove.iteration";
     
     // Other
+    @Inject
+    private FormService _formService;
+    @Inject
+    private FormsAsynchronousUploadHandler _formsAsynchronousUploadHandler;
     private Controller _controller = getClass( ).getAnnotation( Controller.class );
-    private FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
     private FormResponseManager _formResponseManager;
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
@@ -159,7 +168,7 @@ public class FormResponseJspBean extends AbstractJspBean
         {
             if ( _breadcrumb == null )
             {
-                _breadcrumb = SpringContextService.getBean( form.getBreadcrumbName( ) );
+                _breadcrumb = CDI.current( ).select( IBreadcrumb.class, NamedLiteral.of( form.getBreadcrumbName( ) ) ).get( );
             }
             initFormResponseManager( form, getUser().getAccessCode( ) );
 
@@ -194,7 +203,6 @@ public class FormResponseJspBean extends AbstractJspBean
             }
             
             Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
-            modelForStep.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
             // Set whether the current form's responses are from a backed up save or not
             modelForStep.put( FormsConstants.MARK_HAS_BACKUP_RESPONSE, _formResponseManager.getFormResponse( ).isFromSave( ) );
             _stepDisplayTree.addModel( modelForStep );
@@ -427,8 +435,6 @@ public class FormResponseJspBean extends AbstractJspBean
         Map<String, Object> model = buildModelForSummary( request );
         model.put( FormsConstants.MARK_ID_FORM, form.getId( ) );
         model.put( FormsConstants.MARK_FORM, form );
-
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
         
         return getPage( form.getTitle( ), TEMPLATE_VIEW_FORM_RESPONSE_SUMMARY, model );
     }
@@ -540,7 +546,7 @@ public class FormResponseJspBean extends AbstractJspBean
         _currentStep = null;
         _stepDisplayTree = null;
         _breadcrumb = null;
-        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
+        _formsAsynchronousUploadHandler.removeSessionFiles( request.getSession( ) );
     }
     
     /**

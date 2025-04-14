@@ -41,9 +41,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -86,9 +88,8 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.security.SecurityTokenService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -110,6 +111,8 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
+@SessionScoped
+@Named
 @Controller( controllerJsp = "ManageForms.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormJspBean extends AbstractJspBean
 {
@@ -190,7 +193,6 @@ public class FormJspBean extends AbstractJspBean
     private static final String INFO_FORM_COPIED = "forms.info.form.copied";
     private static final String ERROR_FORM_NOT_COPIED = "forms.error.form.not.copied";
     private static final String ERROR_FORM_NOT_IMPORTED = "forms.error.form.not.imported";
-    private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
 
     // Errors
     private static final String ERROR_FORM_NOT_UPDATED = "forms.error.form.notUpdated";
@@ -208,10 +210,16 @@ public class FormJspBean extends AbstractJspBean
     private int _nItemsPerPage;
 
     // Other
-    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    @Inject
+    private FormService _formService;
+    @Inject
+    private FormCategoryService _formCategoryService;
+    @Inject
+    private WorkflowService _workflowService;
+    @Inject
+    private AccessControlService _accessControlService;
     private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
-    private IAsyncUploadHandler _uploadHandler = AsynchronousUploadHandler.getHandler( );
-    private static FormCategoryService _formCategoryService = SpringContextService.getBean( FormCategoryService.BEAN_NAME );
+    private IAsyncUploadHandler _uploadHandler = AsynchronousUploadHandler.getHandler( );    
 
     /**
      * Build the Manage View
@@ -265,7 +273,6 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN, PluginService.isPluginEnable( KIBANA_FORMS_PLUGIN_NAME ) );
         model.put( FormsConstants.MARK_TIMESTAMP, strTimespamp );
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_FORM ) );
 
         setPageTitleProperty( EMPTY_STRING );
 
@@ -296,10 +303,10 @@ public class FormJspBean extends AbstractJspBean
 
         Map<String, Object> model = getModel( );
 
-        if ( WorkflowService.getInstance( ).isAvailable( ) )
+        if ( _workflowService.isAvailable( ) )
         {
             AdminUser adminUser = getUser( );
-            ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( (User) adminUser, getLocale( ) );
+            ReferenceList referenceList = _workflowService.getWorkflowsEnabled( (User) adminUser, getLocale( ) );
             model.put( MARK_WORKFLOW_REF_LIST, referenceList );
         }
         
@@ -307,10 +314,10 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_WORKGROUP_REF_LIST, workGroupReferenceList );
         model.put(FormsConstants.MARK_DEFAULT_VALUE_WORKGROUP_KEY, AdminWorkgroupService.ALL_GROUPS);
 
-        if ( AccessControlService.getInstance( ).isAvailable( ) )
+        if ( _accessControlService.isAvailable( ) )
         {
             AdminUser adminUser = getUser( );
-            ReferenceList referenceList = AccessControlService.getInstance( ).getAccessControlsEnabled( adminUser, getLocale( ) );
+            ReferenceList referenceList = _accessControlService.getAccessControlsEnabled( adminUser, getLocale( ) );
             model.put( MARK_ACCESSCONTROL_REF_LIST, referenceList );
         }
 
@@ -323,7 +330,6 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
         model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_FORM ) );
         model.put( MARK_FORM_CATEGORY_LIST, formCategoryList );
 
         return getPage( PROPERTY_PAGE_TITLE_CREATE_FORM, TEMPLATE_CREATE_FORM, model );
@@ -360,10 +366,10 @@ public class FormJspBean extends AbstractJspBean
         _formMessage.setIdForm( _form.getId( ) );
         FormMessageHome.create( _formMessage );
 
-        if ( AccessControlService.getInstance( ).isAvailable( ) )
+        if ( _accessControlService.isAvailable( ) )
         {
             int idAccessControl = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACCESS_CONTROL ), -1 );
-            AccessControlService.getInstance( ).linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, idAccessControl );
+            _accessControlService.linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, idAccessControl );
         }
 
         addInfo( INFO_FORM_CREATED, getLocale( ) );
@@ -380,7 +386,7 @@ public class FormJspBean extends AbstractJspBean
      * @throws AccessDeniedException
      *             Access denied exception if user isn't authorized
      */
-    @View( VIEW_CONFIRM_REMOVE_FORM )
+    @View( value = VIEW_CONFIRM_REMOVE_FORM , securityTokenAction = ACTION_REMOVE_FORM )
     public String getConfirmRemoveForm( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = -1;
@@ -403,7 +409,6 @@ public class FormJspBean extends AbstractJspBean
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_FORM ) );
         url.addParameter( FormsConstants.PARAMETER_ID_FORM, nId );
-        url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_FORM ) );
 
         String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage,
                 new Object[ ] { formToBeDeleted.getTitle( ) }, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
@@ -485,14 +490,13 @@ public class FormJspBean extends AbstractJspBean
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_DELETE, request, ACTION_REMOVE_FORM );
         checkWorkgroupPermission(nId, request);
 
-        if ( AccessControlService.getInstance( ).isAvailable( ) )
+        if ( _accessControlService.isAvailable( ) )
         {
             // This will delete the remove the link between resource & access control.
-            AccessControlService.getInstance( ).linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, -1 );
+            _accessControlService.linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, -1 );
         }
 
-        FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
-        formService.removeForm( nId, getUser( ) );
+        _formService.removeForm( nId, getUser( ) );
 
         addInfo( INFO_FORM_REMOVED, getLocale( ) );
 
@@ -547,15 +551,15 @@ public class FormJspBean extends AbstractJspBean
                 	PhysicalFile physicalFile = PhysicalFileHome.findByPrimaryKey( logo.getPhysicalFile( ).getIdPhysicalFile( ) );
                 	if (physicalFile != null)
                 	{
-                		FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), logo.getTitle( ) );
+                		MultipartItem fileItem = new GenAttFileItem( physicalFile.getValue( ), logo.getTitle( ) );
                         _uploadHandler.addFileItemToUploadedFilesList( fileItem, PARAMETER_LOGO, request );
                 	}
                 }
             }
 
-            if ( WorkflowService.getInstance( ).isAvailable( ) )
+            if ( _workflowService.isAvailable( ) )
             {
-                ReferenceList referenceList = WorkflowService.getInstance( ).getWorkflowsEnabled( (User) adminUser, getLocale( ) );
+                ReferenceList referenceList = _workflowService.getWorkflowsEnabled( (User) adminUser, getLocale( ) );
                 model.put( MARK_WORKFLOW_REF_LIST, referenceList );
             }
             
@@ -563,17 +567,16 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_WORKGROUP_REF_LIST, workGroupReferenceList );
             model.put(FormsConstants.MARK_DEFAULT_VALUE_WORKGROUP_KEY, AdminWorkgroupService.ALL_GROUPS);
 
-            if ( AccessControlService.getInstance( ).isAvailable( ) )
+            if ( _accessControlService.isAvailable( ) )
             {
-                ReferenceList referenceList = AccessControlService.getInstance( ).getAccessControlsEnabled( adminUser, getLocale( ) );
+                ReferenceList referenceList = _accessControlService.getAccessControlsEnabled( adminUser, getLocale( ) );
                 model.put( MARK_ACCESSCONTROL_REF_LIST, referenceList );
                 model.put( MARK_ACCESSCONTROL_ID,
-                        AccessControlService.getInstance( ).findAccessControlForResource( formToBeModified.getId( ), Form.RESOURCE_TYPE ) );
+                        _accessControlService.findAccessControlForResource( formToBeModified.getId( ), Form.RESOURCE_TYPE ) );
             }
 
             model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
             model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
-            model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM ) );
 
             ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model, "*", FormResponse.RESOURCE_TYPE + "_" + nId );
 
@@ -610,7 +613,6 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, questionList );
         model.put( MARK_FORM_MESSAGE, _formMessage );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM ) );
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_QUESTION_PUBLICATION, model );
     }
@@ -664,7 +666,6 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_FORM_MESSAGE, _formMessage );
             model.put( MARK_FORM, formToBeModified );
             model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
-            model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_FORM ) );
 
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM_PUBLICATION, model );
         }
@@ -742,10 +743,10 @@ public class FormJspBean extends AbstractJspBean
             FormMessageHome.update( _formMessage );
         }
 
-        if ( AccessControlService.getInstance( ).isAvailable( ) )
+        if ( _accessControlService.isAvailable( ) )
         {
             int idAccessControl = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACCESS_CONTROL ), -1 );
-            AccessControlService.getInstance( ).linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, idAccessControl );
+            _accessControlService.linkResourceToAccessControl( _form.getId( ), Form.RESOURCE_TYPE, idAccessControl );
         }
 
         addInfo( INFO_FORM_UPDATED, getLocale( ) );
@@ -765,11 +766,6 @@ public class FormJspBean extends AbstractJspBean
     @Action( ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION )
     public String doModifyFormQuestionsPublication( HttpServletRequest request ) throws AccessDeniedException
     {
-        // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_FORM ) )
-        {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
-        }
         int nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
@@ -800,8 +796,8 @@ public class FormJspBean extends AbstractJspBean
     private File getLogoFromRequest( HttpServletRequest request )
     {
         _uploadHandler.addFilesUploadedSynchronously( request, PARAMETER_LOGO );
-        List<FileItem> listUploadedFileItems = _uploadHandler.getListUploadedFiles( PARAMETER_LOGO, request.getSession( ) );
-        for ( FileItem fileItem : listUploadedFileItems )
+        List<MultipartItem> listUploadedFileItems = _uploadHandler.getListUploadedFiles( PARAMETER_LOGO, request.getSession( ) );
+        for ( MultipartItem fileItem : listUploadedFileItems )
         {
         	if (fileItem != null)
             {
@@ -872,7 +868,7 @@ public class FormJspBean extends AbstractJspBean
     {
         checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, ACTION_CREATE_FORM );
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
+        MultipartItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
         try
         {
             FormJsonService.getInstance( ).jsonImportForm( new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );

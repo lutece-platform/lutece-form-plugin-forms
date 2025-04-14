@@ -37,11 +37,17 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryAnonymizationType;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeMyLuteceUser;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * class EntryTypeText
  */
+@ApplicationScoped
+@Named( "forms.entryTypeMyLuteceUser" )
 public class EntryTypeMyLuteceUser extends AbstractEntryTypeMyLuteceUser implements IResponseComparator
 {
     /**
@@ -53,6 +59,23 @@ public class EntryTypeMyLuteceUser extends AbstractEntryTypeMyLuteceUser impleme
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_mylutece_user.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_mylutece_user.html";
 
+    @Inject
+    public void addAnonymizationTypes6(
+        @Named("genericattributes.entryIdAnonymizationType") IEntryAnonymizationType entryIdAnonymizationType,
+        @Named("genericattributes.entryCodeAnonymizationType") IEntryAnonymizationType entryCodeAnonymizationType,
+        @Named("genericattributes.responseIdAnonymizationType") IEntryAnonymizationType responseIdAnonymizationType,
+        @Named("forms.formIdAnonymizationType") IEntryAnonymizationType formIdAnonymizationType,
+        @Named("forms.stepIdAnonymizationType") IEntryAnonymizationType stepIdAnonymizationType,
+        @Named("forms.questionTitleAnonymizationType") IEntryAnonymizationType questionTitleAnonymizationType,
+        @Named("genericattributes.randomGuidAnonymizationType") IEntryAnonymizationType randomGuidAnonymizationType,
+        @Named("genericattributes.randomNumberAnonymizationType") IEntryAnonymizationType randomNumberAnonymizationType ) 
+    {
+        setAnonymizationTypes( List.of(
+            entryIdAnonymizationType, entryCodeAnonymizationType, responseIdAnonymizationType,
+            formIdAnonymizationType, stepIdAnonymizationType, questionTitleAnonymizationType,
+            randomGuidAnonymizationType, randomNumberAnonymizationType ) );
+    }
+    
     /**
      * {@inheritDoc}
      */

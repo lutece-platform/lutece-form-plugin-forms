@@ -34,7 +34,7 @@
 package fr.paris.lutece.plugins.forms.business.form.column;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -51,24 +51,6 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
 {
     // Constants
     private static final String DEFAULT_SORT_ATTRIBUTE_NAME = "name";
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void setUp( ) throws Exception
-    {
-        super.setUp( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void tearDown( ) throws Exception
-    {
-        super.tearDown( );
-    }
 
     /**
      * Test for the method {@link FormColumnCellComparator#compare(FormColumnCell, FormColumnCell)} without any values on each FormColumnCell

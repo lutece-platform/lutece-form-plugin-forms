@@ -1,9 +1,7 @@
-<jsp:useBean id="manageformsTransition" scope="session" class="fr.paris.lutece.plugins.forms.web.admin.FormTransitionJspBean" />
-<% String strContent = manageformsTransition.processController ( request , response ); %>
+${ pageContext.setAttribute( 'strContent', formTransitionJspBean.processController( pageContext.request , pageContext.response ) ) }
 
-<%@ page errorPage="../../ErrorPage.jsp" %>
 <jsp:include page="../../AdminHeader.jsp" />
 
-<%= strContent %>
+${ pageContext.getAttribute( 'strContent' ) }
 
 <%@ include file="../../AdminFooter.jsp" %>

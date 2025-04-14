@@ -42,7 +42,11 @@ import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.implementation.DefaultFileDownloadService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
+@ApplicationScoped
+@Named( "forms.formsFileDownloadUrlService" )
 public class FormsFileDownloadService extends DefaultFileDownloadService
 {
     private static final long serialVersionUID = -3269252917857734585L;

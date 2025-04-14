@@ -44,10 +44,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -92,7 +94,7 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -103,6 +105,8 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * Controller which manage the multiview of responses of all Forms
  */
+@SessionScoped
+@Named
 @Controller( controllerJsp = "MultiviewForms.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MULTIVIEW" )
 public class MultiviewFormsJspBean extends AbstractJspBean
 {
@@ -165,6 +169,9 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private transient List<IFormPanelDisplay> _listAuthorizedFormPanelDisplay;
     
     private IAsyncUploadHandler _uploadHandler = AsynchronousUploadHandler.getHandler( );
+
+    @Inject
+    private FormColumnFactory _formColumnFactory;
 
     /**
      * Return the view with the responses of all the forms
@@ -337,7 +344,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         MultiviewConfig config = MultiviewConfig.getInstance( );
         
-        List<FileItem> listUniquefileItem = new ArrayList<>();
+        List<MultipartItem> listUniquefileItem = new ArrayList<>();
         _uploadHandler.removeSessionFiles( request.getSession( ) );
         File fileTemplatePdf = FileHome.findByPrimaryKey(config.getIdFileTemplatePdf());
         if (fileTemplatePdf != null && fileTemplatePdf.getPhysicalFile() != null)
@@ -345,7 +352,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         	PhysicalFile physicalFileTemplatePdf = PhysicalFileHome.findByPrimaryKey(fileTemplatePdf.getPhysicalFile().getIdPhysicalFile());
         	if (physicalFileTemplatePdf != null && physicalFileTemplatePdf.getValue() != null)
         	{
-        		FileItem fileItem = new GenAttFileItem( physicalFileTemplatePdf.getValue( ), fileTemplatePdf.getTitle( ) );
+        		MultipartItem fileItem = new GenAttFileItem( physicalFileTemplatePdf.getValue( ), fileTemplatePdf.getTitle( ) );
     			_uploadHandler.addFileItemToUploadedFilesList( fileItem, PARAMETER_UPLOAD_TEMPLATE_PDF, request );
     			listUniquefileItem.add(fileItem);	
         	}
@@ -443,8 +450,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
         List<FormPanel> listFormPanel = new FormPanelFactory( ).buildFormPanelList( );
 
-        FormColumnFactory formColumnFactory = SpringContextService.getBean( FormColumnFactory.BEAN_NAME );
-
         Integer nIdForm = null;
         try
         {
@@ -458,7 +463,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         boolean changePanel = Boolean.parseBoolean( request.getParameter( PARAMETER_CHANGE_PANEL ) );
         if ( CollectionUtils.isEmpty( _listFormFilterDisplay ) || !changePanel )
         {
-            _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
+            _listFormColumn = _formColumnFactory.buildFormColumnList( nIdForm, request.getLocale( ), (User) AdminUserService.getAdminUser( request ) );
             List<FormFilter> listFormFilter = FormDisplayFactory.buildFormFilterList( nIdForm, _listFormColumn, request.getLocale( ),
                     (User) AdminUserService.getAdminUser( request ) );
             _listFormFilterDisplay = FormDisplayFactory.createFormFilterDisplayList( request, listFormFilter );
@@ -617,8 +622,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
      */
     private void reloadFormColumnList( List<FormFilter> listFormFilter, Locale locale, User user )
     {
-        FormColumnFactory formColumnFactory = SpringContextService.getBean( FormColumnFactory.BEAN_NAME );
-
         for ( FormFilter filter : listFormFilter )
         {
             if ( filter instanceof FormFilterForms )
@@ -627,11 +630,11 @@ public class MultiviewFormsJspBean extends AbstractJspBean
 
                 if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE )
                 {
-                    _listFormColumn = formColumnFactory.buildFormColumnList( nIdForm, locale, user );
+                    _listFormColumn = _formColumnFactory.buildFormColumnList( nIdForm, locale, user );
                 }
                 else
                 {
-                    _listFormColumn = formColumnFactory.buildFormColumnList( null, locale, user );
+                    _listFormColumn = _formColumnFactory.buildFormColumnList( null, locale, user );
                 }
 
                 _listFormColumnDisplay = FormDisplayFactory.createFormColumnDisplayList( _listFormColumn );
@@ -679,10 +682,10 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private File getTemplateFileFromRequest( HttpServletRequest request )
     {
 	    	_uploadHandler.addFilesUploadedSynchronously( request, PARAMETER_UPLOAD_TEMPLATE_PDF );
-	    	List<FileItem> listUploadedFileItems = _uploadHandler.getListUploadedFiles( PARAMETER_UPLOAD_TEMPLATE_PDF, request.getSession( ) );
+	    	List<MultipartItem> listUploadedFileItems = _uploadHandler.getListUploadedFiles( PARAMETER_UPLOAD_TEMPLATE_PDF, request.getSession( ) );
         	if (CollectionUtils.isNotEmpty(listUploadedFileItems))
         	{
-        		for ( FileItem fileItem : listUploadedFileItems )
+        		for ( MultipartItem fileItem : listUploadedFileItems )
                 {
                 	if (fileItem != null)
                     {

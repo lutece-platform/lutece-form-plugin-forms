@@ -33,41 +33,41 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
-import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.service.json.IStepTemplateProvider;
 import fr.paris.lutece.plugins.forms.service.json.StepJsonData;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 
 /**
  * Service dedicated to management of formDisplay
  */
-public final class StepService
+@ApplicationScoped
+public class StepService
 {
     public static final String BEAN_NAME = "forms.stepService";
 
     private static final int DISPLAY_ROOT_PARENT_ID = 0;
 
-    @Autowired( required = false )
-    private IStepTemplateProvider _provider;
+    @Inject
+    private Instance<IStepTemplateProvider> _provider;
 
+    @Inject
+    private FormDisplayService _displayService;
+    
     /**
      * Constructor
      */
-    private StepService( )
+    StepService( )
     {
     }
 
@@ -80,13 +80,11 @@ public final class StepService
      */
     public void removeStep( int nIdStep )
     {
-        FormDisplayService displayService = SpringContextService.getBean( FormDisplayService.BEAN_NAME );
-
         List<FormDisplay> listChildrenDisplay = FormDisplayHome.getFormDisplayListByParent( nIdStep, DISPLAY_ROOT_PARENT_ID );
 
         for ( FormDisplay childDisplay : listChildrenDisplay )
         {
-            displayService.deleteDisplayAndDescendants( childDisplay.getId( ) );
+            _displayService.deleteDisplayAndDescendants( childDisplay.getId( ) );
         }
 
         for ( Transition transition : TransitionHome.getTransitionsListFromStep( nIdStep ) )
@@ -100,88 +98,17 @@ public final class StepService
 
     }
 
-    /**
-     * Return a list of steps based on given step list and transition between steps list
-     * 
-     * @param listSteps
-     *            the list of steps
-     * @param listTransitions
-     *            the list of transitions
-     * @return the list of given steps based on given transitions
-     */
-    public static List<Step> sortStepsWithTransitions( List<Step> listSteps, List<Transition> listTransitions )
-    {
-        List<Step> listStepOrdered = new ArrayList<>( );
-        Step initialStep = listSteps.stream( ).filter( Step::isInitial ).findFirst( ).orElse( null );
-        if ( initialStep == null )
-        {
-            return listSteps;
-        }
-
-        Set<Integer> listIdStepOrderWithTransitions = new LinkedHashSet<>( );
-        listIdStepOrderWithTransitions.add( initialStep.getId( ) );
-        listIdStepOrderWithTransitions.addAll( getNextStep( initialStep.getId( ), listTransitions ) );
-        for ( Integer nIdStep : listIdStepOrderWithTransitions )
-        {
-            for ( Step stepToOrder : listSteps )
-            {
-                if ( nIdStep == stepToOrder.getId( ) )
-                {
-                    listStepOrdered.add( stepToOrder );
-                }
-            }
-        }
-        for ( Step step : listSteps )
-        {
-            if ( !listIdStepOrderWithTransitions.contains( step.getId( ) ) )
-            {
-                listStepOrdered.add( step );
-            }
-        }
-
-        return listStepOrdered;
-    }
-
-    /**
-     * Get iteratively the next steps based on transitions list
-     * 
-     * @param idFromStep
-     * @param listTransitions
-     * @return the list of integer of the steps based on the transitions list
-     */
-    private static List<Integer> getNextStep( Integer idFromStep, List<Transition> listTransitions )
-    {
-        List<Integer> listIdNextSteps = new ArrayList<>( );
-        if ( idFromStep != null )
-        {
-            List<Transition> nextTransitionsList = new ArrayList<>( );
-            for ( Transition transition : listTransitions )
-            {
-                if ( transition.getFromStep( ) == idFromStep )
-                {
-                    listIdNextSteps.add( transition.getNextStep( ) );
-                    nextTransitionsList.add( transition );
-                }
-            }
-            for ( Transition transition : nextTransitionsList )
-            {
-                listIdNextSteps.addAll( getNextStep( transition.getNextStep( ), listTransitions ) );
-            }
-        }
-        return listIdNextSteps;
-    }
-
     public IStepTemplateProvider getStepTemplateProvider( )
     {
-        return _provider;
+        return _provider.isUnsatisfied( ) ? null : _provider.get( );
     }
 
     public StepJsonData getStepTemplateData( int idTemplate )
     {
-        if ( _provider == null )
+        if ( _provider.isUnsatisfied( ) )
         {
             return null;
         }
-        return _provider.getStepTemplateData( idTemplate );
+        return _provider.get( ).getStepTemplateData( idTemplate );
     }
 }

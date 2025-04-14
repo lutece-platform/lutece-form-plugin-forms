@@ -38,14 +38,16 @@ import java.util.List;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeComment;
-import fr.paris.lutece.portal.service.file.FileService;
-import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  *
  * class EntryTypeComment
  *
  */
+@ApplicationScoped
+@Named( "forms.entryTypeComment" )
 public class EntryTypeComment extends AbstractEntryTypeComment implements IResponseComparator
 {
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_comment.html";

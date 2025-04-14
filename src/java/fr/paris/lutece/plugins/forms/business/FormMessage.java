@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 /**
  * This is the business class for the object Form

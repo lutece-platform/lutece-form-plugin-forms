@@ -33,14 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
-import static org.junit.Assert.assertNotEquals;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
 public class QuestionTest extends LuteceTestCase
 {
+	@Test
     public void testCopy( )
     {
         Question orig = new Question( );

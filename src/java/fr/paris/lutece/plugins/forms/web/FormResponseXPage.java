@@ -41,7 +41,11 @@ import java.util.Map;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import javax.servlet.http.HttpServletRequest;
+
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
@@ -83,6 +87,8 @@ import fr.paris.lutece.portal.web.xpages.XPage;
  * Controller for formResponse display
  *
  */
+@RequestScoped
+@Named( "forms.xpage.formsResponse" )
 @Controller( xpageName = FormResponseXPage.XPAGE_NAME, pageTitleI18nKey = FormResponseXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = FormResponseXPage.MESSAGE_PATH )
 public class FormResponseXPage extends MVCApplication
 {
@@ -128,6 +134,11 @@ public class FormResponseXPage extends MVCApplication
     // Parameters
     private static final String PARAMETER_ID_ACTION = "id_action";
 
+    @Inject
+    private FormsAsynchronousUploadHandler _formsAsynchronousUploadHandler;
+    @Inject
+    private WorkflowService _workflowService;
+
     @View( value = VIEW_FORM_RESPONSE, defaultView = true )
     public XPage getFormResponseView( HttpServletRequest request ) throws SiteMessageException
     {
@@ -142,7 +153,6 @@ public class FormResponseXPage extends MVCApplication
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
         model.put( MARK_WORKFLOW_ACTION_LIST, actionsList );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_PROCESS_ACTION ) );
 
         XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE, getLocale( request ), model );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
@@ -163,7 +173,6 @@ public class FormResponseXPage extends MVCApplication
         }
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_PROCESS_ACTION ) );
         for (FormResponseStep step: formResponse.getSteps() ){
             listResponse.addAll(findResponses(step.getQuestions()));
         }
@@ -198,11 +207,6 @@ public class FormResponseXPage extends MVCApplication
     @fr.paris.lutece.portal.util.mvc.commons.annotations.Action( value = ACTION_PROCESS_ACTION )
     public XPage doProcessAction( HttpServletRequest request ) throws AccessDeniedException
     {
-        // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_PROCESS_ACTION ) )
-        {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
-        }
         // Get parameters from request
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
@@ -216,19 +220,17 @@ public class FormResponseXPage extends MVCApplication
         }
 
         Locale locale = getLocale( request );
-        WorkflowService workflowService = WorkflowService.getInstance( );
-        if ( workflowService.isDisplayTasksForm( nIdAction, locale ) )
+        if ( _workflowService.isDisplayTasksForm( nIdAction, locale ) )
         {
-            FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
+        	_formsAsynchronousUploadHandler.removeSessionFiles( request.getSession( ) );
 
-            String strHtmlTasksForm = WorkflowService.getInstance( ).getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request,
+            String strHtmlTasksForm = _workflowService.getDisplayTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, request,
                     locale, null );
 
             Map<String, Object> model = new LinkedHashMap<>( );
             model.put( MARK_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
             model.put( MARK_ID_ACTION, String.valueOf( nIdAction ) );
             model.put( MARK_TASK_FORM, strHtmlTasksForm );
-            model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_SAVE_TASK_FORM ) );
 
             XPage xPage = getXPage( TEMPLATE_TASK_FORM_RESPONSE, locale, model );
             xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
@@ -239,7 +241,7 @@ public class FormResponseXPage extends MVCApplication
 
         try
         {
-            workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale, false, user );
+        	_workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale, false, user );
         }
         catch( AppException e )
         {
@@ -257,7 +259,7 @@ public class FormResponseXPage extends MVCApplication
      * @return The Jsp URL of the process result
      * @throws AccessDeniedException
      */
-    @fr.paris.lutece.portal.util.mvc.commons.annotations.Action( value = ACTION_SAVE_TASK_FORM )
+    @fr.paris.lutece.portal.util.mvc.commons.annotations.Action( value = ACTION_SAVE_TASK_FORM, securityTokenDisabled = true )
     public XPage doSaveTaskForm( HttpServletRequest request ) throws AccessDeniedException
     {
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
@@ -279,13 +281,12 @@ public class FormResponseXPage extends MVCApplication
 
         int nIdForm = formResponse.getFormId( );
         Locale locale = getLocale( request );
-        WorkflowService workflowService = WorkflowService.getInstance( );
 
-        if ( workflowService.canProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, false, user ) )
+        if ( _workflowService.canProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, false, user ) )
         {
             try
             {
-                String strError = workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, locale, user );
+                String strError = _workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, locale, user );
                 if ( strError != null )
                 {
                     return redirect( request, strError );
@@ -311,12 +312,11 @@ public class FormResponseXPage extends MVCApplication
             Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
             if (FormsResponseUtils.isAuthorized(formResponse, SecurityService.getInstance( ).getRegisteredUser( request ), form ))
             {
-                WorkflowService workflowService = WorkflowService.getInstance( );
-                boolean workflowEnabled = workflowService.isAvailable( ) && ( form.getIdWorkflow( ) != FormsConstants.DEFAULT_ID_VALUE );
+                boolean workflowEnabled = _workflowService.isAvailable( ) && ( form.getIdWorkflow( ) != FormsConstants.DEFAULT_ID_VALUE );
 
                 if ( workflowEnabled )
                 {
-                    return workflowService.getActions( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), (User) user );
+                    return _workflowService.getActions( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ), (User) user );
                 }
             }
         }

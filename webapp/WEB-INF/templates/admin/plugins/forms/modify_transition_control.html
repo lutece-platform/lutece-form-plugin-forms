@@ -19,7 +19,6 @@
     </@boxHeader>
     <@boxBody>
         <@tform method='post' id='modify_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
-            <@input type='hidden' id='token' name='token' value='${token}' />
             <@messages errors=errors />
             <@input type="hidden" name='id_step'  value='${id_step!}' />
             <@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}' mandatory=true>

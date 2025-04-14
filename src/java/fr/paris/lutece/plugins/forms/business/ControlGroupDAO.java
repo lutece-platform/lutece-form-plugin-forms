@@ -38,6 +38,8 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.sql.Statement;
 
 import java.util.ArrayList;
@@ -48,6 +50,7 @@ import java.util.Optional;
 /**
  * This class provides Data Access methods for ControlGroup objects
  */
+@ApplicationScoped
 public final class ControlGroupDAO implements IControlGroupDAO
 {
     // Constants

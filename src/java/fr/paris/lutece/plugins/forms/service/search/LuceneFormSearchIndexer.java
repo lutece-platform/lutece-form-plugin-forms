@@ -42,7 +42,10 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
@@ -57,7 +60,6 @@ import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
@@ -81,14 +83,13 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
-import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
+import fr.paris.lutece.plugins.workflowcore.service.state.IStateService;
 import fr.paris.lutece.portal.service.content.XPageAppService;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.search.IndexationService;
 import fr.paris.lutece.portal.service.search.SearchItem;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -97,6 +98,7 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * Forms global indexer
  */
+@ApplicationScoped
 public class LuceneFormSearchIndexer implements IFormSearchIndexer
 {
     public static final String INDEXER_NAME = "FormsIndexer";
@@ -113,8 +115,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
     private IndexWriter _indexWriter;
-    @Autowired( required = false )
-    private StateService _stateService;
+    @Inject
+    private Instance<IStateService> _stateServiceInstance;
 
     public LuceneFormSearchIndexer( )
     {
@@ -369,9 +371,9 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
         Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
         State formResponseState = null;
-        if ( _stateService != null )
+        if ( !_stateServiceInstance.isUnsatisfied( ) )
         {
-            formResponseState = _stateService.findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
+            formResponseState = _stateServiceInstance.get( ).findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
         }
 
         Document doc = getDocument( formResponse, form, formResponseState );
@@ -403,9 +405,9 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             Document doc = null;
             Form form = mapForms.get( formResponse.getFormId( ) );
             State formResponseState = null;
-            if ( _stateService != null )
+            if ( !_stateServiceInstance.isUnsatisfied( ) )
             {
-                formResponseState = _stateService.findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
+                formResponseState = _stateServiceInstance.get( ).findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
             }
             else
             {
@@ -458,10 +460,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      */
     private void provideExternalFields( List<Document> documentList )
     {
-        for ( ILucenDocumentExternalFieldProvider provider : SpringContextService.getBeansOfType( ILucenDocumentExternalFieldProvider.class ) )
-        {
-            provider.provideFields( documentList );
-        }
+    	CDI.current( ).select( ILucenDocumentExternalFieldProvider.class ).stream( ).forEach( provider -> provider.provideFields( documentList ) );
     }
 
     /**

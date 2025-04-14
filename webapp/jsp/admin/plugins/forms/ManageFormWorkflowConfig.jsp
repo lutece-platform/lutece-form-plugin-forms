@@ -1,9 +1,9 @@
-<jsp:useBean id="manageWorkflowBean" scope="session" class="fr.paris.lutece.plugins.forms.web.admin.FormWorkflowConfigJspBean" />
-<% String strContent = manageWorkflowBean.processController ( request , response ); %>
-
 <%@ page errorPage="../../ErrorPage.jsp" %>
+
+${ pageContext.setAttribute( 'strContent', formWorkflowConfigJspBean.processController( pageContext.request , pageContext.response ) ) }
+
 <jsp:include page="../../AdminHeader.jsp" />
 
-<%= strContent %>
+${ pageContext.getAttribute( 'strContent' ) }
 
 <%@ include file="../../AdminFooter.jsp" %>

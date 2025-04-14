@@ -39,7 +39,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -64,16 +67,35 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Implementation of the IFormsMultiviewAuthorizationService interface
  */
+@ApplicationScoped
 public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthorizationService
 {
     public static final String BEAN_NAME = "forms.formsMultiviewAuthorizationService";
 
     // Variables
     private FormPanel _formPanel;
-    private final FormListFacade _formListFacade;
-    private final FormColumnFactory _formColumnFactory;
 
-    /**
+    @Inject
+    private FormListFacade _formListFacade;
+
+    @Inject
+    private FormColumnFactory _formColumnFactory;
+
+    @Inject
+    private IFormPanelConfiguration _formPanelConfiguration;
+
+	public FormsMultiviewAuthorizationService( )
+	{
+	}
+
+	@PostConstruct
+    public void initialize( ) 
+	{
+		_formPanel = new FormPanel( );
+		_formPanel.setFormPanelConfiguration( _formPanelConfiguration );
+	}
+	
+	/**
      * Constructor
      * 
      * @param formPanelConfiguration

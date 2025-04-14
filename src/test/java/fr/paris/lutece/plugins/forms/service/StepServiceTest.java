@@ -38,6 +38,7 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.Transition;
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.test.LuteceTestCase;
 
 public class StepServiceTest extends LuteceTestCase
@@ -84,7 +85,7 @@ public class StepServiceTest extends LuteceTestCase
         transition22_3.setNextStep( 3 );
         listTransitions.add( transition22_3 );
 
-        List<Step> orderedList = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+        List<Step> orderedList = FormsUtils.sortStepsWithTransitions( listSteps, listTransitions );
 
         assertEquals( 4, orderedList.size( ) );
         assertEquals( 1, orderedList.get( 0 ).getId( ) );
@@ -106,7 +107,7 @@ public class StepServiceTest extends LuteceTestCase
         listSteps.add( step3 );
 
         List<Transition> listTransitions = new ArrayList<>( );
-        List<Step> orderedList = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+        List<Step> orderedList = FormsUtils.sortStepsWithTransitions( listSteps, listTransitions );
         assertEquals( 2, orderedList.size( ) );
 
     }

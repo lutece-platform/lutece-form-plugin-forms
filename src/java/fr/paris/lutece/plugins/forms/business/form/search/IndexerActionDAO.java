@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.forms.business.form.search;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.sql.Statement;
 
 import java.util.ArrayList;
@@ -43,8 +45,9 @@ import java.util.List;
 /**
  * This class provides Data Access methods for Indexer Action objects
  */
-public final class IndexerActionDAO implements IIndexerActionDAO
-{
+@ApplicationScoped
+public class IndexerActionDAO implements IIndexerActionDAO
+{	
     // Constants
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_action,id_form_response,id_task" + " FROM forms_indexer_action WHERE id_action = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_indexer_action( id_form_response,id_task)" + " VALUES(?,?)";

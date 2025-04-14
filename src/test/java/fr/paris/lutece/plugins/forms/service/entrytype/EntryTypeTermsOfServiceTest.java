@@ -37,7 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.junit.jupiter.api.Test;
+
+import fr.paris.lutece.test.mocks.MockHttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.util.IdGenerator;
@@ -53,7 +55,7 @@ import static fr.paris.lutece.plugins.genericattributes.business.MockEntry.creat
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class EntryTypeTermsOfServiceTest extends LuteceTestCase
 {
@@ -69,12 +71,11 @@ public class EntryTypeTermsOfServiceTest extends LuteceTestCase
 
     public void setUp( ) throws Exception
     {
-        super.setUp( );
-
         _entryTypeTermsOfService = new EntryTypeTermsOfService( );
         _request = new MockHttpServletRequest( );
     }
 
+    @Test
     public void testGetRequestData( )
     {
         _request.addParameter( IEntryTypeService.PARAMETER_TITLE, "testGetRequestData.title" );
@@ -101,6 +102,7 @@ public class EntryTypeTermsOfServiceTest extends LuteceTestCase
         assertThat( field.getValue( ), is( strFieldValue ) );
     }
 
+    @Test
     public void testGetRequestDataWhenTitleIsMissing( )
     {
         _request.addParameter( IEntryTypeService.PARAMETER_CSS_CLASS, "testGetRequestDataWhenTitleIsMissing.cssClass" );
@@ -125,6 +127,7 @@ public class EntryTypeTermsOfServiceTest extends LuteceTestCase
         assertThat( field, is( nullValue( ) ) );
     }
 
+    @Test
     public void testGetRequestDataWhenCssClassIsMissing( )
     {
         _request.addParameter( IEntryTypeService.PARAMETER_TITLE, "testGetRequestDataWhenCssClassIsMissing.title" );
@@ -142,6 +145,7 @@ public class EntryTypeTermsOfServiceTest extends LuteceTestCase
         assertThatFieldIsPresent( entry, FIELD_AGREEMENT_CODE, "false" );
     }
 
+    @Test
     public void testGetRequestDataWhenLinkIsMissing( )
     {
         _request.addParameter( IEntryTypeService.PARAMETER_TITLE, "testGetRequestDataWhenLinkIsMissing.title" );
@@ -159,6 +163,7 @@ public class EntryTypeTermsOfServiceTest extends LuteceTestCase
         assertThatFieldIsNotPresent( entry, FIELD_AGREEMENT_CODE );
     }
 
+    @Test
     public void testGetRequestDataWhenTOSIsMissing( )
     {
         _request.addParameter( IEntryTypeService.PARAMETER_TITLE, "testGetRequestDataWhenTOSIsMissing.title" );
@@ -176,6 +181,7 @@ public class EntryTypeTermsOfServiceTest extends LuteceTestCase
         assertThatFieldIsNotPresent( entry, FIELD_AGREEMENT_CODE );
     }
 
+    @Test
     public void testGetResponseData( )
     {
         Entry entry = createEntry( );
@@ -212,6 +218,7 @@ public class EntryTypeTermsOfServiceTest extends LuteceTestCase
         assertThat( bFound, is( true ) );
     }
 
+    @Test
     public void testGetResponseDataWhenAgreementIsNotInRequest( )
     {
         Entry entry = createEntry( );
@@ -246,6 +253,7 @@ public class EntryTypeTermsOfServiceTest extends LuteceTestCase
         assertThat( bFound, is( false ) );
     }
 
+    @Test
     public void testGetResponseDataWhenAgreementFieldIsNotInEntry( )
     {
         Entry entry = createEntry( );

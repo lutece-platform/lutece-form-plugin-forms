@@ -37,10 +37,9 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.IFormFilterQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.filter.querypart.impl.FormFilterIdFormResponseLuceneQueryPart;
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
-import fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchEngine;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.IFormFilterDisplay;
 import fr.paris.lutece.plugins.forms.web.form.filter.display.impl.FormFilterDisplaySearchedText;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 public class FormFilterFormResponseIdConfiguration extends AbstractFormFilterConfiguration
 {
@@ -59,7 +58,7 @@ public class FormFilterFormResponseIdConfiguration extends AbstractFormFilterCon
     @Override
     public IFormFilterDisplay getFormFilterDisplay( FormFilter formFilter )
     {
-        IFormSearchEngine formSearchEngine = SpringContextService.getBean( LuceneFormSearchEngine.BEAN_NAME );
+        IFormSearchEngine formSearchEngine = CDI.current( ).select( IFormSearchEngine.class ).get( );
 
         FormFilterDisplaySearchedText formFilterDisplaySearchedText = new FormFilterDisplaySearchedText( formSearchEngine );
         formFilterDisplaySearchedText.setFormFilter( formFilter );

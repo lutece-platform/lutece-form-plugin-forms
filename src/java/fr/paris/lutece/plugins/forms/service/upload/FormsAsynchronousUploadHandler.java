@@ -34,27 +34,31 @@
 package fr.paris.lutece.plugins.forms.service.upload;
 
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * FormAsynchronousUploadHandler.
  */
+@ApplicationScoped
 public class FormsAsynchronousUploadHandler extends AbstractGenAttUploadHandler
 {
     private static final String UPLOAD_SUBMIT_PREFIX = "_form_upload_submit_";
     private static final String UPLOAD_DELETE_PREFIX = "_form_upload_delete_";
     private static final String UPLOAD_CHECKBOX_PREFIX = "_form_upload_checkbox_";
-    private static final String BEAN_FORM_ASYNCHRONOUS_UPLOAD_HANDLER = "forms.asynchronousUploadHandler";
     private static final String HANDLER_NAME = "formsAsynchronousUploadHandler";
 
     /**
      * Get the handler
      * 
      * @return the handler
+     * 
+     * @deprecated Use {@code @Inject} to obtain the {@link FormsAsynchronousUploadHandler} instance
      */
+    @Deprecated( since = "4.0", forRemoval = true )
     public static FormsAsynchronousUploadHandler getHandler( )
     {
-        return SpringContextService.getBean( BEAN_FORM_ASYNCHRONOUS_UPLOAD_HANDLER );
+        return CDI.current( ).select( FormsAsynchronousUploadHandler.class ).get( );
     }
 
     public static String getUploadFormsSubmitPrefix( )

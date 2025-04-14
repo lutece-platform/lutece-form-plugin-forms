@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><plug-in>
     <name>forms</name>
     <class>fr.paris.lutece.plugins.forms.service.FormsPlugin</class>
-    <version>3.1.0-SNAPSHOT</version>
+    <version>4.0.0-SNAPSHOT</version>
     <documentation/>
     <installation/>
     <changes/>
@@ -14,7 +14,7 @@
     <db-pool-required>1</db-pool-required>
 
     <core-version-dependency>
-        <min-core-version>6.1.0</min-core-version>
+        <min-core-version>8.0.0</min-core-version>
         <max-core-version/>
     </core-version-dependency>
 
@@ -62,19 +62,15 @@
     <applications>
     	<application>
             <application-id>forms</application-id>
-            <application-class>fr.paris.lutece.plugins.forms.web.FormXPage</application-class>
         </application>
         <application>
             <application-id>formsTermsOfService</application-id>
-            <application-class>fr.paris.lutece.plugins.forms.web.TermsOfServiceXPage</application-class>
         </application>
         <application>
             <application-id>formsResponse</application-id>
-            <application-class>fr.paris.lutece.plugins.forms.web.FormResponseXPage</application-class>
         </application>
         <application>
             <application-id>myformresponses</application-id>
-            <application-class>fr.paris.lutece.plugins.forms.web.MyFormResponsesXPage</application-class>
         </application>
     </applications>
 

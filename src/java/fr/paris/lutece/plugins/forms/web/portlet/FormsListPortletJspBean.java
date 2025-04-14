@@ -38,9 +38,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -59,6 +61,8 @@ import fr.paris.lutece.util.json.JsonUtil;
 /**
  * This class provides the user interface to manage FormsList Portlet
  */
+@SessionScoped
+@Named
 public class FormsListPortletJspBean extends PortletJspBean
 {
     private static final long serialVersionUID = 4077345110036566513L;
