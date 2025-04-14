@@ -68,6 +68,11 @@ public class FormsCacheService extends AbstractCacheableService implements Event
         return new StringBuilder( "Initial-Step-For-Form-id:" ).append( nIdForm ).toString( );
     }
 
+    public String getFinalStepCacheKey( int nIdForm )
+    {
+        return new StringBuilder( "Final-Step-For-Form-id:" ).append( nIdForm ).toString( );
+    }
+
     public String getFormCacheKey( int nIdForm )
     {
         return new StringBuilder( "Form-id:" ).append( nIdForm ).toString( );
