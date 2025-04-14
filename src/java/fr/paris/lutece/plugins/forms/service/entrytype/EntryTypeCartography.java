@@ -37,12 +37,18 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryAnonymizationType;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeCartography;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeGeolocation;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * The Class EntryTypeGeolocation.
  */
+@ApplicationScoped
+@Named( "forms.entryTypeCartography" )
 public class EntryTypeCartography extends AbstractEntryTypeCartography implements IResponseComparator
 {
     /** The Constant CONSTANT_ID_ADDRESS. */
@@ -51,6 +57,14 @@ public class EntryTypeCartography extends AbstractEntryTypeCartography implement
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_cartography.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_cartography.html";
     private static final String TEMPLATE_FRONT_CARTOGRAPHY = "/skin/plugins/carto/manage_map.html";
+    
+    @Inject
+    public void addAnonymizationTypes(
+        @Named("genericattributes.defaultGeolocAnonymizationType") IEntryAnonymizationType defaultGeolocAnonymizationType ) 
+    {
+        setAnonymizationTypes( List.of( defaultGeolocAnonymizationType ) );
+    }
+
     /**
      * {@inheritDoc}
      */

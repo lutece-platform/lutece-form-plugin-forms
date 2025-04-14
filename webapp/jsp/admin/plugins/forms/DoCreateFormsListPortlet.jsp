@@ -1,7 +1,6 @@
 <%@ page errorPage="../../ErrorPage.jsp" %>
-<jsp:useBean id="formsListPortlet" scope="session" class="fr.paris.lutece.plugins.forms.web.portlet.FormsListPortletJspBean" />
 
-<%
-    formsListPortlet.init( request, formsListPortlet.RIGHT_MANAGE_ADMIN_SITE );
-    response.sendRedirect( formsListPortlet.doCreate( request ) );
-%>
+<%@page import="fr.paris.lutece.plugins.forms.web.portlet.FormsListPortletJspBean"%>
+
+${ formsListPortletJspBean.init( pageContext.request, FormsListPortletJspBean.RIGHT_MANAGE_ADMIN_SITE ) }
+${ pageContext.response.sendRedirect( formsListPortletJspBean.doCreate( pageContext.request ) ) }

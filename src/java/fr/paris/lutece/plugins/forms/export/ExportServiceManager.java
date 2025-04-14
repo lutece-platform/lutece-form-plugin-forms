@@ -51,8 +51,8 @@ import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeText;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * This is the manager class for different entry type
@@ -70,7 +70,7 @@ public final class ExportServiceManager
      */
     private ExportServiceManager( )
     {
-        _listFormatExport = SpringContextService.getBeansOfType( IFormatExport.class );
+        _listFormatExport = CDI.current( ).select( IFormatExport.class ).stream( ).toList( );
     }
 
     /**

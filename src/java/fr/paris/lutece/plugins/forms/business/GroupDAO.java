@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.sql.Statement;
 
 import java.util.ArrayList;
@@ -47,6 +49,7 @@ import org.apache.commons.collections.CollectionUtils;
 /**
  * This class provides Data Access methods for Group objects
  */
+@ApplicationScoped
 public final class GroupDAO implements IGroupDAO
 {
     // Constants

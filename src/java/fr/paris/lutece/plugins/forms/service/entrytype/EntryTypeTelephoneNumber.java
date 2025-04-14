@@ -37,11 +37,17 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryAnonymizationType;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeTelephoneNumber;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * Telephone number entry type
  */
+@ApplicationScoped
+@Named( "forms.entryTypeTelephoneNumber" )
 public class EntryTypeTelephoneNumber extends AbstractEntryTypeTelephoneNumber implements IResponseComparator
 {
     /* TEMPLATES */
@@ -51,6 +57,13 @@ public class EntryTypeTelephoneNumber extends AbstractEntryTypeTelephoneNumber i
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_telephone.html";
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_telephone.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_telephone.html";
+
+    @Inject
+    public void addAnonymizationTypes(
+    		@Named("genericattributes.defaultTelephoneAnonymizationType") IEntryAnonymizationType defaultTelephoneAnonymizationType ) 
+    {
+    	setAnonymizationTypes( List.of( defaultTelephoneAnonymizationType ) );
+    }
 
     @Override
     public String getTemplateHtmlForm( Entry entry, boolean bDisplayFront )

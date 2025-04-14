@@ -38,12 +38,16 @@ import java.util.List;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeSelectOrder;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  *
  * class EntryTypeSelect
  *
  */
+@ApplicationScoped
+@Named( "forms.entryTypeSelectOrder" )
 public class EntryTypeSelectOrder extends AbstractEntryTypeSelectOrder implements IResponseComparator
 {
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_select_order.html";

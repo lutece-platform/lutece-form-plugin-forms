@@ -35,18 +35,25 @@ package fr.paris.lutece.plugins.forms.business.form.column;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.List;
 import java.util.Locale;
 
 /**
  * Factory used to build a list of FormColumn objects
  */
+@ApplicationScoped
 public class FormColumnFactory
 {
     // Constants
     public static final String BEAN_NAME = "forms.formColumn.factory";
 
-    /**
+	public FormColumnFactory( ) 
+	{
+	}
+
+	/**
      * Build the list of all FormColumn
      * 
      * @param nIdForm

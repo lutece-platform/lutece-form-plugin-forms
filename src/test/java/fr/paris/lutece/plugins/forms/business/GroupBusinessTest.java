@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.business;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
@@ -57,6 +57,7 @@ public class GroupBusinessTest extends LuteceTestCase
     /**
      * test Group
      */
+    @Test
     public void testBusiness( )
     {
         // Initialize an object

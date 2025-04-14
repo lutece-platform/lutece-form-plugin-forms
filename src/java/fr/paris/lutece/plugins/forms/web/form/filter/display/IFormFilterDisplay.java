@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.form.filter.display;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.web.form.filter.IFilterable;
 import fr.paris.lutece.plugins.forms.web.form.multiview.util.IFormListPosition;

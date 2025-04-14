@@ -40,7 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.springframework.transaction.annotation.Transactional;
+
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -65,12 +65,12 @@ import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.ReferenceItemFieldHome;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.transaction.Transactional;
 
 /**
  * Json service to handle import/export
@@ -83,7 +83,7 @@ public class FormJsonService extends AbstractFormJsonService
 
     private FormJsonService( )
     {
-        super( SpringContextService.getBean( FormDatabaseService.BEAN_NAME ) );
+        super( CDI.current( ).select( FormDatabaseService.class ).get( ) );
     }
 
     public static FormJsonService getInstance( )
@@ -145,7 +145,7 @@ public class FormJsonService extends AbstractFormJsonService
      * 
      * @return
      */
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    @Transactional
     public void jsonImportForm( String json, Locale locale ) throws JsonProcessingException
     {
         FormJsonData jsonData = _objectMapper.readValue( json, FormJsonData.class );

@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.impl;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.form.FormParameters;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl.FormPanelFormResponseIdFilterInitializerQueryPart;

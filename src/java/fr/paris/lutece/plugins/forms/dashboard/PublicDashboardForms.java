@@ -45,7 +45,9 @@ import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.portal.service.dashboard.IPublicDashboardComponent;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class PublicDashboardForms implements IPublicDashboardComponent {
 
 	public static final String DASHBOARD_PROPERTIES_TITLE = "forms.publicdashboard.bean.title";

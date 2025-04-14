@@ -34,9 +34,10 @@
 package fr.paris.lutece.plugins.forms.business.form.util;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.forms.util.ReferenceItemComparator;
 import fr.paris.lutece.test.LuteceTestCase;
@@ -48,27 +49,10 @@ import fr.paris.lutece.util.ReferenceItem;
 public class ReferenceItemComparatorTest extends LuteceTestCase
 {
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void setUp( ) throws Exception
-    {
-        super.setUp( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void tearDown( ) throws Exception
-    {
-        super.tearDown( );
-    }
-
-    /**
      * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with two empty
      * ReferenceItem
      */
+	@Test
     public void testCompareEmptyReferenceItem( )
     {
         ReferenceItem referenceItemOne = new ReferenceItem( );
@@ -84,6 +68,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
      * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with the first
      * ReferenceItem which is empty
      */
+	@Test
     public void testCompareReferenceItemWithFirstEmpty( )
     {
         ReferenceItem referenceItemOne = new ReferenceItem( );
@@ -100,6 +85,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
      * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with the second
      * ReferenceItem which is empty
      */
+	@Test
     public void testCompareReferenceItemWithSecondEmpty( )
     {
         ReferenceItem referenceItemOne = new ReferenceItem( );
@@ -116,6 +102,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
      * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with the two
      * ReferenceItems which have the same name
      */
+	@Test
     public void testCompareReferenceItemSameNames( )
     {
         ReferenceItem referenceItemOne = new ReferenceItem( );
@@ -133,6 +120,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
      * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with the first
      * ReferenceItem which have a "greater" value than the second ReferenceItem
      */
+	@Test
     public void testCompareReferenceItemFirstGreater( )
     {
         ReferenceItem referenceItemOne = new ReferenceItem( );
@@ -150,6 +138,7 @@ public class ReferenceItemComparatorTest extends LuteceTestCase
      * Test for the {@link ReferenceItemComparator#compare(ReferenceItem, ReferenceItem)} method with the second
      * ReferenceItem which have a "greater" value than the first ReferenceItem
      */
+	@Test
     public void testCompareReferenceItemSecondGreater( )
     {
         ReferenceItem referenceItemOne = new ReferenceItem( );

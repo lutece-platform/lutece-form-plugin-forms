@@ -41,7 +41,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -74,7 +75,6 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.util.ReferenceList;
@@ -158,7 +158,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     // Others
     protected static final int INTEGER_MINUS_ONE = -1;
 
-    protected IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( ).getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
+    protected IFileStoreServiceProvider _fileStoreProvider = CDI.current().select( FileService.class ).get( ).getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
 
     private IFormDatabaseService _formDatabaseService;
     private IFormDisplayService _formDisplayService;
@@ -489,7 +489,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
 
-        Map<String, Object> model = new HashMap<>( );
+        Map<String, Object> model = getModel();
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_ID_PARENT, _nIdParentSelected );
@@ -554,7 +554,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
 
-        Map<String, Object> model = new HashMap<>( );
+        Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_ENTRY, _entry );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( FormsConstants.MARK_QUESTION, _question );

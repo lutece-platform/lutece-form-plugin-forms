@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -65,11 +64,11 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
-import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import jakarta.transaction.Transactional;
 
 public abstract class AbstractFormJsonService
 {
@@ -147,7 +146,7 @@ public abstract class AbstractFormJsonService
      * 
      * @return
      */
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    @Transactional
     public void jsonImportStep( int idForm, String json, Locale locale ) throws JsonProcessingException
     {
         StepJsonData jsonData = _objectMapper.readValue( json, StepJsonData.class );
@@ -155,7 +154,7 @@ public abstract class AbstractFormJsonService
         jsonImportStep( idForm, jsonData, locale );
     }
 
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    @Transactional
     public void jsonImportStep( int idForm, StepJsonData jsonData, Locale locale )
     {
         Step step = jsonData.getStep( );

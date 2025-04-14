@@ -36,8 +36,9 @@ package fr.paris.lutece.plugins.forms.web.file;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -56,7 +57,6 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.security.SecurityService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.filesystem.FileSystemUtil;
@@ -96,7 +96,7 @@ public final class FormsDownloadFile
         int nIdFile = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FILE ), ID_FILE_INCORRECT );
         int nIdResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), ID_RESPONSE_INCORRECT );
 
-        FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
+        FormService formService = CDI.current( ).select( FormService.class ).get( );
         if ( !formService.isFileAccessAuthorized( request, nIdResponse, nIdFile ) )
         {
             return AdminMessageService.getMessageUrl( request, Messages.USER_ACCESS_DENIED, AdminMessage.TYPE_STOP );

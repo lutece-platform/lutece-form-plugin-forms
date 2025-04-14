@@ -38,7 +38,7 @@ import java.util.List;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * This class provides instances management methods (create, find, ...) for FormDisplay objects
@@ -46,7 +46,7 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 public final class FormQuestionResponseHome
 {
     // Static variable pointed at the DAO instance
-    private static IFormQuestionResponseDAO _dao = SpringContextService.getBean( "forms.formQuestionResponseDAO" );
+    private static IFormQuestionResponseDAO _dao = CDI.current( ).select( IFormQuestionResponseDAO.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**

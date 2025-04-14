@@ -39,7 +39,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -60,11 +62,12 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
-import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 
+@RequestScoped
+@Named
 @Controller( controllerJsp = "ManageFormMultiviewConfig.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormMultiviewConfigJspBean extends AbstractJspBean
 {
@@ -147,7 +150,6 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         model.put( MARK_QUESTIONLIST, questionList );
         model.put( MARK_FILTERABLE_QUESTIONLIST, filterableQuestionList );
         model.put( MARK_NON_DISPLAYABLE_QUESTIONLIST, nonDisplayableQuestionList );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MANAGE_MULTIVIEW ) );
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_MULTIVIEW_CONFIG, model );
     }

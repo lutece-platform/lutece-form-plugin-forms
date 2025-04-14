@@ -39,7 +39,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -63,7 +64,6 @@ import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
 import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 
 /**
@@ -87,7 +87,7 @@ public class StepDisplayTree
     private static final String MARK_DISPLAY_CAPTCHA = "display_captcha";
     private static final String MARK_CAPTCHA = "captcha";
 
-    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    private static FormService _formService = CDI.current( ).select( FormService.class ).get( );
 
     private final List<ICompositeDisplay> _listChildren = new ArrayList<>( );
     private final List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<>( );

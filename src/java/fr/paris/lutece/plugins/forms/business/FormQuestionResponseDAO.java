@@ -47,10 +47,12 @@ import fr.paris.lutece.plugins.genericattributes.business.ResponseFilter;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * This class provides Data Access methods for Form objects
  */
+@ApplicationScoped
 public final class FormQuestionResponseDAO implements IFormQuestionResponseDAO
 {
     // Constants

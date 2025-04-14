@@ -36,9 +36,9 @@ package fr.paris.lutece.plugins.forms.export.csv;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Question;
-import junit.framework.TestCase;
+import fr.paris.lutece.test.LuteceTestCase;
 
-public class CSVHeaderTest extends TestCase
+public class CSVHeaderTest extends LuteceTestCase
 {
 
     public void testAddHeader( )

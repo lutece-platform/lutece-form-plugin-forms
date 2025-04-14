@@ -40,7 +40,11 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
@@ -62,15 +66,16 @@ import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
+import fr.paris.lutece.plugins.forms.service.event.ControlEvent;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
-import fr.paris.lutece.plugins.forms.validation.ControlListenerManager;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.event.EventAction;
+import fr.paris.lutece.portal.service.event.Type.TypeQualifier;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -87,6 +92,8 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * This class provides the user interface to manage Form controls ( manage, create, modify, remove )
  */
+@SessionScoped
+@Named
 @Controller( controllerJsp = "ManageControls.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormControlJspBean extends AbstractJspBean
 {
@@ -151,7 +158,11 @@ public class FormControlJspBean extends AbstractJspBean
     private final int _nDefaultItemsPerPage = AppPropertiesService.getPropertyInt( PROPERTY_ITEM_PER_PAGE, 50 );
     private String _strCurrentPageIndex;
     private int _nItemsPerPage;
-
+    @Inject
+    private Event<ControlEvent> _controlCreatedEvent;
+    @Inject
+    private Event<ControlEvent> _controlRemovedEvent;
+    
     /**
      * Build the Manage View
      *
@@ -569,7 +580,6 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_QUESTION_LIST, referenceListQuestion );
         model.put( FormsConstants.MARK_AVAILABLE_STEPS, StepHome.getStepReferenceListByForm( _step.getIdForm( ) ) );
         model.put( FormsConstants.MARK_CONDITION_TITLE, _strControlTitle );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_CONTROL ) );
     }
 
     /**
@@ -583,11 +593,6 @@ public class FormControlJspBean extends AbstractJspBean
     @Action( ACTION_MODIFY_CONTROL )
     public String doModifyControl( HttpServletRequest request ) throws AccessDeniedException
     {
-        // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_MODIFY_CONTROL ) )
-        {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
-        }
         if ( !populateAndValidateControl( request ) )
         {
             return redirectView( request, VIEW_MODIFY_CONTROL );
@@ -596,13 +601,18 @@ public class FormControlJspBean extends AbstractJspBean
         if ( _control.getId( ) > 0 )
         {
             ControlHome.update( _control );
-            ControlListenerManager.notifyListenersControlUpdated( _control, request );
+            ControlEvent controlEvent = new ControlEvent( _control, request );
+            _controlRemovedEvent.select( ControlEvent.class, new TypeQualifier( EventAction.REMOVE ) ).fire( controlEvent );
+            _controlCreatedEvent.select( ControlEvent.class, new TypeQualifier( EventAction.CREATE ) ).fire( controlEvent );
+
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_UPDATED );
         }
         else
         {
             ControlHome.create( _control );
-            ControlListenerManager.notifyListenersControlCreated( _control, request );
+            ControlEvent controlEvent = new ControlEvent( _control, request );
+            _controlCreatedEvent.select( ControlEvent.class, new TypeQualifier( EventAction.CREATE ) ).fire( controlEvent );
+
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_CREATED );
         }
 
@@ -623,7 +633,6 @@ public class FormControlJspBean extends AbstractJspBean
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_CONTROL ) );
         url.addParameter( FormsConstants.PARAMETER_ID_CONTROL, nIdControlToRemove );
-        url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_CONTROL ) );
 
         String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_CONTROL, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
 
@@ -642,12 +651,6 @@ public class FormControlJspBean extends AbstractJspBean
     @Action( ACTION_REMOVE_CONTROL )
     public String doRemoveControl( HttpServletRequest request ) throws AccessDeniedException
     {
-        // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_REMOVE_CONTROL ) )
-        {
-            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
-        }
-
         if ( !retrieveControlFromRequest( request ) )
         {
             return redirectToViewManageForm( request );
@@ -664,7 +667,10 @@ public class FormControlJspBean extends AbstractJspBean
                     && ControlHome.getControlCountByControlTargetAndType(_control.getIdControlTarget(), ControlType.CONDITIONAL) == 0) {
                 ControlGroupHome.remove(_control.getIdControlGroup());
             }
-            ControlListenerManager.notifyListenersControlRemoval( _control, request );
+            
+            ControlEvent controlEvent = new ControlEvent( _control, request );
+            _controlRemovedEvent.select( ControlEvent.class, new TypeQualifier( EventAction.REMOVE ) ).fire( controlEvent );
+            
             request.setAttribute( FormsConstants.PARAMETER_INFO_KEY, INFO_CONTROL_REMOVED );
         }
         else

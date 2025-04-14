@@ -34,10 +34,12 @@
 package fr.paris.lutece.plugins.forms.business.form.service;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.forms.service.MultiviewFormService;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.IFormPanelDisplay;
@@ -51,26 +53,9 @@ import fr.paris.lutece.test.LuteceTestCase;
 public class MultiviewFormServiceTest extends LuteceTestCase
 {
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void setUp( ) throws Exception
-    {
-        super.setUp( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void tearDown( ) throws Exception
-    {
-        super.tearDown( );
-    }
-
-    /**
      * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)}
      */
+	@Test
     public void testFindActiveFormPanel( )
     {
         IFormPanelDisplay formPanelDisplayExpected = new FormPanelFormsDisplay( );
@@ -88,6 +73,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
     /**
      * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)} with several panels
      */
+	@Test
     public void testFindActiveFormPanelWithSeveralPanels( )
     {
         IFormPanelDisplay formPanelDisplayExpected = new FormPanelFormsDisplay( );
@@ -108,6 +94,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
      * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)} with null list of
      * FormPanelDisplay
      */
+	@Test
     public void testFindActiveFormPanelWithNullList( )
     {
         IFormPanelDisplay formPanelDisplayExpected = null;
@@ -124,6 +111,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
      * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)} with empty list of
      * FormPanelDisplay
      */
+	@Test
     public void testFindActiveFormPanelWithEmptyList( )
     {
         IFormPanelDisplay formPanelDisplayExpected = null;
@@ -139,6 +127,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
     /**
      * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)} with none active panels
      */
+	@Test
     public void testFindActiveFormPanelWithNoneActivePanels( )
     {
         IFormPanelDisplay formPanelDisplayExpected = null;
@@ -156,6 +145,7 @@ public class MultiviewFormServiceTest extends LuteceTestCase
     /**
      * Test of the method {@link fr.paris.lutece.plugins.forms.service.MultiviewFormService#findActiveFormPanel(java.util.List)} with several active panels
      */
+	@Test
     public void testFindActiveFormPanelWithSeveralActivePanels( )
     {
         IFormPanelDisplay formPanelDisplayExpected = new FormPanelDisplayMockTwo( );

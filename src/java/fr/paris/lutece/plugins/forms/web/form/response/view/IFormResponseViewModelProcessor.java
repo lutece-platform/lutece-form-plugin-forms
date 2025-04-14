@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.web.form.response.view;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Processor used to build the model for accessing the page of details of a Form Response

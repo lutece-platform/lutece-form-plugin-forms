@@ -38,10 +38,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -60,12 +62,12 @@ import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.plugins.forms.service.json.FormJsonService;
 import fr.paris.lutece.plugins.forms.service.json.StepJsonData;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.security.SecurityTokenService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
@@ -82,6 +84,8 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
+@SessionScoped
+@Named
 @Controller( controllerJsp = "ManageSteps.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormStepJspBean extends AbstractJspBean
 {
@@ -150,7 +154,8 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String ERROR_STEP_NOT_IMPORTED = "forms.error.step.not.imported";
 
     // Others
-    private static final StepService _stepService = SpringContextService.getBean( StepService.BEAN_NAME );
+    @Inject
+    private StepService _stepService;
 
     // Session variable to store working values
     private Form _form;
@@ -203,7 +208,7 @@ public class FormStepJspBean extends AbstractJspBean
                     CollectionUtils.isNotEmpty( ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION ) ) );
         }
 
-        listSteps = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+        listSteps = FormsUtils.sortStepsWithTransitions( listSteps, listTransitions );
 
         LocalizedPaginator<Step> paginator = new LocalizedPaginator<>( listSteps, _nItemsPerPage, getJspManageSteps( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
@@ -215,7 +220,6 @@ public class FormStepJspBean extends AbstractJspBean
         model.put( MARK_STEP_LIST, paginator.getPageItems( ) );
         model.put( MARK_LOCALE, request.getLocale( ) );
         model.put( MARK_TEMPLATE_PROVIDER, _stepService.getStepTemplateProvider( ) );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_STEP ) );
 
         setPageTitleProperty( EMPTY_STRING );
 
@@ -257,7 +261,6 @@ public class FormStepJspBean extends AbstractJspBean
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_STEP ) );
 
         ReferenceList stepRefList = new ReferenceList( );
         stepRefList.addItem( -1, "" );
@@ -346,7 +349,6 @@ public class FormStepJspBean extends AbstractJspBean
 
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_STEP ) );
         url.addParameter( FormsConstants.PARAMETER_ID_STEP, nId );
-        url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_STEP ) );
 
         String strMessageUrl = AdminMessageService.getMessageUrl( request, strConfirmRemoveMessage,
                 new Object[ ] { _step.getTitle( ) }, url.getUrl( ), AdminMessage.TYPE_CONFIRMATION );
@@ -480,7 +482,6 @@ public class FormStepJspBean extends AbstractJspBean
             model.put( FormsConstants.MARK_STEP, _step );
             model.put( FormsConstants.MARK_FORM, _form );
             model.put( MARK_LOCALE, request.getLocale( ) );
-            model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MODIFY_STEP ) );
 
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_STEP, TEMPLATE_MODIFY_STEP, model );
         }
@@ -586,7 +587,7 @@ public class FormStepJspBean extends AbstractJspBean
     public String doImportJson( HttpServletRequest request ) throws AccessDeniedException
     {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        FileItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
+        MultipartItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
 
         int nIdForm = -1;
         try

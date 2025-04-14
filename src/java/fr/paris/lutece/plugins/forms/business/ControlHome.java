@@ -38,9 +38,10 @@ import java.util.List;
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
-import org.apache.commons.collections4.CollectionUtils;
+import jakarta.enterprise.inject.spi.CDI;
+
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * This class provides instances management methods (create, find, ...) for Control objects
@@ -48,8 +49,8 @@ import org.apache.commons.collections4.CollectionUtils;
 public final class ControlHome
 {
     // Static variable pointed at the DAO instance
-    private static IControlDAO _dao = SpringContextService.getBean( "forms.controlDAO" );
-    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
+    private static IControlDAO _dao = CDI.current( ).select( IControlDAO.class ).get( );
+    private static FormsCacheService _cache = CDI.current( ).select( FormsCacheService.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -160,7 +161,7 @@ public final class ControlHome
     public static Control findByPrimaryKey( int nKey )
     {
         String controlCacheKey = _cache.getControlCacheKey( nKey );
-        Control control = ( Control ) _cache.getFromCache( controlCacheKey );
+        Control control = ( Control ) _cache.get( controlCacheKey );
         if ( control == null )
         {
             control = _dao.load( nKey, _plugin );
@@ -168,7 +169,7 @@ public final class ControlHome
             {
                 control.setListIdQuestion( _dao.loadIdQuestions( nKey, _plugin ) );
             }
-            _cache.putInCache( controlCacheKey, control );
+            _cache.put( controlCacheKey, control );
         }
         return control;
     }
@@ -216,7 +217,7 @@ public final class ControlHome
     {
         String cacheKey = _cache.getControlByControlTargetAndTypeCacheKey( nIdControlTarget, controlType );
         @SuppressWarnings( "unchecked" )
-        List<Control> listControl = ( List<Control> ) _cache.getFromCache( cacheKey );
+        List<Control> listControl = ( List<Control> ) _cache.get( cacheKey );
         if ( CollectionUtils.isEmpty( listControl ) )
         {
             listControl = _dao.selectControlByControlTargetAndType( nIdControlTarget, controlType, _plugin );
@@ -224,7 +225,7 @@ public final class ControlHome
             {
                 ctrl.setListIdQuestion( _dao.loadIdQuestions( ctrl.getId( ), _plugin ) );
             }
-            _cache.putInCache( cacheKey, listControl );
+            _cache.put( cacheKey, listControl );
         }
         return listControl;
     }
@@ -258,7 +259,7 @@ public final class ControlHome
     {
         String cacheKey = _cache.getControlByQuestionAndTypeCacheKey( nIdQuestion, strControlType );
         @SuppressWarnings( "unchecked" )
-        List<Control> listControl = ( List<Control> ) _cache.getFromCache( cacheKey );
+        List<Control> listControl = ( List<Control> ) _cache.get( cacheKey );
         if ( CollectionUtils.isEmpty( listControl ) )
         {
             listControl = _dao.selectControlByQuestionAndType( nIdQuestion, strControlType, _plugin );
@@ -266,7 +267,7 @@ public final class ControlHome
             {
                 ctrl.setListIdQuestion( _dao.loadIdQuestions( ctrl.getId( ), _plugin ) );
             }
-            _cache.putInCache( cacheKey, listControl );
+            _cache.put( cacheKey, listControl );
         }
         return listControl;
     }

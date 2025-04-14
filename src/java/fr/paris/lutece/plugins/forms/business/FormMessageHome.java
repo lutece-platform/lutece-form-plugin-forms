@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * This class provides instances management methods (create, find, ...) for FormResponseHome objects
@@ -44,8 +44,8 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 public final class FormMessageHome
 {
     // Static variable pointed at the DAO instance
-    private static IFormMessageDAO _dao = SpringContextService.getBean( "forms.formMessageDAO" );
-    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
+    private static IFormMessageDAO _dao = CDI.current( ).select( IFormMessageDAO.class ).get( );
+    private static FormsCacheService _cache = CDI.current( ).select( FormsCacheService.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -65,7 +65,7 @@ public final class FormMessageHome
     public static FormMessage create( FormMessage formMessage )
     {
         _dao.insert( formMessage, _plugin );
-        _cache.putInCache( _cache.getFormMessageByFormCacheKey( formMessage.getIdForm( ) ), formMessage );
+        _cache.put( _cache.getFormMessageByFormCacheKey( formMessage.getIdForm( ) ), formMessage );
         return formMessage;
     }
 
@@ -79,7 +79,7 @@ public final class FormMessageHome
     public static FormMessage update( FormMessage formMessage )
     {
         _dao.store( formMessage, _plugin );
-        _cache.putInCache( _cache.getFormMessageByFormCacheKey( formMessage.getIdForm( ) ), formMessage );
+        _cache.put( _cache.getFormMessageByFormCacheKey( formMessage.getIdForm( ) ), formMessage );
         return formMessage;
     }
 
@@ -104,7 +104,7 @@ public final class FormMessageHome
     public static void removeByForm( int nIdForm )
     {
         _dao.deleteByForm( nIdForm, _plugin );
-        _cache.removeKey( _cache.getFormMessageByFormCacheKey( nIdForm ) );
+        _cache.remove( _cache.getFormMessageByFormCacheKey( nIdForm ) );
     }
 
     /**
@@ -129,11 +129,11 @@ public final class FormMessageHome
     public static FormMessage findByForm( int nIdForm )
     {
         String cacheKey = _cache.getFormMessageByFormCacheKey( nIdForm );
-        FormMessage formMessage = ( FormMessage ) _cache.getFromCache( cacheKey );
+        FormMessage formMessage = ( FormMessage ) _cache.get( cacheKey );
         if ( formMessage == null )
         {
             formMessage = _dao.selectByForm( nIdForm, _plugin );
-            _cache.putInCache( cacheKey, formMessage );
+            _cache.put( cacheKey, formMessage );
         }
         return formMessage;
     }

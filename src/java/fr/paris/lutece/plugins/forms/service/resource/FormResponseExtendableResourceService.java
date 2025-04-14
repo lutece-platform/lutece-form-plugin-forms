@@ -42,7 +42,9 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.resource.IExtendableResource;
 import fr.paris.lutece.portal.service.resource.IExtendableResourceService;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class FormResponseExtendableResourceService implements IExtendableResourceService
 {
 

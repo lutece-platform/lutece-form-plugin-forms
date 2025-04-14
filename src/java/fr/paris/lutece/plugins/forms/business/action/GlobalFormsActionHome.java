@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.forms.business.action;
 
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 import java.util.Locale;
@@ -46,7 +46,7 @@ import java.util.Locale;
 public final class GlobalFormsActionHome
 {
     // Static variable pointed at the DAO instance
-    private static IGlobalFormsActionDAO _dao = SpringContextService.getBean( "forms.globalFormsActionDAO" );
+    private static IGlobalFormsActionDAO _dao = CDI.current( ).select( IGlobalFormsActionDAO.class ).get( );
 
     /**
      * Private constructor - this class need not be instantiated

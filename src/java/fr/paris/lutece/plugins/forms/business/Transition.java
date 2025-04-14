@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.forms.business;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.Min;
+import jakarta.validation.constraints.Min;
 
 /**
  * This is the business class for the object Transition

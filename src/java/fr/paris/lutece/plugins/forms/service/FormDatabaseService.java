@@ -51,7 +51,9 @@ import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.ReferenceItemFieldHome;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class FormDatabaseService implements IFormDatabaseService
 {
     public static final String BEAN_NAME = "forms.formDatabaseService";

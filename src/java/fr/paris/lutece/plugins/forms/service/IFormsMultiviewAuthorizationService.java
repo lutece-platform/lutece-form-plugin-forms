@@ -33,7 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Forms service for managing the authorization on access form response from the multiview page

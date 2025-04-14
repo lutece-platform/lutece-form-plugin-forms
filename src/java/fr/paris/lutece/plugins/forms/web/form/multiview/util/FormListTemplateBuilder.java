@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.web.form.multiview.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,9 +60,12 @@ import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisp
 import fr.paris.lutece.plugins.forms.web.form.column.display.impl.FormColumnDisplayEntryGeolocation;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppException;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * Builder class for the template of FormColumnDisplay and FormFilterDisplay objects
@@ -90,6 +94,8 @@ public final class FormListTemplateBuilder
     private static final String GEOJSON_TYPE = "type";
     private static final String GEOJSON_TYPE_FEATURE = "Feature";
     private static final String PROPERTY_POPUP_CONTENT = "popupContent";
+
+    private static final String PROPERTY_MAPPROVIDER_BEANS_NAME = "forms.mapProvider.beanName.list";
 
     // To serialize to geojson
     private static ObjectMapper _mapper = new ObjectMapper( );
@@ -176,30 +182,35 @@ public final class FormListTemplateBuilder
 
     private static Optional<IMultiviewMapProvider> getMapProvider( )
     {
-        // getBean( BEAN_NAME ) throws if the bean is not defined, so check before to avoid an exception
-        // Also check if the plugin of the bean is enabled because the getBean doesn't..
-        if ( SpringContextService.getContext( ).containsBean( BEAN_NAME_MULTIVIEWMAP ) )
-        {
-            String strOriginalBeanName = SpringContextService.getContext( ).getAliases( BEAN_NAME_MULTIVIEWMAP ) [0];
+        Instance<IMultiviewMapProvider> mapProviderInstances = CDI.current( ).select( IMultiviewMapProvider.class );
 
-            // TODO copypasted from SpringContextService, maybe this need to be public
-            int nPos = strOriginalBeanName.indexOf( '.' );
-            String strPrefix = null;
-            if ( nPos > 0 )
-            {
-                strPrefix = strOriginalBeanName.substring( 0, nPos );
-            }
-            Plugin plugin = null;
-            if ( strPrefix != null )
-            {
-                plugin = PluginService.getPlugin( strPrefix );
-            }
-            if ( plugin == null || plugin.isInstalled( ) ) // A bean without a plugin is always enabled (core beans)
-            {
-                return Optional.of( SpringContextService.getBean( BEAN_NAME_MULTIVIEWMAP ) );
-            }
+    	if ( !mapProviderInstances.isUnsatisfied( ) )
+        {
+    		String strMapProviderBeanNameList = AppPropertiesService.getProperty( PROPERTY_MAPPROVIDER_BEANS_NAME );
+        	List<String> mapProviderBeanNameList = StringUtils.isEmpty( strMapProviderBeanNameList ) ? new ArrayList<>( ) : Arrays.asList( strMapProviderBeanNameList.split( "," ) );
+        	
+        	if ( CollectionUtils.isNotEmpty( mapProviderBeanNameList ) )
+        	{
+        		String strOriginalBeanName = mapProviderBeanNameList.get( 0 );
+        		int nPos = strOriginalBeanName.indexOf( '.' );
+                String strPrefix = null;
+                if ( nPos > 0 )
+                {
+                    strPrefix = strOriginalBeanName.substring( 0, nPos );
+                }
+                Plugin plugin = null;
+                if ( strPrefix != null )
+                {
+                    plugin = PluginService.getPlugin( strPrefix );
+                }
+                if ( plugin == null || plugin.isInstalled( ) ) // A bean without a plugin is always enabled (core beans)
+                {
+                    return Optional.of( CDI.current().select( IMultiviewMapProvider.class , NamedLiteral.of( strOriginalBeanName ) ).get( ) );
+                }
+        	}
         }
-        return Optional.empty( );
+
+    	return Optional.empty( );
     }
 
     private static List<String> buildGeoJsonPointsList( FormColumnDisplayEntryGeolocation geolocFormColumnDisplay, List<FormResponseItem> listFormResponseItem,

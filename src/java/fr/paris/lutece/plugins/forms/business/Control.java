@@ -35,7 +35,7 @@ package fr.paris.lutece.plugins.forms.business;
 
 import java.util.Set;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 import fr.paris.lutece.portal.service.util.AppLogService;
 

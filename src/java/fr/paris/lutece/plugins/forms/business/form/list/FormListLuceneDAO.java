@@ -53,12 +53,14 @@ import fr.paris.lutece.plugins.forms.business.form.panel.configuration.IFormPane
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.IFormPanelInitializer;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchEngine;
 
 /**
  * Implementation of the IFormListDAO interface
  */
+@ApplicationScoped
 public class FormListLuceneDAO implements IFormListDAO
 {
 
@@ -67,7 +69,11 @@ public class FormListLuceneDAO implements IFormListDAO
     @Inject
     private IFormSearchEngine _formSearchEngine;
 
-    /**
+	public FormListLuceneDAO( ) 
+	{
+	}
+
+	/**
      * {@inheritDoc}
      */
     @Override

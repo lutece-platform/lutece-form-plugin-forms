@@ -33,7 +33,14 @@
  */
 package fr.paris.lutece.plugins.forms.util;
 
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.portal.service.util.CryptoService;
 
 /**
@@ -62,4 +69,74 @@ public class FormsUtils
         return CryptoService.hmacSHA256( builder.toString( ) );
     }
 
+    /**
+     * Return a list of steps based on given step list and transition between steps list
+     * 
+     * @param listSteps
+     *            the list of steps
+     * @param listTransitions
+     *            the list of transitions
+     * @return the list of given steps based on given transitions
+     */
+    public static List<Step> sortStepsWithTransitions( List<Step> listSteps, List<Transition> listTransitions )
+    {
+        List<Step> listStepOrdered = new ArrayList<>( );
+        Step initialStep = listSteps.stream( ).filter( Step::isInitial ).findFirst( ).orElse( null );
+        if ( initialStep == null )
+        {
+            return listSteps;
+        }
+
+        Set<Integer> listIdStepOrderWithTransitions = new LinkedHashSet<>( );
+        listIdStepOrderWithTransitions.add( initialStep.getId( ) );
+        listIdStepOrderWithTransitions.addAll( getNextStep( initialStep.getId( ), listTransitions ) );
+        for ( Integer nIdStep : listIdStepOrderWithTransitions )
+        {
+            for ( Step stepToOrder : listSteps )
+            {
+                if ( nIdStep == stepToOrder.getId( ) )
+                {
+                    listStepOrdered.add( stepToOrder );
+                }
+            }
+        }
+        for ( Step step : listSteps )
+        {
+            if ( !listIdStepOrderWithTransitions.contains( step.getId( ) ) )
+            {
+                listStepOrdered.add( step );
+            }
+        }
+
+        return listStepOrdered;
+    }
+
+    /**
+     * Get iteratively the next steps based on transitions list
+     * 
+     * @param idFromStep
+     * @param listTransitions
+     * @return the list of integer of the steps based on the transitions list
+     */
+    private static List<Integer> getNextStep( Integer idFromStep, List<Transition> listTransitions )
+    {
+        List<Integer> listIdNextSteps = new ArrayList<>( );
+        if ( idFromStep != null )
+        {
+            List<Transition> nextTransitionsList = new ArrayList<>( );
+            for ( Transition transition : listTransitions )
+            {
+                if ( transition.getFromStep( ) == idFromStep )
+                {
+                    listIdNextSteps.add( transition.getNextStep( ) );
+                    nextTransitionsList.add( transition );
+                }
+            }
+            for ( Transition transition : nextTransitionsList )
+            {
+                listIdNextSteps.addAll( getNextStep( transition.getNextStep( ), listTransitions ) );
+            }
+        }
+        return listIdNextSteps;
+    }
 }

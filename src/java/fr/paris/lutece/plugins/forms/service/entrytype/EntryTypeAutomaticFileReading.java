@@ -36,10 +36,12 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -53,11 +55,13 @@ import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.IOcrProvider;
 import fr.paris.lutece.plugins.genericattributes.business.OcrProviderManager;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryAnonymizationType;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeFile;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.genericattributes.service.upload.AbstractGenAttUploadHandler;
 import fr.paris.lutece.plugins.genericattributes.util.FileAttributesUtils;
 import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.url.UrlItem;
@@ -66,6 +70,8 @@ import fr.paris.lutece.util.url.UrlItem;
  * This class is a service for the entry type Automatic File Reading
  *
  */
+@ApplicationScoped
+@Named( "forms.entryTypeAutomaticFileReading" )
 public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile implements IResponseComparator
 {
     private static final String JSP_DOWNLOAD_FILE = "jsp/admin/plugins/forms/DoDownloadFile.jsp";
@@ -77,6 +83,17 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_auto_file_reading.html";
 
     private static final String ENTRY_TYPE_AUT_READING_FILE = "forms.entryTypeAutomaticFileReading";
+
+    @Inject
+    private FormsAsynchronousUploadHandler _formsAsynchronousUploadHandler;
+
+    @Inject
+    public void addAnonymizationTypes(
+    		@Named("genericattributes.fileDeleteAnonymizationType") IEntryAnonymizationType fileDeleteAnonymizationType,
+    		@Named("genericattributes.fileReplaceAnonymizationType") IEntryAnonymizationType fileReplaceAnonymizationType) 
+    {
+    	setAnonymizationTypes( List.of( fileDeleteAnonymizationType, fileReplaceAnonymizationType ) );
+    }
 
     /**
      * {@inheritDoc}
@@ -117,7 +134,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
     @Override
     public AbstractGenAttUploadHandler getAsynchronousUploadHandler( )
     {
-        return FormsAsynchronousUploadHandler.getHandler( );
+        return _formsAsynchronousUploadHandler;
     }
 
     /**
@@ -293,7 +310,7 @@ public class EntryTypeAutomaticFileReading extends AbstractEntryTypeFile impleme
         Question quest = listQuestionStep.stream( ).filter( mapper -> mapper.getIdEntry( ) == nIdEntry ).collect( Collectors.toList( ) ).get( 0 );
 
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        FileItem fileUploaded = multipartRequest.getFileList( strAttributeName ).get( 0 );
+        MultipartItem fileUploaded = multipartRequest.getFileList( strAttributeName ).get( 0 );
         Entry entry = quest.getEntry( );
 
         if ( entry.getEntryType( ).getBeanName( ).equals( ENTRY_TYPE_AUT_READING_FILE ) && handler.hasAddFileFlag( request, strAttributeName )

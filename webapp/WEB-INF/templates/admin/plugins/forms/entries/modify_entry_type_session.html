@@ -33,7 +33,6 @@ ${breadcrumb_template}
 							<#assign field=getFieldByCode( entry, "attribute_name")>
 							<@input type='text' name='value' id='value' maxlength=255 value='${field.value}' />
 						</@formGroup>
-						<@input type='hidden' id='token' name='token' value='${token}' />
 						<@formGroup>
 							<@button type='submit' name='action_modifyQuestion' id='save' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonSave}' />
 							<@button type='submit' name='action_saveQuestion' id='apply' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' />

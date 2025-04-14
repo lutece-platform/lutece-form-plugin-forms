@@ -33,13 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
-import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -51,8 +51,8 @@ import java.util.List;
 public final class QuestionHome
 {
     // Static variable pointed at the DAO instance
-    private static IQuestionDAO _dao = SpringContextService.getBean( "forms.questionDAO" );
-    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
+    private static IQuestionDAO _dao = CDI.current( ).select( IQuestionDAO.class ).get( );
+    private static FormsCacheService _cache = CDI.current( ).select( FormsCacheService.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -86,7 +86,7 @@ public final class QuestionHome
     public static Question update( Question question )
     {
         _dao.store( question, _plugin );
-        _cache.removeKey( _cache.getQuestionCacheKey( question.getId( ) ) );
+        _cache.remove( _cache.getQuestionCacheKey( question.getId( ) ) );
         return question;
     }
 
@@ -104,7 +104,7 @@ public final class QuestionHome
             EntryHome.remove( questionToDelete.getIdEntry( ) );
         }
         _dao.delete( nKey, _plugin );
-        _cache.removeKey( _cache.getQuestionCacheKey( nKey ) );
+        _cache.remove( _cache.getQuestionCacheKey( nKey ) );
     }
 
     /**
@@ -117,11 +117,11 @@ public final class QuestionHome
     public static Question findByPrimaryKey( int nKey )
     {
         String cacheKey = _cache.getQuestionCacheKey( nKey );
-        Question question = ( Question ) _cache.getFromCache( cacheKey );
+        Question question = ( Question ) _cache.get( cacheKey );
         if ( question == null )
         {
             question = _dao.load( nKey, _plugin );
-            _cache.putInCache( cacheKey, question );
+            _cache.put( cacheKey, question );
         }
         else
         {
@@ -267,7 +267,7 @@ public final class QuestionHome
         List<Question> listQuestions = new ArrayList<>(  );
         List<Step> listSteps = StepHome.getStepsListByForm( nIdForm );
         List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( nIdForm );
-        listSteps = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+        listSteps = FormsUtils.sortStepsWithTransitions( listSteps, listTransitions );
 
         for ( Step step : listSteps ){
             List<FormDisplay> listFormDisplay = FormDisplayHome.getFormDisplayListByParent( step.getId(), 0 );

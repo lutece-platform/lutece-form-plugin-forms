@@ -37,10 +37,12 @@ import java.util.List;
 import fr.paris.lutece.plugins.forms.business.FormCategory;
 import fr.paris.lutece.plugins.forms.business.FormCategoryHome;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.context.ApplicationScoped;
 
 /**
  * This is the service class related to the form
  */
+@ApplicationScoped
 public class FormCategoryService
 {
     public static final String BEAN_NAME = "forms.formCategoryService";
