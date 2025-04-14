@@ -35,19 +35,20 @@ package fr.paris.lutece.plugins.forms.web.entrytype;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.web.http.IterationMultipartHttpServletRequestWrapper;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.forms.service.upload.FormsAsynchronousUploadHandler;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.web.upload.MultipartHttpServletRequest;
 
 /**
@@ -104,9 +105,9 @@ public class EntryTypeFileDataService extends EntryTypeDefaultDataService
     @Override
     public void questionRemoved( HttpServletRequest request, Question question )
     {
-        IAsyncUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
+        IAsyncUploadHandler handler = CDI.current( ).select( FormsAsynchronousUploadHandler.class ).get( );
         String strAttributeName = getAttributeName( question, question.getIterationNumber( ) );
-        List<FileItem> listFileItem = handler.getListUploadedFiles( strAttributeName, request.getSession( ) );
+        List<MultipartItem> listFileItem = handler.getListUploadedFiles( strAttributeName, request.getSession( ) );
 
         for ( int i = 0; i < listFileItem.size( ); i++ )
         {
@@ -143,11 +144,11 @@ public class EntryTypeFileDataService extends EntryTypeDefaultDataService
     @Override
     public void questionMoved( HttpServletRequest request, Question question, int nNewIterationNumber )
     {
-        IAsyncUploadHandler handler = FormsAsynchronousUploadHandler.getHandler( );
+        IAsyncUploadHandler handler = CDI.current( ).select( FormsAsynchronousUploadHandler.class ).get( );
         String strCurrentAttributeName = getAttributeName( question, question.getIterationNumber( ) );
         String strNewAttributeName = getAttributeName( question, nNewIterationNumber );
-        List<FileItem> listCurrentFileItem = handler.getListUploadedFiles( strCurrentAttributeName, request.getSession( ) );
-        List<FileItem> listNewFileItem = handler.getListUploadedFiles( strNewAttributeName, request.getSession( ) );
+        List<MultipartItem> listCurrentFileItem = handler.getListUploadedFiles( strCurrentAttributeName, request.getSession( ) );
+        List<MultipartItem> listNewFileItem = handler.getListUploadedFiles( strNewAttributeName, request.getSession( ) );
         int nCurrentFileItemNumber = listCurrentFileItem.size( );
         int nNewFileItemNumber = listNewFileItem.size( );
 

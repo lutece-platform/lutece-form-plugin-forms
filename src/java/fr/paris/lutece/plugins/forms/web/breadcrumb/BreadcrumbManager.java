@@ -33,8 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.breadcrumb;
 
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  *
@@ -56,11 +56,8 @@ public final class BreadcrumbManager
     public static ReferenceList getRefListBreadcrumb( )
     {
         ReferenceList refListBreadcrumbType = new ReferenceList( );
-
-        for ( IBreadcrumb breadcrumb : SpringContextService.getBeansOfType( IBreadcrumb.class ) )
-        {
-            refListBreadcrumbType.addItem( breadcrumb.getBreadcrumbBeanName( ), breadcrumb.getBreadcrumbDisplayName( ) );
-        }
+        
+        CDI.current( ).select( IBreadcrumb.class ).stream( ).forEach( breadcrumb -> refListBreadcrumbType.addItem( breadcrumb.getBreadcrumbBeanName( ), breadcrumb.getBreadcrumbDisplayName( ) ) ); 
 
         return refListBreadcrumbType;
     }

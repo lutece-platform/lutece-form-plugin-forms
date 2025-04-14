@@ -42,9 +42,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.junit.jupiter.api.Test;
 
+import fr.paris.lutece.test.mocks.MockHttpServletRequest;
+import jakarta.enterprise.inject.spi.CDI;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -66,7 +67,6 @@ import fr.paris.lutece.portal.business.rbac.RBACRole;
 import fr.paris.lutece.portal.business.right.Right;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.test.LuteceTestCase;
 
 public class FormServiceTest extends LuteceTestCase {
@@ -115,10 +115,8 @@ public class FormServiceTest extends LuteceTestCase {
 	@Override
     protected void setUp( ) throws Exception
     {
-        super.setUp( );
-        
         PluginService.getPlugin( FormsPlugin.PLUGIN_NAME ).install( );
-        _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+        _formService = CDI.current( ).select( FormService.class ).get( );
     }
     
     @Test

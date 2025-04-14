@@ -36,12 +36,14 @@ package fr.paris.lutece.plugins.forms.business.form.util;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.ReferenceListFactory;
@@ -62,26 +64,9 @@ public class ReferenceListFactoryTest extends LuteceTestCase
     private static final String DEFAULT_ATTRIBUTE_CODE = FormsConstants.REFERENCE_ITEM_DEFAULT_CODE;
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void setUp( ) throws Exception
-    {
-        super.setUp( );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void tearDown( ) throws Exception
-    {
-        super.tearDown( );
-    }
-
-    /**
      * Test for the method {@link ReferenceListFactory#createReferenceList()}
      */
+    @Test
     public void testCreateReferenceList( )
     {
         List<String> listName = Arrays.asList( DEFAULT_ATTRIBUTE_NAME, "code_3", "code_1", "code_2" );
@@ -103,6 +88,7 @@ public class ReferenceListFactoryTest extends LuteceTestCase
     /**
      * Test for the method {@link ReferenceListFactory#createReferenceList()} without numeric code
      */
+    @Test
     public void testCreateReferenceListWithoutNumericCode( )
     {
         List<String> listName = Arrays.asList( DEFAULT_ATTRIBUTE_NAME, "code_3", "code_1", "code_2" );
@@ -124,6 +110,7 @@ public class ReferenceListFactoryTest extends LuteceTestCase
     /**
      * Test for the method {@link ReferenceListFactory#createReferenceList()} with sort
      */
+    @Test
     public void testCreateReferenceListWithSort( )
     {
         List<String> listName = Arrays.asList( DEFAULT_ATTRIBUTE_NAME, "code_1", "code_2", "code_3", "code_4" );
@@ -147,6 +134,7 @@ public class ReferenceListFactoryTest extends LuteceTestCase
     /**
      * Test for the method {@link ReferenceListFactory#createReferenceList()} with a changed default name
      */
+    @Test
     public void testCreateReferenceListWithChangedDefaultName( )
     {
         String strDefaultLabel = "default label";
@@ -170,6 +158,7 @@ public class ReferenceListFactoryTest extends LuteceTestCase
     /**
      * Test for the method {@link ReferenceListFactory#createReferenceList()} with duplicates
      */
+    @Test
     public void testCreateReferenceListWithDuplicates( )
     {
         List<String> listName = Arrays.asList( DEFAULT_ATTRIBUTE_NAME, "code_3", "code_1", "code_2" );
@@ -193,6 +182,7 @@ public class ReferenceListFactoryTest extends LuteceTestCase
     /**
      * Test for the method {@link ReferenceListFactory#createReferenceList()} and verify that the missing name are replaced
      */
+    @Test
     public void testCreateReferenceLisCheckedNameReplacement( )
     {
         List<String> listName = Arrays.asList( DEFAULT_ATTRIBUTE_NAME, "", "code_1", "" );

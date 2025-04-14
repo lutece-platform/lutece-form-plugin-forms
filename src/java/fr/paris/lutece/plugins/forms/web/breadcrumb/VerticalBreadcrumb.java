@@ -34,13 +34,10 @@
 package fr.paris.lutece.plugins.forms.web.breadcrumb;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.forms.business.Step;
-import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.FormResponseManager;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -108,26 +105,4 @@ public class VerticalBreadcrumb implements IBreadcrumb
     public String getBottomHtml( HttpServletRequest request, FormResponseManager formResponseManager ) {
         return null;
     }
-
-    /**
-     * 
-     * @param listStep
-     *            the list of step
-     * @param nIdCurrentStep
-     *            the current step id
-     * @return the index of current step in list
-     */
-    private int getCurrentStepIndex( List<Step> listStep, int nIdCurrentStep )
-    {
-        for ( Step step : listStep )
-        {
-            if ( step.getId( ) == nIdCurrentStep )
-            {
-                return listStep.indexOf( step );
-            }
-        }
-
-        return 0;
-    }
-
 }

@@ -36,7 +36,9 @@ package fr.paris.lutece.plugins.forms.web;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -63,6 +65,8 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * This class is an XPage for the terms of service
  *
  */
+@RequestScoped
+@Named( "forms.xpage.formsTermsOfService" )
 @Controller( xpageName = TermsOfServiceXPage.XPAGE_NAME, pageTitleI18nKey = TermsOfServiceXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = TermsOfServiceXPage.MESSAGE_PATH )
 public class TermsOfServiceXPage extends MVCApplication
 {

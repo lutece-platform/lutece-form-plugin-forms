@@ -36,8 +36,8 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 
@@ -47,8 +47,8 @@ import java.util.List;
 public final class GroupHome
 {
     // Static variable pointed at the DAO instance
-    private static IGroupDAO _dao = SpringContextService.getBean( "forms.groupDAO" );
-    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
+    private static IGroupDAO _dao = CDI.current( ).select( IGroupDAO.class ).get( );
+    private static FormsCacheService _cache = CDI.current( ).select( FormsCacheService.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -68,7 +68,7 @@ public final class GroupHome
     public static Group create( Group group )
     {
         _dao.insert( group, _plugin );
-        _cache.putInCache( _cache.getGroupCacheKey( group.getId( ) ), group );
+        _cache.put( _cache.getGroupCacheKey( group.getId( ) ), group );
         return group;
     }
 
@@ -82,7 +82,7 @@ public final class GroupHome
     public static Group update( Group group )
     {
         _dao.store( group, _plugin );
-        _cache.putInCache( _cache.getGroupCacheKey( group.getId( ) ), group );
+        _cache.put( _cache.getGroupCacheKey( group.getId( ) ), group );
         return group;
     }
 
@@ -95,7 +95,7 @@ public final class GroupHome
     public static void remove( int nKey )
     {
         _dao.delete( nKey, _plugin );
-        _cache.removeKey( _cache.getGroupCacheKey( nKey ) );
+        _cache.remove( _cache.getGroupCacheKey( nKey ) );
     }
 
     /**
@@ -108,11 +108,11 @@ public final class GroupHome
     public static Group findByPrimaryKey( int nKey )
     {
         String cacheKey = _cache.getGroupCacheKey( nKey );
-        Group group = ( Group ) _cache.getFromCache( cacheKey );
+        Group group = ( Group ) _cache.get( cacheKey );
         if ( group == null )
         {
             group = _dao.load( nKey, _plugin );
-            _cache.putInCache( cacheKey, group );
+            _cache.put( cacheKey, group );
         }
         return group;
     }

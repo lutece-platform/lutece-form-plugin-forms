@@ -37,13 +37,19 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryAnonymizationType;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeNumber;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  *
  * class EntryTypeText
  *
  */
+@ApplicationScoped
+@Named( "forms.entryTypeNumber" )
 public class EntryTypeNumber extends AbstractEntryTypeNumber implements IResponseComparator
 {
     public static final String BEAN_FORM_RESPONSE_SERVICE = "forms.responseService";
@@ -54,6 +60,13 @@ public class EntryTypeNumber extends AbstractEntryTypeNumber implements IRespons
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_number.html";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_number.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_number.html";
+
+    @Inject
+    public void addAnonymizationTypes(
+    		@Named("genericattributes.randomNumberAnonymizationType") IEntryAnonymizationType randomNumberAnonymizationType ) 
+    {
+    	setAnonymizationTypes( List.of( randomNumberAnonymizationType ) );
+    }
 
     /**
      * {@inheritDoc}

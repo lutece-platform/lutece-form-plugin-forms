@@ -37,11 +37,17 @@ import java.util.List;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
+import fr.paris.lutece.plugins.genericattributes.service.anonymization.IEntryAnonymizationType;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeGeolocation;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
  * The Class EntryTypeGeolocation.
  */
+@ApplicationScoped
+@Named( "forms.entryTypeGeolocation" )
 public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation implements IResponseComparator
 {
     /** The Constant CONSTANT_ID_ADDRESS. */
@@ -51,6 +57,13 @@ public class EntryTypeGeolocation extends AbstractEntryTypeGeolocation implement
     private static final String TEMPLATE_EDITION_BACKOFFICE = "admin/plugins/forms/entries/fill_entry_type_geolocation.html";
     private static final String TEMPLATE_EDITION_FRONTOFFICE = "skin/plugins/forms/entries/fill_entry_type_geolocation.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_geolocation.html";
+
+    @Inject
+    public void addAnonymizationTypes(
+        @Named("genericattributes.defaultGeolocAnonymizationType") IEntryAnonymizationType defaultGeolocAnonymizationType ) 
+    {
+        setAnonymizationTypes( List.of( defaultGeolocAnonymizationType ) );
+    }
 
     /**
      * {@inheritDoc}

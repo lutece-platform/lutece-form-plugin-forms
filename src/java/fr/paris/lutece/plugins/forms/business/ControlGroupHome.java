@@ -36,9 +36,8 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.plugins.forms.service.cache.FormsCacheService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
-
+import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
 import java.util.Locale;
@@ -50,8 +49,8 @@ import java.util.Optional;
 public final class ControlGroupHome
 {
     // Static variable pointed at the DAO instance
-    private static IControlGroupDAO _dao = SpringContextService.getBean( "forms.controlGroupDAO" );
-    private static FormsCacheService _cache = SpringContextService.getBean( "forms.cacheService" );
+    private static IControlGroupDAO _dao = CDI.current( ).select( IControlGroupDAO.class ).get( );
+    private static FormsCacheService _cache = CDI.current( ).select( FormsCacheService.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     /**
@@ -69,7 +68,7 @@ public final class ControlGroupHome
     public static ControlGroup create( ControlGroup controlGroup )
     {
         _dao.insert( controlGroup, _plugin );
-        _cache.putInCache( _cache.getControlGroupCacheKey( controlGroup.getId( ) ), controlGroup );
+        _cache.put( _cache.getControlGroupCacheKey( controlGroup.getId( ) ), controlGroup );
         return controlGroup;
     }
 
@@ -81,7 +80,7 @@ public final class ControlGroupHome
     public static ControlGroup update( ControlGroup controlGroup )
     {
         _dao.store( controlGroup, _plugin );
-        _cache.putInCache( _cache.getControlGroupCacheKey( controlGroup.getId( ) ), controlGroup );
+        _cache.put( _cache.getControlGroupCacheKey( controlGroup.getId( ) ), controlGroup );
         return controlGroup;
     }
 
@@ -92,7 +91,7 @@ public final class ControlGroupHome
     public static void remove( int nKey )
     {
         _dao.delete( nKey, _plugin );
-        _cache.removeKey( _cache.getControlGroupCacheKey( nKey ) );
+        _cache.remove( _cache.getControlGroupCacheKey( nKey ) );
     }
 
     /**
@@ -104,11 +103,11 @@ public final class ControlGroupHome
     {
         String cacheKey = _cache.getControlGroupCacheKey( nKey );
         @SuppressWarnings( "unchecked" )
-        Optional<ControlGroup> controlGroup = ( Optional<ControlGroup> ) _cache.getFromCache( cacheKey );
+        Optional<ControlGroup> controlGroup = ( Optional<ControlGroup> ) _cache.get( cacheKey );
         if ( controlGroup == null )
         {
             controlGroup = _dao.load( nKey, _plugin );
-            _cache.putInCache( cacheKey, controlGroup );
+            _cache.put( cacheKey, controlGroup );
         }
         return controlGroup;
     }

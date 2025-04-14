@@ -43,8 +43,8 @@ import fr.paris.lutece.portal.service.rbac.Permission;
 import fr.paris.lutece.portal.service.rbac.ResourceIdService;
 import fr.paris.lutece.portal.service.rbac.ResourceType;
 import fr.paris.lutece.portal.service.rbac.ResourceTypeManager;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 public class FormPanelConfigIdService extends ResourceIdService
 {
@@ -93,7 +93,7 @@ public class FormPanelConfigIdService extends ResourceIdService
     {
         if ( _listFormPanelConfiguration == null )
         {
-            _listFormPanelConfiguration = SpringContextService.getBeansOfType( IFormPanelConfiguration.class );
+            _listFormPanelConfiguration = CDI.current().select( IFormPanelConfiguration.class ).stream( ).toList( );
         }
         return new ArrayList<>( _listFormPanelConfiguration );
     }

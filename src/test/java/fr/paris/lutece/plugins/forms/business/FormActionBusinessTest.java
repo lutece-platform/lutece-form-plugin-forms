@@ -36,13 +36,15 @@ package fr.paris.lutece.plugins.forms.business;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
+import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.test.LuteceTestCase;
 
 public class FormActionBusinessTest extends LuteceTestCase
 {
+	@Test
     public void testSelect( )
     {
         List<FormAction> allActions = FormActionHome.selectAllFormActions( FormsPlugin.getPlugin( ), Locale.getDefault( ) );

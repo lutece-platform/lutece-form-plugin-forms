@@ -45,7 +45,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.literal.NamedLiteral;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -85,7 +88,6 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
@@ -227,24 +229,26 @@ public class FormsResponseUtils
      */
     public static FormResponseData buildFormResponseData( FormResponse formResponse, Optional<Form> form)
     {
-    	    IStateService stateService = SpringContextService.getBean( StateService.BEAN_SERVICE );
+        Instance<IStateService> stateServiceInstance = CDI.current( ).select( IStateService.class, NamedLiteral.of( StateService.BEAN_SERVICE ) );
 
-	        FormResponseData data = new FormResponseData( );
-	        data.setIdFormResponse( formResponse.getId( ) );
-	        data.setDateUpdate( new Date( formResponse.getUpdate( ).getTime( ) ) );
-	        if ( form.isPresent())
-	        {
-	        	data.setFormTitle( form.get( ).getTitle( ) );
+	    FormResponseData data = new FormResponseData( );
+	    data.setIdFormResponse( formResponse.getId( ) );
+	    data.setDateUpdate( new Date( formResponse.getUpdate( ).getTime( ) ) );
+
+	    if ( form.isPresent())
+	    {
+	        data.setFormTitle( form.get( ).getTitle( ) );
 		        
-		        if ( stateService != null )
+		    if ( !stateServiceInstance.isUnsatisfied( ) )
+		    {
+		        State formResponseState = stateServiceInstance.get( ).findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.get().getIdWorkflow( ) );
+		        if ( formResponseState != null )
 		        {
-		            State formResponseState = stateService.findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.get().getIdWorkflow( ) );
-		            if ( formResponseState != null )
-		            {
-		                data.setWorkflowState( formResponseState.getName( ) );
-		            }
+		            data.setWorkflowState( formResponseState.getName( ) );
 		        }
-	        }
+		    }
+	    }
+
 	    return data;
     }
     

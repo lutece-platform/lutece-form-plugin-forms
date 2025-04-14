@@ -31,42 +31,32 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.validation;
+package fr.paris.lutece.plugins.forms.web.breadcrumb;
 
-import javax.servlet.http.HttpServletRequest;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import fr.paris.lutece.plugins.forms.business.Control;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 
-/**
- * Interface for listeners that should be notified when Controls are removed or when the date changed. <b>The listener must be a Spring bean.</b>
- * 
- * @author Laurent Payen
- * 
- */
-public interface IControlListener
+@ApplicationScoped
+public class BreadcrumbProducer 
 {
-    /**
-     * Notify the listener that an Control has been removed
-     * 
-     * @param Control
-     *            The Control
-     */
-    void notifyControlRemoval( Control control, HttpServletRequest request );
+	@Produces
+	@ApplicationScoped
+	@Named( "forms.horizontalBreadcrumb" )
+    public IBreadcrumb produceHorizontalBreadcrumb( @ConfigProperty( name = "forms.horizontalBreadcrumb.beanName" ) String strBreadcrumbBeanName,
+            @ConfigProperty( name = "forms.horizontalBreadcrumb.displayBeanName" ) String strBreadcrumbDisplayBeanName )
+    {
+        return new HorizontalBreadcrumb( strBreadcrumbBeanName, strBreadcrumbDisplayBeanName );
+    }
 
-    /**
-     * Notify the listener that an Control has been creates
-     * 
-     * @param Control
-     *            The Controll
-     */
-    void notifyControlCreated( Control control, HttpServletRequest request );
-
-    /**
-     * Notify the listener that an Control has been update
-     * 
-     * @param Control
-     *            The Control
-     */
-    void notifyControlUpdated( Control control, HttpServletRequest request );
-
+	@Produces
+	@ApplicationScoped
+	@Named( "forms.verticalBreadcrumb" )
+    public IBreadcrumb produceVerticalBreadcrumb( @ConfigProperty( name = "forms.verticalBreadcrumb.beanName" ) String strBreadcrumbBeanName,
+            @ConfigProperty( name = "forms.verticalBreadcrumb.displayBeanName" ) String strBreadcrumbDisplayBeanName )
+    {
+        return new VerticalBreadcrumb( strBreadcrumbBeanName, strBreadcrumbDisplayBeanName );
+    }
 }

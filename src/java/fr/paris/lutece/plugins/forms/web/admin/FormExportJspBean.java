@@ -48,8 +48,6 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.security.SecurityTokenService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -57,9 +55,14 @@ import fr.paris.lutece.util.url.UrlItem;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 
+@RequestScoped
+@Named
 @Controller( controllerJsp = "ManageFormExport.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormExportJspBean extends AbstractJspBean
 {
@@ -101,7 +104,8 @@ public class FormExportJspBean extends AbstractJspBean
     private static final String MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG = "forms.modify_form.message.confirmRemoveExportConfig";
     private static final String PARAMETER_EXPORT_ALL = "export_all";
 
-    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    @Inject
+    private FormService _formService;
     
     @View( VIEW_MANAGE_EXPORT )
     public String getManageExport( HttpServletRequest request ) throws AccessDeniedException
@@ -137,7 +141,7 @@ public class FormExportJspBean extends AbstractJspBean
         model.put( MARK_EXPORT_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfigOption( formToBeModified, getLocale( ) ) );
         model.put( MARK_EXPORT_CONFIG_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) ) );
         model.put( MARK_ACTIVE_TAB_PANNEL_2, Boolean.parseBoolean( request.getParameter( PARAMETER_ACTIVE_TAB_PANNEL_2 )));
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_CREATE_EXPORT_CONFIG ) );
+
         if (CollectionUtils.isNotEmpty(listQuestions))
         {
         	model.put( MARK_NUMBER_MAX_ORDER, listQuestions.size());
@@ -286,7 +290,6 @@ public class FormExportJspBean extends AbstractJspBean
         UrlItem url = new UrlItem( getActionUrl( ACTION_REMOVE_EXPORT_CONFIG ) );
         url.addParameter( PARAMETER_ID_CONFIG, idConfig );
         url.addParameter( FormsConstants.PARAMETER_ID_FORM, idForm );
-        url.addParameter( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_REMOVE_EXPORT_CONFIG ) );
 
         String strMessageUrl = AdminMessageService.getMessageUrl( request, MESSAGE_CONFIRM_REMOVE_EXPORT_CONFIG, url.getUrl( ),
                 AdminMessage.TYPE_CONFIRMATION );

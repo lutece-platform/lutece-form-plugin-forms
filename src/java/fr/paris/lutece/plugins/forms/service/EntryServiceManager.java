@@ -40,8 +40,8 @@ import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * This is the manager class for different entry type
@@ -59,9 +59,9 @@ public final class EntryServiceManager
      */
     private EntryServiceManager( )
     {
-        _listEntryDisplayService = SpringContextService.getBeansOfType( IEntryDisplayService.class );
-        _listEntryDataService = SpringContextService.getBeansOfType( IEntryDataService.class );
-        _listValidator = SpringContextService.getBeansOfType( IValidator.class );
+        _listEntryDisplayService = CDI.current( ).select( IEntryDisplayService.class ).stream( ).toList( );
+        _listEntryDataService = CDI.current( ).select( IEntryDataService.class ).stream( ).toList( );
+        _listValidator = CDI.current( ).select( IValidator.class ).stream( ).toList( );
     }
 
     /**

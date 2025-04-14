@@ -36,7 +36,6 @@ ${breadcrumb_template}
                         <@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelAttributeName}' mandatory=true helpKey='#i18n{forms.createEntry.labelAttributeNameComment}'>
                             <@input type='text' name='value' id='value' value='' maxlength=255 />
                         </@formGroup>
-                        <@input type='hidden' id='token' name='token' value='${token}' />
                         <@formGroup>
                             <@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' />
                             <@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.createEntry.buttonApplyAndManageVerification}' />

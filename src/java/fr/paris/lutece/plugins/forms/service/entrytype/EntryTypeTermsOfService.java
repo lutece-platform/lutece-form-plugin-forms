@@ -36,7 +36,9 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -57,6 +59,8 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
  * This class is a service for the entry type Terms of service
  *
  */
+@ApplicationScoped
+@Named( "forms.entryTypeTermsOfService" )
 public class EntryTypeTermsOfService extends EntryTypeService implements IResponseComparator
 {
     // Fields

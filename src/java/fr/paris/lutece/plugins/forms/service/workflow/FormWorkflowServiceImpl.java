@@ -43,15 +43,20 @@ import fr.paris.lutece.plugins.forms.business.FormResponse;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * This class represents a workflow service for the forms
  *
  */
+@ApplicationScoped
 public class FormWorkflowServiceImpl implements IFormWorkflowService
 {
     public static final String BEAN_NAME = "forms.formWorkflowService";
 
+    @Inject
+    private WorkflowService _workflowService;
     /**
      * {@inheritDoc}
      */
@@ -60,11 +65,10 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
     {
         int nIdWorkflow = form.getIdWorkflow( );
         int nIdFormResponse = formResponse.getId( );
-        WorkflowService workflowService = WorkflowService.getInstance( );
 
-        if ( nIdWorkflow > 0 && workflowService.isAvailable( ) )
+        if ( nIdWorkflow > 0 && _workflowService.isAvailable( ) )
         {
-            workflowService.getState( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdWorkflow, form.getId( ) );
+            _workflowService.getState( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdWorkflow, form.getId( ) );
         }
     }
 
@@ -74,15 +78,13 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
     @Override
     public void removeResources( int nIdWorkflow, int nIdForm, AdminUser adminUser )
     {
-        WorkflowService workflowService = WorkflowService.getInstance( );
-
-        if ( workflowService.isAvailable( ) )
+        if ( _workflowService.isAvailable( ) )
         {
             List<Integer> listIdWorkflowState = getListIdWorkflowState( nIdWorkflow, adminUser );
-            List<Integer> listIdResources = workflowService.getAuthorizedResourceList( FormResponse.RESOURCE_TYPE, nIdWorkflow, listIdWorkflowState, nIdForm,
+            List<Integer> listIdResources = _workflowService.getAuthorizedResourceList( FormResponse.RESOURCE_TYPE, nIdWorkflow, listIdWorkflowState, nIdForm,
                     (User) adminUser );
 
-            workflowService.doRemoveWorkFlowResourceByListId( listIdResources, FormResponse.RESOURCE_TYPE, nIdWorkflow );
+            _workflowService.doRemoveWorkFlowResourceByListId( listIdResources, FormResponse.RESOURCE_TYPE, nIdWorkflow );
         }
     }
 
@@ -100,7 +102,7 @@ public class FormWorkflowServiceImpl implements IFormWorkflowService
     private List<Integer> getListIdWorkflowState( int nIdWorkflow, AdminUser adminUser )
     {
         List<Integer> listIdState = new ArrayList<>( );
-        Collection<State> collState = WorkflowService.getInstance( ).getAllStateByWorkflow( nIdWorkflow, (User) adminUser );
+        Collection<State> collState = _workflowService.getAllStateByWorkflow( nIdWorkflow, (User) adminUser );
 
         for ( State state : collState )
         {

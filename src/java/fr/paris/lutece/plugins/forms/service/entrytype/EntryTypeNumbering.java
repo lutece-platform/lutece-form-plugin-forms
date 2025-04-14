@@ -38,10 +38,14 @@ import java.util.List;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeNumbering;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  * EntryTypeNumbering
  */
+@ApplicationScoped
+@Named( "forms.entryTypeNumbering" )
 public class EntryTypeNumbering extends AbstractEntryTypeNumbering implements IResponseComparator
 {
     /**

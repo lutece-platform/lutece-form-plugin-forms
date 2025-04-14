@@ -37,11 +37,11 @@ import java.util.List;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import jakarta.enterprise.inject.spi.CDI;
 
 public class FormExportConfigHome
 {
-    private static IFormExportConfigDao _dao = SpringContextService.getBean( "forms.formExportConfigDao" );
+    private static IFormExportConfigDao _dao = CDI.current( ).select( IFormExportConfigDao.class ).get( );
     private static Plugin _plugin = PluginService.getPlugin( "forms" );
 
     private FormExportConfigHome( )

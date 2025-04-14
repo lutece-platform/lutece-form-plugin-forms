@@ -3,7 +3,6 @@
 	<@boxHeader title=step.title params='data-step="${current_step_index!}"' />
 	<@boxBody id='step-content'>
     ${stepContent}
-    <input type="hidden" name="token" value = "${token!}">
     <input name="page" value="forms" type="hidden">
     <input name="id_form" value="${step.idForm}" type="hidden">
     <input name="id_step" value="${step.id}" type="hidden">

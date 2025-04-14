@@ -45,7 +45,11 @@ import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.IFileRBACService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
+@ApplicationScoped
+@Named( "forms.formsFileRBACService" )
 public class FormsFileRBACService implements IFileRBACService
 {
     private static final long serialVersionUID = 108613457653577978L;

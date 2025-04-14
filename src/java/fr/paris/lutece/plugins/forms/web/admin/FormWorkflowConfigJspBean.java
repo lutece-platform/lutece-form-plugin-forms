@@ -37,7 +37,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -50,12 +53,12 @@ import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
-import fr.paris.lutece.portal.service.security.SecurityTokenService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 
+@RequestScoped
+@Named
 @Controller( controllerJsp = "ManageFormWorkflowConfig.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormWorkflowConfigJspBean extends AbstractJspBean
 {
@@ -79,7 +82,8 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
     private static final String ACTION_MANAGE_WORKFLOW = "manageWorkflowConfig";
     private static final String ACTION_MODIFY_WORKFLOW = "modifyWorkflowConfig";
 
-    private static FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    @Inject
+    private FormService _formService;
     
     @View( VIEW_MANAGE_WORKFLOW )
     public String getManageMultiview( HttpServletRequest request ) throws AccessDeniedException
@@ -105,7 +109,6 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
         Map<String, Object> model = getModel( );
         model.put( MARK_FORM, formToBeModified );
         model.put( MARK_QUESTIONLIST, questionList );
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, ACTION_MANAGE_WORKFLOW ) );
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_MULTIVIEW_CONFIG, model );
     }

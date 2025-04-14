@@ -36,11 +36,13 @@ package fr.paris.lutece.plugins.forms.business.portlet;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.portal.business.portlet.Portlet;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
+@ApplicationScoped
 public class FormsListPortletDAO implements IFormsListPortletDAO
 {
     private static final String SQL_QUERY_SELECT = "SELECT id_form FROM forms_list_portlet WHERE id_portlet = ? ";

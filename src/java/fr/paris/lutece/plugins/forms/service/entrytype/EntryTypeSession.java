@@ -35,12 +35,16 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeSession;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  * Entry of type session
  *
  */
-public final class EntryTypeSession extends AbstractEntryTypeSession
+@ApplicationScoped
+@Named( "forms.entryTypeSession" )
+public class EntryTypeSession extends AbstractEntryTypeSession
 {
     private static final String TEMPLATE_CREATE = "admin/plugins/forms/entries/create_entry_type_session.html";
     private static final String TEMPLATE_HTML_CODE_ADMIN = "admin/plugins/forms/entries/fill_entry_type_session.html";

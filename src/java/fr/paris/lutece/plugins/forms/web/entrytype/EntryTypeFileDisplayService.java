@@ -39,10 +39,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -53,14 +54,13 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntry
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.business.file.File;
-import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFile;
-import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.FileServiceException;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 
 /**
  * The display service for entry type file
@@ -69,7 +69,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
 {
     protected static final String MARK_UPLOAD_HANDLER = "uploadHandler";
     private String _strEntryServiceName = StringUtils.EMPTY;
-
+    private FileService _fileService = CDI.current( ).select( FileService.class ).get( );
     /**
      * Constructor of the EntryTypeFileDisplayService
      * 
@@ -142,7 +142,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
     {
         IEntryTypeService service = EntryTypeServiceManager.getEntryTypeService( entry );
         List<Response> listResponse = retrieveResponseListFromModel( model );
-        List<FileItem> listFiles = new ArrayList<>( );
+        List<MultipartItem> listFiles = new ArrayList<>( );
 
 
         for ( Response response : listResponse )
@@ -152,13 +152,13 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
                 try {
                     if ( StringUtils.isNotEmpty( response.getFile( ).getFileKey( ) ) )
                     {
-                        IFileStoreServiceProvider fss = FileService.getInstance( ).getFileStoreServiceProvider( response.getFile( ).getOrigin( ) );
+                        IFileStoreServiceProvider fss = _fileService.getFileStoreServiceProvider( response.getFile( ).getOrigin( ) );
                         File file = fss.getFile( response.getFile( ).getFileKey( ) );
 
                         file.setUrl(displayType.isFront( ) ? fss.getFileDownloadUrlFO( file.getFileKey()) : fss.getFileDownloadUrlBO(file.getFileKey()));
 
                         PhysicalFile physicalFile = file.getPhysicalFile();
-                        FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
+                        MultipartItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
                         ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
                                 + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
                                 request );
@@ -166,7 +166,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
                     }
                     else if ( response.getFile( ).getPhysicalFile( ) != null )
                     {
-                        FileItem fileItem = new GenAttFileItem( response.getFile( ).getPhysicalFile( ).getValue( ), response.getFile( ).getTitle( ) );
+                    	MultipartItem fileItem = new GenAttFileItem( response.getFile( ).getPhysicalFile( ).getValue( ), response.getFile( ).getTitle( ) );
                         ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
                                 + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
                                 request );
@@ -212,7 +212,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
                 if ( file != null && file.getPhysicalFile( ) == null )
                 {
                     try {
-                        IFileStoreServiceProvider fss = FileService.getInstance( ).getFileStoreServiceProvider( response.getFile().getOrigin() );
+                        IFileStoreServiceProvider fss = _fileService.getFileStoreServiceProvider( response.getFile().getOrigin() );
                         file = fss.getFile(file.getFileKey() );
 
                         file.setUrl(displayType.isFront( ) ? fss.getFileDownloadUrlFO( file.getFileKey()) : fss.getFileDownloadUrlBO(file.getFileKey()));

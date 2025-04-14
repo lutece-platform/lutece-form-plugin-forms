@@ -33,9 +33,9 @@
  */
 package fr.paris.lutece.plugins.forms.web.file;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.forms.service.FormService;
@@ -47,7 +47,7 @@ import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.image.ImageResource;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.image.ImageResourceProvider;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.web.LocalVariables;
 import fr.paris.lutece.util.file.FileUtil;
@@ -115,7 +115,7 @@ public final class FormsFileImageService implements ImageResourceProvider
         File file = FileHome.findByPrimaryKey( nIdResource );
         if ( file != null && file.getPhysicalFile( ) != null && FileUtil.hasImageExtension( file.getTitle( ) ) && request != null )
         {
-            FormService formService = SpringContextService.getBean( FormService.BEAN_NAME );
+            FormService formService = CDI.current( ).select( FormService.class ).get( );
             int nIdResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), ID_RESPONSE_NOT_FOUND );
 
             if ( formService.isFileAccessAuthorized( request, nIdResponse, nIdResource ) )
@@ -173,7 +173,7 @@ public final class FormsFileImageService implements ImageResourceProvider
     }
 
 	@Override
-	public String addImageResource(FileItem fileItem) {
+	public String addImageResource(MultipartItem fileItem) {
 		throw new AppException( "Not implemented yet" );
 	}
 }

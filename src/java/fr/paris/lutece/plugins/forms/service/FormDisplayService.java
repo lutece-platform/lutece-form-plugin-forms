@@ -45,16 +45,21 @@ import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * Service dedicated to management of formDisplay
  */
+@ApplicationScoped
 public class FormDisplayService extends AbstractFormDisplayService
 {
 
     public static final String BEAN_NAME = "forms.formDisplayService";
+    
+    @Inject
+    private FormDatabaseService _formDatabaseService;
 
     /**
      * Remove the formDisplay whose identifier is specified in parameter. The responses, group/question associated to this display will be deleted. All the
@@ -133,6 +138,6 @@ public class FormDisplayService extends AbstractFormDisplayService
     @Override
     protected IFormDatabaseService initFormDatabaseService( )
     {
-        return SpringContextService.getBean( FormDatabaseService.BEAN_NAME );
+        return _formDatabaseService;
     }
 }

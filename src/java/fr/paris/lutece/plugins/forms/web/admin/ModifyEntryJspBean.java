@@ -38,9 +38,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
-import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
@@ -65,6 +66,7 @@ import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -81,6 +83,8 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
+@SessionScoped
+@Named
 @Controller( controllerJsp = "ModifyEntry.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class ModifyEntryJspBean extends AbstractJspBean
 {
@@ -175,7 +179,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
         Field field = new Field( );
         field.setParentEntry( entry );
 
-        Map<String, Object> model = new HashMap<>( );
+        Map<String, Object> model = getModel( );
         Locale locale = getLocale( );
         model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
 
@@ -245,7 +249,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         field.setParentEntry( entry );
         
-        HashMap<String, Object> model = new HashMap<>( );
+        Map<String, Object> model = getModel( );
         Locale locale = getLocale( );
         model.put( MARK_OPTION_NO_DISPLAY_TITLE, request.getParameter( PARAMETER_OPTION_NO_DISPLAY_TITLE ) != null );
 
@@ -273,7 +277,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         String strIdEntry = request.getParameter( FormsConstants.PARAMETER_ID_ENTRY );
         MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
-        FileItem imageFileItem = multipartRequest.getFile( FormsConstants.PARAMETER_ILLUSTRATION_IMAGE );
+        MultipartItem imageFileItem = multipartRequest.getFile( FormsConstants.PARAMETER_ILLUSTRATION_IMAGE );
         
         _nIdEntry = Integer.parseInt( strIdEntry );
 
@@ -330,7 +334,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
 
         String strIdField = request.getParameter( FormsConstants.PARAMETER_ID_FIELD );
         MultipartHttpServletRequest multipartRequest = ( MultipartHttpServletRequest ) request;
-        FileItem imageFileItem = multipartRequest.getFile( FormsConstants.PARAMETER_ILLUSTRATION_IMAGE );
+        MultipartItem imageFileItem = multipartRequest.getFile( FormsConstants.PARAMETER_ILLUSTRATION_IMAGE );
         int nIdField = -1;
 
         if ( !updateStepAndQuestion( request ) )
@@ -396,7 +400,7 @@ public class ModifyEntryJspBean extends AbstractJspBean
      *            The HTTP request
      * @return the html code to confirm
      */
-    @View( value = VIEW_CONFIRM_REMOVE_FIELD )
+    @View( value = VIEW_CONFIRM_REMOVE_FIELD , securityTokenAction = ACTION_REMOVE_FIELD )
     public String getConfirmRemoveField( HttpServletRequest request )
     {
         if ( !updateStepAndQuestion( request ) )

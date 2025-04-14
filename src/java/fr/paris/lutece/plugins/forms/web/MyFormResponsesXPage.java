@@ -36,7 +36,9 @@ package fr.paris.lutece.plugins.forms.web;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.service.FormResponseService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
@@ -53,8 +55,9 @@ import fr.paris.lutece.portal.web.xpages.XPage;
  * Controller for form reponses display
  *
  */
+@RequestScoped
+@Named( "forms.xpage.myformresponses" )
 @Controller( xpageName = MyFormResponsesXPage.XPAGE_NAME, pageTitleI18nKey = MyFormResponsesXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = MyFormResponsesXPage.MESSAGE_PATH )
-
 public class MyFormResponsesXPage extends MVCApplication
 {
     private static final long serialVersionUID = 3045035844703500479L;

@@ -37,12 +37,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Event;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.transaction.annotation.Transactional;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.CompositeDisplayType;
@@ -62,6 +65,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
+import fr.paris.lutece.plugins.forms.service.event.FormResponseEvent;
 import fr.paris.lutece.plugins.forms.service.workflow.IFormWorkflowService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
@@ -84,25 +88,31 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntry
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.genericattributes.util.GenericAttributesUtils;
-import fr.paris.lutece.portal.business.event.ResourceEvent;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.event.ResourceEventManager;
+import fr.paris.lutece.portal.service.event.EventAction;
+import fr.paris.lutece.portal.service.event.Type.TypeQualifier;
 import fr.paris.lutece.portal.service.rbac.RBACService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.sql.TransactionManager;
 
 /**
  * This is the service class related to the form
  */
+@ApplicationScoped
 public class FormService
 {
     public static final String BEAN_NAME = "forms.formService";
 
     @Inject
     private IFormWorkflowService _formWorkflowService;
+
+    @Inject
+    private Event<FormResponseEvent> _formResponseEvent;
+
+    @Inject
+    private StepService _stepService;
 
     /**
      * Saves the specified form
@@ -287,7 +297,7 @@ public class FormService
      * @param formResponse
      *            The form response to save
      */
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    @Transactional
     public void saveFormForBackup( FormResponse formResponse )
     {
         formResponse.setFromSave( Boolean.TRUE );
@@ -302,7 +312,7 @@ public class FormService
      * @param formResponse
      *            The form response to remove
      */
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    @Transactional
     public void removeFormBackup( FormResponse formResponse )
     {
         if ( formResponse.isFromSave( ) )
@@ -369,16 +379,14 @@ public class FormService
      * @param adminUser
      *            the user
      */
-    @Transactional( FormsConstants.BEAN_TRANSACTION_MANAGER )
+    @Transactional
     public void removeForm( int nIdForm, AdminUser adminUser )
     {
-        StepService stepService = SpringContextService.getBean( StepService.BEAN_NAME );
-
         List<Step> listStep = StepHome.getStepsListByForm( nIdForm );
 
         for ( Step step : listStep )
         {
-            stepService.removeStep( step.getId( ) );
+            _stepService.removeStep( step.getId( ) );
         }
 
         FormResponseHome.removeByForm( nIdForm );
@@ -497,11 +505,9 @@ public class FormService
      */
     public void fireFormResponseEventCreation( FormResponse formResponse )
     {
-        ResourceEvent formResponseEvent = new ResourceEvent( );
-        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) );
-        formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
-
-        ResourceEventManager.fireAddedResource( formResponseEvent );
+    	FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ) );
+        
+    	_formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.CREATE ) ).fireAsync( formResponseEvent );
     }
 
     /**
@@ -512,14 +518,12 @@ public class FormService
      */
     public void fireFormResponseEventCreation( Form form )
     {
-        new Thread( ( ) -> {
-            List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
+    	List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
-            for ( FormResponse formResponse : listFormResponse )
-            {
-                fireFormResponseEventCreation( formResponse );
-            }
-        } ).start( );
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            fireFormResponseEventCreation( formResponse );
+        }
     }
 
     // FORM RESPONSE UPDATE
@@ -531,11 +535,9 @@ public class FormService
      */
     public void fireFormResponseEventUpdate( FormResponse formResponse )
     {
-        ResourceEvent formResponseEvent = new ResourceEvent( );
-        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) );
-        formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
-
-        ResourceEventManager.fireUpdatedResource( formResponseEvent );
+        FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ) );
+        
+    	_formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.UPDATE ) ).fireAsync( formResponseEvent );
     }
 
     /**
@@ -546,14 +548,12 @@ public class FormService
      */
     public void fireFormResponseEventUpdate( Form form )
     {
-        new Thread( ( ) -> {
-            List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
+    	List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
-            for ( FormResponse formResponse : listFormResponse )
-            {
-                fireFormResponseEventUpdate( formResponse );
-            }
-        } ).start( );
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            fireFormResponseEventUpdate( formResponse );
+        }
     }
 
     // FORM RESPONSE DELETION
@@ -566,11 +566,9 @@ public class FormService
      */
     public void fireFormResponseEventDelete( FormResponse formResponse )
     {
-        ResourceEvent formResponseEvent = new ResourceEvent( );
-        formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) );
-        formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
-
-        ResourceEventManager.fireDeletedResource( formResponseEvent );
+        FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ) );
+        
+    	_formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.REMOVE ) ).fireAsync( formResponseEvent );
     }
 
     /**
@@ -581,14 +579,12 @@ public class FormService
      */
     public void fireFormResponseEventDelete( Form form )
     {
-        new Thread( ( ) -> {
-            List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
+    	List<FormResponse> listFormResponse = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( form.getId( ) );
 
-            for ( FormResponse formResponse : listFormResponse )
-            {
-                fireFormResponseEventDelete( formResponse );
-            }
-        } ).start( );
+        for ( FormResponse formResponse : listFormResponse )
+        {
+            fireFormResponseEventDelete( formResponse );
+        }
     }
     
     /**

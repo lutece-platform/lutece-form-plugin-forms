@@ -36,8 +36,9 @@ package fr.paris.lutece.plugins.forms.service.search;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.DirectoryReader;
@@ -54,6 +55,7 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 /**
  * Factory for the search on Directory
  */
+@ApplicationScoped
 public class LuceneFormSearchFactory
 {
     // Constants
@@ -62,7 +64,7 @@ public class LuceneFormSearchFactory
 
     // Variables
     @Inject
-    @Named( value = "forms.luceneFrenchAnalizer" )
+    @Named( value = "forms.luceneFrenchAnalyzer" )
     private Analyzer _analyzer;
 
     private IndexWriter _indexWriter;

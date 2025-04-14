@@ -37,8 +37,9 @@ import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.inject.Inject;
-
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
@@ -46,21 +47,26 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 /**
  * Facade used to populate a list of FormColumn
  */
+@ApplicationScoped
 public class FormListFacade
 {
     // Constants
     public static final String BEAN_NAME = "forms.formList.facade";
 
     // Variables
-    private final IFormListDAO _formListDAO;
+    @Inject
+    private IFormListDAO _formListDAO;
 
+    public FormListFacade( )
+    {
+    }
+    
     /**
      * Constructor
      * 
      * @param formListDAO
      *            The DAO to use for the Facade
      */
-    @Inject
     public FormListFacade( IFormListDAO formListDAO )
     {
         _formListDAO = formListDAO;

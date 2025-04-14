@@ -1,9 +1,9 @@
-<jsp:useBean id="manageformsQuestion" scope="session" class="fr.paris.lutece.plugins.forms.web.admin.FormQuestionJspBean" />
-<% String strContent = manageformsQuestion.processController ( request , response ); %>
-
 <%@ page errorPage="../../ErrorPage.jsp" %>
+
+${ pageContext.setAttribute( 'strContent', formQuestionJspBean.processController( pageContext.request , pageContext.response ) ) }
+
 <jsp:include page="../../AdminHeader.jsp" />
 
-<%= strContent %>
+${ pageContext.getAttribute( 'strContent' ) }
 
 <%@ include file="../../AdminFooter.jsp" %>

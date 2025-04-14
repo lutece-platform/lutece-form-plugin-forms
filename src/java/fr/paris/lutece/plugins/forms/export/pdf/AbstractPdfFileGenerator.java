@@ -90,6 +90,7 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import jakarta.enterprise.inject.spi.CDI;
 
 
 public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
@@ -381,10 +382,10 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
             {
                 if ( response.getFile( ) != null )
                 {
-                    IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
+                    IFileStoreServiceProvider fileStoreService = CDI.current( ).select( FileService.class ).get( ).getFileStoreServiceProvider( );
                     fr.paris.lutece.portal.business.file.File fileImage = null;
 					try {
-						fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
+						fileImage = fileStoreService.getFile( response.getFile( ).getFileKey( ) );
 					} catch (FileServiceException e) {
 						AppLogService.error(e);
 					}
@@ -399,10 +400,10 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
             }
             if ( entryTypeService instanceof EntryTypeFile && response.getFile( ) != null )
             {
-                IFileStoreServiceProvider fileStoreService = FileService.getInstance( ).getFileStoreServiceProvider( );
+                IFileStoreServiceProvider fileStoreService = CDI.current( ).select( FileService.class ).get( ).getFileStoreServiceProvider( );
                 File fileImage = null;
 				try {
-					fileImage = fileStoreService.getFile( String.valueOf( response.getFile( ).getIdFile( ) ) );
+					fileImage = fileStoreService.getFile( response.getFile( ).getFileKey( ) );
 				} catch (FileServiceException e) {
 					AppLogService.error(e);
 				}
@@ -427,7 +428,7 @@ public abstract class AbstractPdfFileGenerator extends AbstractFileGenerator {
             doc.outputSettings( ).escapeMode( EscapeMode.base.xhtml );
             doc.outputSettings( ).charset( UTF_8 );
 
-            PdfConverterService.getInstance( ).getPdfBuilder( ).reset( ).withHtmlContent( doc.html( ) ).notEditable( ).render( outputStream );
+            CDI.current( ).select( PdfConverterService.class ).get( ).getPdfBuilder( ).reset( ).withHtmlContent( doc.html( ) ).notEditable( ).render( outputStream );
         }
         catch(PdfConverterServiceException | IOException e)
         {

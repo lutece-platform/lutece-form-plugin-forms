@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.forms.business.action;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.test.LuteceTestCase;

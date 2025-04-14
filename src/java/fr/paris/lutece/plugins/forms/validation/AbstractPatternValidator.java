@@ -48,10 +48,10 @@ import fr.paris.lutece.portal.business.regularexpression.RegularExpression;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.regularexpression.IRegularExpressionService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
+import jakarta.enterprise.inject.spi.CDI;
 
 public abstract class AbstractPatternValidator extends AbstractValidator
 {
@@ -110,7 +110,7 @@ public abstract class AbstractPatternValidator extends AbstractValidator
 
         if ( regularExpression != null )
         {
-            IRegularExpressionService service = SpringContextService.getBean( BEAN_NAME_REGULAR_EXPRESSION );
+            IRegularExpressionService service = CDI.current().select( IRegularExpressionService.class ).get( );
             for ( Response response : questionResponse.getEntryResponse( ) )
             {
             	String toValidate = getValueToValidate( response );

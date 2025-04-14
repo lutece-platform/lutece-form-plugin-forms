@@ -1,9 +1,9 @@
-<jsp:useBean id="manageMultiviewBean" scope="session" class="fr.paris.lutece.plugins.forms.web.admin.FormMultiviewConfigJspBean" />
-<% String strContent = manageMultiviewBean.processController ( request , response ); %>
-
 <%@ page errorPage="../../ErrorPage.jsp" %>
+
+${ pageContext.setAttribute( 'strContent', formMultiviewConfigJspBean.processController( pageContext.request , pageContext.response ) ) }
+
 <jsp:include page="../../AdminHeader.jsp" />
 
-<%= strContent %>
+${ pageContext.getAttribute( 'strContent' ) }
 
 <%@ include file="../../AdminFooter.jsp" %>

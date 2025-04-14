@@ -51,7 +51,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
@@ -69,6 +70,7 @@ import org.apache.lucene.search.SortedNumericSortField;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 
+@ApplicationScoped
 public class LuceneFormSearchEngine implements IFormSearchEngine
 {
     public static final String BEAN_NAME = "forms.luceneFormsSearchEngine";
