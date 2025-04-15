@@ -178,6 +178,15 @@
             </list>
         </constructor-arg>
     </bean>
+    <bean id="forms.geolocationAddressPatternValidator" class="fr.paris.lutece.plugins.forms.validation.GeolocationAddressPatternValidator">
+        <constructor-arg type="java.lang.String" index="0" value="forms.geolocationAddressPatternValidator" />
+        <constructor-arg type="java.lang.String" index="1" value="forms.validator.geolocation.addressPattern.name" />
+        <constructor-arg index="2" >
+            <list>
+                <value type="java.lang.String">forms.entryTypeGeolocation</value>
+            </list>
+        </constructor-arg>
+    </bean>
 	<!-- Breadcrumb -->
     <bean id="forms.horizontalBreadcrumb" class="fr.paris.lutece.plugins.forms.web.breadcrumb.HorizontalBreadcrumb">
     	<constructor-arg type="java.lang.String" index="0" value="forms.horizontalBreadcrumb" />
