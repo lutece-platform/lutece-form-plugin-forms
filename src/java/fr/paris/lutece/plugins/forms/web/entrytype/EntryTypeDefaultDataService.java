@@ -91,7 +91,12 @@ public class EntryTypeDefaultDataService implements IEntryDataService
     @Override
     public void save( FormQuestionResponse questionResponse )
     {
-        FormQuestionResponse responseSaved = FormQuestionResponseHome.findByPrimaryKey( questionResponse.getId( ) );
+        FormQuestionResponse responseSaved = null;
+
+        if ( questionResponse.getId() != FormQuestionResponse.CONSTANT_ID_NEW_RESPONSE )
+        {
+            responseSaved = FormQuestionResponseHome.findByPrimaryKey( questionResponse.getId( ) );
+        }
 
         if ( responseSaved == null )
         {
