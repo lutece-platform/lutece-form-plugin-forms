@@ -214,7 +214,13 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             _model.put( MARK_COMPLETENESS_FO, displayType == DisplayType.COMPLETE_FRONTOFFICE );
             _model.put( FormsConstants.MARK_REGEX_URL, FormsConstants.DEFAULT_REGEX_URL );
 
-            for( Field field : FieldHome.getFieldListByIdEntry( _question.getEntry().getIdEntry( ) ) )
+            List<Field> listField = _question.getEntry().getFields();
+            if( listField == null )
+            {
+                listField = FieldHome.getFieldListByIdEntry( _question.getEntry().getIdEntry( ) );
+            }
+
+            for( Field field : listField )
             {
             	if( field.getCode( ).equals( ILLUSTRATION_IMAGE ) && field.getValue( ) != null )
             		fieldsList.put( field.getIdField( ), ImageResourceManager.getImageUrl( PUBLIC_IMAGE_RESOURCE, Integer.parseInt( field.getValue( ) ) )  );
