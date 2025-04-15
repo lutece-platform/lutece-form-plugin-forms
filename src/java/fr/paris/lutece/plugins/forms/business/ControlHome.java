@@ -40,7 +40,6 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.ReferenceList;
-import org.apache.commons.collections4.CollectionUtils;
 
 /**
  * This class provides instances management methods (create, find, ...) for Control objects
@@ -217,7 +216,7 @@ public final class ControlHome
         String cacheKey = _cache.getControlByControlTargetAndTypeCacheKey( nIdControlTarget, controlType );
         @SuppressWarnings( "unchecked" )
         List<Control> listControl = ( List<Control> ) _cache.getFromCache( cacheKey );
-        if ( CollectionUtils.isEmpty( listControl ) )
+        if ( listControl  == null )
         {
             listControl = _dao.selectControlByControlTargetAndType( nIdControlTarget, controlType, _plugin );
             for ( Control ctrl : listControl )
@@ -259,7 +258,7 @@ public final class ControlHome
         String cacheKey = _cache.getControlByQuestionAndTypeCacheKey( nIdQuestion, strControlType );
         @SuppressWarnings( "unchecked" )
         List<Control> listControl = ( List<Control> ) _cache.getFromCache( cacheKey );
-        if ( CollectionUtils.isEmpty( listControl ) )
+        if ( listControl == null )
         {
             listControl = _dao.selectControlByQuestionAndType( nIdQuestion, strControlType, _plugin );
             for ( Control ctrl : listControl )

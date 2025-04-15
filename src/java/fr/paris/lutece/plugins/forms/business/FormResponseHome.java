@@ -36,10 +36,7 @@ package fr.paris.lutece.plugins.forms.business;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import fr.paris.lutece.plugins.genericattributes.business.Entry;
-import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
-import fr.paris.lutece.plugins.genericattributes.business.FieldHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
@@ -159,33 +156,17 @@ public final class FormResponseHome
         List<FormQuestionResponse> formQuestionResponseList = FormQuestionResponseHome
                 .selectFormQuestionResponseListByListFormResponseStep( formResponseStepList );
 
-        // Questions
-        List<Question> questionList = QuestionHome.findByPrimaryKeyList( formQuestionResponseList.stream( ).map( FormQuestionResponse::getQuestion )
-                .map( Question::getId ).distinct( ).collect( Collectors.toList( ) ) );
-        List<Entry> entryList = EntryHome
-                .findByPrimaryKeyList( questionList.stream( ).map( Question::getIdEntry ).distinct( ).collect( Collectors.toList( ) ) );
-        List<Field> fieldList = FieldHome.getFieldListByListIdEntry( entryList.stream( ).map( Entry::getIdEntry ).collect( Collectors.toList( ) ) );
-
-        for ( Entry entry : entryList )
-        {
-            entry.setFields(
-                    fieldList.stream( ).filter( ( Field f ) -> f.getParentEntry( ).getIdEntry( ) == entry.getIdEntry( ) ).collect( Collectors.toList( ) ) );
-        }
-        for ( Question question : questionList )
-        {
-            question.setEntry( entryList.stream( ).filter( entry -> entry.getIdEntry( ) == question.getIdEntry( ) ).findFirst( ).orElse( null ) );
-        }
-
         // Populate FormQuestionResponse
         for ( FormQuestionResponse fqr : formQuestionResponseList )
         {
-            fqr.setQuestion( questionList.stream( ).filter( q -> q.getId( ) == fqr.getQuestion( ).getId( ) ).findFirst( ).orElse( null ) );
+
+            fqr.setQuestion( QuestionHome.findByPrimaryKey( fqr.getQuestion().getId() ) );
 
             for ( Response resp : fqr.getEntryResponse( ) )
             {
-                if ( resp.getField( ) != null )
+                if ( resp.getField( ) != null && fqr.getQuestion() != null )
                 {
-                    resp.setField( fieldList.stream( ).filter( ( Field f ) -> f.getIdField( ) == resp.getField( ).getIdField( ) ).findFirst( ).orElse( null ) );
+                    resp.setField( fqr.getQuestion().getEntry().getFields().stream( ).filter( ( Field f ) -> f.getIdField( ) == resp.getField( ).getIdField( ) ).findFirst( ).orElse( null ) );
                 }
             }
         }

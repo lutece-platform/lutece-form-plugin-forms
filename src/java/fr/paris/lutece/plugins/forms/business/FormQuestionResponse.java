@@ -43,7 +43,9 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
  */
 public class FormQuestionResponse
 {
-    private int _nId;
+    public static final int CONSTANT_ID_NEW_RESPONSE = 0;
+
+    private int _nId = CONSTANT_ID_NEW_RESPONSE;
 
     private int _nIdFormResponse;
 
