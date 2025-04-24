@@ -51,13 +51,16 @@ public class FormsEntryUtilsTest extends LuteceTestCase {
 
     private static final int ENTRY_TYPE_TEXT_ID = 106;
     private static final String ENTRY_TYPE_TITLE = "default_entry_type_title";
-
+    private static final String BEAN_NAME_ENTRY_TYPE_NUMBER = "forms.entryTypeNumber";
     private static final String BEAN_NAME_ENTRY_TYPE_TEXT = "forms.entryTypeText";
 
 
     public void testCreateEntryByType() {
+        List<EntryType> entryTypes = FormsEntryUtils.initListEntryType();
+        EntryType entryTypeNumber = entryTypes.stream().filter( type -> BEAN_NAME_ENTRY_TYPE_NUMBER.equals( type.getBeanName( ) ) ).findFirst( ).orElse( null );
+        assertNotNull(entryTypeNumber);
 
-        Entry entryByType = FormsEntryUtils.createEntryByType(120);
+        Entry entryByType = FormsEntryUtils.createEntryByType(entryTypeNumber.getIdType());
         assertNotNull(entryByType);
         EntryType entryType = entryByType.getEntryType();
         assertNotNull(entryType);
@@ -80,7 +83,7 @@ public class FormsEntryUtilsTest extends LuteceTestCase {
 
     public void testInitRefListEntryType() {
         ReferenceList referenceItems = FormsEntryUtils.initRefListEntryType();
-        assertEquals(18, referenceItems.size());
+        assertEquals(22, referenceItems.size());
     }
 
     public void testInitListEntryType() {
