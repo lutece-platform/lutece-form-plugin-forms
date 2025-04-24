@@ -379,9 +379,6 @@ public class FormStepJspBean extends AbstractJspBean
         }
 
         int nIdForm = -1;
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
-        checkWorkgroupPermission(nIdForm, request);
-
         if ( nIdStep != -1 )
         {
             _step = StepHome.findByPrimaryKey( nIdStep );
@@ -389,6 +386,8 @@ public class FormStepJspBean extends AbstractJspBean
             if ( _step != null )
             {
                 nIdForm = _step.getIdForm( );
+                checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
+                checkWorkgroupPermission(nIdForm, request);
 
                 try
                 {
