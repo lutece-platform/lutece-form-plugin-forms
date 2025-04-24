@@ -61,6 +61,7 @@ import fr.paris.lutece.plugins.forms.web.admin.MultiviewFormResponseDetailsJspBe
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
+import fr.paris.lutece.plugins.genericattributes.business.EntryTypeHome;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.business.ResponseHome;
 import fr.paris.lutece.portal.business.file.File;
@@ -85,10 +86,6 @@ public class FormServiceTest extends LuteceTestCase {
     private static final String DEFAULT_QUESTION_TITLE = "default_question_title";
     private static final String DEFAULT_QUESTION_CODE = "default_question_code";
     private static final String DEFAULT_QUESTION_COLUMN_TITLE = "default_question_column_title";
-
-    // Entry
-    private static final int ENTRY_TYPE_FILE_ID = 108;
-    private static final String ENTRY_TYPE_TITLE = "default_entry_type_title";
 
     // Entry type
     private static final String BEAN_NAME_ENTRY_TYPE_FILE = "forms.entryTypeFile";
@@ -224,14 +221,12 @@ public class FormServiceTest extends LuteceTestCase {
 	 */
 	private Entry createEntry( )
 	{
-		EntryType entryTypeText = new EntryType( );
-        entryTypeText.setIdType( ENTRY_TYPE_FILE_ID );
-        entryTypeText.setTitle( ENTRY_TYPE_TITLE );
-        entryTypeText.setBeanName( BEAN_NAME_ENTRY_TYPE_FILE );
+        List<EntryType> entryTypes = EntryTypeHome.getCompleteList( );
+        EntryType entryTypeFile = entryTypes.stream().filter( type -> BEAN_NAME_ENTRY_TYPE_FILE.equals( type.getBeanName( ) ) ).findFirst( ).orElse( null );
 
         Entry entry = new Entry( );
         entry.setIndexed( true );
-        entry.setEntryType( entryTypeText );
+        entry.setEntryType( entryTypeFile );
         entry.setResourceType( RESOURCE_TYPE );
         entry.setIdResource( _form.getId( ) );
         
