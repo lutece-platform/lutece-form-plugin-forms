@@ -112,6 +112,7 @@ public class FormXPage extends MVCApplication
     private static final String MESSAGE_WARNING_CAPTCHA = "portal.admin.message.wrongCaptcha";
     private static final String MESSAGE_WARNING_INACTIVE_STATE_BYPASSED = "forms.warning.inactive.state.bypassed";
     private static final String MESSAGE_ERROR_TOKEN = "Invalid security token";
+    private static final String MESSAGE_WARNING_INVALID_FORM_SESSION = "forms.warning.invalid.form.session";
 
     // Views
     private static final String VIEW_LIST_FORM = "listForm";
@@ -495,6 +496,11 @@ public class FormXPage extends MVCApplication
             _currentStep = _formResponseManager.getCurrentStep( );
             return  getStepView(  request );
         }
+        if ( !isFormSessionValid( request ) )
+        {
+            addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+            return getStepView( request );
+        }
         try
         {
             // The condition below : We don't want to fill the FormResponseManager when just logged in with response made when user wasn't logged in
@@ -550,7 +556,11 @@ public class FormXPage extends MVCApplication
             addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
             return getStepView(  request );
         }
-
+        if ( !isFormSessionValid( request ) )
+        {
+            addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+            return getStepView( request );
+        }
         try
         {
             FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
@@ -592,6 +602,11 @@ public class FormXPage extends MVCApplication
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return getStepView(  request );
+            }
+            if ( !isFormSessionValid( request ) )
+            {
+                addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+                return getStepView( request );
             }
             FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
             List<Step> stepList = StepHome.getStepsListByForm( form.getId( ) );
@@ -705,6 +720,11 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return getStepView(  request );
             }
+            if ( !isFormSessionValid( request ) )
+            {
+                addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+                return getStepView( request );
+            }
             FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
 
             List<Step> stepList = StepHome.getStepsListByForm( form.getId( ) );
@@ -766,6 +786,11 @@ public class FormXPage extends MVCApplication
             {
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return  getStepView(  request );
+            }
+            if ( !isFormSessionValid( request ) )
+            {
+                addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+                return getStepView( request );
             }
             boolean needValidation = form.isCaptchaRecap( );
             if ( isCaptchaKO( request, needValidation ) )
@@ -961,6 +986,11 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return getStepView(  request );
             }
+            if ( !isFormSessionValid( request ) )
+            {
+                addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+                return getStepView( request );
+            }
             if(_formResponseManager.getCurrentStep() == null) {
                 _formResponseManager.add(StepHome.getInitialStep(form.getId()));
             }
@@ -1034,6 +1064,11 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return getStepView(  request );
             }
+            if ( !isFormSessionValid( request ) )
+            {
+                addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+                return getStepView( request );
+            }
         }
         catch( FormNotFoundException exception )
         {
@@ -1093,6 +1128,11 @@ public class FormXPage extends MVCApplication
             AppLogService.error( MESSAGE_ERROR_TOKEN );
             return getStepView(  request );
         }
+        if ( !isFormSessionValid( request ) )
+        {
+            addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+            return getStepView( request );
+        }
         Form form = null;
 
         try
@@ -1142,7 +1182,11 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return getStepView(  request );
             }
-
+            if ( !isFormSessionValid( request ) )
+            {
+                addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+                return getStepView( request );
+            }
             FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -1186,6 +1230,11 @@ public class FormXPage extends MVCApplication
                 addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
                 return getStepView(  request );
             }
+            if ( !isFormSessionValid( request ) )
+            {
+                addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+                return getStepView( request );
+            }
             FormsResponseUtils.fillResponseManagerWithResponses( request, false, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
         }
         catch( FormNotFoundException | QuestionValidationException exception )
@@ -1226,6 +1275,11 @@ public class FormXPage extends MVCApplication
         {
             addWarning( MESSAGE_WARNING_LOST_SESSION, getLocale( request ) );
             return getStepView(  request );
+        }
+        if ( !isFormSessionValid( request ) )
+        {
+            addWarning( MESSAGE_WARNING_INVALID_FORM_SESSION, getLocale( request ) );
+            return getStepView( request );
         }
 
         String error = null;
@@ -1403,4 +1457,21 @@ public class FormXPage extends MVCApplication
         return ( _currentStep == null && _formResponseManager == null && _stepDisplayTree == null && _breadcrumb == null );
     }
 
+    /**
+     * Check if the form being processed is the one currently stored in the user's session
+     * 
+     * @param request
+     *            The HttpServletRequest of the current user
+     * @return true if the form corresponds to the current session, returns false otherwise
+     */
+    private boolean isFormSessionValid( HttpServletRequest request )
+    {
+        int nIdForm = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
+
+        if ( nIdForm != FormsConstants.DEFAULT_ID_VALUE && _currentStep != null )
+        {
+            return nIdForm == _currentStep.getIdForm( );
+        }
+        return false;
+    }
 }
