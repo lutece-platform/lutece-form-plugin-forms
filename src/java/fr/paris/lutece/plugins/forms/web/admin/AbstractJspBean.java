@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.web.admin;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.math.NumberUtils;
@@ -48,6 +49,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
@@ -84,6 +86,9 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected int _nItemsPerPage;
     protected LocalizedDelegatePaginator<Integer> _paginator;
     protected transient FormItemSortConfig _formItemSortConfig;
+
+    @Inject
+    private SecurityTokenService _securityTokenService;
 
     protected void initiatePaginatorProperties( HttpServletRequest request )
     {
@@ -232,6 +237,11 @@ public abstract class AbstractJspBean extends MVCAdminJspBean
     protected void checkUserPermission( String strRessourceType, String strResource, String strPermissionName, HttpServletRequest request, String actionCsrf )
             throws AccessDeniedException
     {
+    	// CSRF Token control
+        if ( actionCsrf != null && !_securityTokenService.validate( request, actionCsrf ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         if ( !RBACService.isAuthorized( strRessourceType, strResource, strPermissionName, (User) AdminUserService.getAdminUser( request ) ) )
         {
             throw new AccessDeniedException( UNAUTHORIZED );

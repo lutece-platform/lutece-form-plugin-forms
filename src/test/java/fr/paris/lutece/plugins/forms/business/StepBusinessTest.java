@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.test.LuteceTestCase;
 
 /**
@@ -50,6 +52,7 @@ public class StepBusinessTest extends LuteceTestCase
     /**
      * test Step
      */
+    @Test
     public void testBusiness( )
     {
         // Initialize an object

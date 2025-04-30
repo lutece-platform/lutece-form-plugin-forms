@@ -40,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -62,6 +63,7 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -105,10 +107,11 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
     private static final String ACTION_MANAGE_MULTIVIEW = "manageMultiviewConfig";
     private static final String ACTION_MODIFY_FILTERABLE_QUESTIONS = "modifyFilterableQuestions";
     private static final String ACTION_MODIFY_VISIBLE_QUESTIONS = "modifyVisibleQuestions";
-    private static final String ACTION_SET_DEFAULT_ORDER = "doSetDefaultOrder";
 
     // Parameters
-    
+    @Inject
+    private SecurityTokenService _securityTokenService;
+
     @View( VIEW_MANAGE_MULTIVIEW )
     public String getManageMultiview( HttpServletRequest request ) throws AccessDeniedException
     {
@@ -150,11 +153,12 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         model.put( MARK_QUESTIONLIST, questionList );
         model.put( MARK_FILTERABLE_QUESTIONLIST, filterableQuestionList );
         model.put( MARK_NON_DISPLAYABLE_QUESTIONLIST, nonDisplayableQuestionList );
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_MANAGE_MULTIVIEW ) );
 
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MANAGE_MULTIVIEW_CONFIG, model );
     }
     
-    @Action( ACTION_MODIFY_FILTERABLE_QUESTIONS )
+    @Action( value = ACTION_MODIFY_FILTERABLE_QUESTIONS, securityTokenDisabled = true )
     public String modifyFilterableQuestions( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
@@ -191,7 +195,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         return redirect( request, VIEW_MANAGE_MULTIVIEW, mapParameters );
     }
     
-    @Action( ACTION_MODIFY_VISIBLE_QUESTIONS )
+    @Action( value = ACTION_MODIFY_VISIBLE_QUESTIONS, securityTokenDisabled = true )
     public String modifyVisibleQuestions( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
@@ -226,28 +230,5 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         return redirect( request, VIEW_MANAGE_MULTIVIEW, mapParameters );
     }
 
-    @Action( ACTION_SET_DEFAULT_ORDER )
-    public String doSetDefaultDisplayOrder(HttpServletRequest request) throws AccessDeniedException
-    {
-        Integer nIdForm = Integer.parseInt(request.getParameter(FormsConstants.PARAMETER_ID_FORM));
-        int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
-
-        if ( nId == FormsConstants.DEFAULT_ID_VALUE )
-        {
-            return redirect( request, VIEW_MANAGE_FORMS );
-        }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_MANAGE_MULTIVIEW );
-
-        List<Question> questionList = QuestionHome.getQuestionListByIdFormInQuestionOrder(nIdForm);
-        for (int i = 0; i < questionList.size();i++){
-            questionList.get( i ).setMultiviewColumnOrder( i+1 );
-        }
-        // update the list
-        questionList.forEach( QuestionHome::update );
-        Map<String, String> mapParameters = new LinkedHashMap<>();
-        mapParameters.put(FormsConstants.PARAMETER_ID_FORM, String.valueOf(nIdForm));
-
-        return redirect(request, VIEW_MANAGE_MULTIVIEW, mapParameters);
-    }
 }
 

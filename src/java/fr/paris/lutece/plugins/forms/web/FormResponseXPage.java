@@ -138,6 +138,8 @@ public class FormResponseXPage extends MVCApplication
     private FormsAsynchronousUploadHandler _formsAsynchronousUploadHandler;
     @Inject
     private WorkflowService _workflowService;
+    @Inject
+    private SecurityTokenService _securityTokenService;
 
     @View( value = VIEW_FORM_RESPONSE, defaultView = true )
     public XPage getFormResponseView( HttpServletRequest request ) throws SiteMessageException
@@ -153,6 +155,7 @@ public class FormResponseXPage extends MVCApplication
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
         model.put( MARK_WORKFLOW_ACTION_LIST, actionsList );
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_PROCESS_ACTION ) );
 
         XPage xPage = getXPage( TEMPLATE_VIEW_FORM_RESPONSE, getLocale( request ), model );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
@@ -173,6 +176,7 @@ public class FormResponseXPage extends MVCApplication
         }
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM_RESPONSE, formResponse );
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_PROCESS_ACTION ) );
         for (FormResponseStep step: formResponse.getSteps() ){
             listResponse.addAll(findResponses(step.getQuestions()));
         }
@@ -207,7 +211,12 @@ public class FormResponseXPage extends MVCApplication
     @fr.paris.lutece.portal.util.mvc.commons.annotations.Action( value = ACTION_PROCESS_ACTION )
     public XPage doProcessAction( HttpServletRequest request ) throws AccessDeniedException
     {
-        // Get parameters from request
+    	// CSRF Token control
+        if ( !_securityTokenService.validate( request, ACTION_PROCESS_ACTION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+    	// Get parameters from request
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
         int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
 
@@ -231,6 +240,7 @@ public class FormResponseXPage extends MVCApplication
             model.put( MARK_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
             model.put( MARK_ID_ACTION, String.valueOf( nIdAction ) );
             model.put( MARK_TASK_FORM, strHtmlTasksForm );
+            model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_SAVE_TASK_FORM ) );
 
             XPage xPage = getXPage( TEMPLATE_TASK_FORM_RESPONSE, locale, model );
             xPage.setTitle( I18nService.getLocalizedString( MESSAGE_FORM_RESPONSE_PAGETITLE, locale ) );
@@ -274,7 +284,7 @@ public class FormResponseXPage extends MVCApplication
         }
 
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_TASK_FORM ) )
+        if ( !_securityTokenService.validate( request, ACTION_SAVE_TASK_FORM ) )
         {
             throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
         }

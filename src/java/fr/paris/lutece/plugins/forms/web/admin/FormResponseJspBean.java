@@ -445,7 +445,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the view
      */
-    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY )
+    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY, securityTokenDisabled = true )
     public synchronized String doSaveFormResponseSummary( HttpServletRequest request )
     {
         Form form = null;

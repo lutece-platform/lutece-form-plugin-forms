@@ -112,7 +112,10 @@ public final class StepHome
         if ( step == null )
         {
             step = _dao.load( nKey, _plugin );
-            _cache.put( stepCacheKey, step );
+            if ( step != null )
+            {
+            	_cache.put( stepCacheKey, step );
+            }
         }
         return step;
     }

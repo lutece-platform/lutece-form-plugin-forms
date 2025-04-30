@@ -33,11 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.test.LuteceTestCase;
 
 public class FormMessageBusinessTest extends LuteceTestCase
 {
-
+    @Test
     public void testCRUD( )
     {
         FormMessage formMessage = new FormMessage( );

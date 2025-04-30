@@ -41,6 +41,7 @@ import java.util.Map;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -190,7 +191,7 @@ public class FormFilterDisplayWorkflowState extends AbstractFormFilterDisplay
         if ( form != null && form.getIdWorkflow( ) > ID_WORKFLOW_UNSET )
         {
             listWorkflowState
-                    .addAll( WorkflowService.getInstance( ).getAllStateByWorkflow( form.getIdWorkflow( ), (User) AdminUserService.getAdminUser( request ) ) );
+                    .addAll( CDI.current( ).select( WorkflowService.class ).get( ).getAllStateByWorkflow( form.getIdWorkflow( ), (User) AdminUserService.getAdminUser( request ) ) );
         }
 
         return listWorkflowState;

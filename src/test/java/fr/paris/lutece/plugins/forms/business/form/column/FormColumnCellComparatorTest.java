@@ -40,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
 import fr.paris.lutece.test.LuteceTestCase;
@@ -55,6 +56,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     /**
      * Test for the method {@link FormColumnCellComparator#compare(FormColumnCell, FormColumnCell)} without any values on each FormColumnCell
      */
+    @Test
     public void testCompareWithoutValues( )
     {
         FormColumnCell formColumnCellOne = new FormColumnCell( );
@@ -71,6 +73,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
      * Test for the method {@link FormColumnCellComparator#compare(FormColumnCell, FormColumnCell)} with the second FormColumnCell which have a greater value
      * than the first
      */
+    @Test
     public void testCompareWithSecondCellValueGreater( )
     {
         Map<String, Object> mapFormColumnValuesOne = new LinkedHashMap<>( );
@@ -93,6 +96,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
      * Test for the method {@link FormColumnCellComparator#compare(FormColumnCell, FormColumnCell)} with the first FormColumnCell which have a greater value
      * than the second
      */
+    @Test
     public void testCompareWithFirstCellValueGreater( )
     {
         Map<String, Object> mapFormColumnValuesOne = new LinkedHashMap<>( );
@@ -114,6 +118,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     /**
      * Test for the method {@link FormColumnCellComparator#compare(FormColumnCell, FormColumnCell)} with integer values for the sorting key
      */
+    @Test
     public void testCompareWithIntegerValues( )
     {
         Map<String, Object> mapFormColumnValuesOne = new LinkedHashMap<>( );
@@ -135,6 +140,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     /**
      * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the first FormColumnCell which have a null value
      */
+    @Test
     public void testCompareWithFirstCellNullValue( )
     {
         Map<String, Object> mapFormColumnValuesOne = new LinkedHashMap<>( );
@@ -156,6 +162,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     /**
      * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the second FormColumnCell which have a null value
      */
+    @Test
     public void testCompareWithSecondCellNullValue( )
     {
         Map<String, Object> mapFormColumnValuesOne = new LinkedHashMap<>( );
@@ -177,6 +184,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     /**
      * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with one FormColumnCell which haven't the good key
      */
+    @Test
     public void testCompareWithOneMissingKey( )
     {
         Map<String, Object> mapFormColumnValuesOne = new LinkedHashMap<>( );
@@ -198,6 +206,7 @@ public class FormColumnCellComparatorTest extends LuteceTestCase
     /**
      * Test for the method {@link FormResponseItemComparator#compare(FormResponseItem, FormResponseItem)} with the two FormColumnCell which haven't the good key
      */
+    @Test
     public void testCompareWithoutSortKey( )
     {
         Map<String, Object> mapFormColumnValuesOne = new LinkedHashMap<>( );

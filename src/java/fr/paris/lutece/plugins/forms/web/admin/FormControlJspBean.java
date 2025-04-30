@@ -369,7 +369,7 @@ public class FormControlJspBean extends AbstractJspBean
         }
     }
 
-    @View( VIEW_MODIFY_CONDITION_CONTROL )
+    @View( value = VIEW_MODIFY_CONDITION_CONTROL, securityTokenAction = ACTION_MODIFY_CONTROL )
     public String getModifyConditionControl( HttpServletRequest request )
     {
         if ( _step == null )
@@ -588,10 +588,9 @@ public class FormControlJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
-     * @throws AccessDeniedException
      */
     @Action( ACTION_MODIFY_CONTROL )
-    public String doModifyControl( HttpServletRequest request ) throws AccessDeniedException
+    public String doModifyControl( HttpServletRequest request )
     {
         if ( !populateAndValidateControl( request ) )
         {
@@ -626,7 +625,7 @@ public class FormControlJspBean extends AbstractJspBean
      *            The Http request
      * @return the html code to confirm
      */
-    @View( VIEW_CONFIRM_REMOVE_CONTROL )
+    @View( value = VIEW_CONFIRM_REMOVE_CONTROL, securityTokenAction = ACTION_REMOVE_CONTROL )
     public String getConfirmRemoveControl( HttpServletRequest request )
     {
         int nIdControlToRemove = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_CONTROL ), FormsConstants.DEFAULT_ID_VALUE );
@@ -646,10 +645,9 @@ public class FormControlJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the jsp URL to display the form to manage Transition
-     * @throws AccessDeniedException
      */
     @Action( ACTION_REMOVE_CONTROL )
-    public String doRemoveControl( HttpServletRequest request ) throws AccessDeniedException
+    public String doRemoveControl( HttpServletRequest request )
     {
         if ( !retrieveControlFromRequest( request ) )
         {

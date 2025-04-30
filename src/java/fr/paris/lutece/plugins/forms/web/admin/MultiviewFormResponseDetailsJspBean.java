@@ -156,7 +156,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     // Variables
     private Map<String, String> _mapFilterValues = new LinkedHashMap<>( );
     @Inject
-    private transient IFormsMultiviewAuthorizationService _formsMultiviewAuthorizationService;
+    private IFormsMultiviewAuthorizationService _formsMultiviewAuthorizationService;
     @Inject
     private WorkflowService _workflowService;
     @Inject

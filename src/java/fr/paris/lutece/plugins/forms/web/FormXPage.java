@@ -1083,14 +1083,13 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      *             Exception
-     * @throws AccessDeniedException
      */
-    @Action( value = ACTION_RESET_BACKUP )
-    public synchronized XPage doResetBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
+    @Action( value = ACTION_RESET_BACKUP, securityTokenDisabled = true )
+    public synchronized XPage doResetBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         IsRequestComingFromAction = true;
         // CSRF Token control
-        if ( !SecurityTokenService.getInstance( ).validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !_securityTokenService.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
             AppLogService.error( MESSAGE_ERROR_TOKEN );
             return getStepView(  request );

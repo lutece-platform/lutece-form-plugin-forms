@@ -85,7 +85,7 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
     @Inject
     private FormService _formService;
     
-    @View( VIEW_MANAGE_WORKFLOW )
+    @View( value = VIEW_MANAGE_WORKFLOW, securityTokenAction = ACTION_MODIFY_WORKFLOW )
     public String getManageMultiview( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
@@ -122,7 +122,7 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
         {
             return redirect( request, VIEW_MANAGE_FORMS );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_MANAGE_WORKFLOW );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
 
         Form formToBeModified = FormHome.findByPrimaryKey( nId );
 

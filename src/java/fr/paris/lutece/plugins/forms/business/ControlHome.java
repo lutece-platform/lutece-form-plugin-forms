@@ -168,8 +168,8 @@ public final class ControlHome
             if ( control != null )
             {
                 control.setListIdQuestion( _dao.loadIdQuestions( nKey, _plugin ) );
+                _cache.put( controlCacheKey, control );
             }
-            _cache.put( controlCacheKey, control );
         }
         return control;
     }

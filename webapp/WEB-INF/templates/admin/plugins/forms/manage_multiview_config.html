@@ -28,6 +28,7 @@
 							<@tabContent>
 								<@tabPanel id="multiview-1" active=true>
 									<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp'>
+									    <@input type='hidden' id='token' name='token' value='${token}' />
 										<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 										<@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
 											<@tr>
@@ -85,6 +86,7 @@
 								</@tabPanel>
 								<@tabPanel id='multiview-2'>
 									<@tform class='form' method='post' name='manage_export' action='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp'>
+									    <@input type='hidden' id='token' name='token' value='${token}' />
 										<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
 										<@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
 											<@tr>

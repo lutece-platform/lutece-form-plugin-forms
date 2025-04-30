@@ -48,6 +48,7 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeSer
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
@@ -106,6 +107,8 @@ public class FormExportJspBean extends AbstractJspBean
 
     @Inject
     private FormService _formService;
+    @Inject
+    private SecurityTokenService _securityTokenService;
     
     @View( VIEW_MANAGE_EXPORT )
     public String getManageExport( HttpServletRequest request ) throws AccessDeniedException
@@ -141,6 +144,7 @@ public class FormExportJspBean extends AbstractJspBean
         model.put( MARK_EXPORT_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfigOption( formToBeModified, getLocale( ) ) );
         model.put( MARK_EXPORT_CONFIG_LIST, ExportServiceManager.getInstance( ).createReferenceListExportConfig( formToBeModified, getLocale( ) ) );
         model.put( MARK_ACTIVE_TAB_PANNEL_2, Boolean.parseBoolean( request.getParameter( PARAMETER_ACTIVE_TAB_PANNEL_2 )));
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_EXPORT_CONFIG ) );
 
         if (CollectionUtils.isNotEmpty(listQuestions))
         {
@@ -231,7 +235,7 @@ public class FormExportJspBean extends AbstractJspBean
         return redirect(request, VIEW_MANAGE_EXPORT, mapParameters);
     };
 
-    @Action( ACTION_CREATE_EXPORT_CONFIG )
+    @Action( value = ACTION_CREATE_EXPORT_CONFIG, securityTokenDisabled = true )
     public String doCreateExportConfig( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
@@ -266,7 +270,7 @@ public class FormExportJspBean extends AbstractJspBean
         return redirect( request, VIEW_MANAGE_EXPORT, mapParameters );
     }
 
-    @View( VIEW_CONFIG_REMOVE_EXPORT_CONFIG )
+    @View( value = VIEW_CONFIG_REMOVE_EXPORT_CONFIG, securityTokenAction = ACTION_REMOVE_EXPORT_CONFIG )
     public String getConfirmRemoveExportConfig( HttpServletRequest request ) throws AccessDeniedException
     {
         int idConfig = NumberUtils.toInt( request.getParameter( PARAMETER_ID_CONFIG ), FormsConstants.DEFAULT_ID_VALUE );
@@ -308,7 +312,7 @@ public class FormExportJspBean extends AbstractJspBean
         {
             return redirect( request, VIEW_MANAGE_FORMS );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( idForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_REMOVE_EXPORT_CONFIG );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( idForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
 
         if ( idConfig == FormsConstants.DEFAULT_ID_VALUE )
         {

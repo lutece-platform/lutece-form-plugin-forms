@@ -107,7 +107,10 @@ public final class ControlGroupHome
         if ( controlGroup == null )
         {
             controlGroup = _dao.load( nKey, _plugin );
-            _cache.put( cacheKey, controlGroup );
+            if ( controlGroup != null )
+            {
+                _cache.put( cacheKey, controlGroup );	
+            }
         }
         return controlGroup;
     }

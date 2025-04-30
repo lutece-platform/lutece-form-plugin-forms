@@ -44,7 +44,6 @@ import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
-import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
@@ -117,6 +116,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private IndexWriter _indexWriter;
     @Inject
     private Instance<IStateService> _stateServiceInstance;
+    @Inject
+    private Instance<ILucenDocumentExternalFieldProvider> _externalFieldProviderInstance;
 
     public LuceneFormSearchIndexer( )
     {
@@ -460,7 +461,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      */
     private void provideExternalFields( List<Document> documentList )
     {
-    	CDI.current( ).select( ILucenDocumentExternalFieldProvider.class ).stream( ).forEach( provider -> provider.provideFields( documentList ) );
+    	if ( !_externalFieldProviderInstance.isUnsatisfied( ) )
+    	{
+    		_externalFieldProviderInstance.stream( ).forEach( provider -> provider.provideFields( documentList ) );
+    	}
     }
 
     /**

@@ -35,11 +35,13 @@ package fr.paris.lutece.plugins.forms.business;
 
 import java.util.HashSet;
 
+import org.junit.jupiter.api.Test;
+
 import fr.paris.lutece.test.LuteceTestCase;
 
 public class ControlBusinessTest extends LuteceTestCase
 {
-
+    @Test
     public void testBusiness( )
     {
         Control control = new Control( );

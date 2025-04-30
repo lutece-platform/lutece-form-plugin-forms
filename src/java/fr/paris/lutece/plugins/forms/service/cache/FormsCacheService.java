@@ -33,12 +33,13 @@
  */
 package fr.paris.lutece.plugins.forms.service.cache;
 
+import javax.cache.CacheException;
+
 import fr.paris.lutece.plugins.forms.business.ControlType;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.genericattributes.business.EntryEvent;
 import fr.paris.lutece.portal.service.cache.AbstractCacheableService;
-import fr.paris.lutece.portal.service.event.EventAction;
-import fr.paris.lutece.portal.service.event.Type;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
@@ -46,7 +47,6 @@ import jakarta.enterprise.event.Observes;
 @ApplicationScoped
 public class FormsCacheService extends AbstractCacheableService<String, Object>
 {
-
     private static final String CACHE_NAME = "formsCacheService";
 
     @PostConstruct
@@ -134,24 +134,89 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
         return new StringBuilder( "FormMessage-by-Form:" ).append( nIdForm ).toString( );
     }
 
-    public void addedResource( @Observes @Type(EventAction.CREATE) EntryEvent event )
+    @Override
+    public void put( String key, Object value ) 
     {
-        handleEvent( event );
+        if ( !isCacheEnable( ) )
+        {
+        	return;
+        }
+
+        try
+        {
+            if ( isCacheAvailable( ) ) 
+            {
+            	_cache.put( key, value );
+            }
+        } catch ( CacheException | IllegalStateException e ) 
+        {
+            AppLogService.error( e.getMessage( ), e );
+        }
     }
 
-    public void deletedResource( @Observes @Type(EventAction.REMOVE) EntryEvent event )
+    @Override
+    public Object get( String key ) 
     {
-        handleEvent( event );
+    	if ( !isCacheEnable( ) )
+        {
+        	return null;
+        }
+    	
+    	try
+        {
+            if ( isCacheAvailable( ) ) 
+            {
+            	return _cache.get( key );
+            }
+        } catch ( CacheException | IllegalStateException e ) 
+        {
+            AppLogService.error( e.getMessage( ), e );
+        }
+
+    	return null;
     }
 
-    public void updatedResource( @Observes @Type(EventAction.UPDATE) EntryEvent event )
+    @Override
+    public boolean remove( String key ) 
     {
-        handleEvent( event );
+    	if ( !isCacheEnable( ) )
+        {
+        	return false;
+        }
+    	
+    	try
+        {
+            if ( isCacheAvailable() ) 
+            {
+            	return _cache.remove( key );
+            }
+        } catch ( CacheException | IllegalStateException e ) 
+        {
+            AppLogService.error( e.getMessage( ), e) ;
+        }
+    	
+    	return false;
+    }
+    
+    /**
+     * Checks whether the cache instance is initialized and currently open.
+     *
+     * @return true if the cache is not null and not closed, false otherwise.
+     */
+    private boolean isCacheAvailable( )
+    {
+        return _cache != null && !_cache.isClosed( );
     }
 
-    private void handleEvent( EntryEvent event )
+    /**
+     * Process an entry event
+     *
+     * @param event
+     *            The event to process
+     */
+    public void processEntryEvent( @Observes EntryEvent event )
     {
-        if ( Form.RESOURCE_TYPE.equals( event.getResourceType( ) ) )
+        if ( isCacheEnable( ) && Form.RESOURCE_TYPE.equals( event.getResourceType( ) ) )
         {
             resetCache( );
         }
