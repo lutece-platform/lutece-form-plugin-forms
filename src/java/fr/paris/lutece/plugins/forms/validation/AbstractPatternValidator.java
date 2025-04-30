@@ -55,8 +55,6 @@ import jakarta.enterprise.inject.spi.CDI;
 
 public abstract class AbstractPatternValidator extends AbstractValidator
 {
-
-    private static final String BEAN_NAME_REGULAR_EXPRESSION = "regularExpressionService";
     private static final String TEMPLATE_JS_FUNCTION = "/skin/plugins/forms/validators/pattern_function.js";
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/pattern_template.html";
 

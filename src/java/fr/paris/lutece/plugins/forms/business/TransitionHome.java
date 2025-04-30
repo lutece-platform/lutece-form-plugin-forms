@@ -174,7 +174,10 @@ public final class TransitionHome
         if ( transitions == null )
         {
             transitions = _dao.selectTransitionsListFromStep( nIdStep, _plugin );
-            _cache.put( cacheKey, transitions );
+            if ( transitions != null )
+            {
+            	_cache.put( cacheKey, transitions );
+            }
         }
         return transitions;
     }

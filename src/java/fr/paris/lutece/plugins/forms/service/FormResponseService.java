@@ -115,7 +115,7 @@ public class FormResponseService
             List<Integer> listIdResource = new ArrayList<>( );
             listIdResource.add( formResponse.getId( ) );
 
-            WorkflowService.getInstance( ).doRemoveWorkFlowResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE );
+            CDI.current( ).select( WorkflowService.class ).get( ).doRemoveWorkFlowResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE ); 
 
             TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
         }

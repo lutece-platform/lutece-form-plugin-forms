@@ -37,10 +37,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.test.mocks.MockHttpServletRequest;
-
+import jakarta.inject.Inject;
 import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.forms.util.IdGenerator;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
@@ -65,13 +66,13 @@ public class EntryTypeTermsOfServiceTest extends LuteceTestCase
 
     private static final String PARAMETER_LINK = "link";
     private static final String PARAMETER_TOS = "tos";
-
+    @Inject
     private EntryTypeTermsOfService _entryTypeTermsOfService;
     private MockHttpServletRequest _request;
 
+    @BeforeEach
     public void setUp( ) throws Exception
     {
-        _entryTypeTermsOfService = new EntryTypeTermsOfService( );
         _request = new MockHttpServletRequest( );
     }
 

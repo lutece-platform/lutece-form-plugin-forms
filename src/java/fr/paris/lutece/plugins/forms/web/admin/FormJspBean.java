@@ -51,7 +51,6 @@ import org.apache.commons.lang3.math.NumberUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import fr.paris.lutece.api.user.User;
-import fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormAction;
@@ -88,6 +87,7 @@ import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -218,8 +218,12 @@ public class FormJspBean extends AbstractJspBean
     private WorkflowService _workflowService;
     @Inject
     private AccessControlService _accessControlService;
-    private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
-    private IAsyncUploadHandler _uploadHandler = AsynchronousUploadHandler.getHandler( );    
+    @Inject
+    @Named( "asynchronous-upload.asynchronousUploadHandler" )
+    private IAsyncUploadHandler _uploadHandler;
+    @Inject
+    private SecurityTokenService _securityTokenService;
+    private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( ); 
 
     /**
      * Build the Manage View
@@ -273,6 +277,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_IS_ACTIVE_KIBANA_FORMS_PLUGIN, PluginService.isPluginEnable( KIBANA_FORMS_PLUGIN_NAME ) );
         model.put( FormsConstants.MARK_TIMESTAMP, strTimespamp );
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_FORM ) );
 
         setPageTitleProperty( EMPTY_STRING );
 
@@ -346,7 +351,7 @@ public class FormJspBean extends AbstractJspBean
     @Action( ACTION_CREATE_FORM )
     public String doCreateForm( HttpServletRequest request ) throws AccessDeniedException
     {
-        checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, ACTION_CREATE_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, null );
 
         populate( _form, request, request.getLocale( ) );
         populate( _formMessage, request, request.getLocale( ) );
@@ -429,12 +434,10 @@ public class FormJspBean extends AbstractJspBean
     public String doDuplicateForm( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = -1;
-        String strIdForm;
 
         try
         {
-            strIdForm = request.getParameter( FormsConstants.PARAMETER_ID_FORM );
-            nId = Integer.parseInt( strIdForm );
+            nId = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
         }
         catch( NumberFormatException ne )
         {
@@ -442,7 +445,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, strIdForm, FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_FORM );
         checkWorkgroupPermission(nId, request);
         
         if ( nId != FormsConstants.DEFAULT_ID_VALUE )
@@ -487,7 +490,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_DELETE, request, ACTION_REMOVE_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_DELETE, request, null );
         checkWorkgroupPermission(nId, request);
 
         if ( _accessControlService.isAvailable( ) )
@@ -586,7 +589,7 @@ public class FormJspBean extends AbstractJspBean
         return redirectView( request, VIEW_MANAGE_FORMS );
     }
 
-    @View( VIEW_MANAGE_QUESTION_PUBLICATION )
+    @View( value = VIEW_MANAGE_QUESTION_PUBLICATION, securityTokenAction = ACTION_MODIFY_FORM_QUESTIONS_PUBLICATION )
     public String getManageQuestionPublication( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
@@ -643,7 +646,7 @@ public class FormJspBean extends AbstractJspBean
      * @throws AccessDeniedException
      *             Access denied exception if the user isn't authorized to view the form config page
      */
-    @View( VIEW_MODIFY_PUBLICATION )
+    @View( value = VIEW_MODIFY_PUBLICATION, securityTokenAction = ACTION_MODIFY_FORM )
     public String getModifyFormPublication( HttpServletRequest request ) throws AccessDeniedException
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
@@ -698,7 +701,7 @@ public class FormJspBean extends AbstractJspBean
             return redirectView( request, VIEW_MANAGE_FORMS );
         }
 
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, ACTION_MODIFY_FORM );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nId ), FormsResourceIdService.PERMISSION_MODIFY_PARAMS, request, null );
 
         _form = FormHome.findByPrimaryKey( nId );
 
@@ -863,7 +866,7 @@ public class FormJspBean extends AbstractJspBean
         }
     }
 
-    @Action( ACTION_IMPORT_FORM )
+    @Action( value = ACTION_IMPORT_FORM, securityTokenDisabled = true )
     public String doImportJson( HttpServletRequest request ) throws AccessDeniedException
     {
         checkUserPermission( Form.RESOURCE_TYPE, RBAC.WILDCARD_RESOURCES_ID, FormsResourceIdService.PERMISSION_CREATE, request, ACTION_CREATE_FORM );

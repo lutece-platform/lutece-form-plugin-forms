@@ -37,6 +37,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -69,6 +71,8 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * This class provides the user interface to manage Form features ( manage, create, modify, remove )
  */
+@SessionScoped
+@Named
 @Controller( controllerJsp = "ManageTransitions.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
 public class FormTransitionJspBean extends AbstractJspBean
 {
@@ -131,7 +135,7 @@ public class FormTransitionJspBean extends AbstractJspBean
      *            The HTTP request
      * @return The page
      */
-    @View( value = VIEW_MANAGE_TRANSITIONS, defaultView = true )
+    @View( value = VIEW_MANAGE_TRANSITIONS, defaultView = true, securityTokenAction = FormStepJspBean.ACTION_MODIFY_STEP )
     public String getManageTransition( HttpServletRequest request )
     {
         _transition = null;
@@ -396,7 +400,7 @@ public class FormTransitionJspBean extends AbstractJspBean
      *            The Http request
      * @return the html code to confirm
      */
-    @View( VIEW_CONFIRM_REMOVE_TRANSITION )
+    @View( value = VIEW_CONFIRM_REMOVE_TRANSITION, securityTokenAction = ACTION_REMOVE_TRANSITION )
     public String getConfirmRemoveTransition( HttpServletRequest request )
     {
         int nIdTransitionToRemove = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_TRANSITION ), FormsConstants.DEFAULT_ID_VALUE );

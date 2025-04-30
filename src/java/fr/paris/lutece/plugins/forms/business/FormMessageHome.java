@@ -133,7 +133,10 @@ public final class FormMessageHome
         if ( formMessage == null )
         {
             formMessage = _dao.selectByForm( nIdForm, _plugin );
-            _cache.put( cacheKey, formMessage );
+            if ( formMessage != null )
+            {
+            	_cache.put( cacheKey, formMessage );
+            }
         }
         return formMessage;
     }

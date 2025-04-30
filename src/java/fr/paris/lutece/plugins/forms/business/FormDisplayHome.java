@@ -112,7 +112,10 @@ public final class FormDisplayHome
         if ( formDisplay == null )
         {
             formDisplay = _dao.load( nKey, _plugin );
-            _cache.put( cacheKey, formDisplay );
+            if ( formDisplay != null )
+            {
+                _cache.put( cacheKey, formDisplay );
+            }
         }
         if ( formDisplay != null )
         {
@@ -153,7 +156,10 @@ public final class FormDisplayHome
         if ( result == null )
         {
             result = _dao.selectFormDisplayListByParent( nIdStep, nIdParent, _plugin );
-            _cache.put( cacheKey, result );
+            if ( result != null )
+            {
+                _cache.put( cacheKey, result );	
+            }
         }
         for ( FormDisplay formDisplay : result )
         {
