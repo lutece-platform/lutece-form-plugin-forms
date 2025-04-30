@@ -1,3 +1,5 @@
+<%@ page errorPage="../../ErrorPage.jsp" %>
+
 ${ pageContext.setAttribute( 'strContent', formTransitionJspBean.processController( pageContext.request , pageContext.response ) ) }
 
 <jsp:include page="../../AdminHeader.jsp" />

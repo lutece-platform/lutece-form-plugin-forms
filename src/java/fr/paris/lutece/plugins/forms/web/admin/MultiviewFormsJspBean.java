@@ -54,7 +54,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
-import fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.filegenerator.service.TemporaryFileGeneratorService;
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -168,10 +167,13 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private transient String _strFormSelectedValue = StringUtils.EMPTY;
     private transient List<IFormPanelDisplay> _listAuthorizedFormPanelDisplay;
     
-    private IAsyncUploadHandler _uploadHandler = AsynchronousUploadHandler.getHandler( );
-
+    @Inject
+    @Named( "asynchronous-upload.asynchronousUploadHandler" )
+    private IAsyncUploadHandler _uploadHandler;
     @Inject
     private FormColumnFactory _formColumnFactory;
+    @Inject
+    private TemporaryFileGeneratorService _temporaryFileGeneratorService;
 
     /**
      * Return the view with the responses of all the forms
@@ -314,7 +316,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
             Form form = FormHome.findByPrimaryKey( idForm );
             List<FormFilter> listFormFilter = _listFormFilterDisplay.stream( ).map( IFormFilterDisplay::getFormFilter ).collect( Collectors.toList( ) );
 
-            TemporaryFileGeneratorService.getInstance( ).generateFile( formatExport.createFileGenerator( form.getTitle( ),
+            _temporaryFileGeneratorService.generateFile( formatExport.createFileGenerator( form.getTitle( ),
                     _formPanelDisplayActive.getFormPanel( ), _listFormColumn, listFormFilter, _formItemSortConfig ), user );
         }
         addInfo( "forms.export.async.message", getLocale( ) );

@@ -114,7 +114,10 @@ public final class FormHome
         if ( form == null )
         {
             form = _dao.load( nKey, _plugin );
-            _cache.put( formCacheKey, form );
+            if ( form != null )
+            {
+            	_cache.put( formCacheKey, form );	
+            }
         }
         else
         {

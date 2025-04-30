@@ -176,6 +176,17 @@ public class ValidatorProducer
 	    return new DayDelayMinimumValidator( strBeanName, strDisplayName, convertStringToList( strAvailableEntryTypeItems ) );
 	}
 
+	@Produces
+	@ApplicationScoped
+	@Named( "forms.geolocationAddressPatternValidator" )
+	public IValidator produceGeolocationAddressPatternValidator(
+	        @ConfigProperty( name = "forms.geolocationAddressPatternValidator.beanName" ) String strBeanName,
+	        @ConfigProperty( name = "forms.geolocationAddressPatternValidator.displayName" ) String strDisplayName,
+	        @ConfigProperty( name = "forms.geolocationAddressPatternValidator.availableEntryTypeItems" ) String strAvailableEntryTypeItems )
+	{
+	    return new GeolocationAddressPatternValidator( strBeanName, strDisplayName, convertStringToList( strAvailableEntryTypeItems ) );
+	}
+
 	private List<String> convertStringToList( String strInput) 
 	{
         return Arrays.stream( strInput.split( "," ) )

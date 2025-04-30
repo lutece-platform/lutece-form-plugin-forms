@@ -42,10 +42,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.test.mocks.MockHttpServletRequest;
-import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
@@ -98,7 +99,7 @@ public class FormServiceTest extends LuteceTestCase {
 	
 	private static final String FORMS_ROLE_KEY = "forms_manager";
 	private static final String ATTRIBUTE_ADMIN_USER = "lutece_admin_user";
-	
+	@Inject
 	private FormService _formService;
 	
 	private Form _form;
@@ -112,11 +113,10 @@ public class FormServiceTest extends LuteceTestCase {
      * 
      * @throws Exception
      */
-	@Override
+	@BeforeAll
     protected void setUp( ) throws Exception
     {
         PluginService.getPlugin( FormsPlugin.PLUGIN_NAME ).install( );
-        _formService = CDI.current( ).select( FormService.class ).get( );
     }
     
     @Test

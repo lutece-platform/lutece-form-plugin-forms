@@ -121,7 +121,10 @@ public final class QuestionHome
         if ( question == null )
         {
             question = _dao.load( nKey, _plugin );
-            _cache.put( cacheKey, question );
+            if ( question != null )
+            {
+            	_cache.put( cacheKey, question );
+            }
         }
         else
         {

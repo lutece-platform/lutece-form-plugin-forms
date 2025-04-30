@@ -112,7 +112,10 @@ public final class GroupHome
         if ( group == null )
         {
             group = _dao.load( nKey, _plugin );
-            _cache.put( cacheKey, group );
+            if ( group != null )
+            {
+            	_cache.put( cacheKey, group );
+            }
         }
         return group;
     }

@@ -39,6 +39,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.Test;
+
 /**
  * This is the business class test for the object Form
  */
@@ -58,6 +60,7 @@ public class FormBusinessTest extends LuteceTestCase
     /**
      * test Form
      */
+    @Test
     public void testBusiness( )
     {
         // Initialize an object

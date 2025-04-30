@@ -38,12 +38,12 @@ import java.util.Locale;
 import java.util.Map;
 
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
-import fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadHandler;
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.forms.business.FormCategory;
 import fr.paris.lutece.plugins.forms.business.FormCategoryHome;
@@ -110,7 +110,9 @@ public class FormCategoriesJspBean extends AbstractJspBean
     private FormCategory _formCategory;
 
     // Other
-    private IAsyncUploadHandler _uploadHandler = AsynchronousUploadHandler.getHandler( );
+    @Inject
+    @Named( "asynchronous-upload.asynchronousUploadHandler" )
+    private IAsyncUploadHandler _uploadHandler;
 
     /**
      * Build the Manage View

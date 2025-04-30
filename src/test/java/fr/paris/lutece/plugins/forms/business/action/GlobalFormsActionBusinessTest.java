@@ -37,13 +37,14 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.test.LuteceTestCase;
 
 public class GlobalFormsActionBusinessTest extends LuteceTestCase
 {
-
+    @Test
     public void testSelect( )
     {
         List<GlobalFormsAction> allActions = GlobalFormsActionHome.selectAllFormActions( FormsPlugin.getPlugin( ), Locale.getDefault( ) );

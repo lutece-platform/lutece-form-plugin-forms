@@ -66,6 +66,7 @@ import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -156,6 +157,8 @@ public class FormStepJspBean extends AbstractJspBean
     // Others
     @Inject
     private StepService _stepService;
+    @Inject
+    private SecurityTokenService _securityTokenService;
 
     // Session variable to store working values
     private Form _form;
@@ -220,6 +223,7 @@ public class FormStepJspBean extends AbstractJspBean
         model.put( MARK_STEP_LIST, paginator.getPageItems( ) );
         model.put( MARK_LOCALE, request.getLocale( ) );
         model.put( MARK_TEMPLATE_PROVIDER, _stepService.getStepTemplateProvider( ) );
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_STEP ) );
 
         setPageTitleProperty( EMPTY_STRING );
 
@@ -295,7 +299,7 @@ public class FormStepJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_CREATE_STEP );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _step.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _step.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
         checkWorkgroupPermission(_step.getIdForm( ), request);
 
         StepHome.create( _step );
@@ -320,7 +324,7 @@ public class FormStepJspBean extends AbstractJspBean
      *            The Http request
      * @return the html code to confirm
      */
-    @View( VIEW_CONFIRM_REMOVE_STEP )
+    @View( value = VIEW_CONFIRM_REMOVE_STEP, securityTokenAction = ACTION_REMOVE_STEP )
     public String getConfirmRemoveStep( HttpServletRequest request )
     {
         int nId = -1;
@@ -436,7 +440,7 @@ public class FormStepJspBean extends AbstractJspBean
         {
             nIdForm = _step.getIdForm( );
         }
-        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_REMOVE_STEP );
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
         checkWorkgroupPermission(nIdForm, request);
         _stepService.removeStep( nIdStep );
         FormResponseStepHome.removeByStep( nIdStep );
@@ -507,7 +511,7 @@ public class FormStepJspBean extends AbstractJspBean
         try
         {
             nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
-            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_MODIFY_STEP );
+            checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
             checkWorkgroupPermission(nIdForm, request);
             nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         }
@@ -583,7 +587,7 @@ public class FormStepJspBean extends AbstractJspBean
         }
     }
 
-    @Action( ACTION_IMPORT_STEP )
+    @Action( value = ACTION_IMPORT_STEP, securityTokenDisabled = true )
     public String doImportJson( HttpServletRequest request ) throws AccessDeniedException
     {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
@@ -606,7 +610,7 @@ public class FormStepJspBean extends AbstractJspBean
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
     }
 
-    @Action( ACTION_IMPORT_TEMPLATE )
+    @Action( value = ACTION_IMPORT_TEMPLATE, securityTokenDisabled = true  )
     public String doImportTemplate( HttpServletRequest request ) throws AccessDeniedException
     {
 
