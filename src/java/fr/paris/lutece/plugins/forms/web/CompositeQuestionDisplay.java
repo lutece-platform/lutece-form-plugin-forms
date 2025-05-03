@@ -72,8 +72,11 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeComment;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.service.editor.RichTextContentService;
+import fr.paris.lutece.portal.service.editor.RichTextParsingException;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 /**
@@ -227,8 +230,15 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             }
             
             _model.put( MARK_FIELDS_LIST_BY_ID_ENTRIES, fieldsList );
-            
             strQuestionTemplate = displayService.getEntryTemplateDisplay( request, _question.getEntry( ), locale, _model, displayType );
+            try 
+            {
+                strQuestionTemplate = RichTextContentService.getContent( strQuestionTemplate );
+            } 
+            catch (RichTextParsingException e) 
+            {
+                AppLogService.error(e.getMessage(), e);
+            }
 
             _model.put( FormsConstants.MARK_QUESTION_CONTENT, strQuestionTemplate );
             _model.put( FormsConstants.MARK_QUESTION, _question );
