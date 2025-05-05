@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel.initializer.impl;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.IFormPanelInitializerQueryPart;
 import fr.paris.lutece.plugins.forms.business.form.panel.initializer.querypart.impl.FormPanelFormResponseInitializerQueryPart;
 import fr.paris.lutece.plugins.forms.web.form.panel.display.initializer.IFormPanelDisplayInitializer;
@@ -53,5 +54,11 @@ public class FormPanelFormResponseInitializer extends AbstractFormPanelInitializ
     public IFormPanelDisplayInitializer getFormPanelDisplayInitializer( )
     {
         return new FormPanelFormResponseDisplayInitializer( );
+    }
+
+    @Override
+    public IFormPanelInitializerQueryPart getIFormPanelInitializerQueryPart( User user )
+    {
+        return new FormPanelFormResponseInitializerQueryPart( user );
     }
 }

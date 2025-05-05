@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.form.FormResponseItem;
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -67,6 +68,23 @@ public class FormListDAOMock implements IFormListDAO
     @Override
     public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
             FormItemSortConfig sortConfig )
+    {
+        List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
+
+        for ( Integer nIdFormResponse : _listIdAuthorizedFormResponse )
+        {
+            FormResponseItem formResponseItem = new FormResponseItem( );
+            formResponseItem.setIdFormResponse( nIdFormResponse );
+
+            listFormResponseItem.add( formResponseItem );
+        }
+
+        formPanel.setFormResponseItemList( listFormResponseItem );
+    }
+
+    @Override
+    public void populateFormColumns( FormPanel formPanel, List<IFormColumn> listFormColumn, List<FormFilter> listFormFilter, int nStartIndex, int nPageSize,
+            FormItemSortConfig sortConfig, User user )
     {
         List<FormResponseItem> listFormResponseItem = new ArrayList<>( );
 
