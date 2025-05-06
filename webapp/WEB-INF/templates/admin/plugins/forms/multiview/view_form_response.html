@@ -127,12 +127,6 @@
 					</@boxBody>
 				</@box>
 			</@columns>
-			<#if action_confirmation_message??>
-				<#assign contentConfirmation>${action_confirmation_message!}</#assign>
-				<@initToast>
-					<@addToast content=contentConfirmation class='bg-success text-white' />
-				</@initToast>
-			</#if>
 		</@row>
 		</@boxBody>
 	</@box>
