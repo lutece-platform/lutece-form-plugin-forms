@@ -78,10 +78,11 @@ import fr.paris.lutece.plugins.forms.web.StepDisplayTree;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.forms.web.form.response.view.FormResponseViewModelProcessorFactory;
 import fr.paris.lutece.plugins.forms.web.form.response.view.IFormResponseViewModelProcessor;
-import fr.paris.lutece.plugins.workflowcore.business.resource.ResourceHistory;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.business.user.AdminUserHome;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
+import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -129,7 +130,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String PARAMETER_ID_FORM_RESPONSE = "id_form_response";
     private static final String PARAMETER_BACK_FROM_ACTION = "back_form_action";
     private static final String PARAMETER_ID_ACTION = "id_action";
-    private static final String PARAMETER_ACTION_CONFIRMATION_MESSAGE = "action_confirmation_message";
 
     // Marks
     private static final String MARK_LIST_FILTER_VALUES = "list_filter_values";
@@ -146,7 +146,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private static final String MARK_WORKFLOW_STATE = "workflow_state";
     private static final String MARK_WORKFLOW_ACTION_LIST = "workflow_action_list";
     private static final String MARK_ADMIN_DEPOSITARY = "admin_depositary";
-    private static final String MARK_ACTION_CONFIRMATION_MESSAGE = "action_confirmation_message";
 
     // Messages
     private static final String MESSAGE_ACCESS_DENIED = "Acces denied";
@@ -161,7 +160,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
     private WorkflowService _workflowService;
     @Inject
     private FormsAsynchronousUploadHandler _formsAsynchronousUploadHandler;
-    private String _actionConfirmationMessage;
 
     /**
      * Return the page with the details of a form response
@@ -213,16 +211,6 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         {
             _mapFilterValues = fillFilterMapValues( request );
         }
-        else
-        {
-            int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
-            String actionConfirmationMessage = request.getParameter( PARAMETER_ACTION_CONFIRMATION_MESSAGE );
-            if ( NumberUtils.INTEGER_MINUS_ONE != nIdAction && StringUtils.isNotBlank( actionConfirmationMessage ) )
-            {
-                model.put( MARK_ACTION_CONFIRMATION_MESSAGE, actionConfirmationMessage );
-            }
-        }
-
         populateModelWithFilterValues( _mapFilterValues, model );
 
         return getPage( MESSAGE_MULTIVIEW_FORM_RESPONSE_TITLE, TEMPLATE_VIEW_FORM_RESPONSE, model );
@@ -482,13 +470,8 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             {
                 boolean bIsAutomaticAction = Boolean.FALSE;
 
-                List<ResourceHistory> actionHistoryResourceList = _workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale,
+                _workflowService.doProcessAction( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, formResponse.getFormId( ), request, locale,
                         bIsAutomaticAction, getUser( ) );
-
-                if ( CollectionUtils.isNotEmpty( actionHistoryResourceList ) )
-                {
-                    _actionConfirmationMessage = actionHistoryResourceList.stream( ).map( ah -> ah.getAction( ).getName( ) ).collect( Collectors.joining( "<br/>" ) );
-                }
             }
             else
             {
@@ -525,16 +508,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         {
             try
             {
-            	List<ResourceHistory> actionHistoryResourceList = new ArrayList<>( );
-            	String strError = _workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, getLocale( ),
-                        getUser( ), actionHistoryResourceList );
+                String strError = _workflowService.doSaveTasksForm( nIdFormResponse, FormResponse.RESOURCE_TYPE, nIdAction, nIdForm, request, getLocale( ),
+                        getUser( ) );
                 if ( strError != null )
                 {
                     return redirect( request, strError );
-                }
-                else if ( CollectionUtils.isNotEmpty( actionHistoryResourceList ) )
-                {
-                    _actionConfirmationMessage = actionHistoryResourceList.stream( ).map( ah -> ah.getAction( ).getName( ) ).collect( Collectors.joining( "<br/>" ) );
                 }
             }
             catch( AppException e )
@@ -620,7 +598,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      */
     private String redirectToResponseList( HttpServletRequest request )
     {
-        return redirect( request, buildRedirectUrl( request ) );
+        return redirect( request, buildRedirecUrlWithFilterValues( ) );
     }
 
     /**
@@ -649,15 +627,10 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
         if ( nIdFormResponse != NumberUtils.INTEGER_MINUS_ONE )
         {
+
             Map<String, String> mapParameters = new LinkedHashMap<>( );
             mapParameters.put( PARAMETER_ID_FORM_RESPONSE, String.valueOf( nIdFormResponse ) );
             mapParameters.put( PARAMETER_BACK_FROM_ACTION, Boolean.TRUE.toString( ) );
-            mapParameters.put( PARAMETER_ID_ACTION, request.getParameter( PARAMETER_ID_ACTION ) );
-            
-            if ( _actionConfirmationMessage != null )
-            {
-            	mapParameters.put( PARAMETER_ACTION_CONFIRMATION_MESSAGE, consumeActionConfirmationMessage( ) );
-            }
 
             return redirect( request, VIEW_FORM_RESPONSE_DETAILS, mapParameters );
         }
@@ -665,20 +638,18 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
         {
             AppLogService.error( "The given id form response is not valid !" );
 
-            return redirect( request, buildRedirectUrl( request ) );
+            return redirect( request, buildRedirecUrlWithFilterValues( ) );
         }
     }
 
     /**
-     * Build the redirection url 
+     * Build the url with the values of the filter selected on the list view
      * 
-     * @param request
-     *            The HttpServletRequest to retrieve data from
-     * @return the url
+     * @return the url with the values of the filter selected on the list view
      */
-    private String buildRedirectUrl( HttpServletRequest request )
+    private String buildRedirecUrlWithFilterValues( )
     {
-        UrlItem urlRedirect = new UrlItem( MultiviewFormsJspBean.getMultiviewBaseViewUrl( ) );
+        UrlItem urlRedirectWithFilterValues = new UrlItem( MultiviewFormsJspBean.getMultiviewBaseViewUrl( ) );
 
         if ( !MapUtils.isEmpty( _mapFilterValues ) )
         {
@@ -695,30 +666,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
                     AppLogService.debug( "Failed to encode url parameter value !" );
                 }
 
-                urlRedirect.addParameter( strFilterName, strFilterValue );
+                urlRedirectWithFilterValues.addParameter( strFilterName, strFilterValue );
             }
         }
-        
-        String strWorkflowActionRedirection = request.getParameter( FormsConstants.PARAMETER_WORKFLOW_ACTION_REDIRECTION );
-        if ( StringUtils.isNotBlank( strWorkflowActionRedirection ) && _actionConfirmationMessage != null )
-        {
-            urlRedirect.addParameter( PARAMETER_BACK_FROM_ACTION, Boolean.TRUE.toString( ) );
-            urlRedirect.addParameter( PARAMETER_ID_ACTION, request.getParameter( PARAMETER_ID_ACTION ) );
-            urlRedirect.addParameter( PARAMETER_ACTION_CONFIRMATION_MESSAGE, consumeActionConfirmationMessage( ) );
-        }
 
-        return urlRedirect.getUrl( );
+        return urlRedirectWithFilterValues.getUrl( );
     }
 
-    /**
-     * Retrieves the action confirmation message and resets the variable to null.
-     *
-     * @return The action confirmation message, or null if there was none.
-     */
-    private String consumeActionConfirmationMessage( )
-    {
-        String temp = _actionConfirmationMessage;
-        _actionConfirmationMessage = null;
-        return temp;
-    }
 }
