@@ -49,7 +49,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.asynchronousupload.service.AsynchronousUploadHandler;
@@ -139,9 +138,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String PARAMETER_DISPLAY_ASSIGNEE_COLUMN = "display_assignee_column";
     private static final String PARAMETER_CHANGE_PANEL = "change_panel";
     private static final String PARAMETER_UPLOAD_TEMPLATE_PDF = "upload_template";
-    private static final String PARAMETER_BACK_FROM_ACTION = "back_form_action";
-    private static final String PARAMETER_ID_ACTION = "id_action";
-    private static final String PARAMETER_ACTION_CONFIRMATION_MESSAGE = "action_confirmation_message";
 
     // Marks
     private static final String MARK_LOCALE = "locale";
@@ -152,8 +148,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String MARK_TABLE_TEMPLATE = "table_template";
     private static final String MARK_LIST_FORMAT_EXPORT = "format_export_list";
     private static final String MARK_LIST_UNIQUE_FILE = "listUniqueFile";
-    private static final String MARK_ACTION_CONFIRMATION_MESSAGE = "action_confirmation_message";
-
     // Session variables
     private String _strSelectedPanelTechnicalCode = StringUtils.EMPTY;
     private transient List<IFormColumn> _listFormColumn;
@@ -251,16 +245,6 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         model.put( MARK_FORM_PANEL_LIST, _listAuthorizedFormPanelDisplay );
         model.put( MARK_CURRENT_SELECTED_PANEL, _strSelectedPanelTechnicalCode );
         model.put( MARK_LIST_FORMAT_EXPORT, ExportServiceManager.getInstance( ).getRefListFormatExport( ) );
-
-        if ( request.getParameter( PARAMETER_BACK_FROM_ACTION ) != null )
-        {
-            int nIdAction = NumberUtils.toInt( request.getParameter( PARAMETER_ID_ACTION ), NumberUtils.INTEGER_MINUS_ONE );
-            String actionConfirmationMessage = request.getParameter( PARAMETER_ACTION_CONFIRMATION_MESSAGE );
-            if ( NumberUtils.INTEGER_MINUS_ONE != nIdAction && StringUtils.isNotBlank( actionConfirmationMessage ) )
-            {
-                model.put( MARK_ACTION_CONFIRMATION_MESSAGE, actionConfirmationMessage );
-            }
-        }
 
         return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW, model );
     }
