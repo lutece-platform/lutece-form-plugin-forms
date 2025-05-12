@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset forms:init_db_forms.sql
+--preconditions onFail:MARK_RAN onError:WARN
 --
 -- Dumping data for table `forms_action`
 --

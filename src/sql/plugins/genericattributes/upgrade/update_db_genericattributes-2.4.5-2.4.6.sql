@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset forms:update_db_genericattributes-2.4.5-2.4.6.sql
+--preconditions onFail:MARK_RAN onError:WARN
 ALTER TABLE genatt_entry_type MODIFY COLUMN id_type int AUTO_INCREMENT NOT NULL;
 
 INSERT INTO genatt_field ( id_entry, title, code, VALUE, default_value )
