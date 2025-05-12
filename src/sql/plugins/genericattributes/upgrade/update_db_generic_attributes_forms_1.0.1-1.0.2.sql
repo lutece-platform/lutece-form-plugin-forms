@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset forms:update_db_generic_attributes_forms_1.0.1-1.0.2.sql
+--preconditions onFail:MARK_RAN onError:WARN
 --
 -- Dumping data for table genatt_entry_type
 --

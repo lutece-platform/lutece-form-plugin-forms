@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset forms:update_db_genericattributes-2.3.2-2.4.1.sql
+--preconditions onFail:MARK_RAN onError:WARN
 INSERT INTO genatt_field (id_entry, code, VALUE, title)
 	SELECT e.id_entry, 'suffix', 
 	'', null from genatt_entry e 
