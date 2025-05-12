@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset forms:update_db_forms-1.0.1-1.0.2.sql
+--preconditions onFail:MARK_RAN onError:WARN
 /*==============================================================*/
 /* Table structure for table forms_indexer_action				*/
 /*==============================================================*/

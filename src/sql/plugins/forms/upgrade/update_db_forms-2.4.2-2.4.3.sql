@@ -1,3 +1,6 @@
+--liquibase formatted sql
+--changeset forms:update_db_forms-2.4.2-2.4.3.sql
+--preconditions onFail:MARK_RAN onError:WARN
 ALTER TABLE forms_response ADD role varchar(50) default NULL;
 ALTER TABLE forms_form ADD access_to_responses_by_role SMALLINT default 0;
 ALTER TABLE forms_response ADD admin varchar(50) default NULL;
