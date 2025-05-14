@@ -1,56 +1,49 @@
-<#assign editModeValue = "">
-<#assign viewNumberValue = "1">
-<#if entry.fields??>
-    <#assign addressField = getFieldValueByCode( entry, "address" )>
-    <#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
-    <#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
-</#if>
-<#assign addressValue = "" />
-<#assign idAddressValue = "" />
-<#assign xValue = "" />
-<#assign yValue = "" />
-<#assign geometryValue = "" />
+<#assign editModeValue = ''>
+<#assign viewNumberValue = '1'>
+<#assign addressValue = '' />
+<#assign idAddressValue = '' />
+<#assign xValue = '' />
+<#assign yValue = '' />
+<#assign geometryValue = '' />
 <#assign hasError = false />
+<#assign entryClass=''>
+<#assign entryClass>position-relative <#list entry.CSSClass?split(' ') as laClass>${laClass!}</#list></#assign>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
+<#if list_responses??><#list list_responses as response><#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response.entry.error></#if></#list></#if>
+<#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
+<#assign helpMsg><#if entry.helpMessage?? && entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
 <#assign iterationNumber = entry_iteration_number?c >
-<#if getError( list_responses, entry )?? >
-    <#assign error = getError( list_responses, entry ) >
-    <#if error?? && error.isDisplayableError>
-        <#assign hasError = true />
-    </#if>
+<#if entry.fields??>
+<#assign addressField = getFieldValueByCode( entry, "address" )>
+<#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
+<#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
 </#if>
 <#if entry.mapProvider??>
-    <div class="form-group ${entry.mapProvider.key!} ${entry.CSSClass!}">
-        <label for="${idName}" class="form-label">${entry.title}<#if entry.mandatory><span class="main-danger-color" aria-hidden="true"> *</span></#if></label>
-        <#if list_responses?? && list_responses?has_content>
-            <#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse />
-            <#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse />
-            <#assign xValue = getResponseContainingTheFieldWithCode(list_responses, "X").toStringValueResponse />
-            <#assign yValue = getResponseContainingTheFieldWithCode(list_responses, "Y").toStringValueResponse />
-            <#assign geometryValue = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse />
-            <#if getError( list_responses, entry )?? >
-                <#assign error = getError( list_responses, entry ) >
-            </#if>
-        </#if>
-        <#if editModeValue == "" || editModeValue == "Address" || editModeValue == "Adresse" >
-            <input type="text" class="form-control form-geoloc <#if hasError> is-invalid</#if> address-autocomplete" name="${idName}_address" id="${idName}_address" value="${addressValue!}"<#if entry.mandatory> required</#if> />
-            <div id="labelAutocomplete"></div>
-        <#else>
-            <input type="hidden" name="${idName}_address" id="${idName}" value="${addressValue!}" <#if !entry.mandatory > required</#if> >
-        </#if>
-        <input type="hidden" name="${idName}_idAddress" id="${idName}_idAddress" value="${idAddressValue!}">
-        <input type="hidden" name="${idName}_x" id="${idName}_x" value="${xValue!}">
-        <input type="hidden" name="${idName}_y" id="${idName}_y" value="${yValue!}">
-        <input type="hidden" name="${idName}_geometry" id="${idName}_geometry" value="${geometryValue!}">
-        <#if hasError>
-            <div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
-        </#if>
-        <#if entry.helpMessage?exists&&entry.helpMessage!=''>
-            <small class="form-text text-muted">${entry.helpMessage}</small>
-        </#if>
-    </div>
+    <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' class=entryClass!  mandatory=entry.mandatory htmlRequired=false rows=2>
+    <#if list_responses?? && list_responses?has_content>
+        <#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse />
+        <#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse />
+        <#assign xValue = getResponseContainingTheFieldWithCode(list_responses, "X").toStringValueResponse />
+        <#assign yValue = getResponseContainingTheFieldWithCode(list_responses, "Y").toStringValueResponse />
+        <#assign geometryValue = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse />
+        <#if getError( list_responses, entry )?? ><#assign error = getError( list_responses, entry ) ></#if>
+    </#if>
+    <#if editModeValue == '' || editModeValue?starts_with('Address') || editModeValue?starts_with('Adresse')>
+        <@input class=inputClass name='${idName}_address' id='${idName}_address' value=addressValue! required=entry.mandatory! />
+        <@div id='labelAutocomplete'></@div>
+    <#else>
+        <input type="hidden" name="${idName}_address" id="${idName}"  value="${addressValue!}" <#if !entry.mandatory > required</#if> >
+    </#if>
+    <input type="hidden" name="${idName}_idAddress" id="${idName}_idAddress" value="${idAddressValue!}">
+    <input type="hidden" name="${idName}_x" id="${idName}_x" value="${xValue!}">
+    <input type="hidden" name="${idName}_y" id="${idName}_y" value="${yValue!}">
+    <input type="hidden" name="${idName}_geometry" id="${idName}_geometry" value="${geometryValue!}">
+    <#if hasError>
+        <@div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></@div>
+    </#if>
+    <#if entry.helpMessage?exists&&entry.helpMessage!=''><small class="form-text text-muted">${entry.helpMessage}</small></#if>
     <#if entry.mapProvider?has_content>
-        <p hidden>${entry.mapProvider.key!}</p>
+        <@p params='hidden'>${entry.mapProvider.key!}</@p>
         <#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
             <#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter >
         </#if>
@@ -58,101 +51,91 @@
             <#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam >
         </#if>
         <#include entry.mapProvider.htmlCode />
+    </#if>
+    </@formGroup>
+    <#if entry.mapProvider?has_content>
         <#if entry.mapProvider.key='wsaddress' || entry.mapProvider.key='openstreetmap'>
-            <#include "/skin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
+           <#include "/admin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
             <@setupSuggestPOI />
-            <script type="text/javascript">
-                $(window).on('load', function () {
-                    let iterationNumber = '${entry_iteration_number}';
-                    if (document.getElementById('number_iteration_geolocation') == null) {
-                        let numberAddressInput = document.createElement('input');
-                        numberAddressInput.type = 'hidden';
-                        numberAddressInput.id = 'number_iteration_geolocation';
-                        numberAddressInput.name = 'number_iteration_geolocation';
-                        document.getElementById('form-validate').appendChild(numberAddressInput);
-                        document.getElementById('number_iteration_geolocation').value = iterationNumber;
-                    } else {
-                        document.getElementById('number_iteration_geolocation').value = iterationNumber;
-                    }
-                    let currStep = $('#step-content'),
-                        hasCheckAdr = currStep.find('.checkaddress').length;
-                    if (hasCheckAdr > 0) {
-                        currStep.addClass('checkadress');
-                    }
+            <script>
+            function isInvalidAdress( adr ){
+                // Show error message
+                adr.addClass('is-invalid');
+                if (!adr.next('.invalid-feedback').length) {
+                    adr.after('<div class="invalid-feedback">#i18n{forms.message.geolocation.checkAdress}</div>');
+                }
+                
+                // Scroll to the input field
+                $('html, body').animate({
+                    scrollTop: adr.offset().top - 100
+                }, 200);
+            }
 
-                    var jAdresse = $('#${idName}_address');
-                    var jAdresseId = $('#${idName}_idAddress');
-                    var jAdresseX = $('#${idName}_x');
-                    var jAdresseY = $('#${idName}_y');
-                    var jAdresseGeometry = $('#${idName}_geometry');
+            $(window).on('load', function () {
+                let iterationNumber = '${entry_iteration_number}';
+                if (document.getElementById('number_iteration_geolocation') == null) {
+                    let numberAddressInput = document.createElement('input');
+                    numberAddressInput.type = 'hidden';
+                    numberAddressInput.id = 'number_iteration_geolocation';
+                    numberAddressInput.name = 'number_iteration_geolocation';
+                    document.getElementById('form-validate').appendChild(numberAddressInput);
+                    document.getElementById('number_iteration_geolocation').value = iterationNumber;
+                } else {
+                    document.getElementById('number_iteration_geolocation').value = iterationNumber;
+                }
 
-                    jAdresse.suggestPOI();
-                    jAdresse.bind($.suggestPOI.EVT_SELECT, function (event) {
-                        event.preventDefault();
+                let currStep = $('.step-current .step-content'),
+                    hasCheckAdr = currStep.find('input.checkaddress').length;
+                    btnSendStep = currStep.find('[name="action_doSaveStep"]');
+
+                var jAdresse = $('#${idName}_address');
+                var jAdresseId = $('#${idName}_idAddress');
+                var jAdresseX = $('#${idName}_x');
+                var jAdresseY = $('#${idName}_y');
+                var jAdresseGeometry = $('#${idName}_geometry');
+
+                jAdresse.suggestPOI();
+                jAdresse.bind($.suggestPOI.EVT_SELECT, function( event ){
+                    event.preventDefault();
+                    if( event.poi != null){
                         jAdresseGeometry.val(event.poi.type);
                         jAdresseY.val(event.poi.y);
                         jAdresseX.val(event.poi.x);
                         jAdresseId.val(event.poi.id);
                         jAdresse.addClass('wssuggest');
                         jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
-                    });
-
-                    /* Remove unused field with wsadress */
-                    $('#${entry.idEntry}_address_results').remove();
-
-                    /* Check if an entry has been selected in the data list and prevent from validating step */
-                    var wsv = sessionStorage.getItem('wsvalidated_${entry.idEntry}');
-                    if (wsv === 'done') {
-                        jAdresse.addClass('wssuggest');
-                        jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
-                        $('[name="action_doSaveStep"]').removeAttr('disabled');
-                        $('[name="action_doSaveResponse"]').removeAttr('disabled');
-                        $('[name="action_formResponseSummary"]').removeAttr('disabled');
-                    }
-
-                    if (hasCheckAdr > 0) {
-                        jAdresse.on('focus', (e) => {
-                            if ($(e.target).hasClass('wsvalidated')) {
-                                $(e.target).addClass('wssuggest');
-                            }
-                        });
-
-                        jAdresse.on('keyup', (e) => {
-                            if ($(e.target).hasClass('wssuggest')) {
-                                $(e.target).removeClass('wssuggest').removeClass('wsvalidated');
-                                $('[name="action_doSaveStep"]').attr('disabled', 'disabled');
-                                $('[name="action_doSaveResponse"]').attr('disabled', 'disabled');
-                                $('[name="action_formResponseSummary"]').attr('disabled', 'disabled');
-                            }
-                        });
-
-                        jAdresse.on('blur', (e) => {
-                            if ($(e.target).val().trim() === '') {
-                                $(e.target).removeClass('is-invalid').next('.invalid-feedback').remove();
-                                $('[name="action_doSaveStep"]').removeAttr('disabled');
-                                $('[name="action_doSaveResponse"]').removeAttr('disabled');
-                                $('[name="action_formResponseSummary"]').removeAttr('disabled');
-                                return;
-                            }
-
-                            if (!$(e.target).hasClass('wssuggest')) {
-                                $(e.target).addClass('is-invalid');
-                                $(e.target).next('.invalid-feedback').length === 0 ? $(e.target).after('<div class="invalid-feedback">#i18n{forms.message.geolocation.checkAdress}</div>') : '';
-                                $('[name="action_doSaveStep"]').attr('disabled', 'disabled');
-                                $('[name="action_doSaveResponse"]').attr('disabled', 'disabled');
-                                $('[name="action_formResponseSummary"]').attr('disabled', 'disabled');
-                                $(e.target).focus();
-                            } else {
-                                $(e.target).addClass('wsvalidated').removeClass('wssuggest').removeClass('is-invalid').next('.invalid-feedback').remove();
-                                $('[name="action_doSaveStep"]').removeAttr('disabled');
-                                $('[name="action_doSaveResponse"]').removeAttr('disabled');
-                                $('[name="action_formResponseSummary"]').removeAttr('disabled');
-                                sessionStorage.setItem('wsvalidated_${entry.idEntry}', 'done');
-                            }
-                        });
                     }
                 });
+
+                if ( hasCheckAdr  ){
+                    // If the value has been already set
+                    const addrInputValue = '${addressValue!}';
+                    // Reset address validation state when user changes the input
+                    jAdresse.on('input', function() {
+                        jAdresse.removeClass('wssuggest');
+                        jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
+                    });
+                    
+                    // Reset address validation state when user changes the input
+                    jAdresse.on('blur', function(e) {
+                        if ( jAdresse.val() && !jAdresse.hasClass('wssuggest') && (  jAdresse.val().trim() !== '')) {
+                            e.preventDefault();
+                            isInvalidAdress( jAdresse )
+                        }
+                    });
+
+                    // Validate before submitting the form
+                    btnSendStep.on('click', function(e) {
+                        // Check if address has a value but wasn't selected from autocomplete
+                        if ( jAdresse.val() && !jAdresse.hasClass('wssuggest') && addrInputValue != jAdresse.val()  && (  jAdresse.val().trim() !== '')) {
+                            e.preventDefault();
+                            isInvalidAdress( jAdresse )
+                        }
+                    });
+                }
+            });
             </script>
         </#if>
-    </#if>
+	</#if>
 </#if>
+<link rel="stylesheet" href="themes/admin/shared/plugins/forms/css/geoloc.css">

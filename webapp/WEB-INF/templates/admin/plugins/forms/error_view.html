@@ -1,3 +1,21 @@
-<h3>${formTitle!}</h3>
-<@messages errors=errors />
-<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp' title='#i18n{forms.form.returnPage}' size='sm' />
+<#assign errorTitle='#i18n{forms.multiviewForms.view_record_history.information}' />
+<#assign errorColor = 'info' />
+<#assign errorIcon = 'exclamation-circle' />
+<#if errors?? && errors?size gt 0>
+<#assign errorTitle = errors[0].message! />
+<#assign errorColor = 'danger' />
+<#assign errorIcon = 'alert-triangle' />
+</#if>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title=errorTitle! />
+        <@box>
+            <@row>
+                <@columns class='d-flex flex-column justify-content-center align-items-center py-5' >
+                    <@alert title=errorTitle titleLevel='h3' color=errorColor iconTitle=errorIcon class='w-25 my-5' dismissible=false />
+                    <@p class='text-center'><@aButton href='jsp/admin/plugins/forms/ManageForms.jsp' title='#i18n{forms.form.returnPage}' /></@p>
+                </@columns>
+            </@row> 
+        </@box>
+    </@pageColumn>
+</@pageContainer>

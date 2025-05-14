@@ -1,97 +1,39 @@
-
 <#include "all_entry_commons.html" />
-<#include "/admin/util/editor/editor.html" />
-
-${breadcrumb_template}
-
-<@row>
-	<@columns>
-		<@box color='primary'>
-			<@boxHeader title='#i18n{forms.modifyEntry.titleGroup} : "${form.title}"' />
-			<@boxBody>
-				<@tform action="${action}">
-					<@fieldSet>
-	                    <@input name="id_entry" value="${entry.idEntry}" type="hidden" />
-	                    <@input name="id_step" value="${step.id}" type="hidden" />
-	                    <@input name="id_question" value="${question.id}" type="hidden" />
-						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' mandatory=true>
-							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
-						</@formGroup>
-                        <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-                            <@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
-                        </@formGroup>
-						<#assign iterationAddingLabel = getFieldValue(entry,"iteration_adding_label")>
-						<#assign nbIteration = getFieldValue(entry,"nb_iterations")>
-						<#assign nbIteration_minimum = getFieldValue(entry,"nb_iterations_minimum")>
-						<#assign isIterable = (nbIteration?has_content && nbIteration?number != -1)>
-						<#if isIterable>
-							<#assign checked = true />
-							<#assign style = '' />
-						<#else>
-							<#assign checked = false />
-							<#assign style = 'style="display:none;"' />
-						</#if>
-						<@formGroup labelFor='is_iterable' labelKey='#i18n{forms.createEntry.labelIteration}'>
-							<@checkBox orientation='switch' id='checkbox_is_iterable' name='is_iterable' value='true' checked=checked params='onclick="javascript:displayHideIteration();"' />
-						</@formGroup>
-						<div id="iterationNumber" class="form-group" ${style}>
-							<label class="col-xs-12 col-sm-3 control-label" for="nb_iterations">
-								#i18n{forms.createEntry.labelNbIteration}
-								<@icon style='asterisk' />
-							</label>
-							<@columns sm=9 md=6 lg=6>
-								<@input type='text' name='nb_iterations' value='${nbIteration}' maxlength=5 />
-								<span id="nb_iterations_help" class="help-block">
-									#i18n{forms.createEntry.labelHelpNbIteration}
-								</span>
-							</@columns>
-						</div>
-						<div id="iterationNumberMinimum" class="form-group" ${style}>
-							<label class="col-xs-12 col-sm-3 control-label" for="nb_iterations_minimum">
-								#i18n{forms.createEntry.labelNbMinimumIteration}
-								<@icon style='asterisk' />
-							</label>
-							<@columns sm=9 md=6 lg=6>
-								<@input type='text' name='nb_iterations_minimum' value='${nbIteration_minimum}' maxlength=5 />
-								<span id="nb_iterations_help" class="help-block">
-									#i18n{forms.createEntry.labelHelpNbMinimumIteration}
-								</span>
-							</@columns>
-						</div>
-						<@formGroup id='iterationAddingLabel' labelFor='iteration_adding_label' labelKey='#i18n{forms.createEntry.labelIterationAddingLabel}' helpKey='#i18n{forms.createEntry.labelHelpIterationAddingLabel}' params=style >
-							<@input type='text' name='iteration_adding_label' value='${iterationAddingLabel}' maxlength=255 />
-						</@formGroup>
-                        <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}'>
-                            <@checkBox orientation='switch' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
-                        </@formGroup>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' >
-							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
-						</@formGroup>
-						<@formGroup>
-							<@button type='submit' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' showTitleXs=false color='btn-primary' size='' />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
-						</@formGroup>
-					</@fieldSet>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
-<@initEditor />
-<script type="text/javascript">
-	function displayHideIteration( )
-	{
-		if ( document.getElementById("checkbox_is_iterable").checked )
-		{
-			document.getElementById("iterationNumber").style.display = "block";
-			document.getElementById("iterationAddingLabel").style.display = "block";
-			document.getElementById("iterationNumberMinimum").style.display = "block";
-		}
-		else
-		{
-			document.getElementById("iterationNumber").style.display = "none";
-			document.getElementById("iterationAddingLabel").style.display = "none";
-			document.getElementById("iterationNumberMinimum").style.display = "none";
-		}
+<@editFields required=false helpMessage=false comments=false >
+<#assign iterationAddingLabel = getFieldValue(entry,"iteration_adding_label")>
+<#assign nbIteration = getFieldValue(entry,"nb_iterations")>
+<#assign nbIteration_minimum = getFieldValue(entry,"nb_iterations_minimum")>
+<#assign isIterable = (nbIteration?has_content && nbIteration?number != -1)>
+<#if isIterable>
+<#assign checked = true />
+<#assign style = '' />
+<#else>
+<#assign checked = false />
+<#assign style = 'style="display:none;"' />
+</#if>
+<@formGroup labelFor='is_iterable' labelKey='#i18n{forms.create_entry.labelIteration}' rows=2>
+	<@checkBox orientation='switch' id='checkbox_is_iterable' name='is_iterable' value='true' checked=checked params='onclick="javascript:displayHideIteration();"' />
+</@formGroup>
+<@formGroup labelFor='nb_iterations' labelKey='#i18n{forms.create_entry.labelNbIteration}' helpKey='#i18n{forms.create_entry.labelHelpNbIteration' id='iterationNumber' mandatory=true params=style rows=2>
+	<@input type='text' name='nb_iterations' value='${nbIteration}' maxlength=5 />
+</@formGroup>
+<@formGroup labelFor='nb_iterations' labelKey='#i18n{forms.create_entry.labelNbMinimumIteration}' helpKey='#i18n{forms.create_entry.labelHelpNbMinimumIteration' id='iterationNumberMinimum' mandatory=true params=style rows=2>
+	<@input type='text' name='nb_iterations_minimum' value='${nbIteration_minimum}' maxlength=5 />
+</@formGroup>
+<@formGroup id='iterationAddingLabel' labelFor='iteration_adding_label' labelKey='#i18n{forms.create_entry.labelIterationAddingLabel}' helpKey='#i18n{forms.create_entry.labelHelpIterationAddingLabel}' params=style  rows=2>
+	<@input type='text' name='iteration_adding_label' value='${iterationAddingLabel}' maxlength=255 />
+</@formGroup>
+</@editFields>                        
+<script>
+function displayHideIteration(){
+	if ( document.getElementById("checkbox_is_iterable").checked ){
+		document.getElementById("iterationNumber").style.display = "block";
+		document.getElementById("iterationAddingLabel").style.display = "block";
+		document.getElementById("iterationNumberMinimum").style.display = "block";
+	} else 	{
+		document.getElementById("iterationNumber").style.display = "none";
+		document.getElementById("iterationAddingLabel").style.display = "none";
+		document.getElementById("iterationNumberMinimum").style.display = "none";
 	}
+}
 </script>

@@ -4,10 +4,10 @@ ${breadcrumb_template}
 <@row>
     <@columns>
         <@box color='primary'>
-            <@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
+            <@boxHeader title='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' />
             <@boxBody>
                 <@tform action='${action}' method='post'>
-                    <@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+                    <@fieldSet legend='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' hideLegend=['all']>
                         <@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
                         <#if entry.fieldDepend?exists>
                             <@input type='hidden' name='id_field' value='${entry.fieldDepend.idField}' />
@@ -17,29 +17,29 @@ ${breadcrumb_template}
                         <#if entry.fieldDepend?exists>
                             <@input type='hidden' name='id_field' value='${entry.fieldDepend.idField}' />
                         </#if>
-						<@formGroup labelKey='#i18n{forms.createEntry.labelType}'>
+						<@formGroup labelKey='#i18n{forms.create_entry.labelType}'>
 							<@staticText>
 								<@tag color='info'>
 									${entry.entryType.title}
 								</@tag>
 							</@staticText>
 						</@formGroup>
-                        <@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' mandatory=true helpKey='#i18n{forms.createEntry.labelTitleComment}'>
+                        <@formGroup labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' mandatory=true helpKey='#i18n{forms.create_entry.labelTitleComment}'>
                             <@input type='text' name='title' id='title' value='' maxlength=255 />
                         </@formGroup>
-                        <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                        <@formGroup labelFor='entry_code' labelKey='#i18n{forms.create_entry.labelCode}' helpKey='#i18n{forms.create_entry.labelCodeComment}'>
                             <@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
                         </@formGroup>
-                        <@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' helpKey='#i18n{forms.createEntry.labelMandatoryCommentForEntryTypeSession}'>
+                        <@formGroup labelFor='mandatory' labelKey='#i18n{forms.create_entry.labelMandatory}' helpKey='#i18n{forms.create_entry.labelMandatoryCommentForEntryTypeSession}'>
                             <@checkBox name='mandatory' id='mandatory' value='1' />
                         </@formGroup>
-                        <@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelAttributeName}' mandatory=true helpKey='#i18n{forms.createEntry.labelAttributeNameComment}'>
+                        <@formGroup labelFor='value' labelKey='#i18n{forms.create_entry.labelAttributeName}' mandatory=true helpKey='#i18n{forms.create_entry.labelAttributeNameComment}'>
                             <@input type='text' name='value' id='value' value='' maxlength=255 />
                         </@formGroup>
                         <@formGroup>
                             <@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' />
-                            <@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.createEntry.buttonApplyAndManageVerification}' />
-                            <@button type='submit' name='view_manageQuestions' value='cancel' buttonIcon='times' title='#i18n{forms.createEntry.buttonCancel}' cancel=true />
+                            <@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.create_entry.buttonApplyAndManageVerification}' />
+                            <@button type='submit' name='view_manageQuestions' value='cancel' buttonIcon='times' title='#i18n{forms.create_entry.buttonCancel}' cancel=true />
                         </@formGroup>
                     </@fieldSet>
                 </@tform>

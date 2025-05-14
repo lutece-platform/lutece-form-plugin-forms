@@ -4,66 +4,66 @@ ${breadcrumb_template}
 <@row>
 	<@columns>
 		<@box color='primary'>
-			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
+			<@boxHeader title='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
 				<@tform action="${action}">
-					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+					<@fieldSet legend='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<#if entry.fieldDepend?exists>
 							<@input type='hidden' name='id_field' value='${entry.fieldDepend.idField}' />
 						</#if>
 						<@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
 						<@input type='hidden' name='id_step' value='${step.id!"0"}' />
-						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+						<@formGroup labelFor='type' labelKey='#i18n{forms.create_entry.labelType}'>
 							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
 						</@formGroup>
 						<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
 							<@input type='text' name='title' id='title' inputSize=80 value='' maxlength=255 />
 						</@formGroup>
-						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.create_entry.labelCode}' helpKey='#i18n{forms.create_entry.labelCodeComment}'>
 							<@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
 						</@formGroup>
-						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.create_entry.labelHelpMessage}' helpKey='#i18n{forms.create_entry.labelHelpMessageComment}'>
 							<@input type='textarea' name='help_message' id='help_message' rows=2></@input>
 						</@formGroup>
-						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.create_entry.labelComment}'>
 							<@input type='textarea' name='comment' id='comment' rows=2></@input>
 						</@formGroup>
-						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelType} : ${entry.entryType.title}'>
-							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
+						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.create_entry.labelType} : ${entry.entryType.title}'>
+							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.create_entry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
 						</@formGroup>
-						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.createEntry.labelFileMaxSize}' mandatory=true>
+						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.create_entry.labelFileMaxSize}' mandatory=true>
 							<@input type='text' name='file_max_size' id='file_max_size' value=getName('file_max_size',list_param_default_values) />
 						</@formGroup>
-						<@formGroup labelFor='max_files' labelKey='#i18n{forms.createEntry.labelMaxFiles}' mandatory=true>
+						<@formGroup labelFor='max_files' labelKey='#i18n{forms.create_entry.labelMaxFiles}' mandatory=true>
 							<@input type='text' name='max_files' id='max_files' value=getName('max_files',list_param_default_values) maxlength=2 />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='export_binary' labelKey='#i18n{forms.createEntry.labelExportBinary}' labelFor='export_binary' labelKey='#i18n{forms.createEntry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' />
-							<@tag color='warning'>#i18n{forms.createEntry.labelExportBinaryWarning}</@tag>
+							<@checkBox orientation='switch' labelFor='export_binary' labelKey='#i18n{forms.create_entry.labelExportBinary}' labelFor='export_binary' labelKey='#i18n{forms.create_entry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' />
+							<@tag color='warning'>#i18n{forms.create_entry.labelExportBinaryWarning}</@tag>
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
+							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
 						</@formGroup>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.create_entry.labelCSSClass}' helpKey='#i18n{forms.create_entry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
-						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
+						<@formGroup helpKey='#i18n{forms.create_entry.labelResponsesIndexedComment}'>
+							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
+							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
 						</@formGroup>
-						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.create_entry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
 						</@formGroup>
-						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
-							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' />
+						<@formGroup labelFor='disabled' helpKey='#i18n{forms.create_entry.labelDisableQuestionHelp}'>
+							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1' />
 						</@formGroup>
 						<@formGroup>
 							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
-							<@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.creatyEntry.buttonApply}' hideTitle=['xs'] />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+							<@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.create_entry.buttonApply}' hideTitle=['xs'] />
+							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
 						</@formGroup>
 					</@fieldSet>
                 </@tform>

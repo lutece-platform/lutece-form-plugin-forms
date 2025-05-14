@@ -1,12 +1,18 @@
-<@row>
-	<@columns>
-		<@box>
-			<@boxHeader id='multiviewFormsHeader' title='#i18n{forms.multiviewForms.boxTitle}' skipHeader=true />
-			<@boxBody>
-				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='flex' class='flex-wrap gap-3 mb-3'>
+<@pageContainer params='data-feature="#i18n{forms.adminFeature.manageForms.name}"' >
+    <@pageColumn>
+		<@pageHeader id='multiviewFormsHeader' title='#i18n{forms.multiviewForms.boxTitle}' />
+		<@formBreadCrumb>
+			<@breadcrumbItem>#i18n{forms.multiviewForms.boxTitle}</@breadcrumbItem>
+		</@formBreadCrumb>
+		<@row>
+			<@columns xs=12 md=2  class='mt-2'>
+				<@messages errors=errors warnings=warnings />
+				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='flex' class='gap-2 flex-column'>
 					<#include "includes/include_manage_multiview_forms_header.html">
 				</@tform>
-				<@tabs class='mt-3'>
+			</@columns>
+			<@columns xs=12 md=10>
+				<@tabs>
 					<@tabList>
 						<#list form_panel_list as form_panel>
 							<#if form_panel.template??>
@@ -14,28 +20,101 @@
 							</#if>
 						</#list>
 					</@tabList>
-				</@tabs>
 				<#if table_template?has_content>
-					<@div id="multi-form-list">
+					<@div id='multi-form-list' class='p-3'>
 						${table_template}
 						<@paginationAdmin paginator=paginator combo=1 showcount=0 />
 					</@div>
 				<#else>
-					<@div id="multiview-no-forms">
-						<@card>
-							<h2 class="text-muted text-center">#i18n{forms.multiviewForms.noFormResponses}</h2>
-							<@img url='images/admin/skin/plugins/forms/multiview/no_form_responses.jpg' alt='#i18n{forms.multiviewForms.noFormResponses}' title='#i18n{forms.multiviewForms.noFormResponses}' params=' aria-hidden="true"' />	
-						</@card>
-					</@div>
+					<@empty title='#i18n{forms.multiviewForms.noFormResponses}' subtitle=' ' iconName='notes-off' />
 				</#if>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
-<script src="js/admin/plugins/forms/multiview/forms-multiview.js"></script>
+				</@tabs>
+			</@columns>
+		</@row>
+		<#if action_confirmation_message??>
+			<#assign contentConfirmation>${action_confirmation_message!}</#assign>
+			<@initToast>
+				<@addToast content=contentConfirmation class='bg-success text-white' />
+			</@initToast>
+		</#if>
+	</@pageColumn>
+</@pageContainer>
+<script src="themes/admin/shared/plugins/forms/js/multiview/forms-multiview.js"></script>
 <@dateFilterJs />
 <@scrollTopBtn />
 <@jsHeaderSort />
-<link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
-<script src="js/jquery/plugins/toastr/toastr.min.js"></script>
-<@toastr infos=infos warnings=warnings errors=errors clickUrl='jsp/admin/plugins/filegenerator/ManageMyFiles.jsp' />
+<#-- 
+<#if infos?has_content>
+<#list infos as info ><#assign msgInfo=info.message!></#list>
+<@initToast>
+	<@addToast content=msgInfo class='bg-info text-white' />
+</@initToast>
+</#if> 
+-->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	// Initialize the dropdown button
+	const formSelector = document.querySelector('.forms-filter #id_form')
+	formSelector.options[0].textContent = '#i18n{forms.filter.option.labelAllForms}';
+
+	if( document.getElementById("${filter_name!}_button") ){
+		document.getElementById("${filter_name!}_button").addEventListener('mousedown', () => {
+			setInputAndListener("${filter_name!}")
+		});
+	}
+
+	const filegenerator = 'jsp/admin/plugins/filegenerator/ManageMyFiles.jsp', btnExport = document.querySelector('#action_doExportResponses');
+	if (btnExport) {
+		btnExport.addEventListener('click', function (event) {
+			event.preventDefault();
+			const exportEl = document.querySelector('.forms-filter:has( #format_export');
+			if (exportEl) {
+				const p = document.createElement('p');
+				p.className = 'text-primary text-wrap mt-3'; // ms-auto pushes it to the right in Bootstrap 5
+				const a = document.createElement('a');
+				a.className = 'btn btn-outline-secondary';
+				a.target='_blank';
+				a.setAttribute('style','white-space:wrap;');
+				a.href = filegenerator;
+				a.textContent = '#i18n{forms.export.async.message}';
+				const i = document.createElement('i');
+				i.className = 'ti ti-external-link ms-2';
+				i.setAttribute('aria-hidden', 'true');
+				a.appendChild(i);
+				p.appendChild(a);
+				exportEl.appendChild(p);
+			}
+		});
+	}
+
+});
+
+function setInputAndListener(filterName) {
+	const checkboxes = document.getElementById(filterName + "_checkboxes_group").querySelectorAll('input[type=checkbox]');
+	let allChecked = true;
+	for (let i = 0; i < checkboxes.length; i++) {
+		let checkbox = checkboxes[i];
+		if (checkbox.name === filterName) {
+			if (i !== 0 && allChecked && !checkbox.checked) {
+				allChecked = false;
+				document.getElementById(filterName + "_select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.select_all}";
+
+			}
+			if (i === checkboxes.length - 1 && allChecked) {
+				checkboxes[0].value = "";
+				checkboxes[0].name = "";
+				document.getElementById(filterName + "_select_all_filters").innerText = "#i18n{forms.multiviewForms.form_filter.unselect_all}";
+			}
+			checkbox.addEventListener('change', function (ev) {
+				let form = ev.target.form;
+				if (ev.target.value === "") {
+					for (let i = 1; i < checkboxes.length; i++) {
+						checkboxes[i].checked = false;
+					}
+				}
+				form.submit();
+			});
+		}
+	}
+}
+</script>

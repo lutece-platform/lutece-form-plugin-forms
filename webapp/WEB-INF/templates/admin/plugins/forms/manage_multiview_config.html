@@ -9,19 +9,18 @@
 	</#if>
 	<#return false>
 </#function>
-<@row>
-	<@columns>
-		<@box color='primary'>
-			<@boxHeader title='${form.title!}' />
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='${form.title!}' />
+		<@box>
 			<@boxBody>
 				<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
-				<@formTabs tab="multiview" />
-				<@box>
+				<@formTabs tab='multiview'>
 					<@row>
 						<@columns sm=2 class='mt-5'>
-							<@tabList vertical=true>
-								<@tabLink id='multiview-1-tab' active=true href='#multiview-1' title='#i18n{forms.modify_form.multiview.config.display}' />
-								<@tabLink id='multiview-2-tab' href='#multiview-2' title='#i18n{forms.modify_form.multiview.config.filter}' />
+							<@tabList vertical=true class='nav-segmented nav-segmented-vertical'>
+								<@tabLink id='multiview-1-tab' tabIcon='settings-question' class='w-100' active=true href='#multiview-1' title='#i18n{forms.modify_form.multiview.config.display}' />
+								<@tabLink id='multiview-2-tab' tabIcon='filter-question' class='w-100' href='#multiview-2' title='#i18n{forms.modify_form.multiview.config.filter}' />
 							</@tabList>
 						</@columns>
 						<@columns sm=10>
@@ -34,54 +33,55 @@
 											<@tr>
 												<@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>
 												<@th params='data-field="title"'>#i18n{forms.manage_question_response.columnTitle}</@th>
-												<@th params='data-sortable="true" data-field="visibleGlobal"'>#i18n{forms.modify_question.labelDisplayMultiviewGlobal}</@th>
-												<@th params='data-sortable="true" data-field="visibleForm"'>#i18n{forms.modify_question.labelDisplayMultiviewFormSelected}</@th>
+												<@th class='w-25 text-wrap' params='data-sortable="true" data-field="visibleGlobal"'>#i18n{forms.modify_question.labelDisplayMultiviewGlobal}</@th>
+												<@th class='w-25 text-wrap' params='data-sortable="true" data-field="visibleForm"'>#i18n{forms.modify_question.labelDisplayMultiviewFormSelected}</@th>
 												<@th params='data-sortable="true" data-field="column"'>#i18n{forms.modify_question.labelColumnTitle}</@th>
 												<@th params='data-sortable="true" data-field="order"'>#i18n{forms.modify_question.labelColumnOrderTitle}</@th>
 											</@tr>
 											<@tableHeadBodySeparator />
 											<#list questionList as question>
+												<#assign stepTitle=question.step.title!?replace("- hidden","") />
 												<@tr>
-													<@td>${question.step.title!}</@td>
+													<@td>${stepTitle!}</@td>
 													<@td>${question.title!}</@td>
 													<@td>
 														<#if isQuestionTypeFileOrImg(question, nonDisplayableQuestionList)>
-										  					<@formGroup helpKey='#i18n{forms.modify_question.nonDisplayable.question.help}'>
-														    	<@checkBox disabled=true orientation='switch' labelFor='is_visible_multiview_global_${question.id}' name='is_visible_multiview_global_${question.id}' value='0' checked=false/>
+															<@formGroup helpKey='#i18n{forms.modify_question.nonDisplayable.question.help}'>
+																<@checkBox disabled=true orientation='switch' labelFor='is_visible_multiview_global_${question.id}' name='is_visible_multiview_global_${question.id}' value='0' checked=false/>
 															</@formGroup>
-										  				<#else>
-										  					<@formGroup>
-														    	<@checkBox orientation='switch' labelFor='is_visible_multiview_global_${question.id}' name='is_visible_multiview_global_${question.id}' value='1' checked=question.isVisibleMultiviewGlobal()/>
+														<#else>
+															<@formGroup>
+																<@checkBox orientation='switch' labelFor='is_visible_multiview_global_${question.id}' name='is_visible_multiview_global_${question.id}' value='1' checked=question.isVisibleMultiviewGlobal()/>
 															</@formGroup>
-										  				</#if>
+														</#if>
 													</@td>
 													<@td>
 														<#if isQuestionTypeFileOrImg(question, nonDisplayableQuestionList)>
 															<@formGroup helpKey='#i18n{forms.modify_question.nonDisplayable.question.help}'>
-														    	<@checkBox disabled=true orientation='switch' labelFor='is_visible_multiview_form_selected_${question.id}' name='is_visible_multiview_form_selected_${question.id}' value='0' checked=false />
+																<@checkBox disabled=true orientation='switch' labelFor='is_visible_multiview_form_selected_${question.id}' name='is_visible_multiview_form_selected_${question.id}' value='0' checked=false />
 															</@formGroup>
 														<#else>
 															<@formGroup>
-														    	<@checkBox orientation='switch' labelFor='is_visible_multiview_form_selected_${question.id}' name='is_visible_multiview_form_selected_${question.id}' value='1' checked=question.isVisibleMultiviewFormSelected() />
+																<@checkBox orientation='switch' labelFor='is_visible_multiview_form_selected_${question.id}' name='is_visible_multiview_form_selected_${question.id}' value='1' checked=question.isVisibleMultiviewFormSelected() />
 															</@formGroup>
 														</#if>
 													</@td>
 													<@td>
 														<@formGroup>
-													    	<@input type='text' name='column_title_${question.id}' value='${question.columnTitle!}' />
+															<@input type='text' name='column_title_${question.id}' value='${question.columnTitle!}' />
 														</@formGroup>
 													</@td>
 													<@td>
 														<@formGroup>
-													    	<@input type='number' name='multiview_column_order_${question.id}' min=0 value='${question.multiviewColumnOrder}' />
+															<@input type='number' name='multiview_column_order_${question.id}' min=0 value='${question.multiviewColumnOrder}' />
 														</@formGroup>
 													</@td>
 												</@tr>
 											</#list>
 										</@table>
-										<@formGroup rows=2>
+										<@bottomFormFixedButtons>
 											<@headerButton name='action_modifyVisibleQuestions' label='forms.modify_form.buttonValidate' />
-										</@formGroup>
+										</@bottomFormFixedButtons>
 									</@tform>
 								</@tabPanel>
 								<@tabPanel id='multiview-2'>
@@ -98,31 +98,31 @@
 											<@tableHeadBodySeparator />
 											<#list filterableQuestionList?sort_by('id') as question>
 												<@tr>
-													<@td>${question.step.title!}</@td>
+													<@td>${stepTitle!}</@td>
 													<@td>${question.title!}</@td>
 													<@td>
 														<@formGroup>
-				                							<@checkBox orientation='switch' name='is_filterable_multiview_global_${question.id}' id='is_filterable_multiview_global_${question.id}' value='${question.id}' checked=(question.isFiltrableMultiviewGlobal()!) />
-				            							</@formGroup>
+															<@checkBox orientation='switch' name='is_filterable_multiview_global_${question.id}' id='is_filterable_multiview_global_${question.id}' value='${question.id}' checked=(question.isFiltrableMultiviewGlobal()!) />
+														</@formGroup>
 													</@td>
 													<@td>
 														<@formGroup>
-				                							<@checkBox orientation='switch' name='is_filterable_multiview_form_selected_${question.id}' id='is_filterable_multiview_form_selected_${question.id}' value='${question.id}' checked=(question.isFiltrableMultiviewFormSelected()!) />
-				            							</@formGroup>
+															<@checkBox orientation='switch' name='is_filterable_multiview_form_selected_${question.id}' id='is_filterable_multiview_form_selected_${question.id}' value='${question.id}' checked=(question.isFiltrableMultiviewFormSelected()!) />
+														</@formGroup>
 													</@td>
 												</@tr>
 											</#list>
 										</@table>
-										<@formGroup rows=2>
+										<@bottomFormFixedButtons>
 											<@headerButton name='action_modifyFilterableQuestions' label='forms.modify_form.buttonValidate' />
-										</@formGroup>
+										</@bottomFormFixedButtons>
 									</@tform>
 								</@tabPanel>
 							</@tabContent>
 						</@columns>
 					</@row>
-				</@box>
+				</@formTabs>
 			</@boxBody>
 		</@box>
-	</@columns>
-</@row>
+	</@pageColumn>
+</@pageContainer>

@@ -4,10 +4,10 @@ ${breadcrumb_template}
 <@row>
 	<@columns>
 		<@box>
-			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}' />
+			<@boxHeader title='#i18n{forms.create_entry.titleQuestion} : "${form.title}" - #i18n{forms.create_entry.labelEntryType} : ${entry.entryType.title}' />
 			<@boxBody>
 				<@tform action="${action}">
-					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}' hideLegend=['all']>
+					<@fieldSet legend='#i18n{forms.create_entry.titleQuestion} : "${form.title}" - #i18n{forms.create_entry.labelEntryType} : ${entry.entryType.title}' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<#if entry.fieldDepend?exists>
 							<@input type='hidden' name='id_field' value='${entry.fieldDepend.idField}' />
@@ -15,31 +15,31 @@ ${breadcrumb_template}
 						<@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
 						<@input type='hidden' name='id_step' value='${step.id!"0"}' />
 						
-						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+						<@formGroup labelFor='type' labelKey='#i18n{forms.create_entry.labelType}'>
 							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
 						</@formGroup>
-						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' helpKey='#i18n{forms.create_entry.labelTitleComment}' mandatory=true>
 							<@input type='text' name='title' id='title' value='' maxlength=255 />
 						</@formGroup>
-						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.create_entry.labelCode}' helpKey='#i18n{forms.create_entry.labelCodeComment}'>
 							<@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
 						</@formGroup>
-						<@formGroup labelFor='prefix' labelKey='#i18n{forms.createEntry.labelPrefix}' helpKey='#i18n{forms.createEntry.labelPrefixComment}'>
+						<@formGroup labelFor='prefix' labelKey='#i18n{forms.create_entry.labelPrefix}' helpKey='#i18n{forms.create_entry.labelPrefixComment}'>
 							<@input type='text' name='prefix' id='prefix' value='' maxlength=255 />
 						</@formGroup>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.create_entry.labelCSSClass}' helpKey='#i18n{forms.create_entry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
-						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
+						<@formGroup helpKey='#i18n{forms.create_entry.labelResponsesIndexedComment}'>
+							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
 						</@formGroup>
-						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
-							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' />
+						<@formGroup labelFor='disabled' helpKey='#i18n{forms.create_entry.labelDisableQuestionHelp}'>
+							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1' />
 						</@formGroup>
 						<@formGroup>
 							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
-							<@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.creatyEntry.buttonApply}' hideTitle=['xs'] />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+							<@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.create_entry.buttonApply}' hideTitle=['xs'] />
+							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
 						</@formGroup>
 					</@fieldSet>
 				</@tform>

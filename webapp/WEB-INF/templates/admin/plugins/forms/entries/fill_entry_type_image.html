@@ -1,52 +1,56 @@
-<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
-<#if list_responses?? && list_responses?has_content>
-  <#list list_responses as response>
-    <#if response.file?? && response.file.title?? && response.file.title != ''>
-      <#if listFiles??>
-        <#assign listFiles = listFiles + [response.file] >
-      <#else>
-        <#assign listFiles = [response.file] >
-      </#if>
-    </#if>
-  </#list>
-</#if>
-<#if !listFiles??>
-  <#assign listFiles = ''>
-</#if>
+<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
+<#if !entry.onlyDisplayInBack || is_completeness_bo>
+<#assign cssClass='' >
+<#assign helpMsg='' >
+<#assign isDisabled=false >
+<#assign hasError = false />
+<#if list_responses?? && list_responses?has_content><#assign response_error = list_responses[0]><#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError><#assign hasError = true /><#assign error = response_error.entry.error><#assign cssClass='is-invalid' ></#if><#assign nbFiles=list_responses?size ></#if>
+<#assign entryClasses=cssClass>
+<#list entry.CSSClass?split(' ') as laClass><#assign entryClasses += laClass + ' ' ></#list>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
-<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-  <#assign helpKey = entry.helpMessage />
+<#assign nbMaxFiles = entry.getFieldByCode('max_files').value >
+<#assign maxFileSize = entry.getFieldByCode('file_max_size').value >
+<#assign fieldName=idName >
+<#if nbMaxFiles?number = 1><#assign isMultiple=false ><#else><#assign isMultiple=true ></#if>
+<#if list_responses?? && list_responses?has_content><#list list_responses as response><#if response.file?? && response.file.title?? && response.file.title != ''><#if listFiles??><#assign listFiles = listFiles + [response.file] ><#else><#assign listFiles = [response.file] ></#if></#if></#list></#if>
+<#if !listFiles??><#assign listFiles = ''></#if>
+<#if nbMaxFiles?number = listFiles?size><#assign isDisabled=true ></#if>
+<#if entry.helpMessage?exists&&entry.helpMessage!=''><#assign helpMsg=entry.helpMessage /></#if>
+<@addFileBOInput fieldName=fieldName handler=uploadHandler label=entry.title! image=true helpMsg=helpMsg cssClass=entryClasses submitBtnName='action_doSaveStep' multiple=isMultiple type='dropzone' disabled=isDisabled required=entry.mandatory hasError=hasError nbMaxFiles=nbMaxFiles nbFiles=nbFiles maxFileSize=maxFileSize >
+<@addBOUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles maxFiles=nbMaxFiles image=true />
+</@addFileBOInput>
 </#if>
-<@formGroup labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey=helpKey mandatory=entry.mandatory htmlRequired=false >
-    <#assign fieldName=idName >
-    <#assign cssClass=entry.CSSClass!'' >
-    <#if list_responses??>
-      <#list list_responses as response>
-        <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-          <#assign cssClass='error' >
-          <#break>
-        </#if>
-      </#list>
-    </#if>
-    <@addFileInput fieldName=fieldName handler=uploadHandler cssClass=cssClass multiple=true />
-    <div id="listUpload">
-      <@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles />
-    </div>
-    <#if list_responses?? && list_responses?has_content>
-      <#assign response_error = list_responses[0]>
-      <#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
-        <@alert color='danger'>
-          <#assign error = response_error.entry.error>
-          <#if error.mandatoryError>
-            #i18n{forms.message.mandatory.entry}
-          <#else>
-            ${error.errorMessage}
-          </#if>
-        </@alert>
-      </#if>
-    </#if>
-</@formGroup>
 <script>
-  /*HACK for firefox*/
-  $("#listUpload  button[type='submit']").attr("onclick","return false;");
+document.addEventListener('DOMContentLoaded', function() {
+	// Get all image labels
+	const imageLabels = document.querySelectorAll('.files-item-label.image');
+	// Process each label
+	imageLabels.forEach(label => {
+		const img = label.querySelector('img');
+		const link = label.querySelector('a.files-item-link');
+		
+		if (img && link) {
+			const fileUrl = link.getAttribute('href');
+			const fileType = link.getAttribute('data-type');
+			
+			// Load image via AJAX and convert to data URL
+			fetch(fileUrl)
+				.then(response => response.blob())
+				.then(blob => {
+				const reader = new FileReader();
+				reader.onload = function(e) {
+					// Set the image source to the data URL
+					img.src = e.target.result;
+					// Update data-img attribute
+					link.setAttribute('data-img', 'true');
+				};
+				reader.readAsDataURL(blob);
+				})
+				.catch(() => {
+					// Fallback in case of error
+					img.src = 'themes/shared/images/none.svg';
+				});
+		}
+	});
+});
 </script>

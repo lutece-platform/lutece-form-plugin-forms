@@ -1,76 +1,54 @@
-<@formBreadCrumb>
-	<li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
-	<li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
-	<li class="active">#i18n{forms.manage_controls.title.${control_type?lower_case}}</li></ul>
-</@formBreadCrumb>
-<@modalBody>
-	<#if condition_control_list?size gt 0>
-		<@table>
-			<thead>
-				<tr>
-					<@th sm=6>#i18n{forms.modify_control.labelStep}</@th>
-					<@th sm=1>#i18n{forms.modify_control.labelQuestion}</@th>
-					<@th sm=1>#i18n{forms.modify_control.labelValidator}</@th>
-					<@th sm=4>#i18n{forms.manageForm.columnActions}</@th>
-				</tr>
-			</thead>
-			<tbody>
-				<#list condition_control_list as condition_control>
-					<#assign validator = validatorManager.getValidator( condition_control.control.validatorName ) />
-					<tr>
-						<@td sm=6>${condition_control.targetStepTitle}</@td>
-						<@td sm=1>${condition_control.targetQuestionTitle}</@td>
-						<@td sm=1>${validator.validatorDisplayName}</@td>
-						<@td sm=4>
-							<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_control=${condition_control.control.id}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
-							<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${condition_control.control.id}&id_step=${id_step!}&id_rm_question=${condition_control.control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' params=' target="_top"' />
-						</@td>
-					</tr>
-				</#list>
-			</tbody>
-		</@table>
-		<@tform method='post' id='modifyLogicalOperator' action='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl'>
-			<@inputGroup>
-				<@select name='logical_operator' items=logicalOperators default_value='${logical_operator_label!}' />
-				<@inputGroupItem>
-					<@button type='submit' name='view_modifyLogicalOperator' value='validateLogicalOperator' hideTitle=['all'] buttonIcon='check'/>
-				</@inputGroupItem>
-			</@inputGroup>
-		</@tform>
-	<#else>    
-		<@alert color='warning'>
-			<@icon style='exclamation-triangle' /> #i18n{forms.manage_condition_control.labelNoConditionControl}
-		</@alert>
-	</#if>    
-	<@messages errors=errors />
-	<@messages infos=infos />
-</@modalBody>
-<@modalFooter>
+<@div class='d-flex justify-content-end mb-3'>
 	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_step=${step.id}&id_control_group=${id_control_group!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
-</@modalFooter>
-
+</@div>
+<#if condition_control_list?size gt 0>
+	<@table headBody=true>
+		<@tr>
+			<@th sm=6>#i18n{forms.modify_control.labelStep}</@th>
+			<@th sm=1>#i18n{forms.modify_control.labelQuestion}</@th>
+			<@th sm=1>#i18n{forms.modify_control.labelValidator}</@th>
+			<@th sm=4>#i18n{forms.manageForm.columnActions}</@th>
+		</@tr>
+		<@tableHeadBodySeparator />
+		<#list condition_control_list as condition_control>
+			<#assign validator = validatorManager.getValidator( condition_control.control.validatorName ) />
+			<@tr>
+				<@td sm=6>${condition_control.targetStepTitle}</@td>
+				<@td sm=1>${condition_control.targetQuestionTitle}</@td>
+				<@td sm=1>${validator.validatorDisplayName}</@td>
+				<@td sm=4>
+					<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_control=${condition_control.control.id}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
+					<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${condition_control.control.id}&id_step=${id_step!}&id_rm_question=${condition_control.control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' params=' target="_top"' />
+				</@td>
+			</@tr>
+		</#list>
+	</@table>
+	<@tform method='post' id='modifyLogicalOperator' action='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl'>
+	<@inputGroup>
+		<@select name='logical_operator' items=logicalOperators default_value='${logical_operator_label!}' />
+		<@inputGroupItem>
+			<@button type='submit' name='view_modifyLogicalOperator' value='validateLogicalOperator' hideTitle=['all'] buttonIcon='check'/>
+		</@inputGroupItem>
+	</@inputGroup>
+	</@tform>
+<#else>    
+	<@alert color='warning'>
+		<@icon style='exclamation-triangle' /> #i18n{forms.manage_condition_control.labelNoConditionControl}
+	</@alert>
+</#if>    
+<@messages errors=errors />
+<@messages infos=infos />
 <script>
-// Function to check if a webpage is in iFrame
-function isIniFrame() {
-	return window.self !== window.top ? true : false;
-}
-
-$( function() {
-    if ( isIniFrame() ){
-		$('header').remove();
-		$('#breadforms').remove();
-		$('footer').remove();
-		$('body').css( 'overflow', 'auto' ).css('margin', '15px');
-		$('.content-header').hide();
-		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
-		var modalTitle = "#i18n{forms.manage_controls.title.${control_type?lower_case}}";
-		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
-		window.parent.$("#transitionModal").find(".modal-title").text(modalTitle);
-    } else {
-        $('#pubModal .content-header').hide();
-        $('#pubModal #admin-wrapper').css( 'margin', '0' );
-        $('#pubModal header').hide();
-        $('#pubModal footer').hide();
-    }
+window.addEventListener('message', function(event) {
+	if (event.data === 'offcanvas') {
+		document.querySelector('#lutece-layout-wrapper').classList.add('d-none','bg-white');
+		if( document.querySelector('.lutece-header') ){ document.querySelector('.lutece-header').remove(); }
+		if( document.querySelector('.breadcrumb') ){ document.querySelector('.breadcrumb').remove(); }
+		if( document.querySelector('.page-header') ){ document.querySelector('.page-header').remove(); }
+		if( document.querySelector('#pageHeader') ){ document.querySelector('#pageHeader').remove(); }
+		if( document.querySelector('#feature-title') ){ document.querySelector('#feature-title').remove(); }
+		if( document.querySelector('.lutece-main-footer') ){  document.querySelector('.lutece-main-footer').remove(); }
+		document.querySelector('#lutece-layout-wrapper').classList.remove('d-none');
+	}
 });
 </script>

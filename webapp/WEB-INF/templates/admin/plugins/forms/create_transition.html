@@ -1,52 +1,11 @@
 <!-- title='#i18n{forms.create_transition.title}' -->
 <@tform method='post' id='create_transition' name='create_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
-	<@modalBody>
-		<@messages errors=errors />
-		<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
-		<@input type='hidden' id='fromStep' name='fromStep' value='${step.id}' />
-		<@formGroup labelFor='nextStep' labelKey='#i18n{forms.create_transition.labelNextStep}' helpKey='#i18n{forms.create_transition.labelNextStep.help}' mandatory=true rows=2>
-			<@select name='nextStep' items=availableSteps default_value='' />
-		</@formGroup>
-	</@modalBody>
-	<@modalFooter>
-		<@formsButton okAction='createTransition' viewAction='' rows=2 />
-	</@modalFooter>
+<@input type='hidden' id='token' name='token' value='${token}' />
+<@messages errors=errors />
+<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
+<@input type='hidden' id='fromStep' name='fromStep' value='${step.id}' />
+<@formGroup labelFor='nextStep' labelKey='#i18n{forms.create_transition.labelNextStep}' helpKey='#i18n{forms.create_transition.labelNextStep.help}' mandatory=true rows=2>
+	<@select name='nextStep' items=availableSteps default_value='' />
+</@formGroup>
+<@formsButton okAction='createTransition' viewAction='' rows=2 />
 </@tform>
-<script>
-// Function to check if a webpage is in iFrame
-function isIniFrame() {
- return window.self !== window.top ? true : false;
-}
-
-$( function() {
-    if ( isIniFrame() ){
-        window.top.$("#modalIframe");
-        $('body').css('background-color', 'white');
-        $('.skipnav').hide();
-		$('nav').hide();
-        $('.container-fluid').css( 'padding', '0' );
-        $('.modal-body').css( 'padding', '24px' );
-        $('main').css( 'margin', '0' );
-        $('header').hide();
-        $('footer').hide();
-		$('#breadforms').remove();
-		$('#transitionModal .content-header').hide();
-		$('#transitionModal #admin-wrapper').css( 'margin', '0' );
-		
-		var formAction = $('#create_transition'), btnAction = $('#action_createTransition');
-
-		btnAction.click( function(e){ 
-			formAction.submit( function(e){
-				formAction.attr('target','_top');
-				_this.unbind('submit').submit();
-			});
-		});
-    } else {
-        $('#transitionModal .content-header').hide();
-        $('#transitionModal #admin-wrapper').css( 'margin', '0' );
-        $('#transitionModal header').hide();
-        $('#transitionModal footer').hide();
-    }
-});
-
-</script>

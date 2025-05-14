@@ -1,24 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Export PDF formulaire ${form_title}</title>
+<title>#i18n{forms.export.pdf.name} ${form_title}</title>
 </head>
 <body>
-	<h1 style="font-size: 30px; text-align: center;">
-		${form_title}
-	</h1>
+	<h1 style="font-size: 30px; text-align: center;">${form_title}</h1>
 	<div id="form-response-summary" style="margin-bottom: 3em;">
 		<#if list_pdf_cell?has_content>
 			<#list list_pdf_cell as pdf_cell>
 				<#if pdf_cell.formResponseNumber gt 0 >
-					<h2 style="font-size: 18px; border-top: solid; border-top-width: thin;">
+					<h2 style="border-top: solid; border-top-width: thin;">
 						# : ${pdf_cell.formResponseNumber}
 					</h2>
 				</#if>
 				<#if pdf_cell.formResponseDate??>
-					<h2 style="font-size: 18px;">
-						Date : ${pdf_cell.formResponseDate}
-					</h2>
+					<h2>Date : ${pdf_cell.formResponseDate}</h2>
 				</#if>
 				<#if pdf_cell.step??>
 					<h3>${pdf_cell.step!}</h3>
@@ -34,6 +30,5 @@
 			</#list>
 		</#if>
 	</div>
-	<div class="panel-footer"></div>
 </body>
 </html>

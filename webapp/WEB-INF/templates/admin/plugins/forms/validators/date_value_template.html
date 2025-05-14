@@ -1,11 +1,9 @@
-<@formGroup labelKey='#i18n{${date_label_key}}' helpKey='#i18n{${date_help_key}}' rows=2 >
-	<@inputGroup>
-		<@inputGroupItem type='text'>
-			<@icon style='calendar' />
-		</@inputGroupItem>
-			<#if control_value?has_content>
-				<#assign date_value = control_value?datetime("yyyy-MM-dd HH:mm:ss")/>
-			</#if>
-		<@input type='date' name='value' id='date' value=date_value! />
-	</@inputGroup>
+<#if control_value?has_content><#assign date_value = control_value?datetime("yyyy-MM-dd HH:mm:ss")/></#if>
+<@formGroup labelKey='#i18n{${date_label_key}}' helpKey='#i18n{${date_help_key}}' >
+<@inputGroup>
+	<@inputGroupItem type='text'>
+		<@icon style='calendar' />
+	</@inputGroupItem>
+	<@input type='date' name='value' id='date' value=date_value! />
+</@inputGroup>
 </@formGroup>

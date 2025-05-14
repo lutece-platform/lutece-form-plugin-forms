@@ -9,10 +9,9 @@
 <#assign checked = false />
 <#if responseAgreement?? && responseAgreement.toStringValueResponse == "true"><#assign checked = true /></#if>
 <#assign style = 'inline' />
-
 <@div class="mb-3 row">
 	<@div class="col-12">
-		<@checkBox name="${name}" id="${name}_${fieldAgreement.idField}" value="${fieldAgreement.idField}" checked=checked orientation=style class="${entry.CSSClass!}<#if error?? > is-invalid</#if>" />
+		<@checkBox name="${name}" id="${name}_${fieldAgreement.idField}" value="${fieldAgreement.idField}" checked=true orientation=style class="${entry.CSSClass!}<#if error?? > is-invalid</#if>" />
 		<#assign fieldLink = getFieldByCode( entry, "link" ) >
 		<@link href='jsp/site/RunStandaloneApp.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}' params='onclick="javascript:openFormsTermsOfService(this.href); return false;"' target='_blank'>${fieldLink.value}</@link>
 		<#if error?? && error.isDisplayableError>

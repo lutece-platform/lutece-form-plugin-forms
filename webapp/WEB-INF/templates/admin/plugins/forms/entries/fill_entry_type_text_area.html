@@ -33,7 +33,7 @@
 </#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number ) />
 
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory  htmlRequired=false >
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory  htmlRequired=false  rows=2>
 	<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 	<@input type='textarea' name='${idName}' id='${idName}' cols=field_width?number rows=field_height?number class='${entry.CSSClass!}' richtext=richtext params=autocomplete placeHolder=placeholder>${responseContent}</@input>	
 </@formGroup>

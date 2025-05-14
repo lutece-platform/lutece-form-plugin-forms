@@ -1,56 +1,16 @@
 <!-- title='#i18n{forms.modify_transition.title}' -->
 <@tform method='post' id='modify_transition' name='modify_transition' action='jsp/admin/plugins/forms/ManageTransitions.jsp'>
-	<@modalBody>
-        <@messages errors=errors />
-        <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
-        <@input type='hidden' id='fromStep' name='fromStep' value='${step.id}' />
-        <@input type='hidden' id='id_transition' name='id_transition' value='${transition.id}' />
-        <@formGroup labelKey='#i18n{forms.modify_transition.labelNextStep}' helpKey='#i18n{forms.modify_transition.labelNextStep.help}' mandatory=true>
-            <@inputGroup>
-                <@select name='nextStep' items=availableSteps default_value='${transition.nextStep}' />
-                <@inputGroupItem>
-                    <@button type='submit' id='action_modifyTransition' name='action_modifyTransition' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' hideTitle=['all'] />
-                </@inputGroupItem>
-            </@inputGroup>
-        </@formGroup>
-	</@modalBody>
+<@messages errors=errors />
+<@input type='hidden' id='token' name='token' value='${token}' />
+<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
+<@input type='hidden' id='fromStep' name='fromStep' value='${step.id}' />
+<@input type='hidden' id='id_transition' name='id_transition' value='${transition.id}' />
+<@formGroup labelKey='#i18n{forms.modify_transition.labelNextStep}' helpKey='#i18n{forms.modify_transition.labelNextStep.help}' mandatory=true rows=2>
+    <@inputGroup>
+        <@select name='nextStep' items=availableSteps default_value='${transition.nextStep}' />
+        <@inputGroupItem>
+            <@button type='submit' id='action_modifyTransition' name='action_modifyTransition' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' hideTitle=['all'] />
+        </@inputGroupItem>
+    </@inputGroup>
+</@formGroup>
 </@tform>
-
-<script>
-// Function to check if a webpage is in iFrame
-function isIniFrame() {
-    return window.self !== window.top ? true : false;
-}
-
-$( function() {
-    if ( isIniFrame() ){
-	    //window.top.$("#modalIframe");
-        $('body').css('background-color', 'white').css( 'overflow', 'hidden' );
-		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
-        $('.skipnav').hide();
-		$('nav').hide();
-        $('#pubModal .content-header').hide();
-        $('.container-fluid').css( 'padding', '0px' );
-        $('.modal-body').css( 'padding', '24px' );
-        $('main').css( 'margin', '0' );
-        $('header').hide();
-        $('footer').hide();
-		$('#breadforms').remove();
-		
-		var formAction = $('#modify_transition'), btnAction = $('#action_modifyTransition');
-
-		btnAction.click( function(e){ 
-			formAction.submit( function(e){
-				formAction.attr('target','_top');
-				_this.unbind('submit').submit();
-			});
-		});
-
-    } else {
-        $('#pubModal .content-header').hide();
-        $('#pubModal #admin-wrapper').css( 'margin', '0' );
-        $('#pubModal header').hide();
-        $('#pubModal footer').hide();
-    }
-});
-</script>

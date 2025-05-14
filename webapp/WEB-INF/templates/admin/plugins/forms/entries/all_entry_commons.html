@@ -11,7 +11,7 @@ changeVisilityConfirmFieldTitle();
 </script>
 </#macro>
 <#macro refListSelect>
-<script type="text/javascript">
+<script>
 function changeVisibilityRefListSelect(){
     if( document.getElementById( "use_ref_list" ).checked ){
     	$('#use_ref_list_group').show();
@@ -25,7 +25,7 @@ changeVisibilityRefListSelect();
 </script>
 </#macro>
 <#macro anonymPattern>
-<script type="text/javascript">
+<script>
 function changeVisilityAnonymizePattern(){
     if( document.getElementById( "anonymizable" ).checked ){
     	$("#anonymize_pattern_group").show();
@@ -36,115 +36,243 @@ function changeVisilityAnonymizePattern(){
 changeVisilityAnonymizePattern();
 </script>
 </#macro>
-
 <#macro toDayDate>
-<script type="text/javascript">
-    function changeVisibilityDateValue(){
-        if( document.getElementById( "default_today_date" ).checked ){
-            $('#default_date_group').hide();
-        } else {
-            $('#default_date_group').show();
-        }
+<script>
+function changeVisibilityDateValue(){
+    if( document.getElementById( "default_today_date" ).checked ){
+        $('#default_date_group').hide();
+    } else {
+        $('#default_date_group').show();
     }
-    changeVisibilityDateValue();
+}
+changeVisibilityDateValue();
 </script>
 </#macro>
-
-<#--- MACRO formBox --->
-<#macro formBox entry stepid questionid title='' action='jsp/admin/plugins/forms/ManageQuestions.jsp' editable=true display=true rows=2>
-<@box>
-    <@boxBody>
-        <@tform action=action>
-            <@input type='hidden' name='id_entry' value='${entry.idEntry}' />
-            <@input type='hidden' name='id_step' value='${stepid}' />
-            <@input type='hidden' name='id_question' value='${questionid}' />
-            <@formGroup rows=rows>
-                <@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false color='btn-link' />
-                <@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false color='btn-link' />
-                <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' size='' showTitleXs=false  showTitleMd=false color='btn-link'/>
-            </@formGroup>
-            <@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}' rows=rows>
-                <@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
-            </@formGroup>
-            <@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true rows=rows>
-                <@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
-            </@formGroup>
-            <!-- Specific for the field-->
-            <#nested>
-            <!-- Specific for the field -->
-            <#assign showCklabel=false>
-            <#if rows!=2><#assign showCklabel=true></#if>
-            <@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' showLabel=showCklabel rows=rows>
-                <#if entry.mandatory>
-                    <#assign checked = true>
-                <#else>
-                    <#assign checked = false>
-                </#if>
-                <@checkBox orientation='switch' name='mandatory' value='1' checked=checked labelKey='#i18n{forms.createEntry.labelMandatory}' />
-            </@formGroup>
-            <@formGroup labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' showLabel=showCklabel rows=rows>
-                <@checkBox orientation='switch' name='only_display_in_back' id='only_display_in_back' value='1' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
-            </@formGroup>
-            <@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}' rows=rows>
-                <@input type='textarea' name='help_message' id='help_message' rows=rows>${entry.helpMessage}</@input>
-            </@formGroup>
-            <@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}' rows=rows>
-                <@input type='textarea' name='comment' id='comment' rows=rows>${entry.comment}</@input>
-            </@formGroup>
-            <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}' rows=rows>
-                <@input type='text' name='css_class' value='${entry.CSSClass!}' maxlength=255 />
-            </@formGroup>
-            <@formGroup labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-                <@checkBox orientation='switch' name='is_indexed' id='is_indexed' value='1' checked=true />
-            </@formGroup>
-            <@formGroup rows=rows>
-                <@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' size='' showTitleXs=false showTitleMd=false />
-                <@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' size='' showTitleXs=false showTitleMd=false />
-                <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' size='' showTitleXs=false  showTitleMd=false color='default'/>
-            </@formGroup>
-        </@tform>
-    </@boxBody>
-</@box>
-</#macro>
-<#--- MACRO optionBox --->
-<#macro optionBox questionid title='' action='jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true' >
-<@box color='primary'>
-    <@boxHeader title='#i18n{forms.createEntry.manageField.title}' boxTools=true>
-        <@tform class='form-inline pull-right' action='${action}'>
-            <@input type='hidden' name='id_question' value='${questionid}' />
-            <@button type='submit' buttonIcon='plus' name='view_createField' title='#i18n{forms.createEntry.manageField.buttonInsert}' color='btn-link' />
-        </@tform>
-    </@boxHeader>
-    <@boxBody>
-        <@table headBody=true id='list'>
-            <@tr> 
-                <@th>#i18n{forms.createEntry.manageField.rowTitle}</@th>
-                <@th>#i18n{forms.createEntry.manageField.rowValue}</@th>
-                <@th><@icon style='question-circle' title='#i18n{forms.createEntry.manageField.rowConditionalQuestion}' /></@th>
-                <@th>#i18n{forms.createEntry.manageField.rowActions}</@th>
-            </@tr>
-            <@tableHeadBodySeparator />
-            <#assign cpt=0>
-            <#list list as field>
-			<#assign cpt=cpt+1>
-			<@tr>
-				<@td>${field.title}</@td>
-				<@td>${field.value}</@td>
-                <@td><#if field.defaultValue><@icon style='check' class='text-success' title='#i18n{forms.createEntry.manageField.rowDefaultValue}' /></#if></@td>
-                <#nested>
-				<@td>                       
-                    <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' title='#i18n{portal.util.labelModify}' buttonIcon='pencil' hideTitle=['all'] size='sm' />
-                    <#if cpt!=1>
-                        <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all'] size='sm' />
-                    </#if> 
-                    <#if field_has_next>
-                        <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleMoveDown}' buttonIcon='chevron-down' hideTitle=['all'] size='sm' />
-                    </#if>
-                    <@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.createEntry.manageField.titleDelete}' buttonIcon='trash' hideTitle=['all'] color='danger' size='sm' />
-                </@td>
-			</@tr>
-			</#list> 
-		</@table>
-    </@boxBody>
-</@box>
+<#macro editFields options=false hasTitle=true required=true onlyInBack=true autocomplete=false datalist=[] comments=true helpMessage=true labelErrorMessage=false image=false editor=false confirm=false anonym=false exportable=false exportablePdf=false refList='' placeholder='' maxSize=0 defaultValue='' >
+<#if editor>
+<#include "/admin/util/editor/editor.html" />
+</#if>
+${breadcrumb_template}
+<@tform id='modifyEntryForm' action="${action}">
+<#assign xs=12 />
+<#assign md=6 />
+<#assign lg=6 />
+<#assign xl=6 />
+<#if options>
+	<#assign xs=12 />
+	<#assign md=4 />
+	<#assign lg=3 />
+	<#assign xl=3 />
+</#if>
+<@row>
+    <@columns xs=xs md=md lg=lg xl=xl>
+		<#assign fieldTitle>"${entry.title}" <@tag color='info'>${entry.entryType.title} </@tag></#assign>
+			<@box title=fieldTitle>
+				<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+					<@input type='hidden' name='id_type' value='${entry.entryType.idType!}' />
+					<#if entry.fieldDepend?exists><@input type='hidden' name='id_field' value='${entry.fieldDepend.idField!}' /></#if>
+					<@input type='hidden' name='id_entry' value='${entry.idEntry!}' />
+					<@input type='hidden' name='id_step' value='${step.id!}' />
+					<@input type='hidden' name='id_question' value='${question.id!}' />
+					<@input type='hidden' id='token' name='token' value='${token}' />
+					<@formGroup rows=2  labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' helpKey='#i18n{forms.create_entry.labelTitleComment}' mandatory=true>
+						<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+					</@formGroup>
+					<#if defaultValue !=''>
+						<@formGroup rows=2 labelFor='value' labelKey='#i18n{forms.create_entry.labelValueDefault}'>
+							<@input type='text' name='value' id='value' value='${config.value}' />
+						</@formGroup>
+					</#if>
+					<@formGroup rows=2 >
+						<@checkBox orientation='switch' labelFor='mandatory'labelKey='#i18n{forms.create_entry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory labelKey='#i18n{forms.create_entry.labelMandatory}' />
+					</@formGroup>
+					${question_modify_template!}
+					<#nested>
+					<#if maxSize !=0>
+						<@formGroup rows=2 labelFor='max_size_enter' labelKey='#i18n{forms.create_entry.labelMaxSizeEnter}'  class='w-25' >
+						<#if maxSize!=-1>
+							<@input type='number' name='max_size_enter' id='max_size_enter' value='${field_max_size?number}' min=0 />
+						<#else>
+							<@input type='number' name='max_size_enter' id='max_size_enter' value='' min=0 />
+						</#if>
+						</@formGroup>
+					</#if>
+					<#if refList!=''>
+					<@formGroup rows=2 >
+					<#if useRefListField.value?boolean>
+						<#assign checkedValue = true />
+						<#assign useRefListFieldId = useRefListField.title />
+					<#else>
+						<#assign checkedValue = false />
+						<#assign useRefListFieldId ="" />
+					</#if>
+						<@checkBox orientation='switch' labelFor='use_ref_list' labelKey='#i18n{forms.create_entry.labelUseRefList}' name='use_ref_list' id='use_ref_list' value='1' params='onchange="javascript:changeVisibilityRefListSelect();"' checked=checkedValue />
+					</@formGroup>
+					<@formGroup rows=2 labelFor='select_ref_list' id="use_ref_list_group" labelKey='#i18n{forms.create_entry.labelUseRefListSelect}' >
+						<@select name='select_ref_list' items=ref_list_select default_value=useRefListFieldId />
+					</@formGroup>
+					<@refListSelect />
+					</#if>
+					<#if helpMessage=true>
+					<@formGroup rows=2 labelFor='help_message' labelKey='#i18n{forms.create_entry.labelHelpMessage}' helpKey='#i18n{forms.create_entry.labelHelpMessageComment}'>
+						<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
+					</@formGroup>
+					</#if>
+					<#if labelErrorMessage>
+					<@formGroup rows=2 labelFor='errorMessage' labelKey='#i18n{forms.create_entry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.create_entry.labelMandatoryErrorMessageHelp}'>
+						<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
+					</@formGroup>
+					</#if>
+					
+				</@fieldSet>
+			</@box>
+		</@columns>	
+		<@columns xs=xs md=md lg=lg xl=xl>
+			<@box title=fieldTitle>
+				<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+					<#if placeholder !=''>
+					<@formGroup rows=2 labelFor='placeholder' labelKey='#i18n{forms.create_entry.labelPlaceholder}'>
+						<@input type='text' name='placeholder' id='placeholder' value=placeholder maxlength=100 />
+					</@formGroup>
+					</#if>
+					<@formGroup rows=2 labelFor='css_class' labelKey='#i18n{forms.create_entry.labelCSSClass}' helpKey='#i18n{forms.create_entry.labelCSSClassComment}'>
+						<@input type='text' name='css_class' value='${entry.CSSClass!}' maxlength=255 />
+					</@formGroup>
+					<#if datalist?size != 0>
+					<@formGroup rows=2 labelFor='autocomplete' labelKey='#i18n{forms.create_entry.labelAutocomplete}' helpKey='#i18n{forms.create_entry.labelHelpMessageAutocomplete}'>
+					<#assign field_autocomplete = getFieldByCode(entry, "autocomplete")!{}>
+						<@input type='text' name='autocomplete' id='autocomplete' value="${field_autocomplete.value?if_exists}" params=' list="autocompleteList"' />
+						<datalist id="autocompleteList"><#list datalist as opt><option value="${opt!}"></#list></datalist>
+					</@formGroup>
+					</#if>
+					<#if comments>
+					<@formGroup rows=2 labelFor='comment' labelKey='#i18n{forms.create_entry.labelComment}'>
+						<@input type='textarea' name='comment' id='comment' richtext=true rows=2>${entry.comment}</@input>
+					</@formGroup>
+					</#if>
+					<@formGroup rows=2 labelFor='entry_code' labelKey='#i18n{forms.create_entry.labelCode}' helpKey='#i18n{forms.create_entry.labelCodeComment}'>
+						<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+					</@formGroup>
+					<#if confirm>
+					<@formGroup rows=2 >
+						<#assign confirmFieldField=getFieldByCode( entry, "confirm_field")>
+						<#if confirmFieldField.value?boolean>
+							<#assign checkedValue = true />
+							<#assign confirmFieldTitle = confirmFieldField.title />
+						<#else>
+							<#assign checkedValue = false />
+							<#assign confirmFieldTitle ="" />
+						</#if>
+						<@checkBox orientation='switch' labelFor='confirm_field' labelKey='#i18n{forms.create_entry.labelConfirmField}' name='confirm_field' id='confirm_field' value='1' params='onchange="javascript:changeVisilityConfirmFieldTitle();"' checked=checkedValue />
+					</@formGroup>
+					<@formGroup rows=2 labelFor='confirm_field_title' id="confirm_field_title_group" labelKey='#i18n{forms.create_entry.labelConfirmFieldTitle}'>
+						<@input type='text' name='confirm_field_title' id='confirm_field_title' value='${confirmFieldTitle!}'  maxlength=255 />
+					</@formGroup>
+					</#if>
+					<#if image>
+						<@formGroup rows=2 labelFor='illustration_image' labelKey='#i18n{forms.create_entry.labelIllustrationPicture}' helpKey='#i18n{forms.create_entry.labelIllustrationPictureHelp}'>
+						<#if getFieldByCode( entry, "illustration_image")??>
+							<#assign illustration_image_entry=getFieldByCode( entry, "illustration_image")>
+							<#assign image_id = illustration_image_entry.value>
+							<#list fields_list_by_id_entries as key, value>
+								<#if key = illustration_image_entry.idField>
+									<#assign image_url = value>
+									<@input type='file' id='illustration_image${key!}' name='illustration_image' fileName='#i18n{forms.modifyEntry.downloadPicture}' fileURL='${image_url!\'\'}' showFileUrl=true showImage=true value=key />
+								</#if>
+							</#list>
+						<#else>
+							<@input type='file' id='illustration_image'  name='illustration_image' />
+						</#if>
+						</@formGroup>
+					</#if>
+					<#if anonym>
+					<@formGroup rows=2 >
+						<#assign anonymizable=getFieldByCode( entry, "anonymizable")>
+						<#if anonymizable.value?boolean>
+							<#assign checkedValue = true />
+							<#assign anonPattern = anonymizable.title />
+						<#else>
+							<#assign checkedValue = false />
+							<#assign anonPattern ="" />
+						</#if>
+						<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
+					</@formGroup>
+					<@formGroup rows=2 labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.create_entry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+						<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
+					</@formGroup>
+					</#if>
+					<@formGroup rows=2 >
+						<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1'  labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' checked=entry.onlyDisplayInBack />
+					</@formGroup>
+					<@formGroup rows=2 helpKey='#i18n{forms.create_entry.labelResponsesIndexedComment}'>
+						<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+					</@formGroup>
+					<#if entry.exportable>
+						<@input type='hidden' name='exportable' value='1' />
+					</#if>
+					<#if entry.exportablePdf>
+						<@input type='hidden' name='exportable_pdf' value='1' />
+					</#if>
+					<@formGroup rows=2 labelFor='disabled' helpKey='#i18n{forms.create_entry.labelDisableQuestionHelp}'>
+                    <@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1' checked=entry.disabled />
+					</@formGroup>
+					<@bottomFormFixedButtons>
+						<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='device-floppy' />
+						<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' />
+						<@button type='cancel' name='view_manageQuestions' buttonIcon='x' title='#i18n{forms.create_entry.buttonCancel}' color='default' cancel=true />
+					</@bottomFormFixedButtons>
+				</@fieldSet>
+			</@box>
+		</@columns>
+	<#if options>
+		<@columns xs=12 md=4 lg=6 xl=6>
+			<@box color='primary' id='manage-field-options'>
+				<#if useRefListField?? && useRefListField.value?boolean>
+					<@boxHeader title='#i18n{forms.create_entry.manageField.title}'></@boxHeader>
+					<@boxBody>#i18n{forms.create_entry.messageUseRefList}</@boxBody>
+				<#else>
+					<@boxHeader title='#i18n{forms.create_entry.manageField.title}'>
+						<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view_createField=&id_question=${question.id}" targetElement="#modify-entry" id="create-entry-${question.id}" hideTitle=['xs','sm','md','lg'] btnIcon="plus" btnTitle="#i18n{forms.createField.title}" btnColor="primary" position="end" title="#i18n{forms.createField.title}" size="auto"/>
+					</@boxHeader>
+					<@boxBody>
+						<@ul id='list' class='list-group'>
+							<#assign cpt=0>
+							<#list list as field>
+							<#if field.code == 'answer_choice'>
+								<#assign cpt=cpt+1>
+								<@li class='list-group-item d-flex justify-content-between'>
+								<@span>${field.title} > ${field.value}</@span>
+								<@btnToolbar>
+								<#if field.defaultValue><@tag color='success'><@icon style='check' title='#i18n{forms.create_entry.manageField.rowDefaultValue}' /></@tag></#if>
+									<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" targetElement="#modify-entry" id="modify-entry-${question.id}-${field.idField}"  btnIcon="pencil" btnTitle="#i18n{portal.util.labelModify}" btnColor="primary" position="end" title="#i18n{forms.modifyField.title} : \"${field.title}\"" size="auto"/>
+									<@btnGroup class='mx-1'>
+										<#if cpt!=1>
+											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all']  />
+										</#if> 
+										<#if field_has_next>
+											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveDown}' buttonIcon='chevron-down' hideTitle=['all']  />
+										</#if>
+									</@btnGroup>
+									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleDelete}' buttonIcon='trash' hideTitle=['all']  color='danger' />
+								</@btnToolbar>	
+								</@li>
+							</#if>
+							</#list> 
+						</@ul>
+					</@boxBody>
+				</#if>
+			</@box>
+		</@columns>
+	</#if>
+</@row>
+</@tform>
+<#if editor>
+<@initEditor />
+</#if>
+<#if confirm>
+<@confirmField />
+</#if>
+<#if anonym>
+<@anonymPattern />
+</#if>
 </#macro>

@@ -1,5 +1,3 @@
-<@formGroup labelKey='#i18n{forms.modify_control.labelValue}' helpKey='#i18n{forms.modify_control.labelValue.help}'  rows=2>
-	<@inputGroup>
-	    <@select name='value' items=refListValue default_value='${control_value!}' />
-	</@inputGroup>
+<@formGroup labelKey='#i18n{forms.modify_control.labelValue}' helpKey='#i18n{forms.modify_control.labelValue.help}' >
+    <@select class='form-select' name='value' items=refListValue default_value='${control_value!}' />
 </@formGroup>

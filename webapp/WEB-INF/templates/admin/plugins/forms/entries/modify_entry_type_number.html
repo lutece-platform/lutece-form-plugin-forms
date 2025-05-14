@@ -1,122 +1,12 @@
-
 <#include "all_entry_commons.html" />
-<#include "/admin/util/editor/editor.html" />
-
-${breadcrumb_template}
-
-<@row>
-	<@columns>
-		<@box>
-			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
-			<@boxBody>
-				<@tform id='form-number' action=action>
-					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
-						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
-						<@input type='hidden' name='id_step' value='${step.id}' />
-						<@input type='hidden' name='id_question' value='${question.id}' />
-						<@input type='hidden' name='width' id='width' value='0' />
-						<@formGroup labelKey='#i18n{forms.createEntry.labelType}'>
-							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
-						</@formGroup>
-						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
-							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
-						</@formGroup>
-						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
-						</@formGroup>
-						<#if entry.fields?? && entry.fields?has_content>
-							<#assign suffix = getFieldValueByCode( entry, 'suffix') >
-							<@formGroup labelFor='suffix' labelKey='#i18n{forms.createEntry.labelSuffix}' helpKey='#i18n{forms.createEntry.labelSuffixComment}'>
-								<@input type='text' name='suffix' value=suffix maxlength=255 />
-							</@formGroup>
-						</#if>
-						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}'>
-							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
-						</@formGroup>
-						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
-							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
-						</@formGroup>
-						<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-						<@formGroup labelFor='placeholder' labelKey='#i18n{forms.createEntry.labelPlaceholder}'>
-							<@input type='text' name='placeholder' id='placeholder' value=placeholder maxlength=100 />
-						</@formGroup>
-						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.createEntry.labelAutocomplete}' helpKey='#i18n{forms.createEntry.labelHelpMessageAutocomplete}'>
-						<#assign field_autocomplete = getFieldByCode(entry, "autocomplete")!{}>
-						<@input type='text' name='autocomplete' id='autocomplete' value="${field_autocomplete.value?if_exists}" params=' list="autocompleteList"' />
-							<datalist id="autocompleteList"><option value="off"><option value="on"></datalist>
-						</@formGroup>
-						<#assign config=getFieldByCode( entry, "text_config")>
-						<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
-							<@input type='number' name='value' id='value' value='${config.value!}' />
-						</@formGroup>
-						<@formGroup>
-							<#if entry.mandatory><#assign checked = true /></#if>
-							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=checked />
-						</@formGroup>
-						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}'>
-							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
-						</@formGroup>
-						<#assign minField=getFieldByCode( entry, "min")>
-						<@formGroup labelFor='min' labelKey='#i18n{forms.createEntry.labelMin}'>
-							<@input type='number' name='min' id='min' value='${minField.value!}' />
-						</@formGroup>
-						<#assign maxField=getFieldByCode( entry, "max")>
-						<@formGroup labelFor='max' labelKey='#i18n{forms.createEntry.labelMax}'>
-							<@input type='number' name='max' id='max' value='${maxField.value!}' />
-						</@formGroup>
-						<@formGroup labelFor='entry_step' labelKey='#i18n{forms.createEntry.labelStep}' helpKey='#i18n{forms.createEntry.labelStepHelp}'>
-							<@row>
-								<@columns sm=12 md=2>
-									<@input type='number' name='entry_step' id='entry_step' min=0 />
-								</@columns>
-							</@row>
-						</@formGroup>
-						<@formGroup>
-							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
-						</@formGroup>
-						<#if entry.exportable>
-							<@input type='hidden' name='exportable' value='1' />
-						</#if>
-						<#if entry.exportablePdf>
-							<@input type='hidden' name='exportable_pdf' value='1' />
-						</#if>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
-							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
-						</@formGroup>
-						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
-						</@formGroup>
-						<@formGroup>
-							<#assign anonymizable=getFieldByCode( entry, "anonymizable")>
-							<#if anonymizable.value?boolean>
-								<#assign checkedValue = true />
-								<#assign anonPattern = anonymizable.title />
-							<#else>
-								<#assign checkedValue = false />
-								<#assign anonPattern ="" />
-							</#if>
-							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
-						</@formGroup>
-						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
-							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
-						</@formGroup>
-						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
-							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' checked=entry.disabled />
-						</@formGroup>
-						${question_modify_template!}
-						<@formGroup>
-							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
-							<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' hideTitle=['xs'] />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
-						</@formGroup>
-					</@fieldSet>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
-<@initEditor />
-<@anonymPattern />
+<@editFields editor=true datalist=['on','off'] labelErrorMessage=true exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true placeholder=placeholder  >
+<#if entry.fields?? && entry.fields?has_content>
+<#assign suffix = getFieldValueByCode( entry, 'suffix') >
+<@formGroup labelFor='suffix' labelKey='#i18n{forms.create_entry.labelSuffix}' helpKey='#i18n{forms.create_entry.labelSuffixComment}' rows=2>
+	<@input type='text' name='suffix' value=suffix maxlength=255 />
+</@formGroup>
+</#if>
+</@editFields>
 <script>
 function setStep(c,i){
 	// Extract step value from CSS class if it exists
@@ -128,6 +18,7 @@ function setStep(c,i){
 		c.value = c.value.replace( <#noparse>`step-${match[1]}`</#noparse>, '');
 	} 
 }
+
 document.addEventListener('DOMContentLoaded', function () {
 	const form = document.getElementById('form-number');
 	const entryCssClass = document.getElementById('css_class');
@@ -142,10 +33,5 @@ document.addEventListener('DOMContentLoaded', function () {
 			entryCssClass.value += <#noparse>` step-${value}`</#noparse> ;
 		} 
 	});
-});
-document.getElementById("entry_step").addEventListener("input", function(e) {
-	if (this.value < 0) {
-		this.value = 0;
-	}
 });
 </script>

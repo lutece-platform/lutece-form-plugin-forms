@@ -1,5 +1,6 @@
+<#assign stepTitle=step.title!?replace("- hidden","") />
 <@formBreadCrumb>
 	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem> 
-	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='Liste des questions'>${step.title}</@link></@breadcrumbItem>
+	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='Liste des questions'>${stepTitle}</@link></@breadcrumbItem>
 	<@breadcrumbItem class='active is-active'>${entry.entryType.title}</@breadcrumbItem>
 </@formBreadCrumb>

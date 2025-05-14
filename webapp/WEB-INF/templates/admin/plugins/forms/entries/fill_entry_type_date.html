@@ -11,7 +11,7 @@
 <#else>
 	<#assign helpKey = '' />
 </#if>
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory htmlRequired=false >
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory htmlRequired=false  rows=2>
     <@inputGroup>
 		<#assign default_today_date=getFieldByCode( entry, "default_today_date")>
 		<#assign field = getFieldByCode( entry, "default_date_value" )>
