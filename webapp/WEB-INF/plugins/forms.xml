@@ -9,7 +9,7 @@
     <description>forms.plugin.description</description>
     <provider>forms.plugin.provider</provider>
     <provider-url>http://lutece.paris.fr</provider-url>
-    <icon-url>images/admin/skin/feature_default_icon.png</icon-url>
+    <icon-url>themes/admin/shared/plugins/forms/images/forms.svg</icon-url>
     <copyright>Copyright (c) 2025 Ville de Paris</copyright>
     <db-pool-required>1</db-pool-required>
 
