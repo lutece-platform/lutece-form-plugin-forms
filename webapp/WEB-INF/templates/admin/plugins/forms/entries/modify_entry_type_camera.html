@@ -1,99 +1,27 @@
 <#include "all_entry_commons.html" />
-
-${breadcrumb_template}
-<@row>
-	<@columns>
-		<@box>
-			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
-			<@boxBody>
-				<@tform action="${action}">
-					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
-						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
-						<@input type='hidden' name='id_step' value='${step.id}' />
-						<@input type='hidden' name='id_question' value='${question.id}' />
-						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
-							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
-						</@formGroup>
-						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
-							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
-						</@formGroup>
-						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
-						</@formGroup>
-						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
-							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
-						</@formGroup>
-						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
-							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
-						</@formGroup>
-						<@formGroup>
-							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
-						</@formGroup>
-						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}'>
-							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
-						</@formGroup>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
-							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
-						</@formGroup>
-						<@formGroup>
-							<#assign anonymizable=getFieldByCode( entry, "anonymizable")>
-							<#if anonymizable.value?boolean>
-								<#assign checkedValue = true />
-								<#assign anonPattern = anonymizable.title />
-							<#else>
-								<#assign checkedValue = false />
-								<#assign anonPattern ="" />
-							</#if>
-							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
-						</@formGroup>
-						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
-							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
-						</@formGroup>
-						<@formGroup labelFor='width' labelKey='#i18n{forms.createEntry.labelWidthImage}' mandatory=true>
-							<#assign width=getFieldValueByCode( entry, "width")>
-							<@input type='text' name='width' id='width' value=width />
-						</@formGroup>
-						<@formGroup labelFor='height' labelKey='#i18n{forms.createEntry.labelHeightImage}'>
-							<#assign height=getFieldValueByCode( entry, "height")>
-							<@input type='text' name='height' id='height' value=height />
-						</@formGroup>
-						<@formGroup labelFor='maxImageSize' labelKey='#i18n{forms.createEntry.labelImageSize}'>
-							<#assign max_image_size=getFieldValueByCode( entry, "max_size")>
-							<@input type='text' name='maxImageSize' id='maxImageSize' value=max_image_size />
-						</@formGroup>
-							<@formGroup labelFor='imageType' labelKey='#i18n{forms.createEntry.labelImageType}'>
-							<#assign field_image_type=getFieldByCode( entry, "image_type")>
-							<@select name='image_type'>
-								<#if field_image_type?? && field_image_type.value="jpeg" >
-									<option value="png" > png </option> 
-									<option value="jpeg" selected> jpeg </option>
-								<#else>
-									<option value="png" selected> png </option> 
-									<option value="jpeg" > jpeg </option>
-								</#if>
-							</@select>
-						</@formGroup>
-						<#if entry.exportable>
-							<@input type='hidden' name='exportable' value='1' />
-						</#if>
-						<#if entry.exportablePdf>
-							<@input type='hidden' name='exportable_pdf' value='1' />
-						</#if>
-						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
-							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' checked=entry.disabled />
-						</@formGroup>
-						<@input type='hidden' id='token' name='token' value='${token}' />
-						<@formGroup>
-							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
-							<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' hideTitle=['xs'] />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
-						</@formGroup>
-					</@fieldSet>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
-<#include "/admin/util/editor/editor.html" />
-<@anonymPattern />
-<@initEditor />
+<@editFields editor=true labelErrorMessage=true  exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true >
+<@formGroup labelFor='width' labelKey='#i18n{forms.create_entry.labelWidthImage}' mandatory=true rows=2>
+	<#assign width=getFieldValueByCode( entry, "width")>
+	<@input type='text' name='width' id='width' value=width />
+</@formGroup>
+<@formGroup labelFor='height' labelKey='#i18n{forms.create_entry.labelHeightImage}' rows=2>
+	<#assign height=getFieldValueByCode( entry, "height")>
+	<@input type='text' name='height' id='height' value=height />
+</@formGroup>
+<@formGroup labelFor='maxImageSize' labelKey='#i18n{forms.create_entry.labelImageSize}' rows=2>
+	<#assign max_image_size=getFieldValueByCode( entry, "max_size")>
+	<@input type='text' name='maxImageSize' id='maxImageSize' value=max_image_size />
+</@formGroup>
+<@formGroup labelFor='imageType' labelKey='#i18n{forms.create_entry.labelImageType}' rows=2>
+	<#assign field_image_type=getFieldByCode( entry, "image_type")>
+	<@select name='image_type'>
+	<#if field_image_type?? && field_image_type.value="jpeg" >
+		<@option value='png' label='png' /> 
+		<@option value='jpeg' label='jpeg' selected=true /> 
+	<#else>
+		<@option value='png' label='png' selected=true /> 
+		<@option value='jpeg' label='jpeg' /> 
+	</#if>
+	</@select>
+</@formGroup>
+</@editFields>

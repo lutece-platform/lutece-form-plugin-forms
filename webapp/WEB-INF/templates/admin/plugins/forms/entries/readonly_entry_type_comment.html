@@ -1,7 +1,7 @@
 <#assign displayBo=getFieldValueByCode( entry, "display_in_bo")>
 <#if displayBo == 'true'>
 <@row>
-    <@columns sm=3><@p class='text-right font-weight-bold'>#i18n{forms.createEntry.labelComment}</@p></@columns>
+    <@columns sm=3><@p class='text-right font-weight-bold'>#i18n{forms.create_entry.labelComment}</@p></@columns>
     <@columns sm=9>
 		<@p>${entry.comment}</@p>
 		<#if url_download_bo??>

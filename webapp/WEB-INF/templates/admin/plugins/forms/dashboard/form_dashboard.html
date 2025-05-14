@@ -1,38 +1,25 @@
 <@adminDashboardWidget title='#i18n{forms.dashboard.formList}' id='forms_dashboard' url=url  >
-<@table striped=true condensed=true responsive=false hover=false >
-	<@tr>
-		<@th>#i18n{forms.dashboard.row_name}</@th>
-		<@th>#i18n{forms.dashboard.row_responses}</@th>
-		<@th>#i18n{forms.dashboard.row_actions}</@th>
-	</@tr>
-	<#list form_list as form>
-		<@tr>
-			<@td>
-				<strong>${form.title}</strong>
-				<#if !form.active>
-					<@icon style='times' class='fa-fw text-danger'  title='#i18n{portal.util.labelDisabled}' />
-				</#if>
-			</@td>
-			<@td align='center'>
-				<@staticText inForm=false>${form.currentNumberResponse}</@staticText>
-			</@td>
-			<@td>
+<@listGroup class='list-group-flush py-0' >
+<#list form_list as form>
+	<@listGroupItem class='p-0' >
+		<@row>
+			<@columns xs=12 md=8>
+				<@h level=3 class='d-inline-block truncate' params='title="${form.title}" style="--tw:300px"'>
+					<#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
+					<@tag class='mx-2 fs-5' title='#i18n{forms.dashboard.row_responses}'> ${form.currentNumberResponse}</@tag>
+					${form.title}
+				</@h>
+			</@columns>
+			<@columns xs=12 md=4 class='d-flex justify-content-end'>
 				<#if form.actions?exists>
-					<#list form.actions as action>
-						<#assign color='' />
+					<#assign color='primary' />
+					<#list form.actions?filter( action -> ( action.permission=='MODIFY' || action.permission=='PARAM' || action.permission=='VIEW_FORM_RESPONSE'  ) ) as action>
 						<#assign params='' />
-						<#if action.permission=='DELETE'>
-							<#assign color = 'danger' />
-						<#else>
-							<#assign color = 'primary' />
-						</#if>
-						<#if action.permission=='PUBLISH'>
-							<#assign can_publish=true>
-							<#assign params='data-toggle="modal" data-target="#pubModal" data-url="${action.url}&id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"' />
-						</#if>
-						<@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' hideTitle=['all'] color='${color}' class='${action.permission?lower_case}' buttonIcon=action.iconUrl params=params size='sm' />
+						<#assign class='' />
+						<@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' hideTitle=['all'] class=class color=color buttonIcon=action.iconUrl  params=params />
 					</#list>
 				</#if>
+				<@aButton href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title}' buttonIcon='text-plus' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' />
 				<#if form.active>
 					<#assign inactiveBypass=''>
 					<#assign color='success'>
@@ -40,11 +27,11 @@
 					<#assign inactiveBypass='&ts='+timestamp+'&token='+inactiveBypassTokens[form.id?string]>
 					<#assign color='warning'>
 				</#if>
-				<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' color=color />
-			</@td>
-			
-		</@tr>
-	</#list>
-</@table>
+				<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' params='target="_blank"' buttonIcon='external-link' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' color=color />
+			</@columns>
+		</@row>
+	</@listGroupItem>
+</#list>
+</@listGroup>
 </@adminDashboardWidget>
 <@formModal id='pubModal' />

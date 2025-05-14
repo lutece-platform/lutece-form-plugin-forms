@@ -1,50 +1,78 @@
-<#if current_step_index?? && current_step_index=0><#assign current_step_index = ' &gt; ' /></#if>
-<@box>
-	<@boxHeader title=step.title params='data-step="${current_step_index!}"' />
-	<@boxBody id='step-content'>
-    ${stepContent}
-    <input type="hidden" name="token" value = "${token!}">
-    <input name="page" value="forms" type="hidden">
-    <input name="id_form" value="${step.idForm}" type="hidden">
-    <input name="id_step" value="${step.id}" type="hidden">
-    <#if !step.initial><button class="btn btn-primary btn-sm" name="action_doReturnStep"  type="submit" >#i18n{forms.step.previous}</button></#if>
-    <#if step.final>
-        <#if form.displaySummary >
-          <button class="btn btn-primary btn-sm" name="action_formResponseSummary"  type="submit">#i18n{forms.step.see.summary}</button>
-        <#else>
-          <#assign label_button="#i18n{forms.step.save}" />
-          <#if form.labelFinalButton?has_content>
-            <#assign label_button=form.labelFinalButton />
-          </#if>
-          <button class="btn btn-primary btn-sm" name="action_doSaveResponse"  type="submit">${label_button}</button>
-        </#if>
-    <#else>
-      <button class="btn btn-primary btn-sm" name="action_doSaveStep"  type="submit">#i18n{forms.step.next}</button>
-    </#if>
-	  <#if form.backupEnabled>
-	  	<#if hasBackupResponse>
-			<button class="btn btn-info btn-sm pull-right" name="action_doResetBackup"  type="submit" >#i18n{forms.step.resetResponse}</button>
-		</#if>
-		<button class="btn btn-info btn-sm pull-right" name="action_doSaveForBackup"  type="submit" >#i18n{forms.step.saveResponse}</button>
-    </#if>
-    </@boxBody>
-</@box>
+<#--   ^																	-->
+<#--  / \ 																	-->
+<#-- / ! \  WARNING ! current_step_index error						        -->
+<#-- ----- 																	-->
+<#-- Please check that the module module-forms-breadcrumbaccordion 			-->
+<#-- is installed and active. Forms with the Theme paris.fr must 			-->
+<#-- have "module-forms-breadcrumbaccordion" selected in breadcrumb type	-->
+<#assign hasSteps=!(step.initial && step.final)>
+<#assign showTitle=!step.title?ends_with('hidden')>
+<#assign doPrevAction='' />
+<#assign doNextAction='' />
+<#assign doSaveAction='' />
+<#assign labelNextAction='' />
+<#assign labelPrevAction='' />
+<#assign labelSaveAction='' />
+<#assign doSaveForBackUpAction='' />
+<#assign labelForBackUpAction='' />
+<#assign doResetBackUpAction='' />
+<#assign labelResetBackupAction='' />
+<input type="hidden" name="token" value = "${token!}">
+<input name="page" value="forms" type="hidden">
+<input name="id_form" value="${step.idForm}" type="hidden">
+<input name="id_step" value="${step.id}" type="hidden">
+<#if !step.initial >
+<#assign doPrevAction='action_doReturnStep'>
+<#assign labelPrevAction>#i18n{forms.step.previous}</#assign>
+</#if>
+<#if step.final>
+<#assign labelSaveAction>#i18n{forms.step.save}</#assign>
+<#if form.labelFinalButton?has_content>
+<#assign labelSaveAction=form.labelFinalButton />
+</#if>
+<#if form.displaySummary>
+<#assign doSaveAction='action_formResponseSummary' />
+<#assign labelSaveAction>#i18n{forms.step.save}</#assign>
+<#else>
+<#assign doSaveAction='action_doSaveResponse' />
+</#if>
+<#else>
+<#assign doNextAction='action_doSaveStep' />
+<#assign labelNextAction>#i18n{forms.step.next}</#assign>
+</#if>
+<#if user?? && form.backupEnabled && hasBackupResponse>
+<#assign doSaveForBackUpAction='action_doSaveForBackup' />
+<#assign doResetBackUpAction='action_doResetBackup' />
+</#if>
+<#assign stepParams='' >
+<@stepCurrent step=current_step_index title=step.title?replace('hidden','') showTitle=showTitle actionNextStep=doNextAction labelNextStep=labelNextAction actionPrevStep=doPrevAction labelPrevStep=labelPrevAction actionSaveStep=doSaveAction labelSaveStep=labelSaveAction actionSaveForBackUpStep=doSaveForBackUpAction labelForBackUpStep=labelForBackUpAction actionResetBackUpStep=doResetBackUpAction labelResetBackUpStep=labelResetBackUpAction showPrevStep=false hasSteps=hasSteps params=stepParams >
+${stepContent}
+</@stepCurrent>
 <script>
-  $( function() {
-     /* Check if step-group has all field hidden due to conditionnal behavior */
-    $(".step-group").each( function(){
-      var count_field = $(this).find( '.form-group').length,
-        count_cond =  $(this).find( 'div[class*="display_field_"]' ).length,
-        count_cond_visible = $(this).find( 'div[class*="display_field_"]:visible' ).length;
-       
-      if( count_field == count_cond &&  count_cond > 0 &&  count_cond_visible==0 ){
-        $(this).toggle();
-        $(this).addClass('step-group-collapsible');
-      }
-    });
-     
-    /* remove required attribute */
-    $(".form-control, .custom-control-input, .form-check-input, .form-select").prop("required", false);
-  });
-  </script>
-  
+function stepGroupDisplay( stepGroup ){
+	const displayControls = stepGroup.querySelectorAll('[displaycontrol]').length
+	const displayControlsInvalid = stepGroup.querySelectorAll('.control_invalid[displaycontrol]').length
+	
+	if( displayControls === displayControlsInvalid ){
+		stepGroup.classList.add('d-none');
+	} else {
+		stepGroup.classList.remove('d-none');
+	};
+}
+
+document.addEventListener("DOMContentLoaded", function(){
+	const noGroups = document.querySelectorAll( '.step-content > [displaycontrol].col.col-12' )
+	const lastNoGroupEl = noGroups[noGroups.length - 1]
+	if( lastNoGroupEl ){
+		lastNoGroupEl.classList.add('pb-xl');
+	}
+	
+	// Hide step groups that have no inputs
+	const stepGroups = document.querySelectorAll(".step-group");
+	if( stepGroups > 1 ){
+		stepGroups.forEach( function( stepGroup ){
+			stepGroupDisplay( stepGroup )
+		});
+	}
+});
+</script>

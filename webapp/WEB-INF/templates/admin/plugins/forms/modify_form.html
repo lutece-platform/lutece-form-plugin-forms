@@ -1,48 +1,65 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
-<@tform class='form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
+<@tform class='form' id='modify_form' method='post' name='modify_form' action='jsp/admin/plugins/forms/ManageForms.jsp'>
 <@input type="hidden" name="token" value = "${token}" />
-<@row>
-	<@columns>
-		<@box color='primary'>
-			<@boxHeader title='${form.title!}' boxTools=true >
-				<#if form.active>
-					<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>
-					${extendableResourceActionsHtml!}
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title=form.title!>
+			<#if form.active>
+				<@button type='button' id='forms-action' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-2' dropdownMenu=true >
+					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title}' buttonIcon='text-plus' />
+					<@aButton color='default dropdown-item justify-content-start' href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='external-link' />
+					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='list-alt' />
+					<#if form.breadcrumbName=='forms-breadcrumbaccordion.breadcrumbAccordion'>
+					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/modules/breadcrumbaccordion/ManageBreadcrumbAccordion.jsp?view=modifyBreadcrumb&id_form=${form.id}' title='#i18n{module.forms.breadcrumbaccordion.manage_breadcrumbAccordion.title}' buttonIcon='stack' />
 					</#if>
-					<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['xs'] params='target="_blank"' buttonIcon='external-link' />
-					<@aButton href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['xs'] params='target="_blank"' buttonIcon='list-alt' />
-					<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
-				</#if>
-				<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' params='data-toggle="modal" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" data-target="#pubModal"' hideTitle=['xs']  />
-			</@boxHeader>
-			<@boxBody>
-				<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
-				<@formTabs tab="general" />
-				<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-				<@tabContent>
-					<@tabPanel id='' active=true>
-						<@formModel />
-					</@tabPanel>
-				</@tabContent>
-				<@formGroup rows=2>
-					<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
-				</@formGroup>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+					<@button type='button' class='default dropdown-item justify-content-start' id='toggleMap' title='Voir le graphique' buttonIcon='sitemap' />
+				</@button>
+				<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>${extendableResourceActionsHtml!}</#if>
+			</#if>
+			<!-- <#if form.active>
+				<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>${extendableResourceActionsHtml!}</#if>
+				<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['xs'] params='target="_blank"' buttonIcon='external-link' />
+				<@aButton href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['xs'] params='target="_blank"' buttonIcon='list-alt' />
+			</#if>
+			<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
+			<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus'  title='#i18n{forms.manage_steps.buttonAdd}' params='data-toggle="modal" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" data-target="#pubModal"' hideTitle=['xs']  /> -->
+		</@pageHeader>
+		<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
+		<@formTabs tab="general" >
+		<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+		<@tabContent>
+			<@tabPanel id='' active=true>
+				<@formModel />
+			</@tabPanel>
+			<@bottomFormFixedButtons>
+				<@headerButton name='action_modifyForm' label='forms.modify_form.buttonValidate' /> 
+			</@bottomFormFixedButtons>
+		</@tabContent>
+		</@formTabs>
+	</@pageColumn>
+</@pageContainer>
 </@tform>
 <@formEditor />
 <@toastr infos=infos warnings=warnings errors=errors />
 <@formModal />
 <script>
-$( function(){
-    $('#endMessage').toggle();
-    if ( $('#endMessageDisplay').prop("checked" ) ){
-        $('#endMessage').toggle();  
-    }
-    $('#labelEndMessage').change( function(){
-        $('#endMessage').toggle();
-    });
+document.addEventListener('DOMContentLoaded', function () {
+	const endMessage = document.getElementById('endMessage');
+	const endMessageDisplay = document.getElementById('endMessageDisplay');
+	const labelEndMessage = document.getElementById('labelEndMessage');
+
+	if (endMessageDisplay && endMessage) {
+		endMessage.style.display = endMessageDisplay.checked ? 'block' : 'none';
+
+		endMessageDisplay.addEventListener('change', function () {
+			endMessage.style.display = this.checked ? 'block' : 'none';
+		});
+	}
+
+	if (labelEndMessage && endMessage) {
+		labelEndMessage.addEventListener('change', function () {
+			endMessage.style.display = endMessage.style.display === 'none' ? 'block' : 'none';
+		});
+	}
 });
 </script>

@@ -1,69 +1,50 @@
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
     <#assign hasError = false />
     <#if getError( list_responses, entry )?? >
-        <#assign error = getError( list_responses, entry ) >
-        <#if error?? && error.isDisplayableError>
-            <#assign hasError = true />
-        </#if>
-    </#if>
-    <div class="form-group">
+        <#assign error = getError( list_responses, entry ) ><#if error?? && error.isDisplayableError><#assign hasError = true /></#if></#if>
         <#assign idName = buildEntryName( entry, entry_iteration_number )>
-        <label class="control-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-        <div id="${idName}">
-            <div class="slot-entry">
-                <#if list_responses?has_content>
-                    <#assign beginHourCode = "begin_hour">
-                    <#assign endHourCode = "end_hour">
-                    <#list list_responses?chunk(2) as row>
-                        <#if row[0].field.code == beginHourCode>
-                            <#assign beginHour = row[0].toStringValueResponse>
-                        </#if>
-                        <#if row[1].field.code == beginHourCode>
-                            <#assign beginHour = row[1].toStringValueResponse>
-                        </#if>
-                        <#if row[0].field.code == endHourCode>
-                            <#assign endHour = row[0].toStringValueResponse>
-                        </#if>
-                        <#if row[1].field.code == endHourCode>
-                            <#assign endHour = row[1].toStringValueResponse>
-                        </#if>
-                        <label>#i18n{forms.message.slot.preposition.from}</label>
-                        <input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" value="${beginHour!}" />
-                        <label>#i18n{forms.message.slot.preposition.to}</label>
-                        <input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" value="${endHour!}" />
-                    </#list>
-                    <#if hasError>
-                        <div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
+        <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' class=entry.class!  mandatory=entry.mandatory htmlRequired=false rows=2>
+            <@row id=idName class='align-items-center'>
+            <#if list_responses?has_content>
+                <#assign beginHourCode = "begin_hour">
+                <#assign endHourCode = "end_hour">
+                <#list list_responses?chunk(2) as row>
+                    <#if row[0].field.code == beginHourCode>
+                        <#assign beginHour = row[0].toStringValueResponse>
                     </#if>
-                <#else>
+                    <#if row[1].field.code == beginHourCode>
+                        <#assign beginHour = row[1].toStringValueResponse>
+                    </#if>
+                    <#if row[0].field.code == endHourCode>
+                        <#assign endHour = row[0].toStringValueResponse>
+                    </#if>
+                    <#if row[1].field.code == endHourCode>
+                        <#assign endHour = row[1].toStringValueResponse>
+                    </#if>
+                    <@columns xs=6 sm=4 md=3 xl=2>
+                        <@formLabel for='${idName}_begin'>#i18n{forms.message.slot.preposition.from}</@formLabel>
+                        <#assign beginClass>form-control<#if hasError> is-invalid</#if></#assign>
+                        <@input type='html5time' class=beginClass id='${idName}_begin' name='${idName}_begin' value=beginHour! />
+                    </@columns>
+                    <@columns xs=6 sm=4 md=3 xl=2>
+                        <@formLabel for="${idName}_end">#i18n{forms.message.slot.preposition.to}</@formLabel>
+                        <#assign endClass>form-control<#if hasError> is-invalid</#if></#assign>
+                        <@input type='html5time' class=endClass id='${idName}_end' name='${idName}_end' value=endHour! />
+                    </@columns>
+                </#list>
+                <#if hasError><@p class='invalid-feedback'><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></@p></#if>
+            <#else>
+                <@columns xs=6 sm=4 md=3 xl=2>
                     <label>#i18n{forms.message.slot.preposition.from}</label>
-                    <input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" min="00:00" max="23:59" />
+                    <input type="time" class="form-control<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" min="00:00" max="23:59" />
+                </@columns>
+                <@columns xs=6 sm=4 md=3 xl=2>
                     <label>#i18n{forms.message.slot.preposition.to}</label>
-                    <input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" min="00:00" max="23:59" />
-                    <#if hasError>
-                        <div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
-                    </#if>
-                </#if>
-            </div>
-        </div>
-        </br>
-        <#if entry.helpMessage?exists && entry.helpMessage != ''>
-            <span class="help-block">${entry.helpMessage}</span>
-        </#if>
-    </div>
+                    <input type="time" class="form-control<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" min="00:00" max="23:59" />
+                </@columns>
+                <#if hasError><@p class='invalid-feedback'><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></@p></#if>
+            </#if>
+        </@row>
+        <#if entry.helpMessage?exists && entry.helpMessage != ''><p class="form-text text-muted">${entry.helpMessage}</p> </#if>
+    </@formGroup>
 </#if>
-
-<style>
-    .slot-entry {
-        display: flex;
-        align-items: center;
-    }
-
-    .slot-entry > * {
-        margin-right: 10px;
-    }
-
-    .slot-entry > *:last-child {
-        margin-right: 0;
-    }
-</style>

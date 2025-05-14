@@ -1,7 +1,8 @@
 <#if question.visible>
-<div<#if id_display??> class="display_field_${id_display}"</#if> displayControl="${question.id}_${question.iterationNumber}">
+<#assign displayClass><#if id_display??>display_field_${id_display}</#if></#assign>
+<@div class=displayClass! params='displayControl="${question.id}_${question.iterationNumber}"'>
 <@formGroup>
 	<@checkBox labelKey='${question.title}' id='${question.id}_${question.iterationNumber}' name='ids_entry' value='${question.idEntry}' />
 </@formGroup>
-</div>
+</@div>
 </#if>

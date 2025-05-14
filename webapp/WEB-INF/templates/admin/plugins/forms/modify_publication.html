@@ -1,66 +1,47 @@
-<#include "/admin/plugins/forms/edit_form_tabs.html" />
-
 <@tform method='post' name='modify_form' action="jsp/admin/plugins/forms/ManageForms.jsp" params=' target="_top"'>
 <@input type="hidden" name="token" value = "${token}" />
-<@modalBody>
-    <@messages errors=errors />
-    <@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-    <#-- problem with populate method because it puts the value of checkbox to false -->
-    <#if form?has_content && form.displaySummary>
-        <@input type='hidden' name='displaySummary' value='1' />
-    </#if>
-    <#if formMessage?has_content && formMessage.endMessageDisplay>
-        <@input type='hidden' name='endMessageDisplay' value='1' />
-    </#if>
-    <#if form?has_content && form.oneResponseByUser>
-        <@input type='hidden' name='oneResponseByUser' value='1' />
-    </#if>
-    <#if form?has_content && form.authentificationNeeded>
-        <@input type='hidden' name='authentificationNeeded' value='1' />
-    </#if>
-    <@input type='hidden' name='maxNumberResponse' value='form.maxNumberResponse!\'0\'' />
-    <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' rows=2>
-        <@inputGroup>
-            <@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value=form.availabilityStartDate />
-            <@inputGroupItem type='text'>
-                <@icon style='calendar' />
-            </@inputGroupItem>
-        </@inputGroup>
-    </@formGroup>
-    <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' rows=2>
-        <@inputGroup>
-            <@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value=form.availabilityEndDate />
-            <@inputGroupItem type='text'>
-                <@icon style='calendar' />
-            </@inputGroupItem>
-        </@inputGroup>
-    </@formGroup>
-</@modalBody>
-<@modalFooter>
-    <@formsButton okAction='modifyForm' viewAction='manageForm' rows=2 />
-</@modalFooter>
+<@messages errors=errors />
+<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
+<#-- problem with populate method because it puts the value of checkbox to false -->
+<#if form?has_content && form.displaySummary>
+    <@input type='hidden' name='displaySummary' value='1' />
+</#if>
+<#if formMessage?has_content && formMessage.endMessageDisplay>
+    <@input type='hidden' name='endMessageDisplay' value='1' />
+</#if>
+<#if form?has_content && form.oneResponseByUser>
+    <@input type='hidden' name='oneResponseByUser' value='1' />
+</#if>
+<#if form?has_content && form.authentificationNeeded>
+    <@input type='hidden' name='authentificationNeeded' value='1' />
+</#if>
+<@input type='hidden' name='maxNumberResponse' value='form.maxNumberResponse!\'0\'' />
+<@div class='container'>
+<@row>
+    <@columns>
+        <@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' helpKey='#i18n{forms.modify_form.labelStartDate.help}' rows=2>
+            <@inputGroup>
+                <@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value=form.availabilityStartDate />
+                <@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
+            </@inputGroup>
+        </@formGroup>
+    </@columns>
+</@row>
+<@row>
+    <@columns>
+        <@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' helpKey='#i18n{forms.modify_form.labelEndDate.help}' rows=2>
+            <@inputGroup>
+                <@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value=form.availabilityEndDate />
+                <@inputGroupItem type='text'>
+                    <@icon style='calendar' />
+                </@inputGroupItem>
+            </@inputGroup>
+        </@formGroup>
+    </@columns>
+</@row>
+<@formsButton okAction='modifyForm' viewAction='' />
+</@div>
 </@tform>
 <script>
-// Function to check if a webpage is in iFrame
-function isIniFrame() {
- return window.self !== window.top ? true : false;
-}
-$( function() {
-    if ( isIniFrame() ){
-        window.top.$("#modalIframe");
-        $('.skipnav').hide();
-		$('nav').hide();
-        $('#pubModal .content-header').hide();
-        $('.container-fluid').css( 'padding', '0px' );
-        $('.modal-body').css( 'padding', '24px' );
-        $('main').css( 'margin', '0' );
-        $('header').hide();
-        $('footer').hide();
-    } else {
-        $('#pubModal .content-header').hide();
-        $('#pubModal #admin-wrapper').css( 'margin', '0' );
-        $('#pubModal header').hide();
-        $('#pubModal footer').hide();
-    }
-});
+<@offcanvasIframeScript />
 </script>

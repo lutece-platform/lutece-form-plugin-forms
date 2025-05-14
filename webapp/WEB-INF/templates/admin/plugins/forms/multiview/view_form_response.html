@@ -5,7 +5,7 @@
 -->
 <#macro display_actions resource_actions >
 <#if resource_actions.workflow_action_list?exists>
-    <h2>#i18n{forms.multiviewForms.view_record_history.actions}</h2>
+    <@h level=2>#i18n{forms.multiviewForms.view_record_history.actions}</@h>
     <#if resource_actions.workflow_action_list?has_content>
 		<@div class="d-grid gap-2 position-relative mt-3">
 			<#list resource_actions.workflow_action_list as action>
@@ -21,124 +21,137 @@
     </#if>
 </#if>
 </#macro>
-<@div id='form-response-details'>
-	<@messages errors=errors />
-	<@box id='form-detail-header'>
-		<@boxBody>
-		<@icon style='list' id='toc-expand-toggle' title='#i18n{forms.multiviewForms.responseDetails.show.steps}' params=' role="button"' />
-		<@row>
-			<@columns sm=2 id='toc'>
-				<@box id='toc-box'>
-					<@boxHeader id='toc-box-header' title=form.title boxTools=true>
-						<@icon style='times' id='toc-compress-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=' role="button"' />
-					</@boxHeader>
-					<@boxBody>
-						<@navBar id='step-toc'>
-							<@nav type='pills'></@nav>
-						</@navBar>
-					</@boxBody>
-				</@box>
-			</@columns>
-			<@columns sm=7 id='steps-content'>
-				<#if list_multiview_step_display?has_content>
-					<#list list_multiview_step_display as multiview_step_display>
-						${multiview_step_display}
-					</#list>
-				</#if>
-				<#if comment??>
-					<@box color='primary' class='step-group' id='step-comment' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.comment.title}"'>
-						<@boxHeader title='#i18n{module.forms.extend.response.comment.title}' boxTools=true>
-							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-comment" aria-expanded="false" aria-controls="box-step-content-comment"' />
-						</@boxHeader>
-						<@boxBody id='box-step-content-comment' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.comment.subtitle}' legendClass='sr-only' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
-							${comment!}
-							</@fieldSet>
-						</@boxBody>
-					</@box>
-				</#if>
-				<#if rating??>
-					<@box color='primary' class='step-group' id='step-rating' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.rating.title}"'>
-						<@boxHeader title='#i18n{module.forms.extend.response.rating.title}' boxTools=true>
-							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-rating" aria-expanded="false" aria-controls="box-step-content-rating"' />
-						</@boxHeader>
-						<@boxBody id='box-step-content-rating' class='collapse show'>
-						<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.rating.subtitle}' legendClass='sr-only' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
-							${rating!}
-						</@fieldSet>
-						</@boxBody>
-					</@box>
-				</#if>
-				<#if follow??>
-					<@box color='primary' class='step-group' id='step-follow' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.follow.title}"'>
-						<@boxHeader title='#i18n{module.forms.extend.response.follow.title}' boxTools=true>
-							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-follow" aria-expanded="false" aria-controls="box-step-content-follow"' />
-						</@boxHeader>
-						<@boxBody id='box-step-content-follow' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.follow.subtitle}' legendClass='sr-only' fieldsetId='group-follow' fieldsetParams=' tabindex=0'>
-								${follow!}
-							</@fieldSet>
-						</@boxBody>
-					</@box>
-				</#if>
-				<#if feedback??>
-					<@box color='primary' class='step-group' id='step-feedback' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.feedback.title}"'>
-						<@boxHeader title='#i18n{module.forms.extend.response.feedback.title}' boxTools=true>
-							<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-feedback" aria-expanded="false" aria-controls="box-step-content-feedback"' />
-						</@boxHeader>
-						<@boxBody id='box-step-content-feedback' class='collapse show'>
-							<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.feedback.subtitle}' legendClass='sr-only' fieldsetId='group-feedback' fieldsetParams=' tabindex=0'>
-								${feedback!}
-							</@fieldSet>
-						</@boxBody>
-					</@box>
-				</#if>
-			</@columns>
-			<@columns sm=3>
-				<@box id='response-right'>
-					<@boxHeader id='info-box-header' title='' boxTools=true>
-						<@tform method='get' id='form-response-detail-header' type='inline' action='jsp/admin/plugins/forms/MultiviewForms.jsp'>
-						<@input type='hidden' name='page' value='form' />
-						<@input type='hidden' name='session' value='session' />
-						<#assign editModeValue = "ReadOnly">
-						<#assign viewNumberAttValue = "1">
-						<#if list_filter_values?has_content>
-							<#list list_filter_values as filter_values>
-								<@input type='hidden' name='${filter_values.code}' value='${filter_values.name}' />		
+<@pageContainer params='data-feature="#i18n{forms.adminFeature.manageForms.name}"' >
+    <@pageColumn>
+		<@pageHeader title='#i18n{forms.multiviewForms.responseDetails.title} ${form_response.id!} ${form.title!}' />
+		<@formBreadCrumb>
+			<@breadcrumbItem><@link href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' label='#i18n{forms.multiviewForms.boxTitle} ${form.title}' /></@breadcrumbItem>
+			<@breadcrumbItem>#i18n{forms.multiviewForms.responseDetails.title} ${form_response.id!}</@breadcrumbItem>
+		</@formBreadCrumb>
+		<@div id='form-response-details'>
+			<@messages errors=errors />
+			<@box id='form-detail-header'>
+				<@boxBody>
+				<@icon style='layout-sidebar-left-expand' id='toc-expand-toggle' title='#i18n{forms.multiviewForms.responseDetails.show.steps}' params=' role="button"' />
+				<@row>
+					<@columns sm=2 id='toc'>
+						<@box id='toc-box'>
+							<@boxHeader id='toc-box-header' title=form.title boxTools=true>
+								<@icon style='layout-sidebar-right-expand' id='toc-compress-toggle' title='#i18n{forms.multiviewForms.responseDetails.hide.steps}' params=' role="button"' />
+							</@boxHeader>
+							<@boxBody>
+								<@div id='step-toc' >
+									<@nav type='pills' class='step-toc-list'></@nav>
+								</@div>
+							</@boxBody>
+						</@box>
+					</@columns>
+					<@columns sm=7 id='steps-content' params='data-bs-spy="scroll" data-bs-target="#step-toc-list" data-bs-smooth-scroll="true"'>
+						<#if list_multiview_step_display?has_content>
+							<#list list_multiview_step_display as multiview_step_display>
+								${multiview_step_display}
 							</#list>
 						</#if>
-						<@button type='submit' buttonIcon='list' title='#i18n{portal.util.labelBack}' size='' />
-						</@tform>
-					</@boxHeader>
-					<@boxBody>
-						<h2>#i18n{forms.multiviewForms.view_record_history.information}</h2>
-						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} : <strong>${form_response.creation}</strong></@p>
-						<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong></@p>
-						<#if admin_depositary??>
-						<@p>#i18n{forms.multiviewForms.admin.depositary.label} : ${admin_depositary.firstName!} ${admin_depositary.lastName} - ${admin_depositary.email}</@p>
+						<#if comment??>
+							<@box color='primary' class='step-group' id='step-comment' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.comment.title}"'>
+								<@boxHeader title='#i18n{module.forms.extend.response.comment.title}' boxTools=true>
+									<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-comment" aria-expanded="false" aria-controls="box-step-content-comment"' />
+								</@boxHeader>
+								<@boxBody id='box-step-content-comment' class='collapse show'>
+									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.comment.subtitle}' legendClass='sr-only' fieldsetId='group-comment' fieldsetParams=' tabindex=0'>
+									${comment!}
+									</@fieldSet>
+								</@boxBody>
+							</@box>
 						</#if>
-						<#if resource_actions?exists && resource_actions.workflow_state?exists><@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.state} : <strong >${resource_actions.workflow_state.name}</strong> </span></@p></#if>
-						<@p><@icon style='info-circle' /><#if form_response.published> #i18n{forms.multiviewForms.responseDetails.response.status} : <strong> ${form_response.update!} </strong><#else>#i18n{forms.multiviewForms.responseDetails.response.status} : #i18n{portal.site.admin_page.labelNodeStatus1}</#if></@p>
-						<#if form_response.published>
-						<@p><@icon style='external-link' title='#i18n{portal.portal_footer.newWindow}' /> <@link href='jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${form_response.id}' target='_blank'>#i18n{forms.permission.label.viewResult}</@link></@p>
+						<#if rating??>
+							<@box color='primary' class='step-group' id='step-rating' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.rating.title}"'>
+								<@boxHeader title='#i18n{module.forms.extend.response.rating.title}' boxTools=true>
+									<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-rating" aria-expanded="false" aria-controls="box-step-content-rating"' />
+								</@boxHeader>
+								<@boxBody id='box-step-content-rating' class='collapse show'>
+								<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.rating.subtitle}' legendClass='sr-only' fieldsetId='group-rating' fieldsetParams=' tabindex=0'>
+									${rating!}
+								</@fieldSet>
+								</@boxBody>
+							</@box>
 						</#if>
-						<@display_actions resource_actions! />
-						${resource_history!}
-					</@boxBody>
-				</@box>
-			</@columns>
-		</@row>
-		</@boxBody>
-	</@box>
-</@div>
+						<#if follow??>
+							<@box color='primary' class='step-group' id='step-follow' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.follow.title}"'>
+								<@boxHeader title='#i18n{module.forms.extend.response.follow.title}' boxTools=true>
+									<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-follow" aria-expanded="false" aria-controls="box-step-content-follow"' />
+								</@boxHeader>
+								<@boxBody id='box-step-content-follow' class='collapse show'>
+									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.follow.subtitle}' legendClass='sr-only' fieldsetId='group-follow' fieldsetParams=' tabindex=0'>
+										${follow!}
+									</@fieldSet>
+								</@boxBody>
+							</@box>
+						</#if>
+						<#if feedback??>
+							<@box color='primary' class='step-group' id='step-feedback' params=' tabindex=0 data-title="#i18n{module.forms.extend.response.feedback.title}"'>
+								<@boxHeader title='#i18n{module.forms.extend.response.feedback.title}' boxTools=true>
+									<@button color='link' buttonIcon='minus-square' params='data-toggle="collapse" data-target="#box-step-content-feedback" aria-expanded="false" aria-controls="box-step-content-feedback"' />
+								</@boxHeader>
+								<@boxBody id='box-step-content-feedback' class='collapse show'>
+									<@fieldSet class='fieldset-group' legend='#i18n{module.forms.extend.response.feedback.subtitle}' legendClass='sr-only' fieldsetId='group-feedback' fieldsetParams=' tabindex=0'>
+										${feedback!}
+									</@fieldSet>
+								</@boxBody>
+							</@box>
+						</#if>
+					</@columns>
+					<@columns sm=3>
+						<@box id='response-sidebar'>
+							<@boxHeader id='info-box-header' title='' boxTools=true>
+								<@tform method='get' id='form-response-detail-header' type='inline' action='jsp/admin/plugins/forms/MultiviewForms.jsp'>
+								<@input type='hidden' name='page' value='form' />
+								<@input type='hidden' name='session' value='session' />
+								<#assign editModeValue = "ReadOnly">
+								<#assign viewNumberAttValue = "1">
+								<#if list_filter_values?has_content>
+									<#list list_filter_values as filter_values>
+										<@input type='hidden' name='${filter_values.code}' value='${filter_values.name}' />		
+									</#list>
+								</#if>
+								<@button type='submit' buttonIcon='list' title='#i18n{portal.util.labelBack}' size='' />
+								</@tform>
+							</@boxHeader>
+							<@boxBody>
+								<@h level=2>#i18n{forms.multiviewForms.view_record_history.information}</@h>
+								<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateCreation} : <strong>${form_response.creation}</strong></@p>
+								<@p><@icon style='calendar' /> #i18n{forms.multiviewForms.responseDetails.response.dateModification} : <strong>${form_response.update}</strong></@p>
+								<#if admin_depositary??>
+								<@p>#i18n{forms.multiviewForms.admin.depositary.label} : ${admin_depositary.firstName!} ${admin_depositary.lastName} - ${admin_depositary.email}</@p>
+								</#if>
+								<#if resource_actions?exists && resource_actions.workflow_state?exists><@p><@icon style='info-circle' /> #i18n{forms.multiviewForms.responseDetails.response.state} : <strong >${resource_actions.workflow_state.name}</strong> </span></@p></#if>
+								<@p><@icon style='info-circle' /><#if form_response.published> #i18n{forms.multiviewForms.responseDetails.response.status} : <strong> ${form_response.update!} </strong><#else>#i18n{forms.multiviewForms.responseDetails.response.status} : #i18n{portal.site.admin_page.labelNodeStatus1}</#if></@p>
+								<#if form_response.published>
+								<@p><@icon style='external-link' title='#i18n{portal.portal_footer.newWindow}' /> <@link href='jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${form_response.id}' target='_blank'>#i18n{forms.permission.label.viewResult}</@link></@p>
+								</#if>
+								<@display_actions resource_actions! />
+								${resource_history!}
+							</@boxBody>
+						</@box>
+					</@columns>
+					<#if action_confirmation_message??>
+						<#assign contentConfirmation>${action_confirmation_message!}</#assign>
+						<@initToast>
+							<@addToast content=contentConfirmation class='bg-success text-white' />
+						</@initToast>
+					</#if>
+				</@row>
+				</@boxBody>
+			</@box>
+		</@div>
+	</@pageColumn>
+</@pageContainer>
 <!-- END  -->
 <@scrollTopBtn />
-<script src="js/admin/plugins/forms/multiview/forms-multiview.js"></script>
+<script src="themes/admin/shared/plugins/forms/js/multiview/forms-multiview.js"></script>
 <script>
-$( function() {	
-	$( '.content-header' ).hide();
-	$( '#form-detail-header' ).css( 'border-top', 0 );
-	setNavButtons( '${form_response.id}', '<i class="fas fa-arrow-left"></i> #i18n{portal.util.labelPrevious}', '#i18n{portal.util.labelNext} <i class="fas fa-arrow-right"></i>')	;
+document.addEventListener('DOMContentLoaded', function() {
+	setNavButtons('${form_response.id}', '<i class="bi bi-arrow-left"></i> #i18n{portal.util.labelPrevious}', '#i18n{portal.util.labelNext} <i class="bi bi-arrow-right"></i>');
 });
 </script>
 

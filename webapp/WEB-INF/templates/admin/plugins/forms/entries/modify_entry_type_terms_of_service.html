@@ -1,60 +1,11 @@
 <#include "all_entry_commons.html" />
-<#include "/admin/util/editor/editor.html" />
-
-${breadcrumb_template}
-<@row>
-	<@columns>
-		<@box>
-			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
-			<@boxBody>
-				<@tform action="${action}">
-					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
-						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
-						<@input type='hidden' name='id_step' value='${step.id}' />
-						<@input type='hidden' name='id_question' value='${question.id}' />
-						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
-						  <@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
-						</@formGroup>
-						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
-						  <@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
-						</@formGroup>
-						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
-						</@formGroup>
-						<#assign fieldLink = getFieldByCode( entry, "link" ) >
-						<@formGroup labelFor='link' labelKey='#i18n{forms.entryType.termsOfService.labelLink}' helpKey='#i18n{forms.entryType.termsOfService.labelLink.help}' mandatory=true>
-						  <@input type='text' name='link' id='link' value='${fieldLink.value}' maxlength=255 />
-						</@formGroup>
-						<#assign fieldTos = getFieldByCode( entry, "tos" ) >			
-						<@formGroup labelFor='tos' labelKey='#i18n{forms.entryType.termsOfService.labelTermsOfService}' mandatory=true>
-						  <@input type='textarea' name='tos' id='tos' richtext=true>${fieldTos.value}</@input>
-						</@formGroup>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
-						  <@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
-						</@formGroup>
-						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
-						</@formGroup>
-						<#if entry.exportable>
-							<@input type='hidden' name='exportable' value='1' />
-						</#if>
-						<#if entry.exportablePdf>
-							<@input type='hidden' name='exportable_pdf' value='1' />
-						</#if>
-						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
-							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' checked=entry.disabled />
-						</@formGroup>
-						<@input type='hidden' id='token' name='token' value='${token}' />
-						<@formGroup>
-						  <@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
-						  <@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
-						</@formGroup>	
-					</@fieldSet>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
-
-<#include "/admin/util/editor/editor.html" />
-<@initEditor />
+<#assign fieldLink = getFieldByCode( entry, "link" ) >
+<#assign fieldTos = getFieldByCode( entry, "tos" ) >			
+<@editFields editor=true exportable=entry.exportable exportablePdf=entry.exportablePdf helpMessage=false comments=false >
+<@formGroup labelFor='link' labelKey='#i18n{forms.entryType.termsOfService.labelLink}' helpKey='#i18n{forms.entryType.termsOfService.labelLink.help}' mandatory=true  rows=2>
+	<@input type='text' name='link' id='link' value='${fieldLink.value}' maxlength=255 />
+</@formGroup>
+<@formGroup labelFor='tos' labelKey='#i18n{forms.entryType.termsOfService.labelTermsOfService}' mandatory=true >
+	<@input type='textarea' name='tos' id='tos' richtext=true>${fieldTos.value}</@input>
+</@formGroup>
+</@editFields>

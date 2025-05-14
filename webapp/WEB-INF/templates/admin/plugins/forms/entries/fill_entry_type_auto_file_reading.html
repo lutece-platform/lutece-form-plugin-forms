@@ -14,7 +14,7 @@
   <#assign listFiles = ''>
 </#if>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
-<@formGroup class='${entry.CSSClass!}' labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey='${entry.helpMessage!}' mandatory=entry.mandatory htmlRequired=false >
+<@formGroup class='${entry.CSSClass!}' labelFor='${idName}' id='label${entry.idEntry}' labelKey='${entry.title}' helpKey='${entry.helpMessage!}' mandatory=entry.mandatory htmlRequired=false  rows=2>
     <#assign fieldName=idName >
     <#assign cssClass=entry.CSSClass!'' >
     <#if list_responses??>
@@ -26,9 +26,9 @@
       </#list>
     </#if>
     <@addFileInput fieldName=fieldName handler=uploadHandler cssClass=cssClass multiple=true />
-    <div id="listUpload">
+    <@div id='listUpload'>
       <@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles />
-    </div>
+    </@div>
     <#if list_responses?? && list_responses?has_content>
       <#assign response_error = list_responses[0]>
       <#if response_error.entry.idEntry == entry.idEntry && response_error.entry.error?? && response_error.entry.error.isDisplayableError>
@@ -44,7 +44,11 @@
     </#if>
 </@formGroup>
 <script>
-  /*HACK for firefox*/
-  $("#listUpload button[type='submit']").attr("onclick","return false;");
+/*HACK for firefox*/
+document.querySelectorAll("#listUpload button[type='submit']").forEach(function(btn) {
+  btn.addEventListener("click", function(event) {
+    event.preventDefault();
+  });
+});
 </script>
 ${ocr_code_template!}

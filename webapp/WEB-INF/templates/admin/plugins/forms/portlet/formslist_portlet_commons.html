@@ -30,18 +30,18 @@
   </@columns>
 </@row>
 <script>
-  let alreadySubmitted = false;
-  document.addEventListener('DOMContentLoaded', (event) => {
-    const form = document.getElementById('form-portlet');
+let alreadySubmitted = false;
+document.addEventListener('DOMContentLoaded', (event) => {
+  const form = document.getElementById('form-portlet');
 
-    form.addEventListener('submit', (e) => {
-      if (alreadySubmitted) {
-        e.preventDefault();
-        return;
-      }
-      alreadySubmitted = true;
-    });
+  form.addEventListener('submit', (e) => {
+    if (alreadySubmitted) {
+      e.preventDefault();
+      return;
+    }
+    alreadySubmitted = true;
   });
+});
 </script>
 <script type="module">
 import {

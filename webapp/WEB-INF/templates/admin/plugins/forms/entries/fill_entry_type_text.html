@@ -1,14 +1,3 @@
-<div class="mb-3 row w-75 mx-auto">
-	<#if getFieldByCode( entry, "illustration_image")??>
-		<#assign illustration_image_entry=getFieldByCode( entry, "illustration_image")>
-		<#assign image_id = illustration_image_entry.value>
-		<#list fields_list_by_id_entries as key, value>
-		<#if key = illustration_image_entry.idField>
-			<@img value illustration_image_entry.title illustration_image_entry.title />
-		</#if>
-		</#list>
-	</#if>
-</div>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign field_width=getFieldValueByCode( entry, "width")>
 <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
@@ -20,7 +9,6 @@
 <#else>
 	<#assign autocomplete = "" />
 </#if>
-
 <#if list_responses?has_content>
 	<#list list_responses as response>
 		<#if response.entry.idEntry == entry.idEntry>
@@ -42,9 +30,20 @@
 <#if field_max_size?number!=-1>
 	<#assign maxlength = field_max_size?number />
 </#if>
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory rows=2>
 	<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+	<@inputGroup>
 	<@input type='text' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue params=autocomplete placeHolder=placeholder/>
+	<#if getFieldByCode( entry, "illustration_image")??>
+		<#assign illustration_image_entry=getFieldByCode( entry, "illustration_image")>
+		<#assign image_id = illustration_image_entry.value>
+		<#list fields_list_by_id_entries as key, value>
+		<#if key = illustration_image_entry.idField>
+			<@img url=value title=illustration_image_entry.title class='img-thumbnail thumbnail-sm p-1' />
+		</#if>
+		</#list>
+	</#if>
+	</@inputGroup>
 </@formGroup>
 <#if list_responses??>
   <#list list_responses as response>

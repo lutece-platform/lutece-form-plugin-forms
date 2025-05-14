@@ -1,22 +1,7 @@
-<@box color='primary' id='step-${step.id}' class='step-group' params=' tabindex=0 data-title="${step.title}"'>
-    <@boxHeader title='${step.title} - ${form.title}' boxTools=true>
-        <@button type='button' color='link' params=' data-toggle="collapse" data-target="#box-step-content-${step.id}" aria-expanded="false" aria-controls="box-step-content-${step.id}"'>
-            <@icon style='minus-square' />
-        </@button>
-    </@boxHeader>
-    <@boxBody id='box-step-content-${step.id}' class='collapse show'>
-        ${stepContent}
-    </@boxBody>
-</@box>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        var formGroups = document.querySelectorAll('.form-group-value-content, .slot-entry');
-        formGroups.forEach(function(formGroup) {
-            var fieldset = formGroup.closest('fieldset');
-            if (formGroup.innerHTML.trim() === '') {
-                fieldset.style.display = 'none';
-            }
-        });
-    });
-</script>
+<#assign stepTitle=step.title!?replace("- hidden","") />
+<@h level=2>${stepTitle}</@h>
+<@listGroup class='list-group-flush step' id='step-${step.id}' params=' tabindex=0 data-title="${stepTitle}"'>
+<@listGroupItem>
+${stepContent}
+</@listGroupItem>
+</@listGroup>

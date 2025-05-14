@@ -1,99 +1,20 @@
 <#include "all_entry_commons.html" />
-<#include "/admin/util/editor/editor.html" />
-
-${breadcrumb_template}
-<@row>
-	<@columns sm=12>
-		<@box>
-			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : ${form.title}'>
-				<@button type='button' style='card-control collapse' buttonTargetId='#modifyEntryForm' size='sm' />
-			</@boxHeader>
-			<@boxBody>
-				<@tform id='modifyEntryForm' action="${action}" collapsed=true>
-					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
-						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
-						<@input type='hidden' name='id_step' value='${step.id}' />
-						<@input type='hidden' name='id_question' value='${question.id}' />
-						<@input type='hidden' name='max_files' id='max_files' value='1' />
-						
-						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
-							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
-						</@formGroup>
-						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
-							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
-						</@formGroup>
-						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-                            <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
-                        </@formGroup>
-						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
-							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
-						</@formGroup>
-						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
-							<@input type='textarea' name='comment' id='comment' rows=2>${entry.comment}</@input>
-						</@formGroup>
-						<@formGroup>
-							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
-						</@formGroup>
-						<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.createEntry.labelFileMaxSize}' mandatory=true>
-							<@input type='text' name='file_max_size' id='file_max_size' value=getFileMaxSize(entry) />
-						</@formGroup>
-						<!-- File type -->
-						<#assign fileType = getFieldValueByCode( entry, "file_type" )>
-						<@formGroup labelFor='file_type' labelKey='#i18n{forms.createEntry.fileType}' mandatory=true>
-							<#list entryTypeService.fileTypeRefList as file>
-								<#if fileType="${file.code}">
-									<@input type='text' name='file_type' id='file_type' value='${file.code}' maxlength=255 readonly=true class='hidden'/>
-									<@input type='text' name='readonly_file_type' id='readonly_file_type' value='${file.name}' maxlength=255 readonly=true/>
-								</#if>
-							</#list>
-						</@formGroup>
-						<@formGroup>
-							<@checkBox orientation='switch' labelFor='export_binary' labelKey='#i18n{forms.createEntry.labelExportBinary}' labelKey='#i18n{forms.createEntry.labelExportBinaryComment}' name='export_binary' id='export_binary' value='1' checked=exportBinary( entry ) />
-							<@tag color='warning' params='style="white-space: normal;"'>#i18n{forms.createEntry.labelExportBinaryWarning}</@tag>
-						</@formGroup>
-                    	<@formGroup>
-                        	<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
-                    	</@formGroup>
-						<#if entry.exportable>
-							<@input type='hidden' name='exportable' value='1' />
-						</#if>
-						<#if entry.exportablePdf>
-							<@input type='hidden' name='exportable_pdf' value='1' />
-						</#if>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
-							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
-						</@formGroup>
-						<@formGroup>
-							<#assign anonymizable=getFieldByCode( entry, "anonymizable")>
-							<#if anonymizable.value?boolean>
-								<#assign checkedValue = true />
-								<#assign anonPattern = anonymizable.title />
-							<#else>
-								<#assign checkedValue = false />
-								<#assign anonPattern ="" />
-							</#if>
-							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
-						</@formGroup>
-						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
-							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
-						</@formGroup>
-						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
-							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' checked=entry.disabled />
-						</@formGroup>
-						<@formGroup rows=2>
-							<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' hideTitle=['xs','sm'] />
-							<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' hideTitle=['xs','sm'] />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
-						</@formGroup>
-					</@fieldSet>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-	<!-- -----------------------OCR CONFIG MAPPING----------------------- -->
-	<#assign ocr_mapping_template= entryTypeService.getOcrConfigTemplate( step.id , question.id, entry.idEntry, fileType)>
-	${ocr_mapping_template!}
-	<!-- ---------------------------------------------------------------- -->
-</@row>
-<@initEditor />
-<@anonymPattern />
+<@editFields editor=true labelErrorMessage=true  exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true >
+<@formGroup labelFor='file_max_size' labelKey='#i18n{forms.create_entry.labelFileMaxSize}' mandatory=true>
+	<@input type='text' name='file_max_size' id='file_max_size' value=getFileMaxSize(entry) />
+</@formGroup>
+<!-- File type -->
+<#assign fileType = getFieldValueByCode( entry, "file_type" )>
+<@formGroup labelFor='file_type' labelKey='#i18n{forms.create_entry.fileType}' mandatory=true rows=2>
+	<#list entryTypeService.fileTypeRefList as file>
+		<#if fileType="${file.code}">
+			<@input type='text' name='file_type' id='file_type' value='${file.code}' maxlength=255 readonly=true class='hidden'/>
+			<@input type='text' name='readonly_file_type' id='readonly_file_type' value='${file.name}' maxlength=255 readonly=true/>
+		</#if>
+	</#list>
+</@formGroup>
+<!-- -----------------------OCR CONFIG MAPPING----------------------- -->
+<#assign ocr_mapping_template= entryTypeService.getOcrConfigTemplate( step.id , question.id, entry.idEntry, fileType)>
+${ocr_mapping_template!}
+<!-- ---------------------------------------------------------------- -->
+</@editFields>

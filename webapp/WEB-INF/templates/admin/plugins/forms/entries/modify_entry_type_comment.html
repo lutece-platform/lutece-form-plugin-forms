@@ -1,58 +1,18 @@
 <#include "all_entry_commons.html" />
-<#include "/admin/util/editor/editor.html" />
-
-${breadcrumb_template}
-<@row>
-	<@columns>
-		<@box color='primary'>
-			<@boxHeader title='#i18n{forms.modifyEntry.titleComment} : "${form.title}"' />
-			<@boxBody>
-				<@tform action="${action}"  params='enctype="multipart/form-data"'>
-					<@fieldSet legend='#i18n{forms.modifyEntry.titleComment} : "${form.title}"' hideLegend=['all']>
-						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
-						<@input type='hidden' name='id_step' value='${step.id}' />
-						<@input type='hidden' name='id_question' value='${question.id}' />
-						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
-							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
-						</@formGroup>
-						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
-						</@formGroup>
-						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}' mandatory=true>
-							<@input type='textarea' name='comment' id='comment' rows=5 richtext=true >${entry.comment}</@input>
-						</@formGroup>
-						<#if canAddFile>
-							<@formGroup labelFor='file' labelKey='#i18n{forms.createEntry.labelCommentFile}' helpKey='#i18n{forms.createEntry.labelCommentFileHelp}'>
-								<@input type='file' id='file' name='file' value='' />
-								<#if url_download_bo??>
-									<a href="${url_download_bo}">${filename}</a><@aButton href='${action}?action=removeFileComment&id_entry=${entry.idEntry}' hideTitle=['all'] color='danger' buttonIcon='times'  size='xs' />
-								</#if>
-							</@formGroup>
-						</#if>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
-							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
-						</@formGroup>
-						<#assign displayBo=getFieldValueByCode( entry, "display_in_bo") == 'true'>
-						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesDisplayBoComment}'>
-							<@checkBox orientation='switch' labelFor='display_in_bo' labelKey='#i18n{forms.createEntry.labelResponsesDisplayBo}' name='display_in_bo' id='display_in_bo' value='1' checked=displayBo />
-						</@formGroup>
-						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
-						</@formGroup>
-						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
-							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' checked=entry.disabled />
-						</@formGroup>
-						<@input type='hidden' id='token' name='token' value='${token}' />
-						<@formGroup>
-							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.createEntry.buttonSave}' hideTitle=['xs'] />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
-						</@formGroup>
-					</@fieldSet>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
- <@initEditor />
-
- 
+<#assign displayBo=getFieldValueByCode( entry, "display_in_bo") == 'true'>
+<@editFields editor=true hasTitle=false required=false onlyInBack=false>
+<@formGroup helpKey='#i18n{forms.create_entry.labelResponsesDisplayBoComment}' rows=2>
+	<@checkBox orientation='switch' labelFor='display_in_bo' labelKey='#i18n{forms.create_entry.labelResponsesDisplayBo}' name='display_in_bo' id='display_in_bo' value='1' checked=displayBo />
+</@formGroup>
+<#if canAddFile>
+<@formGroup labelFor='file' labelKey='#i18n{forms.create_entry.labelCommentFile}' helpKey='#i18n{forms.create_entry.labelCommentFileHelp}' rows=2>
+	<@input type='file' id='file' name='file' value='' />
+	<#if url_download_bo??>
+	<@div class='d-flex'>
+		<@link href=url_download_bo! title=filename! />
+		<@aButton href='${action}?action=removeFileComment&id_entry=${entry.idEntry}' hideTitle=['all'] color='danger' buttonIcon='times' />
+	</@div>
+	</#if>
+</@formGroup>
+</#if>				
+ </@editFields>

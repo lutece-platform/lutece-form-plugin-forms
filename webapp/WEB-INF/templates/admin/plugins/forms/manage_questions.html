@@ -1,156 +1,354 @@
-<#include "/admin/plugins/forms/edit_step_tabs.html" />
-<@row>
-    <@columns>
-        <@box>
-			<@boxHeader title='${form.title}'>
+<#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#assign stepTitle=step.title!?replace("- hidden","") />
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='${form.title}'>
+            <@tform type='inline'>
+				<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
+					<@inputGroup>
+						<@input type='text' name='search_step' id='search_step' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' params='autocomplete="off" addons' />
+						<@button color='primary' title='#i18n{portal.system.manage_plugins.buttonFilter}' buttonIcon='filter' hideTitle=['all'] />
+					</@inputGroup>
+				</@formGroup>
+			</@tform>
+			<@button type='button' id='forms-action' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-1' dropdownMenu=true >
 				<#if form.active>
-					<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' />
+					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='text-plus me-1' />
+					<@aButton color='default dropdown-item justify-content-start' href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='external-link me-1' />
+					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='list-alt me-1' />
 				</#if>
-				<#if step.final && step.initial>   
-					<@tform type='inline' method='post' name='modify_step' action='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions'>
-						<@input type='hidden' name='id_form' value='${step.idForm}' />
-						<@input type='hidden' name='id_step' value='${step.id}' />
-						<@input type='hidden' name='title' value='${step.title}' />
-						<@button type='submit' name='action_modifyStep' buttonIcon='cog' title='#i18n{forms.manage_questions.action.step}' hideTitle=['all'] size='sm' />
-					</@tform> 
-				</#if>  
-			</@boxHeader>
-            <@boxBody>
-				<@formBreadCrumb>
-					<#if step.final && step.initial>   
-                        <@breadcrumbItem class='active is-active'>${form.title}</@breadcrumbItem>
-					<#else>    
-                        <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem> 
-						<@breadcrumbItem class='active is-active'>${step.title}</@breadcrumbItem>
-					</#if> 
-				</@formBreadCrumb>
-                <@formStepTabs tab='questions' />
-                <@tabContent>
-                <@tform class='forms-questions' method='post' name='manage_questions' action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+            </@button>
+            <#if step.final && step.initial>   
+                <@tform type='inline' method='post' name='modify_step' action='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions'>
+                    <@input type='hidden' name='id_form' value='${step.idForm}' />
+                    <@input type='hidden' name='id_step' value='${step.id}' />
+                    <@input type='hidden' name='title' value='${stepTitle}' />
+                    <@button type='submit' name='action_modifyStep' buttonIcon='cog' title='#i18n{forms.manage_questions.action.step}' hideTitle=['all'] />
+                </@tform> 
+            </#if>  
+			</@pageHeader>
+            <@formBreadCrumb>
+                <#if step.final && step.initial>   
+                    <@breadcrumbItem class='active is-active'>${form.title}</@breadcrumbItem>
+                <#else>    
+                    <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem> 
+                    <@breadcrumbItem class='active'>${stepTitle}</@breadcrumbItem>
+                </#if> 
+            </@formBreadCrumb>
+            <@formTabs tab='questions' class='align-items-center' type='steps' >
+            <@tabContent>
+                <@div id='form-container' class='container'>
+                    <@tform class='forms-questions' method='post' name='manage_questions' action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
+                    <label for="parent_step" class="visually-hidden">
+                        <input type="radio" id="parent_step" name="id_parent" value="0" <#if id_parent=0>checked</#if>>
+                        #i18n{forms.manage_questions.type.step.label} "${stepTitle}"
+                    </label>
                     <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
-                    <@row>
-                        <@columns lg=10>
-                            <div class="radio">
-                                <label>
-                                    <input type="radio" id="parent_step" name="id_parent" value="0" <#if id_parent=0>checked</#if>>
-                                    <span class="group-radio-label"> #i18n{forms.manage_questions.type.step.label} "${step.title}"</span>
-                                </label>
-                            </div>
-                            <@tabPanel id='panel-question' active=true>
-                                 <@table class='forms-questions is-fullwidth'>
-                                    <@tr>
-                                        <@th sm=1></@th>
-                                        <@th sm=5>#i18n{forms.manage_questions.columnTitle}</@th>
-                                        <@th sm=1><@icon style='question' title='#i18n{forms.manage_questions.columnCondition}' /></@th>
-                                        <@th sm=4 hide=['xs','sm']>#i18n{forms.manage_questions.columnAction}</@th>
-                                        <@th sm=1></@th>
-                                    </@tr>
-                                    <@tableHeadBodySeparator />
-                                    <#list composite_list as composite>
-                                    	<#assign group=composite.type == 'group' />
-										<#if group><#assign trClass='group tr-group' /><#else><#assign trClass='' /></#if>
-                                        <@tr class=trClass>
-                                            <@input type='hidden' name='own_display_id_parent' value='${composite.formDisplay.parentId}' />
-                                            <@input type='hidden' name='own_display_id_composite' value='${composite.formDisplay.id}' />
-                                            <@td sm=1>
-                                                <#assign parentd>parent_${composite.formDisplay.id}</#assign>
-                                                <#if group>
-                                                    <div class="radio">
-                                                        <label>
-                                                            <input type="radio" id="${parentd}" name="id_parent" value="${composite.formDisplay.id}" <#if id_parent=composite.formDisplay.id>checked</#if>>
-                                                            <span class="group-radio-label"></span>
-                                                        </label>
-                                                    </div>
-                                                </#if>
-                                            </@td>
-                                            <@td sm=5>
-                                                <#if group><label for="${parentd}"><h4></#if><#list 0..composite.formDisplay.depth as indent><#if indent_index gte 0><#if indent_has_next><@icon style='level-down-alt' class='text-primary' /><#else><@icon style='${composite.icon!}' /></#if></#if></#list>${composite.title}<#if group></h4></label></#if>
-                                                <@div hide=['md','lg','xl','xxl']>
-													<@btnGroup size='sm'>
-                                                    <#if group>
-                                                        <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyGroup}' buttonIcon='pencil' size='sm' />
-                                                    <#else>
-                                                        <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.modifyQuestion}' buttonIcon='pencil' />
-                                                        <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=CONDITIONAL' class='btn-iframe' title='#i18n{forms.manage_questions.action.condition}' buttonIcon='question' />
-                                                    </#if> 
-                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' class='btn-iframe' title='#i18n{forms.manage_questions.action.move}' buttonIcon='arrows-alt' size='sm' />
-                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn-iframe'  title='#i18n{forms.manage_questions.action.control}' params=group?then('style="visibility:hidden;"','') buttonIcon='check' size='sm' />
-                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' size='sm' />
-													</@btnGroup>
-                                                </@div>
-                                            </@td>
-											<@td hide=['xs','sm'] sm=1>
-												<#if composite.formDisplay.displayControl??><@icon style='question' /></#if>
-												<#if composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content><@icon style='check' /></#if>
-											</@td>
-                                            <@td hide=['xs','sm'] sm=4>
-                                                <#if group>
-                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyGroup}' buttonIcon='pencil' size='sm' />
-                                                <#else>
-                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyQuestion}' buttonIcon='pencil' size='sm' />
-													<@button type='button' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL"' title='#i18n{forms.manage_questions.action.condition}' hideTitle=['all'] buttonIcon='question' size='sm' />
-													<@button type='button' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION"' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='check' size='sm' />
-													<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=duplicateQuestion&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&token=${token}' class='btn-into'  title='#i18n{forms.manage_questions.action.copy}' buttonIcon='copy' size='sm' />
-												</#if>
-												<@button type='button' style='modal' buttonTargetId='#qModal' params='data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}"' title='#i18n{forms.manage_questions.action.move}' hideTitle=['all'] buttonIcon='sort' size='sm' />
-												<@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' size='sm' /> 
-									        </@td>
-                                            <@td sm=1><#if group><@icon style='minus-square' class='text-primary group-toggle' /></#if></@td>
-                                        </@tr>
-                                    </#list>
-                                </@table>
-                            </@tabPanel>
-                        </@columns>
-                        <@columns lg=2 id='sticky-container'>
-                            <@ul class='list-group unstyled' id='info-right'>
+                        <@row>
+                            <@columns id='main-form-content'>
+                                <@tabPanel id='panel-question' active=true>
+                                <@div class='d-flex justify-content-between align-items-center pb-2 mb-3 border-bottom-wide'>
+                                <@h level=2>#i18n{forms.manage_questions.type.step.label} "${stepTitle?replace('- hidden','')}" </@h> 
                                 <#list entry_type_list as item>
-                                	<@li>
-	                                	<#if item.group>
-	                                		<@button type='submit' class='btn-add-entry' style='btn-block' color='primary' name='view_createGroup' value='' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName}'>${item.title}</@button>
-	                                	<#else>
-	                                        <@button type='submit' class='btn-add-entry' style='btn-block' color='primary' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName}'>${item.title}</@button>
-	                                    </#if>
-                                    </@li>
+                                    <#if item.group>
+                                        <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}' title='#i18n{forms.manage_questions.action.creategroup.label}' buttonIcon='${item.iconName}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}"' />
+                                    </#if>
                                 </#list>
-                            </@ul>
+                                </@div>
+                                <#assign idCurrentGroup=0 />
+                                <#assign inGroup=false />
+                                <ul id="question-list" class="list-unstyled">
+                                <#if composite_list?size gt 0>
+                                    <#list composite_list as composite>
+                                        <li data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}">
+                                        <@input type='hidden' name='own_display_id_parent' value='${composite.formDisplay.parentId}' />
+                                        <@input type='hidden' name='own_display_id_composite' value='${composite.formDisplay.id}' />
+                                        <#assign parentd>parent_${composite.formDisplay.id}</#assign>
+                                        <#assign group=composite.type == 'group' />
+                                        <#if idCurrentGroup != composite.formDisplay.parentId>
+                                                        </ul>
+                                                    </div> <!-- card-body -->
+                                                </div><!-- card -->
+                                            </li>
+                                            <li>
+                                            <#assign idCurrentGroup=0 />
+                                            <#assign inGroup=false />
+                                        <#else>   
+                                        </#if>
+                                        <#if group>
+                                            <#assign idCurrentGroup=composite.formDisplay.id />
+                                            <#assign groupCount=0 />
+                                            <#assign inGroup=true />
+                                            <div class="card card-question mb-4 border-dark" id="group-${composite.formDisplay.id}">
+                                                <div class="card-header d-flex align-items-start justify-content-between">
+                                                    <@h level=3 class='mb-0 pt-2 searchable'>
+                                                        ${composite.title!?replace('- hidden','')} 
+                                                     </@h>
+                                                    <label for="${parentd}" class="visually-hidden">
+                                                        <input type="radio" id="${parentd}" name="id_parent" value="${composite.formDisplay.id}" <#if id_parent=composite.formDisplay.id>checked</#if>>
+                                                    </label>
+                                                    <@cInline>
+                                                    <@button type='button' buttonIcon='plus' title='#i18n{forms.manage_questions.buttonAdd}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasFieldType"' />
+                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' buttonIcon='sort' position='end' class='btn btn-primary btn-iframe' title='#i18n{forms.manage_questions.action.move}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}"' />
+                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.updategroup.label}' buttonIcon='pencil' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}"' />
+                                                    <@aButton hideTitle=['all']  href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' />
+                                                    </@cInline>
+                                                </div>
+                                                <div class="card-body p-2">
+                                                    <ul class="list-unstyled">
+                                        <#else>
+                                            <@div class='d-flex justify-content-between align-items-center px-3 py-1'>
+                                                <#assign fieldType=composite.icon!?keep_after_last(" ") />
+                                                <@div class='d-flex align-items-center'>
+                                                    <@formGroup labelFor='f_${composite.formDisplay.id}' labelKey='${composite.title}' mandatory=false rows=2 class='form-label' >
+                                                    <@inputGroup>
+                                                    <#switch fieldType>
+                                                        <#case 'checkbox'>
+                                                            <@checkBox name=composite.title labelKey='Item 1' />
+                                                            <#break>
+                                                        <#case 'radio'>
+                                                            <@radioButton name=composite.title labelKey='Item 1' />
+                                                            <#break>
+                                                        <#case 'table'>
+                                                            <@table headBody=true>
+                                                                <@tr>
+                                                                    <@th colspan=2>${composite.title}</@th>
+                                                                </@tr>
+                                                                <@tableHeadBodySeparator />
+                                                                <@tr>
+                                                                    <@td>${composite.title}</@td>
+                                                                </@tr>
+                                                            </@table>
+                                                            <#break>
+                                                        <#case 'camera'>
+                                                            <#break>
+                                                        <#case 'image'>
+                                                            <@input type='file' name='${composite.title}' id='f_${composite.formDisplay.id}' />
+                                                            <#break>
+                                                        <#case 'list'>
+                                                            <@select name=composite.title >
+                                                                <@option label='${composite.title}' value='' />
+                                                            </@select>
+                                                            <#break>
+                                                        <#case 'user'>
+                                                            <@input type='text' name='user' id='f_${composite.formDisplay.id}' value='User' />
+                                                            <#break>
+                                                        <#case 'time'>
+                                                            <@row>
+                                                                <@columns sm=12 md=2>
+                                                                    <@input type='time' name='${composite.title}' id='f_${composite.formDisplay.id}' value=.now />
+                                                                </@columns>
+                                                                <@columns sm=12 md=2>
+                                                                    <@input type='time' name='${composite.title}2' id='f_${composite.formDisplay.id}2' value=.now />
+                                                                </@columns>
+                                                            </@row>
+                                                            <#break>
+                                                        <#case 'carto'>
+                                                        <#case 'geoloc'>
+                                                            <@input name='${composite.title}' id='f_${composite.formDisplay.id}' value='227 rue de Bercy' params='list="adress_${composite.formDisplay.id}"' />
+                                                            <datalist id="adress_${composite.formDisplay.id}">
+                                                                <option value="227 rue de Bercy, 75012 Paris"></option>
+                                                                <option value="227 rue de Belleville, 75020 Paris"></option>
+                                                                <option value="227 rue de Belledone, 75004 Paris"></option>
+                                                            </datalist>
+                                                            <#break>
+                                                        <#case 'date'>
+                                                            <@input type=fieldType name='${composite.title}' id='f_${composite.formDisplay.id}' value=.now />
+                                                            <#break>
+                                                        <#case 'text'>
+                                                        <#case 'textarea'>
+                                                        <#case 'file'>
+                                                            <@input type=fieldType name='${composite.title}' id='f_${composite.formDisplay.id}' />
+                                                            <#break>
+                                                        <#default>
+                                                            <@input name='${composite.title}' id='f_${composite.formDisplay.id}' />
+                                                    </#switch>
+                                                    </@inputGroup>
+                                                    <@formHelp labelFor='f_${composite.formDisplay.id}'></@formHelp>
+                                                    </@formGroup>
+                                                </@div>
+                                                <@div class='mt-2 ms-auto me-1' >
+                                                    <#if ( composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content ) || composite.formDisplay.displayControl??>
+                                                        <#if composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content>
+                                                            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn btn-outline-secondary me-2' title='#i18n{forms.modify_form.accesscontrol.label}' buttonIcon='settings-check' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION"' />
+                                                        </#if>
+                                                        <#if composite.formDisplay.displayControl??>
+                                                            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=CONDITIONAL' class='btn btn-outline-secondary' title='#i18n{forms.manage_questions.columnCondition}' buttonIcon='settings-question' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL"'  />
+                                                        </#if>
+                                                    </#if>
+                                                </@div>   
+                                                <@span class="btn-toolbar">
+                                                    <@btnGroup class='mx-2'>
+                                                        <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyQuestion}' buttonIcon='pencil' />
+                                                        <@aButton hideTitle=['all']  href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' />
+                                                    </@btnGroup>
+                                                    <@button type='button' id='forms-action' title='Actions' buttonIcon='cog' dropdownMenu=true >
+                                                        <@li><@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL' class='dropdown-item justify-content-start' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL"'><@span><@icon style='question'/> #i18n{forms.manage_questions.action.condition}</@span></@link></@li>
+                                                        <@li><@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn-iframe dropdown-item justify-content-start' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION"'><@span><@icon style='check'/> #i18n{forms.manage_questions.action.control}</@span></@link></@li>
+                                                        <@li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=duplicateQuestion&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&token=${token}' class='btn-into dropdown-item justify-content-start' ><@span><@icon style='copy'/> #i18n{forms.manage_questions.action.copy}</@span></@link></@li>
+                                                        <@li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' class='btn-iframe dropdown-item justify-content-start' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}"'><@span><@icon style='sort'/> #i18n{forms.manage_questions.action.move}</@span></@link></@li>
+                                                    </@button>
+                                                </@span>     
+                                            </@div>
+                                            <#if !inGroup><#else><#assign groupCount++ /></#if>           
+                                            </li>
+                                        </#if>
+                                    </#list>     
+                                        </ul>
+                                    </div>
+                                    <#if groupCount?? && groupCount==0>
+                                        <@empty title='#i18n{forms.manage_questions.action.noQuestions}' iconName='message-2-question' />
+                                    </#if>
+                                </div>
+                            <#else>
+                                <@empty title='#i18n{forms.manage_questions.action.noQuestions}' iconName='message-2-question' />
+                            </#if>
+                            </@tabPanel>
+                         </@columns>
+                     </@row>
+                     <@row>
+                        <@columns class='d-flex justify-content-center align-items-center'>
+                            <@button type='button' buttonIcon='plus' title='#i18n{forms.manage_questions.buttonAdd}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasFieldType"' />
                         </@columns>
                     </@row>
+                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasFieldType" aria-labelledby="offcanvasFieldTypeLabel">
+                        <div class="offcanvas-header">
+                            <h3 id="offcanvasFieldTypeLabel" class="h5">#i18n{forms.manage_questions.buttonAdd}</h2>
+                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="#i18n{portal.util.labelClose}"></button>
+                        </div>
+                        <div class="offcanvas-body">
+                            <@row class='row-cols-2 g-3'>
+                            <#list entry_type_list?filter( item-> item.group=false) as item>
+                                <@columns>
+                                    <#if !item.group>
+                                        <@button type='submit' color='outline-primary d-flex w-100' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName?keep_before(" ")} me-1' ><@span class='truncate text-start'>${item.title}</@span></@button>
+                                    </#if>
+                                </@columns>
+                            </#list>
+                        </@row>
+                        </div>
+                    </div>
                     </@tform>
-                </@tabContent>
-            </@boxBody>
-        </@box>
-    </@columns>
-</@row>
-
-<@formModal id='qModal' />
-
+                </@div>
+            </@tabContent>
+        </@formTabs>
+    </@pageColumn>
+</@pageContainer>
+<@offcanvasIframe id='offcanvasField'  />
+<@formModal />
 <script>
-$( function(){
-    $('.group-toggle').click( function(){
-        var nIdGroup = $(this).parents('.group').find("input[name='own_display_id_composite']").val();
-        $('input[name="own_display_id_parent"][value="' + nIdGroup + '"]').parents('tr').toggle();
-        $(this).toggleClass('fa-minus-square').toggleClass('fa-plus-square');
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.group-toggle').forEach(function (toggle) {
+        toggle.addEventListener('click', function () {
+            var nIdGroup = this.closest('.group').querySelector("input[name='own_display_id_composite']").value;
+            document.querySelectorAll(<#noparse>`input[name="own_display_id_parent"][value="${nIdGroup}"]`</#noparse>).forEach(function (input) {
+                input.closest('tr').classList.toggle('d-none');
+            });
+            this.classList.toggle('ti-minus-square');
+            this.classList.toggle('ti-plus-square');
+        });
     });
-    var isOpen=false;
-    $('.btn-iframe').click( function(e){
-        e.preventDefault();
-        var iff = $('body').find('#iframe-forms');
-        iff.remove();
-        if( !isOpen ){
-            $(this).parents('tr').after('<tr id="iframe-forms" class="open"><td colspan="4"><iframe id="modalIframe" src="' + $(this).attr('href') + '"><i class="fa fa-5x fa-sync fa-spin"></i></iframe></td></tr>' );
-            isOpen=true;
+
+    document.querySelectorAll('#question-list :not( .card > .card-header) li').forEach( question => {
+        question.addEventListener('dblclick', function(e) {
+            e.preventDefault();
+            window.location.href = encodeURI(this.dataset.url);
+        });
+    });
+
+    // When the modal is about to be shown, check the radio button before the button that triggered it
+    document.getElementById('offcanvasFieldType').addEventListener('show.bs.offcanvas', function (event) {
+        // Button that triggered the modal
+        let triggerBtn = event.relatedTarget;
+        if (!triggerBtn) return;
+
+        // Find the closest .card with id starting with "group-"
+        let card = triggerBtn.closest('.card[id^="group-"]');
+        if (card) {
+            // Find the radio input just before the button in the .card-header
+            let cardHeader = triggerBtn.closest('.card-header');
+            if (cardHeader) {
+                let radio = cardHeader.querySelector('input[type="radio"][name="id_parent"]');
+                if (radio) {
+                    radio.checked = true;
+                }
+            }
         } else {
-            isOpen=false;
+            // If no card found, check the radio button with id "parent_step"
+            let radio = document.querySelector('input[type="radio"][name="id_parent"][value="0"]');
+            if (radio) {
+                radio.checked = true;
+            }
         }
     });
-	
+
+    const offcanvasElement = document.getElementById( 'offcanvasField' );
+    const offcanvasElementLabel = document.getElementById( 'offcanvasFieldLabel' );
+    const iframeElement = document.getElementById( 'offcanvasIframe' );
+
+    if (offcanvasElement && iframeElement ) {
+        offcanvasElement.style.width = '30%';
+        offcanvasElement.addEventListener( 'show.bs.offcanvas', function (event) {
+            const button = event.relatedTarget;
+            const url = button.getAttribute( 'data-url' );
+            if (url) {
+                offcanvasElementLabel.textContent = button.getAttribute( 'title' );
+                iframeElement.src = url;
+                iframeElement.style.display = 'none';
+            }
+        });
+
+        iframeElement.addEventListener('load', function () {
+            iframeElement.style.display = 'block';
+            iframeElement.contentWindow.postMessage( 'offcanvas', '*');
+
+        });
+    } 
+
+    let stepList = [];
+
+    try {
+        stepList = JSON.parse(sessionStorage.getItem('stepList${step.idForm}')) || [];
+    } catch (e) {
+        stepList = [];
+    }
+    
+    if (stepList.length > 0) {
+        // Build dropdown menu HTML
+        const actionButtons = document.querySelector('#forms-action');
+        
+        <#noparse>
+        let menuHtml = `<div class="dropdown d-inline-block mx-2 my-0 py-0 ms-auto">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="stepDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+               <i class="ti ti-list-details me-2"></i> #i18n{forms.multiviewForms.responseDetails.show.steps} 
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="stepDropdown">`;
+        stepList.forEach(function(step) {
+            menuHtml += `<li><a class="dropdown-item" href="jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}">${step.title}</a></li>`;
+        });
+        menuHtml += `</ul></div>`;
+        </#noparse>
+
+        actionButtons.insertAdjacentHTML( "beforebegin", menuHtml );
+    }
+
 });
 </script>
-
+<script type="module">
+import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';
+const searchInput = document.querySelector("#search_step");
+const searchElementList = document.querySelectorAll("#main-form-content li");
+new LuteceSearchList( searchInput, searchElementList, {
+    searchableChild: [".card-header",".form-label"],
+    highlight: true
+});
+</script>
+<#-- REWRITE 
 <link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
 <script src="js/jquery/plugins/toastr/toastr.min.js"></script>
 <script>
-$( function(){
+document.addEventListener('DOMContentLoaded', function() {
+    // Configure and display toastr notifications
 <#if warnings?has_content>
 	<#list warnings as warning >
 		toastr.warning("${warning.message}", "");
@@ -168,3 +366,4 @@ $( function(){
 </#if>
 });
 </script>
+-->

@@ -1,56 +1,9 @@
-
 <#include "all_entry_commons.html" />
-
-${breadcrumb_template}
-<@row>
-	<@columns>
-		<@box>
-			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}' />
-			<@boxBody>
-				<@tform action="${action}">
-					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}" - #i18n{forms.createEntry.labelEntryType} : ${entry.entryType.title}' hideLegend=['all']>
-						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
-						<@input type='hidden' name='id_step' value='${step.id}' />
-						<@input type='hidden' name='id_question' value='${question.id}' />
-						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
-							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
-						</@formGroup>
-						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
-							<@input type='text' name='title' id='title' value=entry.title maxlength=255 />
-						</@formGroup>
-						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
-							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
-						</@formGroup>
-						<#if entry.fields?? && entry.fields?has_content>
-							<#assign prefix = getFieldValueByCode( entry, 'prefix') >
-							<@formGroup labelFor='prefix' labelKey='#i18n{forms.createEntry.labelPrefix}' helpKey='#i18n{forms.createEntry.labelPrefixComment}'>
-								<@input type='text' name='prefix' value=prefix maxlength=255 />
-							</@formGroup>
-						</#if>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
-							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
-						</@formGroup>
-						<#if entry.exportable>
-							<@input type='hidden' name='exportable' value='1' />
-						</#if>
-						<#if entry.exportablePdf>
-							<@input type='hidden' name='exportable_pdf' value='1' />
-						</#if>
-						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesExportablePdfComment}'>
-							<@checkBox orientation='switch' labelFor='exportable_pdf' labelKey='#i18n{forms.createEntry.labelResponsesExportablePdf}' name='exportable_pdf' id='exportable_pdf' value='1' checked=entry.exportablePdf />
-						</@formGroup>
-						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
-							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' checked=entry.disabled />
-						</@formGroup>
-                        ${question_modify_template!}
-						<@formGroup>
-							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
-							<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' hideTitle=['xs'] />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
-						</@formGroup>
-					</@fieldSet>
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+<#assign prefix = getFieldValueByCode( entry, 'prefix') >
+<@editFields required=false onlyInBack=false comments=false helpMessage=false exportable=entry.exportable exportablePdf=entry.exportablePdf >
+<#if entry.fields?? && entry.fields?has_content>
+<@formGroup labelFor='prefix' labelKey='#i18n{forms.create_entry.labelPrefix}' helpKey='#i18n{forms.create_entry.labelPrefixComment}' rows=2>
+<@input type='text' name='prefix' value=prefix maxlength=255 />
+</@formGroup>
+</#if>
+</@editFields>

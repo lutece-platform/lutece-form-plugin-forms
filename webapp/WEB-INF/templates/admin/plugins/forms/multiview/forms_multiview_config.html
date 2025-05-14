@@ -1,34 +1,35 @@
 <#include "/admin/plugins/asynchronousupload/upload_commons.html" />
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{forms.action.multiviewConfig.labelKey}' />
+		<@box class='p-0'>
+			<@boxBody>
+			<@tform method='post' name='save_multiview_config' action='jsp/admin/plugins/forms/MultiviewForms.jsp' params='enctype="multipart/form-data"'>
+				<@messages errors=errors />
+				<@formGroup  labelKey='#i18n{forms.multiview_config.labelDisplayColumnCsvSeparator}' helpKey='#i18n{forms.multiview_config.labelDisplayColumnCsvSeparator.help}' >
+					<@input type='text' name='csv_separator' id='csv_separator' class='w-25' value=multiview_config.csvSeparator />
+				</@formGroup>
+				<@formGroup  labelFor='display_forms_title_column' helpKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle.help}' >
+					<@checkBox labelFor='display_forms_title_column' labelKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle}' name='display_forms_title_column' id='display_forms_title_column' value='1' checked=multiview_config.displayFormsTitleColumn />
+				</@formGroup>
+				<#if userassignment_enabled>
+					<@formGroup  helpKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee.help}' >
+						<@checkBox labelFor='display_assignee_column' labelKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee}' name='display_assignee_column' id='display_assignee_column' value='1' checked=multiview_config.displayFormsAssigneeColumn />
+					</@formGroup>
+				</#if>
+				<@formGroup labelFor='pdf_number_of_response_per_file' labelKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile}'>
+					<@input type='number' name='pdf_number_of_response_per_file' class='w-25' id='pdf_number_of_response_per_file' value=multiview_config.numberOfFormResponsesPerPdf min=1 />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.multiview_config.labelUploadPdfTemplate}' helpKey='#i18n{forms.multiview_config.labelUploadPdfTemplate.help}'>
+					<@addFileInputAndfilesBox fieldName="upload_template" handler=uploadHandler listUploadedFiles=listUniqueFile!'' inputCssClass='' />
+				</@formGroup>
+				<@formGroup	>
+				<@formsButton okAction='doSaveMultiviewConfig' viewAction='' />
+				</@formGroup>
+			</@tform>
+		</@boxBody>
+		</@box>
+	</@pageColumn>
+</@pageContainer>
 <@addRequiredJsFiles />
-<script type="text/javascript" src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${uploadHandler.handlerName}" ></script>
-<@row>
-    <@columns>
-        <@box>
-			<@boxHeader title='Configuration de la vue des r&#233;ponses' />
-            <@boxBody>
-				<@tform method='post' name='save_multiview_config' action='jsp/admin/plugins/forms/MultiviewForms.jsp' params='enctype="multipart/form-data"'>
-					<@messages errors=errors />
-					<@formGroup labelKey='#i18n{forms.multiview_config.labelDisplayColumnCsvSeparator}' helpKey='#i18n{forms.multiview_config.labelDisplayColumnCsvSeparator.help}' >
-						<@input type='text' name='csv_separator' id='csv_separator' value=multiview_config.csvSeparator />
-					</@formGroup>
-					<@formGroup labelFor='display_forms_title_column' helpKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle.help}' >
-						<@checkBox labelFor='display_forms_title_column' labelKey='#i18n{forms.multiview_config.labelDisplayColumnFormTitle}' name='display_forms_title_column' id='display_forms_title_column' value='1' checked=multiview_config.displayFormsTitleColumn />
-					</@formGroup>
-					<#if userassignment_enabled>
-						<@formGroup helpKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee.help}' >
-							<@checkBox labelFor='display_assignee_column' labelKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee}' name='display_assignee_column' id='display_assignee_column' value='1' checked=multiview_config.displayFormsAssigneeColumn />
-						</@formGroup>
-					</#if>
-					<@formGroup labelFor='pdf_number_of_response_per_file' labelKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile}'>
-						<@input type='number' name='pdf_number_of_response_per_file' id='pdf_number_of_response_per_file' value=multiview_config.numberOfFormResponsesPerPdf min=1 />
-					</@formGroup>
-					<@formGroup labelKey='#i18n{forms.multiview_config.labelUploadPdfTemplate}' helpKey='#i18n{forms.multiview_config.labelUploadPdfTemplate.help}' rows=2>
-						<@addFileInputAndfilesBox fieldName="upload_template" handler=uploadHandler listUploadedFiles=listUniqueFile!'' inputCssClass='' />
-					</@formGroup>
-					
-					<@formsButton okAction='doSaveMultiviewConfig' viewAction='' />
-				</@tform>
-            </@boxBody>
-        </@box>
-    </@columns>
-</@row>
+<script src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${uploadHandler.handlerName}" ></script>

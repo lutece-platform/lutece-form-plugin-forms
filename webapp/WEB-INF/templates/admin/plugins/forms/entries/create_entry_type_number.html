@@ -3,10 +3,10 @@ ${breadcrumb_template}
 <@row>
 	<@columns>
 		<@box>
-			<@boxHeader title='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' />
+			<@boxHeader title='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' />
 			<@boxBody>
 				<@tform id='form-number' method="post" name="manage_entries" action="${action}">
-					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+					<@fieldSet legend='#i18n{forms.create_entry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<@input type='hidden' name='width' id='width' value='0' />
 						<#if entry.fieldDepend?exists>
@@ -15,76 +15,76 @@ ${breadcrumb_template}
 						<@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
 						<@input type='hidden' name='id_step' value='${step.id!"0"}' />
 						
-						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+						<@formGroup labelFor='type' labelKey='#i18n{forms.create_entry.labelType}'>
 							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
 						</@formGroup>
-						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' helpKey='#i18n{forms.create_entry.labelTitleComment}' mandatory=true>
 							<@input type='text' name='title' id='title' value='' maxlength=255 />
 						</@formGroup>
-						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.create_entry.labelCode}' helpKey='#i18n{forms.create_entry.labelCodeComment}'>
 							<@input type='text' name='entry_code' id='entry_code' value='' maxlength=100 />
 						</@formGroup>
-						<@formGroup labelFor='suffix' labelKey='#i18n{forms.createEntry.labelSuffix}' helpKey='#i18n{forms.createEntry.labelSuffixComment}'>
+						<@formGroup labelFor='suffix' labelKey='#i18n{forms.create_entry.labelSuffix}' helpKey='#i18n{forms.create_entry.labelSuffixComment}'>
 							<@input type='text' name='suffix' id='suffix' value='' maxlength=255 />
 						</@formGroup>
-						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.create_entry.labelHelpMessage}' helpKey='#i18n{forms.create_entry.labelHelpMessageComment}'>
 							<@input type='textarea' name='help_message' id='help_message' rows=2></@input>
 						</@formGroup>
-						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.create_entry.labelComment}'>
 							<@input type='textarea' name='comment' id='comment' rows=2></@input>
 						</@formGroup>
-						<@formGroup labelFor='placeholder' labelKey='#i18n{forms.createEntry.labelPlaceholder}'>
+						<@formGroup labelFor='placeholder' labelKey='#i18n{forms.create_entry.labelPlaceholder}'>
 							<@input type='text' name='placeholder' id='placeholder' value='' maxlength=100 />
 						</@formGroup>
-						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.createEntry.labelAutocomplete}' helpKey='#i18n{forms.createEntry.labelHelpMessageAutocomplete}'>
+						<@formGroup labelFor='autocomplete' labelKey='#i18n{forms.create_entry.labelAutocomplete}' helpKey='#i18n{forms.create_entry.labelHelpMessageAutocomplete}'>
 							<@input type='text' name='autocomplete' id='autocomplete' params=' list="autocompleteList"' />
 							<datalist id="autocompleteList"><option value="off"><option value="on"></datalist>
 						</@formGroup>
-						<@formGroup labelFor='value' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
+						<@formGroup labelFor='value' labelKey='#i18n{forms.create_entry.labelValueDefault}'>
 							<@input type='number' name='value' id='value' />
 						</@formGroup>
-						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}'>
+						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.create_entry.labelMandatory}'>
 							<@checkBox orientation='switch' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
 						</@formGroup>
-						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.createEntry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.createEntry.labelMandatoryErrorMessageHelp}'>
+						<@formGroup labelFor='errorMessage' labelKey='#i18n{forms.create_entry.labelMandatoryErrorMessage}' helpKey='#i18n{forms.create_entry.labelMandatoryErrorMessageHelp}'>
 							<@input type='textarea' name='errorMessage' id='errorMessage' rows=2></@input>
 						</@formGroup>
-						<@formGroup labelFor='min' labelKey='#i18n{forms.createEntry.labelMin}'>
+						<@formGroup labelFor='min' labelKey='#i18n{forms.create_entry.labelMin}'>
 							<@input type='number' name='min' id='min'/>
 						</@formGroup>
-						<@formGroup labelFor='max' labelKey='#i18n{forms.createEntry.labelMax}'>
+						<@formGroup labelFor='max' labelKey='#i18n{forms.create_entry.labelMax}'>
 							<@input type='number' name='max' id='max'/>
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
+							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.create_entry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
 						</@formGroup>
-						<@formGroup labelFor='entry_step' labelKey='#i18n{forms.createEntry.labelStep}' helpKey='#i18n{forms.createEntry.labelStepHelp}'>
+						<@formGroup labelFor='entry_step' labelKey='#i18n{forms.create_entry.labelStep}' helpKey='#i18n{forms.create_entry.labelStepHelp}'>
 							<@row>
 								<@columns sm=12 md=2>
 									<@input type='number' name='entry_step' id='entry_step' min=0 />
 								</@columns>
 							</@row>
 						</@formGroup>
-						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.create_entry.labelCSSClass}' helpKey='#i18n{forms.create_entry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
 						</@formGroup>
-						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
-							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
+						<@formGroup helpKey='#i18n{forms.create_entry.labelResponsesIndexedComment}'>
+							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.create_entry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=true />
 						</@formGroup>
 						<@formGroup>
-							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
+							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.create_entry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' />
 						</@formGroup>
-						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.create_entry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
 							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' maxlength=255 />
 						</@formGroup>
 						<@anonymPattern />
-						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
-							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' />
+						<@formGroup labelFor='disabled' helpKey='#i18n{forms.create_entry.labelDisableQuestionHelp}'>
+							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1' />
 						</@formGroup>
 						${question_create_template!}
 						<@formGroup>
 							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' />
-							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
 						</@formGroup>
 					</@fieldSet>
 				</@tform>

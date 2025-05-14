@@ -1,92 +1,115 @@
-
-<#include "/admin/plugins/forms/edit_step_tabs.html" />
+<#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#assign stepTitle=step.title!?replace("- hidden","") />
 <#assign isOnlyOneStep=0>
 <#if step.initial><#assign isOnlyOneStep=isOnlyOneStep+1></#if>
 <#if step.final><#assign isOnlyOneStep=isOnlyOneStep+1></#if>
-<@row>
-    <@columns>
-        <@box>
-			<@boxHeader title='${form.title}' />
-            <@boxBody>
-                <@formBreadCrumb>
-                    <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem>
-                    <@breadcrumbItem>${step.title}</@breadcrumbItem>
-                </@formBreadCrumb>
-                <@tabs color='clearfix'>
-                    <@formStepTabs tab="transitions" />
-                </@tabs>
-                <@tabContent>
-                    <@tabPanel id='manageStep' active=true>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='${form.title!}'>
+        <@button type='button' id='forms-action' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-1' dropdownMenu=true >
+            <#if form.active>
+                <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='text-plus me-1' />
+                <@aButton color='default dropdown-item justify-content-start' href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='external-link me-1' />
+                <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='list-alt me-1' />
+            </#if>
+        </@button>
+        </@pageHeader>
+        <@formBreadCrumb>
+            <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem>
+            <@breadcrumbItem class='active' id='${step.id}'>${stepTitle}</@breadcrumbItem>
+        </@formBreadCrumb>
+        <@formTabs tab="transitions" type='steps'>
+            <@tabContent>
+            <@tabPanel id='manageStep' active=true>
+                <@div class='container'>
+                    <@h level=2 class='pb-2 border-bottom d-flex'>
+                    #i18n{forms.create_step.pageTitle} ${stepTitle}
+                        <#if !step.final>
+                        <@div class="ms-auto">
+                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}" targetElement="#create_transition" id="create-transition-${step.id}" btnIcon="plus" btnColor="primary" position="end" btnTitle="#i18n{forms.manage_transitions.buttonAdd}" title="#i18n{forms.manage_transitions.buttonAdd}" size="half"/>
+                        </@div>
+                        </#if>
+                    </@h>
+                    <@row class='row-cols-1 row-cols-md-2 align-items-start g-2 py-3'>
+                    <@columns sm=3 class='d-flex flex-column align-items-start'>
+                        <@tform method='post' name='modify_step' id='modify_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
+                        <@input type='hidden' id='token' name='token' value='${token}' />
+                        <@messages errors=errors />
+                        <@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
+                        <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
+                        <@formGroup labelKey=' #i18n{forms.modify_step.pageTitle} ' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true rows=2>
+                            <@input type='text' name='title' id='step-title' value='${stepTitle}' />
+                        </@formGroup>
+                        <@formGroup helpKey='#i18n{forms.modify_step.showLabelTitle.help}' rows=2>
+                            <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.showLabelTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=!step.title?ends_with('hidden') />
+                        </@formGroup>
+                        <@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}' rows=2>
+                            <@input type='textarea' name='description'>${step.description!}</@input>
+                        </@formGroup>
                         <@row>
-                            <@columns sm=4>
-                                <@tform method='post' name='modify_step' id='modify_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
-                                	<@input type='hidden' id='token' name='token' value='${token}' />
-                                    <@messages errors=errors />
-                                    <@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
-                                    <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
-                                    <@formGroup labelKey='#i18n{forms.modify_step.labelTitle}' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true rows=2>
-                                        <@input type='text' name='title' id='step-title' value='${step.title!?replace(\'- hidden\',\'\')}' />
-                                    </@formGroup>
-                                    <@formGroup helpKey='#i18n{forms.modify_step.showLabelTitle.help}' rows=2>
-                                        <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.showLabelTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=!step.title?ends_with('hidden') />
-                                    </@formGroup>
-                                    <@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}' rows=2>
-                                        <@input type='textarea' name='description'>${step.description!}</@input>
-                                    </@formGroup>
-                                    <@formGroup helpKey='#i18n{forms.modify_step.labelInitial.help}' rows=2>
-                                        <@checkBox orientation='switch' labelFor='initial' labelKey='#i18n{forms.modify_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
-                                    </@formGroup>
-                                    <@formGroup helpKey='#i18n{forms.modify_step.labelFinal.help}' rows=2>
-                                        <@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.modify_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
-                                    </@formGroup>
-                                    <@formsButton okAction='modifyStep' viewAction='' rows=2 />
-                                </@tform>
+                            <@columns>
+                                <@formGroup helpKey='#i18n{forms.modify_step.labelInitial.help}' rows=2>
+                                    <@checkBox orientation='switch' labelFor='initial' labelKey='#i18n{forms.modify_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+                                </@formGroup>
                             </@columns>
-                            <@columns sm=8>
-                                <@table id='transitions'>
-                                    <tr>
-                                        <@th sm=6>#i18n{forms.manage_transitions.columnNextStep}</@th>
-                                        <@th sm=1 align='center'>#i18n{forms.manage_transitions.columnPriority}</@th>
-                                        <@th sm=1 align='center' title='#i18n{forms.manage_questions.columnCondition}' hide=['xs']><@icon style='question'/></@th>
-                                        <@th sm=4>#i18n{forms.manageForm.columnActions}
-                                        <#if !step.final>               
-                                         <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}' title='#i18n{forms.manage_transitions.buttonAdd}' params='data-toggle="modal" data-target="#transitionModal" data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}" data-modal-title="#i18n{forms.create_transition.title}"' buttonIcon='plus' size='sm' />
-                                        </#if>
-                                        </@th>
-                                    </tr>
-                                    <#list transition_list as transition>
-                                    <tr>
-                                        <@td sm=6>${transition.nextStepTitle!''}</@td>
-                                        <@td sm=1 align='center' hide=['xs']>
-                                        	<@tag>${transition.priority!}</@tag>
-                                            <#if transition_index gt 0>
-                                                <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveUpPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveUpPriorityTransition}' hideTitle=['all'] buttonIcon='chevron-up' size='sm' />
-                                            </#if>
-                                            <#if transition_has_next>
-                                                <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveDownPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveDownPriorityTransition}' hideTitle=['all'] buttonIcon='chevron-down' size='sm' />
-                                            </#if>
-                                        </@td>
-                                        <@td sm=1 align='center' valign='middle'><#if transition.conditional><@icon style='question' /></#if></@td>
-                                        <@td sm=4>
-                                           <@button type='button' style='modal' class='btn-modal' buttonTargetId='#transitionModal' params='data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}" data-modal-title="#i18n{forms.modify_transition.title}"' buttonIcon='pencil' size='sm' />
-											<@button type='button' buttonTargetId='#transitionModal' style='modal' params='data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION"' title='#i18n{forms.manage_controls.action.modifyControl}' hideTitle=['all'] buttonIcon='cog' class='btn-modal' size='sm' />
-			                                <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveTransition&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.removeTransition}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' /> 
-                                        </@td>
-                                    </tr>
-                                    </#list>
-                                </@table>
-                                <@alert id='tr-msg' color='warning'>
-                                    #i18n{forms.manage_transitions.warning.final}
-                                </@alert>
+                            <@columns>
+                                <@formGroup helpKey='#i18n{forms.modify_step.labelFinal.help}' rows=2>
+                                    <@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.modify_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+                                </@formGroup>
                             </@columns>
                         </@row>
-                    </@tabPanel>
-                </@tabContent>
-            </@boxBody>
-        </@box>
-    </@columns>
-</@row>
-<@formModal id='transitionModal' />
+                        <@formsButton okAction='modifyStep' viewAction='' rows=2 />
+                        </@tform>
+                    </@columns>
+                    <#if step.final> 
+                    <@columns class='d-flex align-items-center justify-content-center'>
+                        <@callOut color='warning d-flex w-75 justify-content-center'>
+                            <@h level=3 class='h2'><@icon style='alert-triangle' /> #i18n{forms.manage_transitions.warning.final}</@h>
+                        </@callOut>
+                    </@columns>
+                <#else> 
+                    <@columns>
+                        <@row class='g-2'>
+                            <#list transition_list as transition>
+                            <@columns class='d-flex flex-column'>
+                                <div class="card mb-4 rounded-3 shadow-sm">
+                                    <div class="card-header py-3 <#if transition.priority! == 1> bg-primary text-bg-primary</#if>">
+                                        <@h level=3 class='my-0 fw-normal d-flex justify-content-between w-100'>
+                                            <span>#i18n{forms.manage_transitions.columnNextStep} </span>
+                                            <span class="badge bg-info text-bg-info">#i18n{forms.manage_transitions.columnPriority} ${transition.priority!}<#if transition.conditional> <@icon style='question'/></#if></span>
+                                        </@h>
+                                    </div>
+                                    <div class="card-body">
+                                        <@h level=4 class='card-title truncate h2 d-flex justify-content-between'>${transition.nextStepTitle!''}</@h>   
+                                        <ul class="list-unstyled d-flex justify-content-end">
+                                            <li>
+                                                <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}" targetElement="#modify_transition" id="transition-step-${step.id}${transition.id}" btnIcon="pencil" btnColor="primary" position="end" title="#i18n{forms.modify_transition.title}" size="half"/>
+                                            </li>
+                                            <li><@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION' title='#i18n{forms.manage_controls.action.modifyControl}' hideTitle=['xs','sm','md'] buttonIcon='cog' color='primary' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasTransition" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION"' /> </li>
+                                            <li> 
+                                                <@btnGroup>
+                                                    <#if transition_index gt 0><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveUpPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveUpPriorityTransition}'  buttonIcon='chevron-left' /></#if>
+                                                    <#if transition_has_next><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveDownPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveDownPriorityTransition}' buttonIcon='chevron-right' iconPosition='right' /></#if>
+                                                </@btnGroup>
+                                            </li>
+                                            <li><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveTransition&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.removeTransition}' hideTitle=['all'] buttonIcon='trash' color='danger' /> </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </@columns>
+                            </#list>
+                        </@row>
+                    </@columns>       
+                </#if>
+            </@row>
+            </@div>
+            </@tabPanel>
+            </@tabContent>
+        </@formTabs>
+    </@pageColumn>
+</@pageContainer>
+<@offcanvasIframe id='offcanvasTransition'  />
+<@formModal />
 <link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
 <script src="js/jquery/plugins/toastr/toastr.min.js"></script>
 <script>
@@ -97,98 +120,67 @@ document.addEventListener('DOMContentLoaded', function(e) {
             document.querySelector('#step-title').value = document.querySelector('#step-title').value  + ' - hidden';
         } 
     });
-
-    if (e.target.closest('.btn-iframe')) {
-        e.preventDefault();
-        
-        const existingIframe = document.getElementById('iframe-forms');
-        if (existingIframe) {
-            existingIframe.remove();
-        }
-        
-        if (!isOpen) {
-            const buttonRow = e.target.closest('tr');
-            const newRow = document.createElement('tr');
-            newRow.id = 'iframe-forms';
-            newRow.className = 'open';
-            newRow.innerHTML = <#noparse>`<td colspan="4"><iframe id="modalIframe" src="${e.target.closest('a').getAttribute('href')}"><i class="bi bi-arrow-repeat spinner"></i></iframe></td>`</#noparse>;
-            
-            buttonRow.parentNode.insertBefore(newRow, buttonRow.nextSibling);
-            isOpen = true;
-        } else {
-            isOpen = false;
-        }
-    }
-	
-    document.querySelectorAll('button.btn-modal').forEach(button => {
-        button.addEventListener('click', function(e) {
-            const iframeUrl = this.getAttribute('data-url');
-            document.querySelector('#transitionModal #modalIframe').setAttribute('src', iframeUrl);
-        });
-    });
-
+    
     if (document.getElementById('initial').checked && document.getElementById('final').checked) {
         steps = true;
     }
-    
     document.getElementById('initial').addEventListener('change', function() {
         steps = document.getElementById('initial').checked && document.getElementById('final').checked;
     });
-    
     document.getElementById('final').addEventListener('change', function() {
         steps = document.getElementById('initial').checked && document.getElementById('final').checked;
     });
-/*
-    toastr.options.closeButton = true;
-    toastr.options.timeOut = 0;
-    toastr.options.extendedTimeOut = 0;
 
-    <#if warnings??>
-        <#if warnings?size &gt; 0 >
-            <#list warnings as warning >
-                toastr.warning("${warning.message}");
-            </#list>	
-        </#if>
-    </#if>
+    let stepList = [];
+    try {
+        stepList = JSON.parse(sessionStorage.getItem('stepList${step.idForm}')) || [];
+    } catch (e) {
+        stepList = [];
+    }
 
-    <#if error?has_content>
-        <#list errors as error >
-            toastr.error("${error.message}", "");
-        </#list>	
-    </#if>
-    <#if infos?has_content>
-        <#list infos as info >
-            toastr.info("${info.message}", "");
-        </#list>	
-    </#if>
-    */
-    document.getElementById('tr-msg').classList.add('d-none');
-
-    <#if isOnlyOneStep=2>
-        // toastr.info('#i18n{forms.manage_transitions.info.multiple.step}');
-        document.getElementById('transitions').classList.add('d-none');
-        document.getElementById('tr-msg').classList.remove('d-none');
-    </#if>
-	
-    document.getElementById('final').addEventListener('change', function() {
-        const transitionsTable = document.getElementById('transitions');
-        const trMsg = document.getElementById('tr-msg');
+    if (stepList.length > 0) {
+        // Build dropdown menu HTML
+        const activeTitle = document.querySelector('#forms-action');
         
-        if (this.checked) {
-            transitionsTable.classList.add('d-none');
-            trMsg.classList.remove('d-none');
-            
-            if (steps) {
-                // toastr.warning("#i18n{forms.manage_transitions.warning.final}");
-            } else {
-                // toastr.warning("#i18n{forms.manage_transitions.info.step.initial.final}");
-            }
-        } else {
-            transitionsTable.classList.remove('d-none');
-            trMsg.classList.add('d-none');
-            toastr.clear();
-        }
-    });
+        <#noparse>
+        let menuHtml = `<div class="dropdown d-inline-block mx-2 my-0 py-0 ms-auto">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="stepDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+               <i class="ti ti-list-details me-2"></i> #i18n{forms.multiviewForms.responseDetails.show.steps} 
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="stepDropdown">`;
+        stepList.forEach(function(step) {
+            menuHtml += `<li><a class="dropdown-item" href="jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}">${step.title}</a></li>`;
+        });
+        menuHtml += `</ul></div>`;
+        </#noparse>
 
+        activeTitle.insertAdjacentHTML( "beforebegin", menuHtml );
+
+    }
+
+    const offcanvasElement = document.getElementById( 'offcanvasTransition' ); // Updated to use offcanvasTransition
+    const offcanvasElementLabel = document.getElementById( 'offcanvasTransitionLabel' ); // Updated to use offcanvasTransitionLabel
+    const iframeElement = document.getElementById( 'offcanvasIframe' );
+
+    if (offcanvasElement && iframeElement ) {
+        offcanvasElement.style.width = '30%';
+        offcanvasElement.addEventListener( 'show.bs.offcanvas', function (event) {
+            const button = event.relatedTarget;
+            const url = button.getAttribute( 'data-url' );
+            if (url) {
+                offcanvasElementLabel.textContent = button.getAttribute( 'title' );
+                iframeElement.src = url;
+                iframeElement.style.display = 'none';
+            }
+        });
+
+        iframeElement.addEventListener('load', function () {
+            iframeElement.style.display = 'block';
+            iframeElement.contentWindow.postMessage( 'offcanvas', '*');
+        });
+    } else {
+        console.error('Un des éléments nécessaires est manquant.');
+    }
+  
 });
 </script>

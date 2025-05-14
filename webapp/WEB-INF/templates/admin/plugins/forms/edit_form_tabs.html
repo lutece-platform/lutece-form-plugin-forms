@@ -1,24 +1,28 @@
-<#macro formTabs tab>
-	<@tabs>
-		<@tabList>
-			<#if tab='steps'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' tabIcon='step-forward' title='#i18n{forms.modify_form.tab.labelSteps}' />
-			
-			<#if tab='general'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelGeneral}' />
-			
-			<#if tab='export'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormExport.jsp?view=manageExport&id_form=${form.id}' tabIcon='file-export' title='#i18n{forms.modify_form.tab.labelExport}' />
-			
-			<#if tab='questions'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=manageQuestionPublication&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelQuestion}' />
-			
-			<#if tab='multiview'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp?view=manageMultiview&id_form=${form.id}' tabIcon='list-alt' title='#i18n{forms.modify_form.tab.labelMultiview}' />
-			
-			<#if tab='workflow'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormWorkflowConfig.jsp?view=manageWorkflow&id_form=${form.id}' tabIcon='tasks' title='#i18n{forms.modify_form.tab.labelWorkflow}' />
-		</@tabList>
-		<#nested>
-	</@tabs>
+<#macro formTabs tab class='' type='form' params=''>
+<@tabs>
+<@tabList class=class>
+<#if type='form'>
+<#if tab='steps'><#assign active = true /><#else><#assign active = false /></#if>
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' tabIcon='step-forward' title='#i18n{forms.modify_form.tab.labelSteps}' />
+<#if tab='general'><#assign active = true /><#else><#assign active = false /></#if>
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelGeneral}' />
+<#if tab='export'><#assign active = true /><#else><#assign active = false /></#if>
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormExport.jsp?view=manageExport&id_form=${form.id}' tabIcon='file-export' title='#i18n{forms.modify_form.tab.labelExport}' />
+<#if tab='questions'><#assign active = true /><#else><#assign active = false /></#if>
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=manageQuestionPublication&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelQuestion}' />
+<#if tab='multiview'><#assign active = true /><#else><#assign active = false /></#if>
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp?view=manageMultiview&id_form=${form.id}' tabIcon='list-alt' title='#i18n{forms.modify_form.tab.labelMultiview}' />
+<#if tab='workflow'><#assign active = true /><#else><#assign active = false /></#if>
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormWorkflowConfig.jsp?view=manageWorkflow&id_form=${form.id}' tabIcon='tasks' title='#i18n{forms.modify_form.tab.labelWorkflow}' />
+</#if>
+<#if type='steps'>
+<#if tab='questions'><#assign active = true /><#else><#assign active = false /></#if>
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' tabIcon='th-list' title='#i18n{forms.manage_questions.title}' />
+<#if tab='transitions' || tab='general'><#assign active = true /><#else><#assign active = false /></#if>
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' tabIcon='cog' title='#i18n{forms.modify_step.labelTitle}' />
+</#if>
+${params}
+</@tabList>
+<#nested>
+</@tabs>
 </#macro>

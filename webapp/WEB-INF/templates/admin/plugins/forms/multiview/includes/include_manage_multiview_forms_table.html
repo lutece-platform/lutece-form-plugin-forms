@@ -1,23 +1,23 @@
 ${multiviewmap!''}
 <@table>
-	<#if form_response_column_header_template_list?has_content>
-		<#list form_response_column_header_template_list as form_response_column_header_template>
-			${form_response_column_header_template}
-		</#list>
-	</#if>
-	<@tableHeadBodySeparator />
-	<#if form_response_line_template_list?has_content>
-		<#list form_response_line_template_list as form_response_line_template>
-			<#assign dataParams>data-url="${redirect_details_base_url}&id_form_response=${form_response_line_template.idFormResponse}"</#assign>
-			<@tr params=dataParams>
-				<#if form_response_line_template.formColumnCellTemplateList?has_content>
-					<#list form_response_line_template.formColumnCellTemplateList as form_column_cell_template>
-						${form_column_cell_template}
-					</#list>
-				</#if>
-			</@tr>
-		</#list>
-	</#if>
+<#if form_response_column_header_template_list?has_content>
+	<#list form_response_column_header_template_list as form_response_column_header_template>
+		${form_response_column_header_template}
+	</#list>
+</#if>
+<@tableHeadBodySeparator />
+<#if form_response_line_template_list?has_content>
+	<#list form_response_line_template_list as form_response_line_template>
+		<#assign dataParams>data-url="${redirect_details_base_url}&id_form_response=${form_response_line_template.idFormResponse}"</#assign>
+		<@tr params=dataParams>
+			<#if form_response_line_template.formColumnCellTemplateList?has_content>
+				<#list form_response_line_template.formColumnCellTemplateList as form_column_cell_template>
+					${form_column_cell_template}
+				</#list>
+			</#if>
+		</@tr>
+	</#list>
+</#if>
 </@table>
 <#if form_response_geojson_point_list?has_content>
 <script id="geojson_points" type="application/json">{

@@ -1,9 +1,9 @@
-<#include "/admin/plugins/forms/edit_step_tabs.html" />
-<@box>
-    <@boxHeader title='#i18n{forms.manageForm.pageTitle}' />
-    <@boxBody>
-        <@tabs>
-            <@formStepTabs tab="general" />
+<#include "/admin/plugins/forms/edit_form_tabs.html" />
+<#assign stepTitle=step.title!?replace("- hidden","") />
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{forms.manageForm.pageTitle}' />
+       <@formTabs tab='general' type='steps' >
 			<@tabContent>
 				<@tform method='post' name='modify_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
 					<@input type='hidden' id='token' name='token" value="${token}' />
@@ -11,16 +11,13 @@
 					<@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
 					<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
 					<@formGroup labelKey='#i18n{forms.modify_step.labelTitle}' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true>
-						<@input type='text' name='title' value='${step.title!}' />
-					</@formGroup>
-					<@formGroup helpKey='#i18n{forms.modify_step.labelShowTitle.help}' rows=2>
-						<@checkBox labelKey='#i18n{forms.modify_step.labelShowTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=!step.title?ends_with('hidden') />
+						<@input type='text' name='title' value='${stepTitle!}' />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}'>
 						<@input type='textarea' name='description'>${step.description!}</@input>
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_step.labelInitial}' helpKey='#i18n{forms.modify_step.labelInitial.help}'>
-						<@checkBox orientation='switch' labelFor='initial' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+						<@checkBox labelFor='initial' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_step.labelFinal}' helpKey='#i18n{forms.modify_step.labelFinal.help}'>
 						<@checkBox labelFor='final' name='final' id='final' value='1' checked=(step?has_content && step.final) />
@@ -28,29 +25,6 @@
 					<@formsButton okAction='modifyStep' viewAction='manageSteps' />
 				</@tform>
 			</@tabContent>
-        </@tabs>
-    </@boxBody>
-</@box>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-	// Form submission handler
-	document.querySelector('#modify_step').addEventListener('submit', function(e) {
-		const showTitleCheckbox = document.querySelector('#show-step-title');
-		const titleField = document.querySelector('input[name="title"]');
-		
-		if (!showTitleCheckbox.checked && !titleField.value.includes('hidden')) {
-			titleField.value = titleField.value + ' - hidden';
-		}
-	});
-	
-	// Hide elements in the modal
-	const pubModal = document.querySelector('#pubModal');
-	if (pubModal) {
-		pubModal.querySelectorAll('.content-header').forEach(el => el.style.display = 'none');
-		const adminWrapper = pubModal.querySelector('#admin-wrapper');
-		if (adminWrapper) adminWrapper.style.margin = '0';
-		pubModal.querySelectorAll('header').forEach(el => el.style.display = 'none');
-		pubModal.querySelectorAll('footer').forEach(el => el.style.display = 'none');
-	}
-});
-</script>
+        </@formTabs>
+    </@pageColumn>
+</@pageContainer>

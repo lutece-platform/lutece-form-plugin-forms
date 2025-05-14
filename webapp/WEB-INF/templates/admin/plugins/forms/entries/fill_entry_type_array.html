@@ -1,4 +1,4 @@
-<@formGroup labelFor='form${entry.idEntry}' id='form${entry.idEntry}' labelKey='${entry.title}' mandatory=entry.mandatory htmlRequired=false >
+<@formGroup labelFor='form${entry.idEntry}' id='form${entry.idEntry}' labelKey='${entry.title}' mandatory=entry.mandatory htmlRequired=false  rows=2>
 	<@table>
       <#assign x=getFieldValueByCode(entry, "array_row")?number>
       <#list 1..x+1 as i>
