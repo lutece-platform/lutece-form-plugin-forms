@@ -1,25 +1,24 @@
- <@messages warnings=warnings />
- <form class="form-horizontal" id="summary_validate" action="jsp/admin/plugins/forms/ManageFormResponse.jsp" method="post">
- <input name="id_form" value="${id_form}" type="hidden" />
-  <div id="form-response-summary" class="box-body">
-  	<#if form.countResponses>#i18n{forms.createEntry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
-    <#if list_summary_step_display?has_content>
-      <#list list_summary_step_display as summary_step_display>
-        ${summary_step_display}
-      </#list>
-    </#if>
-  </div>
-  <div class="panel-footer">
-  	<#assign label_button="#i18n{forms.summary.validate}" />
-  	<#if form.labelFinalButton?has_content>
-  		<#assign label_button=form.labelFinalButton />
-  	</#if>
-  	<input type="hidden" name="token" value = "${token}">
-    <button type="submit" class="btn btn-primary btn-sm"  name="action_doSaveResponseSummary" >
-      <i class="glyphicon glyphicon-ok"></i>&nbsp;${label_button}
-    </button>
-	<a class="btn btn-default btn-sm" href="jsp/admin/plugins/forms/ManageFormResponse.jsp?&view=stepView&id_form=${id_form}" title="#i18n{forms.summary.step.previous}">
-		<i class="glyphicon glyphicon-remove-circle"></i>&nbsp;<span class="">#i18n{forms.summary.step.previous}</span>
-	</a>
-  </div>
-</form>
+<@pageContainer>
+<@pageColumn>
+    <@pageHeader title='#i18n{forms.manageForm.title}' />
+    <@div class='container'>
+        <@card>
+        <@messages warnings=warnings />
+        <@tform id='summary_validate' action='jsp/admin/plugins/forms/ManageFormResponse.jsp'>
+        <@input name='id_form' value=id_form type='hidden' />
+        <@input type='hidden' name='token' value=token />
+        <@div id='form-response-summary'>
+            <#if form.countResponses><@p>#i18n{forms.create_entry.manageField.labelFieldNumber}: <@span class='font-weight-bold'>${form.currentNumberResponse}</@span></@p></#if>
+            <#if list_summary_step_display?has_content><#list list_summary_step_display as summary_step_display>${summary_step_display}</#list></#if>
+        </@div>
+        <#assign label_button="#i18n{forms.summary.validate}" />
+        <#if form.labelFinalButton?has_content><#assign label_button=form.labelFinalButton /></#if>
+        <@div class='d-flex justify-content-center mt-5'>
+            <@aButton class='btn btn-outline-secondary me-2' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?&view=stepView&id_form=${id_form}' title='#i18n{forms.summary.step.previous}' buttonIcon='arrow-back' />
+            <@button type='submit' class='btn btn-primary' name='action_doSaveResponseSummary' buttonIcon='check me-2' title=label_button! />
+        </@div>
+        </@tform>
+        </@card>
+    </@div>
+    </@pageColumn>
+</@pageContainer>

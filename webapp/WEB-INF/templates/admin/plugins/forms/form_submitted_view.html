@@ -1,6 +1,14 @@
-	<@messages warnings=warnings />
-	<#if messageInfo?? >
-		${messageInfo}
-	</#if>
-	
-	<a class="btn btn-primary btn-sm" href="${back_url}">#i18n{forms.form.returnPage}</a>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{forms.message.form.submitted}' />
+        <@div class='container vh-100'>
+            <@card>
+            <@div class='d-flex flex-column align-items-center justify-content-center mt-5'>
+                <@messages warnings=warnings />
+                <#if messageInfo?? >${messageInfo}</#if>
+                <@aButton href=back_url title="#i18n{forms.form.returnPage}" buttonIcon="x ms-2" />
+            </@div>
+            </@card>
+        </@div>
+    </@pageColumn>
+</@pageContainer>
