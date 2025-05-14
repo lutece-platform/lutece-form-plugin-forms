@@ -1,63 +1,22 @@
-<@formBreadCrumb>
-    <li><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
-    <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
-    <li class="active">#i18n{forms.modify_question_control.title}</li>
-</@formBreadCrumb>
 <@tform method='post' id='modify_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
-	<@modalBody>
-         <@messages errors=errors />
-		 <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true  rows=2>
-			<@inputGroup>
-				 <@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
-				 <@inputGroupItem>
-					 <@button type='submit' name='view_modifyControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
-				 </@inputGroupItem>
-			 </@inputGroup>
-		</@formGroup>
-		 ${control_template}
-		<@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' rows=2>
-			<@input type='text' name='errorMessage' value='${control.errorMessage!}' />
-		</@formGroup>
-	</@modalBody>
-	<@modalFooter>
-		<#if control.id gt 0>
-			<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='times' color='danger' />
-		</#if>
-		<@formsButton okAction='modifyControl' viewAction='' />
-	</@modalFooter>
+<@input type='hidden' id='token' name='token' value='${token}' />
+<@messages errors=errors />
+<@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true rows=2>
+	<@inputGroup>
+		<@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
+			<@button type='submit' name='view_modifyControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
+	</@inputGroup>
+</@formGroup>
+${control_template}
+<@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' rows=2>
+	<@input type='text' name='errorMessage' value='${control.errorMessage!}' />
+</@formGroup>
+<#if control.id gt 0>
+<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='times' color='danger' />
+</#if>
+<@formsButton okAction='modifyControl' viewAction='' />
 </@tform>
-
 <script>
-// Function to check if a webpage is in iFrame
-function isIniFrame() {
-    return window.self !== window.top ? true : false;
-}
-
-$( function() {
-    if ( isIniFrame() ){
-		$('header').remove();
-		$('#breadforms').remove();
-		$('footer').remove();
-		$('body').css( 'overflow', 'auto' ).css('margin', '15px');
-		$('.content-header').hide();
-		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
-		var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
-		btnAction.click( function(e){ 
-			formAction.submit( function(){
-				e.preventDefault();
-				formAction.attr('target','_top');
-				_this.unbind('submit').submit();
-			});
-		});
-
-		var modalTitle = "#i18n{forms.modify_question_control.title}";
-		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
-    } else {
-        $('#pubModal .content-header').hide();
-        $('#pubModal #admin-wrapper').css( 'margin', '0' );
-        $('#pubModal header').hide();
-        $('#pubModal footer').hide();
-    }
-});
-
+<@offcanvasIframeScript triggerForm='modify_control' triggerActionId='action_modifyControl' >
+document.querySelector('body').classList.add('loaded');
 </script>

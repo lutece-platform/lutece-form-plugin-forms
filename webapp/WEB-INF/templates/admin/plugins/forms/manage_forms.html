@@ -1,188 +1,207 @@
-<@row>
-    <@columns>
-		<@box color='primary'>
-            <@boxHeader title='#i18n{forms.manageForm.title}' class='is-align-items-center' boxTools=true>
-                <#if permission_create_forms>
-                    <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm'] class='card-header-icon' color='primary' />
-                	<@aButton title='#i18n{forms.manageForm.buttonImport}' buttonIcon='upload' params='data-toggle="modal" data-target="#importJsonModal" ' hideTitle=['xs','sm'] class='card-header-icon' color='primary' />
-                </#if>
-            </@boxHeader>
-			<@boxBody>
-				<@messages errors=errors />
-                <@table>
-                    <@tr>
-                        <@headerSort field='title' title='#i18n{forms.manageForm.columnTitle}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='title' />
-                        <@th>#i18n{forms.manageForm.columnActions}</@th>
-                        <!--@th hide=['xs']>#i18n{forms.manageForm.columnPeriodDisponibility}</@th-->
-                        <@headerSort field='period_disponibility' title='#i18n{forms.manageForm.columnPeriodDisponibility}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='period_disponibility' hide=['xs','sm'] />
-                        <@headerSort field='creation_date' title='#i18n{forms.manageForm.columnCreationDate}' jsp_url='jsp/admin/plugins/forms/ManageForms.jsp' attribute='creation_date' hide=['xs','sm','md'] />
-                    </@tr>
-                    <#list form_list as form>
-                        <#assign hasFinalStep = formsWithFinalStep[form.id?c]!false>
-                    	<#assign can_publish=false>
-                        <@tr id="form_${form.id}">
-                            <@td>
-                                <#assign hasActionUpdate = form.actions?seq_contains('MODIFY') >
-                                <#if form.actions?exists && hasActionUpdate>
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{forms.manageForm.title}' class='align-items-center'>
+			<@tform type='inline'>
+				<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
+					<@inputGroup>
+						<@input type='text' name='search_forms' id='search_forms' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' params='autocomplete="off" addons' />
+						<@button color='primary' title='#i18n{portal.system.manage_plugins.buttonFilter}' buttonIcon='filter' hideTitle=['all'] />
+					</@inputGroup>
+				</@formGroup>
+			</@tform>
+			<#if permission_create_forms>
+                <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm'] class='card-header-icon' color='primary' />
+                <@offcanvas id="import-json" title="#i18n{forms.manageForm.buttonImport}" position="end" btnTitle="#i18n{forms.manageForm.buttonImport}" btnIcon="upload" btnSize='md d-none d-lg-block'>
+                <@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageForms.jsp' params='enctype="multipart/form-data"'>
+                <@input type="hidden" name="token" value = "${token}" />
+                    <@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
+                        <@input type='file' name='json_file'/>
+                        </@formGroup>
+                        <@formGroup rows=2>
+                        <@button type='submit' name='action_doImportJson' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
+                        <@button type='cancel' name='action_doCancelImport' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' cancel=true />
+                    </@formGroup>
+                </@tform>
+                </@offcanvas>
+            </#if>
+		</@pageHeader>
+        <#if form_list?size gt 0>
+            <@messages errors=errors />
+            <@row id='forms-list' class='row-cols-1 row-cols-sm-2 row-cols-xl-4'>
+                <#list form_list as form>
+                    <#assign can_publish=false>
+                    <@columns>
+                        <@box id='form_${form.id}' params=styleCard>
+                        <#assign formTitle>
+                        <#if form.actions?exists>
+                            <#assign formActions = form.actions?map( actions -> actions.permission)>
+                            <#assign hasFormActionUpdate = formActions?seq_contains('PARAM') >
+                            <#if hasFormActionUpdate>
+                                <#list form.actions as action>
+                                    <#if action.permission=='PARAM'>
+                                        <@link href='${action.url}&id_form=${form.id}' title='${form.title}'><@span class='truncate'>${form.title}</@span></@link>
+                                        <#break>
+                                    </#if>
+                                </#list>
+                            <#else>
+                                <@span class='truncate'>${form.title}</@span>
+                            </#if>
+                        </#if>
+                        </#assign>
+                        <@boxHeader title=formTitle />
+                        <@boxBody class=''>
+                            <@p class='py-2 searchable' >
+                                <#if hasFormActionUpdate>
                                     <#list form.actions as action>
                                         <#if action.permission=='MODIFY'>
-                                            <@link href='${action.url}&id_form=${form.id}' title='${form.title}'>${form.title}</@link>
+                                            <@link class='d-none d-lg-block' href='${action.url}&id_form=${form.id}' title='${form.title}'>${form.description}</@link>
                                             <#break>
-	                                    </#if>
-                                    </#list>
-								<#else>
-									${form.title}
-                                </#if>
-                                <@div hide=['md','lg','xl','xxl']>
-                                    #i18n{forms.manageForm.columnPeriodDisponibility} : 
-                                    <#setting locale=locale.language>
-                                    <#if form.active>
-                                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
-                                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
-                                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
-                                            #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
-                                        <#elseif form.availabilityStartDate??>
-                                            #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} 
-                                        <#elseif form.availabilityEndDate??>
-                                            #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
                                         </#if>
-                                    <#else>
-                                        <#if form.availabilityStartDate?? && form.availabilityStartDate gt .now?datetime>
-                                            <@span class='text-danger'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}</@span>
-                                        <#else>    
-                                            <@tag color='danger'>#i18n{forms.manageForm.unavailable}</@tag>
-                                        </#if> 
-                                    </#if>
-                                </@div>
-                            </@td>
-                            <@td>
+                                    </#list>
+                                <#else>
+                                    <@div class='d-none d-lg-block'>${form.description!}</@div>
+                                </#if>
+                                <small class="py-2 searchable fw-light me-2 d-none d-lg-block">#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></small>
+                            </@p>
+                            <@div class='form-actions d-flex justify-content-center align-items-center'>
+                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}' label='' class='btn btn-primary overflow-visible'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
+                                <@button type='button' id='forms-action' class='overflow-visible' title='#i18n{portal.util.labelActions}' dropdownMenu=true >
                                 <#if form.actions?exists>
                                     <#list form.actions as action>
-                                        <#assign color='' />
+                                        <#assign color='primary' />
                                         <#assign perm=action.permission?lower_case />
                                         <#assign params='' />
                                         <#if action.permission=='DELETE'>
                                             <#assign color = 'danger' />
                                             <#assign perm='' />
-										<#else>
-											<#assign color = 'primary' />
+                                        <#else>
+                                            <#assign color = 'primary' />
                                         </#if>
                                         <#if action.permission=='PUBLISH'>
-                                        	<#if hasFinalStep>
-                                                <#assign can_publish = true>
-                                                <#assign params = 'data-toggle="modal" data-target="#pubModal" data-url="${action.url}&id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"' />
-                                            <#else>
-                                                <#assign can_publish = false>
-                                            </#if>
+                                            <#assign can_publish=true>
+                                            <#assign params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasForm" data-url="${action.url}&id_form=${form.id}" title="${action.name!}"' />
                                         </#if>
-                                        <#if action.permission=='PUBLISH' && !hasFinalStep>
-                                            <@aButton href='#'
-                                                      title='#i18n{forms.manageForm.needFinalStep}'
-                                                      hideTitle=['all']
-                                                      color='secondary'
-                                                      class='${perm} disabled'
-                                                      buttonIcon=action.iconUrl
-                                                      params='aria-disabled="true"'
-                                                      size='sm' />
-                                        <#else>
-                                            <@aButton href='${action.url}&id_form=${form.id}&token=${token}'
-                                                      title='${action.name}'
-                                                      hideTitle=['all']
-                                                      color='${color}'
-                                                      class='${perm}'
-                                                      buttonIcon=action.iconUrl
-                                                      params=params
-                                                      size='sm' />
-                                        </#if>
+                                        <@link href='${action.url}&id_form=${form.id}&token=${token}' label='' class='dropdown-item  ${perm}' params=params> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
                                     </#list>
                                 </#if>
                                 <#if form.active>
-                                	<#assign inactiveBypass=''>
-                                	<#assign color='success'>
+                                    <#assign inactiveBypass=''>
+                                    <#assign color='success'>
                                 <#else>
-                                	<#assign inactiveBypass='&ts='+timestamp+'&token_bypass='+inactiveBypassTokens[form.id?string]>
-                                	<#assign color='warning'>
+                                    <#assign inactiveBypass='&ts='+timestamp+'&token_bypass='+inactiveBypassTokens[form.id?string]>
+                                    <#assign color='warning'>
                                 </#if>
-                                <@aButton href='jsp/admin/plugins/forms/ManageFormResponse.jsp?&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] buttonIcon='eye' size='sm' />
-                                <@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' color=color />
+                                <#if form.actions?exists>
+                                    <#list form.actions as action>
+                                    <#if action.permission=='VIEW_FORM_RESPONSE'>
+                                        <@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?&view=stepView&id_form=${form.id}&init=true' label='' class='dropdown-item'><@span> <@icon style='text-plus'/> #i18n{forms.manageForm.BOLink.label}</@span></@link>
+                                    </#if>
+                                    </#list>
+                                </#if>
+                                <@link href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='' class='dropdown-item' params='target="_blank"'><@span> <@icon style='external-link'/> #i18n{forms.manageForm.FOLink.label}</@span></@link>
                                 <#if is_active_kibana_forms_plugin>
-                                	<@aButton href='jsp/admin/plugins/kibana/KibanaDashboard.jsp?view=dashboard&tab=FormsDataSource_${form.id}' title='#i18n{forms.manageForm.stats.label}' hideTitle=['all'] params='target="_blank"' buttonIcon='chart-area' size='sm' color='info' />
+                                    <@link href='jsp/admin/plugins/kibana/KibanaDashboard.jsp?view=dashboard&tab=FormsDataSource_${form.id}' label='' class='dropdown-item' params='target="_blank"'><@span> <@icon style='chart-area'/> #i18n{forms.manageForm.stats.label}</@span></@link>
                                 </#if>
-                            </@td>
-                            <@td hide=['xs','sm']>
-                            	<#if can_publish>
-	                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' params='data-toggle="modal" data-target="#pubModal" data-url="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}" data-modal-title="#i18n{forms.modify_form.title} ${form.title!}"'>
-	                                    <#setting locale=locale.language>
-	                                    <#if form.active>
-	                                        <@icon style='check' class='text-success' /> 
-	                                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
-	                                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
-	                                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
-	                                            #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
-	                                        <#elseif form.availabilityStartDate??>
-	                                            #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} 
-	                                        <#elseif form.availabilityEndDate??>
-	                                            #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
-	                                        </#if>
-	                                    <#else>
-	                                        <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?datetime>
-	                                            <@icon style='clock-o' class='text-info' /> <@span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}</@span>
-	                                        <#else>    
-	                                            <@icon style='close' class='text-danger' /> <@tag color='danger' >#i18n{forms.manageForm.unavailable}</@tag>
-	                                        </#if> 
-	                                    </#if>
-	                                </@link>
-	                             <#else>
-	                             	<#setting locale=locale.language>
-	                                    <#if form.active>
-	                                        <@icon style='check' class='text-success' /> 
-	                                        <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
-	                                            #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
-	                                        <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
-	                                            #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
-	                                        <#elseif form.availabilityStartDate??>
-	                                            #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} 
-	                                        <#elseif form.availabilityEndDate??>
-	                                            #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
-	                                        </#if>
-	                                    <#else>
-	                                        <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?datetime>
-	                                            <@icon style='clock-o' class='text-info' /> <@span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate} </@span>
-	                                        <#else>    
-	                                            <@icon style='close' class='text-danger' /> <@tag color='danger' >#i18n{forms.manageForm.unavailable}</@tag>
-	                                        </#if> 
-	                                    </#if>
-	                             </#if>   
-                            </@td>
-                            <@td hide=['xs','sm','md']>
-                            	${form.creationDate}
-                            </@td>
-                        </@tr>
-                    </#list>
-                </@table>
-                <@paginationAdmin paginator=paginator combo=1 showcount=0 />
-            </@boxBody>
-        </@box>
-    </@columns>
-</@row>
+                                <#if form.breadcrumbName=='forms-breadcrumbaccordion.breadcrumbAccordion'>
+                                    <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/modules/breadcrumbaccordion/ManageBreadcrumbAccordion.jsp?view=modifyBreadcrumb&id_form=${form.id}' title='#i18n{module.forms.breadcrumbaccordion.manage_breadcrumbAccordion.title}' buttonIcon='stack' />
+                                </#if>
+                                </@button>
+                                <#if can_publish>
+                                    <@aButton color='transparent searchable w-100 text-start d-none d-xl-block' href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' hideTitle=['all']  params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasForm" data-url="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}"' >
+                                        <#setting locale=locale.language>
+                                        <#if form.active>
+                                        <@span>
+                                            <@icon style='check' class='text-success' />
+                                            <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
+                                                #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
+                                            <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
+                                                #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
+                                            <#elseif form.availabilityStartDate??>
+                                                #i18n{forms.manageForm.columnPeriodDisponibilitySince} ${form.availabilityStartDate} 
+                                            <#elseif form.availabilityEndDate??>
+                                                #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
+                                            </#if>
+                                            </@span>
+                                        <#else>
+                                            <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?datetime>
+                                                <@span>
+                                                    <@icon style='clock' class='text-info' /> 
+                                                    <@span class='text-info'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}</@span>
+                                                </@span>   
+                                            <#else>    
+                                                <@span>
+                                                    <@icon style='x' class='text-danger' /> 
+                                                    <@span class='text-danger' >#i18n{forms.manageForm.unavailable}</@span>
+                                                </@span>
+                                            </#if> 
+                                        </#if>
+                                    </@aButton>
+                                </#if>
+                            </@div>  
+                        </@boxBody>
+                    </@box>
+                </@columns>
+                </#list>
+            </@row>   
+            <@paginationAdmin paginator=paginator combo=1 showcount=0 />
+        <#else>
+            <@card>
+            <#if permission_create_forms>
+                <@empty title='#i18n{forms.multiviewForms.view_record_history.history_empty}' subtitle='#i18n{forms.manageForm.buttonAdd}' actionTitle='#i18n{forms.manageForm.buttonAdd}' actionUrl='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' />
+            <#else>
+                <@empty title='#i18n{forms.multiviewForms.view_record_history.history_empty}' subtitle=' ' />
+            </#if>
+            </@card>
+        </#if>
+    </@pageColumn>
+</@pageContainer>
+<@offcanvasIframe />
+<script type="module">
+import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';
+const searchInput = document.querySelector("#search_forms");
+const searchElementList = document.querySelectorAll("#forms-list .col");
+new LuteceSearchList( searchInput, searchElementList, {
+    searchableChild: [".searchable",".card-title"],
+    highlight: true,
+    toggleList: true,
+    toggleRow: true,
+    toggleRowSelector: '#forms-list',
+    toggleLabel: '#i18n{portal.util.labelToggleList}',
+    toggleLabelOff: '#i18n{portal.util.labelToggleListOff}',
+    toggleCardClass: ['card-list','flex-row'], 
+    toggleCardHeaderClass : ['flex-row','justify-content-between','align-items-center'],  
+});
 
-<@toastr infos=infos warnings=warnings errors=errors />
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[id^="form_"]').forEach( form => {
+	    form.addEventListener('dblclick', function(e) {
+	        const formId = this.id.replace('form_', ''), token='${token!}';
+			window.location.href = <#noparse>`jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${formId}&token=${token}`</#noparse>;
+		});
+	});
 
-<@formModal id='pubModal' />
-	
-<@modal id='importJsonModal'>
-	<@modalHeader modalTitle='#i18n{forms.manageForm.buttonImport}' />
-	<@modalBody>
-		<@tform class='form' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageForms.jsp' params='enctype="multipart/form-data"'>
-			<@input type="hidden" name="token" value = "${token}" />
-			<@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
-				<@input type='file' name='json_file'/>
-			</@formGroup>
-			<@formGroup>
-				<@button type='submit' name='action_doImportJson' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
-				<@button type='cancel' name='action_doCancelImport' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' cancel=true />
-			</@formGroup>
-		</@tform>
-	</@modalBody>
-</@modal>
+    const offcanvasElement = document.getElementById( 'offcanvasForm' );
+    const offcanvasElementLabel = document.getElementById( 'offcanvasFormLabel' );
+    const iframeElement = document.getElementById( 'offcanvasIframe' );
+
+    if (offcanvasElement && iframeElement ) {
+        offcanvasElement.style.width = '30%';
+        offcanvasElement.addEventListener( 'show.bs.offcanvas', function (event) {
+            const button = event.relatedTarget;
+            const url = button.getAttribute( 'data-url' );
+            if (url) {
+                offcanvasElementLabel.textContent = button.getAttribute( 'title' );
+                iframeElement.src = url;
+                iframeElement.style.display = 'none';
+            }
+        });
+
+        iframeElement.addEventListener('load', function () {
+            iframeElement.style.display = 'block';
+            iframeElement.contentWindow.postMessage( 'offcanvas', '*');
+            
+        });
+    } 
+});
+</script>
 <@scrollTopBtn />
