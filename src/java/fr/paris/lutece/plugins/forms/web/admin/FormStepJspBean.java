@@ -524,6 +524,13 @@ public class FormStepJspBean extends AbstractJspBean
             addError( ERROR_STEP_NOT_UPDATED, getLocale( ) );
             return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
         }
+
+        if ( _step.getIdForm() != nIdForm )
+        {
+            addError( ERROR_STEP_NOT_UPDATED, getLocale( ) );
+            return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
+        }
+
         populate( _step, request, request.getLocale( ) );
 
         if ( !validateStep( _step ) )
