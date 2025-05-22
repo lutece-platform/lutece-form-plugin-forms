@@ -63,7 +63,7 @@
                                 </#if>
                                 <small class="py-2 searchable fw-light me-2 d-none d-lg-block">#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></small>
                             </@p>
-                            <@div class='form-actions d-flex justify-content-center align-items-center'>
+                            <@div class='form-actions d-flex justify-content-center align-items-center flex-wrap'>
                                 <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}' label='' class='btn btn-primary overflow-visible'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
                                 <@button type='button' id='forms-action' class='overflow-visible' title='#i18n{portal.util.labelActions}' dropdownMenu=true >
                                 <#if form.actions?exists>
