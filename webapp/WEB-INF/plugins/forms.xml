@@ -14,7 +14,7 @@
     <db-pool-required>1</db-pool-required>
 
     <core-version-dependency>
-        <min-core-version>6.1.0</min-core-version>
+        <min-core-version>7.1.0</min-core-version>
         <max-core-version/>
     </core-version-dependency>
 
