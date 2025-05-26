@@ -24,7 +24,7 @@
     </css-stylesheets>
 
     <admin-css-stylesheets>
-        <admin-css-stylesheet>themes/admin/shared/plugins/forms/css/forms.css</admin-css-stylesheet>
+        <admin-css-stylesheet>css/admin/plugins/forms/forms.css</admin-css-stylesheet>
     </admin-css-stylesheets>
 
     <freemarker-macro-files>
