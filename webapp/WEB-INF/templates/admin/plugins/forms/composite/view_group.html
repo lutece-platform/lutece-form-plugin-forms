@@ -1,7 +1,5 @@
 <#assign fieldsetClass=''>
 <#if id_display??><#assign fieldsetClass='display_field_${id_display}'></#if>
 <@fieldSet class='fieldset-group ${fieldsetClass}' legend=group.title fieldsetId='group-${group.id}' fieldsetParams=' tabindex=0'>
-<@listGroup>
-<#list groupContent as childrenHtml>${childrenHtml}</#list>
-</@listGroup>
+	<#list groupContent as childrenHtml>${childrenHtml}</#list>
 </@fieldSet>

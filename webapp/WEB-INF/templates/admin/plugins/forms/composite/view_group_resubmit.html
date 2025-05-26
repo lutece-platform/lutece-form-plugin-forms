@@ -1,9 +1,13 @@
 <#if visible>
-<#assign fieldsetClass=''>
-<#if id_display??><#assign fieldsetClass='display_field_${id_display}'></#if>
-<@fieldSet class=fieldsetClass legend=group.title >
-<@listGroupItem>
-<#list groupContent as childrenHtml>${childrenHtml}</#list>
-</@listGroupItem>
-</@fieldSet>
+	<#assign fieldsetClass=''>
+	<#if id_display??>
+		<#assign fieldsetClass='display_field_${id_display}'>
+	</#if>
+	<@fieldSet class=fieldsetClass legend=group.title >
+		<div class="form-group-value-content">
+			<#list groupContent as childrenHtml>
+				${childrenHtml}
+			</#list>
+	    </div>
+	</@fieldSet>
 </#if>

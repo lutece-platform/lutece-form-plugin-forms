@@ -1,30 +1,87 @@
-<@tform method='post' name='create_step' id='create-step' action='jsp/admin/plugins/forms/ManageSteps.jsp' params=' target="_top"'>
-<@input type='hidden' id='token' name='token" value="${token}' />
-<@input type='hidden' id='id_form' name='id_form" value="${step.idForm}' />
-<@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true  rows=2 >
-        <@input type='text' name='title' id='step-title' value='${step.title!?replace(\'- hidden\',\'\')}' />
-</@formGroup>
-<@formGroup helpKey='#i18n{forms.modify_step.showLabelTitle.help}' rows=2>
-    <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.showLabelTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=true />
-</@formGroup>
-<@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}'  rows=2 >
-        <@input type='textarea' name='description'>${step.description!}</@input>
-</@formGroup>
-<@row>
-    <@columns>
-        <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' hideLabel=['all'] rows=2>
-            <@checkBox labelFor='initial'labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
-        </@formGroup>
-    </@columns>
-    <@columns>
-        <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all'] rows=2>
-            <@checkBox labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
-        </@formGroup>
-    </@columns>
-</@row>
-<@formGroup labelFor='previousStep' labelKey='#i18n{forms.create_step.labelPreviousStep}' helpKey='#i18n{forms.create_step.labelPreviousStep.help}' hideLabel=['all'] >
-    <#assign step_default=step_list?map(step -> step.code?number)?max?c >
-    <@select name='previousStep' items=step_list default_value=step_default />
-</@formGroup>
-<@formsButton okAction='createStep' viewAction='manageSteps' />
-</@tform>
+
+<@box>
+    <@boxHeader title='#i18n{forms.manageForm.pageTitle}' />
+    <@boxBody>
+        <@tform method='post' name='create_step' id='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp' params=' target="_top"'>
+        	<@input type='hidden' id='token' name='token" value="${token}' />
+            <@input type='hidden' id='id_form' name='id_form" value="${step.idForm}' />
+            <@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true  rows=2 >
+                 <@input type='text' name='title' id='step-title' value='${step.title!?replace(\'- hidden\',\'\')}' />
+            </@formGroup>
+            <@formGroup helpKey='#i18n{forms.modify_step.labelShowTitle.help}' rows=2>
+                <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelShowTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=true />
+            </@formGroup>
+            <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}'  rows=2 >
+                 <@input type='textarea' name='description'>${step.description!}</@input>
+            </@formGroup>
+            <@row>
+                <@columns>
+                    <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' hideLabel=['all'] rows=2>
+                        <@checkBox orientation='switch' labelFor='initial'labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+                    </@formGroup>
+                </@columns>
+                <@columns>
+                    <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all'] rows=2>
+                        <@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+                    </@formGroup>
+                </@columns>
+            </@row>
+            <@formGroup labelFor='previousStep' labelKey='#i18n{forms.create_step.labelPreviousStep}' helpKey='#i18n{forms.create_step.labelPreviousStep.help}' hideLabel=['all'] >
+            	<#assign step_default=step_list?map(step -> step.code?number)?max?c >
+                <@select name='previousStep' items=step_list default_value=step_default />
+            </@formGroup>
+            <@formsButton okAction='createStep' viewAction='manageSteps' />
+        </@tform>
+    </@boxBody>
+</@box>
+<script>
+// Function to check if a webpage is in iFrame
+function isIniFrame() {
+    return window.self !== window.top ? true : false;
+}
+
+document.addEventListener('DOMContentLoaded', function(e) {
+    document.querySelector('#create_step').addEventListener('submit', function(e) {
+        if ( !document.querySelector('#show-step-title').checked && document.querySelector('#step-title').value.indexOf('hidden') === -1 ) {
+            document.querySelector('#step-title').value = document.querySelector('#step-title').value  + ' - hidden';
+        } 
+    });
+    if ( isIniFrame() ){
+        window.top.$("#modalIframe");
+        document.body.style.backgroundColor = 'white';
+        document.querySelectorAll('.skipnav').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('nav').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.container-fluid').forEach(el => el.style.padding = '0');
+        document.querySelectorAll('.modal-title').forEach(el => el.innerHTML = 'Create Step' );
+        document.querySelectorAll('.modal-body').forEach(el => el.style.padding = '24px');
+        document.querySelectorAll('main').forEach(el => el.style.margin = '0');
+        document.querySelectorAll('.card-header').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.card-body').forEach(el => el.style.paddingBlock = '5px');
+        document.querySelectorAll('.row').forEach(el => el.classList.toggle('mb-3'));
+        document.querySelectorAll('header').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('footer').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('#pubModal .content-header').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('#pubModal #admin-wrapper').forEach(el => el.style.margin = '0');
+       
+        const breadforms = document.getElementById('breadforms');
+        if (breadforms) breadforms.remove();
+       
+        var formAction = $('#create_step'), btnAction = $('#action_createStep');
+
+        btnAction.click( function(e){ 
+            formAction.submit( function(e){
+                formAction.attr('target','_top');
+                _this.unbind('submit').submit();
+            });
+        });
+       
+        btnAction.click( function(e){ 
+            formAction.submit( function(e){
+                formAction.attr('target','_top');
+                _this.unbind('submit').submit();
+            });
+        });
+    }
+});
+</script>
+<@toastr infos=infos warnings=warnings errors=errors />

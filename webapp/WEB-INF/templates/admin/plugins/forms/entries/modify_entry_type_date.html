@@ -1,23 +1,103 @@
+
 <#include "all_entry_commons.html" />
-<#assign dtField = getFieldByCode( entry, "default_date_value" ) >
-<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-<@editFields editor=true exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true placeholder=placeholder  >
-<@formGroup rows=2>
-	<#assign default_today_date=getFieldByCode( entry, "default_today_date")>
-	<#if default_today_date.value?boolean>
-		<#assign checkedToDay = true />
-	<#else>
-		<#assign checkedToDay = false />
-	</#if>
-	<@checkBox orientation='switch' labelFor='default_today_date' labelKey='#i18n{forms.create_entry.defaultTodayDate}' name='default_today_date' id='default_today_date' value='1' params='onchange="javascript:changeVisibilityDateValue();"' checked=checkedToDay/>
-</@formGroup>
-<@formGroup id="default_date_group" labelFor='date' labelKey='#i18n{forms.create_entry.labelValueDefault}' rows=2>
-	<@inputGroup>
-		<@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
-		<#assign default=''>
-		<#if dtField.valueTypeDate?? ><#assign default=dtField.valueTypeDate></#if>
-		<@input type='date' language=locale name='value' id='date' value=default />
-	</@inputGroup>
-</@formGroup>
-</@editFields>
+<#include "/admin/util/editor/editor.html" />
+
+${breadcrumb_template}
+<@row>
+	<@columns>
+		<@box color='primary'>
+			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
+			<@boxBody>
+				<@tform action="${action}">
+					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
+						<@input type='hidden' name='id_step' value='${step.id}' />
+						<@input type='hidden' name='id_question' value='${question.id}' />
+						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
+						</@formGroup>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+						</@formGroup>
+						<@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
+							<@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
+						</@formGroup>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
+							<@input type='textarea' name='comment' id='comment' rows=5>${entry.comment}</@input>
+						</@formGroup>
+						<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
+						<@formGroup labelFor='placeholder' labelKey='#i18n{forms.createEntry.labelPlaceholder}'>
+							<@input type='text' name='placeholder' id='placeholder' value=placeholder maxlength=100 />
+						</@formGroup>
+						<@formGroup>
+								<#assign default_today_date=getFieldByCode( entry, "default_today_date")>
+								<#if default_today_date.value?boolean>
+									<#assign checkedToDay = true />
+								<#else>
+									<#assign checkedToDay = false />
+								</#if>
+							<@checkBox orientation='switch' labelFor='default_today_date' labelKey='#i18n{forms.createEntry.defaultTodayDate}' name='default_today_date' id='default_today_date' value='1' params='onchange="javascript:changeVisibilityDateValue();"' checked=checkedToDay/>
+						</@formGroup>
+						<@formGroup id="default_date_group" labelFor='date' labelKey='#i18n{forms.createEntry.labelValueDefault}'>
+							<#assign field = getFieldByCode( entry, "default_date_value" ) >
+							<@inputGroup>
+								<@inputGroupItem type='text'><@icon style='calendar' /></@inputGroupItem>
+								<#assign default=''>
+								<#if field.valueTypeDate?? >
+									<#assign default=field.valueTypeDate>
+								</#if>
+								<@input type='date' language=locale name='value' id='date' value=default />
+							</@inputGroup>
+						</@formGroup>
+						<@formGroup>
+							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
+						</@formGroup>
+						<@formGroup>
+							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' checked=entry.onlyDisplayInBack />
+						</@formGroup>
+						<@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+						</@formGroup>
+						<@formGroup>
+							<#assign anonymizable=getFieldByCode( entry, "anonymizable")>
+							<#if anonymizable.value?boolean>
+								<#assign checkedValue = true />
+								<#assign anonPattern = anonymizable.title />
+							<#else>
+								<#assign checkedValue = false />
+								<#assign anonPattern ="" />
+							</#if>
+							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
+						</@formGroup>
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
+						</@formGroup>
+						<#if entry.exportable>
+							<@input type='hidden' name='exportable' value='1' />
+						</#if>
+						<#if entry.exportablePdf>
+							<@input type='hidden' name='exportable_pdf' value='1' />
+						</#if>
+						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
+							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' checked=entry.disabled />
+						</@formGroup>
+						${question_modify_template!}
+						<@formGroup>
+							<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.createEntry.buttonSave}' hideTitle=['xs'] />
+							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+						</@formGroup>
+					</@fieldSet>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
+<@anonymPattern />
+<@initEditor />
 <@toDayDate />

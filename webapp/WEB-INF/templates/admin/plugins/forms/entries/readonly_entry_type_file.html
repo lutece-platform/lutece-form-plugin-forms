@@ -1,47 +1,20 @@
-<#if !entry.onlyDisplayInBack>
-<#assign idName = buildEntryName( entry, entry_iteration_number )>
-<#assign entryClass>files-list <#if entry.CSSClass?contains('hidden')>hidden</#if></#assign>
-<@li class=entryClass! >
-	<@span class='fw-bold' id='label_${idName!}'>${entry.title!''} :</@span>
-	<#if list_responses?has_content>
-		<@span class='ms-xs font-italic'>#i18n{themeparisfr.labelNumberOfFiles}</@span> <@span class='fw-bold'>${list_responses?size}</@span><@cBtn label='' type='button' id='btn-${idName!}' class='link btn-show-files p-0 ms-sm' params='data-hide="#i18n{themeparisfr.labelHideUploadedFiles}" data-show="#i18n{themeparisfr.labelShowUploadedFiles}" aria-expanded="false" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"'>#i18n{themeparisfr.labelShowUploadedFiles}</@cBtn>
-		<@ul class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
-		<#list list_responses as response>
-		<#if response.file?exists>
-			<#if response.file.size??>
-				<#assign fileSize=response.file.size>
-				<#if fileSize lt 1024 >
-					<#assign octetUnit='o'>
-					<#assign octetNumber=fileSize >
-				<#elseif fileSize lt ( 1024 * 1024 ) >
-					<#assign octetUnit='Ko'>
-					<#assign octetNumber=fileSize / 1024 >
-				<#else>
-					<#assign octetUnit='Mo'>
-					<#assign octetNumber=fileSize / (1024*1024) >
-				</#if>
-			</#if>
-			<@li>
-				<@span class='font-italic'>${response.file.title} - ${octetNumber?string["0.##"]} ${octetUnit} ,</@span>
-			</@li>
-			</#if>
-		</#list>
-		</@ul>
-		<script>
-			document.addEventListener('DOMContentLoaded', () => {
-				button = document.getElementById('btn-${idName!}')
-					button.addEventListener('click', () => {
-					const filesList = document.getElementById('list_${idName!}')
-					if (filesList) {
-						filesList.classList.toggle('visually-hidden');
-						filesList.classList.contains('visually-hidden') ? button.textContent = button.getAttribute('data-show') : button.textContent = button.getAttribute('data-hide');
-						filesList.classList.contains('visually-hidden') ? button.setAttribute('aria-expanded', 'false') : button.setAttribute('aria-expanded', 'true');
-					}
-				});
-			});
-		</script>
-	<#else>
-		<@span class='ms-xs font-italic'>#i18n{portal.util.labelNoItem}</@span>	
-	</#if>
-</@li>
-</#if>
+<@row>
+    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
+    <@columns sm=9>
+    <#if list_responses?has_content>
+        <#list list_responses as response>
+            <@p>
+            <#if response.file?exists>
+		<#if response.file.fileKey?exists>
+		        <@link href='${response.file.url}'>
+		            ${response.file.title}(${response.file.size} O)
+		        </@link>
+		<#else>
+			${response.file.title}(${response.file.size} O)
+		</#if>
+            </#if>
+			</@p>
+        </#list>
+    </#if>
+    </@columns>
+</@row>

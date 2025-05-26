@@ -13,14 +13,14 @@
 	</#list>
 	<#assign inputClass = entry.CSSClass! />
 </#if>
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' groupStyle=groupStyle!'' mandatory=entry.mandatory htmlRequired=false  rows=2>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' groupStyle=groupStyle!'' mandatory=entry.mandatory htmlRequired=false >
 	<#if isMultiListSelection>
 		<@row class='mt-3'>
 		    <@input type='hidden' name='${idName}' id='${idName}' />
 		    <#assign hasErrors=false>
 				<@columns sm=6>
 					<@box>
-						<@boxHeader title='#i18n{forms.create_entry.sortableList.availableItems}' />
+						<@boxHeader title='#i18n{forms.createEntry.sortableList.availableItems}' />
 						<@boxBody class='p-3'>
 							<@listGroup id='sortable1' class="connectedSortable ${inputClass}" params='style="min-height:10rem;"'>
 								<#list entry.fields as field>
@@ -50,7 +50,7 @@
 				<@columns sm=6>
 					<#assign hasErrors=false />
 					<@box>
-						<@boxHeader title='#i18n{forms.create_entry.sortableList.selectedItems}' />
+						<@boxHeader title='#i18n{forms.createEntry.sortableList.selectedItems}' />
 						<@boxBody class='p-3'>
 							<@listGroup id='sortable2' class="connectedSortable ${inputClass}" params='style="min-height:10rem;"'>
 								<#if list_responses?has_content>

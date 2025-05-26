@@ -1,149 +1,48 @@
-<@pageContainer>
-    <@pageColumn>
-		<@pageHeader title=form.title! />
-		<@formBreadCrumb>
-			<@breadcrumbItem><@link href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' label='#i18n{forms.multiviewForms.boxTitle}' /></@breadcrumbItem>
-			<@breadcrumbItem>${form.title!}</@breadcrumbItem>
-		</@formBreadCrumb>
-		<@box>
-			<@boxBody class='container'>
-				<!-- #current_step : Add for breadcrumbs -->
-				<@tform id='form-validate' action='jsp/admin/plugins/forms/ManageFormResponse.jsp' params='enctype="multipart/form-data"'>
-					<#if messageInfo??><@cAlert id='save-step-status' title='${messageInfo}' /></#if>
-					<#if form.countResponses>
-					<@stepDone step='0' title='#i18n{forms.multiviewForms.view_record_history.information}' idx=0 actionName='' >
-						<@row>
-							<@columns>
-								<@p>#i18n{forms.message.numberResponse.label}<@span class='fw-bold'>${form.currentNumberResponse}</@span></@p>
-							</@columns>
-						</@row>
-					</@stepDone>
-					</#if>
-					${formTopBreadcrumb!}
-					${stepContent!}
-					${formBottomBreadcrumb!} 
-				</@tform>
-			</@boxBody>
-		</@box>
-	</@pageColumn>
-</@pageContainer>
-<script src="js/jquery/plugins/moment.min.js" ></script>
-<script src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
+<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
+<@addRequiredJsFiles />
+<script src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
 <script>
-function getInputElement( displayControl ){
-	var types = ['input','select','textarea'];
-	var elm = null;
-	for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++){
-		elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
-	}
-	if( elm.is('input') ){
-		elm = $('input[name="' + elm.attr('name') + '"]');
-	}
-	return elm;
+function getInputElement(displayControl){
+var types = ['input','select','textarea'];
+var elm = null;
+for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++){
+	elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
 }
 
-function getFieldValue( elm ){
-	if(elm.is(':radio')){
-		var input = $('input[name="' + elm.attr('name') + '"]:checked');
-		return input.val();
-	} else if (elm.is(':checkbox'))	{
-		var resultChecked = [];
-		for(var i=0;i< elm.length;i++){
-			if (elm [i].checked){
-				resultChecked.push(elm[i].value);
-			}
-		}
-		return resultChecked;
-	} else if (elm.is('select')) {
-		return elm[0].options[elm[0].selectedIndex].value;
-	}
-	//add other specific implementations here
-	else {
-		return elm.val();
-	}
+if(elm.is('input')){
+	elm = $('input[name="' + elm.attr('name') + '"]');
+}
+return elm;
 }
 
-document.addEventListener("DOMContentLoaded", function(){
-	document.querySelectorAll("button[name='action_addIteration']").forEach(button => {
-		button.addEventListener("click", function() {
-			const target = "#last_" + this.value;
-			const form = this.closest("form");
-			const newUrl = form.action.replace(/#current_step$/, target);
-			form.action = newUrl;
-		});
-	});
-	
-	document.querySelectorAll('.step').forEach(step => {
-		step.classList.add('card', 'mb-3');
-		const stepTitle = step.querySelector('.step-title');
-		if( stepTitle ) {
-			stepTitle.classList.add('card-header');
+function getFieldValue(elm){
+if(elm.is(':radio'))
+{
+	var input = $('input[name="' + elm.attr('name') + '"]:checked');
+	return input.val();
+} else if (elm.is(':checkbox')){
+	var resultChecked = [];
+	for(var i=0;i< elm.length;i++){
+		if (elm [i].checked){
+			resultChecked.push(elm[i].value);
 		}
-		const titleElement = step.querySelector('.title');
-		if (titleElement) {
-			titleElement.classList.add('card-title');
-		}
-		const stepContent = step.querySelector('.step-content');
-		if (stepContent) {
-			stepContent.classList.add('card-body');
-		}
-		const stepFooter = step.querySelector('.step-footer');
-		if (stepFooter) {
-			stepFooter.classList.add('card-footer');
-		}
-	});
-
-	document.querySelectorAll('.step.step-next').forEach(stepNext => {
-		const titleElement = stepNext.querySelector('.title');
-		if (titleElement) {
-			titleElement.classList.add('text-secondary');
-		}
-	});
-
-	document.querySelectorAll('.step.step-done').forEach(stepDone => {
-		const containerElement = stepDone.querySelector('.container');
-		if (containerElement) {
-			containerElement.classList.remove('container');
-		}
-		const titleElement = stepDone.querySelector('.step-title > d-flex');
-		if (titleElement) {
-			titleElement.classList.add('w-100');
-		}
-		const btnTitleElement = stepDone.querySelector('.step-title .btn.btn-secondary');
-		if (btnTitleElement) {
-			btnTitleElement.classList.add('btn-outline-primary'); 
-			btnTitleElement.classList.remove('btn-secondary');
-			btnTitleElement.classList.remove('btn-sm-block');
-		}
-	});
-
-	// Add the form-control-camera class to the relevant elements
-	document.querySelectorAll('.camera-wrapper .btn').forEach( btn => {
-		btn.classList.add('my-2');
-		i = document.createElement('i');
-		if( btn.previousElementSibling.classList.contains('form-control-camera') ) {
-			i.className = 'ti ti-camera ms-2';
-		} else {
-			i.className = 'ti ti-x ms-2';
-		}
-		i.setAttribute('aria-hidden', 'true');
-		btn.appendChild(i);
-		btn.children[0].remove();
-	});
-
-	/* Error Scroll                           */
-	// Add smooth scrolling to all links
-	const firstInvalidElements = document.querySelectorAll('.is-invalid'), currentStepId = document.querySelector('.step.step-current .step-title .step-number').textContent.trim();
-
-	if ( firstInvalidElements.length > 0 ) {
-		firstInvalidElements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-	} else if ( !isNaN(parseInt(currentStepId)) && parseInt(currentStepId) > 1 ) {
-		const current = document.querySelector('#current_step');
-		const y = current.offsetTop - 220;
-		window.scrollBy(0, y);
-	}	
-});
-
-
-
+	}
+	return resultChecked;
+} else if (elm.is('select')) {
+	return elm[0].options[elm[0].selectedIndex].value;
+}
+//add other specific implementations here
+else {
+	return elm.val();
+}
+}
 </script>
+<form class="form-horizontal" id="form-validate" action="jsp/admin/plugins/forms/ManageFormResponse.jsp" method="post" enctype="multipart/form-data">
+<#if form.logo??><img id="form_logo" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt="" ></#if>
+<@messages warnings=warnings />
+<#if messageInfo?? ><div class="alert alert-info" role="alert">${messageInfo}</div></#if>
+${formTopBreadcrumb!}
+<#if form.countResponses>#i18n{forms.createEntry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
+${stepContent!}
+${formBottomBreadcrumb!}
+</form>

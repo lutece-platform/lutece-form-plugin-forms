@@ -1,12 +1,12 @@
-<@h level=2>#i18n{forms.multiviewForms.view_record_history.title}</@h>
+<h2>#i18n{forms.multiviewForms.view_record_history.title}</h2>
 <#if resource_actions?has_content && history_information_list?has_content>
 <#assign defaultUserFrontId=5>
 <@ul class="timeline-form">
 <#list history_information_list as history_information>
   <@li params=' tabindex=0'>
-      <@h level=3 class='h5 text-primary'>${history_information.resource_history.action.description!}
-        <small>${history_information.resource_history.creationDate!}</small>
-      </@h>
+      <h5 class="text-primary">${history_information.resource_history.action.description!}
+        <small class="pull-right">${history_information.resource_history.creationDate!}</small>
+      </h5>
       <#if history_information.task_information_list?size gt 0>
         <#list history_information.task_information_list as task_information>
         <@p>${task_information!}</@p>

@@ -39,7 +39,7 @@
 <#if field_max.value??>
 	<#assign max=field_max.value?number />
 </#if>
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory htmlRequired=false  rows=2>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory htmlRequired=false >
 	<@inputGroup>
 		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 		<@input type='number' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue min=min max=max params=autocomplete placeHolder=placeholder/>

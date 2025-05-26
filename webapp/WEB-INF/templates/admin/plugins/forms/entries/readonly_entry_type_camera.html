@@ -1,6 +1,4 @@
-<@row>
-    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
-    <@columns sm=9>
+<@formGroup labelKey='${entry.title!\'\'}'>
     <#if list_responses?has_content>
         <#list list_responses as response>
             <@staticText color='black cssbox' id='#cssbox-${entry.code}' >
@@ -19,5 +17,4 @@
             </@staticText>
         </#list>
     </#if>
-    </@columns>
-</@row>
+</@formGroup>

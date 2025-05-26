@@ -1,36 +1,31 @@
 <@tform class='form' method='post' name='create_form' action='jsp/admin/plugins/forms/ManageForms.jsp'  params='enctype="multipart/form-data"'>
-<@input type="hidden" name="token" value = "${token}" />
-<@pageContainer>
-	<@pageColumn>
-		<@pageHeader title='#i18n{forms.create_form.title}' />
-		<@formBreadCrumb homeLabel=true  /> 
-		<@formModel type='create' />
-		<@bottomFormFixedButtons>
-			<@headerButton name='action_createForm' label='forms.create_form.buttonValidate' /> 
-			<@aButton href='jsp/admin/plugins/forms/ManageForms.jsp' title='#i18n{portal.admin.message.buttonCancel}' color='secondary' buttonIcon='arrow-back' />
-		</@bottomFormFixedButtons>
-	</@pageColumn>
-</@pageContainer>
+	<@input type="hidden" name="token" value = "${token}" />
+	<@box>
+		<@boxHeader title='#i18n{forms.create_form.title}' />
+		<@boxBody>
+			<@formModel type='create' />
+			<@formGroup rows=2>
+				<@headerButton name='action_createForm' label='forms.create_form.buttonValidate' /> 
+				<@headerButton name='action_createForm' label='portal.admin.message.buttonCancel' validate=false />
+			</@formGroup>
+		</@boxBody>
+	</@box>
 </@tform>
 <@formEditor /> 
+
 <@toastr infos=infos warnings=warnings errors=errors />
+
+
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-	// Initial toggle based on checkbox state
-	const endMessage = document.getElementById('endMessage');
-	const endMessageDisplay = document.getElementById('endMessageDisplay');
-	
-	// Hide initially
-	endMessage.classList.toggle('d-none', true);
-	
-	// Show if checkbox is checked
-	if (endMessageDisplay && endMessageDisplay.checked) {
-		endMessage.classList.toggle('d-none', false);
-	}
-	
-	// Toggle on change
-	document.getElementById('labelEndMessage').addEventListener('change', function() {
-		endMessage.classList.toggle('d-none');
-	});
+$( function(){
+    $('#endMessage').toggle();
+    if ( $('#endMessageDisplay').prop("checked" ) ){
+        $('#endMessage').toggle();  
+    }
+
+    $('#labelEndMessage').change( function(){
+        $('#endMessage').toggle();
+    });
+
 });
 </script>

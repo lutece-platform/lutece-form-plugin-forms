@@ -1,48 +1,120 @@
 
 <#include "all_entry_commons.html" />
-<#assign default_value = getFieldValueByCode( entry, "provider" )>
-<#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
-<@editFields exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true >
-<@formGroup labelFor='map_provider' labelKey='#i18n{forms.create_entry.mapProvider}' rows=2>
-    <@select name='map_provider' id='map_provider' items=entryTypeService.mapProvidersRefList default_value=default_value />
-</@formGroup>
-<!-- view number  -->
-<@formGroup labelFor='view_number' labelKey='#i18n{forms.create_entry.viewNumber}' rows=2>
-    <@input type='text' name='view_number' id='view_number' value=viewNumberValue maxlength=255 />
-</@formGroup>
-<@formGroup helpKey='#i18n{forms.create_entry.labelGeolocMandatory.help}' rows=2>
-    <@checkBox orientation='switch' labelFor='exactAddr' labelKey='#i18n{forms.create_entry.labelGeolocMandatory}' name='exactAddr' id='exactAddr' value='1' />
-</@formGroup>
-</@editFields>
+<#include "/admin/util/editor/editor.html" />
+
+${breadcrumb_template}
+<@row>
+    <@columns>
+        <@box color='primary'>
+            <@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
+            <@boxBody>
+				<@tform action="${action}">
+					<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
+						<@input type='hidden' name='id_step' value='${step.id}' />
+						<@input type='hidden' name='id_question' value='${question.id}' />
+                        <@input type='hidden' name='id_resource' value='${entry.idResource}' />
+                        
+                        <@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+                            <@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
+                        </@formGroup>
+                        <@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+                            <@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+                        </@formGroup>
+                        <@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+                            <@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+                        </@formGroup>
+                        <@formGroup labelFor='help_message' labelKey='#i18n{forms.createEntry.labelHelpMessage}' helpKey='#i18n{forms.createEntry.labelHelpMessageComment}'>
+                            <@input type='textarea' name='help_message' id='help_message' rows=2>${entry.helpMessage}</@input>
+                        </@formGroup>
+                        <@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelComment}'>
+                            <@input type='textarea' name='comment' id='comment'>${entry.comment}</@input>
+                        </@formGroup>
+                        <@formGroup labelFor='map_provider' labelKey='#i18n{forms.createEntry.mapProvider}'>
+                            <#assign default_value = getFieldValueByCode( entry, "provider" )>
+
+                            <@select name='map_provider' id='map_provider' items=entryTypeService.mapProvidersRefList default_value=default_value />
+                        </@formGroup>
+                        <!-- view number  -->
+                        <@formGroup labelFor='view_number' labelKey='#i18n{forms.createEntry.viewNumber}'>
+                            <#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
+                            <@input type='text' name='view_number' id='view_number' value=viewNumberValue maxlength=255 />
+                        </@formGroup>
+                        <@formGroup>
+                            <@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.mandatory />
+                        </@formGroup>
+                        <@formGroup helpKey='#i18n{forms.createEntry.labelGeolocMandatory.help}'>
+                            <@checkBox orientation='switch' labelFor='exactAddr' labelKey='#i18n{forms.createEntry.labelGeolocMandatory}' name='exactAddr' id='exactAddr' value='1' />
+                        </@formGroup>
+                        <@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
+                            <@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
+                        </@formGroup>
+                        <@formGroup helpKey='#i18n{forms.createEntry.labelResponsesIndexedComment}'>
+							<@checkBox orientation='switch' labelFor='is_indexed' labelKey='#i18n{forms.createEntry.labelResponsesIndexed}' name='is_indexed' id='is_indexed' value='1' checked=entry.indexed />
+						</@formGroup>
+						<@formGroup>
+							<#assign anonymizable=getFieldByCode( entry, "anonymizable")>
+							<#if anonymizable.value?boolean>
+								<#assign checkedValue = true />
+								<#assign anonPattern = anonymizable.title />
+							<#else>
+								<#assign checkedValue = false />
+								<#assign anonPattern ="" />
+							</#if>
+							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
+						</@formGroup>
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
+						</@formGroup>
+						<#if entry.exportable>
+							<@input type='hidden' name='exportable' value='1' />
+						</#if>
+						<#if entry.exportablePdf>
+							<@input type='hidden' name='exportable_pdf' value='1' />
+						</#if>
+						<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
+							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' checked=entry.disabled />
+						</@formGroup>
+                        ${question_modify_template!}
+                        <@formGroup>
+                            <@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='save' hideTitle=['xs','sm'] />
+                            <@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+                        </@formGroup>
+                    </@fieldSet>
+                </@tform>
+            </@boxBody>
+        </@box>
+    </@columns>
+</@row>
+<@anonymPattern />
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const cbCheckAddress = document.getElementById('exactAddr');
-    const labelCheckAddr = 'checkaddress';
-    const inputCss = document.getElementById('css_class');
-
-    function hasCheckAddressClass() {
-        return inputCss.value.split(/\s+/).includes(labelCheckAddr);
+$(function(){
+    const cbChekAddress=$('#exactAddr'), labelCheckAddr='checkaddress', inputCss=$('#css_class');
+    let cssClass=inputCss.val();
+    if( cssClass.search( labelCheckAddr ) >-1  ){
+        cbChekAddress.prop( 'checked', 'checked' );
     }
 
-    function updateCheckbox() {
-        cbCheckAddress.checked = hasCheckAddressClass();
-    }
-
-    // Initialize checkbox state
-    updateCheckbox();
-
-    cbCheckAddress.addEventListener('change', function () {
-        let cssClassArr = inputCss.value.split(/\s+/).filter(Boolean);
-        if (cbCheckAddress.checked) {
-            if (!cssClassArr.includes(labelCheckAddr)) {
-                cssClassArr.push(labelCheckAddr);
-            }
+    cbChekAddress.change( function(e){
+        cssClass=inputCss.val();
+        if( cbChekAddress.prop('checked') ){
+            inputCss.val( cssClass.trim() + ' ' + labelCheckAddr );
         } else {
-            cssClassArr = cssClassArr.filter(cls => cls !== labelCheckAddr);
+            if( cssClass.search( labelCheckAddr ) > - 1 ){
+                
+                inputCss.val( cssClass.replace( labelCheckAddr ,'') );
+            }
         }
-        inputCss.value = cssClassArr.join(' ');
+    }); 
+    
+    inputCss.blur( function(e){
+        cssClass=inputCss.val();
+        if( cssClass.search( labelCheckAddr ) > -1 ){
+            cbChekAddress.prop( 'checked', 'checked' );
+        } else {
+            cbChekAddress.prop( 'checked', '' );
+        }
     });
-
-    inputCss.addEventListener('blur', updateCheckbox);
-});
+})
 </script>
+ <@initEditor />

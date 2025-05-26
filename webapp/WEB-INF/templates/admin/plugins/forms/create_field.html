@@ -1,34 +1,42 @@
-<@pageContainer>
-    <@pageColumn>
-		<@pageHeader title='#i18n{forms.createField.title} : "${field.parentEntry.title}"' />
-		<@tform id='modify-entry' action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data">
-			<@input type='hidden' name='id_step' value='${question.idStep}' />
-			<@input type='hidden' name='id_question' value='${question.id}' />
-			<@input type='hidden' name='id_entry' value='${id_entry}' />
-			<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
-				<@input type='text' name='title' id='title' value='' maxlength=255 />
-			</@formGroup>
-			<@formGroup labelFor='value' labelKey='#i18n{forms.createField.labelValue}' helpKey='#i18n{forms.createField.labelValue.help}'>
-				<@input type='text' name='value' id='value' value='' />
-			</@formGroup>
-			<@formGroup labelFor='comment' labelKey='#i18n{forms.createField.labelComment}'>
-				<@input type='textarea' name='comment' id='comment'></@input>
-			</@formGroup>
-			<@formGroup labelFor='illustration_image' labelKey='#i18n{forms.create_entry.labelIllustrationPicture}' helpKey='#i18n{forms.create_entry.labelIllustrationPictureHelp}'>
-				<@input type='file' id='illustration_image'  name='illustration_image' />
-			</@formGroup>
-			<@formGroup>
-				<@checkBox labelFor='default_value' labelKey='#i18n{forms.createField.labelDefaultValue}' name='default_value' id='default_value' value='1' />
-			</@formGroup>
-			<#if option_no_display_title>
-				<@formGroup>
-					<@checkBox labelFor='no_display_title' labelKey='#i18n{forms.createField.labelNoDisplayTitle}' name='no_display_title' id='no_display_title' value='1' checked=field.noDisplayTitle />
-				</@formGroup>
-			</#if>
-			<@formGroup>
-				<@button type='submit' name='action_createField' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
-				<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.create_entry.buttonCancel}' buttonIcon='close' hideTitle=['xs'] color='default' />
-			</@formGroup>
-		</@tform>
-	</@pageColumn>
-</@pageContainer>
+
+
+<@row>
+	<@columns>
+		<@box color='primary'>
+			<@boxHeader title='#i18n{forms.createField.title} : "${field.parentEntry.title}"' />
+			<@boxBody>
+        		<@fieldSet legend='#i18n{forms.createField.title} : "${field.parentEntry.title}"' hideLegend=['all']>
+					<@tform action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data">
+						<@input type='hidden' name='id_step' value='${question.idStep}' />
+						<@input type='hidden' name='id_question' value='${question.id}' />
+						<@input type='hidden' name='id_entry' value='${id_entry}' />
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createField.labelTitle}' mandatory=true>
+							<@input type='text' name='title' id='title' value='' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='value' labelKey='#i18n{forms.createField.labelValue}' helpKey='#i18n{forms.createField.labelValue.help}'>
+							<@input type='text' name='value' id='value' value='' />
+						</@formGroup>
+						<@formGroup labelFor='comment' labelKey='#i18n{forms.createField.labelComment}'>
+							<@input type='textarea' name='comment' id='comment'></@input>
+						</@formGroup>
+						<@formGroup labelFor='illustration_image' labelKey='#i18n{forms.createEntry.labelIllustrationPicture}' helpKey='#i18n{forms.createEntry.labelIllustrationPictureHelp}'>
+							<@input type='file' id='illustration_image'  name='illustration_image' />
+						</@formGroup>
+						<@formGroup>
+							<@checkBox labelFor='default_value' labelKey='#i18n{forms.createField.labelDefaultValue}' name='default_value' id='default_value' value='1' />
+						</@formGroup>
+						<#if option_no_display_title>
+							<@formGroup>
+								<@checkBox labelFor='no_display_title' labelKey='#i18n{forms.createField.labelNoDisplayTitle}' name='no_display_title' id='no_display_title' value='1' checked=field.noDisplayTitle />
+							</@formGroup>
+						</#if>
+						<@formGroup>
+							<@button type='submit' name='action_createField' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
+							<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.createEntry.buttonCancel}' buttonIcon='close' hideTitle=['xs'] color='default' />
+						</@formGroup>
+					</@tform>
+        		</@fieldSet>
+			</@boxBody>
+		</@box>
+	</@columns>
+ </@row>

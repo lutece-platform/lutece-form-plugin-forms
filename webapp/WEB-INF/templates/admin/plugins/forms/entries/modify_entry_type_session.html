@@ -1,2 +1,47 @@
+
 <#include "all_entry_commons.html" />
-<@editFields required=false onlyInBack=false />
+<#include "/admin/util/editor/editor.html" />
+${breadcrumb_template}
+<@row>
+    <@columns>
+        <@box color='primary'>
+            <@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' />
+			<@boxBody>
+				<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+					<@tform action="${action}">
+						<@input type='hidden' name='id_entry' value='${entry.idEntry}' />
+						<@input type='hidden' name='id_step' value='${step.id}' />
+						<@input type='hidden' name='id_question' value='${question.id}' />
+
+						<@formGroup labelFor='' labelKey='#i18n{forms.createEntry.labelType}'>
+							<@staticText>
+								<@tag color='info'>
+									${entry.entryType.title}
+								</@tag>
+							</@staticText>
+						</@formGroup>
+						<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' mandatory=true>
+							<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+						</@formGroup>
+						<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+							<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+						</@formGroup>
+						<@formGroup labelKey='#i18n{forms.createEntry.labelMandatory}' helpKey='#i18n{forms.createEntry.labelMandatoryCommentForEntryTypeSession}'>
+							<@checkBox labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=entry.checked />
+						</@formGroup>
+						<@formGroup labelKey='#i18n{forms.createEntry.labelAttributeName}' helpKey='#i18n{forms.createEntry.labelAttributeNameComment}' mandatory=true>
+							<#assign field=getFieldByCode( entry, "attribute_name")>
+							<@input type='text' name='value' id='value' maxlength=255 value='${field.value}' />
+						</@formGroup>
+						<@input type='hidden' id='token' name='token' value='${token}' />
+						<@formGroup>
+							<@button type='submit' name='action_modifyQuestion' id='save' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonSave}' />
+							<@button type='submit' name='action_saveQuestion' id='apply' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' />
+							<@button type='submit' name='view_manageQuestions' id='cancel' value='cancel' cancel=true buttonIcon='times' title='#i18n{forms.modifyEntry.buttonCancel}' />
+						</@formGroup>
+					</@tform>
+				</@fieldSet>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>

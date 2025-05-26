@@ -1,8 +1,16 @@
-<@input id='forms_listQuestionValidator' name='forms_listQuestionValidator' type='hidden' value=forms_listQuestionValidator! />
+<input id="forms_listQuestionValidator" name="forms_listQuestionValidator" type="hidden" value=${forms_listQuestionValidator}>
 <#assign default_value= -1>
 <#list refListField as field>
-<#list refListMapping as refMap><#if refMap.name = field ><#assign default_value= refMap.code><#break></#if></#list>
 <@formGroup labelKey='${field}:' helpKey='#i18n{forms.modify_control.labelValue.help}' >
-	<@select class='form-select' name='${field}' items=refListValue default_value='${default_value}' />
+	<@inputGroup>
+	<#list refListMapping as refMap>
+		<#if refMap.name = field >
+			<#assign default_value= refMap.code>
+			<#break>
+		</#if>
+	</#list>
+	 <@select name='${field}' items=refListValue default_value='${default_value}' />
+    
+	</@inputGroup>
 </@formGroup>
 </#list>

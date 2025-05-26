@@ -1,3 +1,5 @@
 <@formGroup labelKey='#i18n{forms.modify_control.labelMinResponse}' helpKey=' ' >
-	<@input type="number" name='value' id='value'  min='0'  value=control_value! placeHolder='0' />
+	<@inputGroup>
+		<input type="number" name='value' id="value"  min="0"  value= '${control_value!}' placeHolder='0' />
+	</@inputGroup>
 </@formGroup>

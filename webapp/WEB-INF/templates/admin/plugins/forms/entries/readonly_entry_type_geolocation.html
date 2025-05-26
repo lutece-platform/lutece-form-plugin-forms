@@ -1,41 +1,42 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign iterationNumber = entry_iteration_number?c >
 <#if !entry.onlyDisplayInBack>
-<@row>
-    <@columns sm=3><@p class='text-right font-weight-bold'>${entry.title!''}</@p></@columns>
-    <@columns sm=9>
-        <#assign responseX = "" >
-        <#assign responseY = "" >
-        <#if getResponseContainingTheFieldWithCode( list_responses, "address" )?? >
-        <#assign responseAddress = getResponseContainingTheFieldWithCode( list_responses, "address" ).toStringValueResponse >
-        </#if>
-        <#if getResponseContainingTheFieldWithCode( list_responses, "geometry" )?? >
-        <#assign responseGeometry = getResponseContainingTheFieldWithCode( list_responses, "geometry" ).toStringValueResponse >
-        </#if>
-        <#if getResponseContainingTheFieldWithCode( list_responses, "X" )?? >
-        <#assign responseX = getResponseContainingTheFieldWithCode( list_responses, "X" ).toStringValueResponse >
-        </#if>
-        <#if getResponseContainingTheFieldWithCode( list_responses, "Y" )?? >
-        <#assign responseY = getResponseContainingTheFieldWithCode( list_responses, "Y" ).toStringValueResponse >
-        </#if>
-        <#if responseX == "" || responseX == "0" || responseY == "" || responseY == "0">
-        #i18n{forms.entryType.geolocalisation.message.noGeolocation}
-        <#else>
-        ${(responseAddress)!}
-        <input type="hidden" id="${idName}_address" name="${idName}_address" value="${(responseAddress)!}">
-        <input type="hidden" id="${idName}_geometry" name="${idName}_geometry" value="${(responseGeometry)!}"/>
-        <input type="hidden" id="${idName}_x" name="${idName}_x" value="${(responseX)!}">
-        <input type="hidden" id="${idName}_y" name="${idName}_y" value="${(responseY)!}">
-        <#assign editModeValue = "ReadOnly">
-        <#assign viewNumberValue = "1">
-        <#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
-        <#if entry.mapProvider?? &&  entry.mapProvider.key='openstreetmap'>
-        <div id="${idName}_gmap" data-map="${iterationNumber}" class="col-md-5" style="height:300px; border:1px solid black;margin:5px 0;"></div>
-        <input type="hidden" name="leafletMap"/>
-        </#if>
-        </#if>
-</@columns>
-</@row>
+<@formGroup labelFor='${idName}_address' labelKey='${entry.title}' helpKey=entry.helpMessage mandatory=entry.mandatory>
+<#assign responseX = "" >
+<#assign responseY = "" >
+<#if getResponseContainingTheFieldWithCode( list_responses, "address" )?? >
+<#assign responseAddress = getResponseContainingTheFieldWithCode( list_responses, "address" ).toStringValueResponse >
+</#if>
+<#if getResponseContainingTheFieldWithCode( list_responses, "geometry" )?? >
+<#assign responseGeometry = getResponseContainingTheFieldWithCode( list_responses, "geometry" ).toStringValueResponse >
+</#if>
+<#if getResponseContainingTheFieldWithCode( list_responses, "X" )?? >
+<#assign responseX = getResponseContainingTheFieldWithCode( list_responses, "X" ).toStringValueResponse >
+</#if>
+<#if getResponseContainingTheFieldWithCode( list_responses, "Y" )?? >
+<#assign responseY = getResponseContainingTheFieldWithCode( list_responses, "Y" ).toStringValueResponse >
+</#if>
+<#if responseX == "" || responseX == "0" || responseY == "" || responseY == "0">
+#i18n{forms.entryType.geolocalisation.message.noGeolocation}
+<#else>
+${(responseAddress)!}
+<input type="hidden" id="${idName}_address" name="${idName}_address" value="${(responseAddress)!}">
+<input type="hidden" id="${idName}_geometry" name="${idName}_geometry" value="${(responseGeometry)!}"/>
+<input type="hidden" id="${idName}_x" name="${idName}_x" value="${(responseX)!}">
+<input type="hidden" id="${idName}_y" name="${idName}_y" value="${(responseY)!}">
+<#assign editModeValue = "ReadOnly">
+<#assign viewNumberValue = "1">
+<#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
+<#if entry.mapProvider?? &&  entry.mapProvider.key='openstreetmap'>
+<div id="${idName}_gmap" data-map="${iterationNumber}" class="col-md-5"
+     style="height:300px; border:1px solid black;margin:5px 0;"></div>
+<input type="hidden" name="leafletMap"/>
+</#if>
+</#if>
+</@formGroup>
+</#if>
+
+
 <link rel="stylesheet" href="js/plugins/genericattributes/modules/openstreetmap/lib/leaflet/leaflet.css" />
 <script src="js/plugins/genericattributes/modules/openstreetmap/lib/leaflet/leaflet.js"></script>
 <script type="text/javascript">
@@ -60,12 +61,10 @@
                 let lat = 48.853;
                 let lon = 2.35;
                 let hasMarker = false;
-                if (document.getElementById(prefix + '_x') ) {
-                    if (document.getElementById(prefix + '_x').value !== "" && document.getElementById(prefix + '_y').value !== "") {
-                        lat = document.getElementById(prefix + '_y').value;
-                        lon = document.getElementById(prefix + '_x').value;
-                        hasMarker = true;
-                    }
+                if (document.getElementById(prefix + '_x').value !== "" && document.getElementById(prefix + '_y').value !== "") {
+                    lat = document.getElementById(prefix + '_y').value;
+                    lon = document.getElementById(prefix + '_x').value;
+                    hasMarker = true;
                 }
                 const iterationData = {
                     idMap: idMap,
@@ -98,4 +97,3 @@
         }
     };
 </script>
-</#if>

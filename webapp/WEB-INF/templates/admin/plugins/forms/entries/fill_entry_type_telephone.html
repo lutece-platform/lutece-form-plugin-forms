@@ -17,7 +17,7 @@
 <#else>
 	<#assign helpKey = '' />
 </#if>
-<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory htmlRequired=false  rows=2>
+<@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey groupStyle=groupStyle mandatory=entry.mandatory htmlRequired=false >
     <#assign placeholder = getFieldValueByCode(entry, "placeholder") >
     <@input type='tel' language=locale.language name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=(response.toStringValueResponse)! params=autocomplete placeHolder=placeholder />
 </@formGroup>

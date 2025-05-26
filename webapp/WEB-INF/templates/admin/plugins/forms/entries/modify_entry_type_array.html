@@ -1,34 +1,80 @@
 <#include "all_entry_commons.html" />
-<@editFields editor=true labelErrorMessage=true helpMessage=false exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true >
+<#include "/admin/util/editor/editor.html" />
+
+${breadcrumb_template}
 <@row>
-	<@columns>
-		<@formGroup labelFor='num_row' labelKey='#i18n{forms.create_entry.labelNumberRows}' mandatory=true rows=2>
-			<@input type='text' name='num_row' id='num_row' value=getFieldValueByCode(entry, "array_row") maxlength=255 readonly=true />
-		</@formGroup>
-	</@columns>
-	<@columns>
-		<@formGroup labelFor='num_column' labelKey='#i18n{forms.create_entry.labelNumberColumns}' mandatory=true rows=2>
-			<@input type='text' name='num_column' id='num_column' value=getFieldValueByCode(entry, "array_column") maxlength=255 readonly=true />
-		</@formGroup>
-	</@columns>
-	<@columns>
-	<@formGroup labelFor='comment' labelKey='#i18n{forms.create_entry.labelArrayTitle}' helpKey='#i18n{forms.create_entry.labelArrayTitleHelp}' rows=2>
-		<@input type='text' name='comment' id='comment' value='${entry.comment!}' maxlength=255 />
-	</@formGroup>
-	</@columns>
-</@row>
-<@row>
-	<@columns>
+	<@tform action="${action}">
+	<@columns sm=12>
+		<@box>
+			<@boxHeader title='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"'>
+				<@button type='button' style='card-control collapse' buttonTargetId='#modifyEntryFields' buttonIcon='plus' size='sm' />
+			</@boxHeader>
+			<@boxBody>
+				<@fieldSet fieldsetId='modifyEntryFields' legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+                    <@input type='hidden' name='id_entry' value='${entry.idEntry}' />
+                    <@input type='hidden' name='id_step' value='${step.id}' />
+                    <@input type='hidden' name='id_question' value='${question.id}' />
+					<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
+						<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
+					</@formGroup>
+					<@formGroup labelFor='title' labelKey='#i18n{forms.createEntry.labelTitle}' helpKey='#i18n{forms.createEntry.labelTitleComment}' mandatory=true>
+						<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
+					</@formGroup>
+					<@formGroup labelFor='entry_code' labelKey='#i18n{forms.createEntry.labelCode}' helpKey='#i18n{forms.createEntry.labelCodeComment}'>
+						<@input type='text' name='entry_code' id='entry_code' value='${entry.code}' maxlength=100 />
+					</@formGroup>
+					<@formGroup labelFor='num_row' labelKey='#i18n{forms.createEntry.labelNumberRows}' mandatory=true>
+						<@input type='text' name='num_row' id='num_row' value=getFieldValueByCode(entry, "array_row") maxlength=255 readonly=true />
+					</@formGroup>
+					<@formGroup labelFor='num_column' labelKey='#i18n{forms.createEntry.labelNumberColumns}' mandatory=true>
+						<@input type='text' name='num_column' id='num_column' value=getFieldValueByCode(entry, "array_column") maxlength=255 readonly=true />
+					</@formGroup>
+					<@formGroup labelFor='comment' labelKey='#i18n{forms.createEntry.labelArrayTitle}' helpKey='#i18n{forms.createEntry.labelArrayTitleHelp}'>
+						<@input type='text' name='comment' id='comment' value='${entry.comment}' maxlength=255 />
+					</@formGroup>
+					<@formGroup>
+							<#assign anonymizable=getFieldByCode( entry, "anonymizable")>
+							<#if anonymizable.value?boolean>
+								<#assign checkedValue = true />
+								<#assign anonPattern = anonymizable.title />
+							<#else>
+								<#assign checkedValue = false />
+								<#assign anonPattern ="" />
+							</#if>
+							<@checkBox orientation='switch' labelFor='anonymizable' labelKey='#i18n{forms.createEntry.labelAnonymizable}' name='anonymizable' id='anonymizable' value='1' params='onchange="javascript:changeVisilityAnonymizePattern();"' checked=checkedValue />
+						</@formGroup>
+						<@formGroup labelFor='anonymize_pattern' id="anonymize_pattern_group" labelKey='#i18n{forms.createEntry.labelAnonymizePattern}' helpKey='${anonymization_help_message}' >
+							<@input type='text' name='anonymize_pattern' id='anonymize_pattern' value='${anonPattern!}' maxlength=255 />
+						</@formGroup>
+					<#if entry.exportable>
+						<@input type='hidden' name='exportable' value='1' />
+					</#if>
+					<#if entry.exportablePdf>
+						<@input type='hidden' name='exportable_pdf' value='1' />
+					</#if>
+					<@formGroup labelFor='disabled' helpKey='#i18n{forms.createEntry.labelDisableQuestionHelp}'>
+						<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.createEntry.labelDisableQuestion}' value='1' checked=entry.disabled />
+					</@formGroup>
+                    ${question_modify_template!}
+					<@formGroup rows=2>
+						<@button type='submit' name='action_modifyQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
+						<@button type='submit' name='action_saveQuestion' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonApply}' hideTitle=['xs'] />
+						<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.createEntry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
+					</@formGroup>
+				</@fieldSet>
+			</@boxBody>
+		</@box>
+
 		<@box color='primary'>
 			<@boxHeader title='${entry.comment!}' />
 			<@boxBody>
 				<@table>
 					<#assign x=getFieldValueByCode(entry, "array_row")?number>
 					<#list 1..x+1 as i>
-						<@tr>
+						<tr>
 						<#assign y=getFieldValueByCode(entry, "array_column")?number>
 							<#list 1..y+1 as j>
-							<@td>
+							<td>
 							<#assign title='' />
 							<#list entry.fields as field>
 								<#assign value=i+"_"+j>
@@ -41,17 +87,19 @@
 								<#elseif i == 1 && j != 1>
 									<@input type='text' id='field_${i}_${j}' name='field_${i}_${j}' value='${title!}' />
 								<#elseif i == 1 && j == 1>
-									<@span class='font-weight-bold'>${entry.comment}</@span>
+									<b>${entry.comment}</b>
 								<#else>
 									&nbsp;
 								</#if>
-							</@td>
+							</td>
 							</#list>
-						</@tr>
+						</tr>
 					</#list>  
 				</@table>
 			</@boxBody>
 		</@box>
 	</@columns>
+</@tform>
 </@row>
-</@editFields>
+<@initEditor />
+<@anonymPattern />

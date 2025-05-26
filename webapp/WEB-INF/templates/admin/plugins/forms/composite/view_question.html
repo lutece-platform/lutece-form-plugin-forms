@@ -2,70 +2,76 @@
 <#if list_validator??>
 <input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='' hidden />
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-	<#assign validNames = [] />
-	<#list list_validator as validator>
+	$(function() {
+		<#assign validNames = [] />
+				<#list list_validator as validator>
 		<#if !validNames?seq_contains(validator.validatorBeanName)>
-		<#assign validNames = validNames + [validator.validatorBeanName] />
-		function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue)	{
+				<#assign validNames = validNames + [validator.validatorBeanName] />
+				function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue)
+		{
 			${validator.getJavascriptValidation()!'return true;'}
 		}
-		</#if>
-	</#list>
-	var hasCollapse=false,
-			toCollapse=null,
-			stepGroup = $('.display_field_${question.id!''}_${question.iterationNumber}').parentsUntil('.step-content');
-	stepGroup.each( function(){
-		if( $(this).hasClass('step-group-collapsible') ){
-			hasCollapse=$(this).find("div[class*='display_field_']").not(".control_invalid").length == 0,
-					toCollapse=$(this);
-		}
-	});
-	var displayField = $('.display_field_${question.id!''}_${question.iterationNumber}');
-	var bOtherStepValidated = true;
-	<#if other_step_validation??>
-		<#if other_step_validation>
-			displayField.show();
-			$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
-		<#else>
-			displayField.hide();
-			displayField.find("[required]").attr("requireddisabled","");
-			displayField.find("[required]").removeAttr("required");
-			$('#${question.id}_${question.iterationNumber}').val('');
-			bOtherStepValidated = false;
-		</#if>
 	</#if>
-	<#list list_control as control>
-		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
-		input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
-		input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
-		var nValidControlsCount = 0;
-		var nNotValidControlsCount = 0;
-		<#list list_control as itemControl>
-		var displayItemControl = ${itemControl.listIdQuestion[0]} + "_" + ${question.iterationNumber},
-				input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
-		stepGroup = $('.display_field_${question.id!''}_${question.iterationNumber}').parentsUntil('.step-content');
+	</#list>
+
+		var hasCollapse=false,
+				toCollapse=null,
+				stepGroup = $('.display_field_${question.id!''}_${question.iterationNumber}').parentsUntil('.step-content');
 		stepGroup.each( function(){
 			if( $(this).hasClass('step-group-collapsible') ){
 				hasCollapse=$(this).find("div[class*='display_field_']").not(".control_invalid").length == 0,
-					toCollapse=$(this);
+						toCollapse=$(this);
 			}
 		});
-		var inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
-		// AND condition : if at least 1 control value isn't present, do not display question
-		if($("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid")	|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}')){
-			nNotValidControlsCount++;
-		} else {
-			nValidControlsCount++;
-		}
+		var displayField = $('.display_field_${question.id!''}_${question.iterationNumber}');
+		var bOtherStepValidated = true;
+		<#if other_step_validation??>
+            <#if other_step_validation>
+                displayField.show();
+                $('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
+            <#else>
+                displayField.hide();
+                displayField.find("[required]").attr("requireddisabled","");
+                displayField.find("[required]").removeAttr("required");
+                $('#${question.id}_${question.iterationNumber}').val('');
+                bOtherStepValidated = false;
+	        </#if>
+	    </#if>
+
+		<#list list_control as control>
+		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+				input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
+		input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
+			var nValidControlsCount = 0;
+			var nNotValidControlsCount = 0;
+			<#list list_control as itemControl>
+			var displayItemControl = ${itemControl.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+					input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
+            stepGroup = $('.display_field_${question.id!''}_${question.iterationNumber}').parentsUntil('.step-content');
+            stepGroup.each( function(){
+                if( $(this).hasClass('step-group-collapsible') ){
+                    hasCollapse=$(this).find("div[class*='display_field_']").not(".control_invalid").length == 0,
+                        toCollapse=$(this);
+                }
+            });
+			var inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
+			// AND condition : if at least 1 control value isn't present, do not display question
+			if($("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid")
+					|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}'))
+			{
+				nNotValidControlsCount++;
+			} else {
+				nValidControlsCount++;
+			}
 		</#list>
 			var bIsQuestionDisplayed;
 			<#if logical_operator_label == 'or'>
 			bIsQuestionDisplayed = (nValidControlsCount > 0) || bOtherStepValidated;
 			<#else>
 			bIsQuestionDisplayed = (nNotValidControlsCount == 0) && bOtherStepValidated;
-			</#if>
-			if(bIsQuestionDisplayed){
+		</#if>
+			if(bIsQuestionDisplayed)
+			{
 				displayField.removeClass("control_invalid");
 				displayField.show();
 				displayField.find("[requireddisabled]").attr("required","");
@@ -87,9 +93,10 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		});
 		input${control.id}_${question.iterationNumber}.change();
-		toggleRequiredAttributesByVisibility();
+        toggleRequiredAttributesByVisibility();
 	</#list>
-});
+	});
+
 
 /**
  * Toggles the "required" attribute on input fields based on their visibility.
