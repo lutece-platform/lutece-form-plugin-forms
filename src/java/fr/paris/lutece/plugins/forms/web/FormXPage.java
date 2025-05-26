@@ -110,7 +110,6 @@ public class FormXPage extends MVCApplication
     protected static final String MESSAGE_PATH = "forms.xpage.form.view.pagePathLabel";
     protected static final String MESSAGE_ERROR_NOT_RESPONSE_AGAIN_FORM = "forms.xpage.form.error.limitNumberResponse";
     protected static final String MESSAGE_ERROR_CONTROL = "forms.xpage.form.error.control";
-    protected static final String MESSAGE_ERROR_STEPS_VALIDATION = "forms.xpage.form.error.steps.validation";
     protected static final String MESSAGE_LIST_FORMS_PAGETITLE = "forms.xpage.listForms.pagetitle";
     protected static final String MESSAGE_LIST_FORMS_PATHLABEL = "forms.xpage.listForms.pathlabel";
     private static final String MESSAGE_WARNING_LOST_SESSION = "forms.warning.lost.session";
@@ -622,18 +621,6 @@ public class FormXPage extends MVCApplication
                 return getStepView( request );
             }
             FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
-            List<Step> stepList = StepHome.getStepsListByForm( form.getId( ) );
-            Set<Integer> validatedStepIds = _formResponseManager.getValidatedSteps( ).stream( ).map( Step::getId ).collect( Collectors.toSet( ) );
-
-            List<Step> invalidSteps = stepList.stream( ).filter( step -> !validatedStepIds.contains( step.getId( ) ) ).collect( Collectors.toList( ) );
-
-            if ( !invalidSteps.isEmpty( ) )
-            {
-                SiteMessageService.setMessage( request, MESSAGE_ERROR_STEPS_VALIDATION, new Object [ ] {
-                        invalidSteps.stream( ).map(Step::getTitle).collect( Collectors.joining(", ") )
-                }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( VIEW_STEP ) );
-                return getStepView(  request );
-            }
             boolean needValidation = form.isCaptchaStepFinal( );
             if ( isCaptchaKO( request, needValidation ) )
             {
@@ -734,20 +721,6 @@ public class FormXPage extends MVCApplication
                 return getStepView( request );
             }
             FormsResponseUtils.fillResponseManagerWithResponses( request, true, _formResponseManager, _stepDisplayTree.getQuestions( ), false );
-
-            List<Step> stepList = StepHome.getStepsListByForm( form.getId( ) );
-            Set<Integer> validatedStepIds = _formResponseManager.getValidatedSteps( ).stream( ).map( Step::getId ).collect( Collectors.toSet( ) );
-
-            List<Step> invalidSteps = stepList.stream( ).filter( step -> !validatedStepIds.contains( step.getId( ) ) ).collect( Collectors.toList( ) );
-
-            if ( !invalidSteps.isEmpty( ) )
-            {
-                SiteMessageService.setMessage( request, MESSAGE_ERROR_STEPS_VALIDATION, new Object [ ] {
-                        invalidSteps.stream( ).map(Step::getTitle).collect( Collectors.joining(", ") )
-                }, null, null, null, SiteMessage.TYPE_ERROR, null, getViewFullUrl( VIEW_STEP ) );
-                return getStepView(  request );
-            }
-
             boolean needValidation = form.isCaptchaStepFinal( );
             if ( isCaptchaKO( request, needValidation ) )
             {
