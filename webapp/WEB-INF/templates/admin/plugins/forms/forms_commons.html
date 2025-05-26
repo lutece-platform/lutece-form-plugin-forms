@@ -382,10 +382,10 @@ window.addEventListener('message', function(event) {
 				<@select name='id_category' items=categoryList default_value='${form.idCategory!}' />
 			</@formGroup>
 			<@formGroup labelKey='#i18n{forms.modify_form.labelLogo}' helpKey='#i18n{forms.modify_form.labelLogo.help}' rows=2>
-				<@addFileBOInput fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' cssClass='' multiple=true />
+				<@addFileInput fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' cssClass='' multiple=true />
 				<#if !listFiles??><#assign listFiles = ''></#if>
 				<div id="listUpload">
-					<@addBOUploadedFilesBox fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' listFiles=listFiles />
+					<@addUploadedFilesBox fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' listFiles=listFiles />
 				</div>
 			</@formGroup>
 		</@fieldSet>
