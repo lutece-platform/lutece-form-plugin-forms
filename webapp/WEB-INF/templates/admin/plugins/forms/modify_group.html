@@ -1,74 +1,83 @@
-<#include "/admin/util/editor/editor.html" />
-<#assign stepTitle=step.title!?replace("- hidden","") />
 <@formBreadCrumb>
 	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>${form.title}</@link></@breadcrumbItem>
-	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${stepTitle}</@link></@breadcrumbItem>
-	<@breadcrumbItem class='active'>#i18n{forms.create_group.title}</@breadcrumbItem>
+	<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></@breadcrumbItem>
+	<@breadcrumbItem class='active is-active'>#i18n{forms.create_group.title}</@breadcrumbItem>
 </@formBreadCrumb>
-<@pageContainer>
-    <@pageColumn>
-		<@pageHeader title='#i18n{forms.modify_group.title}' />
-		<@tform method="post" name="modify_group" id="modify_group" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
-			<@messages errors=errors />
-			<@input type='hidden' id='token' name='token' value='${token}' />
-			<@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
-			<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
-			<@input type='hidden' id='id' name='id' value='${group.id}' />
-			<@formGroup labelFor='title' labelKey='#i18n{forms.modify_group.labelTitle}' helpKey='#i18n{forms.modify_group.labelTitle.help}' mandatory=true rows=2>
-				<@input type='text' name='title' id='group-title' value='${group.title!?replace(\'- hidden\',\'\')}' />
-			</@formGroup>
-			<@formGroup helpKey='#i18n{forms.modify_group.labelShowTitle.help}' rows=2>
-				<@checkBox orientation="switch" labelKey='#i18n{forms.modify_group.labelShowTitle}' labelFor='show-group-title' name='show-group-title' id='show-group-title' value='0' checked=!group.title?ends_with('hidden') />
-			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.modify_group.labelDescription}' helpKey='#i18n{forms.modify_group.labelDescription.help}' rows=2>
-				<@input type='textarea' name='description' class='richtext'>${group.description!}</@input>
-			</@formGroup>
-			<@formGroup rows=2>
-				<@accordion id='iterate_group' title='#i18n{forms.create_group.buttonManageIteration}' icon='number' collapsed=true>
-					<@row id='iteration_group'>
-						<@columns> 
-							<@formGroup rows=2  labelFor='iterationMin' labelKey='#i18n{forms.create_group.labelIterationMin}' helpKey='#i18n{forms.create_group.labelIterationMin.help}' rows=2>
+<@row>
+	<@columns>
+		<@box>
+			<@boxHeader title='#i18n{forms.modify_group.title}' />
+			<@boxBody>
+				<@tform class="form-horizontal" method="post" name="modify_group" id="modify_group" action="jsp/admin/plugins/forms/ManageQuestions.jsp">
+					<@messages errors=errors />
+					<@input type='hidden' id='token' name='token' value='${token}' />
+					<@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
+					<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
+					<@input type='hidden' id='id' name='id' value='${group.id}' />
+					<@formGroup labelFor='title' labelKey='#i18n{forms.modify_group.labelTitle}' helpKey='#i18n{forms.modify_group.labelTitle.help}' mandatory=true>
+						<@input type='text' name='title' id='group-title' value='${group.title!?replace(\'- hidden\',\'\')}' />
+					</@formGroup>
+					<@formGroup helpKey='#i18n{forms.modify_group.labelShowTitle.help}'>
+						<@checkBox labelKey='#i18n{forms.modify_group.labelShowTitle}' labelFor='show-group-title' name='show-group-title' id='show-group-title' value='0' checked=!group.title?ends_with('hidden') />
+					</@formGroup>
+					<@formGroup labelKey='#i18n{forms.modify_group.labelDescription}' helpKey='#i18n{forms.modify_group.labelDescription.help}' >
+						<@input type='textarea' name='description' class='richtext'>${group.description!}</@input>
+					</@formGroup>
+					<@formGroup id='iterate_group'>
+						<#if group.iterationMin=1 && group.iterationMax=1 > 
+							<@button title='#i18n{forms.create_group.buttonManageIteration}' buttonIcon='hashtag' id='iterate' />
+						</#if>
+				   </@formGroup>
+				   <@row id='iteration_group'>
+						<@columns offsetLg=3 lg=2> 
+							<@formGroup labelFor='iterationMin' labelKey='#i18n{forms.create_group.labelIterationMin}' helpKey='#i18n{forms.create_group.labelIterationMin.help}' rows=2>
 								<@row>
 									<@columns lg=3>
 										<@input type='number' name='iterationMin' value='${group.iterationMin!}' min=1 max=99 />
 									</@columns>
 								</@row>
 							</@formGroup>
-							<@formGroup rows=2  labelFor='iterationAddLabel' labelKey='#i18n{forms.create_group.labelIterationAddLabel}' helpKey='#i18n{forms.create_group.labelIterationAddLabel.help}' rows=2>
+							<@formGroup labelFor='iterationAddLabel' labelKey='#i18n{forms.create_group.labelIterationAddLabel}' helpKey='#i18n{forms.create_group.labelIterationAddLabel.help}' rows=2>
 								<@input type='text' name='iterationAddLabel' value='${group.iterationAddLabel!}' />
 							</@formGroup>
 						</@columns>
-						<@columns>
-							<@formGroup rows=2  labelFor='iterationMax' labelKey='#i18n{forms.create_group.labelIterationMax}' helpKey='#i18n{forms.create_group.labelIterationMax.help}' rows=2>
+						<@columns lg=3>
+							<@formGroup labelFor='iterationMax' labelKey='#i18n{forms.create_group.labelIterationMax}' helpKey='#i18n{forms.create_group.labelIterationMax.help}' rows=2>
 								<@row>
 									<@columns lg=2>
 										<@input type='number' name='iterationMax' value='${group.iterationMax!}' min=1 max=99 />
 									</@columns>
 								</@row>
 							</@formGroup>
-							<@formGroup rows=2  labelFor='iterationRemoveLabel' labelKey='#i18n{forms.create_group.labelIterationRemoveLabel}' helpKey='#i18n{forms.create_group.labelIterationRemoveLabel.help}' rows=2>
+							<@formGroup labelFor='iterationRemoveLabel' labelKey='#i18n{forms.create_group.labelIterationRemoveLabel}' helpKey='#i18n{forms.create_group.labelIterationRemoveLabel.help}' rows=2>
 								<@input type='text' name='iterationRemoveLabel' value='${group.iterationRemoveLabel!}' />
 							</@formGroup> 
 						</@columns>
 					</@row>
-				</@accordion>
-			</@formGroup>
-			
-			<@formGroup>
-				<@formsButton okAction='modifyGroup' viewAction='' />
-			</@formGroup>
-		</@tform>
-	</@pageColumn>
-</@pageContainer>
+					<@formGroup>
+						<@formsButton okAction='modifyGroup' viewAction='manageQuestions' />
+					</@formGroup>
+				</@tform>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>
+<#include "/admin/util/editor/editor.html" />
 <@initEditor />
 <script>
-<@offcanvasIframeScript triggerForm='modify_group' triggerActionId='action_modifyGroup' />
-
 document.addEventListener('DOMContentLoaded', function(e) {
 	document.querySelector('#modify_group').addEventListener('submit', function(e) {
 		if ( !document.querySelector('#show-group-title').checked && document.querySelector('#group-title').value.indexOf('hidden') === -1 ) {
 			document.querySelector('#group-title').value = document.querySelector('#group-title').value  + ' - hidden';
 		} 
+	});
+	<#if group.iterationMin=1 && group.iterationMax=1 > 
+	document.getElementById('iteration_group').classList.toggle('d-none');
+	<#else>    
+	document.getElementById('iterate_group').classList.toggle('d-none');
+	</#if>   
+	document.getElementById('iterate').addEventListener('click', function() {
+		document.getElementById('iteration_group').classList.toggle('d-none');
 	});
 });
 </script>

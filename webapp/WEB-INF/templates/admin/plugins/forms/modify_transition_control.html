@@ -1,62 +1,72 @@
-<@tform method='post' id='modify_transition_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
-<@input type='hidden' id='token' name='token' value='${token}' />
-<@messages errors=errors />
-<@input type="hidden" name='id_step'  value='${id_step!}' />
-<@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}' mandatory=true rows=2>
-<@inputGroup>
-<@select name='id_question' class='form-select' items=listQuestion default_value='' />
-<@button type='submit' name="view_modifyControl" value="validateQuestion" showTitle=false buttonIcon='check'/>
-</@inputGroup>
-<#if control.listIdQuestion??>
-    <@ul class='list-group my-3'>
-        <#list control.listIdQuestion as question >
-            <#list listQuestion as q >
-                <#if question == q.code?number>
-                    <@li class='list-group-item d-flex align-items-center justify-content-between'>
-                        <@span class='truncate'> 
-                        <@icon style='square-check' />  ${q.name!} 
-                        </@span>  
-                        <#--  
-                        <@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}' title='#i18n{portal.util.labelDelete} ${q.name!}' class='btn btn-outline-danger'>
-                            <@icon style='trash' /> 
-                        </@link>
-                        -->
-                    </@li>
+<@formBreadCrumb>
+    <@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${step.idForm}' title='#i18n{forms.create_form.button.backForm}'>...</@link></li>
+    <li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}'
+        title='#i18n{forms.create_form.button.backStep}'>${step.title}
+        </@link></li>
+    <li class="active">#i18n{forms.modify_transition_control.title}</li>
+</@formBreadCrumb>
+<@box>
+    <@boxHeader title='#i18n{forms.modify_transition_control.title}'>
+        <#if control.id gt 0 && !nextStepTitle??>
+            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}'
+            title='#i18n{forms.manage_controls.action.removeControl}' buttonIcon='trash' class='pull-right text-danger' color='btn-link' />
+        </#if>
+        <#if nextStepTitle?? && step.getTitle()??>
+            <h3>${step.getTitle()}
+                <@icon style='chevron-right' />
+                ${nextStepTitle}</h3>
+        </#if>
+    </@boxHeader>
+    <@boxBody>
+        <@tform method='post' id='modify_control' name='modify_control' action='jsp/admin/plugins/forms/ManageControls.jsp'>
+            <@input type='hidden' id='token' name='token' value='${token}' />
+            <@messages errors=errors />
+            <@input type="hidden" name='id_step'  value='${id_step!}' />
+            <@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}' mandatory=true>
+                <@inputGroup>
+                    <@select name='id_question' items=listQuestion default_value='' />
+                    <@inputGroupItem>
+                        <@button type='submit' name="view_modifyControl" value="validateQuestion" showTitle=false buttonIcon='check'/>
+                    </@inputGroupItem>
+                </@inputGroup>
+                <#if control.listIdQuestion??>
+                    <#list control.listIdQuestion as question >
+                        <#list listQuestion as q >
+                            <#if question == q.code?number>
+                                <@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}' title='#i18n{portal.util.labelDelete} ${q.name!}' class='btn btn-xs btn-danger truncate'>
+                                    <@icon style='times fa-fw' /> ${q.name!}
+                                </@link>
+                            </#if>
+                        </#list>
+                    </#list>
                 </#if>
-            </#list>
-        </#list>
-    </@ul>
-</#if>
-</@formGroup>
-<@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' rows=2>
-<@inputGroup>
-    <@select name='validatorName' class='form-select' items=availableValidators default_value='${control.validatorName!}' />
-    <@inputGroupItem>
-        <@button type='submit' name="view_modifyControl" value="validateValidator" showTitle=false buttonIcon='check'/>
-    </@inputGroupItem>
-</@inputGroup>
-</@formGroup>
-<@div id='control-template'>
-${control_template}
-</@div>
-<@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' rows=2>
-<@inputGroup>
-    <@input type='textarea' name='errorMessage' value='${control.errorMessage!}' />
-</@inputGroup>
-</@formGroup>
-<@formsButton okAction='modifyControl' viewAction='' />
-</@tform>
+            </@formGroup>
+            <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}'>
+                <@inputGroup>
+                    <@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
+                    <@inputGroupItem>
+                        <@button type='submit' name="view_modifyControl" value="validateValidator" showTitle=false buttonIcon='check'/>
+                    </@inputGroupItem>
+                </@inputGroup>
+            </@formGroup>
+            <@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' >
+                <@inputGroup>
+                    <@input type='textarea' name='errorMessage' value='${control.errorMessage!}' />
+                </@inputGroup>
+            </@formGroup>
+            ${control_template}
+            <@formsButton okAction='modifyControl' viewAction='' />
+        </@tform>
+    </@boxBody>
+</@box>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the form
-    const ctrl = document.getElementById('control-template');
-    if (ctrl) {
-        const labels = ctrl.querySelectorAll('.form-label')
-        labels.forEach(element => {
-            element.className = 'form-label';
-            element.nextElementSibling.classList.add('col-12');
-        });
-    }
-});
-<@offcanvasIframeScript triggerForm='modify_transition_control' triggerActionId='action_modifyControl' />
+    $(function () {
+        var formAction = $('#modify_control'), btnAction = $('#action_modifyControl');
+        $('body').css('overflow', 'auto');
+        $('.content-header').hide();
+        $('#admin-wrapper').css('margin', '0').css('overflow', 'hidden');
+        $('header').remove();
+        $('#breadforms').remove();
+        $('#footer').remove();
+    });
 </script>

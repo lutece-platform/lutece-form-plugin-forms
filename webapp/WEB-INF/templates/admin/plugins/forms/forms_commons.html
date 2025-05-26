@@ -268,13 +268,12 @@ $( function(){
 });
 </script>
 </#macro>
-<#macro formBreadCrumb home='jsp/admin/plugins/forms/ManageForms.jsp' homeLabel=false>
+<#macro formBreadCrumb home='jsp/admin/plugins/forms/ManageForms.jsp'>
 <@row>
 	<@breadcrumbs id='breadforms' params=' style="margin-bottom:1em; background-color:transparent;"'>
 		<@breadcrumbItem>
-			<@link href=home title='#i18n{forms.form.returnPage} #i18n{forms.manageForm.title}'>
+			<@link href=home title='Retour liste des formulaires'>
 				<@icon style='home' />
-				<#if homeLabel>#i18n{forms.manageForm.title}</#if>
 			</@link>
 		</@breadcrumbItem>
 		<#nested>
@@ -283,75 +282,30 @@ $( function(){
 </#macro>     
 <#macro formModal id='pubModal' title=''>
 <@modal id='${id}'>
-<#if token??><@input type='hidden' id='token' name='token' value='${token}' /></#if>
-<@modalHeader />
-<iframe id="modalIframe" src=""></iframe>
+	<#if token??>
+		<@input type='hidden' id='token' name='token' value='${token}' />
+	</#if>
+	<@modalHeader />
+    <iframe id="modalIframe" src=""></iframe>
 </@modal>
 <script>
-document.getElementById('${id}').addEventListener('show.bs.modal', function (event) {
-	var button = event.relatedTarget;
-	var modalSrc = button.getAttribute('data-url');
-	var modalTitle = button.getAttribute('data-modal-title');
-	var modal = this;
-	modal.querySelector('.modal-title').textContent = modalTitle;
-	modal.querySelector('#modalIframe').setAttribute('src', modalSrc);
-	modal.querySelector('#modalIframe').contentWindow.postMessage( 'offcanvas', '*');
+$('#${id}').on('show.bs.modal', function (event) {
+	var button = $(event.relatedTarget);
+	modalSrc = button.data('url');
+	modalTitle = button.data('modal-title');
+	modal = $(this);
+ 	modal.find('.modal-title').text(modalTitle);
+ 	modal.find('.modal-content #modalIframe').attr('src', modalSrc );
 });
 </script>
-</#macro>
-<#macro offcanvasIframe id='offcanvasForm' label='Offcanvas'>
-<div class="offcanvas offcanvas-end" tabindex="-1" id="${id}" aria-labelledby="${id}Label" style="height:100vh; max-height: 100vh;">
-    <div class="offcanvas-header">
-        <h5 id="${id}Label">${label!}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="#i18n{portal.util.labelClose}"></button>
-    </div>
-    <div class="offcanvas-body">
-        <iframe id="offcanvasIframe" style="display:none; width:100%; height:100%; border:none;" src="" title=""></iframe>
-    </div>
-</div>
-</#macro>
-<#macro offcanvasIframeScript triggerForm='modify_form' triggerActionId='action_modifyForm' >
-window.addEventListener('message', function(event) {
-    if (event.data === 'offcanvas') {
-        if( document.querySelector('#top-menu') ){ document.querySelector('#top-menu').classList.add('d-none'); }
-        if( document.querySelector('#lutece-layout-wrapper') ){ document.querySelector('#lutece-layout-wrapper').classList.add('d-none','bg-white'); }
-        if( document.querySelector('.lutece-header') ){ document.querySelector('.lutece-header').remove(); }
-        if( document.querySelector('.breadcrumb') ){ document.querySelector('.breadcrumb').remove(); }
-        if( document.querySelector('.page-header') ){ document.querySelector('.page-header').remove(); }
-        if( document.querySelector('#pageHeader') ){ document.querySelector('#pageHeader').remove(); }
-        if( document.querySelector('#feature-title') ){ document.querySelector('#feature-title').remove(); }
-        if( document.querySelector('.lutece-main-footer') ){  document.querySelector('.lutece-main-footer').remove(); }
-		<#if triggerForm !='' && triggerActionId!=''>
-        var formAction = document.getElementById('${triggerForm}'), btnAction = document.getElementById('${triggerActionId}');
-        btnAction.addEventListener('click', function(e){ 
-            formAction.addEventListener('submit', function(){
-                e.preventDefault();
-                formAction.setAttribute( 'target', '_top' );
-                formAction.submit(); // Corrected the method to submit the form
-            });
-        });
-		<#else>
-		<!-- offcanvasIframeScript : Manque un des deux paramètres : triggerForm ou triggerActionId -->
-		</#if>
-        if( document.querySelector('#lutece-layout-wrapper') ){document.querySelector('#lutece-layout-wrapper').classList.remove('d-none'); }
-        document.querySelector('body').classList.add('loaded'); 
-		<#nested>
-    }
-});
-</#macro>
-<#macro bottomFormFixedButtons>
-<#assign bottomParams>class="<#if commonsThemeCode='tabler'>fixed-bottom </#if>d-flex justify-content-end bg-light bg-gradient left-0 w-100 d-flex justify-content-center py-3" style="--tblr-bg-opacity:.5;"</#assign>
-<@div params=bottomParams>
-<#nested>
-</@div>
 </#macro>
 <#macro headerButton name='view_manageForm' label='portal.admin.message.buttonCancel' validate=true>
 <#if validate>
 	<#assign color = '' />
-	<#assign buttonIcon = 'check me-1' />
+	<#assign buttonIcon = 'check' />
 <#else>
 	<#assign color = 'danger' />
-	<#assign buttonIcon = 'times me-1' />
+	<#assign buttonIcon = 'times' />
 </#if>
 <@button type='submit' name='${name}' title='#i18n{${label}}' cancel=!validate buttonIcon=buttonIcon color=color />
 </#macro>
@@ -362,298 +316,749 @@ window.addEventListener('message', function(event) {
 	<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' />
 </#if>
 </#macro>
-<#macro modalFrameScript formId actionId='action_modifyControl' title='#i18n{portal.util.labelModify}' modalId='pubModal' iframeId='modalIframe' modalHeight=70 >
+<#macro modalFrameScript formId actionId title modalId='qModal' iframeId='modalIframe' modalHeight=70 >
+<script>
+// Function to check if a webpage is in iFrame
+function isIniFrame() {
+ 	return window.self !== window.top ? true : false;
+}
+
+$( function() {
+    if ( isIniFrame() ){
+		$('body').css( 'overflow-x', 'hidden' ).css('background-color', 'white');
+        $('.skipnav').hide();
+		$('nav').hide();
+		$('.content-header').hide();
+		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
+		$('.container-fluid').css( 'padding', '0' );
+        $('.modal-body').css( 'padding', '24px' );
+        $('main').css( 'margin', '0' );
+		$('#breadforms').remove();
+		$('header').remove();
+		$('#footer').remove();
+		<#if title !=''>
+		var modalTitle = '${title}';
+		window.parent.$('#${modalId}').find('.modal-title').text(modalTitle);
+		$('#${modalId}').find('.modal-title').text(modalTitle);
+		</#if>
+		window.parent.$('#${iframeId}').css('height','${modalHeight!}vh');
+		$('#${iframeId}').css('height','${modalHeight!}vh');
+		
+		<#if formId !=''>
+		var formAction = $('#${formId}'), btnAction = $('#${actionId}');
+		btnAction.click( function(e){ 
+			formAction.submit( function(){
+				e.preventDefault();
+				formAction.attr( 'target', '_top' );
+				_this.unbind('submit').submit();
+			});
+		});
+		</#if>
+    }  else {
+        $('#${modalId} .content-header').hide();
+        $('#${modalId} #admin-wrapper').css( 'margin', '0' );
+        $('#${modalId} header').hide();
+        $('#${modalId} footer').hide();
+    }
+});
+</script>
 </#macro>
 <#macro formModel type='update'>
-<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
-<@addRequiredJsFiles />
-<script src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${uploadHandler.handlerName}" ></script>
-<@row> 
-	<@columns md=6 xl=4 > 
-		<@card>
-		<@fieldSet legend='#i18n{forms.modify_form.labelDescription}'>
-			<@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true rows=2>
-				<@input type='text' name='title' value='${form.title!}' />
-			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
-				<@input type='textarea' name='description'>${form.description!}</@input>
-			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.modify_form.labelCategory}' helpKey='#i18n{forms.modify_form.labelCategory.help}' rows=2>
-				<@select name='id_category' items=categoryList default_value='${form.idCategory!}' />
-			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.modify_form.labelLogo}' helpKey='#i18n{forms.modify_form.labelLogo.help}' rows=2>
-				<@addFileInput fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' cssClass='' multiple=true />
-				<#if !listFiles??><#assign listFiles = ''></#if>
-				<div id="listUpload">
-					<@addUploadedFilesBox fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' listFiles=listFiles />
-				</div>
-			</@formGroup>
-		</@fieldSet>
-		<@fieldSet legend='#i18n{forms.create_form.display.label}'>
-			<@row>
-				<@columns xs=12 sm=6> 
-					<@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true rows=2>
-						<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
+	<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
+	<@addRequiredJsFiles />
+	<script type="text/javascript" src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${uploadHandler.handlerName}" ></script>
+	<@row> 
+		<@columns md=7> 
+			<@fieldSet legend='#i18n{forms.modify_form.labelDescription}'>
+				<@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true rows=2>
+					<@input type='text' name='title' value='${form.title!}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.modify_form.labelDescription}' helpKey='#i18n{forms.modify_form.labelDescription.help}' rows=2>
+					<@input type='textarea' name='description'>${form.description!}</@input>
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.modify_form.labelCategory}' helpKey='#i18n{forms.modify_form.labelCategory.help}' rows=2>
+					<@select name='id_category' items=categoryList default_value='${form.idCategory!}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.modify_form.labelLogo}' helpKey='#i18n{forms.modify_form.labelLogo.help}' rows=2>
+					<@addFileInput fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' cssClass='' multiple=true />
+					<#if !listFiles??><#assign listFiles = ''></#if>
+					<div id="listUpload">
+						<@addUploadedFilesBox fieldName="upload_logo" handler=uploadHandler submitBtnName='action_doSynchronousUploadDocument' listFiles=listFiles />
+					</div>
+				</@formGroup>
+			</@fieldSet>
+			<@fieldSet legend='#i18n{forms.create_form.labelDates}'>  
+				<@row>
+					<@columns xs=12 sm=6>   
+						<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
+							<@inputGroup>
+							<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?iso_local_nz></#if>
+									<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
+									<@inputGroupItem type='text'>
+										<@icon style='calendar' />
+									</@inputGroupItem>
+							</@inputGroup>
+						</@formGroup>
+					</@columns>       
+					<@columns xs=12 sm=6>  
+						<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
+							<@inputGroup>
+							<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?iso_local_nz></#if>
+									<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
+									<@inputGroupItem type='text'>
+										<@icon style='calendar' />
+									</@inputGroupItem>
+							</@inputGroup>
+						</@formGroup>
+					</@columns>    
+				</@row>
+				<@row>
+					<@columns xs=12 sm=12>
+						<@formGroup labelKey='#i18n{forms.modify_form.labelUnavailableMessage}' helpKey='#i18n{forms.modify_form.labelUnavailableMessage.help}' rows=2>
+								<@input type='textarea' name='unavailableMessage'>${form.unavailableMessage!}</@input>
+						</@formGroup>
+					</@columns>
+				</@row>
+			</@fieldSet>
+			<@fieldSet legend='#i18n{forms.create_form.display.labelRestrictions}'>
+				<@row>     
+					<@columns xs=12 sm=4>  
+						<@formGroup labelFor='max_number_response' labelKey='#i18n{forms.create_form.labelMaxNumberResponse}' helpKey='#i18n{forms.create_form.labelMaxNumberResponseComment.help}' rows=2>
+							<@input name='maxNumberResponse' id='maxNumberResponse' type='number' value=form.maxNumberResponse?string!'0' />
+						</@formGroup>
+					</@columns>     
+					<@columns xs=12 sm=4>       
+						<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' hideLabel=['all'] rows=2>
+							<@checkBox labelFor='authentificationNeeded' labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
+						</@formGroup>
+						<@formGroup labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' helpKey='#i18n{forms.create_form.labelAccessToResponsesByRole.help}' hideLabel=['all'] rows=2>
+							<@checkBox labelFor='accessToResponsesByRole' labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' name='accessToResponsesByRole' id='accessToResponsesByRole' value='1' checked=(form?has_content && form.accessToResponsesByRole) />
+						</@formGroup>	
+					</@columns>       
+					<@columns xs=12 sm=4>           
+						<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' hideLabel=['all'] rows=2>
+							<@checkBox labelFor='oneResponseByUser' labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) />
+						</@formGroup>
+						<@formGroup labelKey='#i18n{forms.create_form.labelBackupEnabled}' helpKey='#i18n{forms.create_form.labelBackupEnabled.help}' hideLabel=['all'] rows=2>
+							<@checkBox labelFor='backupEnabled' labelKey='#i18n{forms.create_form.labelBackupEnabled}' name='backupEnabled' id='backupEnabled' value='1' checked=(form?has_content && form.backupEnabled) />
+						</@formGroup>
+					</@columns> 
+				</@row>          
+			</@fieldSet>
+			<@fieldSet legend='#i18n{forms.create_form.display.label}'>
+				<@row>
+					<@columns xs=12 sm=6> 
+						<@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true rows=2>
+							<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
+						</@formGroup>
+					</@columns>
+				</@row>
+				<@row>
+					<@columns xs=12 sm=6>
+						<@formGroup labelKey='#i18n{forms.create_form.labelCountResponses}' helpKey='#i18n{forms.create_form.labelCountResponses.help}' hideLabel=['all'] rows=2>
+							<@checkBox labelFor='countResponses' labelKey='#i18n{forms.create_form.labelCountResponses}' name='countResponses' value='1' checked=(form?has_content && form.countResponses) />
+						</@formGroup>
+					</@columns>
+				</@row>
+			</@fieldSet>
+		</@columns>
+		<@columns md=5>
+			<@fieldSet legend='#i18n{forms.create_form.labelDisplaySummary}'>
+				<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
+					<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelLabelFinalButton}' rows=2>
+					<@input type='text' name='labelFinalButton' value='${form.labelFinalButton!}' />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' hideLabel=['all'] helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
+					<#if type='create'><#local isSummary=true ><#else><#local isSummary=(form?has_content && form.displaySummary)></#if>
+					<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=isSummary />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
+					<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
+				</@formGroup>
+				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
+					<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
+				</@formGroup>
+			</@fieldSet>
+			<!-- workgroup -->
+			<@fieldSet legend='#i18n{forms.modify_form.workgroup.label}'>
+				<@formGroup labelKey='#i18n{forms.modify_form.workgroup.label}' rows=2>
+					<@select name='workgroup' items=workgroup_list default_value='${form.workgroup!workgroup_key_default_value}' />
+				</@formGroup>
+			</@fieldSet> 
+			<#if workflow_list?has_content && workflow_list?size gt 1>
+				<@fieldSet legend='#i18n{forms.modify_form.workflow.label}'>
+					<@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' rows=2>
+						<@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
 					</@formGroup>
-				</@columns>
-			</@row>
-			<@row>
-				<@columns>
-					<@formGroup labelKey='#i18n{forms.create_form.labelCountResponses}' helpKey='#i18n{forms.create_form.labelCountResponses.help}' hideLabel=['all'] rows=2>
-						<@checkBox orientation='switch' labelFor='countResponses' labelKey='#i18n{forms.create_form.labelCountResponses}' name='countResponses' value='1' checked=(form?has_content && form.countResponses) />
+				</@fieldSet> 
+			</#if>
+			<#if accesscontrol_list?has_content && accesscontrol_list?size gt 1>
+				<@fieldSet legend='#i18n{forms.modify_form.accesscontrol.label}'>
+					<@formGroup labelKey='#i18n{forms.modify_form.accesscontrol.label}' rows=2>
+						<@select name='id_accesscontrol' items=accesscontrol_list default_value='${accesscontrol_id!}' />
 					</@formGroup>
-				</@columns>
-			</@row>
-		</@fieldSet>
-		</@card>
-	</@columns>					
-	<@columns md=6 xl=4 > 
-		<@card>
-		<@fieldSet legend='#i18n{forms.create_form.labelDates}'>  
-			<@row>
-				<@columns xs=12 sm=6>   
-					<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
-						<@inputGroup>
-						<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?iso_local_nz></#if>
-								<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
-								<@inputGroupItem type='text'>
-									<@icon style='calendar' />
-								</@inputGroupItem>
-						</@inputGroup>
+				</@fieldSet> 
+			</#if>
+			<#if is_active_captcha>
+				<@fieldSet legend='#i18n{forms.modify_form.captcha.label}'>
+					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' hideLabel=['all'] id='labelCaptchaStepInitial' helpKey='#i18n{forms.modify_form.labelCaptchaStepInitial.help}'  rows=2>
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' labelFor='captchaStepInitial' name='captchaStepInitial' value='1' checked=(form?has_content && form.captchaStepInitial) />
 					</@formGroup>
-				</@columns>       
-				<@columns xs=12 sm=6>  
-					<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
-						<@inputGroup>
-						<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?iso_local_nz></#if>
-								<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
-								<@inputGroupItem type='text'>
-									<@icon style='calendar' />
-								</@inputGroupItem>
-						</@inputGroup>
+					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' hideLabel=['all'] id='labelCaptchaStepFinal' helpKey='#i18n{forms.modify_form.labelCaptchaStepFinal.help}'  rows=2>
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' labelFor='captchaStepFinal' name='captchaStepFinal' value='1' checked=(form?has_content && form.captchaStepFinal) />
 					</@formGroup>
-				</@columns>   
-			</@row>
-			<@row>
-				<@columns>
-					<@formGroup labelKey='#i18n{forms.modify_form.labelUnavailableMessage}' helpKey='#i18n{forms.modify_form.labelUnavailableMessage.help}' rows=2>
-						<@input type='textarea' name='unavailableMessage' richtext=true>${form.unavailableMessage!}</@input>
+					<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' hideLabel=['all'] id='labelCaptchaRecap' helpKey='#i18n{forms.modify_form.labelCaptchaRecap.help}'  rows=2>
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' labelFor='captchaRecap' name='captchaRecap' value='1' checked=(form?has_content && form.captchaRecap) />
 					</@formGroup>
-				</@columns>
-			</@row>
-		</@fieldSet>
-		</@card>
-		<@card>
-		<@fieldSet legend='#i18n{forms.create_form.display.labelRestrictions}'>
-			<@row>     
-				<@columns lg=12 xl=6>  
-					<@formGroup labelFor='max_number_response' labelKey='#i18n{forms.create_form.labelMaxNumberResponse}' helpKey='#i18n{forms.create_form.labelMaxNumberResponseComment.help}' rows=2>
-						<@input name='maxNumberResponse' id='maxNumberResponse' type='number' value=form.maxNumberResponse?string!'0' />
-					</@formGroup>
-					<@formGroup labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' helpKey='#i18n{forms.create_form.labelAuthentificationNeeded.help}' hideLabel=['all'] rows=2>
-						<@checkBox orientation='switch' labelFor='authentificationNeeded' labelKey='#i18n{forms.create_form.labelAuthentificationNeeded}' name='authentificationNeeded' id='authentificationNeeded' value='1' checked=(form?has_content && form.authentificationNeeded) />
-					</@formGroup>
-					<@formGroup labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' helpKey='#i18n{forms.create_form.labelAccessToResponsesByRole.help}' hideLabel=['all'] rows=2>
-						<@checkBox orientation='switch' labelFor='accessToResponsesByRole' labelKey='#i18n{forms.create_form.labelAccessToResponsesByRole}' name='accessToResponsesByRole' id='accessToResponsesByRole' value='1' checked=(form?has_content && form.accessToResponsesByRole) />
-					</@formGroup>	
-				</@columns>       
-				<@columns lg=12 xl=6>           
-					<@formGroup labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' helpKey='#i18n{forms.create_form.labelLimitNumberResponse.help}' hideLabel=['all'] rows=2>
-						<@checkBox orientation='switch' labelFor='oneResponseByUser' labelKey='#i18n{forms.create_form.labelLimitNumberResponse}' name='oneResponseByUser' id='oneResponseByUser' value='1' checked=(form?has_content && form.oneResponseByUser) />
-					</@formGroup>
-					<@formGroup labelKey='#i18n{forms.create_form.labelBackupEnabled}' helpKey='#i18n{forms.create_form.labelBackupEnabled.help}' hideLabel=['all'] rows=2>
-						<@checkBox orientation='switch' labelFor='backupEnabled' labelKey='#i18n{forms.create_form.labelBackupEnabled}' name='backupEnabled' id='backupEnabled' value='1' checked=(form?has_content && form.backupEnabled) />
-					</@formGroup>
-				</@columns> 
-			</@row>          
-		</@fieldSet>
-		</@card>
-	</@columns>
-	<@columns md=6 xl=4>
-		<@card>
-		<@fieldSet legend='#i18n{forms.create_form.labelDisplaySummary}'>
-			<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
-				<@input type='text' name='returnUrl' value='${form.returnUrl!"jsp/site/Portal.jsp"}' />
-			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.create_form.labelLabelFinalButton}' rows=2>
-				<@input type='text' name='labelFinalButton' value='${form.labelFinalButton!}' />
-			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' hideLabel=['all'] helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
-				<#if type='create'><#local isSummary=true ><#else><#local isSummary=(form?has_content && form.displaySummary)></#if>
-				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=isSummary />
-			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
-				<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' labelFor='endMessageDisplay' name='endMessageDisplay' id='endMessageDisplay' value='1' checked=(formMessage?has_content && formMessage.endMessageDisplay) />
-			</@formGroup>
-			<@formGroup labelKey='#i18n{forms.create_form.labelEndMessage}' id='endMessage' helpKey='#i18n{forms.create_form.labelEndMessage.help}' rows=2>
-				<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
-			</@formGroup>
-		</@fieldSet>
+				</@fieldSet> 
+			</#if>
+		</@columns>
+	</@row>
+</#macro>
+<#macro formVisualize>
+<div class="modal fade" id="modalPDF" tabindex="-1" role="dialog">
+	<div class="modal-dialog modal-lg" role="document" style="width:80vw;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+					<h3 class="h4 modal-title">Etapes ${form.title}</h4>
+			</div>
+			<div class="modal-body" style="height:80vh;">
+				<iframe src="" style="position:absolute;left:0; top:0; height:80vh; bottom:0; width:100%; padding:0;"></iframe>
+			</div>
+			<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+			</div>
+		</div>
+	</div>
+</div>
+<link rel="stylesheet" type="text/css" href="js/admin/plugins/forms/vis/vis-network.min.css" >
+<script src="js/admin/plugins/forms/vis/vis.min.js"></script>
+<script src="js/admin/plugins/forms/vis/jspdf.min.js"></script>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		// Toggle visibility of the network render element
+		const renderNetwork = document.getElementById('renderNetwork');
+		if (renderNetwork) {
+			renderNetwork.style.display = 'none';
+		}
 		
-		<!-- workgroup -->
-		<@fieldSet legend='#i18n{forms.modify_form.workgroup.label}'>
-			<@formGroup labelKey='#i18n{forms.modify_form.workgroup.label}' rows=2>
-				<@select name='workgroup' items=workgroup_list default_value='${form.workgroup!workgroup_key_default_value}' />
-			</@formGroup>
-		</@fieldSet> 
-		<#if workflow_list?has_content && workflow_list?size gt 1>
-			<@fieldSet legend='#i18n{forms.modify_form.workflow.label}'>
-				<@formGroup labelKey='#i18n{forms.modify_form.workflow.label}' rows=2>
-					<@select name='idWorkflow' items=workflow_list default_value='${form.idWorkflow!}' />
-				</@formGroup>
-			</@fieldSet> 
-		</#if>
-		<#if accesscontrol_list?has_content && accesscontrol_list?size gt 1>
-			<@fieldSet legend='#i18n{forms.modify_form.accesscontrol.label}'>
-				<@formGroup labelKey='#i18n{forms.modify_form.accesscontrol.label}' rows=2>
-					<@select name='id_accesscontrol' items=accesscontrol_list default_value='${accesscontrol_id!}' />
-				</@formGroup>
-			</@fieldSet> 
-		</#if>
-		<#if is_active_captcha>
-			<@fieldSet legend='#i18n{forms.modify_form.captcha.label}'>
-				<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' hideLabel=['all'] id='labelCaptchaStepInitial' helpKey='#i18n{forms.modify_form.labelCaptchaStepInitial.help}'  rows=2>
-					<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepInitial}' labelFor='captchaStepInitial' name='captchaStepInitial' value='1' checked=(form?has_content && form.captchaStepInitial) />
-				</@formGroup>
-				<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' hideLabel=['all'] id='labelCaptchaStepFinal' helpKey='#i18n{forms.modify_form.labelCaptchaStepFinal.help}'  rows=2>
-					<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaStepFinal}' labelFor='captchaStepFinal' name='captchaStepFinal' value='1' checked=(form?has_content && form.captchaStepFinal) />
-				</@formGroup>
-				<@formGroup labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' hideLabel=['all'] id='labelCaptchaRecap' helpKey='#i18n{forms.modify_form.labelCaptchaRecap.help}'  rows=2>
-					<@checkBox orientation='switch' labelKey='#i18n{forms.modify_form.labelCaptchaRecap}' labelFor='captchaRecap' name='captchaRecap' value='1' checked=(form?has_content && form.captchaRecap) />
-				</@formGroup>
-			</@fieldSet> 
-		</#if>
-		</@card>
-	</@columns>
-</@row>
+		// Toggle visibility of state action elements
+		const stateActions = document.querySelectorAll('.state-actions');
+		stateActions.forEach(element => {
+			element.style.display = 'none';
+		});
+		
+		// Hide all siblings after state elements
+		const states = document.querySelectorAll('.state');
+		states.forEach(state => {
+			let sibling = state.nextElementSibling;
+			while (sibling) {
+				sibling.style.display = 'none';
+				sibling = sibling.nextElementSibling;
+			}
+		});
+	});
+
+	var base64Img = null;
+	imgToBase64('images/admin/skin/plugins/forms/logo_site.png', function(base64) {
+    	base64Img = base64; 
+	});
+
+	document.getElementById('toggleMap').addEventListener('click', function(e) {
+		e.preventDefault();
+		
+		const listElement = document.getElementById('list');
+		const renderNetworkElement = document.getElementById('renderNetwork');
+		
+		// Toggle with opacity transition
+		if (listElement.style.display !== 'none') {
+			listElement.style.opacity = '0';
+			setTimeout(() => {
+				listElement.style.display = 'none';
+				renderNetworkElement.style.display = 'block';
+				setTimeout(() => {
+					renderNetworkElement.style.opacity = '1';
+				}, 10);
+			}, 300);
+		} else {
+			renderNetworkElement.style.opacity = '0';
+			setTimeout(() => {
+				renderNetworkElement.style.display = 'none';
+				listElement.style.display = 'block';
+				setTimeout(() => {
+					listElement.style.opacity = '1';
+				}, 10);
+			}, 300);
+		}
+		
+		// Toggle icon classes
+		const iconElement = this.querySelector('i');
+		iconElement.classList.toggle('fa-project-diagram');
+		iconElement.classList.toggle('fa-list-alt');
+	});
+
+    // create an array with nodes
+	<#assign nStepCount = step_list?size>
+	<#assign nIndex = 1>
+	var nodes = new vis.DataSet([
+    <#list step_list as step>
+		{id: ${step.id}, label: "${step.title} <#if step.initial> - Etape initiale</#if><#if step.final> - Etape finale</#if> ",x:undefined,y:undefined}<#if nIndex &lt; nStepCount>,</#if>
+		<#assign nIndex = nIndex+1>
+	</#list>
+	]);
+
+	 // create an array with edges
+ 	var edges = new vis.DataSet([
+	 	<#assign nTransitionCount = transition_list?size >
+		<#assign nIndex = 1>
+		<#assign rndDess = -0.2>
+		<#list transition_list?sort_by('fromStep') as transition>
+		 	{id: ${(transition.id)!''}, from: ${(transition.fromStep)!''}, to: ${(transition.nextStep)!''}, smooth: {type: 'curvedCW', roundness:0.2} , arrows:'to', label:"${(transition.controlTitle)!''}", title: "Priorité : ${(transition.priority)!''} : ${(transition.fromStepTitle)!''} / ${(transition.nextStepTitle)!''} / ${(transition.controlTitle)!''}", font:{align: 'top'}}<#if nIndex &lt; nTransitionCount>,</#if>
+		</#list>
+	]);
+
+	var locales = {
+		en: {
+			edit: 'Edit',
+			del: 'Delete selected',
+			back: 'Back',
+			addNode: 'Add Node',
+			addEdge: 'Add Edge',
+			editNode: 'Edit Node',
+			editEdge: 'Edit Edge',
+			addDescription: 'Click in an empty space to place a new node.',
+			edgeDescription: 'Click on a node and drag the edge to another node to connect them.',
+			editEdgeDescription: 'Click on the control points and drag them to a node to connect to it.',
+			createEdgeError: 'Cannot link edges to a cluster.',
+			deleteClusterError: 'Clusters cannot be deleted.',
+			editClusterError: 'Clusters cannot be edited.'
+		},
+		fr: {
+			edit: 'Editer',
+			del: 'Supprimer la s\u00E9lection',
+			back: 'Retour',
+			addNode: 'Ajoute un \u00E9tat',
+			addEdge: 'Ajouter une action',
+			editNode: 'Editer l\'\u00E9tat',
+			editEdge: 'Editer l\'action',
+			addDescription: 'Cliquer dans un espace vide pour cr\u00E9er un \u00E9tat.',
+			edgeDescription: 'Cliquer sur un \u00E9tat et atteindre un autre \u00E9tat pour associer une actions.',
+			editEdgeDescription: 'Cliquer sur un \u00E9tat s\u00E9lectionn\u00E9 et atteindre un autre \u00E9tat pour associer une actions.',
+			createEdgeError: 'On ne peut lier une action et un cluster.',
+			deleteClusterError: 'Clusters ne peuvent \u00EAtre d\u00E9truit.',
+			editClusterError: 'Clusters ne peuvent \u00EAtre \u00E9dit\u00E9.'
+		}
+	}
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    var options = {
+		autoResize: true,
+		locale: 'fr',
+  		locales: locales,
+  		height: '100%',
+  		width: '100%',
+  		interaction:{ 
+		  hover:true,
+		  navigationButtons: true,
+		},
+		physics: {
+      		enabled: false
+    	},
+		layout: {
+			randomSeed: 1,
+			improvedLayout:true,
+			hierarchical: {
+				enabled:false,
+			}
+		},
+		// TODO : gérer les actions
+		manipulation: {
+			enabled: false,
+			initiallyActive: false,
+			// addNode: function(nodeData,callback) {
+			// 	el = 'jsp/admin/plugins/workflow/CreateState.jsp?id_workflow=' ;
+			// 	window.location.replace( el );
+			// },
+			addEdge: function(edgeData,callback) {
+				el = 'jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=' + edgeData.from + '&id_step_after=' + edgeData.to;
+				window.location.replace( el );
+			},
+			editEdge: function(edgeData,callback) {
+				el = 'jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&' + edgeData.from + '&id_transition=' + edgeData.id;
+				window.location.replace( el );
+			},
+			// deleteNode: function(nodeData,callback) {
+			// 	el = '' +  nodeData.nodes[0];
+			// 	window.location.replace( el );
+			// },
+			deleteEdge: function(edgeData,callback) {
+				el = 'jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveTransition&id_transition=' +  edgeData.id;
+				window.location.replace( el );
+			}
+		},
+		nodes: {
+			shape: 'box',
+			margin: 10,
+			size: 25,
+            font: {
+                size: 12,
+                color: '#000'
+            },
+            borderWidth: 2
+        },
+        edges: {
+            width: 3,
+			scaling: {
+				min: 10,
+				max: 30
+			},
+        },
+	};
+
+    // Initialisation du network!
+    var network = new vis.Network(container, data, options);
+
+    network.on("doubleClick", function (params) {
+        params.event = "[original event]";
+        var elNode = params.nodes[0],  elEdge = params.edges[0], el='';
+		if( elNode !== undefined ){
+			el = 'jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=' + elNode;
+		} else if( elEdge !== undefined ) {
+			el = 'jsp/admin/plugins/workflow/ModifyAction.jsp?id_action=' +  elEdge;
+		}
+		window.location.replace( el );
+    });
+	
+	/* Function pour recréer le network
+	 - h : Paramètre qui défini si le network est de présentation hierachique | valeurs : true ou false
+	 - d : Paramètre qui défini l'orien,tation de la présentation hierachique | valeurs : UD,DU,LR,RL
+	*/
+	function draw( h, d ) {
+        options.layout.hierarchical.enabled=h;
+        options.layout.hierarchical.direction=d;
+        network = new vis.Network(container, data, options);
+    }
+	
+	/* Bouton choix de l'orientation pour une représentation hiérachique */
+	document.querySelector("#direction > select").addEventListener("change", function() {
+		const di = this.value;
+		draw(true, di);
+	});
+
+	// Sauve les positions
+	document.getElementById("save_network").addEventListener("click", function() {
+		saveNetwork();
+	});
+
+	// Récupère les positions depuis localStorage
+	document.getElementById("get_network").addEventListener("click", function() {
+		const savedNodesPosition = getStoredPositions();
+		setNodesPosition(savedNodesPosition);
+		draw(false, 'UD');
+	});
+	
+	// Sauve les positions dans localStorage
+	function saveNetwork() {
+		var n = objectToArray( network.getPositions() );
+		var exportValue = JSON.stringify( n, undefined, 2);
+		localStorage.setItem( 'id_step_' , exportValue );
+	}
+
+	/* Récupère le dernière version en localStorage */
+	function getStoredPositions(){
+		var step_data = localStorage.getItem( 'id_step_' );
+		var inputData = JSON.parse( step_data );
+		return inputData;
+	}	
+	
+	/* Enregistre les dernières positions en localStorage */
+	function setNodesPosition( p ){
+		var networkNodes=[];
+		p.forEach( function( elem, index, array ) {
+			nodes.update({id: elem.id, x: elem.x, y: elem.y});
+		});
+	}
+	
+	/* Génération PDF 								*/
+	/* Var pour récupérer objet canvas du network 	*/
+	var imgData='',canvasW=0,canvasH=0;
+	network.on("afterDrawing", function (ctx) {
+		 imgData = ctx.canvas.toDataURL('image/png');
+		 canvasW= ctx.canvas.width/3;
+		 canvasH= ctx.canvas.height/3;
+	});
+	
+	/* Var définition des marges pour le PDF */
+	margins = {	top: 70, bottom: 60, left: 30, width: 550 };
+
+	/* Fonction de génération du PDF */
+	generateDoc = function( view ){
+		var docWkf = new jsPDF({
+			orientation: 'landscape',
+			unit: 'px',
+			format: 'a4'
+		});
+		
+		docWkf.addImage( imgData, 'PNG', 15, 60, canvasW, canvasH);
+		docWkf.addPage('a4','l');
+		// We'll make our own renderer to skip this editor
+		var specialElementHandlers = {
+			'.btn': function(element, renderer){
+				return true;
+			},
+			'th': function(element, renderer){
+				return true;
+			},
+			'.form-inline': function(element, renderer){
+				return true;
+			}
+		};
+		docWkf.setTextColor(100);
+		docWkf.setFontSize(22);
+		docWkf.text(105, 65, 'Liste des Etapes');
+		docWkf.setDrawColor( 23, 93, 146 );
+		docWkf.setLineWidth(1);
+		docWkf.line(15, 70, 600, 65);
+		docWkf.setTextColor(0,0,0);
+	
+		docWkf.setFontSize(18);
+		docWkf.fromHTML($('#list').get(0),  
+		margins.left, // x coord
+		margins.top,
+		{
+			'elementHandlers': specialElementHandlers,
+			width: margins.width
+		}, function(dispose) {
+			headerFooterFormating( docWkf, docWkf.internal.getNumberOfPages());
+		}, 
+		margins);
+		if( view ){
+			$('#modalPDF iframe').attr('src', docWkf.output('datauristring') );
+			$('#modalPDF').modal('show');
+		} else {
+			docWkf.save("steps.pdf");
+		}
+			
+	};
+	
+	// Insère le header et le footer
+	function headerFooterFormating(doc, totalPages)	{
+		for(var i = totalPages; i >= 1; i--) {
+			doc.setPage(i);                            
+			header(doc);
+			footer(doc, i, totalPages);
+			doc.page++;	
+		}
+	};
+
+	// Prépare le header
+	function header(doc) {
+		if ( base64Img ) {
+			doc.addImage( base64Img, 'png', 10, 15 );        
+		}
+		doc.setTextColor(100);
+		doc.setFontSize(22)
+		doc.text(130, 35, 'Forms : les Etapes')
+		doc.setTextColor(150);
+		doc.setFontSize(12)
+		// doc.text(105, 45, 'Etapes')
+		doc.setDrawColor( 23, 93, 146 );
+		doc.setLineWidth(1);
+		doc.line( 3, 70, margins.width + 400 ); // horizontal line
+	};
+	
+	// Prépare le footer
+	function footer(doc, pageNumber, totalPages) {
+		var str = "Page " + pageNumber + " sur " + totalPages
+		doc.setFontSize(10);
+		doc.text(str, margins.left + 10, doc.internal.pageSize.height - 40);
+	};
+
+	// Bouton generation preview PDF
+	$("#previewPDF").click( function () {
+		generateDoc( true );
+	});
+
+	// Bouton generation téléchargement PDF
+	$("#downloadPDF").click( function () {
+	 	generateDoc( false );
+	});
+
+	/* Utils */
+	function objectToArray(obj) {
+		return Object.keys(obj).map(function (key) {
+			obj[key].id = key;
+			return obj[key];
+		});
+	}
+
+	function imgToBase64( url, callback, imgVariable) {
+		if (!window.FileReader) {
+			callback(null);
+			return;
+		}
+		var xhr = new XMLHttpRequest();
+		xhr.responseType = 'blob';
+		xhr.onload = function() {
+			var reader = new FileReader();
+			reader.onloadend = function() {
+				imgVariable = reader.result.replace('text/xml', 'image/jpeg');
+				callback(imgVariable);
+			};
+			reader.readAsDataURL(xhr.response);
+		};
+		xhr.open('GET', url);
+		xhr.send();
+	};
+ </script>
 </#macro>
 <#macro dateFilterJs>
-<link rel="stylesheet" type="text/css" href="themes/admin/shared/plugins/forms/css/daterangepicker.css">
-<script src="js/jquery/plugins/moment.min.js"></script>
-<script src="js/jquery/plugins/daterangepicker.js"></script>
+<link rel="stylesheet" type="text/css" href="css/admin/plugins/forms/daterangepicker.css">
+<script type="text/javascript" src="js/jquery/plugins/moment.min.js"></script>
+<script type="text/javascript" src="js/jquery/plugins/daterangepicker.js"></script>
 <script>
 $(function() {
-	$("[name='formsFilterDate']").each( function( index ) {
+	$("[name='formsFilterDate']").each( function( index )
+	{
 		var filter='#' + $( this ).val(), filter_to=filter+'_to', filter_from=filter+'_from';
 		$(filter).daterangepicker( {
-			ranges: {
-				"#i18n{forms.multiviewForms.dateRangePicker.today}": [moment(), moment()],
-				"#i18n{forms.multiviewForms.dateRangePicker.yesterday}": [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-				"#i18n{forms.multiviewForms.dateRangePicker.week}": [moment().subtract(6, 'days'), moment()],
-				"#i18n{forms.multiviewForms.dateRangePicker.month}": [moment().subtract(29, 'days'), moment()],
-				"#i18n{forms.multiviewForms.dateRangePicker.months}": [moment().subtract(90, 'days'), moment()],
-			},
-			opens: 'right',
-			alwaysShowCalendars: true,
-			autoUpdateInput: false,
-			locale: {
-			format: '#i18n{forms.multiviewForms.dateRangePicker.format}',
-			applyLabel: "#i18n{forms.multiviewForms.dateRangePicker.applyLabel}",
-			cancelLabel: "#i18n{forms.multiviewForms.dateRangePicker.cancelLabel}",
-			fromLabel: "#i18n{forms.multiviewForms.dateRangePicker.fromLabel}",
-			toLabel: "#i18n{forms.multiviewForms.dateRangePicker.toLabel}",
-			customRangeLabel: "#i18n{forms.multiviewForms.dateRangePicker.customRangeLabel}",
-			weekLabel: "#i18n{forms.multiviewForms.dateRangePicker.weekLabel}",
-			daysOfWeek: [
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSun}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekMon}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekTue}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekWen}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekThu}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekFri}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSat}"
-			],
-			monthNames: [
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames1}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames2}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames3}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames4}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames5}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames9}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"
-			],
+		ranges: {
+			"#i18n{forms.multiviewForms.dateRangePicker.today}": [moment(), moment()],
+			"#i18n{forms.multiviewForms.dateRangePicker.yesterday}": [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+			"#i18n{forms.multiviewForms.dateRangePicker.week}": [moment().subtract(6, 'days'), moment()],
+			"#i18n{forms.multiviewForms.dateRangePicker.month}": [moment().subtract(29, 'days'), moment()],
+			"#i18n{forms.multiviewForms.dateRangePicker.months}": [moment().subtract(90, 'days'), moment()],
+		},
+		opens: 'right',
+		alwaysShowCalendars: true,
+		autoUpdateInput: false,
+		locale: {
+		format: '#i18n{forms.multiviewForms.dateRangePicker.format}',
+		applyLabel: "#i18n{forms.multiviewForms.dateRangePicker.applyLabel}",
+		cancelLabel: "#i18n{forms.multiviewForms.dateRangePicker.cancelLabel}",
+		fromLabel: "#i18n{forms.multiviewForms.dateRangePicker.fromLabel}",
+		toLabel: "#i18n{forms.multiviewForms.dateRangePicker.toLabel}",
+		customRangeLabel: "#i18n{forms.multiviewForms.dateRangePicker.customRangeLabel}",
+		weekLabel: "#i18n{forms.multiviewForms.dateRangePicker.weekLabel}",
+		daysOfWeek: [
+			"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSun}",
+			"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekMon}",
+			"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekTue}",
+			"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekWen}",
+			"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekThu}",
+			"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekFri}",
+			"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSat}"
+		],
+		monthNames: [
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames1}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames2}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames3}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames4}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames5}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames9}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
+			"#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"
+		],
 		}
 		}, 
 		function(start, end, label) {
-			document.querySelector(filter_from).value = start.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
-			document.querySelector(filter_to).value = end.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
-			document.querySelector(filter).value = start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') + " - " + end.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
-			var searchForm = document.getElementById('searchForm');
-			if (searchForm) {
-				searchForm.submit();
-			}
+			$(filter_from).val( start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
+			$(filter_to).val( end.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
+			$(filter).val ( start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') + " - " + end.format('#i18n{forms.multiviewForms.dateRangePicker.format}') );
+			$('#searchForm').submit();
 		});
   		
 		$(filter).on('cancel.daterangepicker', function(ev, picker) {
-			//do something, like clearing an input
-			var startD = moment().day(-30);
-			var endD = moment().day(30);
-			$(this).data('daterangepicker').setStartDate(startD);
-			$(this).data('daterangepicker').setEndDate(endD);
-			$(this).val('');
-			$(filter_from).val ('');
-			$(filter_to).val ('');
+		//do something, like clearing an input
+		var startD = moment().day(-30);
+		var endD = moment().day(30);
+		$(this).data('daterangepicker').setStartDate(startD);
+		$(this).data('daterangepicker').setEndDate(endD);
+		$(this).val('');
+	  	$(filter_from).val ('');
+  		$(filter_to).val ('');
+
 		});
 	});
+});
+</script>
+</#macro>
+<#macro scrollTopBtn>
+<a href="#" id="scroll" style="display: none;"><span></span></a>
+<script>
+$( function(){ 
+    $(window).scroll(function(){ 
+        if ( $(this).scrollTop() > 100) { 
+            $('#scroll').fadeIn(); 
+        } else { 
+            $('#scroll').fadeOut(); 
+        } 
+    }); 
+    $('#scroll').click(function(){ 
+        $("html, body").animate({ scrollTop: 0 }, 600); 
+        return false; 
+    }); 
 });
 </script>
 </#macro>
 <#macro headerSort field title jsp_url attribute id='' hide=[]>
 <#-- Element visibility -->
 <#local displayTitleClass = displaySettings(hide,'table-cell') />
-<#if jsp_url?contains("?")><#assign sort_url = jsp_url + "&amp;sorted_attribute_name=" + attribute + "&amp;asc_sort=" /><#else><#assign sort_url = jsp_url + "?sorted_attribute_name=" + attribute + "&amp;asc_sort=" /></#if>
-<@th class='bg-light ${displayTitleClass!}' id='sort${id!}_${attribute!}' params='data-field="${field}"' >
-	<@div class='d-flex'>
-		<@span>${title}</@span>
-		<@btnGroup params='aria-label=""#i18n{portal.util.labelSort}'>
-			<@aButton hideTitle=['all'] color='' style='' class='btn-sort asc mx-2' href='${sort_url}true#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.asc}' >
-				<@icon style='arrow-up' />
-			</@aButton>	
-			<@aButton hideTitle=['all'] color='' style='' class='btn-sort desc mx-2' href='${sort_url}false#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.desc}' >
-				<@icon style='arrow-down' />
-			</@aButton>	
-		</@btnGroup>
-	</@div>
-</@th>
+<#if jsp_url?contains("?")>
+	<#assign sort_url = jsp_url + "&amp;sorted_attribute_name=" + attribute + "&amp;asc_sort=" />
+<#else>
+	<#assign sort_url = jsp_url + "?sorted_attribute_name=" + attribute + "&amp;asc_sort=" />
+</#if>
+<th data-field="${field}" class="th-header<#if displayTitleClass!=''> ${displayTitleClass}</#if>" id="sort${id!}_${attribute!}">
+	${title}
+	<div class="btn-sort-group" role="group" aria-label="Tri">
+		<@aButton hideTitle=['all'] color='' style="" class="btn-sort asc" href="${sort_url}true#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.asc}" >
+		   <@icon style='arrows-up fa-fw' />
+		</@aButton>	
+		<@aButton hideTitle=['all'] color='' style="" class="btn-sort desc" href="${sort_url}false#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.desc}">
+        	<@icon style='arrows-down fa-fw' />
+		</@aButton>	
+	</div>
+</th>
 </#macro>
 <#macro jsHeaderSort>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-	// Get the sort ID from the URL hash
-	const sortId = window.location.hash;
-	if (sortId !== '') {
-		// Get the sort column element
-		const sortCol = document.querySelector(sortId);
-		if (sortCol) {
-			// Parse URL parameters to determine sort direction
-			const urlParams = new URLSearchParams(window.location.search);
-			const isAsc = urlParams.get('asc_sort') === 'true';
-			// Add active class to the column header
-			sortCol.classList.add('th-active');
-			// Add active class to the appropriate sort button
-			if (!isAsc) {
-				sortCol.querySelector('.btn-sort.desc').classList.add('active');
+$( function(){ 
+    var sortId=window.location.hash, sortCol=$(sortId);
+		if( sortId !='' ){
+			var sUrl=window.location.search.split('&'), bAsc=sUrl[3].split('='), isAsc=bAsc[1];
+			sortCol.toggleClass('th-active');
+			if( isAsc=='false' ){
+				$( sortId + ' .btn-sort.desc' ).toggleClass('active');
 			} else {
-				sortCol.querySelector('.btn-sort.asc').classList.add('active');
+				$( sortId + ' .btn-sort.asc' ).toggleClass('active');
 			}
 		}
-	}
 });
 </script>
 </#macro>
 <#macro comboOrders name default_value max >
 <@select name=name>
-<#list 1..max as i>
-<#if "${default_value}" == "${i}">
-<option selected="selected" value="${i}" >${i}</option>
-<#else>
-<option value="${i}" >${i}</option>
-</#if>
-</#list>
+	<#list 1..max as i>
+		<#if "${default_value}" == "${i}">
+			<option selected="selected" value="${i}" >${i}</option>
+		<#else>
+			<option value="${i}" >${i}</option>
+		</#if>
+	</#list>
 </@select>
 </#macro>
