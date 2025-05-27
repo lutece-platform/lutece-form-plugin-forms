@@ -10,7 +10,7 @@
 		<#if has_error>
 			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="form-control is-invalid" 
 				<#if placeholder!=''> placeholder='${placeholder}' </#if>
-				<#if field_autocomplete?? && field_autocomplete.value??> autocomplete="${field_autocomplete.value}"</#if><#if entry.mandatory> required</#if>${responseContent}</textarea>
+				<#if field_autocomplete?? && field_autocomplete.value??> autocomplete="${field_autocomplete.value}"</#if><#if entry.mandatory> required</#if>>${responseContent}</textarea>
 		<#else>
 			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="${entry.CSSClass!} form-control" 
 				<#if placeholder!=''> placeholder='${placeholder}' </#if>
