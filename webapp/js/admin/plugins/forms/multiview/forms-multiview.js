@@ -20,7 +20,7 @@ function resetForm( ){
 
 function setNavButtons( idResp, labelPrev, labelNext ){
 	const respUrl=sessionStorage.getItem('multiview_base_url') + '&id_form_response=';
-	const item_list=sessionStorage.getItem('multiview_current_list'), boxTool=$('#info-box-header .box-tools');
+	const item_list=sessionStorage.getItem('multiview_current_list'), boxTool=$('#info-box-header.boxTool');
 	var response_list=item_list.split(','), maxIdx=response_list.length - 1, currentIdx=response_list.indexOf(idResp);
 	var nNext=currentIdx+1, nPrev=currentIdx-1;
 	if( currentIdx > -1 ){
