@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import jakarta.enterprise.inject.literal.NamedLiteral;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -64,7 +65,7 @@ public class EntryTypeCommentDisplayService extends EntryTypeDefaultDisplayServi
         Field fieldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
         if ( fieldFile != null )
         {
-            IFileStoreServiceProvider fileStoreprovider = CDI.current( ).select( FileService.class ).get( ).getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
+            IFileStoreServiceProvider fileStoreprovider = CDI.current( ).select( IFileStoreServiceProvider.class, NamedLiteral.of( "forms.formsDatabaseFileStoreServiceProvider" ) ).get( );
 
             Map<String, String> additionnalData = new HashMap<>( );
             additionnalData.put( FileService.PARAMETER_RESOURCE_ID, String.valueOf( entry.getIdResource( ) ) );
