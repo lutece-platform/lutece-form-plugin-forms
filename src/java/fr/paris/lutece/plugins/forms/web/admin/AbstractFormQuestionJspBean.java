@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import jakarta.enterprise.inject.literal.NamedLiteral;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -158,7 +159,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     // Others
     protected static final int INTEGER_MINUS_ONE = -1;
 
-    protected IFileStoreServiceProvider _fileStoreProvider = CDI.current().select( FileService.class ).get( ).getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
+    protected IFileStoreServiceProvider _fileStoreProvider = CDI.current().select( IFileStoreServiceProvider.class, NamedLiteral.of( "forms.formsDatabaseFileStoreServiceProvider" ) ).get( );
 
     private IFormDatabaseService _formDatabaseService;
     private IFormDisplayService _formDisplayService;

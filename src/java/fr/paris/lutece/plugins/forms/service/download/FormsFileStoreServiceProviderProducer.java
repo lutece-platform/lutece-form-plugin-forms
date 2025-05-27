@@ -33,37 +33,33 @@
  */
 package fr.paris.lutece.plugins.forms.service.download;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
 import fr.paris.lutece.portal.service.file.IFileDownloadUrlService;
 import fr.paris.lutece.portal.service.file.IFileRBACService;
+import fr.paris.lutece.portal.service.file.IFileStoreService;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
-import fr.paris.lutece.portal.service.file.implementation.LocalDatabaseFileService;
+import fr.paris.lutece.portal.service.file.implementation.FileStoreServiceProvider;
+import fr.paris.lutece.portal.service.util.CdiHelper;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 @ApplicationScoped
-public class FormsDatabaseFileServiceProducer 
+public class FormsFileStoreServiceProviderProducer 
 {
-	@Inject
-	@Named( "forms.formsFileDownloadUrlService" )
-    private IFileDownloadUrlService _fileDownloadUrlService;
-	
-    @Inject
-    @Named( "forms.formsFileRBACService" )
-    private IFileRBACService _fileRBACService;
-    
-    @Produces
+	@Produces
 	@ApplicationScoped
-	@Named( "forms.formsDatabaseFileService" )
-	public IFileStoreServiceProvider produceFormsDatabaseFileService( )
+	@Named( "forms.formsDatabaseFileStoreServiceProvider" )
+	public IFileStoreServiceProvider produceFormsDatabaseFileStoreServiceProvider( 
+			@ConfigProperty( name = "forms.formsDatabaseFileStoreServiceProvider.fileStoreService" ) String fileStoreImplName,
+			@ConfigProperty( name = "forms.formsDatabaseFileStoreServiceProvider.rbacService" ) String rbacImplName,
+			@ConfigProperty( name = "forms.formsDatabaseFileStoreServiceProvider.downloadService" ) String dlImplName )
 	{
-    	LocalDatabaseFileService formsLocalDatabaseFileService = new LocalDatabaseFileService( );
-    	formsLocalDatabaseFileService.setDownloadUrlService( _fileDownloadUrlService );
-    	formsLocalDatabaseFileService.setFileRBACService( _fileRBACService );
-    	formsLocalDatabaseFileService.setName( "formsDatabaseFileStoreProvider" );
-    	formsLocalDatabaseFileService.setDefault( false);
-
-    	return formsLocalDatabaseFileService;
+		return new FileStoreServiceProvider( "formsDatabaseFileStoreProvider",
+				CdiHelper.getReference( IFileStoreService.class, fileStoreImplName ),
+				CdiHelper.getReference( IFileDownloadUrlService.class, dlImplName ),
+				CdiHelper.getReference( IFileRBACService.class, rbacImplName ),
+				false );
 	}
 }
