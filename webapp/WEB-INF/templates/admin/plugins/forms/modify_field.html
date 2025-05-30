@@ -19,7 +19,9 @@
 							<@input type='textarea' name='comment' id='comment'>${field.comment}</@input>
 						</@formGroup>
 						<#if field.fileImage.url??>
-							<@img field.fileImage.url field.title field.title />
+							<@formGroup>
+								<@img url=field.fileImage.url title=field.title alt=field.title params='width="100" height="100"' />
+							</@formGroup>
 						</#if>
 						<@formGroup labelFor='illustration_image' labelKey='#i18n{forms.createEntry.labelIllustrationPicture}' helpKey='#i18n{forms.createEntry.labelIllustrationPictureHelp}'>
 							<@input type='file' id='illustration_image'  name='illustration_image' />
