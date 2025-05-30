@@ -35,6 +35,8 @@ package fr.paris.lutece.plugins.forms.service;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.business.Form;
+
 /**
  * Forms service for managing the authorization on access form response from the multiview page
  */
@@ -51,4 +53,16 @@ public interface IFormsMultiviewAuthorizationService
      * @return the boolean which tell if the connected user is authorized to access the form response or not
      */
     boolean isUserAuthorizedOnFormResponse( HttpServletRequest request, int nIdFormResponse );
+
+    /**
+     * Return the boolean which tells if the connected user is authorized to access the form response details or not, depending on their Workgroup and the
+     * Workgroup of the Form
+     * 
+     * @param request
+     *            The request to use to determine if the user can access the details of the given Form
+     * @param form
+     *            The Form whose Workgroup is compared to the user's one
+     * @return true if the connected user is authorized to access the form response, returns false otherwise
+     */
+    boolean isUserAuthorizedOnFormResponseWithinWorkgroup( HttpServletRequest request, Form form );
 }
