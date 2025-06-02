@@ -85,11 +85,6 @@
 			<scope>test</scope>
 		</dependency>
     </dependencies>
-    <properties>
-        <componentName>forms</componentName>
-        <jiraProjectName>FORMS</jiraProjectName>
-        <jiraComponentId>14357</jiraComponentId>
-    </properties>
     <scm>
         <connection>scm:git:https://github.com/lutece-platform/lutece-form-plugin-forms.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-form-plugin-forms.git</developerConnection>
