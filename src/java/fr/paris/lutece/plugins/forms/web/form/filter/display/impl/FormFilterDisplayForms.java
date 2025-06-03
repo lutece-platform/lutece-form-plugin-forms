@@ -54,6 +54,7 @@ import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.rbac.RBACService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -178,7 +179,11 @@ public class FormFilterDisplayForms extends AbstractFormFilterDisplay
         List<Form> formList = getFormsList( );
         formList.removeIf( f -> !RBACService.isAuthorized( Form.RESOURCE_TYPE, String.valueOf( f.getId( ) ),
                 FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) user ) );
-        ReferenceListFactory referenceListFactory = new ReferenceListFactory( formList, FORM_CODE_ATTRIBUTE, FORM_NAME_ATTRIBUTE );
+
+        // Only keep the Forms that are part of the user's Workgroup(s)
+        List<Form> authorizedFormList = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( formList, (User) user );
+
+        ReferenceListFactory referenceListFactory = new ReferenceListFactory( authorizedFormList, FORM_CODE_ATTRIBUTE, FORM_NAME_ATTRIBUTE );
 
         return referenceListFactory.createReferenceList( );
     }
