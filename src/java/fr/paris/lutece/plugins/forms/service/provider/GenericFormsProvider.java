@@ -35,20 +35,29 @@ package fr.paris.lutece.plugins.forms.service.provider;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.Form;
+import fr.paris.lutece.plugins.forms.business.FormDisplay;
+import fr.paris.lutece.plugins.forms.business.FormDisplayHome;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.Group;
+import fr.paris.lutece.plugins.forms.business.GroupHome;
 import fr.paris.lutece.plugins.forms.business.Question;
 import fr.paris.lutece.plugins.forms.business.QuestionHome;
+import fr.paris.lutece.plugins.forms.business.Step;
+import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.plugins.forms.business.Transition;
+import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCamera;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
@@ -67,7 +76,6 @@ import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.file.FileService;
 import fr.paris.lutece.portal.service.file.FileServiceException;
 import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
-import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -80,6 +88,7 @@ public abstract class GenericFormsProvider {
 
 	// MARKS
 	private static final String MARK_POSITION = "position_";
+	private static final String MARK_POSITION_ITERATION = "_";
 	private static final String MARK_URL_ADMIN_RESPONSE = "url_admin_forms_response_detail";
 	private static final String MARK_URL_FO_RESPONSE = "url_fo_forms_response_detail";
 	private static final String MARK_CREATION_DATE = "creation_date";
@@ -261,13 +270,37 @@ public abstract class GenericFormsProvider {
 
 		if ( form != null )
 		{
-			List<Question> listFormQuestions = QuestionHome.getListQuestionByIdForm( form.getId( ) );
 
-			for ( Question formQuestion : listFormQuestions )
-			{
-				InfoMarker marker = new InfoMarker( MARK_POSITION + formQuestion.getId( ) );
-				marker.setDescription( formQuestion.getTitle( ) );
-				descriptionMarkersList.add( marker );
+			List<Step> listSteps = StepHome.getStepsListByForm( form.getId() );
+			List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( form.getId() );
+			listSteps = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+
+			for ( Step step : listSteps ){
+				List<FormDisplay> listFormDisplay = FormDisplayHome.getFormDisplayListByParent( step.getId(), 0 );
+				listFormDisplay.sort( Comparator.comparingInt( FormDisplay::getDisplayOrder ) );
+
+				for ( FormDisplay composite : listFormDisplay )
+				{
+					if( FormsConstants.MARK_QUESTION.equals( composite.getCompositeType() ) )
+					{
+						descriptionMarkersList.addAll( buildMarkerForQuestion( QuestionHome.findByPrimaryKey( composite.getCompositeId() ) , null ));
+					}
+					else if( FormsConstants.MARK_GROUP.equals(composite.getCompositeType()) )
+					{
+						List<FormDisplay> listFormDisplayGroup = FormDisplayHome.getFormDisplayListByParent( composite.getStepId(), composite.getId() );
+						listFormDisplayGroup.sort( Comparator.comparingInt( FormDisplay::getDisplayOrder ) );
+
+						Group group = GroupHome.findByPrimaryKey( composite.getCompositeId() );
+
+						for ( FormDisplay compositeGroup : listFormDisplayGroup)
+						{
+							if( FormsConstants.MARK_QUESTION.equals(compositeGroup.getCompositeType()) )
+							{
+								descriptionMarkersList.addAll( buildMarkerForQuestion( QuestionHome.findByPrimaryKey( compositeGroup.getCompositeId() ) , group ));
+							}
+						}
+					}
+				}
 			}
 		}
 
@@ -299,4 +332,27 @@ public abstract class GenericFormsProvider {
 
 		return descriptionMarkersList;
 	}
+
+	private static Collection<InfoMarker> buildMarkerForQuestion(Question question, Group group)
+	{
+		Collection<InfoMarker> descriptionMarkersList = new ArrayList<>( );
+
+		if( group == null || group.getIterationMax() == 1 )
+		{
+			InfoMarker marker = new InfoMarker( MARK_POSITION + question.getId( ) );
+			marker.setDescription( question.getTitle( ) );
+			descriptionMarkersList.add(marker);
+		}
+		else
+		{
+			for (int i = 0 ; i < group.getIterationMax(); i++ )
+			{
+				InfoMarker marker = new InfoMarker( MARK_POSITION + question.getId( ) + MARK_POSITION_ITERATION + i );
+				marker.setDescription( question.getTitle( ) + " " + ( i + 1 ) );
+				descriptionMarkersList.add(marker);
+			}
+		}
+		return descriptionMarkersList;
+	}
+
 }
