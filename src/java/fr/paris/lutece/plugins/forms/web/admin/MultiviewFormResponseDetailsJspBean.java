@@ -413,7 +413,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      *            The Http request
      * @return The HTML form the task form associate to the workflow action
      */
-    @View( value = VIEW_TASKS_FORM )
+    @View( value = VIEW_TASKS_FORM, securityTokenAction = ACTION_SAVE_TASK_FORM )
     public String getTaskForm( HttpServletRequest request )
     {
         int nIdFormResponse = NumberUtils.toInt( request.getParameter( PARAMETER_ID_FORM_RESPONSE ), NumberUtils.INTEGER_MINUS_ONE );
@@ -536,7 +536,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
      *            The HttpServletRequest
      * @return the Jsp URL to return
      */
-    @Action( value = ACTION_CANCEL_TASK_FORM )
+    @Action( value = ACTION_CANCEL_TASK_FORM, securityTokenDisabled = true )
     public String doCancelTaskForm( HttpServletRequest request )
     {
         Map<String, String> mapParameters = new LinkedHashMap<>( );
