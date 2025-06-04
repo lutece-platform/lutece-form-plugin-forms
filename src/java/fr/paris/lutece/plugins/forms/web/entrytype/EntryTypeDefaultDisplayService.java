@@ -46,7 +46,10 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+import fr.paris.lutece.portal.service.editor.RichTextContentService;
+import fr.paris.lutece.portal.service.editor.RichTextParsingException;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 /**
  * The default display service
@@ -78,9 +81,17 @@ public class EntryTypeDefaultDisplayService implements IEntryDisplayService
      */
     private Map<String, Object> setModel( Entry entry, Map<String, Object> model )
     {
-        model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
-
-        return model;
+        try 
+        {
+            entry.setComment( RichTextContentService.getContent( entry.getComment( ) ) );
+            model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
+            return model;
+        }
+        catch (RichTextParsingException e) 
+        {
+            AppLogService.error(e.getMessage(), e);
+            return model;
+        }
     }
 
     /**
