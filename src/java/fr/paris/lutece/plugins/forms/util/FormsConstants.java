@@ -75,6 +75,7 @@ public final class FormsConstants
     public static final String MARK_FORM_BOTTOM_BREADCRUMB = "formBottomBreadcrumb";
     public static final String MARK_QUESTION_CONTENT = "questionContent";
     public static final String MARK_INFO = "messageInfo";
+    public static final String MARK_LABEL_BUTTON = "labelButton";
     public static final String MARK_CONTROL_TEMPLATE = "control_template";
     public static final String MARK_CONDITION_TITLE = "modify_condition_title";
     public static final String MARK_QUESTION_LIST_RESPONSES = "list_responses";

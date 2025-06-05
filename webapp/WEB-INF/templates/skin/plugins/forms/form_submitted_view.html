@@ -3,4 +3,4 @@
 		${messageInfo}
 	</#if>
 	
-	<a class="btn btn-primary btn-sm" href="${back_url}">#i18n{forms.form.returnPage}</a>
+	<a class="btn btn-primary btn-sm" href="${back_url}"><#if labelButton?? >${labelButton}<#else>#i18n{forms.form.returnPage}</#if></a>
