@@ -44,13 +44,13 @@ import fr.paris.lutece.util.sql.DAOUtil;
 public final class FormMessageDAO implements IFormMessageDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id, id_form, end_message_display, end_message FROM forms_message";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id, id_form, end_message_display, end_message, label_end_message_button FROM forms_message";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id = ?";
     private static final String SQL_QUERY_SELECT_BY_FORM = SQL_QUERY_SELECTALL + " WHERE id_form = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_message ( id_form, end_message_display, end_message ) VALUES ( ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_message ( id_form, end_message_display, end_message, label_end_message_button ) VALUES ( ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_message WHERE id = ? ";
     private static final String SQL_QUERY_DELETE_BY_FORM = "DELETE FROM forms_message WHERE id_form = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_message SET id_form = ?, end_message_display = ?, end_message = ? WHERE id = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_message SET id_form = ?, end_message_display = ?, end_message = ?, label_end_message_button = ? WHERE id = ?";
 
     /**
      * {@inheritDoc }
@@ -64,6 +64,7 @@ public final class FormMessageDAO implements IFormMessageDAO
             daoUtil.setInt( nIndex++, formMessage.getIdForm( ) );
             daoUtil.setBoolean( nIndex++, formMessage.getEndMessageDisplay( ) );
             daoUtil.setString( nIndex++, formMessage.getEndMessage( ) );
+            daoUtil.setString( nIndex++, formMessage.getLabelEndMessageButton( ) );
 
             daoUtil.executeUpdate( );
 
@@ -133,6 +134,7 @@ public final class FormMessageDAO implements IFormMessageDAO
             daoUtil.setInt( nIndex++, formMessage.getIdForm( ) );
             daoUtil.setBoolean( nIndex++, formMessage.getEndMessageDisplay( ) );
             daoUtil.setString( nIndex++, formMessage.getEndMessage( ) );
+            daoUtil.setString( nIndex++, formMessage.getLabelEndMessageButton( ) );
 
             daoUtil.setInt( nIndex++, formMessage.getId( ) );
 
@@ -175,6 +177,7 @@ public final class FormMessageDAO implements IFormMessageDAO
         formMessage.setIdForm( daoUtil.getInt( "id_form" ) );
         formMessage.setEndMessageDisplay( daoUtil.getBoolean( "end_message_display" ) );
         formMessage.setEndMessage( daoUtil.getString( "end_message" ) );
+        formMessage.setLabelEndMessageButton( daoUtil.getString( "label_end_message_button" ) );
 
         return formMessage;
     }
