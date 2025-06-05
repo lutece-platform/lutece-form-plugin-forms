@@ -630,6 +630,11 @@ public class FormResponseJspBean extends AbstractJspBean
         if ( formMessage.getEndMessageDisplay( ) )
         {
             model.put( FormsConstants.MARK_INFO, formMessage.getEndMessage( ) );
+            if( StringUtils.isNotBlank(formMessage.getLabelEndMessageButton( ) ) )
+            {
+                model.put( FormsConstants.MARK_LABEL_BUTTON, formMessage.getLabelEndMessageButton( ) );
+            }
+
         }
         else
         {

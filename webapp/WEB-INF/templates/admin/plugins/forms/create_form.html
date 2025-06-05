@@ -18,12 +18,16 @@
 <script>
 $( function(){
     $('#endMessage').toggle();
+    $('#labelEndMessageButton').toggle();
+
     if ( $('#endMessageDisplay').prop("checked" ) ){
-        $('#endMessage').toggle();  
+        $('#endMessage').toggle();
+        $('#labelEndMessageButton').toggle();
     }
 
     $('#labelEndMessage').change( function(){
         $('#endMessage').toggle();
+        $('#labelEndMessageButton').toggle();
     });
 
 });

@@ -50,6 +50,8 @@ public class FormMessage
     @Size( max = 3000, message = "#i18n{forms.validation.form.EndMessage.size}" )
     private String _strEndMessage;
 
+    private String _strLabelEndMessageButton;
+
     /**
      * @return the _nId
      */
@@ -116,6 +118,23 @@ public class FormMessage
     public void setEndMessage( String strEndMessage )
     {
         this._strEndMessage = strEndMessage;
+    }
+
+    /**
+     * @return the _strLabelEndMessageButton
+     */
+    public String getLabelEndMessageButton( )
+    {
+        return _strLabelEndMessageButton;
+    }
+
+    /**
+     * @param strLabelEndMessageButton
+     *            the strLabelEndMessageButton to set
+     */
+    public void setLabelEndMessageButton( String strLabelEndMessageButton )
+    {
+        this._strLabelEndMessageButton = strLabelEndMessageButton;
     }
 
 }
