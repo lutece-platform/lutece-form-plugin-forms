@@ -1,6 +1,7 @@
 /target/
 
 \.settings/
+/.vscode/*
 
 \.classpath
 
