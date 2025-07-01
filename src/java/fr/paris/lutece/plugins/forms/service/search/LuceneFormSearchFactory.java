@@ -34,6 +34,8 @@
 package fr.paris.lutece.plugins.forms.service.search;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.inject.Inject;
@@ -50,6 +52,7 @@ import org.apache.lucene.store.FSDirectory;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import org.springframework.util.FileSystemUtils;
 
 /**
  * Factory for the search on Directory
@@ -59,6 +62,8 @@ public class LuceneFormSearchFactory
     // Constants
     private static final String PATH_INDEX = "forms.internalIndexer.lucene.indexPath";
     private static final String PATH_INDEX_IN_WEBAPP = "forms.internalIndexer.lucene.indexInWebapp";
+    private static final String PATH_SUFFIX_TEMPORARY_PATH = "Temp";
+
 
     // Variables
     @Inject
@@ -82,26 +87,39 @@ public class LuceneFormSearchFactory
      * 
      * @param bCreateIndex
      *            The boolean which tell if the index must be created
+     * @param mainDirectory
+     *            The boolean which tell if the index must be created on the main Directory or in a temporary Directory
      * @return the created IndexWriter
-     * @throws IOException
-     *             - if there is a low level IO error
      */
-    public IndexWriter getIndexWriter( Boolean bCreateIndex )
+    public IndexWriter getIndexWriter( Boolean bCreateIndex, boolean mainDirectory)
     {
+
+        if( !mainDirectory && _indexWriter != null && _indexWriter.isOpen( ) )
+        {
+            try {
+                _indexWriter.close();
+            } catch (IOException e) {
+                AppLogService.error( "Unable to close a old Lucene Index Writer", e );
+            }
+        }
+
         if ( _indexWriter == null || !_indexWriter.isOpen( ) )
         {
             try
             {
-                Directory luceneDirectory = getDirectory( );
-
-                if ( !DirectoryReader.indexExists( luceneDirectory ) )
+                Directory luceneDirectory;
+                if ( mainDirectory )
                 {
-                    bCreateIndex = Boolean.TRUE;
+                    luceneDirectory = getDirectory();
+                }
+                else
+                {
+                    luceneDirectory = getDirectoryTemp();
                 }
 
                 IndexWriterConfig conf = new IndexWriterConfig( getAnalyzer( ) );
 
-                if ( Boolean.TRUE.equals( bCreateIndex ) )
+                if ( Boolean.TRUE.equals( bCreateIndex ) || !DirectoryReader.indexExists( luceneDirectory ) )
                 {
                     conf.setOpenMode( OpenMode.CREATE );
                 }
@@ -121,14 +139,14 @@ public class LuceneFormSearchFactory
 
     }
 
+
     /**
-     * Return the Directory to use for the search
-     * 
-     * @return the Directory to use for the search
-     * @throws IOException
-     *             - if the path string cannot be converted to a Path
+     * Return path to the directory
+     *
+     * @param tempDirectory if true return path for the temporary directory
+     * @return String Path
      */
-    public Directory getDirectory( ) throws IOException
+    public String getPathDirectory(boolean tempDirectory)
     {
         String strIndex;
 
@@ -142,6 +160,64 @@ public class LuceneFormSearchFactory
             strIndex = AppPropertiesService.getProperty( PATH_INDEX );
         }
 
-        return FSDirectory.open( Paths.get( strIndex ) );
+        if (!tempDirectory)
+        {
+            return strIndex;
+        }
+        else {
+            return strIndex + PATH_SUFFIX_TEMPORARY_PATH;
+        }
+    }
+
+    /**
+     * Return the Directory to use for the search
+     * 
+     * @return the Directory to use for the search
+     * @throws IOException
+     *             - if the path string cannot be converted to a Path
+     */
+    public Directory getDirectory( ) throws IOException
+    {
+        return FSDirectory.open( Paths.get( getPathDirectory( false ) ) );
+    }
+
+    /**
+     * Return the temporary Directory to use for the search
+     *
+     * @return the Directory to use for the search
+     * @throws IOException
+     *             - if the path string cannot be converted to a Path
+     */
+    public Directory getDirectoryTemp( ) throws IOException
+    {
+        return FSDirectory.open( Paths.get( getPathDirectory( true ) ) );
+    }
+
+    /**
+     * Delete the old main directory and move the temporary to the main Path
+     *
+     */
+    public void swapIndex( )
+    {
+
+        if ( _indexWriter != null && _indexWriter.isOpen() ) {
+            try {
+                _indexWriter.close();
+            } catch (IOException e) {
+                AppLogService.error("Unable to close index writer ", e);
+            }
+        }
+
+        Path mainPath = Paths.get( getPathDirectory( false ) );
+        Path tempPath = Paths.get( getPathDirectory( true ) );
+
+        try {
+            FileSystemUtils.deleteRecursively( mainPath );
+            Files.move( tempPath, mainPath );
+
+        } catch (IOException e) {
+            AppLogService.error( "Unable to swap lucene path", e );
+        }
+
     }
 }

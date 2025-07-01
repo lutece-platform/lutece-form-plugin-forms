@@ -31,46 +31,41 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service.search;
+package fr.paris.lutece.plugins.forms.business.form.lock;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-/**
- *
- * IFormSearchIndexer
- *
- */
-public interface IFormSearchIndexer
-{
+public interface ILockDAO {
 
     /**
-     * Directly index one document
-     * 
-     * @param nIdFormResponse
-     * @param nIdTask
-     */
-    void indexDocument( int nIdFormResponse, int nIdTask, Plugin plugin );
-
-    /**
-     * add an indexer action
-     * 
-     * @param nIdFormResponse
-     * @param nIdTask
-     */
-    void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin );
-
-    /**
-     * Launch incremental Indexing
+     * acquire a lock
      *
-     * @return String trace
+     * @param lock
+     * @param plugin
+     * @return true if the lock is acquire, false if not
      */
-    String incrementalIndexing();
+    public boolean acquire(Lock lock, Plugin plugin );
 
     /**
-     * Launch full Indexing
+     * release a lock
      *
-     * @return String trace
+     * @param lock
+     * @param plugin
      */
-    String fullIndexing();
+    public void release(Lock lock, Plugin plugin );
+
+    /**
+     * refresh expired date for a lock
+     * @param lock
+     * @param plugin
+     * @return return true if the lock is extended, false if the lock was been lost
+     */
+    public boolean refresh(Lock lock, Plugin plugin );
+
+    /**
+     * Release all
+     * @param plugin
+     */
+    public void closeAll(Plugin plugin );
 
 }

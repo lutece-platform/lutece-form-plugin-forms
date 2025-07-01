@@ -39,11 +39,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
+import fr.paris.lutece.plugins.forms.exception.LockException;
+import fr.paris.lutece.plugins.forms.service.lock.LockResult;
+import fr.paris.lutece.plugins.forms.service.lock.LuceneLockManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -67,7 +69,6 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
-import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionFilter;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionHome;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
@@ -82,103 +83,42 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServ
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.plugins.workflowcore.business.state.State;
 import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
-import fr.paris.lutece.portal.service.content.XPageAppService;
-import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.search.IndexationService;
 import fr.paris.lutece.portal.service.search.SearchItem;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.util.url.UrlItem;
 
 /**
  * Forms global indexer
  */
 public class LuceneFormSearchIndexer implements IFormSearchIndexer
 {
-    public static final String INDEXER_NAME = "FormsIndexer";
-    private static final String INDEXER_DESCRIPTION = "Indexer service for forms";
-    private static final String FORMS = "forms";
-    private static final String INDEXER_VERSION = "1.0.0";
-    private static final String PROPERTY_INDEXER_ENABLE = "forms.globalIndexer.enable";
+    public static final String BEAN_SERVICE = "forms.luceneFormsSearchIndexer";
+    private static final String LOCKNAME = "forms.lucene.lock";
     private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy" );
     private static final int TAILLE_LOT = AppPropertiesService.getPropertyInt( "forms.index.writer.commit.size", 100 );
-
-    private static AtomicBoolean _bIndexIsRunning = new AtomicBoolean( false );
-    private static AtomicBoolean _bIndexToLunch = new AtomicBoolean( false );
+    private static final boolean CLOSE_WRITER = AppPropertiesService.getPropertyBoolean( "forms.index.writer.multi.apps", true );
+    private static final long MS_TIMEOUT_LOCK = AppPropertiesService.getPropertyLong( "forms.index.writer.ms.timeout.lock", 3600000L );
 
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
     private IndexWriter _indexWriter;
     @Autowired( required = false )
     private StateService _stateService;
-
-    public LuceneFormSearchIndexer( )
-    {
-        IndexationService.registerIndexer( this );
-    }
+    private LuceneLockManager _lockManager;
 
     /**
-     * {@inheritDoc}
+     * Constructor
+     *
+     * @param lockManager
+     *            The LockManager
      */
-    @Override
-    public String getName( )
+    @Inject
+    public LuceneFormSearchIndexer( LuceneLockManager lockManager )
     {
-        return INDEXER_NAME;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getDescription( )
-    {
-        return INDEXER_DESCRIPTION;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getVersion( )
-    {
-        return INDEXER_VERSION;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isEnable( )
-    {
-        return AppPropertiesService.getPropertyBoolean( PROPERTY_INDEXER_ENABLE, false );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getListType( )
-    {
-        List<String> listType = new ArrayList<>( 1 );
-        listType.add( FORMS );
-
-        return listType;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getSpecificSearchAppUrl( )
-    {
-        UrlItem url = new UrlItem( AppPathService.getPortalUrl( ) );
-        url.addParameter( XPageAppService.PARAM_XPAGE_APP, FORMS );
-
-        return url.getUrl( );
+        _lockManager = lockManager;
     }
 
     /**
@@ -203,53 +143,75 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     /**
      * {@inheritDoc }
      */
-    @Override
-    public synchronized void indexDocuments( ) throws IOException, InterruptedException, SiteMessageException
+    public String fullIndexing( )
     {
-        List<Integer> listFormResponsesId = FormResponseHome.selectAllFormResponsesId( );
 
-        deleteIndex( );
-        _bIndexToLunch.set( true );
-        if ( _bIndexIsRunning.compareAndSet( false, true ) )
+        StringBuilder log = new StringBuilder();
+        Plugin plugin = PluginService.getPlugin( FormsPlugin.PLUGIN_NAME );
+
+        try
         {
-            new Thread( ( ) -> {
-                try
-                {
-                    List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
-                    for ( Integer nIdFormResponse : listFormResponsesId )
-                    {
-                        FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
-                        if ( response != null )
-                        {
-                            listFormResponses.add( response );
-                        }
-                        if ( listFormResponses.size( ) == TAILLE_LOT )
-                        {
-                            indexFormResponseList( listFormResponses );
-                            listFormResponses.clear( );
-                        }
-                    }
-                    indexFormResponseList( listFormResponses );
-                    // Indexation increment
-                    while ( _bIndexToLunch.compareAndSet( true, false ) )
-                    {
-                        processIndexing( );
+            LockResult lockResult = _lockManager.acquireLock( LOCKNAME, MS_TIMEOUT_LOCK );
+            log.append("Full indexing launch");
 
-                    }
-                }
-                catch( Exception e )
-                {
-                    AppLogService.error( e.getMessage( ), e );
-                    Thread.currentThread( ).interrupt( );
-                }
-                finally
-                {
-                    _bIndexIsRunning.set( false );
-                }
+            try
+            {
+                IndexerActionHome.removeAll( plugin );
+                List<Integer> listFormResponsesId = FormResponseHome.selectAllFormResponsesId( );
 
-            } ).start( );
+                initIndexing( true );
+
+                deleteIndex();
+                indexFormResponseList( listFormResponsesId, plugin );
+
+                _luceneFormSearchFactory.swapIndex();
+            }
+            catch (Exception e)
+            {
+                AppLogService.error(e.getMessage(), e);
+                Thread.currentThread().interrupt();
+            }
+            finally
+            {
+                closeIndexing();
+                _lockManager.releaseLock( lockResult );
+            }
+
+        }
+        catch (LockException e) {
+            log.append("Indexing already in progress, Full indexing Aborted");
         }
 
+        return log.toString();
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    public String incrementalIndexing() {
+
+        StringBuilder log = new StringBuilder();
+
+        try {
+            LockResult lockResult = _lockManager.acquireLock(LOCKNAME, MS_TIMEOUT_LOCK);
+
+            log.append("Incremental indexing launch");
+            try {
+                initIndexing( false );
+                processIndexing();
+            } catch (Exception e) {
+                AppLogService.error(e.getMessage(), e);
+                log.append("Incremental indexing with error");
+            } finally {
+                closeIndexing();
+                _lockManager.releaseLock(lockResult);
+            }
+
+        } catch (LockException e) {
+            log.append("Indexing already in progress, Incremental indexing Aborted");
+        }
+
+        return log.toString();
     }
 
     /**
@@ -259,142 +221,169 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     public void indexDocument( int nIdFormResponse, int nIdTask, Plugin plugin )
     {
         addIndexerAction( nIdFormResponse, nIdTask, plugin );
-        _bIndexToLunch.set( true );
-        if ( _bIndexIsRunning.compareAndSet( false, true ) )
-        {
-            new Thread( ( ) -> {
-                try
-                {
-                    while ( _bIndexToLunch.compareAndSet( true, false ) )
-                    {
-                        processIndexing( );
-                    }
-                }
-                catch( Exception e )
-                {
-                    AppLogService.error( e.getMessage( ), e );
-                    Thread.currentThread( ).interrupt( );
-                }
-                finally
-                {
-                    _bIndexIsRunning.set( false );
-                }
-
-            } ).start( );
-        }
     }
 
     /**
-     * {@inheritDoc }
+     * Index all the idFormResponses
+     *
+     * @param listFormResponsesId list id of form responses
+     * @param plugin The plugin
      */
-    @Override
-    public synchronized void processIndexing( )
+    private void indexFormResponseList( List<Integer> listFormResponsesId, Plugin plugin )
     {
-        initIndexing( false );
-
-        Plugin plugin = PluginService.getPlugin( FormsPlugin.PLUGIN_NAME );
-        Set<Integer> listIdsToAdd = new HashSet<>( );
-        Set<Integer> listIdsToDelete = new HashSet<>( );
-
-        // Delete all record which must be delete
-        for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_DELETE, plugin ) )
-        {
-            listIdsToDelete.add( action.getIdFormResponse( ) );
-            removeIndexerAction( action.getIdAction( ), plugin );
-        }
-
-        // Update all record which must be update
-        for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_MODIFY, plugin ) )
-        {
-            listIdsToDelete.add( action.getIdFormResponse( ) );
-            listIdsToAdd.add( action.getIdFormResponse( ) );
-            removeIndexerAction( action.getIdAction( ), plugin );
-        }
-
-        // Add all form response which must be add
-        for ( IndexerAction action : getAllIndexerActionByTask( IndexerAction.TASK_CREATE, plugin ) )
-        {
-            listIdsToAdd.add( action.getIdFormResponse( ) );
-            removeIndexerAction( action.getIdAction( ), plugin );
-        }
-
-        List<Query> queryList = new ArrayList<>( TAILLE_LOT );
-        for ( Integer nIdFormResponse : listIdsToDelete )
-        {
-            queryList.add( IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, nIdFormResponse ) );
-            if ( queryList.size( ) == TAILLE_LOT )
+        List<FormResponse> listFormResponses = new ArrayList<>(TAILLE_LOT);
+        for (Integer nIdFormResponse : listFormResponsesId) {
+            FormResponse response = FormResponseHome.findByPrimaryKeyForIndex(nIdFormResponse);
+            if (response != null)
             {
-                deleteDocument( queryList );
-                queryList.clear( );
+                listFormResponses.add(response);
+            }
+            if (listFormResponses.size() == TAILLE_LOT)
+            {
+                indexFormResponseList(listFormResponses, null, false, plugin);
+                listFormResponses.clear();
             }
         }
-        deleteDocument( queryList );
+        indexFormResponseList(listFormResponses, null, false, plugin);
+    }
 
-        List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
-        for ( Integer nIdFormResponse : listIdsToAdd )
+    /**
+     * Remove IndexerAction that have no use
+     *
+     * @param listActionAdd list of inderAction Add
+     * @param listActionUpdate list of inderAction Update
+     * @param listActionDelete list of inderAction Delete
+     * @param plugin the plugin
+     */
+    private void removeConcurrentAction( List<IndexerAction> listActionAdd, List<IndexerAction> listActionUpdate, List<IndexerAction> listActionDelete, Plugin plugin)
+    {
+        List<IndexerAction> listActionToRemove = new ArrayList<>();
+
+        Set<Integer> listIdsToAdd = listActionAdd.stream().map( IndexerAction::getIdFormResponse ).collect( Collectors.toSet() );
+        Set<Integer> listIdsToDelete = listActionDelete.stream().map( IndexerAction::getIdFormResponse ).collect( Collectors.toSet() );
+
+
+        for ( IndexerAction action : listActionDelete )
         {
-            FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( nIdFormResponse );
+            // No need to remove document
+            if ( listIdsToAdd.contains( action.getIdFormResponse() ) )
+            {
+                listActionToRemove.add( action );
+            }
+        }
+
+        for ( IndexerAction action : listActionUpdate )
+        {
+            // No need to update indexe, The document going to be created with last version
+            if ( listIdsToAdd.contains( action.getIdFormResponse() ) )
+            {
+                listActionToRemove.add( action );
+            }
+        }
+
+        for ( IndexerAction action : listActionAdd )
+        {
+            // No need to insert indexe
+            if ( listIdsToDelete.contains( action.getIdFormResponse() ) )
+            {
+                listActionToRemove.add( action );
+            }
+        }
+
+        listActionAdd.removeAll( listActionToRemove.stream().filter( a -> a.getIdTask() == IndexerAction.TASK_CREATE ).collect( Collectors.toSet() ) );
+        listActionDelete.removeAll( listActionToRemove.stream().filter( a -> a.getIdTask() == IndexerAction.TASK_DELETE ).collect( Collectors.toSet() ) );
+        listActionUpdate.removeAll( listActionToRemove.stream().filter( a -> a.getIdTask() == IndexerAction.TASK_MODIFY ).collect( Collectors.toSet() ) );
+
+        removeListIndexerAction( listActionToRemove, plugin );
+    }
+
+    /**
+     * process the incremental indexing
+     */
+    public synchronized void processIndexing( )
+    {
+
+        Plugin plugin = PluginService.getPlugin( FormsPlugin.PLUGIN_NAME );
+
+        List<IndexerAction> listActionAdd = new ArrayList<>();
+        List<IndexerAction> listActionUpdate = new ArrayList<>();
+        List<IndexerAction> listActionDelete = new ArrayList<>();
+
+        for ( IndexerAction action : getAllIndexerAction( plugin ) )
+        {
+            switch ( action.getIdTask() )
+            {
+                case IndexerAction.TASK_DELETE :
+                    listActionDelete.add( action );
+                    break;
+
+                case IndexerAction.TASK_CREATE :
+                    listActionAdd.add( action );
+                    break;
+
+                case IndexerAction.TASK_MODIFY :
+                    listActionUpdate.add( action );
+                    break;
+
+                default:
+                    throw new IllegalStateException("Unexpected value: " + action.getIdTask());
+            }
+        }
+
+        removeConcurrentAction(listActionAdd, listActionUpdate, listActionDelete, plugin);
+
+        // Document to remove
+        deleteDocument( listActionDelete, plugin);
+
+        List<IndexerAction> listComputingAction = new ArrayList<>();
+
+        //Create document
+        List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
+        for ( IndexerAction actionAdd : listActionAdd )
+        {
+            FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( actionAdd.getIdFormResponse() );
+            listComputingAction.add( actionAdd );
             if ( response != null )
             {
                 listFormResponses.add( response );
             }
             if ( listFormResponses.size( ) == TAILLE_LOT )
             {
-                indexFormResponseList( listFormResponses );
+                indexFormResponseList( listFormResponses, listComputingAction, false, plugin );
                 listFormResponses.clear( );
+                listComputingAction.clear();
             }
         }
-        indexFormResponseList( listFormResponses );
+        indexFormResponseList( listFormResponses, listComputingAction, false, plugin );
+        listComputingAction.clear();
+
+        //Update document
+        listFormResponses.clear();
+        for ( IndexerAction actionUpdate : listActionUpdate )
+        {
+            FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( actionUpdate.getIdFormResponse() );
+            listComputingAction.add( actionUpdate );
+            if ( response != null )
+            {
+                listFormResponses.add( response );
+            }
+            if ( listFormResponses.size( ) == TAILLE_LOT )
+            {
+                indexFormResponseList( listFormResponses, listComputingAction, true, plugin );
+                listFormResponses.clear( );
+                listComputingAction.clear();
+            }
+        }
+        indexFormResponseList( listFormResponses, listComputingAction, true, plugin );
+        listComputingAction.clear();
+
     }
 
     /**
      * {@inheritDoc}
      */
-    @Override
-    public List<Document> getDocuments( String formResponseId ) throws IOException, InterruptedException, SiteMessageException
+    private void indexFormResponseList( List<FormResponse> listFormResponse, List<IndexerAction> listComputingAction, boolean update, Plugin plugin )
     {
-        int nIdFormResponse;
-
-        try
-        {
-            nIdFormResponse = Integer.parseInt( formResponseId );
-        }
-        catch( NumberFormatException ne )
-        {
-            AppLogService.error( formResponseId + " not parseable to an int", ne );
-
-            return new ArrayList<>( 0 );
-        }
-
-        FormResponse formResponse = FormResponseHome.findByPrimaryKey( nIdFormResponse );
-        Form form = FormHome.findByPrimaryKey( formResponse.getFormId( ) );
-        State formResponseState = null;
-        if ( _stateService != null )
-        {
-            formResponseState = _stateService.findByResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE, form.getIdWorkflow( ) );
-        }
-
-        Document doc = getDocument( formResponse, form, formResponseState );
-        if ( doc != null )
-        {
-            List<Document> listDocument = new ArrayList<>( 1 );
-            listDocument.add( doc );
-
-            return listDocument;
-        }
-
-        return new ArrayList<>( 0 );
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    private void indexFormResponseList( List<FormResponse> listFormResponse )
-    {
-        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
-        {
-            initIndexing( true );
-        }
 
         Map<Integer, Form> mapForms = FormHome.getFormList( ).stream( ).collect( Collectors.toMap( Form::getId, form -> form ) );
         List<Document> documentList = new ArrayList<>( );
@@ -420,7 +409,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             }
             catch( Exception e )
             {
-                IndexationService.error( this, e, null );
+                AppLogService.error(e.getMessage(), e);
             }
 
             if ( doc != null )
@@ -430,17 +419,66 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         }
         if ( !documentList.isEmpty( ) )
         {
-            addDocuments( documentList );
+            if( update )
+            {
+                updateDocuments( documentList, listComputingAction, plugin );
+            }
+            else
+            {
+                addDocuments( documentList, listComputingAction, plugin );
+            }
+
         }
-        endIndexing( );
     }
 
-    private void addDocuments( List<Document> documentList )
+    /**
+     * update the list of document in the writer and remove the list of action in the database
+     *
+     * @param documentList the documentList
+     * @param listComputingAction the list of action
+     * @param plugin the plugin
+     */
+    private void updateDocuments( List<Document> documentList, List<IndexerAction> listComputingAction, Plugin plugin)
+    {
+        provideExternalFields( documentList );
+        try
+        {
+
+            List<Query> luceneQueryList = new ArrayList<>( );
+            for (IndexerAction action : listComputingAction)
+            {
+                luceneQueryList.add(IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, action.getIdFormResponse() ));
+            }
+
+            _indexWriter.deleteDocuments( luceneQueryList.toArray(new Query[luceneQueryList.size()]) );
+            _indexWriter.addDocuments( documentList);
+            _indexWriter.commit();
+            removeListIndexerAction( listComputingAction , plugin );
+        }
+        catch( IOException e )
+        {
+            AppLogService.error( "Unable to index form response", e );
+        }
+        documentList.clear( );
+    }
+
+    /**
+     * add the list of document in the writer, and remove the list of action
+     * @param documentList the documentList
+     * @param listComputingAction the listComputingAction
+     * @param plugin the plugin
+     */
+    private void addDocuments( List<Document> documentList, List<IndexerAction> listComputingAction, Plugin plugin )
     {
         provideExternalFields( documentList );
         try
         {
             _indexWriter.addDocuments( documentList );
+            _indexWriter.commit();
+            if( listComputingAction != null)
+            {
+                removeListIndexerAction( listComputingAction , plugin );
+            }
         }
         catch( IOException e )
         {
@@ -464,33 +502,38 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         }
     }
 
+
     /**
      * Init the indexing action
-     * 
-     * @param bCreate
+     *
+     * @param fullIndexing
+     *              The boolean which tell if the indexing are for full or incremental
      */
-    private void initIndexing( boolean bCreate )
+    private void initIndexing( boolean fullIndexing )
     {
-        Boolean boolCreate = Boolean.valueOf( bCreate );
-        _indexWriter = _luceneFormSearchFactory.getIndexWriter( boolCreate );
+        if (fullIndexing)
+        {
+            _indexWriter = _luceneFormSearchFactory.getIndexWriter( true, false );
+        }
+        else
+        {
+            _indexWriter = _luceneFormSearchFactory.getIndexWriter( false, true );
+        }
     }
 
     /**
-     * End the indexing action
+     * close the indexing action
      */
-    private void endIndexing( )
+    private void closeIndexing( )
     {
-        if ( _indexWriter != null )
-        {
-            try
-            {
-                _indexWriter.commit( );
-            }
-            catch( IOException e )
-            {
-                AppLogService.error( "Unable to close index writer ", e );
+        if ( _indexWriter != null && _indexWriter.isOpen() && CLOSE_WRITER ) {
+            try {
+                _indexWriter.close();
+            } catch (IOException e) {
+                AppLogService.error("Unable to close index writer ", e);
             }
         }
+
     }
 
     /**
@@ -498,10 +541,6 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      */
     private void deleteIndex( )
     {
-        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
-        {
-            initIndexing( true );
-        }
         try
         {
             _indexWriter.deleteAll( );
@@ -510,17 +549,49 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         {
             AppLogService.error( "Unable to delete all docs in index ", e );
         }
-        finally
-        {
-            endIndexing( );
+    }
+
+    /**
+     * cut listActionDelete in TAILLE_LOT, and call deleteDocumentBlock
+     * @param listActionDelete
+     * @param plugin
+     */
+    private void deleteDocument( List<IndexerAction> listActionDelete, Plugin plugin )
+    {
+
+        List<IndexerAction> listActionToCompute;
+
+        while ( !listActionDelete.isEmpty() ) {
+            if (listActionDelete.size() >= TAILLE_LOT) {
+                listActionToCompute = listActionDelete.subList(0, TAILLE_LOT);
+            } else {
+                listActionToCompute = listActionDelete.subList(0, listActionDelete.size() );
+            }
+
+            deleteDocumentBlock( listActionToCompute , plugin );
+
+            listActionToCompute.clear();
         }
     }
 
-    private void deleteDocument( List<Query> luceneQueryList )
+    /**
+     * remove document in indexe, and remove the action after
+     * @param listActionDelete the listActionDelete
+     * @param plugin the plugin
+     */
+    private void deleteDocumentBlock( List<IndexerAction> listActionDelete, Plugin plugin )
     {
         try
         {
-            _indexWriter.deleteDocuments( luceneQueryList.toArray( new Query [ luceneQueryList.size( )] ) );
+            Query[] queryList = new Query [listActionDelete.size( )];
+            for ( int i = 0; i < listActionDelete.size( ) ; i++)
+            {
+                queryList[i] = IntPoint.newExactQuery( FormResponseSearchItem.FIELD_ID_FORM_RESPONSE, listActionDelete.get(i).getIdFormResponse() );
+            }
+
+            _indexWriter.deleteDocuments( queryList );
+            _indexWriter.commit();
+            removeListIndexerAction( listActionDelete , plugin );
         }
         catch( IOException e )
         {
@@ -529,33 +600,28 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     }
 
     /**
-     * Remove a Indexer Action
-     * 
-     * @param nIdAction
-     *            the key of the action to remove
+     * Remove a list of indexer Action
+     *
+     * @param listAction
+     *            the list of the action to remove
      * @param plugin
      *            the plugin
      */
-    private void removeIndexerAction( int nIdAction, Plugin plugin )
+    private void removeListIndexerAction( List<IndexerAction> listAction, Plugin plugin )
     {
-        IndexerActionHome.remove( nIdAction, plugin );
+        IndexerActionHome.remove( listAction.stream( ).map( IndexerAction::getIdAction ).distinct( ).collect( Collectors.toList( ) ), plugin );
     }
 
     /**
-     * return a list of IndexerAction by task key
-     * 
-     * @param nIdTask
-     *            the task kety
+     * return a list of IndexerAction
+     *
      * @param plugin
      *            the plugin
      * @return a list of IndexerAction
      */
-    private List<IndexerAction> getAllIndexerActionByTask( int nIdTask, Plugin plugin )
+    private List<IndexerAction> getAllIndexerAction( Plugin plugin )
     {
-        IndexerActionFilter filter = new IndexerActionFilter( );
-        filter.setIdTask( nIdTask );
-
-        return IndexerActionHome.getList( filter, plugin );
+        return IndexerActionHome.getList( plugin );
     }
 
     /**
@@ -715,13 +781,9 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     /**
      * Concatenates the value of the specified field in this record
      * 
-     * @param record
-     *            the record to seek
-     * @param listEntry
-     *            the list of field to concatenate
-     * @param plugin
-     *            the plugin object
-     * @return
+     * @param formResponse the formResponse object
+     *
+     * @return the index
      */
     private String getContentToIndex( FormResponse formResponse )
     {
