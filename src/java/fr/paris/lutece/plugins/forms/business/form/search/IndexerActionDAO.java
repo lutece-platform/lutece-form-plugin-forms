@@ -41,6 +41,7 @@ import java.sql.Statement;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class provides Data Access methods for Indexer Action objects
@@ -51,7 +52,9 @@ public class IndexerActionDAO implements IIndexerActionDAO
     // Constants
     private static final String SQL_QUERY_FIND_BY_PRIMARY_KEY = "SELECT id_action,id_form_response,id_task" + " FROM forms_indexer_action WHERE id_action = ?";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_indexer_action( id_form_response,id_task)" + " VALUES(?,?)";
-    private static final String SQL_QUERY_DELETE = "DELETE FROM forms_indexer_action WHERE id_action = ? ";
+    private static final String SQL_QUERY_DELETE = "DELETE FROM forms_indexer_action";
+    private static final String SQL_QUERY_DELETE_ID = SQL_QUERY_DELETE + " WHERE id_action = ? ";
+    private static final String SQL_QUERY_DELETE_IN = SQL_QUERY_DELETE + " WHERE id_action IN (";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_indexer_action SET id_action=?,id_form_response=?,id_task=? WHERE id_action = ? ";
     private static final String SQL_QUERY_SELECT = "SELECT id_action,id_form_response,id_task" + " FROM forms_indexer_action  ";
     private static final String SQL_FILTER_ID_TASK = " WHERE id_task = ? ";
@@ -108,13 +111,42 @@ public class IndexerActionDAO implements IIndexerActionDAO
     @Override
     public void delete( int nId, Plugin plugin )
     {
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE_ID, plugin ) )
         {
 
             daoUtil.setInt( 1, nId );
             daoUtil.executeUpdate( );
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delete( List<Integer> idList, Plugin plugin )
+    {
+        if( !idList.isEmpty() ) {
+            String query = SQL_QUERY_DELETE_IN + idList.stream().distinct().map(i -> "?").collect(Collectors.joining(",")) + " )";
+
+            try (DAOUtil daoUtil = new DAOUtil(query, plugin)) {
+                for (int i = 0; i < idList.size(); i++) {
+                    daoUtil.setInt(i + 1, idList.get(i));
+                }
+                daoUtil.executeUpdate();
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteAll( Plugin plugin )
+    {
+        try (DAOUtil daoUtil = new DAOUtil(SQL_QUERY_DELETE, plugin)) {
+            daoUtil.executeUpdate();
+        }
     }
 
     /**
@@ -157,18 +189,51 @@ public class IndexerActionDAO implements IIndexerActionDAO
 
             daoUtil.executeQuery( );
 
-            IndexerAction indexerAction = null;
             while ( daoUtil.next( ) )
             {
-                indexerAction = new IndexerAction( );
-                indexerAction.setIdAction( daoUtil.getInt( 1 ) );
-                indexerAction.setIdFormResponse( daoUtil.getInt( 2 ) );
-                indexerAction.setIdTask( daoUtil.getInt( 3 ) );
-
-                indexerActionList.add( indexerAction );
+                indexerActionList.add( dataToObject(daoUtil) );
             }
         }
 
         return indexerActionList;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<IndexerAction> selectList( Plugin plugin )
+    {
+        List<IndexerAction> indexerActionList = new ArrayList<>( );
+
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT , plugin ) )
+        {
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                indexerActionList.add( dataToObject(daoUtil) );
+            }
+        }
+
+        return indexerActionList;
+    }
+
+    /**
+     *
+     * @param daoUtil
+     *            The daoutil
+     * @return The populated FormAction object
+     */
+    private IndexerAction dataToObject(DAOUtil daoUtil )
+    {
+        IndexerAction indexerAction = new IndexerAction( );
+
+        indexerAction.setIdAction( daoUtil.getInt("id_action") );
+        indexerAction.setIdFormResponse( daoUtil.getInt("id_form_response") );
+        indexerAction.setIdTask( daoUtil.getInt("id_task") );
+
+        return indexerAction;
+    }
+
 }
