@@ -76,6 +76,21 @@ public interface IIndexerActionDAO
     void delete( int nId, Plugin plugin );
 
     /**
+     * Delete records form the table
+     *
+     * @param idList The identifier list of action
+     * @param plugin the plugin
+     */
+    void delete( List<Integer> idList, Plugin plugin );
+
+    /**
+     * Delete all records form the table
+     *
+     * @param plugin the plugin
+     */
+    void deleteAll( Plugin plugin );
+
+    /**
      * Update the indexerAction in the table
      *
      * @param indexerAction
@@ -95,4 +110,14 @@ public interface IIndexerActionDAO
      * @return The List which contains the data of all action
      */
     List<IndexerAction> selectList( IndexerActionFilter filter, Plugin plugin );
+
+    /**
+     * Load the data of all indexerAction and returns them in a list
+     *
+     * @param plugin
+     *            the plugin
+     * @return The List which contains the data of all action
+     */
+    public List<IndexerAction> selectList( Plugin plugin );
+
 }

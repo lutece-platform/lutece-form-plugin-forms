@@ -11,6 +11,9 @@ INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is
 DELETE FROM core_admin_right WHERE id_right = 'FORMS_CATEGORIES';
 INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is_updatable,plugin_name,id_feature_group,icon_url,documentation_url, id_order ) VALUES 
 ('FORMS_CATEGORIES','forms.adminFeature.categoriesForms.name',1,'jsp/admin/plugins/forms/ManageFormsCategories.jsp','forms.adminFeature.categoriesForms.description',0,'forms',NULL,NULL,NULL,6);
+DELETE FROM core_admin_right WHERE id_right = 'FORMS_SEARCH_INDEXATION';
+INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is_updatable,plugin_name,id_feature_group,icon_url,documentation_url, id_order ) VALUES
+('FORMS_SEARCH_INDEXATION','forms.adminFeature.manageSearchIndexation.name',1,'jsp/admin/plugins/forms/ManageFormsSearchIndexation.jsp','forms.adminFeature.manageSearchIndexation.description',0,'forms',NULL,'ti ti-settings-search',NULL,7);
 
 
 

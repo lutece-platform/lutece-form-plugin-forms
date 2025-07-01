@@ -94,6 +94,27 @@ public final class IndexerActionHome
         _dao.delete( nId, plugin );
     }
 
+    /**
+     * Remove the list of indexerAction whose identifier is specified in parameter
+     *
+     * @param idList the list of IndexerActionId
+     * @param plugin the Plugin
+     */
+    public static void remove( List<Integer> idList, Plugin plugin )
+    {
+        _dao.delete(idList, plugin);
+    }
+
+    /**
+     * Remove the all indexerAction
+     *
+     * @param plugin the Plugin
+     */
+    public static void removeAll( Plugin plugin )
+    {
+        _dao.deleteAll( plugin );
+    }
+
     // /////////////////////////////////////////////////////////////////////////
     // Finders
 
@@ -123,5 +144,17 @@ public final class IndexerActionHome
     public static List<IndexerAction> getList( IndexerActionFilter filter, Plugin plugin )
     {
         return _dao.selectList( filter, plugin );
+    }
+
+    /**
+     * Loads the data of all the IndexerAction returns them in a list
+     *
+     * @param plugin
+     *            the Plugin
+     * @return the list which contains the data of all the indexerAction
+     */
+    public static List<IndexerAction> getList(  Plugin plugin )
+    {
+        return _dao.selectList( plugin );
     }
 }

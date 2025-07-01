@@ -288,3 +288,18 @@ CREATE TABLE forms_control_group (
 	logical_operator varchar(50) NOT NULL,
 	PRIMARY KEY (id_control_group)
 );
+
+--
+-- Structure for table forms_lucene_lock
+--
+
+DROP TABLE IF EXISTS forms_lucene_lock;
+CREATE TABLE IF NOT EXISTS forms_lucene_lock (
+  index_name varchar(50),
+  instance_name varchar(50),
+  is_locked boolean,
+  date_begin timestamp,
+  expired_date timestamp,
+  uuid varchar(50),
+  PRIMARY KEY (index_name)
+);

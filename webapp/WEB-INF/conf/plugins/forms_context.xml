@@ -25,7 +25,7 @@
     <bean id="forms.indexerActionDAO" class="fr.paris.lutece.plugins.forms.business.form.search.IndexerActionDAO" />
     <bean id="forms.formExportConfigDao" class="fr.paris.lutece.plugins.forms.business.export.FormExportConfigDao" />
     <bean id="forms.formCategoryDAO" class="fr.paris.lutece.plugins.forms.business.FormCategoryDAO" />
-    
+    <bean id="forms.lockDAO" class="fr.paris.lutece.plugins.forms.business.form.lock.LockDAO" />
     <!-- Services -->
     <bean id="forms.formDatabaseService" class="fr.paris.lutece.plugins.forms.service.FormDatabaseService" />
 
@@ -474,8 +474,12 @@
     </bean>
     
     <!-- Lucene Search services implementation -->
+    <bean id="forms.luceneLockManager" class="fr.paris.lutece.plugins.forms.service.lock.LuceneLockManagerDB"/>
+
     <bean id="forms.luceneFormsSearchEngine" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchEngine"/>
-    <bean id="forms.luceneFormsSearchIndexer" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchIndexer"/>
+    <bean id="forms.luceneFormsSearchIndexer" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchIndexer">
+        <constructor-arg name="lockManager" type="fr.paris.lutece.plugins.forms.service.lock.LuceneLockManager" ref="forms.luceneLockManager" />
+    </bean>
     <bean id="forms.luceneFormsSearchFactory" class="fr.paris.lutece.plugins.forms.service.search.LuceneFormSearchFactory" scope="singleton"/>
     <bean id="forms.luceneFrenchAnalizer" class="fr.paris.lutece.plugins.lucene.service.analyzer.LuteceFrenchAnalyzer"/>
     
