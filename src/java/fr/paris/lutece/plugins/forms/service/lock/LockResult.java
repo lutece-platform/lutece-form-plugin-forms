@@ -31,46 +31,68 @@
  *
  * License 1.0
  */
-package fr.paris.lutece.plugins.forms.service.search;
+package fr.paris.lutece.plugins.forms.service.lock;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import java.sql.Timestamp;
 
-/**
- *
- * IFormSearchIndexer
- *
- */
-public interface IFormSearchIndexer
-{
+public class LockResult {
+
+    private String _nameLock;
+    private String _idLock;
+    private Timestamp _expiredDate;
 
     /**
-     * Directly index one document
-     * 
-     * @param nIdFormResponse
-     * @param nIdTask
+     * Create a LockResult
+     * @param nameLock the name of the lock
+     * @param idLock the unique identifier of the current lock
+     * @param expiredDate the expired date of the lock
+     * @return LockResult
      */
-    void indexDocument( int nIdFormResponse, int nIdTask, Plugin plugin );
+    public static LockResult createLockSuccess(String nameLock, String idLock, Timestamp expiredDate)
+    {
+        LockResult lockResult = new LockResult();
+        lockResult._nameLock = nameLock;
+        lockResult._idLock = idLock;
+        lockResult._expiredDate = expiredDate;
+        return lockResult;
+    }
 
     /**
-     * add an indexer action
-     * 
-     * @param nIdFormResponse
-     * @param nIdTask
+     * refresh a LockResult
+     * @param oldLock the old lockResult
+     * @param newExpiredDate the new expiredDate
+     * @return LockResult
      */
-    void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin );
+    public static LockResult refreshLockSuccess(LockResult oldLock, Timestamp newExpiredDate)
+    {
+        LockResult lockResult = new LockResult();
+        lockResult._nameLock = oldLock._nameLock;
+        lockResult._idLock = oldLock._idLock;
+        lockResult._expiredDate = newExpiredDate;
+        return lockResult;
+    }
 
     /**
-     * Launch incremental Indexing
-     *
-     * @return String trace
+     * The name of the lock
+     * @return nameLock
      */
-    String incrementalIndexing();
+    public String getNameLock() {
+        return _nameLock;
+    }
 
     /**
-     * Launch full Indexing
-     *
-     * @return String trace
+     * The expired date of the Lock
+     * @return expiredDate
      */
-    String fullIndexing();
+    public Timestamp getExpiredDate() {
+        return _expiredDate;
+    }
 
+    /**
+     * The unique identifier of the lock
+     * @return idLock
+     */
+    public String getIdLock() {
+        return _idLock;
+    }
 }

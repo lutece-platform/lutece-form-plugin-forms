@@ -103,6 +103,16 @@
             </rbac-resource-type-class>
         </rbac-resource-type>
     </rbac-resource-types>
+
+    <!-- Daemons -->
+    <daemons>
+        <daemon>
+            <daemon-id>formsIndexerDaemon</daemon-id>
+            <daemon-name>forms.daemon.indexerDameon.name</daemon-name>
+            <daemon-description>forms.daemon.indexerDameon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.forms.service.search.FormsSearchIndexerDaemon</daemon-class>
+        </daemon>
+    </daemons>
     
     <!-- Dashboard components -->
     <dashboard-components>
