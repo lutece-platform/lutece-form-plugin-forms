@@ -33,44 +33,46 @@
  */
 package fr.paris.lutece.plugins.forms.service.search;
 
-import fr.paris.lutece.portal.service.plugin.Plugin;
+import fr.paris.lutece.portal.service.daemon.Daemon;
+import fr.paris.lutece.portal.service.datastore.DatastoreService;
+import fr.paris.lutece.portal.service.spring.SpringContextService;
+
+import javax.inject.Inject;
 
 /**
- *
- * IFormSearchIndexer
- *
+ * FormsSearchIndexerDaemon
  */
-public interface IFormSearchIndexer
-{
+public class FormsSearchIndexerDaemon extends Daemon {
+
+    public static final String DAEMON_ID = "formsIndexerDaemon";
+    public static final String DATASTORE_DAEMON_MODE = "forms.index.full";
+    public static final String DATASTORE_DAEMON_MODE_FULL = DatastoreService.VALUE_TRUE;
+    public static final String DATASTORE_DAEMON_MODE_INCREMENTAL = DatastoreService.VALUE_FALSE;
+
+    @Inject
+    private IFormSearchIndexer _formSearchIndexer = SpringContextService.getBean( LuceneFormSearchIndexer.BEAN_SERVICE );
 
     /**
-     * Directly index one document
-     * 
-     * @param nIdFormResponse
-     * @param nIdTask
+     * {@inheritDoc}
      */
-    void indexDocument( int nIdFormResponse, int nIdTask, Plugin plugin );
+    @Override
+    public void run() {
 
-    /**
-     * add an indexer action
-     * 
-     * @param nIdFormResponse
-     * @param nIdTask
-     */
-    void addIndexerAction( int nIdFormResponse, int nIdTask, Plugin plugin );
+        if( DATASTORE_DAEMON_MODE_FULL.equals(DatastoreService.getDataValue(DATASTORE_DAEMON_MODE,DATASTORE_DAEMON_MODE_INCREMENTAL)) )
+        {
+            try
+            {
+                setLastRunLogs( _formSearchIndexer.fullIndexing() );
+            }
+            finally
+            {
+                DatastoreService.setDataValue(DATASTORE_DAEMON_MODE,DATASTORE_DAEMON_MODE_INCREMENTAL);
+            }
+        }
+        else
+        {
+            setLastRunLogs( _formSearchIndexer.incrementalIndexing( ) );
+        }
 
-    /**
-     * Launch incremental Indexing
-     *
-     * @return String trace
-     */
-    String incrementalIndexing();
-
-    /**
-     * Launch full Indexing
-     *
-     * @return String trace
-     */
-    String fullIndexing();
-
+    }
 }

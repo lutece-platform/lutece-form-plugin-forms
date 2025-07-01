@@ -1,0 +1,16 @@
+<@pageContainer>
+	<@pageColumn>
+		<@pageHeader title='#i18n{forms.adminFeature.manageSearchIndexation.title}'>
+			<@tform method='get' name='doIndexing' action='jsp/admin/plugins/forms/DoFormsIndexing.jsp'>
+				<@input type='hidden' name='token' value='${token}' />
+				<@button type='submit' buttonIcon='redo' title='#i18n{forms.adminFeature.manageSearchIndexation.buttonDoIndex}' name='total' />
+				<@button type='submit' buttonIcon='sync' title='#i18n{forms.adminFeature.manageSearchIndexation.buttonDoIncrementalIndex}' name='incremental' />
+			</@tform>
+		</@pageHeader>
+
+		<#if logs??>
+			<@pre class="index-logs">${logs}</@pre>
+		</#if>
+
+	</@pageColumn>
+</@pageContainer>
