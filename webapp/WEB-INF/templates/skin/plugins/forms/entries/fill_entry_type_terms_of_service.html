@@ -11,7 +11,7 @@
 	<div class="col-12">
 		<input type="checkbox" name="${name}" id="${name}_${fieldAgreement.idField}" value="${fieldAgreement.idField}" <#if responseAgreement?? && responseAgreement.toStringValueResponse == "true">checked="checked" </#if> class="${entry.CSSClass!}<#if error?? > is-invalid</#if>" />
 		<#assign fieldLink = getFieldByCode( entry, "link" ) >
-		<a href="jsp/site/RunStandaloneApp.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}" onclick="javascript:openFormsTermsOfService(this.href); return false;" target="_blank">${fieldLink.value}</a>
+		<a href="jsp/site/Portal.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}" onclick="javascript:openFormsTermsOfService(this.href); return false;" target="_blank">${fieldLink.value}</a>
 		<#if error?? && error.isDisplayableError>
 		  <span class="invalid-feedback"><#if error.mandatoryError>${error.errorMessage}</#if></span>
 		</#if>
