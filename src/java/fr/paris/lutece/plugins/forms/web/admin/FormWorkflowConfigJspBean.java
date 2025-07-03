@@ -137,6 +137,7 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
             Entry entry = question.getEntry( );
             _formService.saveOrUpdateField( entry, FormsConstants.PARAMETER_USED_CORRECT_RESPONSE, null, String.valueOf( usedInCorrectFormResponse ) );
             _formService.saveOrUpdateField( entry, FormsConstants.PARAMETER_USED_COMPLETE_RESPONSE, null, String.valueOf( usedInCompleteFormResponse ) );
+            QuestionHome.update( question );
         }
         
         Map<String, String> mapParameters = new LinkedHashMap<>( );
