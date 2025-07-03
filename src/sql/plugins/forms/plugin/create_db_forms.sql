@@ -204,7 +204,7 @@ id int AUTO_INCREMENT,
 id_form int NOT NULL,
 end_message_display SMALLINT,
 end_message varchar(3000) default '',
-label_final_button VARCHAR(255),
+label_end_message_button VARCHAR(255),
 PRIMARY KEY (id)
 );
 CREATE INDEX index_fm_id_form ON forms_message ( id_form );
