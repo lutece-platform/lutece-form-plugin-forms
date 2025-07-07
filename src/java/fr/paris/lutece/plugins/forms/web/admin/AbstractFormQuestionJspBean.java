@@ -34,7 +34,6 @@
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -84,9 +83,9 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 {
     private static final long serialVersionUID = -8828358457153413756L;
 
-    private static final Class<?> [ ] ENTRY_TYPE_USER_REF_LIT = {
+    private static final Set<Class<?>> ENTRY_TYPE_USER_REF_LIST = Set.of(
             EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeSelectOrder.class
-    };
+    );
 
     // Actions
     protected static final String ACTION_CREATE_QUESTION = "createQuestion";
@@ -510,7 +509,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
 
         model.put( FormsConstants.MARK_ANONYMIZATION_HELP, entryTypeService.getAnonymizationHelpMessage( request.getLocale( ) ) );
 
-        if ( Arrays.asList( ENTRY_TYPE_USER_REF_LIT ).contains( entryTypeService.getClass( ) ) )
+        if ( canUseReferenceList( entryTypeService ) )
         {
             model.put( FormsConstants.MARK_REFERENCE_LIST_SELECT, ReferenceListService.getInstance( ).getReferencesList( ) );
         }
@@ -591,7 +590,8 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
                         _fileStoreProvider.getFileDownloadUrlBO( fieldFile.getValue( ), additionnalData ) );
             }
         }
-        if ( Arrays.asList( ENTRY_TYPE_USER_REF_LIT ).contains( entryTypeService.getClass( ) ) )
+
+        if ( canUseReferenceList( entryTypeService ) )
         {
             model.put( FormsConstants.MARK_REFERENCE_LIST_SELECT, ReferenceListService.getInstance( ).getReferencesList( ) );
         }
@@ -920,4 +920,19 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     }
 
     protected abstract IFormDatabaseService initFormDatabaseService( );
+    
+    /**
+    * Checks if the given entry type service can use reference lists.
+    * Reference lists are supported by entry types that allow users to select
+    * from predefined options.
+    *
+    * @param entryTypeService
+    *            the entry type service to check
+    * @return true if the entry type can use reference lists, false otherwise
+    */
+   private boolean canUseReferenceList( IEntryTypeService entryTypeService )
+   {
+	   return ENTRY_TYPE_USER_REF_LIST.stream( )
+		        .anyMatch( clazz -> clazz.isInstance( entryTypeService ) );
+   }
 }

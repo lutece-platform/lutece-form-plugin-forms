@@ -240,10 +240,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
-     * @throws AccessDeniedException
      */
     @Action( ACTION_CREATE_GROUP )
-    public String doCreateGroup( HttpServletRequest request ) throws AccessDeniedException
+    public String doCreateGroup( HttpServletRequest request )
     {
         return createGroup( request, VIEW_MANAGE_QUESTIONS );
     }
@@ -278,10 +277,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
-     * @throws AccessDeniedException
      */
     @Action( ACTION_MODIFY_GROUP )
-    public String doModifyGroup( HttpServletRequest request ) throws AccessDeniedException
+    public String doModifyGroup( HttpServletRequest request )
     {
         return modifyGroup( request, VIEW_MANAGE_QUESTIONS );
     }
@@ -292,10 +290,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
-     * @throws AccessDeniedException
      */
     @Action( ACTION_CREATE_QUESTION )
-    public String doCreateQuestion( HttpServletRequest request ) throws AccessDeniedException
+    public String doCreateQuestion( HttpServletRequest request )
     {
         try
         {
@@ -393,10 +390,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
-     * @throws AccessDeniedException
      */
     @Action( ACTION_MODIFY_QUESTION )
-    public String doModifyQuestion( HttpServletRequest request ) throws AccessDeniedException
+    public String doModifyQuestion( HttpServletRequest request )
     {
         try
         {
@@ -428,9 +424,14 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @return The URL to go after performing the action
      * @throws AccessDeniedException
      */
-    @Action( ACTION_SAVE_QUESTION )
+    @Action( value = ACTION_SAVE_QUESTION, securityTokenDisabled = true )
     public String doSaveQuestion( HttpServletRequest request ) throws AccessDeniedException
     {
+    	if ( !_securityTokenHandler.validate( request, ACTION_MODIFY_QUESTION ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
+
         try
         {
             String strReturnUrl = processQuestionUpdate( request );
@@ -455,10 +456,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HttpServletRequest the request
      * @return the manage questions page
-     * @throws AccessDeniedException
      */
     @Action( value = ACTION_DUPLICATE_QUESTION )
-    public String doDuplicateQuestion( HttpServletRequest request ) throws AccessDeniedException
+    public String doDuplicateQuestion( HttpServletRequest request )
     {
         String strReturnUrl = processQuestionDuplication( request );
 
@@ -621,10 +621,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
      * @param request
      *            The HTTP request
      * @return The URL to go after performing the action
-     * @throws AccessDeniedException
      */
     @Action( ACTION_REMOVE_COMPOSITE )
-    public String doRemoveComposite( HttpServletRequest request ) throws AccessDeniedException
+    public String doRemoveComposite( HttpServletRequest request )
     {
         int nIdDisplay = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY ), -1 );
         if ( _formDisplay == null || _formDisplay.getId( ) != nIdDisplay )

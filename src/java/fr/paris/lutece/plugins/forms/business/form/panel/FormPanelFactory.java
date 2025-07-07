@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.panel;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,10 +103,10 @@ public class FormPanelFactory
             try
             {
                 formPanelInitializerClass = Class.forName( strInitializerName ).asSubclass( IFormPanelInitializer.class );
-                IFormPanelInitializer formPanelInitializer = formPanelInitializerClass.newInstance( );
+                IFormPanelInitializer formPanelInitializer = formPanelInitializerClass.getDeclaredConstructor().newInstance( );
                 formPanel.getListFormPanelInitializer( ).add( formPanelInitializer );
             }
-            catch( ClassNotFoundException | InstantiationException | IllegalAccessException e )
+            catch( ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e )
             {
                 AppLogService.error( e );
             }

@@ -79,7 +79,6 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
     private static final String MARK_QUESTIONLIST = "questionList";
     
     // Actions
-    private static final String ACTION_MANAGE_WORKFLOW = "manageWorkflowConfig";
     private static final String ACTION_MODIFY_WORKFLOW = "modifyWorkflowConfig";
 
     @Inject

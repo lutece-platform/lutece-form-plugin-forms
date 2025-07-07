@@ -281,10 +281,9 @@ public class FormTransitionJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
-     * @throws AccessDeniedException
      */
     @Action( ACTION_CREATE_TRANSITION )
-    public String doCreateTransition( HttpServletRequest request ) throws AccessDeniedException
+    public String doCreateTransition( HttpServletRequest request )
     {
         if ( !createTransition( request ) )
         {
@@ -355,10 +354,9 @@ public class FormTransitionJspBean extends AbstractJspBean
      * @param request
      *            The Http Request
      * @return The Jsp URL of the process result
-     * @throws AccessDeniedException
      */
     @Action( ACTION_MODIFY_TRANSITION )
-    public String doModifyTransition( HttpServletRequest request ) throws AccessDeniedException
+    public String doModifyTransition( HttpServletRequest request )
     {
         if ( !retrieveTransitionFromRequest( request ) )
         {
@@ -425,10 +423,9 @@ public class FormTransitionJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the jsp URL to display the form to manage Transition
-     * @throws AccessDeniedException
      */
     @Action( ACTION_REMOVE_TRANSITION )
-    public String doRemoveTransition( HttpServletRequest request ) throws AccessDeniedException
+    public String doRemoveTransition( HttpServletRequest request )
     {
         if ( !retrieveTransitionFromRequest( request ) )
         {
