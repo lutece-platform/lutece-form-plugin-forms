@@ -303,7 +303,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = ACTION_PREVIOUS_STEP )
+    @Action( value = ACTION_PREVIOUS_STEP, securityTokenDisabled = true )
     public String doReturnStep( HttpServletRequest request )
     {
         try
@@ -330,7 +330,7 @@ public class FormResponseJspBean extends AbstractJspBean
      *            The Http request
      * @return the View
      */
-    @Action( value = ACTION_GO_TO_STEP )
+    @Action( value = ACTION_GO_TO_STEP, securityTokenDisabled = true )
     public String doGoToStep( HttpServletRequest request )
     {
         try

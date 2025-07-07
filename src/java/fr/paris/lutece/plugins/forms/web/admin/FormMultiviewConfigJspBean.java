@@ -34,10 +34,10 @@
 package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -75,18 +75,14 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
 {
     private static final long serialVersionUID = -2505310758526626253L;
 
-    private static final Class<?> [ ] FILTERABLE = {
+    private static final Set<Class<?>> FILTERABLE = Set.of(
             EntryTypeCheckBox.class, EntryTypeRadioButton.class, EntryTypeSelect.class, EntryTypeDate.class
-    };
-    
-    private static final List<Class<?>> FILTERABLE_LIST = Arrays.asList( FILTERABLE );
-    
-    private static final Class<?> [ ] NON_DISPLAYABLE = {
+    );
+
+    private static final Set<Class<?>> NON_DISPLAYABLE = Set.of(
             EntryTypeAutomaticFileReading.class, EntryTypeFile.class, EntryTypeGalleryImage.class, EntryTypeImage.class
-    };
-    
-    private static final List<Class<?>> NON_DISPLAYABLE_LIST = Arrays.asList( NON_DISPLAYABLE );
-    
+    );
+
     // Templates
     private static final String TEMPLATE_MANAGE_MULTIVIEW_CONFIG = "/admin/plugins/forms/manage_multiview_config.html";
 
@@ -138,11 +134,11 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         for ( Question question : questionList )
         {
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) );
-            if ( FILTERABLE_LIST.contains( entryTypeService.getClass( ) ) )
+            if ( isQuestionFilterable( entryTypeService) )
             {
                 filterableQuestionList.add( question );
             }
-            if ( NON_DISPLAYABLE_LIST.contains( entryTypeService.getClass() ))
+            if ( isQuestionNonDisplayable( entryTypeService ) )
             {
             	nonDisplayableQuestionList.add(question);
             }
@@ -181,7 +177,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         for ( Question question : questionList )
         {
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( question.getEntry( ) );
-            if ( FILTERABLE_LIST.contains( entryTypeService.getClass( ) ) )
+            if ( isQuestionFilterable( entryTypeService ) )
             {
             	question.setFiltrableMultiviewGlobal( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_GLOBAL + "_" + question.getId( ) ) != null );
                 question.setFiltrableMultiviewFormSelected( request.getParameter( FormsConstants.PARAMETER_FILTERABLE_MULTIVIEW_FORM_SELECTED + "_" + question.getId( ) ) != null );
@@ -230,5 +226,30 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         return redirect( request, VIEW_MANAGE_MULTIVIEW, mapParameters );
     }
 
+    /**
+     * Checks whether a question is considered filterable based on its entry type service 
+     *
+     * @param entryTypeService
+     *         The entry type service to check
+     * @return {@code true} if question is filterable, {@code false} otherwise
+     */
+    private boolean isQuestionFilterable( IEntryTypeService entryTypeService )
+    {
+ 	   return FILTERABLE.stream( )
+ 		        .anyMatch( clazz -> clazz.isInstance( entryTypeService ) );
+    }
+
+    /**
+     * Checks whether a question is considered non-displayable based on its entry type service 
+     *
+     * @param entryTypeService
+     *         The entry type service to check
+     * @return {@code true} if the question is non-displayable, {@code false} otherwise
+     */
+    private boolean isQuestionNonDisplayable( IEntryTypeService entryTypeService )
+    {
+ 	   return NON_DISPLAYABLE.stream( )
+ 		        .anyMatch( clazz -> clazz.isInstance( entryTypeService ) );
+    }
 }
 

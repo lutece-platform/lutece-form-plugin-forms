@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.Form;
@@ -65,6 +66,7 @@ import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeFile;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeGalleryImage;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeImage;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
@@ -159,7 +161,7 @@ public abstract class GenericFormsProvider {
 							if ( file != null && file.getPhysicalFile( ) == null )
 							{
 								try {
-									IFileStoreServiceProvider fss = FileService.getInstance( ).getFileStoreServiceProvider( file.getOrigin() );
+									IFileStoreServiceProvider fss = CDI.current( ).select( FileService.class ).get( ).getFileStoreServiceProvider( file.getOrigin( ) );
 									file = fss.getFile(file.getFileKey() );
 
 									file.setUrl(fss.getFileDownloadUrlFO( file.getFileKey()));
@@ -273,7 +275,7 @@ public abstract class GenericFormsProvider {
 
 			List<Step> listSteps = StepHome.getStepsListByForm( form.getId() );
 			List<Transition> listTransitions = TransitionHome.getTransitionsListFromForm( form.getId() );
-			listSteps = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+			listSteps = FormsUtils.sortStepsWithTransitions( listSteps, listTransitions );
 
 			for ( Step step : listSteps ){
 				List<FormDisplay> listFormDisplay = FormDisplayHome.getFormDisplayListByParent( step.getId(), 0 );

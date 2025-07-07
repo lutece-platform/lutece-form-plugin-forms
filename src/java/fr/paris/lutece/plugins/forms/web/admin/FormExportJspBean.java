@@ -233,7 +233,7 @@ public class FormExportJspBean extends AbstractJspBean
         mapParameters.put(PARAMETER_ACTIVE_TAB_PANNEL_2, "true");
 
         return redirect(request, VIEW_MANAGE_EXPORT, mapParameters);
-    };
+    }
 
     @Action( value = ACTION_CREATE_EXPORT_CONFIG, securityTokenDisabled = true )
     public String doCreateExportConfig( HttpServletRequest request ) throws AccessDeniedException

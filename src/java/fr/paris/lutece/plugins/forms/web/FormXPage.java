@@ -489,7 +489,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      */
-    @Action( value = ACTION_PREVIOUS_STEP )
+    @Action( value = ACTION_PREVIOUS_STEP, securityTokenDisabled = true )
     public synchronized XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         IsRequestComingFromAction = true;
@@ -547,7 +547,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      */
-    @Action( value = ACTION_GO_TO_STEP )
+    @Action( value = ACTION_GO_TO_STEP, securityTokenDisabled = true )
     public synchronized XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         IsRequestComingFromAction = true;
@@ -699,10 +699,9 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      *             Exception
-     * @throws AccessDeniedException
      */
     @Action( value = ACTION_SAVE_FORM_RESPONSE )
-    public synchronized XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
+    public synchronized XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         IsRequestComingFromAction = true;
         Form form = null;
@@ -1026,10 +1025,9 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      *             Exception
-     * @throws AccessDeniedException
      */
     @Action( value = ACTION_SAVE_FOR_BACKUP )
-    public synchronized XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
+    public synchronized XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         IsRequestComingFromAction = true;
 
