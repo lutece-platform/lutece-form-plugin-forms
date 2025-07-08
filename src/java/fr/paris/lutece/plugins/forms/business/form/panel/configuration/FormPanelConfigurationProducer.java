@@ -41,12 +41,14 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
+import jakarta.inject.Named;
 
 @ApplicationScoped
 public class FormPanelConfigurationProducer 
 {
 	@Produces
 	@ApplicationScoped
+	@Named( "forms.formsPanel.panelConfiguration" )
     public IFormPanelConfiguration produceFormPanelConfiguration( @ConfigProperty( name = "forms.formsPanel.panelConfiguration.technicalCode" ) String strTechnicalCode,
             @ConfigProperty( name = "forms.formsPanel.panelConfiguration.position" ) int nPosition,
             @ConfigProperty( name = "forms.formsPanel.panelConfiguration.title" ) String strTitle,

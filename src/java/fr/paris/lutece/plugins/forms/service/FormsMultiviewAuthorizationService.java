@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -82,6 +83,7 @@ public class FormsMultiviewAuthorizationService implements IFormsMultiviewAuthor
     private FormColumnFactory _formColumnFactory;
 
     @Inject
+    @Named( "forms.formsPanel.panelConfiguration" )
     private IFormPanelConfiguration _formPanelConfiguration;
 
 	public FormsMultiviewAuthorizationService( )
