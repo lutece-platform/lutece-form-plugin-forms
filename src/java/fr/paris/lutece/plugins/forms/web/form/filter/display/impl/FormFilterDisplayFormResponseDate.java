@@ -84,6 +84,16 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
         String strPeriodTo = request.getParameter( getFormFilter( ).getFormFilterConfiguration( ).getFormFilterName( ) + TO );
         setValue( strPeriodDate );
 
+        if( !StringUtils.isEmpty( strPeriodDate ) && StringUtils.isEmpty( strPeriodFrom ) && StringUtils.isEmpty( strPeriodTo ) )
+        {
+            String[] dateRange = extractRange( strPeriodDate );
+            if( dateRange!=null )
+            {
+                strPeriodFrom = dateRange[0];
+                strPeriodTo = dateRange[1];
+            }
+        }
+
         Map<String, Object> mapFilterNameValues = new LinkedHashMap<>( );
         if ( !StringUtils.isEmpty( strPeriodFrom ) && !StringUtils.isEmpty( strPeriodTo ) )
         {
@@ -142,11 +152,26 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
      */
     private void addDateRange( Map<String, Object> model )
     {
-        String strDateRange = getValue( );
+        String[] dateRange = extractRange(getValue( ));
 
-        if ( StringUtils.isNotEmpty( strDateRange ) )
+        if( dateRange!=null )
         {
-            strDateRange = getValue( ).replace( " ", "" );
+            model.put( MARK_FILTER_LIST_VALUE + FROM, dateRange[0] );
+            model.put( MARK_FILTER_LIST_VALUE + TO, dateRange[1] );
+        }
+    }
+
+    /**
+     * extract ranges dates from value
+     *
+     * @param value dates range
+     * @return index 0: start date, index 1: end date, null if the date range cannot be extracted.
+     */
+    private String[] extractRange( String value )
+    {
+        if ( StringUtils.isNotEmpty( value ) )
+        {
+            String strDateRange = value.replace( " ", "" );
             Matcher m = Pattern.compile( REGEX_DATE_FORMAT ).matcher( strDateRange );
 
             try
@@ -155,13 +180,15 @@ public class FormFilterDisplayFormResponseDate extends AbstractFormFilterDisplay
                 String strDateFromValue = m.group( 1 );
                 String strDateToValue = m.group( 2 );
 
-                model.put( MARK_FILTER_LIST_VALUE + FROM, strDateFromValue );
-                model.put( MARK_FILTER_LIST_VALUE + TO, strDateToValue );
+                return new String[] {strDateFromValue,strDateToValue};
             }
             catch( Exception e )
             {
                 AppLogService.error( "Unable to parse date range and extract date_from and date_to in " + strDateRange + ". Please check date formats.", e );
             }
         }
+        return null;
     }
+
+
 }
