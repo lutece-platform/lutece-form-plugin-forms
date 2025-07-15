@@ -380,11 +380,11 @@ public class FormXPage extends MVCApplication
         {
             if ( StringUtils.isNotEmpty( form.getUnavailableMessage( ) ) )
             {
-                SiteMessageService.setCustomMessage( request, form.getUnavailableMessage( ), SiteMessage.TYPE_ERROR );
+                SiteMessageService.setCustomMessage( request, form.getUnavailableMessage( ), SiteMessage.TYPE_INFO );
             }
             else
             {
-                SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+                SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_INFO );
             }
         }
         IsRequestComingFromAction = true;
@@ -877,11 +877,11 @@ public class FormXPage extends MVCApplication
         {
             if ( StringUtils.isNotEmpty( form.getUnavailableMessage( ) ) )
             {
-                SiteMessageService.setCustomMessage( request, form.getUnavailableMessage( ), SiteMessage.TYPE_ERROR );
+                SiteMessageService.setCustomMessage( request, form.getUnavailableMessage( ), SiteMessage.TYPE_INFO );
             }
             else
             {
-                SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_ERROR );
+                SiteMessageService.setMessage( request, FormsConstants.MESSAGE_ERROR_INACTIVE_FORM, SiteMessage.TYPE_INFO );
             }
         }
         return form;
