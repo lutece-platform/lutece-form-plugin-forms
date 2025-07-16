@@ -53,3 +53,27 @@ else {
 	${stepContent!}
 	${formBottomBreadcrumb!}
 </form>
+<div id="upload-info-message" class="alert alert-warning text-center d-none" role="alert">
+	#i18n{forms.createEntry.warning.upload.inprogress}
+</div>
+<script>
+	let isUploading = false;
+
+	$(document).on('fileuploadstart', function () {
+		isUploading = true;
+
+	});
+
+	$(document).on('fileuploadstop', function () {
+		isUploading = false;
+		$('#upload-info-message').addClass('d-none');
+	});
+
+	$('#form-validate').on('submit', function(e) {
+		if (isUploading) {
+			e.preventDefault();
+			$('#upload-info-message').removeClass('d-none');
+		}
+	});
+
+</script>
