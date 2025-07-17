@@ -262,31 +262,45 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         Set<Integer> listIdsToAdd = listActionAdd.stream().map( IndexerAction::getIdFormResponse ).collect( Collectors.toSet() );
         Set<Integer> listIdsToDelete = listActionDelete.stream().map( IndexerAction::getIdFormResponse ).collect( Collectors.toSet() );
 
-
+        List<Integer> duplicateIdForm = new ArrayList<>();
         for ( IndexerAction action : listActionDelete )
         {
             // No need to remove document
-            if ( listIdsToAdd.contains( action.getIdFormResponse() ) )
+            if ( listIdsToAdd.contains( action.getIdFormResponse() ) || duplicateIdForm.contains( action.getIdFormResponse() ) )
             {
                 listActionToRemove.add( action );
             }
+            else
+            {
+                duplicateIdForm.add( action.getIdFormResponse() );
+            }
         }
 
+        duplicateIdForm.clear();
         for ( IndexerAction action : listActionUpdate )
         {
             // No need to update indexe, The document going to be created with last version
-            if ( listIdsToAdd.contains( action.getIdFormResponse() ) )
+            if ( listIdsToAdd.contains( action.getIdFormResponse() ) || duplicateIdForm.contains( action.getIdFormResponse() ) )
             {
                 listActionToRemove.add( action );
             }
+            else
+            {
+                duplicateIdForm.add(action.getIdFormResponse());
+            }
         }
 
+        duplicateIdForm.clear();
         for ( IndexerAction action : listActionAdd )
         {
             // No need to insert indexe
-            if ( listIdsToDelete.contains( action.getIdFormResponse() ) )
+            if ( listIdsToDelete.contains( action.getIdFormResponse() ) || duplicateIdForm.contains( action.getIdFormResponse() ) )
             {
                 listActionToRemove.add( action );
+            }
+            else
+            {
+                duplicateIdForm.add(action.getIdFormResponse());
             }
         }
 
