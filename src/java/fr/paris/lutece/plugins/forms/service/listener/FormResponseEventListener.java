@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.forms.service.listener;
 
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchIndexer;
@@ -41,6 +42,7 @@ import fr.paris.lutece.portal.business.event.EventRessourceListener;
 import fr.paris.lutece.portal.business.event.ResourceEvent;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import javax.inject.Inject;
+import java.sql.Timestamp;
 
 public class FormResponseEventListener implements EventRessourceListener
 {
@@ -78,9 +80,18 @@ public class FormResponseEventListener implements EventRessourceListener
     @Override
     public void updatedResource( ResourceEvent event )
     {
+        updateDateFormResponse( event );
         indexResource( event, IndexerAction.TASK_MODIFY );
     }
 
+    /**
+     * Index the forms response
+     *
+     * @param event
+     *            the event
+     * @param nIdTask
+     *            The id task
+     */
     private void indexResource( ResourceEvent event, int nIdTask )
     {
         if ( !checkResourceType( event ) )
@@ -91,6 +102,33 @@ public class FormResponseEventListener implements EventRessourceListener
         {
             int nIdResource = Integer.parseInt( event.getIdResource( ) );
             _formSearchIndexer.indexDocument( nIdResource, nIdTask, FormsPlugin.getPlugin( ) );
+        }
+        catch( NumberFormatException e )
+        {
+            AppLogService.error( "Unable to parse given event id ressource to integer " + event.getIdResource( ), e );
+        }
+    }
+
+    /**
+     * Update the date update of the forms response
+     *
+     * @param event
+     *            the event
+     */
+    private void updateDateFormResponse( ResourceEvent event )
+    {
+        if ( !checkResourceType( event ) )
+        {
+            return;
+        }
+        try
+        {
+            int nIdResource = Integer.parseInt( event.getIdResource( ) );
+
+            FormResponse response = FormResponseHome.findByPrimaryKey( nIdResource );
+            response.setUpdate( new Timestamp( new java.util.Date( ).getTime( ) ) );
+            FormResponseHome.update( response );
+
         }
         catch( NumberFormatException e )
         {
