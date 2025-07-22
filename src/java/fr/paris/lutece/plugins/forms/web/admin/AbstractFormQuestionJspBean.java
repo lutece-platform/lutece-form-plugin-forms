@@ -40,8 +40,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import jakarta.enterprise.inject.literal.NamedLiteral;
-import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.BooleanUtils;
@@ -158,7 +158,9 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     // Others
     protected static final int INTEGER_MINUS_ONE = -1;
 
-    protected IFileStoreServiceProvider _fileStoreProvider = CDI.current().select( IFileStoreServiceProvider.class, NamedLiteral.of( "forms.formsDatabaseFileStoreServiceProvider" ) ).get( );
+    @Inject
+    @Named( "forms.formsDatabaseFileStoreServiceProvider" )
+    protected IFileStoreServiceProvider _fileStoreProvider;
 
     private IFormDatabaseService _formDatabaseService;
     private IFormDisplayService _formDisplayService;
