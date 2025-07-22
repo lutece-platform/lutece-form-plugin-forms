@@ -90,8 +90,13 @@
 			<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
 			<#assign field=getFieldByCode( entry, "text_config")>
 			<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
+			<#if confirmFieldValue?exists>
+				<#assign confirm_fieldValue = confirmFieldValue />
+			<#else>
+				<#assign confirm_fieldValue = '' />
+			</#if>
 			<div class="col-12">
-				<input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field_width?number}" value="" <#if field_max_size?number!=-1>maxlength="${field_max_size?number}"</#if> <#if field_autocomplete??>autocomplete="${field_autocomplete.value?if_exists}"</#if> />
+				<input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field_width?number}" value="${confirm_fieldValue}" <#if field_max_size?number!=-1>maxlength="${field_max_size?number}"</#if> <#if field_autocomplete??>autocomplete="${field_autocomplete.value?if_exists}"</#if> />
 			</div>
 		</div>
 	</#if>
