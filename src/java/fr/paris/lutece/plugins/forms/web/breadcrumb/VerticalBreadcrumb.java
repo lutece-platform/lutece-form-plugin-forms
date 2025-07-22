@@ -36,6 +36,11 @@ package fr.paris.lutece.plugins.forms.web.breadcrumb;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
@@ -47,8 +52,11 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 /**
  * Horizontal display implementation of IBreadcrumb
  */
+@ApplicationScoped
+@Named( VerticalBreadcrumb.BEAN_NAME )
 public class VerticalBreadcrumb implements IBreadcrumb
 {
+	public static final String BEAN_NAME = "forms.verticalBreadcrumb";
     private static final String TEMPLATE_BREADCRUMB_HTML = "/util/plugins/forms/breadcrumb/vertical_breadcrumb.html";
     private final String _strBreadcrumbBeanName;
     private final String _strBreadcrumbDisplayBeanName;
@@ -61,7 +69,9 @@ public class VerticalBreadcrumb implements IBreadcrumb
      * @param strBreadcrumbDisplayName
      *            The Breadcrumb display name
      */
-    public VerticalBreadcrumb( String strBreadcrumbName, String strBreadcrumbDisplayName )
+    @Inject
+    public VerticalBreadcrumb( @ConfigProperty( name = "forms.verticalBreadcrumb.beanName" ) String strBreadcrumbName, 
+    		@ConfigProperty( name = "forms.verticalBreadcrumb.displayBeanName" ) String strBreadcrumbDisplayName )
     {
         _strBreadcrumbBeanName = strBreadcrumbName;
         _strBreadcrumbDisplayBeanName = I18nService.getLocalizedString( strBreadcrumbDisplayName, I18nService.getDefaultLocale( ) );
