@@ -463,7 +463,6 @@ public class FormXPage extends MVCApplication
         {
             addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
         }
-        fillCommons( model );
     }
 
     /**
