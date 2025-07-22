@@ -61,9 +61,14 @@
     <#assign field_width=getFieldValueByCode( entry, "width")>
     <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
     <#assign field=getFieldByCode( entry, "text_config")>
+	<#if confirmFieldValue?exists>
+		<#assign confirm_fieldValue = confirmFieldValue />
+	<#else>
+		<#assign confirm_fieldValue = '' />
+	</#if>
 	<#if field_max_size?number!=-1>
 		<#assign maxlength = field_max_size?number />
 	</#if>
-		<@input type='text' name='${idName}_confirm_field' id='${idName}_confirm_field' inputSize=field_width?number value='' maxlength=maxlength!0/>
+		<@input type='text' name='${idName}_confirm_field' id='${idName}_confirm_field' inputSize=field_width?number value="${confirm_fieldValue}" maxlength=maxlength!0/>
     </@formGroup>
 </#if>
