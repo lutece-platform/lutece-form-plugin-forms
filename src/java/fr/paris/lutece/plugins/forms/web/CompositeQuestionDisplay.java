@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.business.Group;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -76,6 +77,8 @@ import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import static fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService.SUFFIX_CONFIRM_FIELD;
+
 /**
  * 
  * Implementation of ICompositeDisplay for Question
@@ -96,6 +99,10 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     private static final String MARK_COMPLETENESS_FO = "is_completeness_bo";
     private static final String MARK_ENTRY_ITERATION_NUMBER = "entry_iteration_number";
     private static final String MARK_FIELDS_LIST_BY_ID_ENTRIES = "fields_list_by_id_entries";
+
+    private static final String MARK_ATTRIBUT = "_attribute";
+    private static final String MARK_GROUP = "group";
+    private static final String MARK_CONFIRM_FIELD_VALUE = "confirmFieldValue";
 
     // Constants
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
@@ -213,6 +220,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             _model.put( MARK_QUESTION_ENTRY, _question.getEntry( ) );
             _model.put( MARK_COMPLETENESS_FO, displayType == DisplayType.COMPLETE_FRONTOFFICE );
             _model.put( FormsConstants.MARK_REGEX_URL, FormsConstants.DEFAULT_REGEX_URL );
+            _model.put( MARK_CONFIRM_FIELD_VALUE, valueConfirmField( request, entry, _question ) );
 
             List<Field> listField = _question.getEntry().getFields();
             if( listField == null )
@@ -288,6 +296,69 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
 
         return strQuestionTemplate;
+    }
+
+
+    /**
+     * recover the previous confirm value for add and remove iteration action
+     *
+     * @param request
+     *            the request
+     * @param entry
+     *            the entry
+     * @param question
+     *            The question
+     * @return the previous confirm value
+     */
+    private String valueConfirmField( HttpServletRequest request, Entry entry , Question question )
+    {
+
+        Field confirmField = entry.getFieldByCode( IEntryTypeService.FIELD_CONFIRM );
+
+        if ( confirmField != null && Boolean.parseBoolean( confirmField.getValue( ) ) )
+        {
+            if( request.getParameter( "action_addIteration" ) != null )
+            {
+                String codeParameter = makeCodeParameterConfirmField( question.getIterationNumber() , entry );
+                return request.getParameter( codeParameter );
+            }
+
+            String strIterationDeleteInfo = request.getParameter( "action_removeIteration" );
+            if( strIterationDeleteInfo != null )
+            {
+                String [ ] arrayIterationInfo = strIterationDeleteInfo.split( FormsConstants.SEPARATOR_UNDERSCORE );
+                int nIdGroupParent = Integer.parseInt( arrayIterationInfo [0] );
+                int nIndexIteration = Integer.parseInt( arrayIterationInfo [1] );
+
+                Object oGroup = _model.get( MARK_GROUP );
+                String codeParameter;
+                if(oGroup instanceof Group && ((Group) oGroup).getId() == nIdGroupParent
+                        && _question.getIterationNumber( ) >= nIndexIteration)
+                {
+                    codeParameter = makeCodeParameterConfirmField( question.getIterationNumber() + 1 , entry );
+                }
+                else
+                {
+                    codeParameter = makeCodeParameterConfirmField( question.getIterationNumber() , entry );
+                }
+                return request.getParameter( codeParameter );
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * make the code parameter to found the previous confirmField Value
+     * @param iterationNumber
+     *          the iterationNumber
+     * @param entry
+     *          the entry
+     * @return the code parameter
+     */
+    private String makeCodeParameterConfirmField( int iterationNumber, Entry entry )
+    {
+        return IEntryTypeService.PREFIX_ITERATION_ATTRIBUTE + iterationNumber + MARK_ATTRIBUT + entry.getIdEntry() + SUFFIX_CONFIRM_FIELD;
     }
     
     /**
