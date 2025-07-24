@@ -290,11 +290,18 @@ public final class QuestionHome
 
     }
 
+    /**
+     * Load the data of question object for the given Group form display and returns them in display order
+     *
+     * @param composite
+     *      The FormDisplay (type : group)
+     * @return the question list sorted in display order
+     */
     private static List<Question> getQuestionListFromFormDisplayCompositeTypeGroup ( FormDisplay composite )
     {
         List<Question> listQuestions = new ArrayList<>(  );
 
-        List<FormDisplay> listFormDisplayGroup = FormDisplayHome.getFormDisplayListByParent( composite.getStepId(), composite.getCompositeId() );
+        List<FormDisplay> listFormDisplayGroup = FormDisplayHome.getFormDisplayListByParent( composite.getStepId(), composite.getId() );
         listFormDisplayGroup.sort( Comparator.comparingInt( FormDisplay::getDisplayOrder ) );
         listFormDisplayGroup.forEach( compositeGroup -> {
             if(compositeGroup.getCompositeType().equals( "question" ) )
