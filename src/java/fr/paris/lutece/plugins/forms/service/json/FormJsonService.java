@@ -38,8 +38,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import fr.paris.lutece.plugins.forms.business.ControlGroup;
+import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -126,9 +129,13 @@ public class FormJsonService extends AbstractFormJsonService
         {
             controlMappingList.addAll( ControlHome.getControlMappingListByIdControl( control.getId( ) ) );
         }
+
+        Set<Integer> listControlGroup = controlList.stream().map( Control::getIdControlGroup ).collect( Collectors.toSet() );
+        List<ControlGroup> controlGroupList = ControlGroupHome.getControlGroupsListByIds( new ArrayList<>(listControlGroup) );
+
         jsonData.setQuestionList( questionList );
         jsonData.setControlList( controlList );
-
+        jsonData.setControlGroupList( controlGroupList );
         jsonData.setControlMappingList( controlMappingList );
 
         jsonData.setTransitionList( TransitionHome.getTransitionsListFromForm( idForm ) );
@@ -160,13 +167,14 @@ public class FormJsonService extends AbstractFormJsonService
         List<FormDisplay> formDisplayList = jsonData.getFormDisplayList( );
         List<Control> controlList = jsonData.getControlList( );
         List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
+        List<ControlGroup> controlGroupList = jsonData.getControlGroupList();
 
         importSteps( newIdForm, stepList, groupList, transitionList, questionList, formDisplayList );
         importQuestions( newIdForm, questionList, controlList, controlMappingList, formDisplayList, formExportConfigList );
         importGroups( groupList, formDisplayList );
         importFormDisplay( newIdForm, formDisplayList, controlList );
         importTransitions( transitionList, controlList );
-        importControls( controlList, controlMappingList );
+        importControls( controlList, controlMappingList, controlGroupList );
         importFormExportConfig( newIdForm, formExportConfigList );
     }
 

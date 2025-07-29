@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.forms.service;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlGroup;
+import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
 import fr.paris.lutece.plugins.forms.business.ControlHome;
 import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
@@ -186,6 +188,12 @@ public class FormDatabaseService implements IFormDatabaseService
     public void createControl( Control control )
     {
         ControlHome.create( control );
+    }
+
+    @Override
+    public void createControlGroup( ControlGroup controlGroup )
+    {
+        ControlGroupHome.create( controlGroup );
     }
 
     @Override
