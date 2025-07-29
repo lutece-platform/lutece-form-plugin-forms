@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.service;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlGroup;
 import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
 import fr.paris.lutece.plugins.forms.business.Group;
@@ -143,6 +144,13 @@ public interface IFormDatabaseService
      * @param control
      */
     void createControl( Control control );
+
+    /**
+     * Create a control group
+     *
+     * @param controlGroup
+     */
+    void createControlGroup( ControlGroup controlGroup );
 
     /**
      * Create a group
