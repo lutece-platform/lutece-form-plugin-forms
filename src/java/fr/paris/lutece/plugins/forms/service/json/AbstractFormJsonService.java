@@ -44,7 +44,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import fr.paris.lutece.plugins.forms.business.ControlGroup;
+import fr.paris.lutece.plugins.forms.business.ControlGroupHome;
+import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
+import fr.paris.lutece.plugins.forms.validation.IValidator;
+import fr.paris.lutece.plugins.forms.validation.ICustomImportableControl;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -131,8 +137,13 @@ public abstract class AbstractFormJsonService
         {
             controlMappingList.addAll( _formDatabaseService.getControlMappingListByIdControl( control.getId( ) ) );
         }
+
+        Set<Integer> listControlGroup = controlList.stream().map( Control::getIdControlGroup ).collect( Collectors.toSet() );
+        List<ControlGroup> controlGroupList = ControlGroupHome.getControlGroupsListByIds( new ArrayList<>(listControlGroup) );
+
         jsonData.setQuestionList( questionList );
         jsonData.setControlList( controlList );
+        jsonData.setControlGroupList( controlGroupList );
         jsonData.setControlMappingList( controlMappingList );
 
         List<FormDisplay> formDisplayList = getAllFormDisplays( idForm, idStep );
@@ -162,6 +173,7 @@ public abstract class AbstractFormJsonService
         List<Question> questionList = jsonData.getQuestionList( );
         List<Control> controlList = jsonData.getControlList( );
         List<ControlMapping> controlMappingList = jsonData.getControlMappingList( );
+        List<ControlGroup> controlGroupList = jsonData.getControlGroupList( );
         List<FormDisplay> formDisplayList = jsonData.getFormDisplayList( );
 
         Object [ ] tabSTepTitleCopy = {
@@ -178,7 +190,7 @@ public abstract class AbstractFormJsonService
         importQuestions( idForm, questionList, controlList, controlMappingList, formDisplayList, null );
         importGroups( groupList, formDisplayList );
         importFormDisplay( idForm, formDisplayList, controlList );
-        importControls( controlList, controlMappingList );
+        importControls( controlList, controlMappingList, controlGroupList );
     }
 
     protected void importSteps( int newIdForm, List<Step> stepList, List<Group> groupList, List<Transition> transitionList, List<Question> questionList,
@@ -208,6 +220,9 @@ public abstract class AbstractFormJsonService
     protected void importQuestions( int newIdForm, List<Question> questionList, List<Control> controlList, List<ControlMapping> controlMappingList,
             List<FormDisplay> formDisplayList, List<FormExportConfig> formExportConfigList )
     {
+
+        Map<Integer, Integer> mapIdFields = new HashMap<>( );
+
         Map<Integer, Integer> mapIdQuestions = new HashMap<>( );
         for ( Question question : questionList )
         {
@@ -222,8 +237,11 @@ public abstract class AbstractFormJsonService
             List<Field> fieldList = entry.getFields( );
             for ( Field field : fieldList )
             {
+                int oldIdField = field.getIdField();
+
                 field.setParentEntry( entry );
                 _formDatabaseService.createField( field );
+                mapIdFields.put( oldIdField, field.getIdField() );
             }
 
             _formDatabaseService.createQuestion( question );
@@ -232,7 +250,7 @@ public abstract class AbstractFormJsonService
 
             mapIdQuestions.put( oldIdQuestion, newIdQuestion );
         }
-        updateControlWithNewQuestion( controlMappingList, controlList, mapIdQuestions );
+        updateControlWithNewQuestion( controlMappingList, controlList, mapIdQuestions, mapIdFields );
         updateFormDisplayWithNewQuestion( formDisplayList, mapIdQuestions );
         if ( CollectionUtils.isNotEmpty( formExportConfigList ) )
         {
@@ -281,11 +299,27 @@ public abstract class AbstractFormJsonService
         updateControlWithFormDisplay( controlList, mapIdFormDisplay );
     }
 
-    protected void importControls( List<Control> controlList, List<ControlMapping> controlMappingList )
+    protected void importControls( List<Control> controlList, List<ControlMapping> controlMappingList, List<ControlGroup> controlGroupList )
     {
+
+        Map<Integer, Integer> mapIdControlGroup = new HashMap<>( );
+        for (ControlGroup controlGroup : controlGroupList)
+        {
+            int oldId = controlGroup.getId( );
+            _formDatabaseService.createControlGroup( controlGroup );
+            int newId = controlGroup.getId( );
+
+            mapIdControlGroup.put( oldId, newId );
+        }
+
         Map<Integer, Integer> mapIdControls = new HashMap<>( );
         for ( Control control : controlList )
         {
+            if ( mapIdControlGroup.containsKey( control.getIdControlGroup() ) )
+            {
+                control.setIdControlGroup( mapIdControlGroup.get( control.getIdControlGroup() ) );
+            }
+
             int oldId = control.getId( );
             _formDatabaseService.createControl( control );
             int newId = control.getId( );
@@ -336,7 +370,8 @@ public abstract class AbstractFormJsonService
         }
     }
 
-    private void updateControlWithNewQuestion( List<ControlMapping> controlMappingList, List<Control> controlList, Map<Integer, Integer> mapIdQuestions )
+    private void updateControlWithNewQuestion( List<ControlMapping> controlMappingList, List<Control> controlList, Map<Integer, Integer> mapIdQuestions,
+                                               Map<Integer, Integer> mapIdFields)
     {
         for ( Control control : controlList )
         {
@@ -353,6 +388,15 @@ public abstract class AbstractFormJsonService
             {
                 control.setIdControlTarget( mapIdQuestions.get( control.getIdControlTarget( ) ) );
             }
+
+            if ( StringUtils.isNotEmpty( control.getValidatorName( ) ) ) {
+                IValidator validator = EntryServiceManager.getInstance().getValidator( control.getValidatorName() );
+                if (validator instanceof ICustomImportableControl)
+                {
+                    control.setValue( ((ICustomImportableControl) validator).getNewValidatorValue( control, mapIdFields ) );
+                }
+            }
+
         }
         for ( ControlMapping controlMapping : controlMappingList )
         {

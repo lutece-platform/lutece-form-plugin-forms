@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.business.Control;
+import fr.paris.lutece.plugins.forms.business.ControlGroup;
 import fr.paris.lutece.plugins.forms.business.ControlMapping;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormDisplay;
@@ -58,6 +59,7 @@ public class FormJsonData
     private List<Transition> _transitionList;
     private List<FormDisplay> _formDisplayList;
     private List<Control> _controlList;
+    private List<ControlGroup> _controlGroupList;
     private List<ControlMapping> _controlMappingList;
     private List<FormExportConfig> _formExportConfigList;
 
@@ -195,6 +197,23 @@ public class FormJsonData
     public void setControlList( List<Control> controlList )
     {
         _controlList = new ArrayList<>( controlList );
+    }
+
+    /**
+     * @return the controlGroupList
+     */
+    public List<ControlGroup> getControlGroupList( )
+    {
+        return new ArrayList<>( _controlGroupList );
+    }
+
+    /**
+     * @param controlGroupList
+     *            the controlGroupList to set
+     */
+    public void setControlGroupList( List<ControlGroup> controlGroupList )
+    {
+        _controlGroupList = new ArrayList<>( controlGroupList );
     }
 
     /**
