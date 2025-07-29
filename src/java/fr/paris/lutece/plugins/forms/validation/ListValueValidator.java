@@ -54,7 +54,7 @@ import fr.paris.lutece.util.html.HtmlTemplate;
  * Validator to verify the exact value of a response
  *
  */
-public class ListValueValidator extends AbstractValidator
+public class ListValueValidator extends AbstractValidator implements ICustomImportableControl
 {
 
     private static final String TEMPLATE_DISPLAY_HTML = "/admin/plugins/forms/validators/list_value_template.html";
@@ -152,4 +152,17 @@ public class ListValueValidator extends AbstractValidator
     {
         return control.getValue( );
     }
+
+    @Override
+    public String getNewValidatorValue( Control oldControl, Map<Integer, Integer> mapIdFields) {
+
+        int idValue = Integer.parseInt( oldControl.getValue() );
+        if ( mapIdFields.containsKey( idValue ) )
+        {
+            return mapIdFields.get( idValue ).toString();
+        }
+
+        return oldControl.getValue();
+    }
+
 }
