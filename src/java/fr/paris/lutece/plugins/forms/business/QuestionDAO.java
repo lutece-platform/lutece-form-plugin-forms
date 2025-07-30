@@ -64,7 +64,9 @@ public final class QuestionDAO implements IQuestionDAO
     private static final String SQL_QUERY_SELECT_BY_STEP = SQL_QUERY_SELECT_ALL + " WHERE id_step = ?";
     private static final String SQL_QUERY_SELECTALL_BY_FORM = "SELECT fq.id_question, fq.title, fq.code, fq.description, fq.id_entry, fq.id_step, fq.is_visible_multiview_global, fq.is_visible_multiview_form_selected , fq.column_title, fq.is_filterable_multiview_global, fq.is_filterable_multiview_form_selected,fq.multiview_column_order,fq.export_display_order FROM forms_question fq INNER JOIN forms_step fs ON fq.id_step = fs.id_step WHERE fs.id_form = ?";
     private static final String SQL_QUERY_SELECT_IN = SQL_QUERY_SELECT_ALL + " WHERE id_question IN ( ";
-    
+    private static final String SQL_QUERY_SELECT_ALL_UNCOMPLETE = SQL_QUERY_SELECT_ALL + " where (is_visible_multiview_global = '1' or is_filterable_multiview_global = '1')";
+    private static final String SQL_QUERY_SELECT_BY_STEP_UNCOMPLETE = SQL_QUERY_SELECTALL_BY_FORM + " and (is_visible_multiview_global = '1' or is_visible_multiview_form_selected = '1' or is_filterable_multiview_global = '1' or is_filterable_multiview_form_selected = '1')";
+
     /**
      * {@inheritDoc }
      */
@@ -278,7 +280,7 @@ public final class QuestionDAO implements IQuestionDAO
     public List<Question> selectQuestionsListUncomplete( Plugin plugin )
     {
         List<Question> questionList = new ArrayList<>( );
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_ALL_UNCOMPLETE, plugin ) )
         {
             daoUtil.executeQuery( );
 
@@ -337,7 +339,7 @@ public final class QuestionDAO implements IQuestionDAO
     public List<Question> selectQuestionsListByFormIdUncomplete( int nIdForm, Plugin plugin )
     {
         List<Question> questionList = new ArrayList<>( );
-        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL_BY_FORM, plugin ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_STEP_UNCOMPLETE , plugin ) )
         {
             daoUtil.setInt( 1, nIdForm );
             daoUtil.executeQuery( );

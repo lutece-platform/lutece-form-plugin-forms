@@ -129,11 +129,11 @@ public interface IQuestionDAO
     List<Question> selectQuestionsList( Plugin plugin );
 
     /**
-     * Load the data of all the question objects and returns them as a list
+     * Load the data of the question objects related to multiview and returns them as a list
      * 
      * @param plugin
      *            the Plugin
-     * @return The list which contains the uncomplete data of all the question objects
+     * @return The list which contains the uncomplete data of the question objects related to multiview
      */
     List<Question> selectQuestionsListUncomplete( Plugin plugin );
 
@@ -160,13 +160,13 @@ public interface IQuestionDAO
     List<Question> selectQuestionsListByFormId( int nIdForm, Plugin plugin );
 
     /**
-     * Load the data of all the question objects by form id and returns them as a list
+     * Load the data of the question objects related to multiview by form id and returns them as a list
      * 
      * @param nIdForm
      *            The id of the form
      * @param plugin
      *            The plugin
-     * @return The list which contains the data of all the question objects by given form id
+     * @return The list which contains the data of the question objects related to multiview by given form id
      */
     List<Question> selectQuestionsListByFormIdUncomplete( int nIdForm, Plugin plugin );
 

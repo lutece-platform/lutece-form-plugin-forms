@@ -68,7 +68,7 @@ public final class StepHome
     public static Step create( Step step )
     {
         _dao.insert( step, _plugin );
-        _cache.putInCache( _cache.getStepCacheKey( step.getId( ) ), step );
+        _cache.resetCache( );
         return step;
     }
 
@@ -192,7 +192,15 @@ public final class StepHome
      */
     public static List<Integer> getIdStepsListByForm( int nIdForm )
     {
-        return _dao.selectIdStepsListByForm( nIdForm, _plugin );
+        String stepCacheKey = _cache.getIdStepByFormKey( nIdForm );
+        @SuppressWarnings( "unchecked" )
+        List<Integer> listIdStep = ( List<Integer> ) _cache.getFromCache( stepCacheKey );
+        if ( listIdStep == null )
+        {
+            listIdStep = _dao.selectIdStepsListByForm( nIdForm, _plugin );
+            _cache.putInCache( stepCacheKey, listIdStep );
+        }
+        return listIdStep;
     }
 
     /**
