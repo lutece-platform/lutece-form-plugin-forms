@@ -72,7 +72,7 @@ public final class QuestionHome
     public static Question create( Question question )
     {
         _dao.insert( question, _plugin );
-
+        _cache.resetCache();
         return question;
     }
 
@@ -86,7 +86,7 @@ public final class QuestionHome
     public static Question update( Question question )
     {
         _dao.store( question, _plugin );
-        _cache.remove( _cache.getQuestionCacheKey( question.getId( ) ) );
+        _cache.resetCache();
         return question;
     }
 
@@ -104,7 +104,7 @@ public final class QuestionHome
             EntryHome.remove( questionToDelete.getIdEntry( ) );
         }
         _dao.delete( nKey, _plugin );
-        _cache.remove( _cache.getQuestionCacheKey( nKey ) );
+        _cache.resetCache();
     }
 
     /**
@@ -181,13 +181,22 @@ public final class QuestionHome
     }
 
     /**
-     * Load the data of all the question objects and returns them as a list
+     * Load the data of the question objects related to multiview and returns them as a list
      * 
-     * @return the list which contains the data of all the question objects
+     * @return the list which contains the data of the question objects related to multiview
      */
     public static List<Question> getQuestionsListUncomplete( )
     {
-        return _dao.selectQuestionsListUncomplete( _plugin );
+        String cacheKey = _cache.getUncompleteQuestionCacheKey( );
+        @SuppressWarnings( "unchecked" )
+        List<Question> listQuestion = ( List<Question> ) _cache.get( cacheKey );
+        if ( listQuestion == null )
+        {
+            listQuestion = _dao.selectQuestionsListUncomplete( _plugin );
+            _cache.put( cacheKey, listQuestion );
+        }
+
+        return listQuestion;
     }
 
     /**
@@ -215,15 +224,25 @@ public final class QuestionHome
     }
 
     /**
-     * Load the data of all the question objects for given form id and returns them as a list
+     * Load the data of the question objects related to multiview for given form id and returns them as a list
      * 
      * @param nIdForm
      *            The id of the form
-     * @return the list of all the question objects for the given form id
+     * @return the list of the question objects related to multiview for the given form id
      */
     public static List<Question> getListQuestionByIdFormUncomplete( int nIdForm )
     {
-        return _dao.selectQuestionsListByFormIdUncomplete( nIdForm, _plugin );
+
+        String cacheKey = _cache.getUncompleteQuestionByFormCacheKey( nIdForm );
+        @SuppressWarnings( "unchecked" )
+        List<Question> listQuestion = ( List<Question> ) _cache.get( cacheKey );
+        if ( listQuestion == null )
+        {
+            listQuestion = _dao.selectQuestionsListByFormIdUncomplete( nIdForm, _plugin );
+            _cache.put( cacheKey, listQuestion );
+        }
+
+        return listQuestion;
     }
 
     /**
