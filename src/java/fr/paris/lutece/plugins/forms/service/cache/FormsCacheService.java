@@ -71,6 +71,11 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
         return new StringBuilder( "Initial-Step-For-Form-id:" ).append( nIdForm ).toString( );
     }
 
+    public String getIdStepByFormKey( int nIdQuestion )
+    {
+        return new StringBuilder( "Step-For-Form-id:" ).append( nIdQuestion ).toString( );
+    }
+
     public String getFormCacheKey( int nIdForm )
     {
         return new StringBuilder( "Form-id:" ).append( nIdForm ).toString( );
@@ -101,6 +106,16 @@ public class FormsCacheService extends AbstractCacheableService<String, Object>
     public String getQuestionCacheKey( int nIdQuestion )
     {
         return new StringBuilder( "Question-id:" ).append( nIdQuestion ).toString( );
+    }
+
+    public String getUncompleteQuestionCacheKey( )
+    {
+        return new StringBuilder( "Question-Uncomplete" ).toString( );
+    }
+
+    public String getUncompleteQuestionByFormCacheKey( int nIdForm )
+    {
+        return new StringBuilder( "Question-Uncomplete-by-Form:" ).append( nIdForm ).toString( );
     }
 
     public String getFormDisplayCacheKey( int nIdFormDisplay )
