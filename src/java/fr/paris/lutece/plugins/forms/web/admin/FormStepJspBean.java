@@ -148,6 +148,8 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String ERROR_STEP_NOT_UPDATED = "forms.error.form.notUpdated";
     private static final String ERROR_STEP_NOT_COPIED = "forms.error.step.not.copied";
     private static final String ERROR_STEP_NOT_IMPORTED = "forms.error.step.not.imported";
+    private static final String ERROR_NO_FINAL_STEP = "forms.error.step.missing.final";
+    private static final String ERROR_NO_INIT_STEP = "forms.error.step.missing.initial";
 
     // Others
     private static final StepService _stepService = SpringContextService.getBean( StepService.BEAN_NAME );
@@ -252,6 +254,7 @@ public class FormStepJspBean extends AbstractJspBean
         if ( StepHome.getInitialStep( nIdForm ) == null )
         {
             _step.setInitial( true );
+            _step.setFinal( true );
         }
 
         Map<String, Object> model = getModel( );
@@ -292,8 +295,29 @@ public class FormStepJspBean extends AbstractJspBean
         {
             return redirectView( request, VIEW_CREATE_STEP );
         }
+
+        Step initialStep = StepHome.getInitialStep( _step.getIdForm( ) );
+        if ( initialStep == null && !_step.isInitial( ) )
+        {
+            addError( ERROR_NO_INIT_STEP, getLocale( ) );
+            return redirect( request, VIEW_CREATE_STEP, FormsConstants.PARAMETER_ID_FORM, _step.getIdForm( ) );
+        }
+
+        List<Step> finalsStepsList = StepHome.getFinalsStep( _step.getIdForm( ) );
+        if ( !_step.isFinal( ) && ( finalsStepsList == null ||  finalsStepsList.isEmpty( ) ) )
+        {
+            addError( ERROR_NO_FINAL_STEP, getLocale( ) );
+            return redirect( request, VIEW_CREATE_STEP, FormsConstants.PARAMETER_ID_FORM, _step.getIdForm( ) );
+        }
+
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _step.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
         checkWorkgroupPermission(_step.getIdForm( ), request);
+
+        if ( initialStep != null && _step.isInitial( ) )
+        {
+            initialStep.setInitial( false );
+            StepHome.update( initialStep );
+        }
 
         StepHome.create( _step );
         addInfo( INFO_STEP_CREATED, getLocale( ) );
@@ -532,9 +556,30 @@ public class FormStepJspBean extends AbstractJspBean
 
         populate( _step, request, request.getLocale( ) );
 
+        Step initialStep = StepHome.getInitialStep( _step.getIdForm( ) );
+        if ( initialStep == null && !_step.isInitial( ) )
+        {
+            addError( ERROR_NO_INIT_STEP, getLocale( ) );
+            return redirect( request, VIEW_MODIFY_STEP, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+        }
+
+        List<Step> finalsStepsList = StepHome.getFinalsStep( _step.getIdForm( ) );
+        boolean hasOtherFinalStep = finalsStepsList != null && finalsStepsList.stream( ).anyMatch( s -> s.getId( ) != _step.getId( ) );
+        if ( !_step.isFinal( ) && !hasOtherFinalStep )
+        {
+            addError( ERROR_NO_FINAL_STEP, getLocale( ) );
+            return redirect( request, VIEW_MODIFY_STEP, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+        }
+
         if ( !validateStep( _step ) )
         {
             return redirect( request, VIEW_MODIFY_STEP, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+        }
+
+        if ( initialStep != null && _step.isInitial( ) )
+        {
+            initialStep.setInitial( false );
+            StepHome.update( initialStep );
         }
 
         StepHome.update( _step );

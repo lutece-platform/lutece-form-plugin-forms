@@ -98,6 +98,17 @@ public interface IStepDAO
     Step selectInitialStep( int nIdForm, Plugin plugin );
 
     /**
+     * Load finals steps list of the given form
+     *
+     * @param nIdForm
+     *            The identifier of the step form
+     * @param plugin
+     *            the Plugin
+     * @return List of finals steps of the given form
+     */
+    List<Step> selectFinalStepList( int nIdForm, Plugin plugin );
+
+    /**
      * Load the data of all the step objects and returns them as a list
      * 
      * @param plugin
