@@ -56,6 +56,7 @@ import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.util.BytesRef;
@@ -377,6 +378,22 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         indexFormResponseList( listFormResponses, listComputingAction, true, plugin );
         listComputingAction.clear();
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean isIndexerInitialized( )
+    {
+        try
+        {
+            return DirectoryReader.indexExists( _luceneFormSearchFactory.getDirectory( ) );
+        }
+        catch( Exception e )
+        {
+            AppLogService.error( "Indexing error ", e );
+        }
+        return false;
     }
 
     /**
