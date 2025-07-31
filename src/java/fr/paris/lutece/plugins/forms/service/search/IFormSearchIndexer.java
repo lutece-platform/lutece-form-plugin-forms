@@ -73,4 +73,11 @@ public interface IFormSearchIndexer
      */
     String fullIndexing();
 
+    /**
+     * return true if the indexer is initialized
+     *
+     * @return true if the indexer is initialized
+     */
+    boolean isIndexerInitialized();
+
 }
