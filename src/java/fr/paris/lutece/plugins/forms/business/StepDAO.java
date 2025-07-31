@@ -53,6 +53,7 @@ public final class StepDAO implements IStepDAO
     private static final String SQL_QUERY_SELECTALL = "SELECT id_step, title, description, id_form, is_initial, is_final FROM forms_step";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_step = ?";
     private static final String SQL_QUERY_SELECT_INITIAL_STEP = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND is_initial = 1";
+    private static final String SQL_QUERY_SELECT_FINAL_STEP = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND is_final = 1";
     private static final String SQL_QUERY_INSERT = "INSERT INTO forms_step ( title, description, id_form, is_initial, is_final ) VALUES ( ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_step WHERE id_step = ? ";
     private static final String SQL_QUERY_UPDATE = "UPDATE forms_step SET id_step = ?, title = ?, description = ?, id_form = ? ,is_initial = ?, is_final = ? WHERE id_step = ?";
@@ -121,6 +122,26 @@ public final class StepDAO implements IStepDAO
             }
         }
         return step;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<Step> selectFinalStepList( int nIdForm, Plugin plugin )
+    {
+        List<Step> stepList = new ArrayList<>( );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_FINAL_STEP, plugin ) )
+        {
+            daoUtil.setInt( 1, nIdForm );
+            daoUtil.executeQuery( );
+
+            while ( daoUtil.next( ) )
+            {
+                stepList.add( dataToObject( daoUtil ) );
+            }
+        }
+        return stepList;
     }
 
     /**
