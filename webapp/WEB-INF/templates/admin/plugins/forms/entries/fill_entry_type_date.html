@@ -16,7 +16,7 @@
 		<#assign default_today_date=getFieldByCode( entry, "default_today_date")>
 		<#assign field = getFieldByCode( entry, "default_date_value" )>
 		<#assign default=''>
-		<#assign toDay = .now?string("yyyy-MM-dd")>
+		<#assign toDay = .now?string("dd/MM/yyyy")>
 		<#if default_today_date?? && default_today_date.value?boolean>
 			<#assign default= toDay>
 		<#elseif response?? && response.responseValue??>
