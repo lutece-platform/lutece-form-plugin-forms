@@ -699,4 +699,25 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
         }
         return null;
     }
+
+    @Override
+    public ICompositeDisplay filterFromListQuestion( List<Question> listQuestion )
+    {
+        if ( listQuestion.stream().anyMatch( question -> question.getId() == _question.getId( ) && (question.getIterationNumber()== -1 || question.getIterationNumber() == _question.getIterationNumber() ) ) )
+        {
+            return this;
+        }
+        return null;
+    }
+
+    @Override
+    public Integer getIterationNumber()
+    {
+        if ( _question != null )
+        {
+            return _question.getIterationNumber();
+        }
+        return null;
+    }
+
 }
