@@ -39,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -79,6 +80,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     // Marks
     private static final String MARK_GROUP = "group";
     private static final String MARK_GROUP_CONTENT = "groupContent";
+    private static final String MARK_GROUP_CONTENT_BY_ITERATION = "groupContentByIteration";
     private static final String MARK_IS_ITERABLE = "isIterable";
     private static final String MARK_NB_BASE_CHILDREN = "nbBaseChildren";
     private static final String MARK_VISIBLE = "visible";
@@ -229,15 +231,25 @@ public class CompositeGroupDisplay implements ICompositeDisplay
     {
         List<String> listChildrenHtml = new ArrayList<>( );
 
+        TreeMap<Integer, List<String>> listChildrenHtmlByIteration = new TreeMap<>();
+
         for ( ICompositeDisplay child : _listChildren )
         {
             child.addModel( _model );
-            listChildrenHtml.add( child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType ) );
+            String childrenHtml = child.getCompositeHtml( request, listFormQuestionResponse, locale, displayType );
+            listChildrenHtml.add( childrenHtml );
+
+            Integer iterationNumber = child.getIterationNumber();
+            if( iterationNumber != null ) {
+                listChildrenHtmlByIteration.computeIfAbsent(iterationNumber , s -> new ArrayList<>( ) );
+                listChildrenHtmlByIteration.get(iterationNumber).add(childrenHtml);
+            }
         }
 
         _model.put( MARK_VISIBLE, isVisible( ) );
         _model.put( MARK_GROUP, _group );
         _model.put( MARK_GROUP_CONTENT, listChildrenHtml );
+        _model.put( MARK_GROUP_CONTENT_BY_ITERATION, listChildrenHtmlByIteration );
         _model.put( FormsConstants.PARAMETER_ID_GROUP, _formDisplay.getId( ) );
         _model.put( MARK_IS_ITERABLE, isIterable( ) );
         _model.put( MARK_NB_BASE_CHILDREN, _nNbBaseChildren );
@@ -554,4 +566,32 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         _listChildren.addAll( listChildrenFiltered );
         return this;
     }
+
+    @Override
+    public ICompositeDisplay filterFromListQuestion( List<Question> listQuestion )
+    {
+        List<ICompositeDisplay> listChildrenFiltered = new ArrayList<>( );
+
+        for ( ICompositeDisplay child : _listChildren )
+        {
+            ICompositeDisplay newChild = child.filterFromListQuestion( listQuestion );
+            if ( newChild != null )
+            {
+                listChildrenFiltered.add( newChild );
+            }
+        }
+        if ( listChildrenFiltered.isEmpty( ) )
+        {
+            return null;
+        }
+        _listChildren.clear( );
+        _listChildren.addAll( listChildrenFiltered );
+        return this;
+    }
+
+    @Override
+    public Integer getIterationNumber() {
+        return null;
+    }
+
 }
