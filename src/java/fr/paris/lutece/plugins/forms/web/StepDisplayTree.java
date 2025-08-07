@@ -162,6 +162,40 @@ public class StepDisplayTree
     }
 
     /**
+     * Constructor
+     *
+     * @param nIdStep
+     *            the step identifier
+     * @param formResponse
+     *            the form response containing the responses
+     * @param listQuestion
+     *            questions to display
+     */
+    public StepDisplayTree( int nIdStep, List<Question> listQuestion, FormResponse formResponse  )
+    {
+        _formResponse = formResponse;
+
+        initStepTree( nIdStep );
+
+        List<ICompositeDisplay> listChildrenFiltered = new ArrayList<>( );
+        for ( ICompositeDisplay child : _listChildren )
+        {
+            ICompositeDisplay newChild = child.filterFromListQuestion( listQuestion );
+            if ( newChild != null )
+            {
+                listChildrenFiltered.add( newChild );
+            }
+        }
+        _listChildren.clear( );
+        _listDisplayControls.clear( );
+        for ( ICompositeDisplay child : listChildrenFiltered )
+        {
+            _listChildren.add( child );
+            _listDisplayControls.addAll( child.getAllDisplayControls( ) );
+        }
+    }
+
+    /**
      * Initialize the composite tree
      * 
      * @param nIdStep

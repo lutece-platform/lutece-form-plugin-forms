@@ -1,12 +1,21 @@
 <#if visible>
-	<fieldset  <#if id_display??>class="display_field_${id_display}"</#if>>
-	    <legend>
-	        ${group.title}
-	    </legend>
-	    <div class="form-group-value-content">
-			<#list groupContent as childrenHtml>
-				${childrenHtml}
-			</#list>
-	    </div>
-	</fieldset>
+<div class="row step-group">
+	<div class="col-12">
+		<#list groupContentByIteration as iterationNumber, groupContent >
+			<#if groupContent?size != 0>
+				<fieldset class="<#if id_display??> display_field_${id_display} d-none</#if>" style="position:relative;">
+					<hr>
+					<legend>${group.title} <#if iterationNumber &gt; 0>(${iterationNumber+1})</#if>
+						<#if group.description!=''>
+							<div class="helpBox">${group.description}</div>
+						</#if>
+					</legend>
+					<#list groupContent as childrenHtml>
+						${childrenHtml}
+					</#list>
+				</fieldset>
+			</#if>
+		</#list>
+	</div>
+</div>
 </#if>

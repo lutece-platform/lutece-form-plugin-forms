@@ -151,4 +151,20 @@ public interface ICompositeDisplay
     boolean isVisible( );
 
     ICompositeDisplay filter( List<Integer> listQuestionIds );
+
+    /**
+     * filter composiste listChildren with the listQuestion using iteration number
+     * @param listQuestion
+     *      The listQuestion
+     * @return composite display
+     */
+    ICompositeDisplay filterFromListQuestion( List<Question> listQuestion );
+
+    /**
+     * Return the IterationNumber of the question
+     *
+     * @return IterationNumber
+     */
+    Integer getIterationNumber();
+
 }
