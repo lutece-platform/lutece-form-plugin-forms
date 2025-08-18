@@ -412,7 +412,7 @@ $( function() {
 				<@row>
 					<@columns xs=12 sm=12>
 						<@formGroup labelKey='#i18n{forms.modify_form.labelUnavailableMessage}' helpKey='#i18n{forms.modify_form.labelUnavailableMessage.help}' rows=2>
-								<@input type='textarea' name='unavailableMessage'>${form.unavailableMessage!}</@input>
+								<@input type='textarea' name='unavailableMessage' richtext=true>${form.unavailableMessage!}</@input>
 						</@formGroup>
 					</@columns>
 				</@row>
