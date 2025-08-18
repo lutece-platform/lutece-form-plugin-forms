@@ -117,6 +117,7 @@ public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Fo
 
     private String _labelFinalButton;
 
+    @Size( max = 3000, message = "#i18n{forms.validation.form.UnavailableMessage.size}" )
     private String _strUnavailableMessage;
 
     private File _logo;
