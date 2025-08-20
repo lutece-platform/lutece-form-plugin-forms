@@ -807,7 +807,7 @@ public class FormXPage extends MVCApplication
         FormMessage formMessage = FormMessageHome.findByForm( form.getId( ) );
         boolean bIsEndMessageDisplayed = formMessage.getEndMessageDisplay( );
         String strBackUrl = getBackUrl( form, bIsEndMessageDisplayed, _formResponseManager.getFormResponse( ).getId( ) );
-        init( request );
+        initAfterSave( request );
 
         if ( formMessage.getEndMessageDisplay( ) )
         {
@@ -1405,6 +1405,22 @@ public class FormXPage extends MVCApplication
         _stepDisplayTree = null;
         _breadcrumb = null;
         _bInactiveStateBypassed = false;
+        IsRequestComingFromAction = false;
+        FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
+    }
+
+    /**
+     *  reinitialize the object after save.
+     *
+     * @param request
+     *            the HTTP request
+     */
+    private void initAfterSave( HttpServletRequest request )
+    {
+        _formResponseManager = null;
+        _currentStep = null;
+        _stepDisplayTree = null;
+        _breadcrumb = null;
         IsRequestComingFromAction = false;
         FormsAsynchronousUploadHandler.getHandler( ).removeSessionFiles( request.getSession( ) );
     }
