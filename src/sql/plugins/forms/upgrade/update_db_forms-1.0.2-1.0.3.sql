@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset forms:update_db_forms-1.0.2-1.0.3.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset forms:update_db_forms-1.0.2-1.0.3.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 
 
 DROP TABLE IF EXISTS forms_control_question;

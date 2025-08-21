@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset forms:update_db_forms-1.0.0-1.0.1.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset forms:update_db_forms-1.0.0-1.0.1.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin) VALUES 
 ('116', 'Conditions d''utilisation', 0, 0, 0, 'forms.entryTypeTermsOfService', 'legal', 'forms');
 

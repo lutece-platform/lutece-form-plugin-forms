@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset forms:update_db_forms-2.4.1-2.4.2.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset forms:update_db_forms-2.4.1-2.4.2.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 ALTER TABLE forms_response ADD status SMALLINT default 0 NOT NULL;
 ALTER TABLE forms_response ADD update_date_status timestamp default CURRENT_TIMESTAMP NOT NULL;
 
