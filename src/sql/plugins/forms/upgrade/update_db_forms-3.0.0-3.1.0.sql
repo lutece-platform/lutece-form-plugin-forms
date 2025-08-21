@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset forms:update_db_forms-3.0.0-3.1.0.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset forms:update_db_forms-3.0.0-3.1.0.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 DROP TABLE IF EXISTS forms_list_portlet;
 CREATE TABLE forms_list_portlet (
 	id_portlet int NOT NULL,

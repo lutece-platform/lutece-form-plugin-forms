@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset forms:update_db_forms-2.3.1-2.4.1.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset forms:update_db_forms-2.3.1-2.4.1.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 ALTER TABLE forms_form MODIFY availability_start_date TIMESTAMP NULL;
 ALTER TABLE forms_form MODIFY availability_end_date TIMESTAMP NULL;
 
