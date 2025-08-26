@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset forms:update_db_forms-1.0.3-2.0.0.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset forms:update_db_forms-1.0.3-2.0.0.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 UPDATE forms_question q 
 SET q.is_filterable_multiview_global = 0, q.is_filterable_multiview_form_selected = 0
 WHERE q.id_entry IN (

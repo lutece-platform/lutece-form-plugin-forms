@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset forms:update_db_genericattributes-1.3.3-2.0.0.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset forms:update_db_genericattributes-1.3.3-2.0.0.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 INSERT INTO genatt_field ( id_entry, code, value)
 	SELECT id_entry, 'array_row', num_row from genatt_entry WHERE resource_type = 'FORMS_FORM' AND num_row > 0;
 

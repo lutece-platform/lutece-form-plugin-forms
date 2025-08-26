@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset forms:update_db_forms-2.2.1-2.2.2.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset forms:update_db_forms-2.2.1-2.2.2.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 INSERT INTO genatt_entry_type (id_type,title,is_group,is_comment,is_mylutece_user,class_name,icon_name,plugin,display_order,inactive) VALUES 
 (118, 'Camera', 0, 0, 0, 'forms.entryTypeCamera', 'camera', 'forms',15,0);
 

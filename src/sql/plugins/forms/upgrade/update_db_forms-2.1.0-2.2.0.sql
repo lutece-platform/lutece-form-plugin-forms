@@ -1,6 +1,6 @@
---liquibase formatted sql
---changeset forms:update_db_forms-2.1.0-2.2.0.sql
---preconditions onFail:MARK_RAN onError:WARN
+-- liquibase formatted sql
+-- changeset forms:update_db_forms-2.1.0-2.2.0.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 ALTER TABLE forms_form ADD COLUMN captcha_step_initial SMALLINT default 0 NOT NULL;
 ALTER TABLE forms_form ADD COLUMN captcha_step_final SMALLINT default 0 NOT NULL;
 ALTER TABLE forms_form ADD COLUMN captcha_recap SMALLINT default 0 NOT NULL;
