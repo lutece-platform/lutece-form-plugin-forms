@@ -42,13 +42,17 @@ import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.web.admin.AdminFeaturesPageJspBean;
 import fr.paris.lutece.util.html.HtmlTemplate;
-
-import javax.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 /**
  * This class provides the user interface to manage forms indexations Portlet
  */
+@RequestScoped
+@Named
 public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
 {
 
@@ -59,6 +63,9 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
     private static final String LABEL_FULL_LAUNCH = "forms.adminFeature.manageSearchIndexation.info.full.launch";
     private static final String LABEL_INCREMENTAL_LAUNCH = "forms.adminFeature.manageSearchIndexation.info.incremental.launch";
     private static final String LABEL_FULL_INPROGRESS = "forms.adminFeature.manageSearchIndexation.info.full.inprogress";
+
+    @Inject
+    private SecurityTokenService _securityTokenService;
 
     /**
      * Displays the indexing info
@@ -72,7 +79,7 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
         HashMap<String, Object> model = new HashMap<>( );
 
         addInfo(model);
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MANAGE_INDEXER ) );
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, TEMPLATE_MANAGE_INDEXER ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_INDEXER, getLocale( ), model );
 
@@ -88,7 +95,7 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
      */
     public String doIndexing( HttpServletRequest request )
     {
-        if ( !SecurityTokenService.getInstance( ).validate( request, TEMPLATE_MANAGE_INDEXER ) )
+        if ( !_securityTokenService.validate( request, TEMPLATE_MANAGE_INDEXER ) )
         {
             return getIndexingProperties( request );
         }
@@ -108,7 +115,7 @@ public class ManageFormsSearchIndexationBean extends AdminFeaturesPageJspBean
         AppDaemonService.signalDaemon( FormsSearchIndexerDaemon.DAEMON_ID );
 
 
-        model.put( SecurityTokenService.MARK_TOKEN, SecurityTokenService.getInstance( ).getToken( request, TEMPLATE_MANAGE_INDEXER ) );
+        model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, TEMPLATE_MANAGE_INDEXER ) );
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_MANAGE_INDEXER, null, model );
 
         return getAdminPage( template.getHtml( ) );

@@ -40,13 +40,18 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.l10n.LocaleService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.UUID;
 
-public final class LuceneLockManagerDB implements LuceneLockManager {
+@ApplicationScoped
+@Named( "forms.luceneLockManager" )
+public class LuceneLockManagerDB implements LuceneLockManager {
 
     private final ILockDAO _lockDao;
     private static final Plugin _plugin = PluginService.getPlugin( "forms" );
@@ -55,9 +60,10 @@ public final class LuceneLockManagerDB implements LuceneLockManager {
 
 
     /**
-     * Private constructor - this class need not be instantiated
+     * constructor
      */
-    private LuceneLockManagerDB( ILockDAO lockDao )
+    @Inject
+    LuceneLockManagerDB( ILockDAO lockDao )
     {
         _lockDao = lockDao;
     }

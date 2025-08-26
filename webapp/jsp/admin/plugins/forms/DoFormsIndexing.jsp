@@ -1,9 +1,9 @@
 <%@ page errorPage="../../ErrorPage.jsp" %>
 <jsp:include page="../../AdminHeader.jsp" />
 
-<jsp:useBean id="formsIndexing" scope="session" class="fr.paris.lutece.plugins.forms.web.search.ManageFormsSearchIndexationBean" />
+<%@page import="fr.paris.lutece.plugins.forms.web.search.ManageFormsSearchIndexationBean"%>
 
-<% formsIndexing.init( request , formsIndexing.RIGHT_FORMS_INDEXER ); %>
-<%= formsIndexing.doIndexing( request ) %>
+${ manageFormsSearchIndexationBean.init( pageContext.request, ManageFormsSearchIndexationBean.RIGHT_FORMS_INDEXER ) }
+${ manageFormsSearchIndexationBean.doIndexing( pageContext.request ) }
 
 <%@ include file="../../AdminFooter.jsp" %>
