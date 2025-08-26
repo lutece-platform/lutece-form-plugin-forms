@@ -35,11 +35,8 @@ package fr.paris.lutece.plugins.forms.service.search;
 
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.datastore.DatastoreService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-
-import javax.inject.Inject;
-
+import jakarta.enterprise.inject.spi.CDI;
 /**
  * FormsSearchIndexerDaemon
  */
@@ -51,8 +48,7 @@ public class FormsSearchIndexerDaemon extends Daemon {
     public static final String DATASTORE_DAEMON_MODE_INCREMENTAL = DatastoreService.VALUE_FALSE;
     private static final boolean INDEXER_AUTO_INITIALIZE  = AppPropertiesService.getPropertyBoolean( "forms.index.writer.auto.initialize", true );
 
-    @Inject
-    private IFormSearchIndexer _formSearchIndexer = SpringContextService.getBean( LuceneFormSearchIndexer.BEAN_SERVICE );
+    private IFormSearchIndexer _formSearchIndexer = CDI.current( ).select( IFormSearchIndexer.class ).get( );
 
     /**
      * {@inheritDoc}

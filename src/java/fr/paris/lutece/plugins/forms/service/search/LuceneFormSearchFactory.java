@@ -53,7 +53,7 @@ import org.apache.lucene.store.FSDirectory;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import org.springframework.util.FileSystemUtils;
+import org.apache.commons.io.file.PathUtils;
 
 /**
  * Factory for the search on Directory
@@ -214,7 +214,7 @@ public class LuceneFormSearchFactory
         Path tempPath = Paths.get( getPathDirectory( true ) );
 
         try {
-            FileSystemUtils.deleteRecursively( mainPath );
+        	PathUtils.deleteDirectory( mainPath );
             Files.move( tempPath, mainPath );
 
         } catch (IOException e) {

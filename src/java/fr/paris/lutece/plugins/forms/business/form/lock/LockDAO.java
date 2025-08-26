@@ -33,16 +33,17 @@
  */
 package fr.paris.lutece.plugins.forms.business.form.lock;
 
-import fr.paris.lutece.plugins.forms.service.lock.LockResult;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.sql.DAOUtil;
+import jakarta.enterprise.context.ApplicationScoped;
 
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public final class LockDAO implements ILockDAO {
+@ApplicationScoped
+public class LockDAO implements ILockDAO {
 
     // Constants
 
