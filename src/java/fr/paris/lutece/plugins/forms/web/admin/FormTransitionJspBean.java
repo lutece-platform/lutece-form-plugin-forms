@@ -73,7 +73,7 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 @SessionScoped
 @Named
-@Controller( controllerJsp = "ManageTransitions.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
+@Controller( controllerJsp = "ManageTransitions.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT", securityTokenEnabled=true )
 public class FormTransitionJspBean extends AbstractJspBean
 {
 

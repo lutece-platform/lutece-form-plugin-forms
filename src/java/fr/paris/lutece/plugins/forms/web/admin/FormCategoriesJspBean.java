@@ -62,7 +62,7 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 @SessionScoped
 @Named
-@Controller( controllerJsp = "ManageFormsCategories.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_CATEGORIES" )
+@Controller( controllerJsp = "ManageFormsCategories.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_CATEGORIES", securityTokenEnabled=true )
 public class FormCategoriesJspBean extends AbstractJspBean
 {
     private static final long serialVersionUID = 1992087822103151373L;
@@ -209,7 +209,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
      * @throws AccessDeniedException
      *             If the user is not authorized
      */
-    @Action( ACTION_CONFIRM_REMOVE_CATEGORY )
+    @Action( value = ACTION_CONFIRM_REMOVE_CATEGORY, securityTokenAction = ACTION_REMOVE_CATEGORY )
     public String getConfirmRemoveCategory( HttpServletRequest request )
     {
         String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );

@@ -59,7 +59,7 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 
 @RequestScoped
 @Named
-@Controller( controllerJsp = "ManageFormWorkflowConfig.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
+@Controller( controllerJsp = "ManageFormWorkflowConfig.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT", securityTokenEnabled=true )
 public class FormWorkflowConfigJspBean extends AbstractJspBean
 {
     private static final long serialVersionUID = -2505310758526626253L;

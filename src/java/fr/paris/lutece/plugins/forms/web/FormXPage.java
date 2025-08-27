@@ -99,7 +99,7 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 @SessionScoped
 @Named( "forms.xpage.forms" )
-@Controller( xpageName = FormXPage.XPAGE_NAME, pageTitleI18nKey = FormXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = FormXPage.MESSAGE_PATH )
+@Controller( xpageName = FormXPage.XPAGE_NAME, pageTitleI18nKey = FormXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = FormXPage.MESSAGE_PATH, securityTokenEnabled=true )
 public class FormXPage extends MVCApplication
 {
     protected static final String XPAGE_NAME = "forms";
