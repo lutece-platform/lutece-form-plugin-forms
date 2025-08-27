@@ -100,7 +100,7 @@ public class FormCategoriesJspBean extends AbstractJspBean
     private static final String INFO_CATEGORY_REMOVED = "forms.info.formCategory.removed";
 
     // Properties
-    private static final String MESSAGE_CONFIRM_REMOVE_CATEGORY = "appointment.message.confirmRemoveCategory";
+    private static final String MESSAGE_CONFIRM_REMOVE_CATEGORY = "forms.message.confirmRemoveCategory";
 
     // Session variable to store working values
     private FormCategory _formCategory;
