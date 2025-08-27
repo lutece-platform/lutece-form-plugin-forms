@@ -87,7 +87,7 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 @SessionScoped
 @Named
-@Controller( controllerJsp = "ManageSteps.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
+@Controller( controllerJsp = "ManageSteps.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT", securityTokenEnabled=true )
 public class FormStepJspBean extends AbstractJspBean
 {
 

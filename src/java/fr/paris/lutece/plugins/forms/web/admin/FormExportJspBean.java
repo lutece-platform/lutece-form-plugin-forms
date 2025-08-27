@@ -64,7 +64,7 @@ import java.util.*;
 
 @RequestScoped
 @Named
-@Controller( controllerJsp = "ManageFormExport.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
+@Controller( controllerJsp = "ManageFormExport.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT", securityTokenEnabled=true )
 public class FormExportJspBean extends AbstractJspBean
 {
     private static final long serialVersionUID = -2505310758526626253L;

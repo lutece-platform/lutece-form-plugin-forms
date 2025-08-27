@@ -76,7 +76,7 @@ import fr.paris.lutece.util.url.UrlItem;
 
 @SessionScoped
 @Named
-@Controller( controllerJsp = "ManageFormResponse.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT" )
+@Controller( controllerJsp = "ManageFormResponse.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_MANAGEMENT", securityTokenEnabled=true )
 public class FormResponseJspBean extends AbstractJspBean
 {
 	private static final long serialVersionUID = 1L;
