@@ -56,12 +56,13 @@
 
     $(function () {
         if (isIniFrame()) {
-            $('body').css('overflow', 'auto');
-            $('.content-header').hide();
-            $('#admin-wrapper').css('margin', '0').css('overflow', 'hidden');
             $('header').remove();
             $('#breadforms').remove();
-            $('#footer').remove();
+            $('footer').remove();
+            $('body').css( 'overflow', 'auto' ).css('margin', '15px');
+            $('.content-header').hide();
+            $('#admin-wrapper').css('margin', '0').css('overflow', 'hidden');
+            $('#lutece-page-wrapper ').css('margin', '15px');
             var modalTitle = "#i18n{forms.manage_controls.title.${control_type?lower_case}}";
             window.parent.$("#qModal").find(".modal-title").text(modalTitle);
             window.parent.$("#transitionModal").find(".modal-title").text(modalTitle);
