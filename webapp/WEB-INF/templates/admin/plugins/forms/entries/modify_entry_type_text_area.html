@@ -1,6 +1,5 @@
 <#include "/admin/util/editor/editor.html" />
 <#include "all_entry_commons.html" />
-  
 ${breadcrumb_template}
 <@row>
 	<@columns>
@@ -46,16 +45,26 @@ ${breadcrumb_template}
 						</@formGroup>
 						<#assign field_height=getFieldValueByCode( entry, "height")>
 						<@formGroup labelFor='height' labelKey='#i18n{forms.createEntry.labelHeight}' mandatory=true>
-							<@input type='text' name='height' id='height' inputSize=5 value='${field_height?number}' />
+						<@row>
+							<@columns md=4 lg=3 xl=2>
+								<@inputGroup>	
+									<@input type='text' name='height' id='height' value='${field_height?number}' />
+									<@inputGroupItem>#i18n{forms.manageForm.labelRows}</@inputGroupItem>
+								</@inputGroup>	
+							</@columns>
+						</@row>
 						</@formGroup>
 						<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
 						<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
-							<#if field_max_size?number!=-1>
-								<#assign value='${field_max_size?number}' />
-							<#else>
-								<#assign value='' />
-							</#if>
-							<@input type='text' name='max_size_enter' id='max_size_enter' value=value />
+						<#if field_max_size?number!=-1><#assign value='${field_max_size?number}' /><#else><#assign value='' /></#if>
+							<@row>
+								<@columns md=6 lg=4 xl=3>
+									<@inputGroup>	
+										<@input type='text' name='max_size_enter' id='max_size_enter' value=value />
+										<@inputGroupItem>#i18n{forms.manageForm.labelChars}</@inputGroupItem>
+									</@inputGroup>
+								</@columns>
+							</@row>
 						</@formGroup>
 						<@formGroup labelFor='css_class' labelKey='#i18n{forms.createEntry.labelCSSClass}' helpKey='#i18n{forms.createEntry.labelCSSClassComment}'>
 							<@input type='text' name='css_class' id='css_class' value='${entry.CSSClass!}' maxlength=255 />
