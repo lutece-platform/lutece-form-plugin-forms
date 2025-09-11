@@ -1,8 +1,6 @@
 
 <#include "all_entry_commons.html" />
- 
 ${breadcrumb_template}
-		
 <@row>
 	<@columns>
 		<@box>
@@ -12,12 +10,9 @@ ${breadcrumb_template}
 					<@fieldSet legend='#i18n{forms.createEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 						<@input type='hidden' name='id_type' value='${entry.entryType.idType}' />
 						<@input type='hidden' name='width' id='width' value='0' />
-						<#if entry.fieldDepend?exists>
-							<@input type='hidden' name='id_field' value='${entry.fieldDepend.idField}' />
-						</#if>
+						<#if entry.fieldDepend?exists><@input type='hidden' name='id_field' value='${entry.fieldDepend.idField}' /></#if>
 						<@input type='hidden' name='id_parent' value='${id_parent!"0"}' />
 						<@input type='hidden' name='id_step' value='${step.id!"0"}' />
-						
 						<@formGroup labelFor='type' labelKey='#i18n{forms.createEntry.labelType}'>
 							<@staticText><@tag color='info'>${entry.entryType.title}</@tag></@staticText>
 						</@formGroup>
@@ -47,10 +42,24 @@ ${breadcrumb_template}
 							<@checkBox orientation='switch' labelFor='mandatory' labelKey='#i18n{forms.createEntry.labelMandatory}' name='mandatory' id='mandatory' value='1' checked=getChecked('mandatory',list_param_default_values) />
 						</@formGroup>
 						<@formGroup labelFor='height' labelKey='#i18n{forms.createEntry.labelHeight}' mandatory=true>
-							<@input type='text' name='height' id='height' value=getName('height_text_area',list_param_default_values) />
+						<@row>
+							<@columns md=4 lg=3 xl=2>
+							<@inputGroup>	
+								<@input type='text' name='height' id='height' value=getName('height_text_area',list_param_default_values) />
+									<@inputGroupItem>#i18n{forms.manageForm.labelRows}</@inputGroupItem>
+								</@inputGroup>	
+							</@columns>
+						</@row>
 						</@formGroup>
 						<@formGroup labelFor='max_size_enter' labelKey='#i18n{forms.createEntry.labelMaxSizeEnter}'>
-							<@input type='text' name='max_size_enter' id='max_size_enter' value=getName('max_size_enter',list_param_default_values) />
+						<@row>
+							<@columns md=6 lg=4 xl=3>
+								<@inputGroup>	
+									<@input type='text' name='max_size_enter' id='max_size_enter' value=getName('max_size_enter',list_param_default_values) />
+									<@inputGroupItem>#i18n{forms.manageForm.labelChars}</@inputGroupItem>
+								</@inputGroup>
+							</@columns>
+						</@row>
 						</@formGroup>
 						<@formGroup>
 							<@checkBox orientation='switch' labelFor='only_display_in_back' labelKey='#i18n{forms.createEntry.labelOnlyDisplayBack}' name='only_display_in_back' id='only_display_in_back' value='1' />
@@ -83,8 +92,6 @@ ${breadcrumb_template}
 		</@box>
 	</@columns>
 </@row>
-
 <#include "/admin/util/editor/editor.html" />
 <@anonymPattern />
 <@initEditor />
- 
