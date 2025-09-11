@@ -21,7 +21,7 @@
 </#if>
 <#if entry.mapProvider??>
     <div class="form-group ${entry.mapProvider.key!} ${entry.CSSClass!}">
-        <label for="${idName}">${entry.title}<#if entry.mandatory><span class="main-warning-color" aria-hidden="true"> *</span></#if></label>
+        <label for="${idName}" class="form-label">${entry.title}<#if entry.mandatory><span class="main-danger-color" aria-hidden="true"> *</span></#if></label>
         <#if list_responses?? && list_responses?has_content>
             <#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse />
             <#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse />
@@ -33,12 +33,10 @@
             </#if>
         </#if>
         <#if editModeValue == "" || editModeValue == "Address" || editModeValue == "Adresse" >
-            <input type="text" class="form-control form-geoloc <#if hasError> is-invalid</#if> address-autocomplete"
-                   name="${idName}_address" id="${idName}_address" value="${addressValue!}"<#if entry.mandatory> required</#if> />
+            <input type="text" class="form-control form-geoloc <#if hasError> is-invalid</#if> address-autocomplete" name="${idName}_address" id="${idName}_address" value="${addressValue!}"<#if entry.mandatory> required</#if> />
             <div id="labelAutocomplete"></div>
         <#else>
-            <input type="hidden" name="${idName}_address" id="${idName}"
-               value="${addressValue!}" <#if !entry.mandatory > required</#if> >
+            <input type="hidden" name="${idName}_address" id="${idName}" value="${addressValue!}" <#if !entry.mandatory > required</#if> >
         </#if>
         <input type="hidden" name="${idName}_idAddress" id="${idName}_idAddress" value="${idAddressValue!}">
         <input type="hidden" name="${idName}_x" id="${idName}_x" value="${xValue!}">
