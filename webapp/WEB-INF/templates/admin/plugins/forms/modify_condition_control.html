@@ -7,7 +7,7 @@
 	<@input type='hidden' id='token' name='token' value='${token}' />
 	<@modalBody>
 		<@messages errors=errors />
-		<@formGroup labelKey='#i18n{forms.modify_control.labelStep}' helpKey='#i18n{forms.modify_control.labelStep.help}' mandatory=true>
+		<@formGroup labelKey='#i18n{forms.modify_control.labelStep}' helpKey='#i18n{forms.modify_control.labelStep.help}' mandatory=true rows=2>
 			<@inputGroup>
 				<@select name='id_step' items=availableSteps default_value='${target_id_step!}' />
 				<@inputGroupItem>
@@ -15,7 +15,7 @@
 				</@inputGroupItem>
 			</@inputGroup>
 		</@formGroup>
-		<@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}' >
+		<@formGroup labelKey='#i18n{forms.modify_control.labelQuestion}' helpKey='#i18n{forms.modify_control.labelQuestion.help}'  rows=2>
 			<@inputGroup>
 				<@select name='id_question' items=listQuestion default_value='${target_id_question!}' /> 
 				<@inputGroupItem>
@@ -26,7 +26,7 @@
 		<#assign labelicon>
 			<@icon style='asterisk' />
 		</#assign>
-		<@formGroup labelKey='#i18n{forms.modify_control.labelValidator} ${labelicon}' helpKey='#i18n{forms.modify_control.labelValidator.help}'>
+		<@formGroup labelKey='#i18n{forms.modify_control.labelValidator} ${labelicon}' helpKey='#i18n{forms.modify_control.labelValidator.help}'  rows=2>
 			<@inputGroup>
 				<@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
 				<@inputGroupItem>
@@ -56,7 +56,7 @@ $( function() {
     if ( isIniFrame() ){
 		$('body').css( 'overflow-x', 'hidden' ).css( 'padding-bottom', '0' );
 		$('.content-header').hide();
-		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow-x', 'hidden' );
+		$('#admin-wrapper').css( 'margin', '15px' ).css( 'overflow-x', 'hidden' );
 		$('header').remove();
 		$('#breadforms').remove();
 		$('#footer').remove();

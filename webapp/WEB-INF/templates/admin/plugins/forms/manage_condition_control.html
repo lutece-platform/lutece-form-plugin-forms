@@ -3,7 +3,6 @@
 	<li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${step.title}</@link></li>
 	<li class="active">#i18n{forms.manage_controls.title.${control_type?lower_case}}</li></ul>
 </@formBreadCrumb>
-
 <@modalBody>
 	<#if condition_control_list?size gt 0>
 		<@table>
@@ -58,12 +57,12 @@ function isIniFrame() {
 
 $( function() {
     if ( isIniFrame() ){
-		$('body').css( 'overflow', 'auto' );
-		$('.content-header').hide();
-		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
 		$('header').remove();
 		$('#breadforms').remove();
-		$('#footer').remove();
+		$('footer').remove();
+		$('body').css( 'overflow', 'auto' ).css('margin', '15px');
+		$('.content-header').hide();
+		$('#admin-wrapper').css( 'margin', '0' ).css( 'overflow', 'hidden' );
 		var modalTitle = "#i18n{forms.manage_controls.title.${control_type?lower_case}}";
 		window.parent.$("#qModal").find(".modal-title").text(modalTitle);
 		window.parent.$("#transitionModal").find(".modal-title").text(modalTitle);

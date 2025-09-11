@@ -1,7 +1,7 @@
 <input id="forms_listQuestionValidator" name="forms_listQuestionValidator" type="hidden" value=${forms_listQuestionValidator}>
 <#assign default_value= -1>
 <#list refListField as field>
-<@formGroup labelKey='${field}:' helpKey='#i18n{forms.modify_control.labelValue.help}' >
+<@formGroup labelKey='${field}:' helpKey='#i18n{forms.modify_control.labelValue.help}'  rows=2>
 	<@inputGroup>
 	<#list refListMapping as refMap>
 		<#if refMap.name = field >
