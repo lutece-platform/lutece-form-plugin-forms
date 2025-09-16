@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><plug-in>
     <name>forms</name>
     <class>fr.paris.lutece.plugins.forms.service.FormsPlugin</class>
-    <version>3.1.1</version>
+    <version>3.1.1a</version>
     <documentation/>
     <installation/>
     <changes/>
@@ -14,7 +14,7 @@
     <db-pool-required>1</db-pool-required>
 
     <core-version-dependency>
-        <min-core-version>6.1.0</min-core-version>
+        <min-core-version>7.1.3</min-core-version>
         <max-core-version/>
     </core-version-dependency>
 
