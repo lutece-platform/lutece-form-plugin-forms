@@ -1,4 +1,7 @@
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
+	<#if getError( list_responses, entry )?? >
+		<#assign error = getError( list_responses, entry ) >
+	</#if>
 	<#assign suffix = '' >
 	<#if entry.fields?? && entry.fields?has_content>
 		<#assign suffix = getFieldValueByCode( entry, 'suffix') >
@@ -52,22 +55,23 @@
 						 <#assign inputValue = '' />
 					</#if>
 				</#if>
-				<input type="number" class="${inputClass} ${entry.CSSClass!}" name="${idName}" id="${idName}" value="${inputValue}" ${params} />
+				<input type="number" class="${inputClass} ${entry.CSSClass!} <#if error??>is-invalid</#if>" name="${idName}" id="${idName}" value="${inputValue}" ${params} />
 				<#if suffix!=''>
 					<span class="input-group-text">${suffix}</span>
+				</#if>
+				<#if list_responses??>
+					<#list list_responses as response>
+						<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+							<#assign error = response.entry.error>
+							<span class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></span>
+						</#if>
+					</#list>
 				</#if>
 			</div>
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="form-control-plaintext">${entry.helpMessage}</span>
 			</#if>
-			<#if list_responses??>
-				<#list list_responses as response>
-					<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-						<#assign error = response.entry.error>
-						<span class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></span>
-					</#if>
-				</#list>
-			</#if>
+
 		</div>
 	</div>
 
