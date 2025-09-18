@@ -131,7 +131,7 @@
 #breadforms{ margin-bottom: 0 }
 
 /* Form Creation and Modification  */
-.btn-add-entry { text-align: left; margin: 5px auto; width: 100%; justify-content: space-between; flex-direction: row-reverse;}
+.btn-add-entry { text-align: left; margin: 5px auto; width: 100%; justify-content: space-between; flex-direction: row-reverse; white-space: wrap;}
 .form .form-group .checkbox label{ font-weight: bold }
 .forms-questions{ position: relative }
 .forms-questions header{ padding: 10px 5px; border-radius: 5px }
