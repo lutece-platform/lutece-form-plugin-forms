@@ -5,6 +5,7 @@
         <#if display_captcha>${captcha}</#if>
 	</div>
 	<div class="card-footer">
+	    <input type="hidden" name="token" value = "${token!}">
 		<input name="page" value="forms" type="hidden">
 		<input name="id_form" value="${step.idForm}" type="hidden">
 		<input name="id_step" value="${step.id}" type="hidden">
