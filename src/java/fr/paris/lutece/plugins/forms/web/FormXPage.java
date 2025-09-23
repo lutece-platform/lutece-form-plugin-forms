@@ -77,7 +77,6 @@ import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
-import fr.paris.lutece.portal.service.security.SecurityTokenHandler;
 import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
@@ -99,7 +98,7 @@ import fr.paris.lutece.util.url.UrlItem;
  */
 @SessionScoped
 @Named( "forms.xpage.forms" )
-@Controller( xpageName = FormXPage.XPAGE_NAME, pageTitleI18nKey = FormXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = FormXPage.MESSAGE_PATH, securityTokenEnabled=true )
+@Controller( xpageName = FormXPage.XPAGE_NAME, pageTitleI18nKey = FormXPage.MESSAGE_PAGE_TITLE, pagePathI18nKey = FormXPage.MESSAGE_PATH, securityTokenEnabled=false )
 public class FormXPage extends MVCApplication
 {
     protected static final String XPAGE_NAME = "forms";
@@ -163,8 +162,6 @@ public class FormXPage extends MVCApplication
     private FormsAsynchronousUploadHandler _formsAsynchronousUploadHandler;
     @Inject
     private SecurityTokenService _securityTokenService;
-    @Inject
-    private SecurityTokenHandler _securityTokenHandler;
     private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
     // Attributes
     private FormResponseManager _formResponseManager;
@@ -462,6 +459,7 @@ public class FormXPage extends MVCApplication
     private void getFormStepModel( Form form, HttpServletRequest request, Map<String, Object> model )
     {
         Map<String, Object> modelForStep = _breadcrumb.getModelForCurrentStep( request, _formResponseManager );
+        modelForStep.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
         // Set whether the current form's responses are from a backed up save or not
         modelForStep.put( FormsConstants.MARK_HAS_BACKUP_RESPONSE, _formResponseManager.getFormResponse( ).isFromSave( ) );
         _stepDisplayTree.addModel( modelForStep );
@@ -488,7 +486,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      */
-    @Action( value = ACTION_PREVIOUS_STEP, securityTokenDisabled = true )
+    @Action( value = ACTION_PREVIOUS_STEP )
     public synchronized XPage doReturnStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         IsRequestComingFromAction = true;
@@ -546,7 +544,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws UserNotSignedException
      */
-    @Action( value = ACTION_GO_TO_STEP, securityTokenDisabled = true )
+    @Action( value = ACTION_GO_TO_STEP )
     public synchronized XPage doGoToStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         IsRequestComingFromAction = true;
@@ -600,7 +598,7 @@ public class FormXPage extends MVCApplication
      *             if there is an error during the page generation
      * @throws UserNotSignedException
      */
-    @Action( value = ACTION_FORM_RESPONSE_SUMMARY, securityTokenDisabled = true )
+    @Action( value = ACTION_FORM_RESPONSE_SUMMARY )
     public synchronized XPage doFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         IsRequestComingFromAction = true;
@@ -700,9 +698,13 @@ public class FormXPage extends MVCApplication
      *             Exception
      */
     @Action( value = ACTION_SAVE_FORM_RESPONSE )
-    public synchronized XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doSaveFormResponse( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         IsRequestComingFromAction = true;
+        if ( !_securityTokenService.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
         Form form = null;
         try
         {
@@ -746,7 +748,7 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY, securityTokenDisabled = true )
+    @Action( value = ACTION_SAVE_FORM_RESPONSE_SUMMARY )
     public synchronized XPage doSaveFormResponseSummary( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         IsRequestComingFromAction = true;
@@ -947,11 +949,11 @@ public class FormXPage extends MVCApplication
      *             Exception
      * @throws AccessDeniedException
      */
-    @Action( value = ACTION_SAVE_STEP , securityTokenDisabled = true )
+    @Action( value = ACTION_SAVE_STEP )
     public synchronized XPage doSaveStep( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         // CSRF Token control
-        if ( !_securityTokenHandler.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        if ( !_securityTokenService.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
         {
             // if you go to step 2, then you log in (as you didn't save any backup), the token is invalided
             // why are we here as we didn't try to save any backup ? So instead of throwing the error, we redirect.
@@ -1026,9 +1028,13 @@ public class FormXPage extends MVCApplication
      *             Exception
      */
     @Action( value = ACTION_SAVE_FOR_BACKUP )
-    public synchronized XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
+    public synchronized XPage doSaveForBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException, AccessDeniedException
     {
         IsRequestComingFromAction = true;
+        if ( !_securityTokenService.validate( request, ACTION_SAVE_FORM_RESPONSE ) )
+        {
+            throw new AccessDeniedException( MESSAGE_ERROR_TOKEN );
+        }
 
         Form form = null;
         try
@@ -1094,7 +1100,7 @@ public class FormXPage extends MVCApplication
      * @throws UserNotSignedException
      *             Exception
      */
-    @Action( value = ACTION_RESET_BACKUP, securityTokenDisabled = true )
+    @Action( value = ACTION_RESET_BACKUP )
     public synchronized XPage doResetBackup( HttpServletRequest request ) throws SiteMessageException, UserNotSignedException
     {
         IsRequestComingFromAction = true;
