@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
@@ -457,7 +458,20 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                 _formPanelDisplayActive = formPanelDisplay;
             }
         }
-        _formItemSortConfig = new FormItemSortConfig( -1, null, true );
+
+        IFormFilterDisplay defaultFormFilterDisplay = _listFormFilterDisplay.stream().filter(fd ->
+                fd.getFormFilter() != null
+                        && fd.getFormFilter().getFormFilterConfiguration() != null
+                        && FormResponseSearchItem.FIELD_DATE_UPDATE.equals(fd.getFormFilter().getFormFilterConfiguration().getFormFilterName())).findFirst().orElse(null);
+
+        if (defaultFormFilterDisplay !=null )
+        {
+            _formItemSortConfig = new FormItemSortConfig( defaultFormFilterDisplay.getPosition(), defaultFormFilterDisplay.getFormFilter().getFormFilterConfiguration().getFormFilterName(), true );
+        }
+        else
+        {
+            _formItemSortConfig = new FormItemSortConfig( -1, null, true );
+        }
     }
 
     /**
