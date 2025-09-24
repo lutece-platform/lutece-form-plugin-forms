@@ -67,7 +67,7 @@ ${breadcrumb_template}
 						<@formGroup labelFor='entry_step' labelKey='#i18n{forms.createEntry.labelStep}' helpKey='#i18n{forms.createEntry.labelStepHelp}'>
 							<@row>
 								<@columns sm=12 md=2>
-									<@input type='number' name='entry_step' id='entry_step' step=60 min=0 max=1440 />
+									<@input type='number' name='entry_step' id='entry_step' min=0 />
 								</@columns>
 							</@row>
 						</@formGroup>
@@ -142,5 +142,10 @@ document.addEventListener('DOMContentLoaded', function () {
 			entryCssClass.value += <#noparse>` step-${value}`</#noparse> ;
 		} 
 	});
+});
+document.getElementById("entry_step").addEventListener("input", function(e) {
+	if (this.value < 0) {
+		this.value = 0;
+	}
 });
 </script>
