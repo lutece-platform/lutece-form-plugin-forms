@@ -13,7 +13,14 @@
 		<div class="col-12">
 			<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 			<#assign field = getFieldByCode( entry, "autocomplete" ) >
-			<input type="tel" name="${idName}" id="${idName}"<#if entry.mandatory> required</#if> class="form-control input-sm ${entry.CSSClass!}<#if error??> is-invalid</#if>" value="${(response.toStringValueResponse)!}"<#if field??>autocomplete="${field.value!}"</#if><#if placeholder!=''> placeholder='${placeholder}' </#if>>
+			<#assign mandatoryMsg>
+				<#if entry.errorMessage?has_content>
+					${entry.errorMessage}
+				<#else>
+					#i18n{forms.message.mandatory.entry}
+				</#if>
+			</#assign>
+			<input type="tel" name="${idName}" id="${idName}"<#if entry.mandatory> required</#if> class="form-control input-sm ${entry.CSSClass!}<#if error??> is-invalid</#if>" value="${(response.toStringValueResponse)!}"<#if field??>autocomplete="${field.value!}"</#if><#if placeholder!=''> placeholder='${placeholder}' </#if> oninvalid="this.setCustomValidity('${mandatoryMsg?js_string}')" oninput="this.setCustomValidity('')">
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="form-control-plaintext">${entry.helpMessage}</span>
 			</#if>
