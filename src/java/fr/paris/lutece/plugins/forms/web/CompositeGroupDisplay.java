@@ -288,9 +288,13 @@ public class CompositeGroupDisplay implements ICompositeDisplay
         {
             strTemplate = TEMPLATE_GROUP_READONLY_FRONTOFFICE;
         }
-        if ( displayType == DisplayType.EDITION_BACKOFFICE || displayType == DisplayType.SUBMIT_BACKOFFICE )
+        if ( displayType == DisplayType.SUBMIT_BACKOFFICE )
         {
             strTemplate = TEMPLATE_GROUP_EDITION_BACKOFFICE;
+        }
+        if ( displayType == DisplayType.EDITION_BACKOFFICE )
+        {
+            strTemplate = TEMPLATE_GROUP_RESUBMIT_BACKOFFICE;
         }
         if ( displayType == DisplayType.RESUBMIT_BACKOFFICE )
         {
