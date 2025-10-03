@@ -158,7 +158,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     // Others
     protected static final int INTEGER_MINUS_ONE = -1;
 
-    protected IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( ).getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
+    protected IFileStoreServiceProvider _fileStoreProvider = FileService.getInstance( ).getFileStoreServiceProvider( );
 
     private IFormDatabaseService _formDatabaseService;
     private IFormDisplayService _formDisplayService;

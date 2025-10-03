@@ -63,7 +63,7 @@ public class EntryTypeCommentDisplayService extends EntryTypeDefaultDisplayServi
         Field fieldFile = entry.getFieldByCode( IEntryTypeService.FIELD_DOWNLOADABLE_FILE );
         if ( fieldFile != null )
         {
-            IFileStoreServiceProvider fileStoreprovider = FileService.getInstance( ).getFileStoreServiceProvider( "formsDatabaseFileStoreProvider" );
+            IFileStoreServiceProvider fileStoreprovider = FileService.getInstance( ).getFileStoreServiceProvider( );
 
             Map<String, String> additionnalData = new HashMap<>( );
             additionnalData.put( FileService.PARAMETER_RESOURCE_ID, String.valueOf( entry.getIdResource( ) ) );
