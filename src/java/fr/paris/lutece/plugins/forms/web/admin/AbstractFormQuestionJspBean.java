@@ -159,7 +159,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     protected static final int INTEGER_MINUS_ONE = -1;
 
     @Inject
-    @Named( "forms.formsDatabaseFileStoreServiceProvider" )
+    @Named( "defaultDatabaseFileStoreProvider" )
     protected IFileStoreServiceProvider _fileStoreProvider;
 
     private IFormDatabaseService _formDatabaseService;
