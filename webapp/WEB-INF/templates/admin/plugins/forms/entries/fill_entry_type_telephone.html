@@ -27,7 +27,11 @@
 			<@alert color='danger'>
 				<#assign error = response.entry.error />
 				<#if error.mandatoryError>
-					#i18n{forms.message.mandatory.entry}
+					<#if entry.errorMessage?has_content>
+						${entry.errorMessage}
+					<#else>
+						#i18n{forms.message.mandatory.entry}
+					</#if>
 				<#else>
 					${error.errorMessage}
 				</#if>
