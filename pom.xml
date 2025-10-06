@@ -72,6 +72,12 @@
             <type>lutece-plugin</type>
             <version>[1.0.0,1.9.9)</version>
         </dependency>
+        <dependency>
+            <groupId>fr.paris.lutece.plugins</groupId>
+            <artifactId>plugin-mermaidjs</artifactId>
+	        <version>[1.0.0,1.9.9)</version>
+            <type>lutece-plugin</type>
+        </dependency>
     </dependencies>
     <properties>
         <componentName>forms</componentName>
