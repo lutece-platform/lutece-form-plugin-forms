@@ -18,6 +18,10 @@
 			
 			<#if tab='workflow'><#assign active = true /><#else><#assign active = false /></#if>
 			<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormWorkflowConfig.jsp?view=manageWorkflow&id_form=${form.id}' tabIcon='tasks' title='#i18n{forms.modify_form.tab.labelWorkflow}' />
+			
+			<#if tab='graphic'><#assign active = true /><#else><#assign active = false /></#if>
+			<@tabLink active=active href='jsp/admin/plugins/forms/ManageSteps.jsp?view=graphicView&id_form=${form.id}' tabIcon='project-diagram' title='#i18n{forms.modify_form.tab.graphicView}' />
+			
 		</@tabList>
 		<#nested>
 	</@tabs>
