@@ -55,6 +55,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.service.FormGraphExportService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.plugins.forms.service.json.FormJsonService;
@@ -67,6 +68,7 @@ import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
@@ -94,6 +96,7 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String TEMPLATE_MANAGE_STEPS = "/admin/plugins/forms/manage_steps.html";
     private static final String TEMPLATE_CREATE_STEP = "/admin/plugins/forms/create_step.html";
     private static final String TEMPLATE_MODIFY_STEP = "/admin/plugins/forms/modify_step.html";
+    private static final String TEMPLATE_GRAPHICAL_VIEW = "/admin/plugins/forms/graphic_view.html";
 
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";
@@ -112,6 +115,7 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String MARK_LOCALE = "locale";
     private static final String MARK_TEMPLATE_PROVIDER = "template_provider";
     private static final String MARK_TRANSITIONS = "transition_list";
+    private static final String MARK_MDGRAPH = "mdgraph";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -128,6 +132,7 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String VIEW_CREATE_STEP = "createStep";
     private static final String VIEW_MODIFY_STEP = "modifyStep";
     private static final String VIEW_CONFIRM_REMOVE_STEP = "confirmRemoveStep";
+    private static final String VIEW_GRAPHICAL_VIEW = "graphicView";
 
     // Actions
     private static final String ACTION_CREATE_STEP = "createStep";
@@ -227,6 +232,47 @@ public class FormStepJspBean extends AbstractJspBean
         return getAdminPage( templateList.getHtml( ) );
     }
 
+    /**
+     * Build the graphical View
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The page
+     * @throws AccessDeniedException
+     *             Access denied is user isnt authorized by RBAC
+     */
+    @View( value = VIEW_GRAPHICAL_VIEW )
+    public String getGraphicalView( HttpServletRequest request ) throws AccessDeniedException
+    {
+	int nIdForm = -1;
+        try
+        {
+            nIdForm = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ) );
+        }
+        catch( NumberFormatException ne )
+        {
+            AppLogService.error( ne );
+            return redirectToViewManageForm( request );
+
+        }
+
+        checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, null );
+        checkWorkgroupPermission(nIdForm, request);
+
+        Form form = FormHome.findByPrimaryKey( nIdForm );
+        _step = new Step( );
+
+        Map<String, Object> model = getModel( );
+        model.put( FormsConstants.MARK_FORM, form );
+        
+        model.put( MARK_MDGRAPH, FormGraphExportService.generate( form, AppPathService.getBaseUrl( request ) ) );
+        
+        HtmlTemplate template =  AppTemplateService.getTemplate( TEMPLATE_GRAPHICAL_VIEW, getLocale(), model );
+
+        return getAdminPage( template.getHtml( ) );
+    }
+    
+    
     /**
      * Returns the form to create a step
      *
