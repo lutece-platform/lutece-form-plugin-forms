@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -388,7 +389,7 @@ public class FormsResponseUtils
 	        	for ( Control control : listControl )
 	            {
 	                IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-	                if ( !validator.validate( listResponsesTemp, control ) )
+	                if ( !validator.validate( filterListResponse(listResponsesTemp,formQuestionResponse) , control ) )
 	                {
 	                	GenericAttributeError error = new GenericAttributeError( );
 	
@@ -414,6 +415,45 @@ public class FormsResponseUtils
         {
             throw new QuestionValidationException( );
         }        
+    }
+
+
+    /**
+     * If there are multiple answers for the same question ID, keep only the one with the same iteration number as the main response you want to process
+     *
+     * @param allFormQuestion All Form Response
+     * @param currentFormQuestionResponse The form response to validate
+     * @return the list of filtered response to analyse
+     */
+    private static List<FormQuestionResponse> filterListResponse( List<FormQuestionResponse> allFormQuestion,
+                                                                  FormQuestionResponse currentFormQuestionResponse )
+    {
+        List<FormQuestionResponse> listResponsesTemp = new ArrayList<>( );
+        int iterationNumber = currentFormQuestionResponse.getQuestion().getIterationNumber();
+
+        Set<Integer> listIdQuestion = allFormQuestion.stream().map(r -> r.getQuestion().getId()).collect(Collectors.toSet());
+
+        for ( Integer idQuestion : listIdQuestion )
+        {
+            FormQuestionResponse responseQuestion = allFormQuestion.stream().filter(r ->
+                    r.getQuestion()!=null
+                    && r.getQuestion().getId()==idQuestion
+                    && r.getQuestion().getIterationNumber()==iterationNumber).findFirst().orElse(null);
+            if ( responseQuestion == null)
+            {
+                responseQuestion = allFormQuestion.stream().filter(r ->
+                                r.getQuestion()!=null
+                                && r.getQuestion().getId()==idQuestion
+                                && r.getQuestion().getIterationNumber()==0).findFirst().orElse(null);
+
+            }
+            if ( responseQuestion !=null )
+            {
+                listResponsesTemp.add( responseQuestion );
+            }
+        }
+
+        return listResponsesTemp;
     }
     
     public static synchronized Object getLockOnForm( Form form )
