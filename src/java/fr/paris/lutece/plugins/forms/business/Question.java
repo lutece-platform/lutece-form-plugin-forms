@@ -112,7 +112,7 @@ public class Question implements Serializable, Cloneable
         _bIsVisible = source._bIsVisible;
         _bIsVisibleMultiviewFormSelected = source._bIsVisibleMultiviewFormSelected;
         _bIsVisibleMultiviewGlobal = source._bIsVisibleMultiviewGlobal;
-        _entry = source._entry;
+        _entry = (Entry) source._entry.clone();
         _nExportDisplayOrder = source._nExportDisplayOrder;
         _nId = source._nId;
         _nIdEntry = source._nIdEntry;
