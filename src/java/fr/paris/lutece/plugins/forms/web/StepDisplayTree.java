@@ -39,6 +39,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import jakarta.enterprise.inject.Instance;
+import jakarta.enterprise.inject.literal.NamedLiteral;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -60,11 +62,11 @@ import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.web.entrytype.DisplayType;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
-import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
+import fr.paris.lutece.portal.service.captcha.ICaptchaService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.BeanUtils;
 
 /**
  * 
@@ -97,7 +99,7 @@ public class StepDisplayTree
     private final Map<Integer, List<Response>> _mapStepResponses = new HashMap<>( );
     private List<Control> _listDisplayControls = new ArrayList<>( );
     private final Map<String, Object> _model = new HashMap<>( );
-    private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
+    private Instance<ICaptchaService> _captchaService = CDI.current( ).select( ICaptchaService.class, NamedLiteral.of( BeanUtils.BEAN_CAPTCHA_SERVICE ) );
 
     /**
      * Constructor
@@ -295,7 +297,7 @@ public class StepDisplayTree
 
         if ( displayType == DisplayType.EDITION_FRONTOFFICE )
         {
-            if ( !_captchaSecurityService.isAvailable( ) )
+            if ( !_captchaService.isResolvable( ) )
             {
                 _model.put( MARK_DISPLAY_CAPTCHA, false );
             }
@@ -306,7 +308,7 @@ public class StepDisplayTree
 
                 if ( displayCaptcha )
                 {
-                    _model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
+                    _model.put( MARK_CAPTCHA, _captchaService.get( ).getHtmlCode( ) );
                 }
             }
         }

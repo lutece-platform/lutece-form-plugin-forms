@@ -39,6 +39,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.literal.NamedLiteral;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.inject.Inject;
@@ -69,8 +70,8 @@ import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.accesscontrol.AccessControlService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
-import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
 import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
+import fr.paris.lutece.portal.service.captcha.ICaptchaService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
@@ -82,6 +83,7 @@ import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.util.BeanUtils;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
@@ -162,7 +164,9 @@ public class FormXPage extends MVCApplication
     private FormsAsynchronousUploadHandler _formsAsynchronousUploadHandler;
     @Inject
     private SecurityTokenService _securityTokenService;
-    private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( );
+    @Inject
+    @Named(BeanUtils.BEAN_CAPTCHA_SERVICE)
+    private Instance<ICaptchaService> _captchaService;
     // Attributes
     private FormResponseManager _formResponseManager;
     private Step _currentStep;
@@ -644,12 +648,12 @@ public class FormXPage extends MVCApplication
         model.put( FormsConstants.MARK_ID_FORM, form.getId( ) );
         model.put( FormsConstants.MARK_FORM, form );
 
-        boolean displayCaptcha = _captchaSecurityService.isAvailable( ) && form.isCaptchaRecap( );
+        boolean displayCaptcha = _captchaService.isResolvable( ) && form.isCaptchaRecap( );
         model.put( MARK_DISPLAY_CAPTCHA, displayCaptcha );
 
         if ( displayCaptcha )
         {
-            model.put( MARK_CAPTCHA, _captchaSecurityService.getHtmlCode( ) );
+            model.put( MARK_CAPTCHA, _captchaService.get( ).getHtmlCode( ) );
         }
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_SAVE_FORM_RESPONSE ) );
         String strTitleForm = I18nService.getLocalizedString( FormsConstants.MESSAGE_SUMMARY_TITLE, new String [ ] {
@@ -1013,7 +1017,7 @@ public class FormXPage extends MVCApplication
         {
             return false;
         }
-        return !_captchaSecurityService.validate( request );
+        return _captchaService.isResolvable( ) ? !_captchaService.get( ).validate( request ) : false;
     }
 
     /**
