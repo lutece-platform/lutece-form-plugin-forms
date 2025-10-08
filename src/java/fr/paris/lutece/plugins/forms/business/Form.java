@@ -43,6 +43,7 @@ import fr.paris.lutece.portal.business.file.File;
 import fr.paris.lutece.portal.service.rbac.RBACResource;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupResource;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Base64;
@@ -52,8 +53,9 @@ import java.util.List;
 /**
  * This is the business class for the object Form
  */
-public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Form>
+public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Form>, Serializable
 {
+	private static final long serialVersionUID = 1L;
 
     /**
      * Form resource type
