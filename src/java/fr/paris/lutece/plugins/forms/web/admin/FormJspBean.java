@@ -42,6 +42,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -79,8 +80,8 @@ import fr.paris.lutece.portal.business.rbac.RBAC;
 import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.portal.service.accesscontrol.AccessControlService;
 import fr.paris.lutece.portal.service.admin.AccessDeniedException;
-import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
 import fr.paris.lutece.portal.service.captcha.ICaptchaSecurityService;
+import fr.paris.lutece.portal.service.captcha.ICaptchaService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
@@ -93,6 +94,7 @@ import fr.paris.lutece.portal.service.upload.MultipartItem;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.util.BeanUtils;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
@@ -223,7 +225,9 @@ public class FormJspBean extends AbstractJspBean
     private IAsyncUploadHandler _uploadHandler;
     @Inject
     private SecurityTokenService _securityTokenService;
-    private ICaptchaSecurityService _captchaSecurityService = new CaptchaSecurityService( ); 
+    @Inject
+    @Named(BeanUtils.BEAN_CAPTCHA_SERVICE)
+    private Instance<ICaptchaService> _captchaService; 
 
     /**
      * Build the Manage View
@@ -334,7 +338,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( MARK_FORM_MESSAGE, _formMessage );
         model.put( MARK_LOCALE, request.getLocale( ).getLanguage( ) );
         model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
-        model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
+        model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaService.isResolvable( ) );
         model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
         model.put( MARK_FORM_CATEGORY_LIST, formCategoryList );
 
@@ -580,7 +584,7 @@ public class FormJspBean extends AbstractJspBean
             }
 
             model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
-            model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaSecurityService.isAvailable( ) );
+            model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaService.isResolvable( ) );
 
             ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model, "*", FormResponse.RESOURCE_TYPE + "_" + nId );
 
