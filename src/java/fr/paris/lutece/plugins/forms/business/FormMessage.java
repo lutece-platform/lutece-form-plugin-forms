@@ -33,13 +33,17 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.io.Serializable;
+
 import jakarta.validation.constraints.Size;
 
 /**
  * This is the business class for the object Form
  */
-public class FormMessage
+public class FormMessage implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+
     // Variables declarations
     private int _nId;
 
