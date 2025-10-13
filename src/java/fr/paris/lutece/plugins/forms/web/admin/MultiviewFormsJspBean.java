@@ -469,7 +469,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         IFormFilterDisplay defaultFormFilterDisplay = _listFormFilterDisplay.stream().filter(fd ->
                 fd.getFormFilter() != null
                         && fd.getFormFilter().getFormFilterConfiguration() != null
-                        && FormResponseSearchItem.FIELD_DATE_UPDATE.equals(fd.getFormFilter().getFormFilterConfiguration().getFormFilterName())).findFirst().orElse(null);
+                        && FormResponseSearchItem.FIELD_DATE_CREATION.equals(fd.getFormFilter().getFormFilterConfiguration().getFormFilterName())).findFirst().orElse(null);
 
         if (defaultFormFilterDisplay !=null )
         {
