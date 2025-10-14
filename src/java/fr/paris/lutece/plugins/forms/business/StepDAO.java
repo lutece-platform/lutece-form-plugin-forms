@@ -36,10 +36,16 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.sql.DAOUtil;
+import org.apache.commons.collections4.CollectionUtils;
+
 import java.sql.Statement;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This class provides Data Access methods for Step objects
@@ -57,6 +63,9 @@ public final class StepDAO implements IStepDAO
     private static final String SQL_QUERY_SELECTALL_BY_FORM = SQL_QUERY_SELECTALL + " where id_form = ?";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_step FROM forms_step";
     private static final String SQL_QUERY_SELECTALL_ID_BY_FORM = "SELECT id_step FROM forms_step WHERE id_form = ?";
+    private static final String SQL_QUERY_SELECT_FINAL_COUNT_PREFIX = "SELECT s.id_form, SUM(CASE WHEN s.is_final = 1 THEN 1 ELSE 0 END) AS final_count FROM forms_step s WHERE s.id_form IN ";
+    private static final String SQL_QUERY_SELECT_FINAL_COUNT_SUFFIX = " GROUP BY s.id_form";
+    private static final String SQL_QUERY_SELECT_COUNT_OTHER_FINALS = "SELECT COUNT(*) FROM forms_step WHERE id_form = ? AND is_final = 1 AND id_step <> ?";
 
     /**
      * {@inheritDoc }
@@ -312,4 +321,47 @@ public final class StepDAO implements IStepDAO
         return step;
     }
 
+    @Override
+    public Map<Integer, Integer> countFinalStepsByFormIds( List<Integer> formIds, Plugin plugin )
+    {
+        Map<Integer, Integer> result = new HashMap<>( );
+        if ( CollectionUtils.isEmpty( formIds ) )
+        {
+            return Collections.emptyMap( );
+        }
+
+        String sql = SQL_QUERY_SELECT_FINAL_COUNT_PREFIX + buildPlaceholders( formIds ) + SQL_QUERY_SELECT_FINAL_COUNT_SUFFIX;
+
+        try ( DAOUtil dao = new DAOUtil( sql, plugin ) )
+        {
+            int i = 1;
+            for ( Integer id : formIds )
+            {
+                dao.setInt( i++, id );
+            }
+            dao.executeQuery( );
+            while ( dao.next( ) )
+            {
+                result.put( dao.getInt( 1 ), dao.getInt( 2 ) );
+            }
+        }
+        return result;
+    }
+
+    private static String buildPlaceholders( List<Integer> formIds )
+    {
+        return "(" + formIds.stream( ).map( id -> "?" ).collect( Collectors.joining( "," ) ) + ")";
+    }
+
+    @Override
+    public int countOtherFinalSteps( int idForm, int idStepToExclude, Plugin plugin )
+    {
+        try ( DAOUtil dao = new DAOUtil( SQL_QUERY_SELECT_COUNT_OTHER_FINALS, plugin ) )
+        {
+            dao.setInt( 1, idForm );
+            dao.setInt( 2, idStepToExclude );
+            dao.executeQuery( );
+            return dao.next( ) ? dao.getInt( 1 ) : 0;
+        }
+    }
 }
