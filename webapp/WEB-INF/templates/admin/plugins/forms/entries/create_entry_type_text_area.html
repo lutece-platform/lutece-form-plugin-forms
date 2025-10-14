@@ -45,7 +45,7 @@ ${breadcrumb_template}
 						<@row>
 							<@columns md=4 lg=3 xl=2>
 							<@inputGroup>	
-								<@input type='text' name='height' id='height' value=getName('height_text_area',list_param_default_values) />
+								<@input type='text' name='height' id='height' value='${entryTypeService.defaultHeight}' />
 									<@inputGroupItem>#i18n{forms.manageForm.labelRows}</@inputGroupItem>
 								</@inputGroup>	
 							</@columns>
@@ -55,7 +55,7 @@ ${breadcrumb_template}
 						<@row>
 							<@columns md=6 lg=4 xl=3>
 								<@inputGroup>	
-									<@input type='text' name='max_size_enter' id='max_size_enter' value=getName('max_size_enter',list_param_default_values) />
+									<@input type='text' name='max_size_enter' id='max_size_enter' value='${entryTypeService.defaultMaxSize}' />
 									<@inputGroupItem>#i18n{forms.manageForm.labelChars}</@inputGroupItem>
 								</@inputGroup>
 							</@columns>
