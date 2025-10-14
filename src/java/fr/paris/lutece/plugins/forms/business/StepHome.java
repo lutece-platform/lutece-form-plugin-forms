@@ -40,6 +40,7 @@ import fr.paris.lutece.util.ReferenceList;
 import jakarta.enterprise.inject.spi.CDI;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class provides instances management methods (create, find, ...) for Step objects
@@ -229,5 +230,30 @@ public final class StepHome
     public static ReferenceList getStepsReferenceList( )
     {
         return _dao.selectStepsReferenceList( _plugin );
+    }
+
+    /**
+     * Returns the number of final steps for each given form.
+     *
+     * @param formIds list of form IDs
+     *
+     * @return map: form ID → count of final steps
+     */
+    public static Map<Integer, Integer> countFinalStepsByFormIds( List<Integer> formIds )
+    {
+        return _dao.countFinalStepsByFormIds( formIds, _plugin );
+    }
+
+    /**
+     * Counts final steps of a form, excluding a specific one.
+     *
+     * @param idForm form ID
+     * @param idStepToExclude step ID to ignore
+     *
+     * @return umber of final steps excluding the given one
+     */
+    public static int countOtherFinalSteps( int idForm, int idStepToExclude )
+    {
+        return _dao.countOtherFinalSteps( idForm, idStepToExclude, _plugin );
     }
 }

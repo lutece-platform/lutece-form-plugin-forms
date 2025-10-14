@@ -13,18 +13,24 @@
             <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}'  rows=2 >
                  <@input type='textarea' name='description'>${step.description!}</@input>
             </@formGroup>
-            <@row>
-                <@columns>
-                    <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' hideLabel=['all'] rows=2>
-                        <@checkBox orientation='switch' labelFor='initial'labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
-                    </@formGroup>
-                </@columns>
-                <@columns>
-                    <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all'] rows=2>
-                        <@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
-                    </@formGroup>
-                </@columns>
-            </@row>
+            <#if isNotFirstStep >
+                <@row>
+                    <@columns>
+                        <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' hideLabel=['all'] rows=2>
+                            <@checkBox orientation='switch' labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+                        </@formGroup>
+                    </@columns>
+                    <@columns>
+                        <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all'] rows=2>
+                            <@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+                        </@formGroup>
+                    </@columns>
+                </@row>
+            <#else>
+                <@formGroup labelFor='multi_step' labelKey='#i18n{forms.create_step.labelMultiStep}' helpKey='#i18n{forms.create_step.labelMultiStep.help}' hideLabel=['all'] rows=2>
+                    <@checkBox orientation='switch' labelFor='multiStep' labelKey='#i18n{forms.create_step.labelMultiStep}' name='multiStep' id='multiStep' value='1' checked=true />
+                </@formGroup>
+            </#if>
             <@formGroup labelFor='previousStep' labelKey='#i18n{forms.create_step.labelPreviousStep}' helpKey='#i18n{forms.create_step.labelPreviousStep.help}' hideLabel=['all'] >
             	<#assign step_default=step_list?map(step -> step.code?number)?max?c >
                 <@select name='previousStep' items=step_list default_value=step_default />
@@ -83,4 +89,4 @@ document.addEventListener('DOMContentLoaded', function(e) {
     }
 });
 </script>
-<@toastr infos=infos warnings=warnings errors=errors />
+<@toastr infos=infos errors=errors warnings=[] />

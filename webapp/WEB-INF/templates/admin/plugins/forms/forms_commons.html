@@ -378,7 +378,8 @@ $( function() {
 	<#include "/admin/plugins/asynchronousupload/upload_commons.html" />
 	<@addRequiredJsFiles />
 	<script type="text/javascript" src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${uploadHandler.handlerName}" ></script>
-	<@row> 
+	<#local isCreate = (type == 'create')>
+	<@row>
 		<@columns md=7> 
 			<@fieldSet legend='#i18n{forms.modify_form.labelDescription}'>
 				<@formGroup labelKey='#i18n{forms.modify_form.labelTitle}' helpKey='#i18n{forms.modify_form.labelTitle.help}' mandatory=true rows=2>
@@ -398,39 +399,53 @@ $( function() {
 					</div>
 				</@formGroup>
 			</@fieldSet>
-			<@fieldSet legend='#i18n{forms.create_form.labelDates}'>  
-				<@row>
-					<@columns xs=12 sm=6>   
-						<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
-							<@inputGroup>
-							<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?iso_local_nz></#if>
-									<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate'  value='${availabilityStartDatestr}' />
+			<#if !isCreate>
+				<#assign canEditDates = (hasFinalStep?? && hasFinalStep)>
+				<@fieldSet legend='#i18n{forms.create_form.labelDates}'>
+					<#if !canEditDates>
+						<@alert color='warning' dismissible=true>
+							#i18n{forms.manageForm.needFinalStep}
+						</@alert>
+					</#if>
+					<@row>
+						<@columns xs=12 sm=6>
+							<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
+								<@inputGroup>
+								<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?iso_local_nz></#if>
+									<@input type='datetime' language=locale name='availabilityStartDate' id='availabilityStartDate' value='${availabilityStartDatestr}' disabled=!canEditDates />
+									<#if !canEditDates>
+										<@input type='hidden' name='availabilityStartDate' value='${availabilityStartDatestr}' />
+									</#if>
 									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
 									</@inputGroupItem>
-							</@inputGroup>
-						</@formGroup>
-					</@columns>       
-					<@columns xs=12 sm=6>  
-						<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
-							<@inputGroup>
-							<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?iso_local_nz></#if>
-									<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' />
+								</@inputGroup>
+							</@formGroup>
+						</@columns>
+						<@columns xs=12 sm=6>
+							<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>
+								<@inputGroup>
+								<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?iso_local_nz></#if>
+									<@input type='datetime' language=locale name='availabilityEndDate' id='availabilityEndDate' value='${availabilityEndDatestr}' disabled=!canEditDates />
+									<#if !canEditDates>
+										<@input type='hidden' name='availabilityEndDate' value='${availabilityEndDatestr}' />
+									</#if>
 									<@inputGroupItem type='text'>
 										<@icon style='calendar' />
 									</@inputGroupItem>
-							</@inputGroup>
-						</@formGroup>
-					</@columns>    
-				</@row>
-				<@row>
-					<@columns xs=12 sm=12>
-						<@formGroup labelKey='#i18n{forms.modify_form.labelUnavailableMessage}' helpKey='#i18n{forms.modify_form.labelUnavailableMessage.help}' rows=2>
-								<@input type='textarea' name='unavailableMessage' richtext=true>${form.unavailableMessage!}</@input>
-						</@formGroup>
-					</@columns>
-				</@row>
-			</@fieldSet>
+								</@inputGroup>
+							</@formGroup>
+						</@columns>
+					</@row>
+					<@row>
+						<@columns xs=12 sm=12>
+							<@formGroup labelKey='#i18n{forms.modify_form.labelUnavailableMessage}' helpKey='#i18n{forms.modify_form.labelUnavailableMessage.help}' rows=2>
+									<@input type='textarea' name='unavailableMessage' richtext=true>${form.unavailableMessage!}</@input>
+							</@formGroup>
+						</@columns>
+					</@row>
+				</@fieldSet>
+			</#if>
 			<@fieldSet legend='#i18n{forms.create_form.display.labelRestrictions}'>
 				<@row>     
 					<@columns xs=12 sm=4>  
@@ -482,7 +497,7 @@ $( function() {
 					<@input type='text' name='labelFinalButton' value='${form.labelFinalButton!}' />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelDisplaySummary}' hideLabel=['all'] helpKey='#i18n{forms.create_form.labelDisplaySummary.help}' rows=2>
-					<#if type='create'><#local isSummary=true ><#else><#local isSummary=(form?has_content && form.displaySummary)></#if>
+					<#local isSummary = isCreate?then(true, (form?has_content && form.displaySummary)) >
 					<@checkBox orientation='switch' labelKey='#i18n{forms.create_form.labelDisplaySummary}' labelFor='displaySummary' name='displaySummary' id='displaySummary' value='1' checked=isSummary />
 				</@formGroup>
 				<@formGroup labelKey='#i18n{forms.create_form.labelEndMessageDisplay}' hideLabel=['all'] id='labelEndMessage' helpKey='#i18n{forms.create_form.labelEndMessageDisplay.help}'  rows=2>
