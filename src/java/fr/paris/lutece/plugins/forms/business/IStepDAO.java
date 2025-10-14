@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.forms.business;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.ReferenceList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * IStepDAO Interface
@@ -168,4 +169,24 @@ public interface IStepDAO
      */
     ReferenceList selectStepReferenceListbyForm( int nFormId, Plugin plugin );
 
+    /**
+     * Counts final steps for each form ID.
+     *
+     * @param formIds list of form IDs
+     * @param plugin plugin
+     *
+     * @return map: formId -> count of final steps
+     */
+    Map<Integer, Integer> countFinalStepsByFormIds( List<Integer> formIds, Plugin plugin );
+
+    /**
+     * Counts other final steps of a form, excluding the given step ID.
+     *
+     * @param idForm form ID
+     * @param idStepToExclude step ID to exclude
+     * @param plugin plugin
+     *
+     * @return number of other final steps
+     */
+    int countOtherFinalSteps( int idForm, int idStepToExclude, Plugin plugin );
 }

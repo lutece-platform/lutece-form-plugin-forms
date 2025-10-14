@@ -34,7 +34,10 @@
                                         <@input type='textarea' name='description'>${step.description!}</@input>
                                     </@formGroup>
                                     <@formGroup helpKey='#i18n{forms.modify_step.labelInitial.help}' rows=2>
-                                        <@checkBox orientation='switch' labelFor='initial' labelKey='#i18n{forms.modify_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+                                        <#if step.initial>
+                                            <@input type='hidden' name='initial' value='1' />
+                                        </#if>
+                                        <@checkBox orientation='switch' labelFor='initial' labelKey='#i18n{forms.modify_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) disabled=step.initial />
                                     </@formGroup>
                                     <@formGroup helpKey='#i18n{forms.modify_step.labelFinal.help}' rows=2>
                                         <@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.modify_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />

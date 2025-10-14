@@ -37,6 +37,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -98,6 +99,7 @@ public class FormStepJspBean extends AbstractJspBean
     // Parameters
     private static final String PARAMETER_PAGE_INDEX = "page_index";
     private static final String PARAMETER_PREVIOUS_STEP = "previousStep";
+    private static final String PARAMETER_MULTI_STEP = "multiStep";
     private static final String PARAMETER_JSON_FILE = "json_file";
     private static final String PARAMETER_ID_TEMPLATE = "id_template";
 
@@ -107,6 +109,7 @@ public class FormStepJspBean extends AbstractJspBean
 
     // Markers
     private static final String MARK_STEP_LIST = "step_list";
+    private static final String MARK_IS_NOT_FIRST_STEP = "isNotFirstStep";
     private static final String MARK_PAGINATOR = "paginator";
     private static final String MARK_NB_ITEMS_PER_PAGE = "nb_items_per_page";
     private static final String MARK_LOCALE = "locale";
@@ -150,6 +153,9 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String ERROR_STEP_NOT_IMPORTED = "forms.error.step.not.imported";
     private static final String ERROR_NO_FINAL_STEP = "forms.error.step.missing.final";
     private static final String ERROR_NO_INIT_STEP = "forms.error.step.missing.initial";
+    private static final String ERROR_SINGLE_STEP = "forms.error.step.locked.initial";
+    private static final String ERROR_REMOVE_FINAL_STEP = "forms.error.step.remove.lastFinal";
+    private static final String ERROR_REMOVE_INITIAL_STEP = "forms.error.step.remove.initial";
 
     // Others
     private static final StepService _stepService = SpringContextService.getBean( StepService.BEAN_NAME );
@@ -210,6 +216,8 @@ public class FormStepJspBean extends AbstractJspBean
         LocalizedPaginator<Step> paginator = new LocalizedPaginator<>( listSteps, _nItemsPerPage, getJspManageSteps( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
 
+        validateInitialFinal( listSteps );
+
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_TRANSITIONS, listTransitions );
         model.put( MARK_NB_ITEMS_PER_PAGE, EMPTY_STRING + _nItemsPerPage );
@@ -254,7 +262,6 @@ public class FormStepJspBean extends AbstractJspBean
         if ( StepHome.getInitialStep( nIdForm ) == null )
         {
             _step.setInitial( true );
-            _step.setFinal( true );
         }
 
         Map<String, Object> model = getModel( );
@@ -273,7 +280,7 @@ public class FormStepJspBean extends AbstractJspBean
                 stepRefList.addItem( step.getId( ), step.getTitle( ) );
             }
         }
-
+        model.put( MARK_IS_NOT_FIRST_STEP, stepList.size( ) > 0 );
         model.put( MARK_STEP_LIST, stepRefList );
         return getPage( PROPERTY_PAGE_TITLE_CREATE_STEP, TEMPLATE_CREATE_STEP, model );
     }
@@ -297,17 +304,27 @@ public class FormStepJspBean extends AbstractJspBean
         }
 
         Step initialStep = StepHome.getInitialStep( _step.getIdForm( ) );
-        if ( initialStep == null && !_step.isInitial( ) )
+        String strMultiStep = request.getParameter( PARAMETER_MULTI_STEP );
+        int multiStep = ( strMultiStep != null ) ? Integer.parseInt( strMultiStep ) : 0;
+
+        // Cas 1 : première étape + case cochée → formulaire multi-étapes
+        if( multiStep == 1 )
         {
-            addError( ERROR_NO_INIT_STEP, getLocale( ) );
-            return redirect( request, VIEW_CREATE_STEP, FormsConstants.PARAMETER_ID_FORM, _step.getIdForm( ) );
+            _step.setInitial( true );
+            _step.setFinal( false );
+
+        }
+        // Cas 2 : première étape (aucune étape initiale existante) + case décochée → formulaire mono-étape
+        else if ( initialStep == null )
+        {
+            _step.setInitial( true );
+            _step.setFinal( true );
         }
 
         List<Step> finalsStepsList = StepHome.getFinalsStep( _step.getIdForm( ) );
         if ( !_step.isFinal( ) && ( finalsStepsList == null ||  finalsStepsList.isEmpty( ) ) )
         {
-            addError( ERROR_NO_FINAL_STEP, getLocale( ) );
-            return redirect( request, VIEW_CREATE_STEP, FormsConstants.PARAMETER_ID_FORM, _step.getIdForm( ) );
+            addWarning( ERROR_NO_FINAL_STEP, getLocale( ) );
         }
 
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( _step.getIdForm( ) ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_CREATE_STEP );
@@ -360,6 +377,12 @@ public class FormStepJspBean extends AbstractJspBean
         _step = StepHome.findByPrimaryKey( nId );
 
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
+
+        if ( _step.isInitial() )
+        {
+            addError( ERROR_REMOVE_INITIAL_STEP, getLocale( ) );
+            return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, _form.getId() );
+        }
 
         String strConfirmRemoveMessage = MESSAGE_CONFIRM_REMOVE_STEP;
 
@@ -459,6 +482,23 @@ public class FormStepJspBean extends AbstractJspBean
         }
         checkUserPermission( Form.RESOURCE_TYPE, String.valueOf( nIdForm ), FormsResourceIdService.PERMISSION_MODIFY, request, ACTION_REMOVE_STEP );
         checkWorkgroupPermission(nIdForm, request);
+
+        Form form = FormHome.findByPrimaryKey( nIdForm );
+        if ( form != null && form.isActive( ) && _step.isFinal( ) )
+        {
+            int others = StepHome.countOtherFinalSteps( nIdForm, nIdStep );
+            if ( others == 0 )
+            {
+                addError( ERROR_REMOVE_FINAL_STEP, getLocale( ) );
+                return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
+            }
+        }
+
+        if ( _step.isInitial() ) {
+            addError( ERROR_REMOVE_INITIAL_STEP, getLocale( ) );
+            return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, _step.getIdForm() );
+        }
+
         _stepService.removeStep( nIdStep );
         FormResponseStepHome.removeByStep( nIdStep );
 
@@ -499,6 +539,7 @@ public class FormStepJspBean extends AbstractJspBean
             {
                 _form = FormHome.findByPrimaryKey( nIdForm );
             }
+
             Map<String, Object> model = getModel( );
             model.put( FormsConstants.MARK_STEP, _step );
             model.put( FormsConstants.MARK_FORM, _form );
@@ -554,7 +595,16 @@ public class FormStepJspBean extends AbstractJspBean
             return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
         }
 
+        final boolean wasInitial = _step.isInitial( );
+        final int stepsCount = StepHome.getStepsListByForm( nIdForm ).size( );
+
         populate( _step, request, request.getLocale( ) );
+
+        if ( stepsCount == 1 && wasInitial && !_step.isInitial( ) )
+        {
+            addError( ERROR_SINGLE_STEP, getLocale( ) );
+            return redirect( request, VIEW_MODIFY_STEP, FormsConstants.PARAMETER_ID_STEP, _step.getId( ) );
+        }
 
         Step initialStep = StepHome.getInitialStep( _step.getIdForm( ) );
         if ( initialStep == null && !_step.isInitial( ) )
@@ -671,5 +721,29 @@ public class FormStepJspBean extends AbstractJspBean
             addInfo( INFO_STEP_CREATED, getLocale( ) );
         }
         return redirect( request, VIEW_MANAGE_STEPS, FormsConstants.PARAMETER_ID_FORM, nIdForm );
+    }
+
+    private void validateInitialFinal( List<Step> steps )
+    {
+        if ( steps == null || steps.isEmpty( ) )
+        {
+            addWarning( ERROR_NO_INIT_STEP, getLocale( ) );
+            addWarning( ERROR_NO_FINAL_STEP, getLocale( ) );
+            return;
+        }
+
+        long initCount = steps.stream( ).filter( Objects::nonNull ).filter( Step::isInitial ).count( );
+
+        long finalCount = steps.stream( ).filter( Objects::nonNull ).filter( Step::isFinal ).count( );
+
+        if ( initCount == 0 )
+        {
+            addWarning( ERROR_NO_INIT_STEP, getLocale( ) );
+        }
+
+        if ( finalCount == 0 )
+        {
+            addWarning( ERROR_NO_FINAL_STEP, getLocale( ) );
+        }
     }
 }
