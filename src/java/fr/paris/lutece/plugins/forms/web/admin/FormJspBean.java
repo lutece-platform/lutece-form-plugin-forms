@@ -35,7 +35,9 @@ package fr.paris.lutece.plugins.forms.web.admin;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,6 +49,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.business.StepHome;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -159,6 +162,8 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_ACCESSCONTROL_ID = "accesscontrol_id";
     private static final String MARK_QUESTIONLIST = "questionList";
     private static final String MARK_FORM_CATEGORY_LIST = "categoryList";
+    private static final String MARK_FORMS_WITH_FINAL_STEP = "formsWithFinalStep";
+    private static final String MARK_FORM_HAS_FINAL_STEP = "hasFinalStep";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -254,6 +259,15 @@ public class FormJspBean extends AbstractJspBean
         List<Form> listForms = FormHome.getFormListSorted( _formItemSortConfig );
         listForms = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( listForms, (User) adminUser );
 
+        List<Integer> formIds = listForms.stream( ).map( Form::getId ).collect( Collectors.toList( ) );
+        Map<Integer, Integer> finalCountByFormId = StepHome.countFinalStepsByFormIds( formIds );
+        Map<String, Boolean> formsWithFinalStep = new HashMap<>( );
+        for ( Form f : listForms )
+        {
+            int n = finalCountByFormId.getOrDefault( f.getId( ), 0 );
+            formsWithFinalStep.put( Integer.toString( f.getId( ) ), n > 0 );
+        }
+
         Map<String, Object> model = getModel( );
         LocalizedPaginator<Form> paginator = new LocalizedPaginator<>( listForms, _nItemsPerPage, getJspManageForm( request ), PARAMETER_PAGE_INDEX,
                 _strCurrentPageIndex, getLocale( ) );
@@ -282,7 +296,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_TIMESTAMP, strTimespamp );
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_FORM ) );
-
+        model.put( MARK_FORMS_WITH_FINAL_STEP, formsWithFinalStep );
         setPageTitleProperty( EMPTY_STRING );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_FORMS, locale, model );
@@ -539,6 +553,8 @@ public class FormJspBean extends AbstractJspBean
             _uploadHandler.removeSessionFiles( request.getSession( ) );
             setFormResponseMessage( formToBeModified.getId( ) );
 
+            boolean hasFinalStep = !StepHome.countFinalStepsByFormIds( Collections.singletonList ( formToBeModified.getId ( ) ) ).getOrDefault( formToBeModified.getId( ), 0 ).equals( 0 );
+
             AdminUser adminUser = getUser( );
             ReferenceList formCategoryList = _formCategoryService.getFormCategoryReferenceList( );
 
@@ -549,6 +565,7 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
             model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
             model.put( MARK_FORM_CATEGORY_LIST, formCategoryList );
+            model.put( MARK_FORM_HAS_FINAL_STEP, hasFinalStep );
 
             if ( formToBeModified.getLogo( ) != null )
             {
