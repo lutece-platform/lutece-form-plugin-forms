@@ -103,16 +103,17 @@ public final class ControlGroupHome
     {
         String cacheKey = _cache.getControlGroupCacheKey( nKey );
         @SuppressWarnings( "unchecked" )
-        Optional<ControlGroup> controlGroup = ( Optional<ControlGroup> ) _cache.get( cacheKey );
+        ControlGroup controlGroup = ( ControlGroup ) _cache.get( cacheKey );
         if ( controlGroup == null )
         {
-            controlGroup = _dao.load( nKey, _plugin );
-            if ( controlGroup != null )
+        	Optional<ControlGroup> loadedOptionalControlGroup = _dao.load( nKey, _plugin );
+            if ( loadedOptionalControlGroup.isPresent( ) )
             {
-                _cache.put( cacheKey, controlGroup );	
+                _cache.put( cacheKey, loadedOptionalControlGroup.get( ) );	
             }
+            return loadedOptionalControlGroup;
         }
-        return controlGroup;
+        return Optional.of( controlGroup );
     }
 
     /**
