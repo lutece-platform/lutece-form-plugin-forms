@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.io.Serializable;
 import java.util.Set;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -42,9 +43,11 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 /**
  * This is the business class for the object Control
  */
-public class Control implements Cloneable
+public class Control implements Cloneable, Serializable
 {
-    private int _nId;
+    private static final long serialVersionUID = 1L;
+
+	private int _nId;
 
     private String _strValue;
 
