@@ -33,9 +33,11 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import fr.paris.lutece.plugins.forms.business.*;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -51,8 +53,10 @@ import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
  * Class for breadcrumb management and responses history
  *
  */
-public class FormResponseManager
+public class FormResponseManager implements Serializable
 {
+    @Serial
+    private static final long serialVersionUID = -8505541228565571985L;
     private final List<Step> _listValidatedStep;
     private final FormResponse _formResponse;
     private boolean _bIsResponseLoadedFromBackup = false;
@@ -376,10 +380,7 @@ public class FormResponseManager
     {
         List<Step> listStep = new ArrayList<>( _listValidatedStep.size( ) );
 
-        for ( Step step : _listValidatedStep )
-        {
-            listStep.add( step );
-        }
+        listStep.addAll( _listValidatedStep );
 
         return listStep;
     }

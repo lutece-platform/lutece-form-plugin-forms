@@ -33,13 +33,17 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * This is the business class for the object FormResponse
  */
-public class FormResponseStep
+public class FormResponseStep implements Serializable
 {
+    @Serial
+    private static final long serialVersionUID = -3674339594923771759L;
 
     private int _nId;
 

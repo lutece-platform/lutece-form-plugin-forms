@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -84,8 +86,11 @@ import static fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntry
  * Implementation of ICompositeDisplay for Question
  *
  */
-public class CompositeQuestionDisplay implements ICompositeDisplay
+public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
 {
+    @Serial
+    private static final long serialVersionUID = 4325897032024855345L;
+
     // Templates
     private static final String TEMPLATE_QUESTION_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_question.html";
     private static final String TEMPLATE_QUESTION_READONLY_BACKOFFICE = "/admin/plugins/forms/composite/view_question_read_only.html";
@@ -107,7 +112,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
     // Constants
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
     private static final String ILLUSTRATION_IMAGE = "illustration_image";
-    
+
     private Question _question;
     private final FormDisplay _formDisplay;
     private String _strIconName;

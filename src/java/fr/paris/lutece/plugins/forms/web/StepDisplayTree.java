@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,8 +75,10 @@ import fr.paris.lutece.portal.service.util.BeanUtils;
  * Management class for the display tree of a Step
  *
  */
-public class StepDisplayTree
+public class StepDisplayTree implements Serializable
 {
+    @Serial
+    private static final long serialVersionUID = 8321846817939527916L;
     // Templates
     private static final String TEMPLATE_STEP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step.html";
     private static final String TEMPLATE_STEP_EDITION_NO_BUTTON_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_step_no_button.html";

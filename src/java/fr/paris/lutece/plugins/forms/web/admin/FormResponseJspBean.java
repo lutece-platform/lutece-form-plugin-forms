@@ -120,7 +120,7 @@ public class FormResponseJspBean extends AbstractJspBean
     private FormService _formService;
     @Inject
     private FormsAsynchronousUploadHandler _formsAsynchronousUploadHandler;
-    private Controller _controller = getClass( ).getAnnotation( Controller.class );
+    private transient Controller _controller = getClass( ).getAnnotation( Controller.class );
     private FormResponseManager _formResponseManager;
     private Step _currentStep;
     private StepDisplayTree _stepDisplayTree;
@@ -746,7 +746,7 @@ public class FormResponseJspBean extends AbstractJspBean
             
             if ( bIsEndMessageDisplayed )
             {
-                url = new UrlItem( _controller.controllerPath( ) + getViewUrl( VIEW_STEP ) );
+                url = new UrlItem( getController( ).controllerPath( ) + getViewUrl( VIEW_STEP ) );
             }
             else
             {
@@ -757,5 +757,19 @@ public class FormResponseJspBean extends AbstractJspBean
 
             return url.getUrl( );
         }
+    }
+
+    /**
+     * Get the {@link Controller} annotation associated with this class
+     *
+     * @return the {@code Controller} annotation of the class
+     */
+    private Controller getController( )
+    {
+        if ( _controller == null )
+        {
+            _controller = getClass().getAnnotation( Controller.class );
+        }
+        return _controller;
     }
 }
