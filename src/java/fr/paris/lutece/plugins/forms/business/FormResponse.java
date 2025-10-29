@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.sql.Timestamp;
 import java.util.List;
@@ -46,12 +48,14 @@ import fr.paris.lutece.portal.service.util.AppLogService;
 /**
  * This is the business class for the object FormResponse
  */
-public class FormResponse implements IExtendableResource
+public class FormResponse implements IExtendableResource, Serializable
 {
     /**
      * Form response resource type
      */
     public static final String RESOURCE_TYPE = "FORMS_FORM_RESPONSE";
+    @Serial
+    private static final long serialVersionUID = -7653906658667747872L;
 
     private int _nId;
 

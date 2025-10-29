@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -67,8 +69,10 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
  * Implementation of ICompositeDisplay for Groups
  *
  */
-public class CompositeGroupDisplay implements ICompositeDisplay
+public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
 {
+    @Serial
+    private static final long serialVersionUID = 6753163982694723528L;
     // Templates
     private static final String TEMPLATE_GROUP_EDITION_FRONTOFFICE = "/skin/plugins/forms/composite_template/view_group.html";
     private static final String TEMPLATE_GROUP_EDITION_BACKOFFICE = "/admin/plugins/forms/composite/view_group_edition.html";

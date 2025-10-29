@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
@@ -41,9 +43,11 @@ import fr.paris.lutece.plugins.genericattributes.business.Response;
 /**
  * This is the business class for the object FormQuestionResponse
  */
-public class FormQuestionResponse
+public class FormQuestionResponse implements Serializable
 {
     public static final int CONSTANT_ID_NEW_RESPONSE = 0;
+    @Serial
+    private static final long serialVersionUID = -6341349517777735096L;
 
     private int _nId = CONSTANT_ID_NEW_RESPONSE;
 

@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,7 +47,6 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.plugins.asynchronousupload.service.IAsyncUploadHandler;
 import fr.paris.lutece.plugins.forms.business.FormCategory;
 import fr.paris.lutece.plugins.forms.business.FormCategoryHome;
-import fr.paris.lutece.portal.service.admin.AccessDeniedException;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
@@ -60,7 +59,7 @@ import fr.paris.lutece.util.url.UrlItem;
 /**
  * This class provides the user interface to manage FormCategory features ( manage, create, modify, remove )
  */
-@SessionScoped
+@RequestScoped
 @Named
 @Controller( controllerJsp = "ManageFormsCategories.jsp", controllerPath = "jsp/admin/plugins/forms/", right = "FORMS_CATEGORIES", securityTokenEnabled=true )
 public class FormCategoriesJspBean extends AbstractJspBean
@@ -106,9 +105,6 @@ public class FormCategoriesJspBean extends AbstractJspBean
     // Properties
     private static final String MESSAGE_CONFIRM_REMOVE_CATEGORY = "appointment.message.confirmRemoveCategory";
 
-    // Session variable to store working values
-    private FormCategory _formCategory;
-
     // Other
     @Inject
     @Named( "asynchronous-upload.asynchronousUploadHandler" )
@@ -142,19 +138,17 @@ public class FormCategoriesJspBean extends AbstractJspBean
      * @param request
      *            The Http request
      * @return the html code of the formCategory form
-     * @throws AccessDeniedException
-     *             the possible AccessDeniedException
      */
     @View( VIEW_CREATE_CATEGORY )
-    public String getCreateForm( HttpServletRequest request ) throws AccessDeniedException
+    public String getCreateCategory( HttpServletRequest request )
     {
         Map<String, Object> model = getModel( );
 
         _uploadHandler.removeSessionFiles( request.getSession( ) );
-        _formCategory = ( _formCategory == null ) ? new FormCategory( ) : _formCategory;
+        FormCategory formCategory = new FormCategory( );
 
         model.put( MARK_UPLOAD_HANDLER, _uploadHandler );
-        model.put( MARK_CATEGORY, _formCategory );
+        model.put( MARK_CATEGORY, formCategory );
 
         return getPage( PROPERTY_PAGE_TITLE_CREATE_CATEGORY, TEMPLATE_CREATE_CATEGORY, model );
     }
@@ -167,16 +161,17 @@ public class FormCategoriesJspBean extends AbstractJspBean
      * @return The Jsp URL of the process result
      */
     @Action( ACTION_CREATE_CATEGORY )
-    public String doCreateForm( HttpServletRequest request )
+    public String doCreateCategory( HttpServletRequest request )
     {
-        populate( _formCategory, request, request.getLocale( ) );
+        FormCategory formCategory = new FormCategory( );
+        populate( formCategory, request, request.getLocale( ) );
 
-        if ( !validateBean( _formCategory, VALIDATION_ATTRIBUTES_PREFIX ) )
+        if ( !validateBean( formCategory, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
             return redirectView( request, VIEW_CREATE_CATEGORY );
         }
 
-        FormCategoryHome.create( _formCategory );
+        FormCategoryHome.create( formCategory );
         addInfo( INFO_CATEGORY_CREATED, getLocale( ) );
 
         return redirectView( request, VIEW_MANAGE_CATEGORY );
@@ -188,8 +183,6 @@ public class FormCategoriesJspBean extends AbstractJspBean
      * @param request
      *            the request
      * @return The JSP URL of the process result
-     * @throws AccessDeniedException
-     *             If the user is not authorized
      */
     @Action( ACTION_REMOVE_CATEGORY )
     public String doRemoveCategory( HttpServletRequest request )
@@ -206,8 +199,6 @@ public class FormCategoriesJspBean extends AbstractJspBean
      * @param request
      *            the request
      * @return the HTML code to confirm
-     * @throws AccessDeniedException
-     *             If the user is not authorized
      */
     @Action( value = ACTION_CONFIRM_REMOVE_CATEGORY, securityTokenAction = ACTION_REMOVE_CATEGORY )
     public String getConfirmRemoveCategory( HttpServletRequest request )
@@ -230,17 +221,15 @@ public class FormCategoriesJspBean extends AbstractJspBean
      * @param request
      *            the request
      * @return The HTML content to display
-     * @throws AccessDeniedException
-     *             If the user is not authorized
      */
     @View( VIEW_MODIFY_CATEGORY )
     public String getModifyCategory( HttpServletRequest request )
     {
         String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );
         int nIdCategory = Integer.parseInt( strIdCategory );
-        _formCategory = FormCategoryHome.findByPrimaryKey( nIdCategory );
+        FormCategory formCategory = FormCategoryHome.findByPrimaryKey( nIdCategory );
         Map<String, Object> model = getModel( );
-        model.put( MARK_CATEGORY, _formCategory );
+        model.put( MARK_CATEGORY, formCategory );
         return getPage( PROPERTY_PAGE_TITLE_MODIFY_CATEGORY, TEMPLATE_MODIFY_CATEGORY, model );
     }
 
@@ -250,23 +239,21 @@ public class FormCategoriesJspBean extends AbstractJspBean
      * @param request
      *            the request
      * @return The JSP URL of the process result
-     * @throws AccessDeniedException
-     *             If the user is not authorized
      */
     @Action( ACTION_MODIFY_CATEGORY )
     public String doModifyCategory( HttpServletRequest request )
     {
         String strIdCategory = request.getParameter( PARAMETER_ID_CATEGORY );
         int nIdCategory = Integer.parseInt( strIdCategory );
-        _formCategory = ( _formCategory == null || _formCategory.getId( ) != nIdCategory ) ? new FormCategory( ) : _formCategory;
-        _formCategory.setId( nIdCategory );
-        populate( _formCategory, request );
+        FormCategory formCategory = new FormCategory( ) ;
+        formCategory.setId( nIdCategory );
+        populate( formCategory, request );
         // Check constraints
-        if ( !validateBean( _formCategory, VALIDATION_ATTRIBUTES_PREFIX ) )
+        if ( !validateBean( formCategory, VALIDATION_ATTRIBUTES_PREFIX ) )
         {
             return redirectView( request, VIEW_MODIFY_CATEGORY );
         }
-        FormCategoryHome.update( _formCategory );
+        FormCategoryHome.update( formCategory );
         addInfo( INFO_CATEGORY_UPDATED, getLocale( ) );
         return redirectView( request, VIEW_MANAGE_CATEGORY );
     }
