@@ -16,7 +16,6 @@
 		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
 		<div class="col-12">
 			<#assign field_width=getFieldValueByCode( entry, "width" )>
-			<#assign field=getFieldByCode( entry, "text_config")>
 			<#assign inputClass="form-control input-sm" />
 			<#assign params>
 				<#if entry.mandatory>
@@ -49,6 +48,7 @@
 					</#if>
 				</#list>
 			<#else>
+				<#assign field=getFieldByCode( entry, "text_config")>
 				<#if field.value?exists>
 					<#assign inputValue = field.value />
 				<#else>
