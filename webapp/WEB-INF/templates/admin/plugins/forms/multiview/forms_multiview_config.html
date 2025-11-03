@@ -19,8 +19,8 @@
 							<@checkBox labelFor='display_assignee_column' labelKey='#i18n{forms.multiview_config.labelDisplayColumnAssignee}' name='display_assignee_column' id='display_assignee_column' value='1' checked=multiview_config.displayFormsAssigneeColumn />
 						</@formGroup>
 					</#if>
-					<@formGroup labelFor='pdf_number_of_response_per_file' labelKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile}'>
-						<@input type='number' name='pdf_number_of_response_per_file' id='pdf_number_of_response_per_file' value=multiview_config.numberOfFormResponsesPerPdf min=1 />
+					<@formGroup labelFor='pdf_number_of_response_per_file' labelKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile}' helpKey='#i18n{forms.multiview_config.labelDisplayColumnPdfNumberOfResponsesPerFile.help}'>
+						<@input type='number' name='pdf_number_of_response_per_file' id='pdf_number_of_response_per_file' value=multiview_config.numberOfFormResponsesPerPdf min=1 mandatory=true />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.multiview_config.labelUploadPdfTemplate}' helpKey='#i18n{forms.multiview_config.labelUploadPdfTemplate.help}' rows=2>
 						<@addFileInputAndfilesBox fieldName="upload_template" handler=uploadHandler listUploadedFiles=listUniqueFile!'' inputCssClass='' />
