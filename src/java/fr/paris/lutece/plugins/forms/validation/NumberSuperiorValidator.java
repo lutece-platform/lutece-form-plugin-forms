@@ -57,7 +57,7 @@ public class NumberSuperiorValidator extends AbstractNumberValidator
     @Override
     public boolean validateControl( Double controlValue, Double value )
     {
-        return value < controlValue;
+        return value > controlValue;
     }
 
     @Override
