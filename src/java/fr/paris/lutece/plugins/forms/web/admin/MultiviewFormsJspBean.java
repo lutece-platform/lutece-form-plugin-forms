@@ -377,7 +377,15 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         config.setCsvSeparator( request.getParameter( PARAMETER_DISPLAY_FORMS_CSV_SEPARATOR ) );
         
         String strNumberOfFormResponsesPerPdf = request.getParameter( PARAMETER_DISPLAY_FORMS_PDF_NUMBER_OF_RESPONSES_PER_FILE );
-        config.setNumberOfFormResponsesPerPdf(Integer.parseInt(strNumberOfFormResponsesPerPdf));
+        if( StringUtils.isNotBlank( strNumberOfFormResponsesPerPdf )
+                && StringUtils.isNumeric( strNumberOfFormResponsesPerPdf ) )
+        {
+            int numberOfFormResponsesPerPdf = Integer.parseInt(strNumberOfFormResponsesPerPdf);
+            if( numberOfFormResponsesPerPdf > 0 )
+            {
+                config.setNumberOfFormResponsesPerPdf(numberOfFormResponsesPerPdf);
+            }
+        }
 
         String strDisplayFormColumnTitle = request.getParameter( PARAMETER_DISPLAY_FORMS_TITLE_COLUMN );
         config.setDisplayFormsTitleColumn( strDisplayFormColumnTitle != null );
