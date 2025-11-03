@@ -1,5 +1,4 @@
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
-<#assign field=getFieldByCode( entry, "text_config")>
 <#assign field_min=getFieldByCode( entry, "min")>
 <#assign field_max=getFieldByCode( entry, "max")>
 <#assign suffix = '' >
@@ -25,6 +24,7 @@
 		</#if>
 	</#list>
 <#else>
+	<#assign field=getFieldByCode( entry, "text_config")>
 	<#if field.value?exists>
 		<#assign inputValue = field.value />
 	<#else>
