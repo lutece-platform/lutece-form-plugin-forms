@@ -8,8 +8,8 @@
             <@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true  rows=2 >
                  <@input type='text' name='title' id='step-title' value='${step.title!?replace(\'- hidden\',\'\')}' />
             </@formGroup>
-            <@formGroup helpKey='#i18n{forms.modify_step.labelShowTitle.help}' rows=2>
-                <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelShowTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=true />
+            <@formGroup helpKey='#i18n{forms.modify_step.showLabelTitle.help}' rows=2>
+                <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.showLabelTitle}' name='show-step-title' id='show-step-title' value='0' checked=true />
             </@formGroup>
             <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}'  rows=2 >
                  <@input type='textarea' name='description'>${step.description!}</@input>
