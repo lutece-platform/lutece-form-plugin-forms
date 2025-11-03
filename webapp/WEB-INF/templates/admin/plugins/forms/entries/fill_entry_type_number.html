@@ -16,8 +16,8 @@
 <#if list_responses?has_content>
 	<#list list_responses as response>
 		<#if response.entry.idEntry == entry.idEntry>
-			<#if response.toStringValueResponse??>
-				<#assign inputValue = response.toStringValueResponse />
+			<#if response.responseValue??>
+				<#assign inputValue = response.responseValue />
 			</#if>
 			<#if response.entry.error??>
 				<#assign groupStyle = 'error' />
