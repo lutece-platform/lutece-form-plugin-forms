@@ -1,21 +1,26 @@
 <@messages errors=errors warnings=warnings infos=infos />
-<div class="card">
-    <h3 class="card-header">${formResponse.id}</h3>
+<div class="card border-secondary">
+    <div class="card-header bg-white border border-0"><h2 class="card-title text-primary">#i18n{forms.xpage.response.title} #${formResponse.id}</h2></div>
+    <div class="card-body fs-6">
+        <#list formResponse.steps as formQuestionResponseSteps>
+            <#list formQuestionResponseSteps.questions as questionResponse>
+                <p class="fw-bold">${questionResponse.question.title} :</p>
+                <ul>
+                    <#list questionResponse.entryResponse as response>
+                        <li>${response.responseValue!}</li>
+                    </#list>
+                </ul>
+            </#list>
+        </#list>
+        <#if workflow_action_list?has_content>
+            <h2>#i18n{forms.multiviewForms.view_record_history.actions}</h2>
+            <#list workflow_action_list as action>
+                <@link class='btn btn-block btn-default' href='jsp/site/Portal.jsp?page=formsResponse&action=doProcessAction&id_action=${action.id}&id_response=${formResponse.id}&token=${token}' >
+                    <@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title=action.name alt=action.name /> ${action.name}  
+                </@link>
+            </#list>
+        </#if>
+    </div>
+    <div class="card-footer bg-white border border-0">
+    </div>
 </div>
-<#list formResponse.steps as formQuestionResponseSteps>
-	<#list formQuestionResponseSteps.questions as questionResponse>
-		${questionResponse.question.title} : 
-    	<#list questionResponse.entryResponse as response>
-    		${response.responseValue!}
-    	</#list>
-    	</br>
-    </#list>
-</#list>
-<#if workflow_action_list?has_content>
-    <h2>#i18n{forms.multiviewForms.view_record_history.actions}</h2>
-    <#list workflow_action_list as action>
-        <@link class='btn btn-block btn-default' href='jsp/site/Portal.jsp?page=formsResponse&action=doProcessAction&id_action=${action.id}&id_response=${formResponse.id}&token=${token}' >
-            <@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title=action.name alt=action.name /> ${action.name}  
-        </@link>
-    </#list>
-</#if>
