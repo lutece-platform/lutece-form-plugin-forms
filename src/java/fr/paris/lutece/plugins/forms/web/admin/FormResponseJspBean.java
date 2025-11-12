@@ -268,7 +268,7 @@ public class FormResponseJspBean extends AbstractJspBean
 
         List<String> errorList = new ArrayList<>( );
 
-        Step currentStep = FormsResponseUtils.getNextStep( _currentStep.getId( ), errorList, _formResponseManager );
+        Step currentStep = FormsResponseUtils.getNextStep( _currentStep.getId( ), errorList, _formResponseManager, getLocale( ) );
         _currentStep = currentStep != null ? currentStep : _currentStep;
 
         return getStepView( request );
