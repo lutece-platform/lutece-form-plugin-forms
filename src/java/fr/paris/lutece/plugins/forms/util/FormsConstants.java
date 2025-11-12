@@ -191,6 +191,7 @@ public final class FormsConstants
     public static final String MESSAGE_LOAD_BACKUP = "forms.message.view.loadBackUp";
     public static final String MESSAGE_SUMMARY_TITLE = "forms.summary.title";
     public static final String MESSAGE_ERROR_NO_STEP = "forms.error.form.noStep";
+    public static final String MESSAGE_ERROR_NO_NEXT_LINK = "forms.error.form.noNextLink";
 
     
     // Jsp
