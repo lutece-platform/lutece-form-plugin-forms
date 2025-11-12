@@ -48,6 +48,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.portal.service.i18n.I18nService;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -256,9 +257,16 @@ public class FormsResponseUtils
    * @param formResponseManager the formResponseManager
    * @return Step object
    */
-    public static Step getNextStep( int nIdCurrentStep, List<String> errorMessageList, FormResponseManager formResponseManager )
+    public static Step getNextStep( int nIdCurrentStep, List<String> errorMessageList, FormResponseManager formResponseManager, Locale locale )
     {
         List<Transition> listTransition = TransitionHome.getTransitionsListFromStep( nIdCurrentStep );
+
+        if ( listTransition == null || listTransition.isEmpty() )
+        {
+            String msg = I18nService.getLocalizedString( FormsConstants.MESSAGE_ERROR_NO_NEXT_LINK, locale );
+            errorMessageList.add( msg );
+            return null;
+        }
 
         for ( Transition transition : listTransition )
         {
