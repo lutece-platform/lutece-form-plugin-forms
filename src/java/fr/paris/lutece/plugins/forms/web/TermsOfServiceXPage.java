@@ -180,6 +180,8 @@ public class TermsOfServiceXPage extends MVCApplication
         page.setPathLabel( I18nService.getLocalizedString( MESSAGE_PATH, locale ) );
         page.setContent( htmlTemplate.getHtml( ) );
 
+        page.setStandalone( true );
+
         return page;
     }
 
