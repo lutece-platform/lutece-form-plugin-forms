@@ -14,7 +14,7 @@
 	<@div class="col-12">
 		<@checkBox name="${name}" id="${name}_${fieldAgreement.idField}" value="${fieldAgreement.idField}" checked=checked orientation=style class="${entry.CSSClass!}<#if error?? > is-invalid</#if>" />
 		<#assign fieldLink = getFieldByCode( entry, "link" ) >
-		<@link href='jsp/site/RunStandaloneApp.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}' params='onclick="javascript:openFormsTermsOfService(this.href); return false;"' target='_blank'>${fieldLink.value}</@link>
+		<@link href='jsp/site/Portal.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}' target='_blank'>${fieldLink.value}</@link>
 		<#if error?? && error.isDisplayableError>
 		  <@span class="invalid-feedback"><#if error.mandatoryError>${error.errorMessage}</#if></@span>
 		</#if>
