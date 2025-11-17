@@ -39,9 +39,6 @@
 		<#assign inputValue = '' />
 	</#if>
 </#if>
-<#if field_max_size?number!=-1>
-	<#assign maxlength = field_max_size?number />
-</#if>
 <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=entry.helpMessage!'' groupStyle=groupStyle!'' mandatory=entry.mandatory>
 	<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 	<@input type='text' name='${idName}' id='${idName}' class='${entry.CSSClass!}' value=inputValue params=autocomplete placeHolder=placeholder/>
@@ -58,17 +55,14 @@
 <#if confirmField.value?boolean>
 	<#assign idName = buildEntryName( entry, entry_iteration_number )>
 	<@formGroup labelFor='${idName}_confirm_field' labelKey='${confirmField.title}' mandatory=entry.mandatory htmlRequired=false >
-    <#assign field_width=getFieldValueByCode( entry, "width")>
-    <#assign field_max_size=getFieldValueByCode( entry, "max_size")>
-    <#assign field=getFieldByCode( entry, "text_config")>
-	<#if confirmFieldValue?exists>
-		<#assign confirm_fieldValue = confirmFieldValue />
-	<#else>
-		<#assign confirm_fieldValue = '' />
-	</#if>
-	<#if field_max_size?number!=-1>
-		<#assign maxlength = field_max_size?number />
-	</#if>
-		<@input type='text' name='${idName}_confirm_field' id='${idName}_confirm_field' inputSize=field_width?number value="${confirm_fieldValue}" maxlength=maxlength!0/>
+		<#assign field_width=getFieldValueByCode( entry, "width")>
+		<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
+		<#assign field=getFieldByCode( entry, "text_config")>
+		<#if confirmFieldValue?exists>
+			<#assign confirm_fieldValue = confirmFieldValue />
+		<#else>
+			<#assign confirm_fieldValue = '' />
+		</#if>
+		<@input type='text' name='${idName}_confirm_field' id='${idName}_confirm_field' inputSize=field_width?number value="${confirm_fieldValue}"/>
     </@formGroup>
 </#if>
