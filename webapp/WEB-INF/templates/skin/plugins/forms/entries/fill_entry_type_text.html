@@ -27,10 +27,6 @@
 				<#if field_autocomplete?? && field_autocomplete.value??>
 					autocomplete="${field_autocomplete.value}"
 				</#if>
-				<#assign field_max_size=getFieldValueByCode( entry, "max_size")>
-				<#if field_max_size?number!=-1>
-					maxlength="${field_max_size?number}"
-				</#if>
 				<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
 				<#if placeholder!=''> 
 					placeholder='${placeholder}'
@@ -97,7 +93,7 @@
 				<#assign confirm_fieldValue = '' />
 			</#if>
 			<div class="col-12">
-				<input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field_width?number}" value="${confirm_fieldValue}" <#if field_max_size?number!=-1>maxlength="${field_max_size?number}"</#if> <#if field_autocomplete??>autocomplete="${field_autocomplete.value?if_exists}"</#if> />
+				<input type="text" class="form-control input-sm" name="${idName}_confirm_field" id="${idName}_confirm_field" size="${field_width?number}" value="${confirm_fieldValue}" <#if field_autocomplete??>autocomplete="${field_autocomplete.value?if_exists}"</#if> />
 			</div>
 		</div>
 	</#if>
