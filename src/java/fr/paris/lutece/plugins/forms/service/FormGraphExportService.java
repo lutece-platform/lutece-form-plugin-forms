@@ -40,6 +40,8 @@ package fr.paris.lutece.plugins.forms.service;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.util.FormsUtils;
+import jakarta.enterprise.inject.spi.CDI;
 import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
@@ -52,7 +54,6 @@ import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 /**
  *
@@ -78,7 +79,7 @@ public class FormGraphExportService
     private static final String TRANSITION_URL_PART = "/jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=";
     private static final String NEWLINE = "\n";
 
-    private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
+    private static final FormService _formService = CDI.current( ).select( FormService.class ).get( );
     
     /**
      * Export form as Mermaid MD graph
@@ -100,7 +101,7 @@ public class FormGraphExportService
                     CollectionUtils.isNotEmpty( ControlHome.getControlByControlTargetAndType( transition.getId( ), ControlType.TRANSITION ) ) );
         }
 
-        listSteps = StepService.sortStepsWithTransitions( listSteps, listTransitions );
+        listSteps = FormsUtils.sortStepsWithTransitions( listSteps, listTransitions );
 
         // add final virtual step
         sb.append ( "F").append ( KEY_STEP_END_SYMBOL).append ( NEWLINE);
