@@ -8,7 +8,6 @@
 				<@tabPanel id="workflow" active=true>
 				<@tform class='form' method='post' name='modify_forms_questions' action='jsp/admin/plugins/forms/ManageFormWorkflowConfig.jsp'>
 				<@input type='hidden' id='id_form' name='id_form' value='${form.id}' />
-				<@input type="hidden" name="token" value = "${token}" />
 				<@table id='list' headBody=true  class='table-striped is-fullwidth' params=' data-toggle="table" data-group-by="true" data-group-by-field="step" data-search="true" data-show-columns="true"'>
 					<@tr>
 						<@th params='data-field="step"'>#i18n{forms.manage_question_response.step}</@th>

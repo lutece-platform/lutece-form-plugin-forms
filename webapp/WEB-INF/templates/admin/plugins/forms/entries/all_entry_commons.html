@@ -74,7 +74,7 @@ ${breadcrumb_template}
 					<@input type='hidden' name='id_entry' value='${entry.idEntry!}' />
 					<@input type='hidden' name='id_step' value='${step.id!}' />
 					<@input type='hidden' name='id_question' value='${question.id!}' />
-					<@input type='hidden' id='token' name='token' value='${token}' />
+					<@input type='hidden' id='token' name='token' value='${token!}' />
 					<@formGroup rows=2  labelFor='title' labelKey='#i18n{forms.create_entry.labelTitle}' helpKey='#i18n{forms.create_entry.labelTitleComment}' mandatory=true>
 						<@input type='text' name='title' id='title' value='${entry.title}' maxlength=255 />
 					</@formGroup>
