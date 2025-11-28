@@ -1,3 +1,4 @@
+<@cTpl>
 <#assign classDisp><#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if></#assign>
 <#assign param>displayControl="${question.id}_${question.iterationNumber}" </#assign>
 <#assign entryCSSClass>${classDisp} mt-3<#if question.entry.CSSClass??><#if question.entry.CSSClass?trim?starts_with('col-')> ${question.entry.CSSClass}<#else> col-12</#if></#if></#assign>
@@ -110,3 +111,4 @@ $( function() {
 	});
 });
 </script>
+</@cTpl>

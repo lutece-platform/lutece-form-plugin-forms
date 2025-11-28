@@ -7,6 +7,7 @@
 				<@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title='#i18n{forms.create_form.button.backStep}'>${stepTitle}</@link></@breadcrumbItem>
 				<@breadcrumbItem class='active is-active'>#i18n{forms.create_group.title}</@breadcrumbItem>
 			</@formBreadCrumb>
+			<@div id='form_createGroup'>
 			<@tform method='post' name='create_group' id='create_group' action='jsp/admin/plugins/forms/ManageQuestions.jsp'>
 			<@messages errors=errors />
 			<@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
@@ -57,6 +58,7 @@
 				<@formsButton okAction='createGroup' viewAction='' />
 			</@formGroup>
 		</@tform>
+		</@div>
 	</@pageColumn>
 </@pageContainer>
 <#include "/admin/util/editor/editor.html" />

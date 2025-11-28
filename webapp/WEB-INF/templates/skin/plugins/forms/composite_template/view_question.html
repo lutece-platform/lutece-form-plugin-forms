@@ -1,3 +1,4 @@
+<@cTpl>
 <div class="row <#if question??>display_field_${question.id}_${question.iterationNumber}</#if>" displayControl="${question.id}_${question.iterationNumber}">${questionContent}</div>
 <#if list_validator??>
 	<input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='' hidden />
@@ -99,3 +100,4 @@
 <#else>
 	<input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='${question.id}_${question.iterationNumber}' hidden />
 </#if>
+</@cTpl>

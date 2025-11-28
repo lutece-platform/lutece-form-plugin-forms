@@ -151,7 +151,7 @@
 					<@paginationAdmin paginator=paginator combo=1 showcount=0 />
 				<#else>
 					<@empty subtitle='#i18n{forms.multiviewForms.view_record_history.history_empty}' title='#i18n{forms.manage_steps.warning.no.initial.final}' />
-					<@div class='d-flex justify-content-center'>
+					<@div class='d-flex justify-content-space-around'>
 						<@offcanvas targetUrl="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" targetElement="#create-step" id="step-${form.id}"  btnIcon="plus" btnTitle="#i18n{forms.manage_steps.buttonAdd}" btnColor="primary" position="end" title="#i18n{forms.manage_steps.buttonAdd}" size="half"/>
 						<#if template_provider??>
 							<@offcanvas id="import-template" title="#i18n{forms.manage_steps.buttonImportTemplate}" position="end" btnTitle="#i18n{forms.manage_steps.buttonImportTemplate}" btnIcon="new-section" size="sm" >
@@ -173,7 +173,7 @@
 								</#if>
 								</@row>
 								<@formGroup rows=2>
-									<@button type='submit' name='action_doImportTemplate' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
+									<@button type='submit' name='action_doImportTemplate' class='me-2' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
 									<@button type='cancel' name='action_doCancelImport' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' cancel=true />
 								</@formGroup>
 							</@tform>

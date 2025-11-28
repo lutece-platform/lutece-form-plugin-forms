@@ -1,3 +1,4 @@
+<@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
 	<#if getError( list_responses, entry )?? >
 		<#assign error = getError( list_responses, entry ) >
@@ -45,3 +46,5 @@
 	    </div>
 	</div>
 </#if>
+
+</@cTpl>

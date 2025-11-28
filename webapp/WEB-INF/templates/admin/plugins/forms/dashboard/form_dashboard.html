@@ -1,4 +1,5 @@
-<@adminDashboardWidget title='#i18n{forms.dashboard.formList}' id='forms_dashboard' url=url  >
+<@adminDashboardWidget title='#i18n{forms.dashboard.formList}' id='forms_dashboard' url=url>
+<#if form_list?size gt 0>
 <@listGroup class='list-group-flush py-0' >
 <#list form_list as form>
 	<@listGroupItem class='p-0' >
@@ -13,10 +14,10 @@
 			<@columns xs=12 md=4 class='d-flex justify-content-end'>
 				<#if form.actions?exists>
 					<#assign color='primary' />
-					<#list form.actions?filter( action -> ( action.permission=='MODIFY' || action.permission=='PARAM' || action.permission=='VIEW_FORM_RESPONSE'  ) ) as action>
+					<#list form.actions?filter( action -> ( action.description=='forms.action.modify.description'  ) ) as action>
 						<#assign params='' />
 						<#assign class='' />
-						<@aButton href='${action.url}&id_form=${form.id}' title='${action.name}' hideTitle=['all'] class=class color=color buttonIcon=action.iconUrl  params=params />
+						<@aButton href='${action.url}&id_form=${form.id}' title='${action.name} ${action.description}' hideTitle=['all'] class=class color=color buttonIcon=action.iconUrl  params=params />
 					</#list>
 				</#if>
 				<@aButton href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title}' buttonIcon='text-plus' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' />
@@ -33,5 +34,8 @@
 	</@listGroupItem>
 </#list>
 </@listGroup>
+<#else>
+<@empty title='#i18n{portal.util.labelNoItem}' actionTitle='#i18n{forms.manageForm.buttonAdd}' actionUrl='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm'/>
+</#if>
 </@adminDashboardWidget>
 <@formModal id='pubModal' />

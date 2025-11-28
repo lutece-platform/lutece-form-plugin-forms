@@ -1,3 +1,4 @@
+<@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
   <#if getError( list_responses, entry )?? >
     <#assign error = getError( list_responses, entry ) >
@@ -61,3 +62,4 @@
     });
   </script>
 </#if>
+</@cTpl>

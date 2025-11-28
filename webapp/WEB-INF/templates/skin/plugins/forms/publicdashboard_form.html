@@ -1,19 +1,21 @@
-		<h2>#i18n{forms.publicdashboard.title}</h2>
-		<div class="table-responsive">
-			<table class="table table-striped">
-				<tbody>
-					<#list list_formsresponse as formRep>
-						<#list formRep.steps as step>
-							<#list step.questions as question>
-								<tr>
-									<td>${question.question.title!}</td>
-									<#list question.entryResponse as response>
-										<td>${response.responseValue!}</td>
-									</#list>
-								</tr>
+<@cTpl>
+<h2>#i18n{forms.publicdashboard.title}</h2>
+<div class="table-responsive">
+	<table class="table table-striped">
+		<tbody>
+			<#list list_formsresponse as formRep>
+				<#list formRep.steps as step>
+					<#list step.questions as question>
+						<tr>
+							<td>${question.question.title!}</td>
+							<#list question.entryResponse as response>
+								<td>${response.responseValue!}</td>
 							</#list>
-						</#list>
+						</tr>
 					</#list>
-				</tbody>
-			</table>
-		</div>
+				</#list>
+			</#list>
+		</tbody>
+	</table>
+</div>
+</@cTpl>

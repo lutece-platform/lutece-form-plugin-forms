@@ -51,7 +51,8 @@
                                 <@h level=2>#i18n{forms.manage_questions.type.step.label} "${stepTitle?replace('- hidden','')}" </@h> 
                                 <#list entry_type_list as item>
                                     <#if item.group>
-                                        <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}' title='#i18n{forms.manage_questions.action.creategroup.label}' buttonIcon='${item.iconName}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}"' />
+                                        <!-- <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}' title='#i18n{forms.manage_questions.action.creategroup.label}' buttonIcon='${item.iconName}' params='data-bs-toggle="offcanvas" data-bs-target="#create_group" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}"' /> -->
+                                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}" targetElement="#form_createGroup" id="step-group-${step.id}"  btnIcon=item.iconName btnTitle="#i18n{forms.manage_questions.action.creategroup.label}" btnColor="primary" hideTitle=['xs','sm'] position="end" title="#i18n{forms.manage_questions.action.creategroup.label}" size="half"/>
                                     </#if>
                                 </#list>
                                 </@div>
