@@ -233,7 +233,7 @@
 <link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
 <script src="js/jquery/plugins/toastr/toastr.min.js"></script>
 <script>
-$( function(){
+document.addEventListener('DOMContentLoaded', function() {
 <#if clickUrl !=''>
 	toastr.options.onclick = function () {
 		window.location.replace('${clickUrl}')
@@ -546,10 +546,14 @@ window.addEventListener('message', function(event) {
 <script src="js/jquery/plugins/moment.min.js"></script>
 <script src="js/jquery/plugins/daterangepicker.js"></script>
 <script>
-$(function() {
-	$("[name='formsFilterDate']").each( function( index ) {
-		var filter='#' + $( this ).val(), filter_to=filter+'_to', filter_from=filter+'_from';
-		$(filter).daterangepicker( {
+document.addEventListener('DOMContentLoaded', function() {
+	document.querySelectorAll("[name='formsFilterDate']").forEach(function(element) {
+		var filter = '#' + element.value;
+		var filterTo = filter + '_to';
+		var filterFrom = filter + '_from';
+		var filterElement = document.querySelector(filter);
+		
+		$(filterElement).daterangepicker({
 			ranges: {
 				"#i18n{forms.multiviewForms.dateRangePicker.today}": [moment(), moment()],
 				"#i18n{forms.multiviewForms.dateRangePicker.yesterday}": [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
@@ -561,57 +565,56 @@ $(function() {
 			alwaysShowCalendars: true,
 			autoUpdateInput: false,
 			locale: {
-			format: '#i18n{forms.multiviewForms.dateRangePicker.format}',
-			applyLabel: "#i18n{forms.multiviewForms.dateRangePicker.applyLabel}",
-			cancelLabel: "#i18n{forms.multiviewForms.dateRangePicker.cancelLabel}",
-			fromLabel: "#i18n{forms.multiviewForms.dateRangePicker.fromLabel}",
-			toLabel: "#i18n{forms.multiviewForms.dateRangePicker.toLabel}",
-			customRangeLabel: "#i18n{forms.multiviewForms.dateRangePicker.customRangeLabel}",
-			weekLabel: "#i18n{forms.multiviewForms.dateRangePicker.weekLabel}",
-			daysOfWeek: [
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSun}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekMon}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekTue}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekWen}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekThu}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekFri}",
-				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSat}"
-			],
-			monthNames: [
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames1}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames2}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames3}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames4}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames5}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames9}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
-				"#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"
-			],
-		}
+				format: '#i18n{forms.multiviewForms.dateRangePicker.format}',
+				applyLabel: "#i18n{forms.multiviewForms.dateRangePicker.applyLabel}",
+				cancelLabel: "#i18n{forms.multiviewForms.dateRangePicker.cancelLabel}",
+				fromLabel: "#i18n{forms.multiviewForms.dateRangePicker.fromLabel}",
+				toLabel: "#i18n{forms.multiviewForms.dateRangePicker.toLabel}",
+				customRangeLabel: "#i18n{forms.multiviewForms.dateRangePicker.customRangeLabel}",
+				weekLabel: "#i18n{forms.multiviewForms.dateRangePicker.weekLabel}",
+				daysOfWeek: [
+					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSun}",
+					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekMon}",
+					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekTue}",
+					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekWen}",
+					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekThu}",
+					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekFri}",
+					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSat}"
+				],
+				monthNames: [
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames1}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames2}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames3}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames4}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames5}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames9}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
+					"#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"
+				],
+			}
 		}, 
 		function(start, end, label) {
-			document.querySelector(filter_from).value = start.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
-			document.querySelector(filter_to).value = end.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
+			document.querySelector(filterFrom).value = start.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
+			document.querySelector(filterTo).value = end.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
 			document.querySelector(filter).value = start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') + " - " + end.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
 			var searchForm = document.getElementById('searchForm');
 			if (searchForm) {
 				searchForm.submit();
 			}
 		});
-  		
-		$(filter).on('cancel.daterangepicker', function(ev, picker) {
-			//do something, like clearing an input
+		
+		$(filterElement).on('cancel.daterangepicker', function(ev, picker) {
 			var startD = moment().day(-30);
 			var endD = moment().day(30);
 			$(this).data('daterangepicker').setStartDate(startD);
 			$(this).data('daterangepicker').setEndDate(endD);
-			$(this).val('');
-			$(filter_from).val ('');
-			$(filter_to).val ('');
+			this.value = '';
+			document.querySelector(filterFrom).value = '';
+			document.querySelector(filterTo).value = '';
 		});
 	});
 });
