@@ -52,5 +52,13 @@
 	setTimeout(function () {
 		   map.invalidateSize(true);
 		}, 100);
+		
+	document.getElementById("search_adress").style.visibility = "hidden";
+		
+	document.getElementsByClassName('leaflet-draw-draw-marker')[0].style.display = 'none';
+	document.getElementsByClassName('leaflet-draw-draw-polyline')[0].style.display = 'none';
+	document.getElementsByClassName('leaflet-draw-draw-polygon')[0].style.display = 'none';
+	document.getElementsByClassName('leaflet-draw-edit-edit')[0].style.display = 'none';
+	document.getElementsByClassName('leaflet-draw-edit-remove')[0].style.display = 'none';
 
   </script>          
