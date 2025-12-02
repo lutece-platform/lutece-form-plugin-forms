@@ -1,0 +1,29 @@
+<label class="col-12 col-form-label" >${entry.title}<#if entry.mandatory> *</#if></label>
+
+<#include "/skin/plugins/carto/manage_map.html" />
+<div id="mapError" style="color: red; margin-top: 8px;"></div>
+<#include "/admin/util/editor/editor.html" />
+<#if entry.helpMessage?exists&&entry.helpMessage!=''>
+	<span class="form-control-plaintext">${entry.helpMessage}</span>
+</#if>
+
+<@initEditor/>
+
+<#if entry.mandatory>
+<script>
+document.getElementById("form-validate").addEventListener("submit", function(e) {
+    let lat = document.getElementById("coordinate_x").value;
+    let lng = document.getElementById("coordinate_y").value;
+    let lngPolygon = document.getElementById("coordinate_polygon").value;
+    let lngPolyline = document.getElementById("coordinate_polyline").value;
+    document.getElementById("forms-admin-map").style.border = "3px solid red";
+    
+    var alertMessage = "#i18n{forms.message.error.entry.carto}";
+
+    if (!lat && !lng && !lngPolygon && ! lngPolyline) {
+        e.preventDefault();
+        document.getElementById("mapError").textContent = alertMessage;
+    }
+});
+</script>
+</#if>

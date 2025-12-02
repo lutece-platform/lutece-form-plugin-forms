@@ -50,7 +50,7 @@ public class EntryTypeCartography extends AbstractEntryTypeCartography implement
     private static final String TEMPLATE_MODIFY = "admin/plugins/forms/entries/modify_entry_type_cartography.html";
     private static final String TEMPLATE_READONLY_BACKOFFICE = "admin/plugins/forms/entries/readonly_entry_type_cartography.html";
     private static final String TEMPLATE_READONLY_FRONTOFFICE = "skin/plugins/forms/entries/readonly_entry_type_cartography.html";
-    private static final String TEMPLATE_FRONT_CARTOGRAPHY = "/skin/plugins/carto/manage_map.html";
+    private static final String TEMPLATE_FRONT_CARTOGRAPHY = "skin/plugins/forms/entries/fill_entry_type_cartography.html";
     /**
      * {@inheritDoc}
      */
