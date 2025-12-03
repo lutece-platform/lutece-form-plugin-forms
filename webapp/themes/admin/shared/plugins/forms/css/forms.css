@@ -25,11 +25,11 @@
    text-align: start;
    flex: 4
 }
-
+/* 
 #forms-list  .card-list.card .card-body p + .form-actions {
    flex: 1;
    justify-content: flex-start !important;
-}
+} */
 
 #forms-list > .col > .card.card-list > .card-body p{
     text-align: center !important;

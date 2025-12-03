@@ -3,6 +3,58 @@
 <@listGroup class='list-group-flush py-0' >
 <#list form_list as form>
 	<@listGroupItem class='p-0' >
+		<@card class='mb-1'>
+			<@row class='align-items-center'>
+				<@columns>
+					<@h level=3 class='d-inline-block' params='title="${form.title}" style="--tw:300px"'>
+						<#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
+						<@tag class='mx-2 fs-5' title='#i18n{forms.dashboard.row_responses}'> ${form.currentNumberResponse}</@tag>
+						<@span class='truncate mb-2'>${form.title}</@span>
+					</@h>
+				</@columns>
+				<@div class='col-auto'>
+					<#if form.actions?exists>
+						<#list form.actions as action>
+							<#if action.permission=='MODIFY'>
+								<@aButton class='btn-sm' href='${action.url}&id_form=${form.id}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
+							</#if>
+							<#if action.permission=='PARAM'>
+								<@aButton class='btn-sm' href='${action.url}&id_form=${form.id}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
+							</#if>
+						</#list>
+					</#if>
+				</@div>
+				<@div class='col-auto'>
+					<div class="dropdown">
+						<a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
+						<!-- Download SVG icon from http://tabler.io/icons/icon/dots-vertical -->
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
+							<path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+							<path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+							<path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+						</svg>
+						</a>
+						<div class="dropdown-menu dropdown-menu-end">
+						<#if form.actions?exists>
+							<#list form.actions as action>
+								<@link href='${action.url}&id_form=${form.id}' label='${action.name}' class='dropdown-item' />
+							</#list>
+						</#if>
+						<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' label='#i18n{forms.manageForm.BOLink.label}' class='dropdown-item' />
+						<#if form.active>
+							<#assign inactiveBypass=''>
+							<#assign color='success'>
+						<#else>
+							<#assign inactiveBypass='&ts='+timestamp+'&token='+inactiveBypassTokens[form.id?string]>
+							<#assign color='warning'>
+						</#if>
+						<@link href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='#i18n{forms.manageForm.FOLink.label}' class='dropdown-item' />
+						</div>
+					</div>
+				</@div>
+			</@row>
+		</@card>
+        <#--
 		<@row>
 			<@columns xs=12 md=8>
 				<@h level=3 class='d-inline-block truncate' params='title="${form.title}" style="--tw:300px"'>
@@ -31,6 +83,7 @@
 				<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' params='target="_blank"' buttonIcon='external-link' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' color=color />
 			</@columns>
 		</@row>
+		-->
 	</@listGroupItem>
 </#list>
 </@listGroup>

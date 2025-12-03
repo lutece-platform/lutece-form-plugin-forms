@@ -405,7 +405,7 @@ window.addEventListener('message', function(event) {
 		</@fieldSet>
 		<@fieldSet legend='#i18n{forms.create_form.display.label}'>
 			<@row>
-				<@columns xs=12 sm=6> 
+				<@columns> 
 					<@formGroup labelKey='#i18n{forms.modify_form.labelBreadcrumb}' helpKey='#i18n{forms.modify_form.labelBreadcrumb.help}' mandatory=true rows=2>
 						<@select name='breadcrumbName' items=breadcrumbTypes default_value='${form.breadcrumbName!}' />
 					</@formGroup>
@@ -425,7 +425,7 @@ window.addEventListener('message', function(event) {
 		<@card>
 		<@fieldSet legend='#i18n{forms.create_form.labelDates}'>  
 			<@row>
-				<@columns xs=12 sm=6>   
+				<@columns>   
 					<@formGroup labelKey='#i18n{forms.modify_form.labelStartDate}' rows=2>
 						<@inputGroup>
 						<#assign availabilityStartDatestr = ""><#if form.availabilityStartDate?? ><#assign availabilityStartDatestr = form.availabilityStartDate?iso_local_nz></#if>
@@ -436,7 +436,7 @@ window.addEventListener('message', function(event) {
 						</@inputGroup>
 					</@formGroup>
 				</@columns>       
-				<@columns xs=12 sm=6>  
+				<@columns>  
 					<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
 						<@inputGroup>
 						<#assign availabilityEndDatestr = ""><#if form.availabilityEndDate?? ><#assign availabilityEndDatestr = form.availabilityEndDate?iso_local_nz></#if>
