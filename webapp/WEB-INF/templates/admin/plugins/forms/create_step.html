@@ -1,29 +1,38 @@
-<@tform method='post' name='create_step' id='create-step' action='jsp/admin/plugins/forms/ManageSteps.jsp' params=' target="_top"'>
-<@input type='hidden' id='id_form' name='id_form" value="${step.idForm}' />
-<@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true  rows=2 >
-        <@input type='text' name='title' id='step-title' value='${step.title!?replace(\'- hidden\',\'\')}' />
-</@formGroup>
-<@formGroup helpKey='#i18n{forms.modify_step.showLabelTitle.help}' rows=2>
-    <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.showLabelTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=true />
-</@formGroup>
-<@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}'  rows=2 >
-        <@input type='textarea' name='description'>${step.description!}</@input>
-</@formGroup>
-<@row>
-    <@columns>
-        <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' hideLabel=['all'] rows=2>
-            <@checkBox labelFor='initial'labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='#i18n{forms.create_step.title}' />
+        <@box>
+        <@boxBody>
+        <@tform method='post' name='create_step' id='create_step' action='jsp/admin/plugins/forms/ManageSteps.jsp' params=' target="_top"'>
+        <@input type='hidden' id='id_form' name='id_form' value=step.idForm />
+        <@formGroup labelFor='title' labelKey='#i18n{forms.create_step.labelTitle}' helpKey='#i18n{forms.create_step.labelTitle.help}' mandatory=true  rows=2 >
+            <@input type='text' name='title' id='step-title' value='${step.title!?replace(\'- hidden\',\'\')}' />
         </@formGroup>
-    </@columns>
-    <@columns>
-        <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all'] rows=2>
-            <@checkBox labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+        <@formGroup helpKey='#i18n{forms.modify_step.showLabelTitle.help}' rows=2>
+            <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.showLabelTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=true />
         </@formGroup>
-    </@columns>
-</@row>
-<@formGroup labelFor='previousStep' labelKey='#i18n{forms.create_step.labelPreviousStep}' helpKey='#i18n{forms.create_step.labelPreviousStep.help}' hideLabel=['all'] >
-    <#assign step_default=step_list?map(step -> step.code?number)?max?c >
-    <@select name='previousStep' items=step_list default_value=step_default />
-</@formGroup>
-<@formsButton okAction='createStep' viewAction='manageSteps' />
-</@tform>
+        <@formGroup labelFor='description' labelKey='#i18n{forms.create_step.labelDescription}' helpKey='#i18n{forms.create_step.labelDescription.help}'  rows=2 >
+            <@input type='textarea' name='description'>${step.description!}</@input>
+        </@formGroup>
+        <@row>
+            <@columns>
+                <@formGroup labelFor='initial' labelKey='#i18n{forms.create_step.labelInitial}' helpKey='#i18n{forms.create_step.labelInitial.help}' hideLabel=['all'] rows=2>
+                    <@checkBox labelFor='initial'labelKey='#i18n{forms.create_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+                </@formGroup>
+            </@columns>
+            <@columns>
+                <@formGroup labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' helpKey='#i18n{forms.create_step.labelFinal.help}' hideLabel=['all'] rows=2>
+                    <@checkBox labelFor='final' labelKey='#i18n{forms.create_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+                </@formGroup>
+            </@columns>
+        </@row>
+        <@formGroup labelFor='previousStep' labelKey='#i18n{forms.create_step.labelPreviousStep}' helpKey='#i18n{forms.create_step.labelPreviousStep.help}' hideLabel=['all'] >
+            <#assign step_default=step_list?map(step -> step.code?number)?max?c >
+            <@select name='previousStep' items=step_list default_value=step_default />
+        </@formGroup>
+        <@formsButton okAction='createStep' viewAction='manageSteps' />
+        </@tform>
+        </@boxBody>
+        </@box>
+    </@pageColumn>
+</@pageContainer>
