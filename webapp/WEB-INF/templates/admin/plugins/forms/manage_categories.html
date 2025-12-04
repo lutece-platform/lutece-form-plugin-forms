@@ -1,26 +1,36 @@
 <@pageContainer>
     <@pageColumn>
-		<@pageHeader title='#i18n{forms.manageFormCategory.title}' class='is-align-items-center' boxTools=true>
-            <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm'] class='card-header-icon' color='secondary' />
+		<@pageHeader title='#i18n{forms.manageFormCategory.title}' boxTools=true>
+         <@tform type='inline'>
+				<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
+					<@inputGroup>
+						<@input type='text' name='search_forms' id='search_forms' placeHolder='#i18n{portal.system.manage_plugins.buttonFilter}' params='autocomplete="off" addons' />
+						<@button color='primary' title='#i18n{portal.system.manage_plugins.buttonFilter}' buttonIcon='filter' hideTitle=['all'] />
+					</@inputGroup>
+				</@formGroup>
+			</@tform>
+            <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm'] color='primary' hideTitle=['xs','sm','md','lg'] params='data-bs-toggle="offcanvas" data-bs-target="#modify_category" data-bs-scroll="true" data-bs-backdrop="false" data-url="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory"' />
         </@pageHeader>
-        <@table>
-            <@tr>
-                <@th>#i18n{forms.manageFormCategory.columnId}</@th>
-                <@th>#i18n{forms.manageFormCategory.columnName}</@th>
-                <@th>#i18n{forms.manageFormCategory.columnCode}</@th>
-                <@th>#i18n{portal.util.labelActions}</@th>
-            </@tr>
+        <@manageFeature>
             <#list form_category_list as category>
-                <@tr>
-                    <@td>${category.id}</@td>
-                    <@td>${category.name}</@td>
-                    <@td>${category.code}</@td>
-                    <@td>
-                        <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}' title='#i18n{portal.util.labelModify}' buttonIcon='pencil' size='sm' hideTitle=['all']/>
-                        <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?action=confirmRemoveCategory&id_category=${category.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger' size='sm' hideTitle=['all']/>
-                    </@td>
-                </@tr>
+                <@manageFeatureItem>
+                    <@manageFeatureItemColumn class='searchable'>#i18n{forms.manageFormCategory.columnCode} : <@span class='fw-bold mx-2'>${category.code}</@span> - #i18n{forms.manageFormCategory.columnName} : <@span class='fw-bold ms-2'>${category.name}</@span></@manageFeatureItemColumn>
+                    <@manageFeatureItemColumn class='form-actions' align='end' >
+                        <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}' title='#i18n{portal.util.labelModify}' buttonIcon='pencil' hideTitle=['xs','sm','md','lg'] params='data-bs-toggle="offcanvas" data-bs-target="#modify_category" data-bs-scroll="true" data-bs-backdrop="false" data-url="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}"' />
+                        <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?action=confirmRemoveCategory&id_category=${category.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger' hideTitle=['xs','sm','md','lg']/>
+                    </@manageFeatureItemColumn>
+                </@manageFeatureItem>
             </#list>
-        </@table>
+        </@manageFeature>
     </@pageColumn>
 </@pageContainer>
+<@offcanvasIframe id='modify_category' label='#i18n{forms.manageFormCategory.title}' />
+<script type="module">
+import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';
+const searchInput = document.querySelector("#search_forms");
+const searchElementList = document.querySelectorAll(".card");
+new LuteceSearchList( searchInput, searchElementList, {
+    searchableChild: [".searchable"],
+    highlight: true,
+});
+</script>

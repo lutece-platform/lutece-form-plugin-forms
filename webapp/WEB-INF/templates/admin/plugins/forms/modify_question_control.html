@@ -3,7 +3,7 @@
 <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' mandatory=true rows=2>
 	<@inputGroup>
 		<@select name='validatorName' items=availableValidators default_value='${control.validatorName!}' />
-			<@button type='submit' name='view_modifyControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
+		<@button type='submit' name='view_modifyControl' value='validateValidator' hideTitle=['all'] buttonIcon='check'/>
 	</@inputGroup>
 </@formGroup>
 ${control_template}

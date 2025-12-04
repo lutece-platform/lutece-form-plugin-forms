@@ -1,6 +1,6 @@
 <#include "all_entry_commons.html" />
 <#assign useRefListField=getFieldByCode( entry, "use_ref_list")>
-<@editFields options=true editor=true exportable=entry.exportable exportablePdf=entry.exportablePdf refList=useRefListField  rows=2>
+<@editFields options=true editor=true exportable=entry.exportable exportablePdf=entry.exportablePdf refList=useRefListField >
 <@formGroup rows=2 labelFor='field_in_line' labelKey='#i18n{forms.create_entry.labelPresentation}'>
 	<@select id='field_in_line' name='field_in_line'>
 		<@option value=1 selected=entry.fieldInLine label='>#i18n{forms.create_entry.selectPresentationInLine}' />

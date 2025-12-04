@@ -15,7 +15,7 @@
 			</@tform>
 			<#if form.active>
 				<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>${extendableResourceActionsHtml!}</#if>
-				<@button type='button' id='forms-action' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-2' dropdownMenu=true >
+				<@button type='button' id='forms-action' class='mx-2' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog' dropdownMenu=true >
 					<@aButton color='default dropdown-item justify-content-start' href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='external-link' />
 					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title}' buttonIcon='text-plus' />
 					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='list-alt' />
@@ -33,8 +33,7 @@
 					<#if step_list?size gt 0>
 					<@row class='justify-content-end mb-3 '>
 						<@columns class='col-auto gap-2'>
-							<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" targetElement="#create-step" id="step-${form.id}"  btnIcon="plus" btnTitle="#i18n{forms.manage_steps.buttonAdd}" btnColor="primary" hideTitle=['xs','sm'] position="end" title="#i18n{forms.manage_steps.buttonAdd}" size="half"/> -->
-							<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' buttonIcon='plus' title='#i18n{forms.manage_steps.buttonAdd}' color='primary' hideTitle=['xs','sm'] />
+							<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}'  buttonIcon='plus' title='#i18n{forms.manage_steps.buttonAdd}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasCreateStep" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}"' />
 						</@columns>
 						<#if template_provider??>
 							<@columns class='col-auto gap-2'>
@@ -87,16 +86,18 @@
 							<@box id='step_${step.id}'>
 								<#assign stepTitle>
 								<@link class='searchable' href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title=''><@icon style='list me-2' /> ${stepTitle}</@link>
-								<#if step.initial><@tag color='success me-2'>#i18n{forms.manage_steps.columnInitial}</@tag> <#assign hasInitial=1 > </#if>
-								<#if step.final><@tag color='warning me-2'>#i18n{forms.manage_steps.columnFinal}</@tag> <#assign hasFinal=1 ></#if>
+								<#if step.initial><@tag color='success' class='me-2'>#i18n{forms.manage_steps.columnInitial}</@tag> <#assign hasInitial=1 > </#if>
+								<#if step.final><@tag color='warning' class='me-2'>#i18n{forms.manage_steps.columnFinal}</@tag> <#assign hasFinal=1 ></#if>
 								</#assign>
-								<@boxHeader title=stepTitle />
-								<@boxBody class='d-flex'>
-									<#if step.description !=''><@div class='d-flex d-none d-lg-block'>${step.description!}</@div></#if>
-									<@div class='actions d-flex justify-content-end w-100'>
+								<@boxHeader title=stepTitle class='w-25' />
+								<@boxBody class='d-flex justify-content-between'>
+									<@div class='d-flex d-none d-lg-block'><#if step.description !=''>${step.description!}<#else>Aucune description</#if></@div>
+									<@div class='d-flex justify-content-between align-items-center'>
 										<#if transition_list??>
 											<#assign stepTransition = transition_list?filter( transition -> transition.fromStep = step.id ) />
 											<#if stepTransition?? && stepTransition?size gt 0>
+											<@row class='me-2'>
+												<@columns>
 												<@h level=3 class='me-5 d-none d-lg-block'>#i18n{forms.manage_transitions.title}</@h>
 												<@listGroup>
 													<#list transition_list as transition>
@@ -111,10 +112,12 @@
 														</#if>	
 													</#list>
 												</@listGroup>
+												</@columns>
+											</@row>
 											</#if>	 
 										</#if>	 
-										<@div class='d-flex'>
-											<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' label='' class='btn btn-primary'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
+										<@div class='d-flex align-items-center'>
+											<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' label='' class='btn btn-primary me-1'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
 											<@button type='button' id='forms-action' title='Actions' dropdownMenu=true >
 												<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=duplicateStep&id_step=${step.id}&token=${token}' label='' class='dropdown-item'> <@icon style='copy' /> #i18n{forms.manage_steps.action.copyStep}</@link>
 												<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=doExportJson&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='download' /> #i18n{forms.manage_steps.action.exportStep}</@link>
@@ -189,6 +192,7 @@
 		</@formTabs>
 	</@pageColumn>
 </@pageContainer>	
+<@offcanvasIframe id='offcanvasCreateStep' label='#i18n{forms.manage_steps.buttonAdd}' />
 <@offcanvasIframe id='offcanvasTransition'  />
 <script type="module">
 import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';

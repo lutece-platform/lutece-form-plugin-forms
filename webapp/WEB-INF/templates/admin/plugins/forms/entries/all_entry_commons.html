@@ -123,7 +123,6 @@ ${breadcrumb_template}
 						<@input type='textarea' name='errorMessage' id='errorMessage' rows=2>${entry.errorMessage!}</@input>
 					</@formGroup>
 					</#if>
-					
 				</@fieldSet>
 			</@box>
 		</@columns>	
@@ -232,7 +231,8 @@ ${breadcrumb_template}
 					<@boxBody>#i18n{forms.create_entry.messageUseRefList}</@boxBody>
 				<#else>
 					<@boxHeader title='#i18n{forms.create_entry.manageField.title}'>
-						<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view_createField=&id_question=${question.id}" targetElement="#modify-entry" id="create-entry-${question.id}" hideTitle=['xs','sm','md','lg'] btnIcon="plus" btnTitle="#i18n{forms.createField.title}" btnColor="primary" position="end" title="#i18n{forms.createField.title}" size="auto"/>
+						<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view_createField=&id_question=${question.id}" targetElement="#modify-entry" id="create-entry-${question.id}" hideTitle=['xs','sm','md','lg'] btnIcon="plus" btnTitle="#i18n{forms.createField.title}" btnColor="primary" position="end" title="#i18n{forms.createField.title}" size="auto"/> -->
+						<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view_createField=&id_question=${question.id}' hideTitle=['xs','sm','md','lg'] buttonIcon='plus' title="#i18n{forms.createField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/ModifyEntry.jsp?view_createField=&id_question=${question.id}"' />
 					</@boxHeader>
 					<@boxBody>
 						<@ul id='list' class='list-group'>
@@ -244,7 +244,8 @@ ${breadcrumb_template}
 								<@span>${field.title} > ${field.value}</@span>
 								<@btnToolbar>
 								<#if field.defaultValue><@tag color='success'><@icon style='check' title='#i18n{forms.create_entry.manageField.rowDefaultValue}' /></@tag></#if>
-									<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" targetElement="#modify-entry" id="modify-entry-${question.id}-${field.idField}"  btnIcon="pencil" btnTitle="#i18n{portal.util.labelModify}" btnColor="primary" position="end" title="#i18n{forms.modifyField.title} : \"${field.title}\"" size="auto"/>
+									<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" targetElement="#modify-entry" id="modify-entry-${question.id}-${field.idField}"  btnIcon="pencil" btnTitle="#i18n{portal.util.labelModify}" btnColor="primary" position="end" title="#i18n{forms.modifyField.title} : \"${field.title}\"" size="auto"/> -->
+									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' hideTitle=['xs','sm','md','lg'] buttonIcon='plus' title="#i18n{forms.modifyField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true"' />
 									<@btnGroup class='mx-1'>
 										<#if cpt!=1>
 											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all']  />
@@ -275,4 +276,5 @@ ${breadcrumb_template}
 <#if anonym>
 <@anonymPattern />
 </#if>
+<@offcanvasIframe id='manageEntry' label='#i18n{forms.modifyEntry.titleQuestion}' />
 </#macro>

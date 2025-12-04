@@ -2,7 +2,7 @@
     <@pageColumn>
 		<@pageHeader title='#i18n{forms.modifyField.title} : "${field.parentEntry.title}"' />
 		<@div id='modify-entry'>
-		<@tform action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data">
+		<@tform id='modify_field_form' action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data" params=' target="_top"'>
 		<@input type='hidden' name='id_step' value='${question.idStep}' />
 		<@input type='hidden' name='id_question' value='${question.id}' />
 		<@input type='hidden' name='id_entry' value='${id_entry}' />
@@ -40,3 +40,6 @@
 		</@div>
 	</@pageColumn>
 </@pageContainer>
+<script>
+<@offcanvasIframeScript triggerForm='modify_field_form' triggerActionId='action_modifyField' />
+</script>

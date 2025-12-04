@@ -6,21 +6,21 @@
 		<@card class='mb-1'>
 			<@row class='align-items-center'>
 				<@columns>
-					<@h level=3 class='d-inline-block' params='title="${form.title}" style="--tw:300px"'>
+					<@h level=3 class='mb-0' params='title="${form.title}" style="--tw:300px"'>
 						<#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
-						<@tag class='mx-2 fs-5' title='#i18n{forms.dashboard.row_responses}'> ${form.currentNumberResponse}</@tag>
-						<@span class='truncate mb-2'>${form.title}</@span>
+						<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' label='${form.title}' class='truncate' />
 					</@h>
 				</@columns>
-				<@div class='col-auto'>
+				<@div class='col-auto d-flex align-items-center'>
+					<@tag class='mx-2 fs-5' title='#i18n{forms.dashboard.row_responses}'> ${form.currentNumberResponse}</@tag>
 					<#if form.actions?exists>
 						<#list form.actions as action>
-							<#if action.permission=='MODIFY'>
-								<@aButton class='btn-sm' href='${action.url}&id_form=${form.id}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
-							</#if>
-							<#if action.permission=='PARAM'>
-								<@aButton class='btn-sm' href='${action.url}&id_form=${form.id}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
-							</#if>
+						<#if action.permission=='PARAM'>
+							<@aButton class='btn-sm me-1' href='${action.url}&id_form=${form.id}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
+						</#if>
+						<#if action.permission=='VIEW_FORM_RESPONSE' && form.currentNumberResponse gt 0>
+							<@aButton class='btn-sm' href='${action.url}&id_form=${form.id}' title='${action.name!}' hideTitle=['all'] buttonIcon='${action.iconUrl}' />
+						</#if>
 						</#list>
 					</#if>
 				</@div>
@@ -37,7 +37,7 @@
 						<div class="dropdown-menu dropdown-menu-end">
 						<#if form.actions?exists>
 							<#list form.actions as action>
-								<@link href='${action.url}&id_form=${form.id}' label='${action.name}' class='dropdown-item' />
+								<@link href='${action.url}&id_form=${form.id}' class='dropdown-item'><@icon style=action.iconUrl! /> ${action.name!}</@link>
 							</#list>
 						</#if>
 						<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' label='#i18n{forms.manageForm.BOLink.label}' class='dropdown-item' />

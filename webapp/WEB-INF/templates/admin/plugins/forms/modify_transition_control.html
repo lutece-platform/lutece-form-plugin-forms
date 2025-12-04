@@ -30,9 +30,7 @@
 <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' rows=2>
 <@inputGroup>
     <@select name='validatorName' class='form-select' items=availableValidators default_value='${control.validatorName!}' />
-    <@inputGroupItem>
-        <@button type='submit' name="view_modifyControl" value="validateValidator" showTitle=false buttonIcon='check'/>
-    </@inputGroupItem>
+    <@button type='submit' name="view_modifyControl" value="validateValidator" showTitle=false buttonIcon='check'/>
 </@inputGroup>
 </@formGroup>
 <@div id='control-template'>

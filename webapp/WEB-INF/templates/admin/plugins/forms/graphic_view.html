@@ -3,25 +3,16 @@
 <#assign hasFinal=0>
 <@row>
 	<@columns>
-        <@box color='primary'>
-			<@boxHeader title='${form.title!}' class='is-align-content-center'>
-			
-			</@boxHeader>
-            <@boxBody>
-				<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>	
-                <@formTabs tab='graphic' />
-                <@tabContent>
-                    <@tabPanel id='tabpanel' active=true>
-						
-<@mermaidGraph download=false mdgraph=mdgraph/>
-
-					</@tabPanel >
-				</@tabContent>
-			</@boxBody>
+        <@box color='primary' title=form.title! />
+		<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>	
+		<@formTabs tab='graphic' />
+		<@tabContent>
+			<@tabPanel id='tabpanel' active=true>
+				<@mermaidGraph download=false mdgraph=mdgraph/>
+			</@tabPanel >
+		</@tabContent>
 		</@box>
 	</@columns>
 </@row>
-        
-        
 <@importMermaidJs />
 <@initMermaidJs />

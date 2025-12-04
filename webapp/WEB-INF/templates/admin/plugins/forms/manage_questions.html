@@ -51,8 +51,8 @@
                                 <@h level=2>#i18n{forms.manage_questions.type.step.label} "${stepTitle?replace('- hidden','')}" </@h> 
                                 <#list entry_type_list as item>
                                     <#if item.group>
-                                        <!-- <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}' title='#i18n{forms.manage_questions.action.creategroup.label}' buttonIcon='${item.iconName}' params='data-bs-toggle="offcanvas" data-bs-target="#create_group" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}"' /> -->
-                                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}" targetElement="#form_createGroup" id="step-group-${step.id}"  btnIcon=item.iconName btnTitle="#i18n{forms.manage_questions.action.creategroup.label}" btnColor="primary" hideTitle=['xs','sm'] position="end" title="#i18n{forms.manage_questions.action.creategroup.label}" size="half"/>
+                                        <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}' title='#i18n{forms.manage_questions.action.creategroup.label}' buttonIcon='${item.iconName}' params='data-bs-toggle="offcanvas" data-bs-target="#create_group" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}"' />
+                                        <!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}" targetElement="#form_createGroup" id="step-group-${step.id}"  btnIcon=item.iconName btnTitle="#i18n{forms.manage_questions.action.creategroup.label}" btnColor="primary" hideTitle=['xs','sm'] position="end" title="#i18n{forms.manage_questions.action.creategroup.label}" size="half"/> -->
                                     </#if>
                                 </#list>
                                 </@div>
@@ -212,17 +212,17 @@
                             <@button type='button' buttonIcon='plus' title='#i18n{forms.manage_questions.buttonAdd}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasFieldType"' />
                         </@columns>
                     </@row>
-                    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasFieldType" aria-labelledby="offcanvasFieldTypeLabel">
+                    <div class="offcanvas offcanvas-end w-25" tabindex="-1" id="offcanvasFieldType" aria-labelledby="offcanvasFieldTypeLabel">
                         <div class="offcanvas-header">
                             <h3 id="offcanvasFieldTypeLabel" class="h5">#i18n{forms.manage_questions.buttonAdd}</h2>
                             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="#i18n{portal.util.labelClose}"></button>
                         </div>
                         <div class="offcanvas-body">
-                            <@row class='row-cols-2 g-3'>
+                            <@row class='row-cols-2 g-2'>
                             <#list entry_type_list?filter( item-> item.group=false) as item>
                                 <@columns>
                                     <#if !item.group>
-                                        <@button type='submit' color='outline-primary d-flex w-100' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName?keep_before(" ")} me-1' ><@span class='truncate text-start'>${item.title}</@span></@button>
+                                        <@button type='submit' color='outline-primary d-flex w-100 justify-content-start' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName?keep_before(" ")} me-1' ><@span class='text-truncate'>${item.title}</@span></@button>
                                     </#if>
                                 </@columns>
                             </#list>
@@ -235,6 +235,7 @@
         </@formTabs>
     </@pageColumn>
 </@pageContainer>
+<@offcanvasIframe id='create_group' label='#i18n{forms.manage_questions.action.creategroup.label}' />
 <@offcanvasIframe id='offcanvasField'  />
 <@formModal />
 <script>

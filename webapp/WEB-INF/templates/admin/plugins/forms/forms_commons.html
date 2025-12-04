@@ -313,28 +313,51 @@ document.getElementById('${id}').addEventListener('show.bs.modal', function (eve
 });
 </script>
 </#macro>
-<#macro offcanvasIframe id='offcanvasForm' label='Offcanvas'>
-<div class="offcanvas offcanvas-end" tabindex="-1" id="${id}" aria-labelledby="${id}Label" style="height:100vh; max-height: 100vh;">
+<#macro offcanvasIframe id='offcanvasForm' label='Offcanvas' url=''>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="${id}" aria-labelledby="offcanvasFormLabel${id}" style="height:100vh; max-height: 100vh;">
     <div class="offcanvas-header">
-        <h5 id="${id}Label">${label!}</h5>
+        <h5 id="offcanvasFormLabel${id}">${label!}</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="#i18n{portal.util.labelClose}"></button>
     </div>
-    <div class="offcanvas-body">
-        <iframe id="offcanvasIframe" style="display:none; width:100%; height:100%; border:none;" src="" title=""></iframe>
+    <div class="offcanvas-body py-0 px-1">
+        <iframe id="offcanvasIframe${id}" style="display:none; width:100%; height:100%; border:none;" src="${url}" title="${label!}"></iframe>
     </div>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const offcanvasElement = document.getElementById( '${id}' );
+    const offcanvasElementLabel = document.getElementById( 'offcanvasFormLabel${id}' );
+    const iframeElement = document.getElementById( 'offcanvasIframe${id}' );
+
+    if (offcanvasElement && iframeElement ) {
+        offcanvasElement.style.width = '30%';
+        offcanvasElement.addEventListener( 'show.bs.offcanvas', function (event) {
+            const button = event.relatedTarget;
+            const url = button.getAttribute( 'data-url' );
+            if (url) {
+                offcanvasElementLabel.textContent = button.getAttribute( 'title' );
+                iframeElement.src = url;
+                iframeElement.style.display = 'none';
+            }
+        });
+
+        iframeElement.addEventListener('load', function () {
+            iframeElement.style.display = 'block';
+            iframeElement.contentWindow.postMessage( 'offcanvas', '*');
+            
+        });
+    } 
+});
+</script>
 </#macro>
 <#macro offcanvasIframeScript triggerForm='modify_form' triggerActionId='action_modifyForm' >
 window.addEventListener('message', function(event) {
     if (event.data === 'offcanvas') {
-        if( document.querySelector('#top-menu') ){ document.querySelector('#top-menu').classList.add('d-none'); }
-        if( document.querySelector('#lutece-layout-wrapper') ){ document.querySelector('#lutece-layout-wrapper').classList.add('d-none','bg-white'); }
-        if( document.querySelector('.lutece-header') ){ document.querySelector('.lutece-header').remove(); }
-        if( document.querySelector('.breadcrumb') ){ document.querySelector('.breadcrumb').remove(); }
+        if( document.querySelector('header') ){  document.querySelector('header').remove(); }
+        if( document.querySelector('body') ){  document.querySelector('body').classList.add('bg-white'); }
+        if( document.querySelector('footer') ){  document.querySelector('footer').remove(); }
         if( document.querySelector('.page-header') ){ document.querySelector('.page-header').remove(); }
-        if( document.querySelector('#pageHeader') ){ document.querySelector('#pageHeader').remove(); }
-        if( document.querySelector('#feature-title') ){ document.querySelector('#feature-title').remove(); }
-        if( document.querySelector('.lutece-main-footer') ){  document.querySelector('.lutece-main-footer').remove(); }
+        if( document.querySelector('#page-header') ){ document.querySelector('#page-header').remove(); }
 		<#if triggerForm !='' && triggerActionId!=''>
         var formAction = document.getElementById('${triggerForm}'), btnAction = document.getElementById('${triggerActionId}');
         btnAction.addEventListener('click', function(e){ 
@@ -435,7 +458,9 @@ window.addEventListener('message', function(event) {
 								</@inputGroupItem>
 						</@inputGroup>
 					</@formGroup>
-				</@columns>       
+				</@columns>  
+			</@row>
+			<@row>	     
 				<@columns>  
 					<@formGroup labelKey='#i18n{forms.modify_form.labelEndDate}' rows=2>     
 						<@inputGroup>
