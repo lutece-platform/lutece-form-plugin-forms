@@ -25,11 +25,11 @@
    text-align: start;
    flex: 4
 }
-/* 
-#forms-list  .card-list.card .card-body p + .form-actions {
-   flex: 1;
-   justify-content: flex-start !important;
-} */
+
+.card.card-transition > *,
+.card .form-actions > *{
+	margin-inline-end: .25rem;
+}
 
 #forms-list > .col > .card.card-list > .card-body p{
     text-align: center !important;
@@ -206,6 +206,7 @@ table.table-hover tbody tr:hover {
 	overflow-y: auto;
 	height: 60vh;
 	width: 15vw;
+	z-index: 1;
 }
 
 #toc-expand-toggle {
@@ -216,9 +217,7 @@ table.table-hover tbody tr:hover {
     background-color: var(--tblr-light);
     padding: 5px;
     border: 1px solid #DDD;
-    border-left: 0;
-    border-bottom-right-radius: 3px;
-    border-top-right-radius: 3px;
+    border-radius: 3px;
 }
 
 #toc-expand-toggle:hover {
