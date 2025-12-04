@@ -92,37 +92,64 @@ document.addEventListener('DOMContentLoaded', function() {
 		setStepsIndex();
 	}
 
+	const tocBox = document.getElementById('toc-box');
 	const tocCompressToggle = document.getElementById('toc-compress-toggle');
 	const tocExpandToggle = document.getElementById('toc-expand-toggle');
-	const toc = document.getElementById('toc');
-	const stepsContent = document.getElementById('steps-content');
+	const tocSideToggle = document.getElementById('toc-side-toggle');
+	
+	if (tocSideToggle && tocBox) {
+		tocSideToggle.addEventListener('click', function() {
+			if (tocBox.style.left === '85%'){
+				tocBox.style.left = '0';
+				tocExpandToggle.classList.add('ti-layout-sidebar-right-expand');
+				tocExpandToggle.classList.remove('ti-layout-sidebar-left-expand');
+				tocSideToggle.classList.add('ti-arrow-right');
+				tocSideToggle.classList.remove('ti-arrow-left');
+				tocExpandToggle.style.left = '0';
+				localStorage.setItem('toc_side_state', '0');
+			} else {
+				tocBox.style.left='85%';
+				tocExpandToggle.classList.add('ti-layout-sidebar-left-expand');
+				tocExpandToggle.classList.remove('ti-layout-sidebar-right-expand');
+				tocSideToggle.classList.add('ti-arrow-left');
+				tocSideToggle.classList.remove('ti-arrow-right');
+				tocExpandToggle.style.left = '98%';
+				localStorage.setItem('toc_side_state', '98%');
+			}
+		});
+	}
 
+	const toc = document.getElementById('toc');
+	
 	if (tocCompressToggle) {
-		const tocState = sessionStorage.getItem('toc_multiview_state');
-		if (tocExpandToggle) tocExpandToggle.style.display = 'none';
+		const tocState = localStorage.getItem('toc_multiview_state');
+		const tocSide = localStorage.getItem('toc_side_state');
+		if (tocExpandToggle){
+			tocExpandToggle.style.display = 'none';
+			tocExpandToggle.style.left = tocSide;
+			if (tocSide === '98%'){
+				tocBox.style.left='85%';
+				tocExpandToggle.classList.add('ti-layout-sidebar-left-expand');
+				tocExpandToggle.classList.remove('ti-layout-sidebar-right-expand');
+				tocSideToggle.classList.add('ti-arrow-left');
+				tocSideToggle.classList.remove('ti-arrow-right');
+			} 
+		} 
 
 		tocCompressToggle.addEventListener('click', function() {
 			if (toc) toc.style.display = toc.style.display === 'none' ? '' : 'none';
 			if (tocExpandToggle) tocExpandToggle.style.display = '';
-			if (stepsContent) {
-				stepsContent.classList.toggle('col-sm-7');
-				stepsContent.classList.toggle('col-sm-9');
-			}
-			sessionStorage.setItem('toc_multiview_state', 'expand');
+			localStorage.setItem('toc_multiview_state', 'expand');
 		});
 
 		if (tocExpandToggle) {
 			tocExpandToggle.addEventListener('click', function() {
-				if (stepsContent) {
-					stepsContent.classList.toggle('col-sm-9');
-					stepsContent.classList.toggle('col-sm-7');
-				}
 				if (toc) toc.style.display = '';
 				this.style.display = 'none';
-				sessionStorage.setItem('toc_multiview_state', 'compress');
+				localStorage.setItem('toc_multiview_state', 'compress');
 			});
 		}
-
+		
 		if (tocState === 'expand' && tocCompressToggle) {
 			tocCompressToggle.click();
 		}
