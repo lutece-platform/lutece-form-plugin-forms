@@ -1,18 +1,23 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
 <#assign hasInitial=0>
 <#assign hasFinal=0>
-<@row>
-	<@columns>
-        <@box color='primary' title=form.title! />
-		<@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>	
-		<@formTabs tab='graphic' />
+<@pageContainer>
+    <@pageColumn>
+		<@pageHeader title='${form.title!}' />
+        <@formBreadCrumb><@breadcrumbItem>${form.title!}</@breadcrumbItem></@formBreadCrumb>
+        <@formTabs tab='graphic' />
 		<@tabContent>
-			<@tabPanel id='tabpanel' active=true>
-				<@mermaidGraph download=false mdgraph=mdgraph/>
-			</@tabPanel >
+			<@row>
+				<@columns>
+					<@box>
+						<@boxBody>
+							<@mermaidGraph download=false mdgraph=mdgraph />
+						</@boxBody>
+					</@box>
+				</@columns>
+			</@row>
 		</@tabContent>
-		</@box>
-	</@columns>
-</@row>
+	</@pageColumn>
+</@pageContainer>
 <@importMermaidJs />
 <@initMermaidJs />
