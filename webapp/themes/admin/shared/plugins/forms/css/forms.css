@@ -9,15 +9,36 @@
     background-color: var(--bs-light);
 }
 
-#forms-list .card-list.card .card-body {
+#forms-list .card .card-body {
     display: flex;
     justify-content: space-between;
+	flex-direction: column;
     align-items: center;
     flex: 4;
+	min-height: 8.5rem;
+}
+
+#forms-list .card-list.card .card-body {
+    flex-direction: column;
+	min-height: auto;
+}
+
+#forms-list  .card .card-body :is( .form-actions, h3 ) {
+	justify-content: center !important;
+	row-gap: .5rem;
+}
+
+#forms-list  .card.card-list .card-body :is( .form-actions, h3 ) {
+    flex-direction: row;
+	row-gap: 0;
 }
 
 #forms-list  .card .card-body p{
     text-align: center;
+}
+
+#forms-list  .card-list.card .card-body{
+   flex-direction: row;
 }
 
 #forms-list  .card-list.card .card-body p {
@@ -33,6 +54,10 @@
 
 #forms-list > .col > .card.card-list > .card-body p{
     text-align: center !important;
+}
+
+#forms-list > .col > .card.card-list > .card-body :is( .form-actions, h3 ) {
+    flex-direction: row;
 }
 
 #forms-list > .col > .card.card-list > .card-body p:has( [data-toggle="modal"] ){

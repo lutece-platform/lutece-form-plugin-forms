@@ -79,7 +79,7 @@
 							</@offcanvas>
 						</@columns>
 					</@row>
-					<@row id='step-list' class='row-cols-1 row-cols-sm-2 row-cols-xl-4'>
+					<@row id='step-list' class='row-cols-1 row-cols-sm-2 row-cols-xl-3'>
 						<#list step_list as step>
 						<#assign stepTitle=step.title!?replace('- hidden','') />
 						<@columns>
@@ -89,9 +89,9 @@
 								<#if step.initial><@tag color='success' class='me-2'>#i18n{forms.manage_steps.columnInitial}</@tag> <#assign hasInitial=1 > </#if>
 								<#if step.final><@tag color='warning' class='me-2'>#i18n{forms.manage_steps.columnFinal}</@tag> <#assign hasFinal=1 ></#if>
 								</#assign>
-								<@boxHeader title=stepTitle class='w-25' />
+								<@boxHeader title=stepTitle  />
 								<@boxBody class='d-flex justify-content-between'>
-									<@div class='d-flex d-none d-lg-block'><#if step.description !=''>${step.description!}<#else>Aucune description</#if></@div>
+									<@div class='d-flex d-none d-lg-block'><#if step.description !=''>${step.description!}<#else>#i18n{manage_steps.noDescriptionLabel}</#if></@div>
 									<@div class='d-flex justify-content-between align-items-center'>
 										<#if transition_list??>
 											<#assign stepTransition = transition_list?filter( transition -> transition.fromStep = step.id ) />

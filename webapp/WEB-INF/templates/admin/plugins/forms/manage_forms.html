@@ -31,7 +31,7 @@
                 <#list form_list as form>
                     <#assign can_publish=false>
                     <@columns>
-                        <@box id='form_${form.id}'>
+                        <@box id='form_${form.id}' class='card-form'>
                         <#assign formTitle>
                         <#if form.actions?exists>
                             <#assign formActions = form.actions?map( actions -> actions.permission)>
@@ -115,8 +115,8 @@
                                     <@aButton color='transparent searchable text-start d-none d-xl-block' href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' hideTitle=['all']  params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasForm" data-url="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}"' >
                                         <#setting locale=locale.language>
                                         <#if form.active>
-                                            <@span class='truncate'>
-                                                <@icon style='check' class='text-success' />
+                                            <@icon style='check' class='text-success' />
+                                            <@span class='text-truncate'>
                                                 <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
                                                     #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
                                                 <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
@@ -148,6 +148,7 @@
                 </@columns>
                 </#list>
             </@row>   
+           
             <@paginationAdmin paginator=paginator combo=1 showcount=0 />
         <#else>
             <@card>
