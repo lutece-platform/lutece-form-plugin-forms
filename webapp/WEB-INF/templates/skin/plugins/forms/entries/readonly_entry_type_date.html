@@ -14,7 +14,7 @@
 	                <div class="col-12">
 	            </#if>
 	                <#if response.responseValue??>
-	            		${response.responseValue?number?number_to_date?iso_local}
+	            		${response.responseValue?number?number_to_date}
 	            	</#if>
 	            </div>
 	        </#list>
