@@ -56,15 +56,14 @@
                                     <#if hasFormActionUpdate>
                                         <#list form.actions as action>
                                             <#if action.permission=='MODIFY'>
-                                                <@link class='d-none d-lg-block' href='${action.url}&id_form=${form.id}' title='${form.title}'>${form.description}</@link>
+                                                <@link class='d-none d-lg-block' href='${action.url}&id_form=${form.id}' title='${form.title}' />
                                             </#if>
                                             <#if action.permission=='PARAM'>
-                                                <@link class='d-none d-lg-block' href='${action.url}&id_form=${form.id}' title='${form.title}'>${form.description}</@link>
+                                                <@link class='d-none d-lg-block' href='${action.url}&id_form=${form.id}' title='${form.title}' />
                                             </#if>
                                         </#list>
-                                    <#else>
-                                        <@div class='d-none d-lg-block'>${form.description!}</@div>
                                     </#if>
+                                     <#if form.description!=''><@div class='d-none d-lg-block text-truncate' params='title="${form.description!}" style="max-width: var(--tw);"'>${form.description!}</@div></#if>
                                 </@span>
                                 <small class="py-2 searchable fw-light me-2 d-none d-lg-block">#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></small>
                             </@h>

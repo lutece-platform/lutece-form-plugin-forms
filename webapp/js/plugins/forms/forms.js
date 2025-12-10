@@ -1,9 +1,15 @@
-$( function(){
+document.addEventListener('DOMContentLoaded', function() {
     /* Check if enter key is pressed and force submit */
-    $("#form-validate").on("keypress", "input", function(e){
-        if(e.which == 13){
-            e.preventDefault();
-            $('button[name="action_doSaveStep"]').click();
-        }
-    });
+    const form = document.getElementById('form-validate');
+    if (form) {
+        form.addEventListener('keypress', function(e) {
+            if (e.target.tagName === 'INPUT' && e.which === 13) {
+                e.preventDefault();
+                const submitBtn = document.querySelector('button[name="action_doSaveStep"]');
+                if (submitBtn) {
+                    submitBtn.click();
+                }
+            }
+        });
+    }
 });

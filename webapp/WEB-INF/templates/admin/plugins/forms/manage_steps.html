@@ -44,14 +44,14 @@
 									<@row>
 									<#if template_provider.stepTemplateList?has_content>
 										<#list template_provider.stepTemplateList?sort_by("name") as item>
-										<div class="col-6">
+										<@columns xs='6'>
 											<label class="form-imagecheck mb-2">
 												<input name="id_template" type="radio" value="${item.code}" class="form-imagecheck-input"  />
 												<span class="form-imagecheck-figure">
 												<svg  xmlns="http://www.w3.org/2000/svg"  width="24"  height="24"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round"  class="form-imagecheck-image icon icon-tabler icons-tabler-outline icon-tabler-list-details"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M13 5h8" /><path d="M13 9h5" /><path d="M13 15h8" /><path d="M13 19h5" /><path d="M3 4m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /><path d="M3 14m0 1a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v4a1 1 0 0 1 -1 1h-4a1 1 0 0 1 -1 -1z" /></svg>
 												<span class="d-inline-block w-100 text-center fw-bold text-wrap">${item.name!}</span>
 											</label>
-										</div>
+										</@columns>
 										</#list>
 									</#if>
 									</@row>
@@ -144,8 +144,9 @@
 					<@paginationAdmin paginator=paginator combo=1 showcount=0 />
 				<#else>
 					<@empty subtitle='#i18n{forms.multiviewForms.view_record_history.history_empty}' title='#i18n{forms.manage_steps.warning.no.initial.final}' />
-					<@div class='d-flex justify-content-space-around'>
-						<@offcanvas targetUrl="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" targetElement="#create-step" id="step-${form.id}"  btnIcon="plus" btnTitle="#i18n{forms.manage_steps.buttonAdd}" btnColor="primary" position="end" title="#i18n{forms.manage_steps.buttonAdd}" size="half"/>
+					<@div class='d-flex justify-content-center'>
+						<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" targetElement="#create-step" id="step-${form.id}"  btnIcon="plus" btnTitle="#i18n{forms.manage_steps.buttonAdd}" btnColor="primary" position="end" title="#i18n{forms.manage_steps.buttonAdd}" size="half"/> -->
+						 <@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' class='me-2' buttonIcon='plus' title='#i18n{forms.manage_steps.buttonAdd}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasCreateStep" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}"' />
 						<#if template_provider??>
 							<@offcanvas id="import-template" title="#i18n{forms.manage_steps.buttonImportTemplate}" position="end" btnTitle="#i18n{forms.manage_steps.buttonImportTemplate}" btnIcon="new-section" size="sm" >
 							<@tform  method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
