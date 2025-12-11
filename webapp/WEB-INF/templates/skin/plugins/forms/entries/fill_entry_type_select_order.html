@@ -13,7 +13,7 @@
 		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
 		<#if isMultiListSelection>
 			<div class="col-6">
-			<label class="col-form-label" for="sortable1">#i18n{forms.createEntry.sortableList.availableItems}</label>
+			<label class="col-form-label" for="sortable1">#i18n{forms.create_entry.sortableList.availableItems}</label>
 		<#else>
 			<div class="col-12">
 		</#if>
@@ -39,7 +39,7 @@
 		<#if isMultiListSelection>
 			</div>
 			<div class="col-6">
-			<label class="col-form-label" for="sortable2">#i18n{forms.createEntry.sortableList.selectedItems}</label>
+			<label class="col-form-label" for="sortable2">#i18n{forms.create_entry.sortableList.selectedItems}</label>
 		</#if>
 		<ul id="sortable2" class="connectedSortable ${entry.CSSClass!}" ${multiListStyle}>
 			<#if list_responses?has_content>

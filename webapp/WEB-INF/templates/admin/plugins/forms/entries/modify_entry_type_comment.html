@@ -1,6 +1,6 @@
 <#include "all_entry_commons.html" />
 <#assign displayBo=getFieldValueByCode( entry, "display_in_bo") == 'true'>
-<@editFields editor=true hasTitle=false required=false onlyInBack=false>
+<@editFields editor=true hasTitle=false required=false helpMessage=false>
 <@formGroup helpKey='#i18n{forms.create_entry.labelResponsesDisplayBoComment}' rows=2>
 	<@checkBox orientation='switch' labelFor='display_in_bo' labelKey='#i18n{forms.create_entry.labelResponsesDisplayBo}' name='display_in_bo' id='display_in_bo' value='1' checked=displayBo />
 </@formGroup>

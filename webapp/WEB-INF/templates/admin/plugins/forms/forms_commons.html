@@ -377,7 +377,7 @@ window.addEventListener('message', function(event) {
 });
 </#macro>
 <#macro bottomFormFixedButtons>
-<#assign bottomParams>class="<#if commonsThemeCode='tabler'>fixed-bottom </#if>d-flex justify-content-end bg-light bg-gradient left-0 w-100 d-flex justify-content-center py-3" style="--tblr-bg-opacity:.5;"</#assign>
+<#assign bottomParams>class="<#if commonsThemeCode='tabler'>fixed-bottom </#if>d-flex gap-2 justify-content-end bg-light bg-gradient left-0 w-100 d-flex justify-content-center py-3" style="--tblr-bg-opacity:.5;"</#assign>
 <@div params=bottomParams>
 <#nested>
 </@div>

@@ -67,8 +67,8 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     public static final String FIELD_TOS_CODE = "tos";
 
     // Messages
-    private static final String MESSAGE_ENTRY_LINK_TITLE = "forms.createEntry.termsOfService.labelLink";
-    private static final String MESSAGE_ENTRY_TOS_TITLE = "forms.createEntry.termsOfService.labelTermsOfService";
+    private static final String MESSAGE_ENTRY_LINK_TITLE = "forms.create_entry.termsOfService.labelLink";
+    private static final String MESSAGE_ENTRY_TOS_TITLE = "forms.create_entry.termsOfService.labelTermsOfService";
     private static final String MESSAGE_ENTRY_MANDATORY = "forms.message.mandatory.termsOfService";
 
     // Templates

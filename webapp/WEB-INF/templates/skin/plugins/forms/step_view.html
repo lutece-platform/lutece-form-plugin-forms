@@ -50,12 +50,12 @@ else {
 	</div>
 	</#if>
 	${formTopBreadcrumb!}
-	<#if form.countResponses>#i18n{forms.createEntry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
+	<#if form.countResponses>#i18n{forms.create_entry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
 	${stepContent!}
 	${formBottomBreadcrumb!}
 </form>
 <div id="upload-info-message" class="alert alert-warning text-center d-none" role="alert">
-	#i18n{forms.createEntry.warning.upload.inprogress}
+	#i18n{forms.create_entry.warning.upload.inprogress}
 </div>
 <script>
 	let isUploading = false;
