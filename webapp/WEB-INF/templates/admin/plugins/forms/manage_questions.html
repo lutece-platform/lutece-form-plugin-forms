@@ -86,7 +86,7 @@
                                                         ${composite.title!?replace('- hidden','')} 
                                                      </@h>
                                                     <label for="${parentd}" class="visually-hidden">
-                                                        <input type="radio" id="${parentd}" name="id_parent" value="${composite.formDisplay.id!}" <#if id_parent=composite.formDisplay.id>checked</#if>
+                                                        <input type="radio" id="${parentd}" name="id_parent" value="${composite.formDisplay.id!}" <#if id_parent=composite.formDisplay.id>checked</#if>>
                                                     </label>
                                                     <@cInline>
                                                     <@button type='button' buttonIcon='plus' title='#i18n{forms.manage_questions.buttonAdd}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasFieldType"' />
