@@ -1,4 +1,3 @@
 <#assign hrefValue>jsp/admin/plugins/forms/MultiviewForms.jsp?plugin_name=forms&selected_panel=${panel_technical_code}&change_panel=true</#assign>
 <#if id_form?? && id_form?has_content><#assign hrefValue>${hrefValue}&id_form=${id_form}</#assign></#if>
 <@tabLink active=panel_active href='${hrefValue}' title='${panel_title}'><@tag color='primary' class='ml-1 ms-1'>${panel_formResponseNumber}</@tag></@tabLink>
-<#if id_form?? && id_form?has_content><@tabLink href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${id_form!}&init=true' title='#i18n{forms.manageForm.BOLink.label}' tabIcon='text-plus' tabClass='ms-auto' /></#if>
