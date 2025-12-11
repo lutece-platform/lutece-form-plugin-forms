@@ -528,7 +528,6 @@ window.addEventListener('message', function(event) {
 				<@input type='textarea' name='endMessage' richtext=true>${formMessage.endMessage!}</@input>
 			</@formGroup>
 		</@fieldSet>
-		
 		<!-- workgroup -->
 		<@fieldSet legend='#i18n{forms.modify_form.workgroup.label}'>
 			<@formGroup labelKey='#i18n{forms.modify_form.workgroup.label}' rows=2>
@@ -572,7 +571,6 @@ window.addEventListener('message', function(event) {
 <style>
 .flatpickr-wrapper { display: block; width: 100%; }
 .date-filter-container { position: relative; }
-.date-filter-container .flatpickr-input { padding-right: 80px; }
 .date-range-presets { 
 	display: flex; 
 	flex-wrap: wrap; 
@@ -597,20 +595,19 @@ window.addEventListener('message', function(event) {
 }
 .flatpickr-clear-btn {
 	position: absolute;
-	right: 8px;
+	right: 30px;
 	top: 50%;
 	transform: translateY(-50%);
 	background: none;
 	border: none;
-	color: #94a3b8;
+	color: #ff2a0094;
 	cursor: pointer;
 	padding: 4px 8px;
-	font-size: 12px;
+	font-size: 14px;
 }
 .flatpickr-clear-btn:hover{ color: #dc3545; }
 </style>
 <script src="themes/admin/shared/js/util/lutece.js"></script>
-<!-- <script src="themes/admin/shared/js/lib/flatpickr/flatpickr.js"></script> -->
 <script src="themes/admin/shared/js/lib/flatpickr/bootstrap-flatpickr.min.js"></script>
 <script src="themes/admin/shared/js/lib/flatpickr/locales/bootstrap-flatpickr.${.lang}.js"></script>
 <script>
@@ -715,7 +712,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		// Wrap in container for clear button
 		const container = document.createElement('div');
 		container.className = 'date-filter-container input-group';
-		filterElement.classList.add('form-select');
+		// filterElement.classList.add('form-select');
 		filterElement.parentNode.insertBefore(container, filterElement);
 		container.appendChild(filterElement);
 
@@ -723,9 +720,15 @@ document.addEventListener('DOMContentLoaded', function() {
 		const clearBtn = document.createElement('button');
 		clearBtn.type = 'button';
 		clearBtn.className = 'flatpickr-clear-btn';
-		clearBtn.innerHTML = '<i class="ti ti-x"></i> Effacer';
+		clearBtn.innerHTML = '<i class="ti ti-x"></i>';
 		clearBtn.style.display = 'none';
 		container.appendChild(clearBtn);
+
+		// Add agenda icon
+		const calendarIcon = document.createElement('span');
+		calendarIcon.className = 'input-group-text px-2';
+		calendarIcon.innerHTML = '<i class="ti ti-calendar"></i>';
+		container.appendChild(calendarIcon);
 
 		// Initialize Flatpickr
 		const fp = flatpickr(filterElement, {
