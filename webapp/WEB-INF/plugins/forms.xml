@@ -77,8 +77,8 @@
     <!-- Specific plugin JAVASCRIPT -->
     <javascript-files>
         <javascript-files-scope>portal</javascript-files-scope>
-        <javascript-file>themes/shared/plugins/forms/forms.js</javascript-file>
-        <javascript-file>themes/shared/plugins/forms/terms-of-service.js</javascript-file>
+        <javascript-file>../../themes/shared/plugins/forms/forms.js</javascript-file>
+        <javascript-file>../../themes/shared/plugins/forms/terms-of-service.js</javascript-file>
     </javascript-files>
 
     <!-- RBAC Resources -->
