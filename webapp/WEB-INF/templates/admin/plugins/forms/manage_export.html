@@ -20,7 +20,7 @@
                             <@formGroup labelKey='#i18n{forms.modify_form.labelExportOption}' mandatory=true rows=2 class='has-addons'>
                                 <@inputGroup class=''>
                                     <@select name='export_config' items=export_list default_value='' />
-                                    <@button type='submit' name='action_createExportConfig' buttonIcon='check' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['all'] />
+                                    <@button type='submit' name='action_createExportConfig' buttonIcon='check' title='#i18n{forms.modify_entry.buttonSave}' hideTitle=['all'] />
                                 </@inputGroup>
                             </@formGroup>
                             <#if export_config_list?size gt 0>

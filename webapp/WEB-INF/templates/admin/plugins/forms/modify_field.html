@@ -2,7 +2,7 @@
     <@pageColumn>
 		<@pageHeader title='#i18n{forms.modifyField.title} : "${field.parentEntry.title}"' />
 		<@div id='modify-entry'>
-		<@tform id='modify_field_form' action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data" params=' target="_top"'>
+		<@tform id='modify_field_form' action='jsp/admin/plugins/forms/modify_entry.jsp' enctype="multipart/form-data" params=' target="_top"'>
 		<@input type='hidden' name='id_step' value='${question.idStep}' />
 		<@input type='hidden' name='id_question' value='${question.id}' />
 		<@input type='hidden' name='id_entry' value='${id_entry}' />
@@ -32,7 +32,7 @@
 				</@formGroup>
 			</#if>
 			<@formGroup>
-				<@button type='submit' name='action_modifyField' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] />
+				<@button type='submit' name='action_modifyField' buttonIcon='save' title='#i18n{forms.modify_entry.buttonSave}' hideTitle=['xs'] />
 				<@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${question.idStep}&id_question=${question.id}' title='#i18n{forms.create_entry.buttonCancel}' buttonIcon='close' hideTitle=['xs'] color='default' />
 			</@formGroup>
 			</@fieldSet>

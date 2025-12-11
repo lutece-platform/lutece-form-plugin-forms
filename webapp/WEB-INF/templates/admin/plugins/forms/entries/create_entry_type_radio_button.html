@@ -39,8 +39,8 @@ ${breadcrumb_template}
 						<@formGroup labelFor='field_in_line' labelKey='#i18n{forms.create_entry.labelPresentation}'>
 							<#assign presentation_type = getName('field_in_line',list_param_default_values)!1>
 							<@select id='field_in_line' name='field_in_line'>
-								<option value=1 <#if presentation_type = '1' >selected="selected"</#if> >#i18n{forms.create_entry.selectPresentationInLine}</option>
-								<option value=0 <#if presentation_type = '0' >selected="selected"</#if> >#i18n{forms.create_entry.selectPresentationNotInLine}</option>
+								<@option value=1 selected=(presentation_type='1') label='#i18n{forms.create_entry.selectPresentationInLine}' />
+								<@option value=0 selected=(presentation_type='0') label='#i18n{forms.create_entry.selectPresentationNotInLine}' />
 							</@select>
 						</@formGroup>
 						<@formGroup labelFor='mandatory' labelKey='#i18n{forms.create_entry.labelMandatory}'>
@@ -56,7 +56,7 @@ ${breadcrumb_template}
 							<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1' />
 						</@formGroup>
 						<@formGroup>
-							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modifyEntry.buttonSave}' hideTitle=['xs'] size='' />
+							<@button type='submit' name='action_createQuestion' buttonIcon='save' title='#i18n{forms.modify_entry.buttonSave}' hideTitle=['xs'] size='' />
 							<@button type='submit' name='action_createQuestionAndManageEntries' buttonIcon='check' title='#i18n{forms.create_entry.buttonApplyAndManageResponse}' hideTitle=['xs'] size='' />
 							<@button type='cancel' name='view_manageQuestions' buttonIcon='close' title='#i18n{forms.create_entry.buttonCancel}' hideTitle=['xs'] color='default' cancel=true />
 						</@formGroup>

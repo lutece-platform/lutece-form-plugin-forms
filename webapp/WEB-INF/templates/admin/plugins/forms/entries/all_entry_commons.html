@@ -68,7 +68,7 @@ ${breadcrumb_template}
     <@columns xs=xs md=md lg=lg xl=xl>
 		<#assign fieldTitle><#if entry.title??>"${entry.title!}" <@tag color='info'>${entry.entryType.title!} </@tag><#else><@tag color='info'>${entry.entryType.title!}</@tag></#if></#assign>
 		<@box title=fieldTitle>
-			<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+			<@fieldSet legend='#i18n{forms.modify_entry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 				<@input type='hidden' name='id_type' value='${entry.entryType.idType!}' />
 				<#if entry.fieldDepend?exists><@input type='hidden' name='id_field' value='${entry.fieldDepend.idField!}' /></#if>
 				<@input type='hidden' name='id_entry' value='${entry.idEntry!}' />
@@ -128,7 +128,7 @@ ${breadcrumb_template}
 				</@formGroup>
 				</#if>
 			</@fieldSet>
-			<@fieldSet legend='#i18n{forms.modifyEntry.titleQuestion} : "${form.title}"' hideLegend=['all']>
+			<@fieldSet legend='#i18n{forms.modify_entry.titleQuestion} : "${form.title}"' hideLegend=['all']>
 				<#if placeholder !=''>
 				<@formGroup rows=2 labelFor='placeholder' labelKey='#i18n{forms.create_entry.labelPlaceholder}'>
 					<@input type='text' name='placeholder' id='placeholder' value=placeholder! maxlength=100 />
@@ -176,7 +176,7 @@ ${breadcrumb_template}
 						<#list fields_list_by_id_entries as key, value>
 							<#if key = illustration_image_entry.idField>
 								<#assign image_url = value>
-								<@input type='file' id='illustration_image${key!}' name='illustration_image' fileName='#i18n{forms.modifyEntry.downloadPicture}' fileURL='${image_url!\'\'}' showFileUrl=true showImage=true value=key />
+								<@input type='file' id='illustration_image${key!}' name='illustration_image' fileName='#i18n{forms.modify_entry.downloadPicture}' fileURL='${image_url!\'\'}' showFileUrl=true showImage=true value=key />
 							</#if>
 						</#list>
 					<#else>
@@ -216,8 +216,8 @@ ${breadcrumb_template}
 				<@checkBox orientation='switch' name='disabled' id='disabled' labelKey='#i18n{forms.create_entry.labelDisableQuestion}' value='1' checked=entry.disabled />
 				</@formGroup>
 				<@bottomFormFixedButtons>
-					<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modifyEntry.buttonSave}' buttonIcon='device-floppy' />
-					<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modifyEntry.buttonApply}' value='apply' buttonIcon='check' />
+					<@button type='submit' name='action_modifyQuestion' title='#i18n{forms.modify_entry.buttonSave}' buttonIcon='device-floppy' />
+					<@button type='submit' name='action_saveQuestion' title='#i18n{forms.modify_entry.buttonApply}' value='apply' buttonIcon='check' />
 					<@button type='cancel' name='view_manageQuestions' buttonIcon='x' title='#i18n{forms.create_entry.buttonCancel}' color='default' cancel=true />
 				</@bottomFormFixedButtons>
 			</@fieldSet>
@@ -231,8 +231,8 @@ ${breadcrumb_template}
 					<@boxBody>#i18n{forms.create_entry.messageUseRefList}</@boxBody>
 				<#else>
 					<@boxHeader title='#i18n{forms.create_entry.manageField.title}'>
-						<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view_createField=&id_question=${question.id}" targetElement="#modify-entry" id="create-entry-${question.id}" hideTitle=['xs','sm','md','lg'] btnIcon="plus" btnTitle="#i18n{forms.createField.title}" btnColor="primary" position="end" title="#i18n{forms.createField.title}" size="auto"/> -->
-						<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view_createField=&id_question=${question.id}' hideTitle=['xs','sm','md','lg'] buttonIcon='plus' title="#i18n{forms.createField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/ModifyEntry.jsp?view_createField=&id_question=${question.id}"' />
+						<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/modify_entry.jsp?view_createField=&id_question=${question.id}" targetElement="#modify-entry" id="create-entry-${question.id}" hideTitle=['xs','sm','md','lg'] btnIcon="plus" btnTitle="#i18n{forms.createField.title}" btnColor="primary" position="end" title="#i18n{forms.createField.title}" size="auto"/> -->
+						<@aButton href='jsp/admin/plugins/forms/modify_entry.jsp?view_createField=&id_question=${question.id}' hideTitle=['xs','sm','md','lg'] buttonIcon='plus' title="#i18n{forms.createField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/modify_entry.jsp?view_createField=&id_question=${question.id}"' />
 					</@boxHeader>
 					<@boxBody>
 						<@ul id='list' class='list-group'>
@@ -244,17 +244,17 @@ ${breadcrumb_template}
 								<@span>${field.title} > ${field.value}</@span>
 								<@btnToolbar>
 								<#if field.defaultValue><@tag color='success'><@icon style='check' title='#i18n{forms.create_entry.manageField.rowDefaultValue}' /></@tag></#if>
-									<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" targetElement="#modify-entry" id="modify-entry-${question.id}-${field.idField}"  btnIcon="pencil" btnTitle="#i18n{portal.util.labelModify}" btnColor="primary" position="end" title="#i18n{forms.modifyField.title} : \"${field.title}\"" size="auto"/> -->
-									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' hideTitle=['xs','sm','md','lg'] buttonIcon='plus' title="#i18n{forms.modifyField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true"' />
+									<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/modify_entry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" targetElement="#modify-entry" id="modify-entry-${question.id}-${field.idField}"  btnIcon="pencil" btnTitle="#i18n{portal.util.labelModify}" btnColor="primary" position="end" title="#i18n{forms.modifyField.title} : \"${field.title}\"" size="auto"/> -->
+									<@aButton href='jsp/admin/plugins/forms/modify_entry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' hideTitle=['xs','sm','md','lg'] buttonIcon='plus' title="#i18n{forms.modifyField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/modify_entry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true"' />
 									<@btnGroup class='mx-1'>
 										<#if cpt!=1>
-											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all']  />
+											<@aButton href='jsp/admin/plugins/forms/modify_entry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all']  />
 										</#if> 
 										<#if field_has_next>
-											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveDown}' buttonIcon='chevron-down' hideTitle=['all']  />
+											<@aButton href='jsp/admin/plugins/forms/modify_entry.jsp?action=moveFieldDown&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveDown}' buttonIcon='chevron-down' hideTitle=['all']  />
 										</#if>
 									</@btnGroup>
-									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleDelete}' buttonIcon='trash' hideTitle=['all']  color='danger' />
+									<@aButton href='jsp/admin/plugins/forms/modify_entry.jsp?view=confirmRemoveField&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleDelete}' buttonIcon='trash' hideTitle=['all']  color='danger' />
 								</@btnToolbar>	
 								</@li>
 							</#if>
@@ -276,5 +276,5 @@ ${breadcrumb_template}
 <#if anonym>
 <@anonymPattern />
 </#if>
-<@offcanvasIframe id='manageEntry' label='#i18n{forms.modifyEntry.titleQuestion}' />
+<@offcanvasIframe id='manageEntry' label='#i18n{forms.modify_entry.titleQuestion}' />
 </#macro>

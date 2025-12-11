@@ -147,8 +147,8 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
     // Properties
     private static final String PROPERTY_CREATE_COMMENT_TITLE = "forms.create_Question.titleComment";
     private static final String PROPERTY_CREATE_QUESTION_TITLE = "forms.create_Question.titleQuestion";
-    private static final String PROPERTY_MODIFY_COMMENT_TITLE = "forms.modifyEntry.titleComment";
-    private static final String PROPERTY_MODIFY_QUESTION_TITLE = "forms.modifyEntry.titleQuestion";
+    private static final String PROPERTY_MODIFY_COMMENT_TITLE = "forms.modify_entry.titleComment";
+    private static final String PROPERTY_MODIFY_QUESTION_TITLE = "forms.modify_entry.titleQuestion";
     private static final String PROPERTY_MOVE_GROUP_TITLE = "forms.moveComposite.group.title";
     private static final String PROPERTY_MOVE_QUESTION_TITLE = "forms.moveComposite.question.title";
 

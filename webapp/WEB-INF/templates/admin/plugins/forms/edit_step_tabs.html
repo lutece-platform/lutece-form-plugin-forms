@@ -1,13 +1,13 @@
 <#macro formStepTabs tab>
-    <@tabs>
-		<@tabList>
-			<#if tab='questions'><#assign active = true /><#else><#assign active = false /></#if>
-			<@tabLink active=active href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' tabIcon='th-list' title='#i18n{forms.manage_questions.title}' />
-        <#if !step.final> 
-			<#if tab='transitions' || tab='general'><#assign active = true /><#else><#assign active = false /></#if>
-            <@tabLink active=active href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' tabIcon='cog' title='#i18n{forms.modify_step.labelTitle}' />
-        </#if>
-		</@tabList>
-		<#nested>
-	</@tabs>
+<@tabs>
+	<@tabList>
+		<#if tab='questions'><#assign active = true /><#else><#assign active = false /></#if>
+		<@tabLink active=active href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' tabIcon='th-list' title='#i18n{forms.manage_questions.title}' />
+	<#if !step.final> 
+		<#if tab='transitions' || tab='general'><#assign active = true /><#else><#assign active = false /></#if>
+		<@tabLink active=active href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' tabIcon='cog' title='#i18n{forms.modify_step.labelTitle}' />
+	</#if>
+	</@tabList>
+	<#nested>
+</@tabs>
 </#macro>
