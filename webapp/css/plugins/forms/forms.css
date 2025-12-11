@@ -1,6 +1,0 @@
-.cam-wrapper{ position: relative; border: 1px dotted #000; display: flex; justify-content: center;}
-.cam-wrapper > video{ max-width: 100%; }
-.btn-cam{  position: absolute !important; bottom:15px; right:15px; }
-
-.checkbox-above{ display: flex; flex-direction: column-reverse; padding:15px; }
-.radiobutton-above{ display: flex; flex-direction: column-reverse; padding:15px; }

@@ -1,11 +1,14 @@
 <#macro confirmField>
-<script type="text/javascript">
+<script>
 function changeVisilityConfirmFieldTitle(){
-    if( document.getElementById( "confirm_field" ).checked ){
-    	$('#confirm_field_title_group').show();
-    } else {
-    	 $('#confirm_field_title_group').hide();
-    }
+	const confirmField = document.getElementById("confirm_field");
+	const confirmFieldTitleGroup = document.getElementById("confirm_field_title_group");
+	
+	if(confirmField.checked){
+		confirmFieldTitleGroup.classList.remove("d-none");
+	} else {
+		confirmFieldTitleGroup.classList.add("d-none");
+	}
 } 
 changeVisilityConfirmFieldTitle();
 </script>
@@ -13,13 +16,17 @@ changeVisilityConfirmFieldTitle();
 <#macro refListSelect>
 <script>
 function changeVisibilityRefListSelect(){
-    if( document.getElementById( "use_ref_list" ).checked ){
-    	$('#use_ref_list_group').show();
-    	$('#select_ref_list').prop("required", true);
-    } else {
-        $('#use_ref_list_group').hide();
-        $('#select_ref_list').prop("required", false);
-    }
+	const useRefList = document.getElementById("use_ref_list");
+	const useRefListGroup = document.getElementById("use_ref_list_group");
+	const selectRefList = document.getElementById("select_ref_list");
+	
+	if(useRefList.checked){
+		useRefListGroup.classList.remove("d-none");
+		selectRefList.setAttribute("required", "required");
+	} else {
+		useRefListGroup.classList.add("d-none");
+		selectRefList.removeAttribute("required");
+	}
 } 
 changeVisibilityRefListSelect();
 </script>
@@ -27,11 +34,14 @@ changeVisibilityRefListSelect();
 <#macro anonymPattern>
 <script>
 function changeVisilityAnonymizePattern(){
-    if( document.getElementById( "anonymizable" ).checked ){
-    	$("#anonymize_pattern_group").show();
-    } else {
-       $("#anonymize_pattern_group").hide();
-    }
+	const anonymizable = document.getElementById("anonymizable");
+	const anonymizePatternGroup = document.getElementById("anonymize_pattern_group");
+	
+	if(anonymizable.checked){
+		anonymizePatternGroup.classList.remove("d-none");
+	} else {
+		anonymizePatternGroup.classList.add("d-none");
+	}
 } 
 changeVisilityAnonymizePattern();
 </script>
@@ -39,11 +49,14 @@ changeVisilityAnonymizePattern();
 <#macro toDayDate>
 <script>
 function changeVisibilityDateValue(){
-    if( document.getElementById( "default_today_date" ).checked ){
-        $('#default_date_group').hide();
-    } else {
-        $('#default_date_group').show();
-    }
+	const defaultTodayDate = document.getElementById("default_today_date");
+	const defaultDateGroup = document.getElementById("default_date_group");
+	
+	if(defaultTodayDate.checked){
+		defaultDateGroup.classList.add("d-none");
+	} else {
+		defaultDateGroup.classList.remove("d-none");
+	}
 }
 changeVisibilityDateValue();
 </script>
@@ -231,7 +244,6 @@ ${breadcrumb_template}
 					<@boxBody>#i18n{forms.create_entry.messageUseRefList}</@boxBody>
 				<#else>
 					<@boxHeader title='#i18n{forms.create_entry.manageField.title}'>
-						<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/modify_entry.jsp?view_createField=&id_question=${question.id}" targetElement="#modify-entry" id="create-entry-${question.id}" hideTitle=['xs','sm','md','lg'] btnIcon="plus" btnTitle="#i18n{forms.createField.title}" btnColor="primary" position="end" title="#i18n{forms.createField.title}" size="auto"/> -->
 						<@aButton href='jsp/admin/plugins/forms/modify_entry.jsp?view_createField=&id_question=${question.id}' hideTitle=['xs','sm','md','lg'] buttonIcon='plus' title="#i18n{forms.createField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/modify_entry.jsp?view_createField=&id_question=${question.id}"' />
 					</@boxHeader>
 					<@boxBody>
@@ -241,11 +253,10 @@ ${breadcrumb_template}
 							<#if field.code == 'answer_choice'>
 								<#assign cpt=cpt+1>
 								<@li class='list-group-item d-flex justify-content-between'>
-								<@span>${field.title} > ${field.value}</@span>
+								<@span class='text-truncate w-50' params='title="${field.title} > ${field.value}">${field.title}' > ${field.value}</@span>
 								<@btnToolbar>
 								<#if field.defaultValue><@tag color='success'><@icon style='check' title='#i18n{forms.create_entry.manageField.rowDefaultValue}' /></@tag></#if>
-									<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/modify_entry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" targetElement="#modify-entry" id="modify-entry-${question.id}-${field.idField}"  btnIcon="pencil" btnTitle="#i18n{portal.util.labelModify}" btnColor="primary" position="end" title="#i18n{forms.modifyField.title} : \"${field.title}\"" size="auto"/> -->
-									<@aButton href='jsp/admin/plugins/forms/modify_entry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' hideTitle=['xs','sm','md','lg'] buttonIcon='plus' title="#i18n{forms.modifyField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/modify_entry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true"' />
+									<@aButton href='jsp/admin/plugins/forms/modify_entry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' hideTitle=['all'] buttonIcon='pencil' title="#i18n{forms.modifyField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/modify_entry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true"' />
 									<@btnGroup class='mx-1'>
 										<#if cpt!=1>
 											<@aButton href='jsp/admin/plugins/forms/modify_entry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all']  />

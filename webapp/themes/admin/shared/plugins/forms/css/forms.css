@@ -736,3 +736,7 @@ table.table-hover tbody tr:hover {
 		width: 100%;
 	}
 }
+
+.cam-wrapper{ position: relative; border: 1px dotted #000; display: flex; justify-content: center;}
+.cam-wrapper > video{ max-width: 100%; }
+.btn-cam{  position: absolute !important; bottom:15px; right:15px; }

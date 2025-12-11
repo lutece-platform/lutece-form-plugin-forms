@@ -567,80 +567,236 @@ window.addEventListener('message', function(event) {
 </@row>
 </#macro>
 <#macro dateFilterJs>
-<link rel="stylesheet" type="text/css" href="themes/admin/shared/plugins/forms/css/daterangepicker.css">
-<script src="js/jquery/plugins/moment.min.js"></script>
-<script src="js/jquery/plugins/daterangepicker.js"></script>
+<link rel="stylesheet" href="themes/admin/shared/js/lib/flatpickr/bootstrap-flatpickr.min.css">
+<link rel="stylesheet" href="themes/admin/shared/js/lib/flatpickr/monthSelect.css">
+<style>
+.flatpickr-wrapper { display: block; width: 100%; }
+.date-filter-container { position: relative; }
+.date-filter-container .flatpickr-input { padding-right: 80px; }
+.date-range-presets { 
+	display: flex; 
+	flex-wrap: wrap; 
+	gap: 4px; 
+	padding: 8px; 
+	border-bottom: 1px solid #e2e8f0;
+	background: #f8fafc;
+}
+.date-range-presets button {
+	padding: 4px 8px;
+	font-size: 12px;
+	border: 1px solid #cbd5e1;
+	background: white;
+	border-radius: 4px;
+	cursor: pointer;
+	transition: all 0.2s;
+}
+.date-range-presets button:hover {
+	background: var(--bs-primary, #0d6efd);
+	color: white;
+	border-color: var(--bs-primary, #0d6efd);
+}
+.flatpickr-clear-btn {
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+	background: none;
+	border: none;
+	color: #94a3b8;
+	cursor: pointer;
+	padding: 4px 8px;
+	font-size: 12px;
+}
+.flatpickr-clear-btn:hover{ color: #dc3545; }
+</style>
+<script src="themes/admin/shared/js/util/lutece.js"></script>
+<!-- <script src="themes/admin/shared/js/lib/flatpickr/flatpickr.js"></script> -->
+<script src="themes/admin/shared/js/lib/flatpickr/bootstrap-flatpickr.min.js"></script>
+<script src="themes/admin/shared/js/lib/flatpickr/locales/bootstrap-flatpickr.${.lang}.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+	 const dtFormat = getFlatPickerDateFormat( '${.lang}' )
+	// Locale configuration
+	const locale = {
+		weekdays: {
+			shorthand: [
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSun}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekMon}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekTue}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekWen}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekThu}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekFri}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSat}"
+			],
+			longhand: [
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSun}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekMon}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekTue}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekWen}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekThu}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekFri}",
+				"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSat}"
+			]
+		},
+		months: {
+			shorthand: [
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames1}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames2}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames3}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames4}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames5}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames9}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"
+			],
+			longhand: [
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames1}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames2}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames3}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames4}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames5}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames9}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
+				"#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"
+			]
+		},
+		firstDayOfWeek: 1,
+		rangeSeparator: " - "
+	};
+
+	// Preset ranges
+	const presets = {
+		"#i18n{forms.multiviewForms.dateRangePicker.today}": [new Date(), new Date()],
+		"#i18n{forms.multiviewForms.dateRangePicker.yesterday}": [
+			new Date(Date.now() - 86400000), 
+			new Date(Date.now() - 86400000)
+		],
+		"#i18n{forms.multiviewForms.dateRangePicker.week}": [
+			new Date(Date.now() - 6 * 86400000), 
+			new Date()
+		],
+		"#i18n{forms.multiviewForms.dateRangePicker.month}": [
+			new Date(Date.now() - 29 * 86400000), 
+			new Date()
+		],
+		"#i18n{forms.multiviewForms.dateRangePicker.months}": [
+			new Date(Date.now() - 90 * 86400000), 
+			new Date()
+		]
+	};
+
+	// Format date to match expected format (DD/MM/YYYY)
+	function formatDate(date) {
+		if (!date) return '';
+		const d = new Date(date);
+		const day = String(d.getDate()).padStart(2, '0');
+		const month = String(d.getMonth() + 1).padStart(2, '0');
+		const year = d.getFullYear();
+		return day + '/' + month + '/' + year;
+	}
+
 	document.querySelectorAll("[name='formsFilterDate']").forEach(function(element) {
-		var filter = '#' + element.value;
-		var filterTo = filter + '_to';
-		var filterFrom = filter + '_from';
-		var filterElement = document.querySelector(filter);
+		const filterId = element.value;
+		const filter = '#' + filterId;
+		const filterTo = filter + '_to';
+		const filterFrom = filter + '_from';
+		const filterElement = document.querySelector(filter);
 		
-		$(filterElement).daterangepicker({
-			ranges: {
-				"#i18n{forms.multiviewForms.dateRangePicker.today}": [moment(), moment()],
-				"#i18n{forms.multiviewForms.dateRangePicker.yesterday}": [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-				"#i18n{forms.multiviewForms.dateRangePicker.week}": [moment().subtract(6, 'days'), moment()],
-				"#i18n{forms.multiviewForms.dateRangePicker.month}": [moment().subtract(29, 'days'), moment()],
-				"#i18n{forms.multiviewForms.dateRangePicker.months}": [moment().subtract(90, 'days'), moment()],
+		if (!filterElement) return;
+
+		// Wrap in container for clear button
+		const container = document.createElement('div');
+		container.className = 'date-filter-container input-group';
+		filterElement.classList.add('form-select');
+		filterElement.parentNode.insertBefore(container, filterElement);
+		container.appendChild(filterElement);
+
+		// Add clear button
+		const clearBtn = document.createElement('button');
+		clearBtn.type = 'button';
+		clearBtn.className = 'flatpickr-clear-btn';
+		clearBtn.innerHTML = '<i class="ti ti-x"></i> Effacer';
+		clearBtn.style.display = 'none';
+		container.appendChild(clearBtn);
+
+		// Initialize Flatpickr
+		const fp = flatpickr(filterElement, {
+			mode: 'range',
+			dateFormat: dtFormat,
+			locale: locale,
+			allowInput: true,
+			clickOpens: true,
+			onReady: function(selectedDates, dateStr, instance) {
+				// Add presets to calendar
+				const presetsDiv = document.createElement('div');
+				presetsDiv.className = 'date-range-presets';
+				
+				Object.keys(presets).forEach(function(label) {
+					const btn = document.createElement('button');
+					btn.type = 'button';
+					btn.textContent = label;
+					btn.addEventListener('click', function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+						const range = presets[label];
+						instance.setDate(range, true);
+					});
+					presetsDiv.appendChild(btn);
+				});
+				
+				instance.calendarContainer.insertBefore(presetsDiv, instance.calendarContainer.firstChild);
 			},
-			opens: 'right',
-			alwaysShowCalendars: true,
-			autoUpdateInput: false,
-			locale: {
-				format: '#i18n{forms.multiviewForms.dateRangePicker.format}',
-				applyLabel: "#i18n{forms.multiviewForms.dateRangePicker.applyLabel}",
-				cancelLabel: "#i18n{forms.multiviewForms.dateRangePicker.cancelLabel}",
-				fromLabel: "#i18n{forms.multiviewForms.dateRangePicker.fromLabel}",
-				toLabel: "#i18n{forms.multiviewForms.dateRangePicker.toLabel}",
-				customRangeLabel: "#i18n{forms.multiviewForms.dateRangePicker.customRangeLabel}",
-				weekLabel: "#i18n{forms.multiviewForms.dateRangePicker.weekLabel}",
-				daysOfWeek: [
-					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSun}",
-					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekMon}",
-					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekTue}",
-					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekWen}",
-					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekThu}",
-					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekFri}",
-					"#i18n{forms.multiviewForms.dateRangePicker.daysOfWeekSat}"
-				],
-				monthNames: [
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames1}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames2}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames3}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames4}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames5}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames6}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames7}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames8}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames9}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames10}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames11}",
-					"#i18n{forms.multiviewForms.dateRangePicker.monthNames12}"
-				],
+			onChange: function(selectedDates, dateStr, instance) {
+				if (selectedDates.length === 2) {
+					const fromInput = document.querySelector(filterFrom);
+					const toInput = document.querySelector(filterTo);
+					
+					if (fromInput) fromInput.value = formatDate(selectedDates[0]);
+					if (toInput) toInput.value = formatDate(selectedDates[1]);
+					
+					clearBtn.style.display = 'block';
+				}
+			},
+			onClose: function(selectedDates, dateStr, instance) {
+				if (selectedDates.length === 2) {
+					const searchForm = document.getElementById('searchForm');
+					if (searchForm) {
+						searchForm.submit();
+					}
+				}
 			}
-		}, 
-		function(start, end, label) {
-			document.querySelector(filterFrom).value = start.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
-			document.querySelector(filterTo).value = end.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
-			document.querySelector(filter).value = start.format('#i18n{forms.multiviewForms.dateRangePicker.format}') + " - " + end.format('#i18n{forms.multiviewForms.dateRangePicker.format}');
-			var searchForm = document.getElementById('searchForm');
+		});
+
+		// Clear button handler
+		clearBtn.addEventListener('click', function() {
+			fp.clear();
+			const fromInput = document.querySelector(filterFrom);
+			const toInput = document.querySelector(filterTo);
+			if (fromInput) fromInput.value = '';
+			if (toInput) toInput.value = '';
+			clearBtn.style.display = 'none';
+			
+			const searchForm = document.getElementById('searchForm');
 			if (searchForm) {
 				searchForm.submit();
 			}
 		});
-		
-		$(filterElement).on('cancel.daterangepicker', function(ev, picker) {
-			var startD = moment().day(-30);
-			var endD = moment().day(30);
-			$(this).data('daterangepicker').setStartDate(startD);
-			$(this).data('daterangepicker').setEndDate(endD);
-			this.value = '';
-			document.querySelector(filterFrom).value = '';
-			document.querySelector(filterTo).value = '';
-		});
+
+		// Show clear button if already has value
+		if (filterElement.value) {
+			clearBtn.style.display = 'block';
+		}
+
+		// Store instance for external access
+		filterElement._flatpickr = fp;
 	});
 });
 </script>

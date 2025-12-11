@@ -3,8 +3,5 @@
 <@input type='hidden' id='${filter_config.getFormFilterName()!""}_from' name='${filter_config.getFormFilterName()!""}_from' value='${filter_list_value_from!""}' />
 <@input type='hidden' id='${filter_config.getFormFilterName()!""}_to' name='${filter_config.getFormFilterName()!""}_to' value='${filter_list_value_to!""}' />
 <@input type='hidden' name='formsFilterDate' value='${filter_config.getFormFilterName()!""}' />
-<@inputGroup>
-    <@input type='text' size='sm' name=filter_config.getFormFilterName()!'' id=filter_config.getFormFilterName()!'' value=filter_list_value!'' placeHolder=filter_label  />
-    <@button buttonIcon='calendar' color='primary' />
-</@inputGroup>
+<@input type='text' size='sm' name=filter_config.getFormFilterName()!'' id=filter_config.getFormFilterName()!'' value=filter_list_value!'' placeHolder=filter_label  />
 </@formGroup>
