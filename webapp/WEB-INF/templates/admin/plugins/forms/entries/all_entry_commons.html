@@ -247,7 +247,7 @@ ${breadcrumb_template}
 						<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true&view_createField=&id_question=${question.id}' hideTitle=['xs','sm','md','lg'] buttonIcon='plus' title="#i18n{forms.createField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true&view_createField=&id_question=${question.id}"' />
 					</@boxHeader>
 					<@boxBody>
-						<@ul id='list' class='list-group'>
+						<@ul class='list-group'>
 							<#assign cpt=0>
 							<#list list as field>
 							<#if field.code == 'answer_choice'>
