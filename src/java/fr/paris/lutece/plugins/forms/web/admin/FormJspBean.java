@@ -50,6 +50,7 @@ import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.StepHome;
+import fr.paris.lutece.util.ReferenceItem;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -333,9 +334,17 @@ public class FormJspBean extends AbstractJspBean
             model.put( MARK_WORKFLOW_REF_LIST, referenceList );
         }
         
-        ReferenceList workGroupReferenceList = AdminWorkgroupService.getUserWorkgroups(getUser(), getLocale());
+        ReferenceList workGroupReferenceList = AdminWorkgroupService.getUserWorkgroups( getUser( ), getLocale( ) );
         model.put( MARK_WORKGROUP_REF_LIST, workGroupReferenceList );
-        model.put(FormsConstants.MARK_DEFAULT_VALUE_WORKGROUP_KEY, AdminWorkgroupService.ALL_GROUPS);
+        String strDefaultWorkGroup = AdminWorkgroupService.ALL_GROUPS;
+        if ( workGroupReferenceList.size( ) == 2 )
+        {
+            strDefaultWorkGroup = workGroupReferenceList.stream( ).map( ReferenceItem::getCode )
+                    .filter( code -> !AdminWorkgroupService.ALL_GROUPS.equals( code ) )
+                    .findFirst( )
+                    .orElse( AdminWorkgroupService.ALL_GROUPS );
+        }
+        model.put( FormsConstants.MARK_DEFAULT_VALUE_WORKGROUP_KEY, strDefaultWorkGroup );
 
         if ( _accessControlService.isAvailable( ) )
         {
