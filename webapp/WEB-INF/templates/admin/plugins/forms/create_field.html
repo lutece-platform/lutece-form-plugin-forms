@@ -1,7 +1,7 @@
 <@pageContainer>
     <@pageColumn>
 		<@pageHeader title='#i18n{forms.createField.title} : "${field.parentEntry.title}"' />
-		<@tform id='create_field_form' action='jsp/admin/plugins/forms/ModifyEntry.jsp?' enctype="multipart/form-data" params=' target="_top"'>
+		<@tform id='create_field_form' action='jsp/admin/plugins/forms/ModifyEntry.jsp' enctype="multipart/form-data" params=' target="_top"'>
 			<@input type='hidden' name='id_step' value='${question.idStep}' />
 			<@input type='hidden' name='id_question' value='${question.id}' />
 			<@input type='hidden' name='id_entry' value='${id_entry}' />
