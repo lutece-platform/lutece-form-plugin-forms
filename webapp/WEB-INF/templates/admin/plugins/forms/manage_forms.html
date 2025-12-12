@@ -1,6 +1,6 @@
 <@pageContainer>
     <@pageColumn>
-		<@pageHeader title='#i18n{forms.manageForm.title}'>
+		<@pageHeader title='#i18n{forms.manageForm.title}' titleClass='mb-3'>
 			<@tform type='inline'>
 				<@formGroup labelFor='plugin_type' labelKey='#i18n{portal.system.manage_plugins.buttonFilter}' hideLabel=['all'] formStyle='inline'>
 					<@inputGroup>
@@ -39,35 +39,27 @@
                             <#if hasFormActionUpdate>
                                 <#list form.actions as action>
                                     <#if action.permission=='MODIFY'>
-                                        <@link href='${action.url}&id_form=${form.id}' title='${form.title}'><@span class='truncate ms-1'>${form.title}</@span></@link>
+                                        <@link href='${action.url}&id_form=${form.id}' title='${form.title}' class='d-flex align-items-center p-2'>
+                                            <#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
+                                            <@span class='ms-1 fw-bold p-2'>${form.title}</@span>
+                                            <#if form.description!=''><@span class='d-none d-lg-inline-block text-truncate ms-2' params='title="${form.description!}" style="max-width: var(--tw);"'>${form.description!}</@span></#if>
+                                            <small class="py-2 searchable fw-light mx-2 d-none d-lg-inline-block">#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></small>
+                                         </@link>
                                         <#break>
                                     </#if>
                                 </#list>
                             <#else>
-                                <@span class='truncate ms-1'>${form.title}</@span>
+                                <@span class='ms-1 fw-bold p-2'>${form.title}</@span>
+                                <#if form.description!=''><@span class='d-none d-lg-inline-block text-truncate ms-2' params='title="${form.description!}" style="max-width: var(--tw);"'>${form.description!}</@span></#if>
+                                <small class="py-2 searchable fw-light fs-6 mx-2 d-none d-lg-inline-block">#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></small>
                             </#if>
                         </#if>
                         </#assign>
-                        <@boxBody class='d-flex justify-content-space-between align-items-center p-2'>
-                             <@h level=3 class='d-flex justify-content-evenly align-items-center mb-0' params='title="${form.title}" style="--tw:300px"'>
-                                <#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
+                        <@boxBody class='d-flex justify-content-space-between align-items-center p-0'>
+                             <@h level=3 class='d-flex justify-content-start align-items-center mb-0' params='title="${form.title}" style="--tw:300px"'>
                                 ${formTitle}
-                                <@span class='ms-2 py-2 searchable' >
-                                    <#if hasFormActionUpdate>
-                                        <#list form.actions as action>
-                                            <#if action.permission=='MODIFY'>
-                                                <@link class='d-none d-lg-block' href='${action.url}&id_form=${form.id}' title='${form.title}' />
-                                            </#if>
-                                            <#if action.permission=='PARAM'>
-                                                <@link class='d-none d-lg-block' href='${action.url}&id_form=${form.id}' title='${form.title}' />
-                                            </#if>
-                                        </#list>
-                                    </#if>
-                                     <#if form.description!=''><@div class='d-none d-lg-block text-truncate' params='title="${form.description!}" style="max-width: var(--tw);"'>${form.description!}</@div></#if>
-                                </@span>
-                                <small class="py-2 searchable fw-light me-2 d-none d-lg-block">#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></small>
                             </@h>
-                            <@div class='form-actions d-flex justify-content-end align-items-center flex-wrap'>
+                            <@div class='form-actions d-flex justify-content-end align-items-center flex-wrap p-2'>
                                 <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}' label='' class='btn btn-primary'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
                                 <@button type='button' id='forms-action' class='overflow-visible' title='#i18n{portal.util.labelActions}' dropdownMenu=true >
                                 <#if form.actions?exists>
@@ -127,7 +119,7 @@
                                                 </#if>
                                             </@span>
                                         <#else>
-                                            <#if form.availabilityStartDate?? &&  form.availabilityStartDate &gt; .now?datetime>
+                                            <#if form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime>
                                                 <@span>
                                                     <@icon style='clock' class='text-info' /> 
                                                     <@span class='text-info truncate'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}</@span>
@@ -146,8 +138,7 @@
                     </@box>
                 </@columns>
                 </#list>
-            </@row>   
-           
+            </@row>
             <@paginationAdmin paginator=paginator combo=1 showcount=0 />
         <#else>
             <@card>
