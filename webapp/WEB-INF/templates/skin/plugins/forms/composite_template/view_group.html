@@ -23,7 +23,9 @@
 				</div>
 			</#if>
 			<fieldset class="<#if id_display??> display_field_${id_display} d-none</#if>" style="position:relative;">
-				<legend>${group.title} <#if indexIteration &gt; 0>(${indexIteration+1})</#if>
+				<#if !group.title?ends_with('hidden')>
+					<legend>${group.title} <#if indexIteration &gt; 0>(${indexIteration+1})</#if>
+				</#if>
 				<#if group.description!=''>
 					<div class="helpBox">${group.description}</div>
 				</#if>
