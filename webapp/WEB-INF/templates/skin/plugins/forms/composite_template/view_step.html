@@ -1,5 +1,7 @@
 <div class="card">
-    <h3 class="card-header">${step.title}</h3>
+	<#if !step.title?ends_with('hidden')>
+		<h3 class="card-header">${step.title}</h3>
+	</#if>
     <div id="step-content" class="card-body">
         ${stepContent}
         <#if display_captcha>${captcha}</#if>
