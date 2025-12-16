@@ -10,7 +10,7 @@
 		<input name="page" value="forms" type="hidden">
 		<input name="id_form" value="${step.idForm}" type="hidden">
 		<input name="id_step" value="${step.id}" type="hidden">
-		<#if !step.initial><button class="btn btn-primary btn-sm" name="action_doReturnStep" type="submit" >#i18n{forms.step.previous}</button></#if>
+		<#if !step.initial><button class="btn btn-primary btn-sm" name="action_doReturnStep" type="submit" formnovalidate >#i18n{forms.step.previous}</button></#if>
 	<#if step.final>
 	<#if form.displaySummary >
 		<button class="btn btn-primary btn-sm" name="action_formResponseSummary" type="submit">#i18n{forms.step.see.summary}</button>
