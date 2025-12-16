@@ -661,17 +661,16 @@ public class FormXPage extends MVCApplication
      */
     private Map<String, Object> buildModelForSummary( Form form, HttpServletRequest request )
     {
+        if ( bypassInactiveState( form, request ) )
+        {
+            addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
+        }
         Map<String, Object> mapFormResponseSummaryModel = getModel( );
 
         List<Step> listValidatedStep = _formResponseManager.getValidatedSteps( );
 
         List<String> listStepHtml = FormsResponseUtils.buildStepsHtml( request, listValidatedStep, _formResponseManager, true );
         mapFormResponseSummaryModel.put( MARK_LIST_SUMMARY_STEP_DISPLAY, listStepHtml );
-        if ( bypassInactiveState( form, request ) )
-        {
-            addWarning( MESSAGE_WARNING_INACTIVE_STATE_BYPASSED, getLocale( request ) );
-        }
-        fillCommons( mapFormResponseSummaryModel );
         return mapFormResponseSummaryModel;
     }
 
