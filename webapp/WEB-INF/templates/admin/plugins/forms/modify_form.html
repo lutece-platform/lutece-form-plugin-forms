@@ -11,7 +11,7 @@
 					<#if form.breadcrumbName=='forms-breadcrumbaccordion.breadcrumbAccordion'>
 					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/modules/breadcrumbaccordion/ManageBreadcrumbAccordion.jsp?view=modifyBreadcrumb&id_form=${form.id}' title='#i18n{module.forms.breadcrumbaccordion.manage_breadcrumbAccordion.title}' buttonIcon='stack' />
 					</#if>
-					<@button type='button' class='default dropdown-item justify-content-start' id='toggleMap' title='Voir le graphique' buttonIcon='sitemap' />
+					<@button type='button' class='default dropdown-item justify-content-start' id='toggleMap' title='#i18n{forms.modify_form.tab.graphicShow}' buttonIcon='sitemap' />
 				</@button>
 				<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>${extendableResourceActionsHtml!}</#if>
 			</#if>
