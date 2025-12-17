@@ -1,11 +1,13 @@
 function redirectOnClick( element ){
-	if ( $(element).attr("data-url") != undefined ){
-		var form = $('<form>', 
-			{ 'action':$(element).attr("data-url"), 'method':'post' }
-		);
-		form.appendTo('body');
-		form.submit().remove();
-	}
+    const url = element.getAttribute("data-url");
+    if (url !== null) {
+        const form = document.createElement("form");
+        form.action = url;
+        form.method = "post";
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    }
 }
 
 function resetForm( ){
@@ -20,18 +22,28 @@ function resetForm( ){
 
 function setNavButtons( idResp, labelPrev, labelNext ){
 	const respUrl=sessionStorage.getItem('multiview_base_url') + '&id_form_response=';
-	const item_list=sessionStorage.getItem('multiview_current_list'), boxTool=$('#info-box-header .box-tools');
-	var response_list=item_list.split(','), maxIdx=response_list.length - 1, currentIdx=response_list.indexOf(idResp);
-	var nNext=currentIdx+1, nPrev=currentIdx-1;
-	if( currentIdx > -1 ){
-		if( currentIdx > 0 ){
-			nPrev=response_list[nPrev];
-			boxTool.append( '<a class="btn btn-primary btn-flat" href="' + respUrl + nPrev  + '">'+labelPrev+'</a>' );
-		}
-		if( currentIdx != maxIdx ){
-			nNext=response_list[nNext];
-			boxTool.append( '<a class="btn btn-primary btn-flat" href="' + respUrl + nNext  + '">'+labelNext+'</a>' );
-		}
+	const item_list=sessionStorage.getItem('multiview_current_list');
+	const boxTool = document.querySelector('#info-box-header.boxTool');
+	if( boxTool )
+	{
+        var response_list=item_list.split(','), maxIdx=response_list.length - 1, currentIdx=response_list.indexOf(idResp);
+        var nNext=currentIdx+1, nPrev=currentIdx-1;
+        if( currentIdx > -1 ){
+            if( currentIdx > 0 ){
+                nPrev=response_list[nPrev];
+                boxTool.insertAdjacentHTML(
+                    'beforeend',
+                    `<a class="btn btn-primary btn-flat" href="${respUrl}${nPrev}">${labelPrev}</a>`
+                );
+            }
+            if( currentIdx != maxIdx ){
+                nNext=response_list[nNext];
+                boxTool.insertAdjacentHTML(
+                    'beforeend',
+                    `<a class="btn btn-primary btn-flat" href="${respUrl}${nNext}">${labelNext}</a>`
+                );
+            }
+        }
 	}
 }
 
