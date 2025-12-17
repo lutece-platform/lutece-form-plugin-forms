@@ -48,7 +48,7 @@
 							<#assign inactiveBypass='&ts='+timestamp+'&token='+inactiveBypassTokens[form.id?string]>
 							<#assign color='warning'>
 						</#if>
-						<@link href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='#i18n{forms.manageForm.FOLink.label}' class='dropdown-item' />
+						<@link href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='#i18n{forms.manageForm.FOLink.label}' class='dropdown-item' target='_blank' />
 						</div>
 					</div>
 				</@div>
