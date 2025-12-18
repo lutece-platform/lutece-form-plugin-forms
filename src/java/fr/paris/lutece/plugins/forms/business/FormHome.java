@@ -71,6 +71,7 @@ public final class FormHome
     {
         _dao.insert( form, _plugin );
         _cache.put( _cache.getFormCacheKey( form.getId( ) ), form );
+        _cache.remove( _cache.getFormListCacheKey( ) );
         return form;
     }
 
@@ -85,6 +86,7 @@ public final class FormHome
     {
         _dao.store( form, _plugin );
         _cache.put( _cache.getFormCacheKey( form.getId( ) ), form );
+        _cache.remove( _cache.getFormListCacheKey( ) );
         return form;
     }
 
@@ -98,6 +100,7 @@ public final class FormHome
     {
         _dao.delete( nKey, _plugin );
         _cache.remove( _cache.getFormCacheKey( nKey ) );
+        _cache.remove( _cache.getFormListCacheKey( ) );
     }
 
     /**
