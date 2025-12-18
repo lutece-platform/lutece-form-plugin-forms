@@ -1,5 +1,4 @@
 <#include "all_entry_commons.html" />
-<#assign fieldMyLuteceAttributeName = getFieldByCode( entry, "attribute_name" ) >
 <@editFields exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true >
 <@formGroup labelFor='file_max_size' labelKey='#i18n{forms.create_entry.labelFileMaxSize}' mandatory=true rows=2>
 	<@input type='text' name='file_max_size' id='file_max_size' value=getFileMaxSize(entry) />
