@@ -63,29 +63,26 @@ document.addEventListener('DOMContentLoaded', function () {
 		});
 	}
 
-	const filegenerator = 'jsp/admin/plugins/filegenerator/ManageMyFiles.jsp', btnExport = document.querySelector('#action_doExportResponses');
-	if (btnExport) {
-		btnExport.addEventListener('click', function (event) {
-			event.preventDefault();
-			const exportEl = document.querySelector('.forms-filter:has( #format_export');
-			if (exportEl) {
-				const p = document.createElement('p');
-				p.className = 'text-primary text-wrap mt-3'; // ms-auto pushes it to the right in Bootstrap 5
-				const a = document.createElement('a');
-				a.className = 'btn btn-outline-secondary';
-				a.target='_blank';
-				a.setAttribute('style','white-space:wrap;');
-				a.href = filegenerator;
-				a.textContent = '#i18n{forms.export.async.message}';
-				const i = document.createElement('i');
-				i.className = 'ti ti-external-link ms-2';
-				i.setAttribute('aria-hidden', 'true');
-				a.appendChild(i);
-				p.appendChild(a);
-				exportEl.appendChild(p);
-			}
-		});
+	<#if export_success?has_content>
+	const filegenerator = 'jsp/admin/plugins/filegenerator/ManageMyFiles.jsp';
+	const exportEl = document.querySelector('.forms-filter:has( #format_export');
+	if (exportEl) {
+		const p = document.createElement('p');
+		p.className = 'text-primary text-wrap mt-3'; // ms-auto pushes it to the right in Bootstrap 5
+		const a = document.createElement('a');
+		a.className = 'btn btn-outline-secondary';
+		a.target='_blank';
+		a.setAttribute('style','white-space:wrap;');
+		a.href = filegenerator;
+		a.textContent = "#i18n{forms.export.async.message}";
+		const i = document.createElement('i');
+		i.className = 'ti ti-external-link ms-2';
+		i.setAttribute('aria-hidden', 'true');
+		a.appendChild(i);
+		p.appendChild(a);
+		exportEl.appendChild(p);
 	}
+	</#if>
 
 });
 
