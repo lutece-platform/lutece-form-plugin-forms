@@ -18,18 +18,22 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Initial toggle based on checkbox state
 	const endMessage = document.getElementById('endMessage');
 	const endMessageDisplay = document.getElementById('endMessageDisplay');
-	
+	const labelEndMessageButton = document.getElementById('labelEndMessageButton');
+
 	// Hide initially
 	endMessage.classList.toggle('d-none', true);
-	
+	labelEndMessageButton.classList.toggle('d-none', true);
+
 	// Show if checkbox is checked
 	if (endMessageDisplay && endMessageDisplay.checked) {
 		endMessage.classList.toggle('d-none', false);
+		labelEndMessageButton.classList.toggle('d-none', false);
 	}
-	
+
 	// Toggle on change
 	document.getElementById('labelEndMessage').addEventListener('change', function() {
 		endMessage.classList.toggle('d-none');
+		labelEndMessageButton.classList.toggle('d-none');
 	});
 });
 </script>
