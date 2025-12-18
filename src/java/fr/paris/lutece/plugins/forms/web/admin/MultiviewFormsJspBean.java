@@ -44,6 +44,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -152,6 +153,7 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String MARK_TABLE_TEMPLATE = "table_template";
     private static final String MARK_LIST_FORMAT_EXPORT = "format_export_list";
     private static final String MARK_LIST_UNIQUE_FILE = "listUniqueFile";
+    private static final String MARK_EXPORT_SUCCESS = "export_success";
     // Session variables
     private String _strSelectedPanelTechnicalCode = StringUtils.EMPTY;
     private transient List<IFormColumn> _listFormColumn;
@@ -255,6 +257,12 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         model.put( MARK_FORM_PANEL_LIST, _listAuthorizedFormPanelDisplay );
         model.put( MARK_CURRENT_SELECTED_PANEL, _strSelectedPanelTechnicalCode );
         model.put( MARK_LIST_FORMAT_EXPORT, ExportServiceManager.getInstance( ).getRefListFormatExport( ) );
+
+        if (request.getParameter( FormsConstants.PARAMETER_ACTION_PREFIX + ACTION_EXPORT_RESPONSES )!=null
+            && model.get(MVCUtils.MARK_ERRORS)==null)
+        {
+            model.put(MARK_EXPORT_SUCCESS ,true );
+        }
 
         return getPage( PROPERTY_FORMS_MULTIVIEW_PAGE_TITLE, TEMPLATE_FORMS_MULTIVIEW, model );
     }
