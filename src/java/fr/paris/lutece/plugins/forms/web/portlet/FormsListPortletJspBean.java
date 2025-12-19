@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -61,7 +62,7 @@ import fr.paris.lutece.util.json.JsonUtil;
 /**
  * This class provides the user interface to manage FormsList Portlet
  */
-@SessionScoped
+@RequestScoped
 @Named
 public class FormsListPortletJspBean extends PortletJspBean
 {
@@ -121,6 +122,10 @@ public class FormsListPortletJspBean extends PortletJspBean
         String strPageId = request.getParameter( PARAMETER_PAGE_ID );
         int nPageId = NumberUtils.toInt( strPageId, NumberUtils.INTEGER_MINUS_ONE );
 
+        if ( _portlet == null )
+        {
+            _portlet = new FormsListPortlet( ); 
+        }
         String strErrorUrl = setPortletCommonData( request, _portlet );
 
         if ( strErrorUrl != null )
@@ -176,6 +181,10 @@ public class FormsListPortletJspBean extends PortletJspBean
     @Override
     public String doModify( HttpServletRequest request ) 
     {
+        String strPortletId = request.getParameter( PARAMETER_PORTLET_ID );
+        int nPortletId = NumberUtils.toInt( strPortletId, NumberUtils.INTEGER_MINUS_ONE );
+        _portlet = (FormsListPortlet) PortletHome.findByPrimaryKey( nPortletId );
+
         String strErrorUrl = setPortletCommonData( request, _portlet );
 
         if ( strErrorUrl != null )
