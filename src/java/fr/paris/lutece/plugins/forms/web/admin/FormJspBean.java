@@ -165,6 +165,7 @@ public class FormJspBean extends AbstractJspBean
     private static final String MARK_FORM_CATEGORY_LIST = "categoryList";
     private static final String MARK_FORMS_WITH_FINAL_STEP = "formsWithFinalStep";
     private static final String MARK_FORM_HAS_FINAL_STEP = "hasFinalStep";
+    private static final String MARK_PROD_URL = "prod_url";
 
     // Properties
     private static final String PROPERTY_ITEM_PER_PAGE = "forms.itemsPerPage";
@@ -298,6 +299,7 @@ public class FormJspBean extends AbstractJspBean
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
         model.put( SecurityTokenService.MARK_TOKEN, _securityTokenService.getToken( request, ACTION_CREATE_FORM ) );
         model.put( MARK_FORMS_WITH_FINAL_STEP, formsWithFinalStep );
+        model.put( MARK_PROD_URL, AppPathService.getProdUrl( request ) );
         setPageTitleProperty( EMPTY_STRING );
 
         HtmlTemplate templateList = AppTemplateService.getTemplate( TEMPLATE_MANAGE_FORMS, locale, model );
@@ -610,7 +612,7 @@ public class FormJspBean extends AbstractJspBean
 
             model.put( MARK_BREADCRUMB_TYPE, BreadcrumbManager.getRefListBreadcrumb( ) );
             model.put( MARK_IS_ACTIVE_CAPTCHA, _captchaService.isResolvable( ) );
-
+            model.put( MARK_PROD_URL, AppPathService.getProdUrl( request ) );
             ExtendableResourcePluginActionManager.fillModel( request, getUser( ), model, "*", FormResponse.RESOURCE_TYPE + "_" + nId );
 
             return getPage( PROPERTY_PAGE_TITLE_MODIFY_FORM, TEMPLATE_MODIFY_FORM, model );
