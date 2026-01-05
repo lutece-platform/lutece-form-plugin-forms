@@ -19,32 +19,35 @@
 }
 
 #forms-list .card-list.card .card-body {
-    flex-direction: column;
-	min-height: auto;
+    min-height: auto;
 }
 
-#forms-list  .card .card-body :is( .form-actions, h3 ) {
+#forms-list .card:not(.card-list) .card-body h3 a {
+	flex-direction: column;
+}
+
+#forms-list .card .card-body :is( .form-actions, h3 ) {
 	justify-content: center !important;
 	row-gap: .5rem;
 }
 
-#forms-list  .card.card-list .card-body :is( .form-actions, h3 ) {
+#forms-list .card.card-list .card-body :is( .form-actions, h3 ) {
     flex-direction: row;
 	row-gap: 0;
 }
 
-#forms-list  .card .card-body p{
+#forms-list .card .card-body p{
     text-align: center;
 }
 
-#forms-list  .card-list.card .card-body{
+#forms-list .card-list.card .card-body{
    flex-direction: row;
 }
 
-#forms-list  .card-list.card .card-body p {
+#forms-list .card-list.card .card-body p {
    margin-bottom: 0;
    text-align: start;
-   flex: 4
+   flex: 4;
 }
 
 .card.card-transition > *,

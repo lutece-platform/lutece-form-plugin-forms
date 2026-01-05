@@ -40,8 +40,10 @@
                                 <#list form.actions as action>
                                     <#if action.permission=='MODIFY'>
                                         <@link href='${action.url}&id_form=${form.id}' title='${form.title}' class='d-flex align-items-center p-2'>
+                                            <@span class='ms-1 fw-bold p-2'>
                                             <#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
-                                            <@span class='ms-1 fw-bold p-2'>${form.title}</@span>
+                                            ${form.title}
+                                            </@span>
                                             <#if form.description!=''><@span class='d-none d-lg-inline-block text-truncate ms-2' params='title="${form.description!}" style="max-width: var(--tw);"'>${form.description!}</@span></#if>
                                             <small class="py-2 searchable fw-light mx-2 d-none d-lg-inline-block">#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></small>
                                          </@link>
@@ -165,7 +167,7 @@ new LuteceSearchList( searchInput, searchElementList, {
     toggleLabel: '#i18n{portal.util.labelToggleList}',
     toggleLabelOff: '#i18n{portal.util.labelToggleListOff}',
     toggleCardClass: ['card-list'], 
-    toggleCardHeaderClass : ['flex-row','justify-content-between','align-items-center'],  
+    toggleCardHeaderClass : ['flex-row','justify-content-space-between','align-items-center'],  
 });
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -175,7 +177,6 @@ document.addEventListener('DOMContentLoaded', function () {
 			window.location.href = <#noparse>`jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${formId}&token=${token}`</#noparse>;
 		});
 	});
-
 });
 </script>
 <@scrollTopBtn />
