@@ -96,7 +96,7 @@
                                     </#if>
                                     </#list>
                                 </#if>
-                                <@link href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='' class='dropdown-item' params='target="_blank"'><@span> <@icon style='external-link'/> #i18n{forms.manageForm.FOLink.label}</@span></@link>
+                                <@link href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='' class='dropdown-item' params='target="_blank"'><@span> <@icon style='external-link'/> #i18n{forms.manageForm.FOLink.label}</@span></@link>
                                 <#if is_active_kibana_forms_plugin>
                                     <@link href='jsp/admin/plugins/kibana/KibanaDashboard.jsp?view=dashboard&tab=FormsDataSource_${form.id}' label='' class='dropdown-item' params='target="_blank"'><@span> <@icon style='chart-area'/> #i18n{forms.manageForm.stats.label}</@span></@link>
                                 </#if>
