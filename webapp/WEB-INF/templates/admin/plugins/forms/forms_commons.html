@@ -5,18 +5,18 @@
 -- @return the String 'checked="checked" if the checkbox must be checked, an empty String otherwise
 -->
 <#function getChecked code reference_list>
-	<#if reference_list?has_content>
-		<#list reference_list as reference_item>
-			<#if reference_item.code = code>
-				<#if reference_item.checked>
-  					<#return true>
-  				<#else>
-  					<#return false>
-  				</#if>
-  			</#if>
-  		</#list>
-	</#if>
-	<#return false>
+<#if reference_list?has_content>
+<#list reference_list as reference_item>
+<#if reference_item.code = code>
+<#if reference_item.checked>
+<#return true>
+<#else>
+<#return false>
+</#if>
+</#if>
+</#list>
+</#if>
+<#return false>
 </#function>
 <#--
 -- Get the value of the parameter
@@ -25,14 +25,14 @@
 -- @return the value of the parameter
 -->
 <#function getName code reference_list default=''>
-	<#if reference_list?has_content>
-		<#list reference_list as reference_item>
-			<#if reference_item.code = code>
-  				<#return reference_item.name>
-  			</#if>
-  		</#list>
-	</#if>
-	<#return default>
+<#if reference_list?has_content>
+<#list reference_list as reference_item>
+<#if reference_item.code = code>
+<#return reference_item.name>
+</#if>
+</#list>
+</#if>
+<#return default>
 </#function>
 <#--
 -- Get the field from a given title
@@ -41,13 +41,13 @@
 -- @return the field
 -->
 <#function getField entry fieldTitle>
-	<#if entry.fields?? && entry.fields?has_content>
-		<#list entry.fields as field>
-			<#if field?? && field.title?? && field.title == fieldTitle>
-				<#return field>
-			</#if>
-		</#list>
-	</#if>
+<#if entry.fields?? && entry.fields?has_content>
+<#list entry.fields as field>
+<#if field?? && field.title?? && field.title == fieldTitle>
+<#return field>
+</#if>
+</#list>
+</#if>
 </#function>
 <#--
 -- Get the field from a given code
@@ -56,13 +56,13 @@
 -- @return the field
 -->
 <#function getFieldByCode entry fieldCode>
-    <#if entry.fields?? && entry.fields?has_content>
-        <#list entry.fields as field>
-            <#if field?? && field.code?? && field.code == fieldCode>
-                <#return field>
-            </#if>
-        </#list>
-    </#if>
+<#if entry.fields?? && entry.fields?has_content>
+<#list entry.fields as field>
+<#if field?? && field.code?? && field.code == fieldCode>
+<#return field>
+</#if>
+</#list>
+</#if>
 </#function>
 <#-- 
 -- Get the field value from a given entry and a given title
@@ -71,11 +71,11 @@
 -- @return the field
 -->
 <#function getFieldValue entry fieldTitle>
-	<#if getField( entry, fieldTitle )??>
-		<#assign field = getField( entry, fieldTitle )>
-		<#return field.value>
-	</#if>
-	<#return "">
+<#if getField( entry, fieldTitle )??>
+<#assign field = getField( entry, fieldTitle )>
+<#return field.value>
+</#if>
+<#return "">
 </#function>
 <#-- 
 -- Get the field value from a given entry and a given title
@@ -84,11 +84,11 @@
 -- @return the field
 -->
 <#function getFieldValueByCode entry fieldCode>
-	<#if getFieldByCode( entry, fieldCode )??>
-		<#assign field = getFieldByCode( entry, fieldCode )>
-		<#return field.value>
-	</#if>
-	<#return "">
+<#if getFieldByCode( entry, fieldCode )??>
+<#assign field = getFieldByCode( entry, fieldCode )>
+<#return field.value>
+</#if>
+<#return "">
 </#function>
 <#-- 
 -- Get the response containing the field with the given title
@@ -97,13 +97,13 @@
 -- @return the response
 -->
 <#function getResponseContainingTheFieldWithTitle responses fieldTitle>
-  <#if responses??>
-    <#list responses as response>
-      <#if response.field?? && response.field.title?? && response.field.title == fieldTitle >
-        <#return response />
-      </#if>
-    </#list>
-  </#if>
+<#if responses??>
+<#list responses as response>
+<#if response.field?? && response.field.title?? && response.field.title == fieldTitle >
+<#return response />
+</#if>
+</#list>
+</#if>
 </#function>
 <#-- 
 -- Get the response containing the field with the given code
@@ -112,13 +112,13 @@
 -- @return the response
 -->
 <#function getResponseContainingTheFieldWithCode responses fieldCode>
-  <#if responses??>
-    <#list responses as response>
-      <#if response.field?? && response.field.code?? && response.field.code == fieldCode >
-        <#return response />
-      </#if>
-    </#list>
-  </#if>
+<#if responses??>
+<#list responses as response>
+<#if response.field?? && response.field.code?? && response.field.code == fieldCode >
+<#return response />
+</#if>
+</#list>
+</#if>
 </#function>
 <#-- 
 -- Get the response from a given entry
@@ -128,13 +128,13 @@
 -- @return the response entry
 -->
 <#function getResponse responses entry>
-  <#if responses??>
-    <#list responses as response>
-      <#if response.entry.idEntry == entry.idEntry>
-        <#return response />
-      </#if>
-    </#list>
-  </#if>
+<#if responses??>
+<#list responses as response>
+<#if response.entry.idEntry == entry.idEntry>
+<#return response />
+</#if>
+</#list>
+</#if>
 </#function>
 <#-- 
 -- Get the response entry from a given entry
@@ -143,13 +143,13 @@
 -- @return the response entry
 -->
 <#function getResponseEntry responses entry>
-  <#if responses??>
-    <#list responses as response>
-      <#if response.entry.idEntry == entry.idEntry>
-        <#return response.entry />
-      </#if>
-    </#list>
-  </#if>
+<#if responses??>
+<#list responses as response>
+<#if response.entry.idEntry == entry.idEntry>
+<#return response.entry />
+</#if>
+</#list>
+</#if>
 </#function>
 <#-- 
 -- Get the error for the given entry
@@ -158,10 +158,10 @@
 -- @return the error
 -->
 <#function getError responses entry>
-  <#if getResponseEntry( responses, entry )??>
-    <#assign responseEntry = getResponseEntry( responses, entry ) >
-    <#return responseEntry.error />
-  </#if>
+<#if getResponseEntry( responses, entry )??>
+<#assign responseEntry = getResponseEntry( responses, entry ) >
+<#return responseEntry.error />
+</#if>
 </#function>
 <#-- 
 -- Get the max files value of an entry
@@ -169,11 +169,11 @@
 -- @return the number of max authorized uploaded files
 -->
 <#function getMaxFiles entry>
-	<#assign fieldMaxFiles = getFieldValueByCode( entry, "max_files" )>
-	<#if fieldMaxFiles?? && fieldMaxFiles != "">
-		<#return fieldMaxFiles>
-	</#if>
-	<#return "1">
+<#assign fieldMaxFiles = getFieldValueByCode( entry, "max_files" )>
+<#if fieldMaxFiles?? && fieldMaxFiles != "">
+<#return fieldMaxFiles>
+</#if>
+<#return "1">
 </#function>
 <#-- 
 -- Get the max size an uploaded file is authorized to have
@@ -181,16 +181,16 @@
 -- @return the max size
 -->
 <#function getFileMaxSize entry>
-	<#assign fieldFileMaxSize = getFieldValueByCode( entry, "file_max_size" )>
-	<#if fieldFileMaxSize?? && fieldFileMaxSize != "">
-		<#return fieldFileMaxSize>
-	<#else>
-		<#if getField( entry, "option" )??>
-			<#assign fieldFileMaxSize = getFieldByCode( entry, "option" )>
-			<#return fieldFileMaxSize.width> 
-		</#if>
-	</#if>
-	<#return "5242880">
+<#assign fieldFileMaxSize = getFieldValueByCode( entry, "file_max_size" )>
+<#if fieldFileMaxSize?? && fieldFileMaxSize != "">
+<#return fieldFileMaxSize>
+<#else>
+<#if getField( entry, "option" )??>
+<#assign fieldFileMaxSize = getFieldByCode( entry, "option" )>
+<#return fieldFileMaxSize.width> 
+</#if>
+</#if>
+<#return "5242880">
 </#function>
 <#--
 -- Check if the given entry must export the binary
@@ -198,11 +198,11 @@
 -- @return true if it must export the binaries, false otherwise
 -->
 <#function exportBinary entry>
-	<#assign field = getFieldValueByCode( entry, "export_binary" ) />
-	<#if field?? && field = "true">
-		<#return true />
-	</#if>
-	<#return false />
+<#assign field = getFieldValueByCode( entry, "export_binary" ) />
+<#if field?? && field = "true">
+<#return true />
+</#if>
+<#return false />
 </#function>
 <#--
 -- Build the entry name
@@ -211,11 +211,11 @@
 -- @return the name
 -->
 <#function buildEntryName entry entry_iteration_number='' >
-  <#assign name = 'attribute' + entry.idEntry>
-  <#if entry_iteration_number?? && entry_iteration_number?has_content>
-    <#assign name = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
-  </#if>
-  <#return name />
+<#assign name = 'attribute' + entry.idEntry>
+<#if entry_iteration_number?? && entry_iteration_number?has_content>
+<#assign name = 'nIt' + entry_iteration_number + '_attribute' + entry.idEntry>
+</#if>
+<#return name />
 </#function>
 <#macro formEditor >
 <#include "/admin/util/editor/editor.html" />
@@ -225,7 +225,7 @@
 <#-- Some lutece plugins pass locale.getLanguage() (="fr"), some pass the locale object (toString="fr_FR", or more complicated...) -->
 <#-- Force it here because if it is a wrong value, tinyMCE does not load -->
 <#if locale?? && (2 <= locale?string?length) && (locale?string?substring(0,2) == "fr")>
-	<#assign editorLocale="fr_FR" />
+<#assign editorLocale="fr_FR" />
 </#if>
 <@initEditor cssFiles=cssFiles />
 </#macro>
@@ -358,6 +358,7 @@ window.addEventListener('message', function(event) {
         if( document.querySelector('footer') ){  document.querySelector('footer').remove(); }
         if( document.querySelector('.page-header') ){ document.querySelector('.page-header').remove(); }
         if( document.querySelector('#page-header') ){ document.querySelector('#page-header').remove(); }
+        if( document.querySelector('.breadcrumb') ){  document.querySelector('.breadcrumb').remove(); }
 		<#if triggerForm !='' && triggerActionId!=''>
         var formAction = document.getElementById('${triggerForm}'), btnAction = document.getElementById('${triggerActionId}');
         btnAction.addEventListener('click', function(e){ 
@@ -384,11 +385,11 @@ window.addEventListener('message', function(event) {
 </#macro>
 <#macro headerButton name='view_manageForm' label='portal.admin.message.buttonCancel' validate=true>
 <#if validate>
-	<#assign color = '' />
-	<#assign buttonIcon = 'check me-1' />
+<#assign color = '' />
+<#assign buttonIcon = 'check me-1' />
 <#else>
-	<#assign color = 'danger' />
-	<#assign buttonIcon = 'times me-1' />
+<#assign color = 'danger' />
+<#assign buttonIcon = 'times me-1' />
 </#if>
 <@button type='submit' name='${name}' title='#i18n{${label}}' cancel=!validate buttonIcon=buttonIcon color=color />
 </#macro>
