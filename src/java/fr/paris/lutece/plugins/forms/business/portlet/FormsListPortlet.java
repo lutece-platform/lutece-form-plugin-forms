@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.business.portlet;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,7 +49,7 @@ import fr.paris.lutece.portal.business.portlet.PortletHtmlContent;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-public class FormsListPortlet extends PortletHtmlContent
+public class FormsListPortlet extends PortletHtmlContent implements Serializable
 {
 	public static final String RESOURCE_ID = "FORMS_LIST_PORTLET";
 

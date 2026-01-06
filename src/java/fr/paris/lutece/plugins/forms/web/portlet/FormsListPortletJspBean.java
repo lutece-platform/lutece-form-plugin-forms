@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import jakarta.enterprise.context.RequestScoped;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,7 +61,7 @@ import fr.paris.lutece.util.json.JsonUtil;
 /**
  * This class provides the user interface to manage FormsList Portlet
  */
-@RequestScoped
+@SessionScoped
 @Named
 public class FormsListPortletJspBean extends PortletJspBean
 {
@@ -95,11 +94,11 @@ public class FormsListPortletJspBean extends PortletJspBean
     public String getCreate( HttpServletRequest request ) 
     {
         HashMap<String, Object> model = new HashMap<>( );
-    	String strPageId = request.getParameter( PARAMETER_PAGE_ID );
+        String strPageId = request.getParameter( PARAMETER_PAGE_ID );
         String strPortletTypeId = request.getParameter( PARAMETER_PORTLET_TYPE_ID );
         if ( _portlet == null )
         {
-        	_portlet = new FormsListPortlet( );	
+            _portlet = new FormsListPortlet( ); 
         }
 
         model.put( MARK_AVAILABLE_FORMS_LIST, getActiveForms( ) );
@@ -122,10 +121,6 @@ public class FormsListPortletJspBean extends PortletJspBean
         String strPageId = request.getParameter( PARAMETER_PAGE_ID );
         int nPageId = NumberUtils.toInt( strPageId, NumberUtils.INTEGER_MINUS_ONE );
 
-        if ( _portlet == null )
-        {
-            _portlet = new FormsListPortlet( ); 
-        }
         String strErrorUrl = setPortletCommonData( request, _portlet );
 
         if ( strErrorUrl != null )
@@ -150,18 +145,18 @@ public class FormsListPortletJspBean extends PortletJspBean
     @Override
     public String getModify( HttpServletRequest request ) 
     {
-    	HashMap<String, Object> model = new HashMap<>( );
-    	List<Form> availableFormsList = new ArrayList<>( );
-    	List<Form> publishedFormsList = new ArrayList<>( );
+        HashMap<String, Object> model = new HashMap<>( );
+        List<Form> availableFormsList = new ArrayList<>( );
+        List<Form> publishedFormsList = new ArrayList<>( );
         String strPortletId = request.getParameter( PARAMETER_PORTLET_ID );
         int nPortletId = NumberUtils.toInt( strPortletId, NumberUtils.INTEGER_MINUS_ONE );
         _portlet = (FormsListPortlet) PortletHome.findByPrimaryKey( nPortletId );
 
         if ( CollectionUtils.isNotEmpty( _portlet.getFormsIdList( ) ) )
         {
-        	publishedFormsList = FormHome.getFormByPrimaryKeyList( _portlet.getFormsIdList( ) );
-        	availableFormsList = getActiveForms( );
-        	availableFormsList.removeAll( publishedFormsList );
+            publishedFormsList = FormHome.getFormByPrimaryKeyList( _portlet.getFormsIdList( ) );
+            availableFormsList = getActiveForms( );
+            availableFormsList.removeAll( publishedFormsList );
         }
         model.put( MARK_AVAILABLE_FORMS_LIST, availableFormsList );
         model.put( MARK_PUBLISHED_FORMS_LIST, publishedFormsList );
@@ -181,10 +176,6 @@ public class FormsListPortletJspBean extends PortletJspBean
     @Override
     public String doModify( HttpServletRequest request ) 
     {
-        String strPortletId = request.getParameter( PARAMETER_PORTLET_ID );
-        int nPortletId = NumberUtils.toInt( strPortletId, NumberUtils.INTEGER_MINUS_ONE );
-        _portlet = (FormsListPortlet) PortletHome.findByPrimaryKey( nPortletId );
-
         String strErrorUrl = setPortletCommonData( request, _portlet );
 
         if ( strErrorUrl != null )
@@ -192,7 +183,7 @@ public class FormsListPortletJspBean extends PortletJspBean
             return strErrorUrl;
         }
         
-    	_portlet.update( );
+        _portlet.update( );
 
         return getPageUrl( _portlet.getPageId( ) );
     }
@@ -230,16 +221,16 @@ public class FormsListPortletJspBean extends PortletJspBean
      */
     private List<Form> getActiveForms( )
     {
-    	List<Form> formsList = FormHome.getFormList( );
-    	formsList = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( formsList, (User) getUser( ) );
-    	
-    	if ( CollectionUtils.isNotEmpty(formsList) )
-    	{
-    	    return formsList.stream( ).filter( Form::isActive ).collect( Collectors.toList( ) );
-    	}
-    	else
-    	{
-    	    return new ArrayList<>( );
-    	}
+        List<Form> formsList = FormHome.getFormList( );
+        formsList = (List<Form>) AdminWorkgroupService.getAuthorizedCollection( formsList, (User) getUser( ) );
+        
+        if ( CollectionUtils.isNotEmpty(formsList) )
+        {
+            return formsList.stream( ).filter( Form::isActive ).collect( Collectors.toList( ) );
+        }
+        else
+        {
+            return new ArrayList<>( );
+        }
     }
 }
