@@ -4,7 +4,7 @@
         <@box>
 			<@boxHeader title='${form.title}'>
 				<#if form.active>
-					<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' />
+					<@aButton href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' size='sm' />
 				</#if>
 				<#if step.final && step.initial>   
 					<@tform type='inline' method='post' name='modify_step' action='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions'>

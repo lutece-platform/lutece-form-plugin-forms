@@ -12,7 +12,7 @@
 					<@aButton title='#i18n{forms.manage_steps.buttonImportTemplate}' buttonIcon='upload' params='data-toggle="modal" data-target="#importTemplateModal" ' hideTitle=['xs','sm'] />
 				</#if>
 				<#if form.active>
-					<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' />
+					<@aButton href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='external-link' />
 					<@aButton href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' hideTitle=['all'] params='target="_blank"' buttonIcon='list-alt' />
 					<@button type='button' id='toggleMap' title='Voir le graphique' hideTitle=['all'] buttonIcon='sitemap' />
 				</#if>
