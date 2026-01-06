@@ -69,34 +69,37 @@ ${breadcrumb_template}
 	</@columns>
 </@row>
 <script>
-	$(function(){
-		const cbChekAddress=$('#exactAddr'), labelCheckAddr='checkaddress', inputCss=$('#css_class');
-		let cssClass=inputCss.val();
-		if( cssClass.search( labelCheckAddr ) >-1  ){
-			cbChekAddress.prop( 'checked', 'checked' );
-		}
+document.addEventListener('DOMContentLoaded', function() {
+	const cbCheckAddress = document.getElementById('exactAddr');
+	const labelCheckAddr = 'checkaddress';
+	const inputCss = document.getElementById('css_class');
 	
-		cbChekAddress.change( function(e){
-			cssClass=inputCss.val();
-			if( cbChekAddress.prop('checked') ){
-				inputCss.val( cssClass.trim() + ' ' + labelCheckAddr );
-			} else {
-				if( cssClass.search( labelCheckAddr ) > - 1 ){
-				   inputCss.val( cssClass.replace( labelCheckAddr ,'') );
-				}
+	let cssClass = inputCss.value;
+	if (cssClass.includes(labelCheckAddr)) {
+		cbCheckAddress.checked = true;
+	}
+
+	cbCheckAddress.addEventListener('change', function() {
+		cssClass = inputCss.value;
+		if (cbCheckAddress.checked) {
+			inputCss.value = (cssClass.trim() + ' ' + labelCheckAddr).trim();
+		} else {
+			if (cssClass.includes(labelCheckAddr)) {
+				inputCss.value = cssClass.replace(labelCheckAddr, '').trim();
 			}
-		}); 
-		
-		inputCss.blur( function(e){
-			cssClass=inputCss.val();
-			if( cssClass.search( labelCheckAddr ) > -1 ){
-				cbChekAddress.prop( 'checked', 'checked' );
-			} else {
-				cbChekAddress.prop( 'checked', '' );
-			}
-		});
-	})
-	</script>
+		}
+	});
+	
+	inputCss.addEventListener('blur', function() {
+		cssClass = inputCss.value;
+		if (cssClass.includes(labelCheckAddr)) {
+			cbCheckAddress.checked = true;
+		} else {
+			cbCheckAddress.checked = false;
+		}
+	});
+});
+</script>
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
 <@anonymPattern />

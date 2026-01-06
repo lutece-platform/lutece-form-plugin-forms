@@ -46,10 +46,13 @@
 	</#list>
 </#if>
 <#-- <@getDatePickerBootstrap idField="${idName}" language=locale.language /> -->
-<script type="text/javascript">
-  $( document ).ready(function() {
-    $("#attribute${idName}").on('changeDate', function(ev){
-      $(this).datepicker('hide');
-    });
-  });
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	const dateInput = document.getElementById('attribute${idName}');
+	if (dateInput) {
+		dateInput.addEventListener('change', function() {
+			this.blur();
+		});
+	}
+});
 </script>

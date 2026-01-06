@@ -67,25 +67,23 @@
 
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
- <@anonymPattern />
- <script>
-$(function() {
-	//Load
+<@anonymPattern />
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	// Load
 	loadGalleryList();
 	
-	function loadGalleryList( ){
-		var request = $.ajax( { 
-			url : 'jsp/admin/plugins/galleryimage/GetSelectGalleryList.jsp',
-			type : 'GET',
-			dataType : 'html'
-		} );
-		
-		request.done( function ( content ) { 
-			$( '#fgMandatory' ).after( content );
+	function loadGalleryList() {
+		fetch('jsp/admin/plugins/galleryimage/GetSelectGalleryList.jsp', {
+			method: 'GET'
+		})
+		.then(response => response.text())
+		.then(content => {
+			const fgMandatory = document.getElementById('fgMandatory');
+			fgMandatory.insertAdjacentHTML('afterend', content);
 			hideInputGallery();
-		} );
-		
+		})
+		.catch(error => console.error('Error loading gallery list:', error));
 	}
 });
-
 </script>

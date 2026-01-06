@@ -66,12 +66,10 @@
                 }
                 
                 // Scroll to the input field
-                $('html, body').animate({
-                    scrollTop: adr.offset().top - 100
-                }, 200);
+                adr.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
 
-            $(window).on('load', function () {
+            document.addEventListener('DOMContentLoaded', function() {
                 let iterationNumber = '${entry_iteration_number}';
                 if (document.getElementById('number_iteration_geolocation') == null) {
                     let numberAddressInput = document.createElement('input');
@@ -84,52 +82,55 @@
                     document.getElementById('number_iteration_geolocation').value = iterationNumber;
                 }
 
-                let currStep = $('.step-current .step-content'),
-                    hasCheckAdr = currStep.find('input.checkaddress').length;
-                    btnSendStep = currStep.find('[name="action_doSaveStep"]');
+                let currStep = document.querySelector('.step-current .step-content');
+                let hasCheckAdr = currStep.querySelectorAll('input.checkaddress').length > 0;
+                let btnSendStep = currStep.querySelector('[name="action_doSaveStep"]');
 
-                var jAdresse = $('#${idName}_address');
-                var jAdresseId = $('#${idName}_idAddress');
-                var jAdresseX = $('#${idName}_x');
-                var jAdresseY = $('#${idName}_y');
-                var jAdresseGeometry = $('#${idName}_geometry');
+                let jAdresse = document.getElementById('${idName}_address');
+                let jAdresseId = document.getElementById('${idName}_idAddress');
+                let jAdresseX = document.getElementById('${idName}_x');
+                let jAdresseY = document.getElementById('${idName}_y');
+                let jAdresseGeometry = document.getElementById('${idName}_geometry');
 
                 jAdresse.suggestPOI();
-                jAdresse.bind($.suggestPOI.EVT_SELECT, function( event ){
+                jAdresse.addEventListener(window.suggestPOI?.EVT_SELECT || 'poi:select', function(event) {
                     event.preventDefault();
-                    if( event.poi != null){
-                        jAdresseGeometry.val(event.poi.type);
-                        jAdresseY.val(event.poi.y);
-                        jAdresseX.val(event.poi.x);
-                        jAdresseId.val(event.poi.id);
-                        jAdresse.addClass('wssuggest');
-                        jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
+                    if (event.poi != null) {
+                        jAdresseGeometry.value = event.poi.type;
+                        jAdresseY.value = event.poi.y;
+                        jAdresseX.value = event.poi.x;
+                        jAdresseId.value = event.poi.id;
+                        jAdresse.classList.add('wssuggest');
+                        jAdresse.classList.remove('is-invalid');
+                        let feedback = jAdresse.nextElementSibling;
+                        if (feedback?.classList.contains('invalid-feedback')) {
+                            feedback.remove();
+                        }
                     }
                 });
 
-                if ( hasCheckAdr  ){
-                    // If the value has been already set
+                if (hasCheckAdr) {
                     const addrInputValue = '${addressValue!}';
-                    // Reset address validation state when user changes the input
-                    jAdresse.on('input', function() {
-                        jAdresse.removeClass('wssuggest');
-                        jAdresse.removeClass('is-invalid').next('.invalid-feedback').remove();
+                    
+                    jAdresse.addEventListener('input', function() {
+                        jAdresse.classList.remove('wssuggest', 'is-invalid');
+                        let feedback = jAdresse.nextElementSibling;
+                        if (feedback?.classList.contains('invalid-feedback')) {
+                            feedback.remove();
+                        }
                     });
                     
-                    // Reset address validation state when user changes the input
-                    jAdresse.on('blur', function(e) {
-                        if ( jAdresse.val() && !jAdresse.hasClass('wssuggest') && (  jAdresse.val().trim() !== '')) {
+                    jAdresse.addEventListener('blur', function(e) {
+                        if (jAdresse.value && !jAdresse.classList.contains('wssuggest') && jAdresse.value.trim() !== '') {
                             e.preventDefault();
-                            isInvalidAdress( jAdresse )
+                            isInvalidAdress(jAdresse);
                         }
                     });
 
-                    // Validate before submitting the form
-                    btnSendStep.on('click', function(e) {
-                        // Check if address has a value but wasn't selected from autocomplete
-                        if ( jAdresse.val() && !jAdresse.hasClass('wssuggest') && addrInputValue != jAdresse.val()  && (  jAdresse.val().trim() !== '')) {
+                    btnSendStep.addEventListener('click', function(e) {
+                        if (jAdresse.value && !jAdresse.classList.contains('wssuggest') && addrInputValue !== jAdresse.value && jAdresse.value.trim() !== '') {
                             e.preventDefault();
-                            isInvalidAdress( jAdresse )
+                            isInvalidAdress(jAdresse);
                         }
                     });
                 }

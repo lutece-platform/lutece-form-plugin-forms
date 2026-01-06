@@ -39,63 +39,63 @@
 <link rel="stylesheet" href="js/plugins/genericattributes/modules/openstreetmap/lib/leaflet/leaflet.css" />
 <script src="js/plugins/genericattributes/modules/openstreetmap/lib/leaflet/leaflet.js"></script>
 <script type="text/javascript">
-    var mapData = [];
-    /* this script is running for each iteration and we want to instantiate the map only at the last one */
-    window.onload = function () {
-        let iterationNumber = '${entry_iteration_number}';
-        if (document.getElementById('number_iteration_geolocation') == null) {
-            let numberAddressInput = document.createElement('input');
-            numberAddressInput.type = 'hidden';
-            numberAddressInput.id = 'number_iteration_geolocation';
-            numberAddressInput.name = 'number_iteration_geolocation';
-            document.getElementsByTagName('div')[0].appendChild(numberAddressInput);
-            document.getElementById('number_iteration_geolocation').value = iterationNumber;
-        } else {
-            document.getElementById('number_iteration_geolocation').value = iterationNumber;
-        }
-        if (parseInt(document.getElementById('number_iteration_geolocation').value) === document.getElementsByName("leafletMap").length - 1) {
-            for (let i = 0; i < document.getElementsByName("leafletMap").length; i++) {
-                const prefix = "nIt" + i + "_attribute" + "${entry.idEntry}";
-                const idMap = prefix + '_gmap';
-                let lat = 48.853;
-                let lon = 2.35;
-                let hasMarker = false;
-                if (document.getElementById(prefix + '_x') ) {
-                    if (document.getElementById(prefix + '_x').value !== "" && document.getElementById(prefix + '_y').value !== "") {
-                        lat = document.getElementById(prefix + '_y').value;
-                        lon = document.getElementById(prefix + '_x').value;
-                        hasMarker = true;
-                    }
+var mapData = [];
+/* this script is running for each iteration and we want to instantiate the map only at the last one */
+window.onload = function () {
+    let iterationNumber = '${entry_iteration_number}';
+    if (document.getElementById('number_iteration_geolocation') == null) {
+        let numberAddressInput = document.createElement('input');
+        numberAddressInput.type = 'hidden';
+        numberAddressInput.id = 'number_iteration_geolocation';
+        numberAddressInput.name = 'number_iteration_geolocation';
+        document.getElementsByTagName('div')[0].appendChild(numberAddressInput);
+        document.getElementById('number_iteration_geolocation').value = iterationNumber;
+    } else {
+        document.getElementById('number_iteration_geolocation').value = iterationNumber;
+    }
+    if (parseInt(document.getElementById('number_iteration_geolocation').value) === document.getElementsByName("leafletMap").length - 1) {
+        for (let i = 0; i < document.getElementsByName("leafletMap").length; i++) {
+            const prefix = "nIt" + i + "_attribute" + "${entry.idEntry}";
+            const idMap = prefix + '_gmap';
+            let lat = 48.853;
+            let lon = 2.35;
+            let hasMarker = false;
+            if (document.getElementById(prefix + '_x') ) {
+                if (document.getElementById(prefix + '_x').value !== "" && document.getElementById(prefix + '_y').value !== "") {
+                    lat = document.getElementById(prefix + '_y').value;
+                    lon = document.getElementById(prefix + '_x').value;
+                    hasMarker = true;
                 }
-                const iterationData = {
-                    idMap: idMap,
-                    center: [lat, lon],
-                    zoom: 10,
-                    hasMarker: hasMarker
-                };
-                console.log(iterationData);
-                mapData.push(iterationData);
             }
-            const L_tiles = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-            const L_options = {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-                minZoom: 0,
-                maxZoom: 18,
-                ext: 'png'
+            const iterationData = {
+                idMap: idMap,
+                center: [lat, lon],
+                zoom: 10,
+                hasMarker: hasMarker
             };
-            const initMap = (mapElement) => {
-                const id = parseInt(mapElement.dataset.map);
-                const data = mapData[id];
-                const map = L.map(mapElement).setView(data.center, data.zoom);
-                L.tileLayer(L_tiles, L_options).addTo(map);
-                if (data.hasMarker) {
-                    L.marker(data.center).addTo(map);
-
-                }
-            };
-            const allMapElements = document.querySelectorAll("[data-map]");
-            allMapElements.forEach(initMap);
+            console.log(iterationData);
+            mapData.push(iterationData);
         }
-    };
+        const L_tiles = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        const L_options = {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+            minZoom: 0,
+            maxZoom: 18,
+            ext: 'png'
+        };
+        const initMap = (mapElement) => {
+            const id = parseInt(mapElement.dataset.map);
+            const data = mapData[id];
+            const map = L.map(mapElement).setView(data.center, data.zoom);
+            L.tileLayer(L_tiles, L_options).addTo(map);
+            if (data.hasMarker) {
+                L.marker(data.center).addTo(map);
+
+            }
+        };
+        const allMapElements = document.querySelectorAll("[data-map]");
+        allMapElements.forEach(initMap);
+    }
+};
 </script>
 </#if>

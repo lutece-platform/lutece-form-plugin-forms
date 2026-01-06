@@ -78,13 +78,56 @@
 					<@alert color='danger'>#i18n{forms.message.mandatory.entry}</@alert>
 			    </#if>
 		    <script>
-				$(function () {
-					$("#sortable1, #sortable2").sortable({
-						connectWith: ".connectedSortable"
-					}).disableSelection();
+				document.addEventListener('DOMContentLoaded', function () {
+					const sortable1 = document.getElementById('sortable1');
+					const sortable2 = document.getElementById('sortable2');
+					const form = document.querySelector('form');
+					const idNameInput = document.getElementById('${idName}');
 
-					$('form').submit(function () {
-						$('#${idName}').val($("#sortable2").sortable("serialize").replaceAll('&', ';'));
+					function makesortable(element) {
+						let draggedItem = null;
+
+						element.addEventListener('dragstart', function (e) {
+							if (e.target.tagName === 'LI') {
+								draggedItem = e.target;
+								e.target.style.opacity = '0.5';
+							}
+						});
+
+						element.addEventListener('dragend', function (e) {
+							e.target.style.opacity = '1';
+						});
+
+						element.addEventListener('dragover', function (e) {
+							e.preventDefault();
+							e.dataTransfer.dropEffect = 'move';
+						});
+
+						element.addEventListener('drop', function (e) {
+							e.preventDefault();
+							if (draggedItem && draggedItem.parentElement !== element) {
+								element.appendChild(draggedItem);
+							}
+						});
+					}
+
+					document.querySelectorAll('.connectedSortable li').forEach(item => {
+						item.draggable = true;
+					});
+
+					makeortable(sortable1);
+					makeortable(sortable2);
+
+					form.addEventListener('submit', function () {
+						if (sortable2.children.length === 0) {
+							idNameInput.value = Array.from(sortable1.children)
+								.map(li => li.id.replace('field_', 'field='))
+								.join(';');
+						} else {
+							idNameInput.value = Array.from(sortable2.children)
+								.map(li => li.id.replace('field_', 'field='))
+								.join(';');
+						}
 					});
 				});
 			</script>
@@ -140,17 +183,50 @@
 				<@alert color='danger'>#i18n{forms.message.mandatory.entry}</@alert>
 		    </#if>
 		    <script>
-				$(function () {
-					$("#sortable1, #sortable2").sortable({
-						connectWith: ".connectedSortable"
-					}).disableSelection();
+				document.addEventListener('DOMContentLoaded', function () {
+					const sortable1 = document.getElementById('sortable1');
+					const sortable2 = document.getElementById('sortable2');
+					const form = document.querySelector('form');
+					const idNameInput = document.getElementById('${idName}');
+					let draggedItem = null;
 
-					$('form').submit(function () {
-						if ($("#sortable2 li").length === 0) {
-							$('#${idName}').val($("#sortable1").sortable("serialize").replaceAll('&', ';'));
-						} else {
-							$('#${idName}').val($("#sortable2").sortable("serialize").replaceAll('&', ';'));
-						}
+					function makeListSortable(element) {
+						element.addEventListener('dragstart', function (e) {
+							if (e.target.tagName === 'LI') {
+								draggedItem = e.target;
+								e.target.style.opacity = '0.5';
+							}
+						});
+
+						element.addEventListener('dragend', function (e) {
+							e.target.style.opacity = '1';
+						});
+
+						element.addEventListener('dragover', function (e) {
+							e.preventDefault();
+							e.dataTransfer.dropEffect = 'move';
+						});
+
+						element.addEventListener('drop', function (e) {
+							e.preventDefault();
+							if (draggedItem) {
+								element.appendChild(draggedItem);
+							}
+						});
+					}
+
+					document.querySelectorAll('.connectedSortable li').forEach(item => {
+						item.draggable = true;
+					});
+
+					makeListSortable(sortable1);
+					makeListSortable(sortable2);
+
+					form.addEventListener('submit', function () {
+						const sourceList = sortable2.children.length > 0 ? sortable2 : sortable1;
+						idNameInput.value = Array.from(sourceList.children)
+							.map(li => li.id.replace('field_', 'field='))
+							.join(';');
 					});
 				});
 			</script>

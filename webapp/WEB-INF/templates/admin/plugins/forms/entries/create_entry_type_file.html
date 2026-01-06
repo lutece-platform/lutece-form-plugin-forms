@@ -71,18 +71,17 @@ ${breadcrumb_template}
 <@initEditor />
 <@anonymPattern />
 <script>
-<#noparse>
-
-</#noparse>
-$( function(){
-	var byteSize = $('#file_max_size').val();
-		byteSize = prettySize( byteSize );
-		$('#file_max_size_pretty').html( byteSize );
-	$('#file_max_size').on('keyup', function(){
-		var byteSize = $(this).val();
-		byteSize = prettySize( byteSize );
-		$('#file_max_size_pretty').html( byteSize );
-	});
+document.addEventListener('DOMContentLoaded', function() {
+	const fileSizeInput = document.getElementById('file_max_size');
+	const fileSizePretty = document.getElementById('file_max_size_pretty');
+	
+	function updateFileSize() {
+		const byteSize = fileSizeInput.value;
+		fileSizePretty.textContent = prettySize(byteSize);
+	}
+	
+	updateFileSize();
+	fileSizeInput.addEventListener('keyup', updateFileSize);
 });
 </script>
  
