@@ -5,11 +5,17 @@
         <@boxHeader title='#i18n{forms.portlet.formsList.titleAvailableFormsList}' boxTools=true />
         <@boxBody class='p-3'>
             <@listGroup id='form-available' params='style="min-height:15rem;"'>
-              <#list available_forms_list as form>
-                <@listGroupItem id=form.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params='draggable="true" tabindex="0"'>
-                  <@span>${form.title}</@span> <@icon style='arrows-move ms-auto' />
+            <#if available_forms_list?? && available_forms_list?size gt 0>
+                <#list available_forms_list as aForm>
+                <@listGroupItem id=aForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params='draggable="true" tabindex="0"'>
+                  <@span>${aForm.title}</@span> <@icon style='arrows-move ms-auto' />
                 </@listGroupItem>
               </#list>
+            <#else>
+                <@listGroupItem class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-center align-items-center no-item'>
+                  <@span>#i18n{forms.portlet.formsList.labelNoAvailableForm}</@span>
+                </@listGroupItem>
+            </#if>
             </@listGroup>
         </@boxBody>
     </@box>
@@ -19,34 +25,24 @@
         <@boxHeader title='#i18n{forms.portlet.formsList.titlePublishedFormsList}' />
         <@boxBody class='p-3'>
             <@listGroup id='form-published' params='style="min-height:15rem;"'>
-                <#list published_forms_list as form>
-                    <@listGroupItem id=form.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params='draggable="true" tabindex="0"'>
-                      <@span>${form.title}</@span> <@icon style='arrows-move ms-auto' />
+            <#if published_forms_list?? && published_forms_list?size gt 0>
+                <#list published_forms_list as pForm>
+                    <@listGroupItem id=pForm.id!?string class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-between' params='draggable="true" tabindex="0"'>
+                      <@span>${pForm.title}</@span> <@icon style='arrows-move ms-auto' />
                     </@listGroupItem>
                 </#list>
+              <#else>
+                <@listGroupItem class='bg-gray-100 border border-gray-300 min-h-40 d-flex justify-content-center align-items-center no-item'>
+                  <@span>#i18n{forms.portlet.formsList.labelNoPublishedForm}</@span>
+                </@listGroupItem>
+            </#if>
             </@listGroup>
         </@boxBody>
     </@box>   
   </@columns>
 </@row>
-<script>
-let alreadySubmitted = false;
-document.addEventListener('DOMContentLoaded', (event) => {
-  const form = document.getElementById('form-portlet');
-
-  form.addEventListener('submit', (e) => {
-    if (alreadySubmitted) {
-      e.preventDefault();
-      return;
-    }
-    alreadySubmitted = true;
-  });
-});
-</script>
 <script type="module">
-import {
-    LuteceDraggable
-} from './themes/shared/modules/luteceDraggable.js';
+import { LuteceDraggable} from './themes/shared/modules/luteceDraggable.js';
 
 const baseUrl = document.getElementsByTagName('base')[0].href;
 
@@ -60,10 +56,22 @@ function moveItem( sourceList, targetList ) {
     return selectedItem.id
 }
 
+let alreadySubmitted = false;
 document.addEventListener( "DOMContentLoaded", function(){
+    const form = document.getElementById('form-portlet');
+    form.addEventListener('submit', (e) => {
+      if (alreadySubmitted) {
+        e.preventDefault();
+        return;
+      }
+      alreadySubmitted = true;
+    });
+
     const formAvailable = document.querySelector("#form-available");
     const formPublished = document.querySelector("#form-published"); 
-
+    
+    if( !formAvailable || !formPublished ){ return; } 
+    
     formAvailable.addEventListener('dblclick', (e => {
         const formId = moveItem( formAvailable, formPublished )
         doAddForm( formId );
@@ -74,13 +82,10 @@ document.addEventListener( "DOMContentLoaded", function(){
         doDeleteForm( formId );
     }))
   
-    setFormsListDraggable( );
+    setFormsListDraggable( formAvailable, formPublished );
 });
 
-function setFormsListDraggable( ){
-    const formAvailable = document.querySelector("#form-available");
-    const formPublished = document.querySelector("#form-published");
-    
+function setFormsListDraggable( formAvailable, formPublished ){
     const containers = document.querySelectorAll('#forms-portlet .list-group');
     const draggables = Array.from(containers).flatMap(container => [...container.children]);
     const AdminHomeDraggable = new LuteceDraggable( draggables, containers );
