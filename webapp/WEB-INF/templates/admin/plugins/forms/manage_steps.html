@@ -16,7 +16,7 @@
 			<#if form.active>
 				<#if extendableResourceActionsHtml?? && extendableResourceActionsHtml?has_content>${extendableResourceActionsHtml!}</#if>
 				<@button type='button' id='forms-action' class='mx-2' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog' dropdownMenu=true >
-					<@aButton color='default dropdown-item justify-content-start' href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='external-link' />
+					<@aButton color='default dropdown-item justify-content-start' href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='external-link' />
 					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title}' buttonIcon='text-plus' />
 					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='list-alt' />
 					<#if form.breadcrumbName=='forms-breadcrumbaccordion.breadcrumbAccordion'>
