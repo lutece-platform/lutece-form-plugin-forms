@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.portal.service.util.AppPathService;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
@@ -118,6 +119,7 @@ public class FormsDashboardComponent extends DashboardComponent
         model.put( MARK_URL, url.getUrl( ) );
         model.put( FormsConstants.MARK_TIMESTAMP, strTimespamp );
         model.put( FormsConstants.MARK_INACTIVEBYPASSTOKENS, formIdToToken );
+        model.put( FormsConstants.MARK_PROD_URL, AppPathService.getProdUrl( request ) );
 
         HtmlTemplate t = AppTemplateService.getTemplate( TEMPLATE_DASHBOARD, user.getLocale( ), model );
 
