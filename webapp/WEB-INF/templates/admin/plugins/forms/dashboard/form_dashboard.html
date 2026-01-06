@@ -80,7 +80,7 @@
 					<#assign inactiveBypass='&ts='+timestamp+'&token='+inactiveBypassTokens[form.id?string]>
 					<#assign color='warning'>
 				</#if>
-				<@aButton href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' params='target="_blank"' buttonIcon='external-link' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' color=color />
+				<@aButton href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' title='#i18n{forms.manageForm.FOLink.label} ${form.title}' params='target="_blank"' buttonIcon='external-link' hideTitle=['all'] class='btn btn-outline-secondary d-none d-xl-inline-block' color=color />
 			</@columns>
 		</@row>
 		-->
