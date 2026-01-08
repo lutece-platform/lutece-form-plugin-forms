@@ -4,9 +4,14 @@
  	${group.title}
  </legend>
  <div class="step-group-value-content">
-	<#list groupContent as childrenHtml>
-		${childrenHtml}
-	</#list>
+  <#list groupContentByIteration as iterationNumber, groupContent >
+   <#if groupContent?size != 0>
+    <hr>
+    <#list groupContent as childrenHtml>
+     ${childrenHtml}
+    </#list>
+   </#if>
+  </#list>
  </div>
 </fieldset>
 </@cTpl>
