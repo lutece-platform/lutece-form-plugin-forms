@@ -18,32 +18,30 @@
 //Retrieve the map object.
 var map = mapsPlaceholder.pop();
 var geojson = ${coordinate};
-var center;
 
-if ( geojson["geometry"]["type"] == "Point" ) {
-	var coordinates = geojson["geometry"]["coordinates"];
-	var marker = L.marker([coordinates[1],coordinates[0]]).addTo(map);
-	var lat = geojson["geometry"]["coordinates"][1];
-	var lon = geojson["geometry"]["coordinates"][0];
-	center = new L.LatLng(lat, lon);
-	map.panTo(center);
-	map.setZoom(15);
-} else if ( geojson["geometry"]["type"] == "Polygon" ) {
-	var coordinates = geojson["geometry"]["coordinates"][0];
-	var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
-	var polygon = L.polygon(inverseCoord ).addTo(map);
-	var bounds = polygon.getBounds()
-	map.fitBounds(bounds);
-	map.setZoom(15);
-} else if ( geojson["geometry"]["type"] == "Polyline" ) {
-	var coordinates = geojson["geometry"]["coordinates"];
-	var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
-	var polyline = L.polyline(inverseCoord ).addTo(map);
-	var bounds = polyline.getBounds()
-	map.fitBounds(bounds);
-	map.setZoom(15);
-}
-setTimeout(function () {
-	map.invalidateSize(true);
-}, 100);
+map.whenReady(function () {
+
+    if (geojson.geometry.type === "Point") {
+        var c = geojson.geometry.coordinates;
+        L.marker([c[1], c[0]]).addTo(map);
+        map.setView([c[1], c[0]], 15);
+    }
+
+    else if (geojson.geometry.type === "Polygon") {
+        var coords = geojson.geometry.coordinates[0];
+        var latlngs = L.GeoJSON.coordsToLatLngs(coords);
+        var polygon = L.polygon(latlngs).addTo(map);
+        map.fitBounds(polygon.getBounds());
+    }
+
+    else if (geojson.geometry.type === "Polyline") {
+        var coords = geojson.geometry.coordinates;
+        var latlngs = L.GeoJSON.coordsToLatLngs(coords);
+        var polyline = L.polyline(latlngs).addTo(map);
+        map.fitBounds(polyline.getBounds());
+    }
+
+    map.invalidateSize(true);
+});
+
 </script>
