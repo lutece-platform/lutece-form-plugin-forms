@@ -95,7 +95,7 @@ public class FormResponseService
     public void saveFormResponse( FormResponse formResponse )
     {
         FormResponseHome.update( formResponse );
-        _formService.fireFormResponseEventUpdate( formResponse );
+        _formService.fireFormResponseEventUpdate( formResponse, true );
     }
 
     public void deleteFormResponse( FormResponse formResponse )
