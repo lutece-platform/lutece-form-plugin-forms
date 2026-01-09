@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import fr.paris.lutece.plugins.forms.util.UpdateResponseEventParam;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -180,7 +181,7 @@ public class FormService
     public void processFormAction( Form form, FormResponse formResponse )
     {
         _formWorkflowService.doProcessActionOnFormCreation( form, formResponse );
-        fireFormResponseEventUpdate( formResponse );
+        fireFormResponseEventUpdate( formResponse, true );
     }
 
     /**
@@ -239,7 +240,7 @@ public class FormService
     public void saveFormResponseWithoutQuestionResponse( FormResponse formResponse )
     {
         FormResponseHome.update( formResponse );
-        fireFormResponseEventUpdate( formResponse );
+        fireFormResponseEventUpdate( formResponse, true );
     }
 
     /**
@@ -529,11 +530,12 @@ public class FormService
      * @param formResponse
      *            the formResponse
      */
-    public void fireFormResponseEventUpdate( FormResponse formResponse )
+    public void fireFormResponseEventUpdate( FormResponse formResponse, boolean updateDate )
     {
         ResourceEvent formResponseEvent = new ResourceEvent( );
         formResponseEvent.setIdResource( String.valueOf( formResponse.getId( ) ) );
         formResponseEvent.setTypeResource( FormResponse.RESOURCE_TYPE );
+        formResponseEvent.setParam(new UpdateResponseEventParam(updateDate));
 
         ResourceEventManager.fireUpdatedResource( formResponseEvent );
     }
@@ -551,7 +553,7 @@ public class FormService
 
             for ( FormResponse formResponse : listFormResponse )
             {
-                fireFormResponseEventUpdate( formResponse );
+                fireFormResponseEventUpdate( formResponse, false);
             }
         } ).start( );
     }

@@ -38,6 +38,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchIndexer;
+import fr.paris.lutece.plugins.forms.util.UpdateResponseEventParam;
 import fr.paris.lutece.portal.business.event.EventRessourceListener;
 import fr.paris.lutece.portal.business.event.ResourceEvent;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -80,7 +81,16 @@ public class FormResponseEventListener implements EventRessourceListener
     @Override
     public void updatedResource( ResourceEvent event )
     {
-        updateDateFormResponse( event );
+        boolean updateDate = true;
+        if ( event.getParam() instanceof UpdateResponseEventParam)
+        {
+            UpdateResponseEventParam eventParam = (UpdateResponseEventParam) event.getParam();
+            updateDate = eventParam.getValue();
+        }
+        if (updateDate)
+        {
+            updateDateFormResponse(event);
+        }
         indexResource( event, IndexerAction.TASK_MODIFY );
     }
 
