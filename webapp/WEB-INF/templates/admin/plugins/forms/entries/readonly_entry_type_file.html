@@ -4,12 +4,16 @@
 <@li class=entryClass! >
 	<@span class='fw-bold' id='label_${idName!}'>${entry.title!''} :</@span>
 	<#if list_responses?has_content>
-		<@span class='ms-xs font-italic'>#i18n{themeparisfr.labelNumberOfFiles}</@span> <@span class='fw-bold'>${list_responses?size}</@span><@cBtn label='' type='button' id='btn-${idName!}' class='link btn-show-files p-0 ms-sm' params='data-hide="#i18n{themeparisfr.labelHideUploadedFiles}" data-show="#i18n{themeparisfr.labelShowUploadedFiles}" aria-expanded="false" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"'>#i18n{themeparisfr.labelShowUploadedFiles}</@cBtn>
-		<@ul class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
+		<@span class='ms-xs font-italic'>#i18n{forms.entry.files.labelNumberOfFiles}</@span> 
+		<@span class='fw-bold'>${list_responses?size}</@span>
+		<@cBtn label='' type='button' id='btn-${idName!}' class='primary btn-show-files p-0 ms-sm' params='data-hide="#i18n{forms.entry.files.labelHideUploadedFiles}" data-show="#i18n{forms.entry.files.labelShowUploadedFiles}" aria-expanded="true" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"'>
+			#i18n{forms.entry.files.labelShowUploadedFiles}
+		</@cBtn>
+		<@ul class='list-uploaded-files mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
 		<#list list_responses as response>
 		<#if response.file?exists>
 			<#if response.file.size??>
-				<#assign fileSize=response.file.size>
+				<#assign fileSize=response.file.size!>
 				<#if fileSize lt 1024 >
 					<#assign octetUnit='o'>
 					<#assign octetNumber=fileSize >
@@ -22,7 +26,10 @@
 				</#if>
 			</#if>
 			<@li>
-				<@span class='font-italic'>${response.file.title} - ${octetNumber?string["0.##"]} ${octetUnit} ,</@span>
+				<@span class='font-italic'>${response.file.title!} - ${octetNumber?string["0.##"]} ${octetUnit!} ,</@span>
+				<#if response.file.title?? && ( response.file.title?ends_with('.jpg') || response.file.title?ends_with('.jpeg') || response.file.title?ends_with('.png') || response.file.title?ends_with('.gif') )>
+					<@img src='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs' params='style="max-height: 200px;"'/>
+				</#if>	
 			</@li>
 			</#if>
 		</#list>
