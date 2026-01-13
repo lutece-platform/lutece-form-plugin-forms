@@ -41,7 +41,7 @@
 							<@formGroup rows=2  labelFor='iterationMax' labelKey='#i18n{forms.create_group.labelIterationMax}' helpKey='#i18n{forms.create_group.labelIterationMax.help}' rows=2>
 								<@row>
 									<@columns lg=2>
-										<@input type='number' name='iterationMax' value='${group.iterationMax!}' min=1 max=99 />
+										<@input type='number' name='iterationMax' value='${group.iterationMax!}' min=0 max=99 />
 									</@columns>
 								</@row>
 							</@formGroup>
