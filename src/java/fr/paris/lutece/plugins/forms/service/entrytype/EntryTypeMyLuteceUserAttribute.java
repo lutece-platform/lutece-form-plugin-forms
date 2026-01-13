@@ -165,6 +165,11 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         {
             if ( entry.isMandatory( ) )
             {
+                Response response = new Response( );
+                response.setEntry( entry );
+                response.setResponseValue( StringUtils.EMPTY );
+                response.setIterationNumber( getResponseIterationValue( request ) );
+                listResponse.add( response );
                 return new MandatoryError( entry, locale );
             }
 
