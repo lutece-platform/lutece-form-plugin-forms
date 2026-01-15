@@ -27,9 +27,11 @@
 			</#if>
 			<@li>
 				<@span class='font-italic'>${response.file.title!} - ${octetNumber?string["0.##"]} ${octetUnit!} ,</@span>
-				<#if response.file.title?? && ( response.file.title?ends_with('.jpg') || response.file.title?ends_with('.jpeg') || response.file.title?ends_with('.png') || response.file.title?ends_with('.gif') )>
-					<@img src='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs' params='style="max-height: 200px;"'/>
-				</#if>	
+				<#if response.file.mimeType?? && response.file.mimeType?contains('image')>
+					<#if response.file.url?? && response.file.url != ''>
+						<@img url='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs' params='style="max-height: 200px;"'/>
+					</#if>
+				</#if>
 			</@li>
 			</#if>
 		</#list>

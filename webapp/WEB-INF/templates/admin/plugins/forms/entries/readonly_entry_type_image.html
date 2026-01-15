@@ -1,3 +1,4 @@
+<#if !entry.onlyDisplayInBack>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign entryClass>files-list <#if entry.CSSClass?contains('hidden')>hidden</#if></#assign>
 <@li class=entryClass! >
@@ -8,45 +9,48 @@
 		<@cBtn label='' type='button' id='btn-${idName!}' class='primary btn-show-files p-0 ms-sm' params='data-hide="#i18n{forms.entry.files.labelHideUploadedFiles}" data-show="#i18n{forms.entry.files.labelShowUploadedFiles}" aria-expanded="true" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"'>
 			#i18n{forms.entry.files.labelShowUploadedFiles}
 		</@cBtn>
-		<@ul class='list-uploaded-files visually-hidden mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
+		<@ul class='list-uploaded-files mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
 		<#list list_responses as response>
-			<#if response.file?exists>
-				<#if response.file.size??>
-					<#assign fileSize=response.file.size>
-					<#if fileSize lt 1024 >
-						<#assign octetUnit='o'>
-						<#assign octetNumber=fileSize >
-					<#elseif fileSize lt ( 1024 * 1024 ) >
-						<#assign octetUnit='Ko'>
-						<#assign octetNumber=fileSize / 1024 >
-					<#else>
-						<#assign octetUnit='Mo'>
-						<#assign octetNumber=fileSize / (1024*1024) >
+		<#if response.file?exists>
+			<#if response.file.size??>
+				<#assign fileSize=response.file.size!>
+				<#if fileSize lt 1024 >
+					<#assign octetUnit='o'>
+					<#assign octetNumber=fileSize >
+				<#elseif fileSize lt ( 1024 * 1024 ) >
+					<#assign octetUnit='Ko'>
+					<#assign octetNumber=fileSize / 1024 >
+				<#else>
+					<#assign octetUnit='Mo'>
+					<#assign octetNumber=fileSize / (1024*1024) >
+				</#if>
+			</#if>
+			<@li>
+				<@span class='font-italic'>${response.file.title!} - ${octetNumber?string["0.##"]} ${octetUnit!} ,</@span>
+				<#if response.file.mimeType?? && response.file.mimeType?contains('image')>
+					<#if response.file.url?? && response.file.url != ''>
+						<@img url='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs' params='style="max-height: 200px;"'/>
 					</#if>
 				</#if>
-				<@li>
-					<@span class='font-italic'>${response.file.title!} - ${octetNumber?string["0.##"]} ${octetUnit!} ,</@span>
-					<#if response.file.title?? && ( response.file.title?ends_with('.jpg') || response.file.title?ends_with('.jpeg') || response.file.title?ends_with('.png') || response.file.title?ends_with('.gif') )>
-						<@img src='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs' params='style="max-height: 200px;"'/>
-					</#if>	
-				</@li>
+			</@li>
 			</#if>
 		</#list>
 		</@ul>
 		<script>
-		document.addEventListener('DOMContentLoaded', () => {
-			button = document.getElementById('btn-${idName!}')
-				button.addEventListener('click', () => {
-				const filesList = document.getElementById('list_${idName!}')
-				if (filesList) {
-					filesList.classList.toggle('visually-hidden');
-					filesList.classList.contains('visually-hidden') ? button.textContent = button.getAttribute('data-show') : button.textContent = button.getAttribute('data-hide');
-					filesList.classList.contains('visually-hidden') ? button.setAttribute('aria-expanded', 'false') : button.setAttribute('aria-expanded', 'true');
-				}
+			document.addEventListener('DOMContentLoaded', () => {
+				button = document.getElementById('btn-${idName!}')
+					button.addEventListener('click', () => {
+					const filesList = document.getElementById('list_${idName!}')
+					if (filesList) {
+						filesList.classList.toggle('visually-hidden');
+						filesList.classList.contains('visually-hidden') ? button.textContent = button.getAttribute('data-show') : button.textContent = button.getAttribute('data-hide');
+						filesList.classList.contains('visually-hidden') ? button.setAttribute('aria-expanded', 'false') : button.setAttribute('aria-expanded', 'true');
+					}
+				});
 			});
-		});
 		</script>
 	<#else>
 		<@span class='ms-xs font-italic'>#i18n{portal.util.labelNoItem}</@span>	
 	</#if>
 </@li>
+</#if>
