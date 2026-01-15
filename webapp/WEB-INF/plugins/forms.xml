@@ -135,8 +135,8 @@
             <portlet-modify-action-url>plugins/forms/DoModifyFormsListPortlet.jsp</portlet-modify-action-url>
             <portlet-create-script-template>/admin/portlet/script_create_portlet.html</portlet-create-script-template>
             <portlet-modify-script-template>/admin/portlet/script_modify_portlet.html</portlet-modify-script-template>
-            <portlet-create-specific-template/>
-            <portlet-modify-specific-template/>
+            <portlet-create-specific-template>/admin/plugins/forms/portlet/create_portlet_formslist.html</portlet-create-specific-template>
+            <portlet-modify-specific-template>/admin/plugins/forms/portlet/modify_portlet_formslist.html</portlet-modify-specific-template>
             <portlet-create-specific-form-template/>
             <portlet-modify-specific-form-template/>
         </portlet>
