@@ -152,11 +152,12 @@ public class FormsListPortletJspBean extends PortletJspBean
         int nPortletId = NumberUtils.toInt( strPortletId, NumberUtils.INTEGER_MINUS_ONE );
         _portlet = (FormsListPortlet) PortletHome.findByPrimaryKey( nPortletId );
 
+        availableFormsList = getActiveForms( );
         if ( CollectionUtils.isNotEmpty( _portlet.getFormsIdList( ) ) )
         {
             publishedFormsList = FormHome.getFormByPrimaryKeyList( _portlet.getFormsIdList( ) );
-            availableFormsList = getActiveForms( );
-            availableFormsList.removeAll( publishedFormsList );
+            List<Integer> publishedFormIds = publishedFormsList.stream( ).map( Form::getId ).collect( Collectors.toList( ) );
+            availableFormsList.removeIf( f -> publishedFormIds.contains( f.getId( ) ) );
         }
         model.put( MARK_AVAILABLE_FORMS_LIST, availableFormsList );
         model.put( MARK_PUBLISHED_FORMS_LIST, publishedFormsList );
