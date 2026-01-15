@@ -1,5 +1,5 @@
 <div class="card">
-  <h3 class="card-header">${step.title}</h3>
+  <h3 class="card-header">${step.title!?replace('- hidden','')}</h3>
   <div id="step-content" class="card-body">
     ${stepContent}
   </div>
