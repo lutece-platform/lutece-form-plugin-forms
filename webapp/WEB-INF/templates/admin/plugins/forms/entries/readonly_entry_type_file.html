@@ -4,11 +4,11 @@
 <@li class=entryClass! >
 	<@span class='fw-bold' id='label_${idName!}'>${entry.title!''} :</@span>
 	<#if list_responses?has_content>
-		<@span class='ms-xs font-italic'>#i18n{forms.entry.files.labelNumberOfFiles}</@span> 
-		<@span class='fw-bold'>${list_responses?size}</@span>
-		<@cBtn label='' type='button' id='btn-${idName!}' class='primary btn-show-files p-0 ms-sm' params='data-hide="#i18n{forms.entry.files.labelHideUploadedFiles}" data-show="#i18n{forms.entry.files.labelShowUploadedFiles}" aria-expanded="true" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"'>
-			#i18n{forms.entry.files.labelShowUploadedFiles}
-		</@cBtn>
+		<@p>
+			<@span class='ms-xs font-italic'>#i18n{forms.entry.files.labelNumberOfFiles}</@span> 
+			<@span class='fw-bold'>${list_responses?size}</@span>
+			<@button title='#i18n{forms.entry.files.labelShowUploadedFiles}' id='btn-${idName!}' class='primary btn-show-files btn-sm ms-3' params='data-hide="#i18n{forms.entry.files.labelHideUploadedFiles}" data-show="#i18n{forms.entry.files.labelShowUploadedFiles}" aria-expanded="true" aria-controls="list_${idName!}" aria-labelledby="label_${idName}"' />
+		</@p>
 		<@ul class='list-uploaded-files mb-3' id='list_${idName!}' params='role="region" aria-labelledby="label_${idName}"'>
 		<#list list_responses as response>
 		<#if response.file?exists>
