@@ -99,76 +99,11 @@
                                                     <ul class="list-unstyled">
                                         <#else>
                                             <@div class='d-flex justify-content-between align-items-center px-3 py-1'>
-                                                <#assign fieldType=composite.icon!?keep_after_last(" ") />
                                                 <@div class='d-flex align-items-center'>
-                                                    <@formGroup labelFor='f_${composite.formDisplay.id!}' labelKey='${composite.title!}' mandatory=false rows=2 class='form-label' >
-                                                    <@inputGroup>
-                                                    <#switch fieldType>
-                                                        <#case 'checkbox'>
-                                                            <@checkBox name=composite.title labelKey='Exemple de choix... ${composite.id!}' />
-                                                            <@checkBox name=composite.title labelKey='Exemple de choix...' />
-                                                            <#break>
-                                                        <#case 'radio'>
-                                                            <@radioButton name=composite.title labelKey='Exemple de choix...' />
-                                                            <@radioButton name=composite.title labelKey='Exemple de choix...' />
-                                                            <#break>
-                                                        <#case 'table'>
-                                                            <@table headBody=true>
-                                                                <@tr>
-                                                                    <@th colspan=2>${composite.title}</@th>
-                                                                </@tr>
-                                                                <@tableHeadBodySeparator />
-                                                                <@tr>
-                                                                    <@td>${composite.title}</@td>
-                                                                </@tr>
-                                                            </@table>
-                                                            <#break>
-                                                        <#case 'camera'>
-                                                            <#break>
-                                                        <#case 'image'>
-                                                            <@input type='file' name='${composite.title}' id='f_${composite.formDisplay.id}' />
-                                                            <#break>
-                                                        <#case 'list'>
-                                                            <@select name=composite.title >
-                                                                <@option label='${composite.title}' value='' />
-                                                            </@select>
-                                                            <#break>
-                                                        <#case 'user'>
-                                                            <@input type='text' name='user' id='f_${composite.formDisplay.id}' value='User' />
-                                                            <#break>
-                                                        <#case 'time'>
-                                                            <@row>
-                                                                <@columns sm=12 md=2>
-                                                                    <@input type='time' name='${composite.title}' id='f_${composite.formDisplay.id}' value=.now />
-                                                                </@columns>
-                                                                <@columns sm=12 md=2>
-                                                                    <@input type='time' name='${composite.title}2' id='f_${composite.formDisplay.id}2' value=.now />
-                                                                </@columns>
-                                                            </@row>
-                                                            <#break>
-                                                        <#case 'carto'>
-                                                        <#case 'geoloc'>
-                                                            <@input name='${composite.title}' id='f_${composite.formDisplay.id}' value='227 rue de Bercy' params='list="adress_${composite.formDisplay.id}"' />
-                                                            <datalist id="adress_${composite.formDisplay.id}">
-                                                                <option value="227 rue de Bercy, 75012 Paris"></option>
-                                                                <option value="227 rue de Belleville, 75020 Paris"></option>
-                                                                <option value="227 rue de Belledone, 75004 Paris"></option>
-                                                            </datalist>
-                                                            <#break>
-                                                        <#case 'date'>
-                                                            <@input type=fieldType name='${composite.title}' id='f_${composite.formDisplay.id}' value=.now />
-                                                            <#break>
-                                                        <#case 'text'>
-                                                        <#case 'textarea'>
-                                                        <#case 'file'>
-                                                            <@input type=fieldType name='${composite.title}' id='f_${composite.formDisplay.id}' />
-                                                            <#break>
-                                                        <#default>
-                                                            <@input name='${composite.title}' id='f_${composite.formDisplay.id}' />
-                                                    </#switch>
-                                                    </@inputGroup>
-                                                    <@formHelp labelFor='f_${composite.formDisplay.id}'></@formHelp>
-                                                    </@formGroup>
+                                                    <@h level=4 class='mb-0'>
+                                                        <@icon style=composite.icon! class='me-2' />
+                                                        <@span class='searchable'>${composite.title!?replace('- hidden','')}</@span>
+                                                     </@h>
                                                 </@div>
                                                 <@div class='mt-2 ms-auto me-1' >
                                                     <#if ( composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content ) || composite.formDisplay.displayControl??>
@@ -343,7 +278,7 @@ import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';
 const searchInput = document.querySelector("#search_step");
 const searchElementList = document.querySelectorAll("#main-form-content li");
 new LuteceSearchList( searchInput, searchElementList, {
-    searchableChild: [".card-header",".form-label"],
+    searchableChild: [".card-header",".form-label",".searchable"],
     highlight: true
 });
 </script>
