@@ -65,6 +65,12 @@ public final class FormResponseDAO implements IFormResponseDAO
     private static final String SQL_CLOSE_PARENTHESIS = " ) ";
     private static final String SQL_ADITIONAL_PARAMETER = ",?";
 
+    private static final String SQL_QUERY_SELECT_BY_FILTER = SQL_QUERY_SELECTALL + " WHERE 1=1 ";
+    private static final String CONSTANT_AND_IDFORM  = " AND id_form IN (?";
+    private static final String CONSTANT_AND_FROMSAVE  = " AND from_save = ?";
+    private static final String CONSTANT_AND_AFTER_DATEUPDATE  = " AND update_date < ?";
+
+
     /**
      * {@inheritDoc }
      */
@@ -364,6 +370,108 @@ public final class FormResponseDAO implements IFormResponseDAO
             daoUtil.setInt( 1, nIdForm );
             daoUtil.executeUpdate( );
         }
+    }
+
+    @Override
+    public List<FormResponse> getFormResponseByFilter( FormResponseFilter formResponseFilter, Plugin plugin )
+    {
+        List<FormResponse> list = new ArrayList<>( );
+
+        String filterSQL = filterBuildSql( formResponseFilter );
+
+        if( filterSQL != null )
+        {
+            String sSQL = SQL_QUERY_SELECT_BY_FILTER +
+                    filterSQL;
+
+
+            try ( DAOUtil daoUtil = new DAOUtil(sSQL, plugin ) )
+            {
+                if ( filterInsertData( formResponseFilter , daoUtil ) == -1 )
+                {
+                    return list;
+                }
+
+                daoUtil.executeQuery( );
+
+                while ( daoUtil.next( ) )
+                {
+                    list.add( dataToObject( daoUtil ) );
+                }
+            }
+        }
+
+        return list;
+    }
+
+    /**
+     * Create condition sql for where filter
+     *
+     * @param filter the filter
+     * @return sql filter, null if the request can t give data
+     */
+    private String filterBuildSql(FormResponseFilter filter )
+    {
+        if( filter.containsListIdForm() && filter.getListIdForm().isEmpty() )
+        {
+            return null;
+        }
+
+        StringBuilder sbSQL = new StringBuilder();
+        if ( filter.containsListIdForm() )
+        {
+            sbSQL.append(CONSTANT_AND_IDFORM );
+            sbSQL.append(SQL_ADITIONAL_PARAMETER.repeat(Math.max(0, filter.getListIdForm().size() - 1)));
+            sbSQL.append(SQL_CLOSE_PARENTHESIS);
+        }
+
+        if ( filter.containsFromSave() )
+        {
+            sbSQL.append( CONSTANT_AND_FROMSAVE );
+        }
+
+        if ( filter.containsAfterDateUpdate() )
+        {
+            sbSQL.append( CONSTANT_AND_AFTER_DATEUPDATE );
+        }
+
+        return sbSQL.toString();
+    }
+
+    /**
+     * insert filter data in DAOUtil, on the same order of filterBuildSql
+     *
+     * @param filter the filter
+     * @param daoUtil the daoUtil
+     * @return index of inserted data -1 if the request can t give data
+     */
+    private int filterInsertData(FormResponseFilter filter , DAOUtil daoUtil )
+    {
+        if( filter.containsListIdForm() && filter.getListIdForm().isEmpty() )
+        {
+            return -1;
+        }
+
+        int nIndex = 0;
+
+        if ( filter.containsListIdForm() )
+        {
+            for ( Integer idForm : filter.getListIdForm() ) {
+                daoUtil.setInt(++nIndex, idForm);
+            }
+        }
+
+        if ( filter.containsFromSave() )
+        {
+            daoUtil.setBoolean(++nIndex, filter.isFromSave());
+        }
+
+        if ( filter.containsAfterDateUpdate() )
+        {
+            daoUtil.setTimestamp(++nIndex, filter.getAfterDateUpdate());
+        }
+
+        return nIndex;
     }
 
     /**

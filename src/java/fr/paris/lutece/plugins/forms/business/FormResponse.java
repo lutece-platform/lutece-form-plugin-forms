@@ -63,6 +63,9 @@ public class FormResponse implements IExtendableResource
 
     private Timestamp _dateUpdate;
 
+    /**
+     * If response is an backup response
+     */
     private boolean _bFromSave;
 
     private boolean _bPublished;
@@ -180,6 +183,8 @@ public class FormResponse implements IExtendableResource
     }
 
     /**
+     * is an backup response
+     *
      * @return the _bFromSave
      */
     public boolean isFromSave( )
@@ -188,6 +193,8 @@ public class FormResponse implements IExtendableResource
     }
 
     /**
+     * set if the response is an backup response
+     *
      * @param bFromSave
      *            the bFromSave to set
      */

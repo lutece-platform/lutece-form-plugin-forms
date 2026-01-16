@@ -112,6 +112,12 @@
             <daemon-description>forms.daemon.indexerDameon.description</daemon-description>
             <daemon-class>fr.paris.lutece.plugins.forms.service.search.FormsSearchIndexerDaemon</daemon-class>
         </daemon>
+        <daemon>
+            <daemon-id>formsBackupPurgeDaemon</daemon-id>
+            <daemon-name>forms.daemon.backupPurgeDaemon.name</daemon-name>
+            <daemon-description>forms.daemon.backupPurgeDaemon.description</daemon-description>
+            <daemon-class>fr.paris.lutece.plugins.forms.service.FormsBackupPurgeDaemon</daemon-class>
+        </daemon>
     </daemons>
     
     <!-- Dashboard components -->

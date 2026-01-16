@@ -49,4 +49,23 @@ $( function(){
         $('#labelEndMessageButton').toggle();
     });
 });
+
+document.addEventListener('DOMContentLoaded', function() {
+	// Initial toggle based on checkbox state
+	const backupStoragePeriodGroup = document.getElementById('backupStoragePeriodGroup');
+	const backupEnabled = document.getElementById('backupEnabled');
+
+	// Hide initially
+	backupStoragePeriodGroup.classList.toggle('d-none', true);
+
+	// Show if checkbox is checked
+	if (backupEnabled && backupEnabled.checked) {
+		backupStoragePeriodGroup.classList.toggle('d-none', false);
+	}
+
+	// Toggle on change
+	backupEnabled.addEventListener('change', function() {
+		backupStoragePeriodGroup.classList.toggle('d-none');
+	});
+});
 </script>

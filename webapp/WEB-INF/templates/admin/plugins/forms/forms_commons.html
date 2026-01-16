@@ -458,7 +458,14 @@ $( function() {
 							<@checkBox labelFor='backupEnabled' labelKey='#i18n{forms.create_form.labelBackupEnabled}' name='backupEnabled' id='backupEnabled' value='1' checked=(form?has_content && form.backupEnabled) />
 						</@formGroup>
 					</@columns> 
-				</@row>          
+				</@row>
+				<@row>
+					<@columns sm=4>
+						<@formGroup id='backupStoragePeriodGroup' labelFor='backupStoragePeriod' labelKey='#i18n{forms.create_form.labelBackupStoragePeriod}' helpKey='#i18n{forms.create_form.labelBackupStoragePeriod.help}'>
+							<@input type='number' min=-1 name='backupStoragePeriod' id='backupStoragePeriod' value=form.backupStoragePeriod?string!'-1' />
+						</@formGroup>
+					</@columns>
+				</@row>
 			</@fieldSet>
 			<@fieldSet legend='#i18n{forms.create_form.display.label}'>
 				<@row>
