@@ -125,6 +125,7 @@ public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Fo
     private int _nIdCategory;
     
     private boolean _bBackupEnabled;
+    private int _nBackupStoragePeriod;
     
     /**
      *  Access to responses management on FO by role
@@ -137,6 +138,7 @@ public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Fo
     public Form( )
     {
         super( );
+        _nBackupStoragePeriod = -1;
     }
 
     /**
@@ -152,6 +154,7 @@ public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Fo
         _bAccessToResponsesByRole = source._bAccessToResponsesByRole;
         _bAuthentificationNeeded = source._bAuthentificationNeeded;
         _bBackupEnabled = source._bBackupEnabled;
+        _nBackupStoragePeriod = source._nBackupStoragePeriod;
         _bCaptchaRecap = source._bCaptchaRecap;
         _bCaptchaStepFinal = source._bCaptchaStepFinal;
         _bCaptchaStepInitial = source._bCaptchaStepInitial;
@@ -731,6 +734,19 @@ public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Fo
     public void setBackupEnabled( boolean bBackupEnabled )
     {
         _bBackupEnabled = bBackupEnabled;
+    }
+
+    /**
+     * @return the nBackupStoragePeriod
+     */
+    public int getBackupStoragePeriod( ) {return _nBackupStoragePeriod; }
+
+    /**
+     * @param backupStoragePeriod the backupStoragePeriod to set
+     */
+    public void setBackupStoragePeriod( int backupStoragePeriod )
+    {
+        _nBackupStoragePeriod = backupStoragePeriod;
     }
 
     /**

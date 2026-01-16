@@ -182,4 +182,13 @@ public interface IFormResponseDAO
      */
     void deleteByForm( int nIdForm, Plugin plugin );
 
+    /**
+     * Load the formResponse from filter
+     *
+     * @param formResponseFilter the formResponseFilter
+     * @param plugin the Plugin
+     * @return the formResponse objects
+     */
+    List<FormResponse> getFormResponseByFilter( FormResponseFilter formResponseFilter, Plugin plugin );
+
 }
