@@ -32,6 +32,7 @@ unavailable_message VARCHAR(3000),
 id_logo INT DEFAULT 0 NOT NULL,
 id_category int DEFAULT NULL,
 backup_enabled SMALLINT default 0 NOT NULL,
+backup_storage_period INT DEFAULT -1 NOT NULL,
 access_to_responses_by_role SMALLINT default 0,
 
 PRIMARY KEY (id_form)

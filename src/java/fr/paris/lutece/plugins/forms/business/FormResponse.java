@@ -69,6 +69,9 @@ public class FormResponse implements IExtendableResource, Serializable
 
     private Timestamp _dateUpdate;
 
+    /**
+     * If response is an backup response
+     */
     private boolean _bFromSave;
 
     private int _nStatus;
@@ -186,6 +189,8 @@ public class FormResponse implements IExtendableResource, Serializable
     }
 
     /**
+     * is an backup response
+     *
      * @return the _bFromSave
      */
     public boolean isFromSave( )
@@ -194,6 +199,8 @@ public class FormResponse implements IExtendableResource, Serializable
     }
 
     /**
+     * set if the response is an backup response
+     *
      * @param bFromSave
      *            the bFromSave to set
      */

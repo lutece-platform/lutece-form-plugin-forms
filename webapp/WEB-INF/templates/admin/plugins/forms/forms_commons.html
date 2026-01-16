@@ -404,8 +404,15 @@
 					<@formGroup labelKey='#i18n{forms.create_form.labelBackupEnabled}' helpKey='#i18n{forms.create_form.labelBackupEnabled.help}' hideLabel=['all'] rows=2>
 						<@checkBox orientation='switch' labelFor='backupEnabled' labelKey='#i18n{forms.create_form.labelBackupEnabled}' name='backupEnabled' id='backupEnabled' value='1' checked=(form?has_content && form.backupEnabled) />
 					</@formGroup>
-				</@columns> 
-			</@row>          
+				</@columns>
+			</@row>
+            <@row>
+                <@columns lg=12 xl=6>
+                    <@formGroup id='backupStoragePeriodGroup' labelFor='backupStoragePeriod' labelKey='#i18n{forms.create_form.labelBackupStoragePeriod}' helpKey='#i18n{forms.create_form.labelBackupStoragePeriod.help}' rows=2>
+                        <@input type='number' min=-1 name='backupStoragePeriod' id='backupStoragePeriod' value=form.backupStoragePeriod?string!'-1' />
+                    </@formGroup>
+                </@columns>
+            </@row>
 		</@fieldSet>
 		</@card>
 	</@columns>

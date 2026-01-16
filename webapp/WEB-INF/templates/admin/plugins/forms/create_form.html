@@ -19,7 +19,10 @@ document.addEventListener('DOMContentLoaded', function() {
 	const endMessageDisplay = document.getElementById('endMessageDisplay');
 	const labelEndMessageButton = document.getElementById('labelEndMessageButton');
 
-	// Hide initially
+    const backupStoragePeriodGroup = document.getElementById('backupStoragePeriodGroup');
+    const backupEnabled = document.getElementById('backupEnabled');
+
+    // Hide initially
 	endMessage.classList.toggle('d-none', true);
 	labelEndMessageButton.classList.toggle('d-none', true);
 
@@ -34,6 +37,19 @@ document.addEventListener('DOMContentLoaded', function() {
 		endMessage.classList.toggle('d-none');
 		labelEndMessageButton.classList.toggle('d-none');
 	});
+
+    // Hide initially
+    backupStoragePeriodGroup.classList.toggle('d-none', true);
+
+    // Show if checkbox is checked
+    if (backupEnabled && backupEnabled.checked) {
+        backupStoragePeriodGroup.classList.toggle('d-none', false);
+    }
+
+    // Toggle on change
+    backupEnabled.addEventListener('change', function() {
+        backupStoragePeriodGroup.classList.toggle('d-none');
+    });
 });
 </script>
 <@formsToastr infos=infos warnings=warnings errors=errors />
