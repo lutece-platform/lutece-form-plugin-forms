@@ -61,15 +61,5 @@
 		<#assign listFiles = ''>
 	</#if>
 	<@addUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles submitBtnName='action_doSynchronousUploadDocument' />
-	<#-- Add FileUpload option to control number of files max to upload -->
-	<#if nbFiles?number &gt; 1>
-	<script>
-	$( function(){
-		$('#${fieldName!}').fileupload({
-			maxNumberOfFiles: ${nbFiles!}
-		});
-	});
-	</script>
-	</#if>
 </#if>
 </@cTpl>
