@@ -24,8 +24,7 @@ function setNavButtons( idResp, labelPrev, labelNext ){
 	const respUrl=sessionStorage.getItem('multiview_base_url') + '&id_form_response=';
 	const item_list=sessionStorage.getItem('multiview_current_list');
 	const boxTool = document.querySelector('#info-box-header.boxTool');
-	if( boxTool )
-	{
+	if( boxTool )	{
         var response_list=item_list.split(','), maxIdx=response_list.length - 1, currentIdx=response_list.indexOf(idResp);
         var nNext=currentIdx+1, nPrev=currentIdx-1;
         if( currentIdx > -1 ){
@@ -47,6 +46,64 @@ function setNavButtons( idResp, labelPrev, labelNext ){
 	}
 }
 
+function setToc( toc, tocBox, tocCompressToggle, tocSideToggle, tocExpandToggle ){
+	if (tocSideToggle && tocBox) {
+		tocSideToggle.addEventListener('click', function() {
+			if (tocBox.style.left === '85%'){
+				tocBox.style.left = '0';
+				tocExpandToggle.classList.add('ti-layout-sidebar-right-expand');
+				tocExpandToggle.classList.remove('ti-layout-sidebar-left-expand');
+				tocSideToggle.classList.add('ti-arrow-right');
+				tocSideToggle.classList.remove('ti-arrow-left');
+				tocExpandToggle.style.left = '0';
+				localStorage.setItem('toc_side_state', '0');
+			} else {
+				tocBox.style.left='85%';
+				tocExpandToggle.classList.add('ti-layout-sidebar-left-expand');
+				tocExpandToggle.classList.remove('ti-layout-sidebar-right-expand');
+				tocSideToggle.classList.add('ti-arrow-left');
+				tocSideToggle.classList.remove('ti-arrow-right');
+				tocExpandToggle.style.left = '98%';
+				localStorage.setItem('toc_side_state', '98%');
+			}
+		});
+	}
+	
+	if (tocCompressToggle) {
+		const tocState = localStorage.getItem('toc_multiview_state');
+		const tocSide = localStorage.getItem('toc_side_state');
+		if (tocExpandToggle){
+			tocExpandToggle.style.display = 'none';
+			tocExpandToggle.style.left = tocSide;
+			if (tocSide === '98%'){
+				tocBox.style.left='85%';
+				tocExpandToggle.classList.add('ti-layout-sidebar-left-expand');
+				tocExpandToggle.classList.remove('ti-layout-sidebar-right-expand');
+				tocSideToggle.classList.add('ti-arrow-left');
+				tocSideToggle.classList.remove('ti-arrow-right');
+			} 
+		} 
+
+		tocCompressToggle.addEventListener('click', function() {
+			if (toc) toc.style.display = toc.style.display === 'none' ? '' : 'none';
+			if (tocExpandToggle) tocExpandToggle.style.display = '';
+			localStorage.setItem('toc_multiview_state', 'expand');
+		});
+
+		if (tocExpandToggle) {
+			tocExpandToggle.addEventListener('click', function() {
+				if (toc) toc.style.display = '';
+				this.style.display = 'none';
+				localStorage.setItem('toc_multiview_state', 'compress');
+			});
+		}
+		
+		if (tocState === 'expand' && tocCompressToggle) {
+			tocCompressToggle.click();
+		}
+	}
+
+}
 function setStepsIndex(){
 	let stepList=document.querySelectorAll('#steps-content > .step'), stepLinks='<ul class="list-unstyled flex-grow-1">', active=true;
 	let stepLinksContent = '';
@@ -90,6 +147,7 @@ function setStepsIndex(){
 		});
 	});
 }
+
 document.addEventListener('DOMContentLoaded', function() {
 	// Rewrite title
 	const mainTitle = document.querySelector('#feature-title a');
@@ -100,73 +158,21 @@ document.addEventListener('DOMContentLoaded', function() {
 	}
 
 	// Set step index
-	if (document.querySelectorAll('.fieldset-group').length > 0) {
-		setStepsIndex();
-	}
-
+	const toc = document.getElementById('toc');
 	const tocBox = document.getElementById('toc-box');
 	const tocCompressToggle = document.getElementById('toc-compress-toggle');
-	const tocExpandToggle = document.getElementById('toc-expand-toggle');
 	const tocSideToggle = document.getElementById('toc-side-toggle');
+	const tocExpandToggle = document.getElementById('toc-expand-toggle');
 	
-	if (tocSideToggle && tocBox) {
-		tocSideToggle.addEventListener('click', function() {
-			if (tocBox.style.left === '85%'){
-				tocBox.style.left = '0';
-				tocExpandToggle.classList.add('ti-layout-sidebar-right-expand');
-				tocExpandToggle.classList.remove('ti-layout-sidebar-left-expand');
-				tocSideToggle.classList.add('ti-arrow-right');
-				tocSideToggle.classList.remove('ti-arrow-left');
-				tocExpandToggle.style.left = '0';
-				localStorage.setItem('toc_side_state', '0');
-			} else {
-				tocBox.style.left='85%';
-				tocExpandToggle.classList.add('ti-layout-sidebar-left-expand');
-				tocExpandToggle.classList.remove('ti-layout-sidebar-right-expand');
-				tocSideToggle.classList.add('ti-arrow-left');
-				tocSideToggle.classList.remove('ti-arrow-right');
-				tocExpandToggle.style.left = '98%';
-				localStorage.setItem('toc_side_state', '98%');
-			}
-		});
-	}
+	if ( document.querySelectorAll('.fieldset-group').length > 1 ) {
+		setStepsIndex();
+		setToc( toc, tocBox, tocCompressToggle, tocSideToggle, tocExpandToggle );
+	} else {
+		toc.style.display = 'none';
+		tocExpandToggle.style.display = 'none';
 
-	const toc = document.getElementById('toc');
+	}
 	
-	if (tocCompressToggle) {
-		const tocState = localStorage.getItem('toc_multiview_state');
-		const tocSide = localStorage.getItem('toc_side_state');
-		if (tocExpandToggle){
-			tocExpandToggle.style.display = 'none';
-			tocExpandToggle.style.left = tocSide;
-			if (tocSide === '98%'){
-				tocBox.style.left='85%';
-				tocExpandToggle.classList.add('ti-layout-sidebar-left-expand');
-				tocExpandToggle.classList.remove('ti-layout-sidebar-right-expand');
-				tocSideToggle.classList.add('ti-arrow-left');
-				tocSideToggle.classList.remove('ti-arrow-right');
-			} 
-		} 
-
-		tocCompressToggle.addEventListener('click', function() {
-			if (toc) toc.style.display = toc.style.display === 'none' ? '' : 'none';
-			if (tocExpandToggle) tocExpandToggle.style.display = '';
-			localStorage.setItem('toc_multiview_state', 'expand');
-		});
-
-		if (tocExpandToggle) {
-			tocExpandToggle.addEventListener('click', function() {
-				if (toc) toc.style.display = '';
-				this.style.display = 'none';
-				localStorage.setItem('toc_multiview_state', 'compress');
-			});
-		}
-		
-		if (tocState === 'expand' && tocCompressToggle) {
-			tocCompressToggle.click();
-		}
-	}
-
 	// Set link on whole tr
 	const multiFormRows = document.querySelectorAll("#multi-form-list tbody > tr");
 	multiFormRows.forEach(function(row) {
