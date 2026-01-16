@@ -8,7 +8,7 @@
 	<#assign indexIteration = ( childrenHtml?index / nbBaseChildren )?int />
 	<#if indexGroup != indexIteration>
 		<fieldset class="<#if id_display??> display_field_${id_display} d-none</#if> position-relative">
-		<legend>${group.title} <#if indexIteration &gt; 0>(${indexIteration+1})</#if></legend>
+		<legend>${group.title?replace(' - hidden', '')} <#if indexIteration &gt; 0>(${indexIteration+1})</#if></legend>
 		<#assign indexGroup=indexIteration>
 		<#if indexIteration gte nbIterationMin>
 			<@button type='submit' class='btn btn-danger' params=' formnovalidate name="action_removeIteration" value="${group.id}_${indexIteration}"'>
