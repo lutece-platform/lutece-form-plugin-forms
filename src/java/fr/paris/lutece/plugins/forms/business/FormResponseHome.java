@@ -364,4 +364,15 @@ public final class FormResponseHome
 
     }
 
+    /**
+     * Load the formResponse from filter
+     *
+     * @param formResponseFilter the formResponseFilter
+     * @return the formResponse objects
+     */
+    public static List<FormResponse> getFormResponseByFilter( FormResponseFilter formResponseFilter )
+    {
+        return _dao.getFormResponseByFilter( formResponseFilter, _plugin );
+    }
+
 }
