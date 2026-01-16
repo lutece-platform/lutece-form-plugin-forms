@@ -104,6 +104,7 @@ function setToc( toc, tocBox, tocCompressToggle, tocSideToggle, tocExpandToggle 
 	}
 
 }
+
 function setStepsIndex(){
 	let stepList=document.querySelectorAll('#steps-content > .step'), stepLinks='<ul class="list-unstyled flex-grow-1">', active=true;
 	let stepLinksContent = '';
@@ -159,18 +160,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// Set step index
 	const toc = document.getElementById('toc');
-	const tocBox = document.getElementById('toc-box');
-	const tocCompressToggle = document.getElementById('toc-compress-toggle');
-	const tocSideToggle = document.getElementById('toc-side-toggle');
-	const tocExpandToggle = document.getElementById('toc-expand-toggle');
-	
-	if ( document.querySelectorAll('.fieldset-group').length > 1 ) {
-		setStepsIndex();
-		setToc( toc, tocBox, tocCompressToggle, tocSideToggle, tocExpandToggle );
-	} else {
-		toc.style.display = 'none';
-		tocExpandToggle.style.display = 'none';
-
+	if( toc != null ){
+		const tocBox = document.getElementById('toc-box');
+		const tocCompressToggle = document.getElementById('toc-compress-toggle');
+		const tocSideToggle = document.getElementById('toc-side-toggle');
+		const tocExpandToggle = document.getElementById('toc-expand-toggle');
+		
+		if ( document.querySelectorAll('.fieldset-group').length > 1 ) {
+			setStepsIndex();
+			setToc( toc, tocBox, tocCompressToggle, tocSideToggle, tocExpandToggle );
+		} else {
+			toc.style.display = 'none';
+			tocExpandToggle.style.display = 'none';
+			
+		}
 	}
 	
 	// Set link on whole tr
