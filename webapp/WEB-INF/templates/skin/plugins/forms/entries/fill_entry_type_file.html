@@ -7,8 +7,8 @@
 			<#assign hasError = true />
 		</#if>
 	</#if>
-
 	<#include "/skin/plugins/asynchronousupload/upload_commons.html" />
+	<@addRequiredJsFiles />
 	<#assign nbFiles=getMaxFiles(entry)>
 	<div class="mb-3 row ${entry.CSSClass!}">
 		<#assign idName = buildEntryName( entry, entry_iteration_number )>
