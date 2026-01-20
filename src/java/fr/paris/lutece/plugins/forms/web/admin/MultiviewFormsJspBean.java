@@ -185,6 +185,10 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         // Retrieve the list of all filters, columns and panels if the pagination and
         // the sort are not used
         boolean bIsSessionLost = isSessionLost( );
+        if ( formSelectedAsChanged( request ) )
+        {
+            resetCurrentPaginatorPageIndex( );
+        }
         if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
         {
             initFormRelatedLists( request );
