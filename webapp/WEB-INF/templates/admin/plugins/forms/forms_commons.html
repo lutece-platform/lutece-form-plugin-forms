@@ -513,7 +513,7 @@ window.addEventListener('message', function(event) {
 		<@card>
 		<@fieldSet legend='#i18n{forms.create_form.labelDisplaySummary}'>
 			<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
-				<@input type='text' name='returnUrl' value='${form.returnUrl!"jsp/site/Portal.jsp"}' />
+				<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
 			</@formGroup>
 			<@formGroup labelKey='#i18n{forms.create_form.labelLabelFinalButton}' rows=2>
 				<@input type='text' name='labelFinalButton' value='${form.labelFinalButton!}' />
