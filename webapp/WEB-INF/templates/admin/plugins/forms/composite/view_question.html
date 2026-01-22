@@ -13,47 +13,71 @@ document.addEventListener('DOMContentLoaded', function() {
 		</#if>
 	</#list>
 	var hasCollapse=false,
-			toCollapse=null,
-			stepGroup = $('.display_field_${question.id!''}_${question.iterationNumber}').parentsUntil('.step-content');
-	stepGroup.each( function(){
-		if( $(this).hasClass('step-group-collapsible') ){
-			hasCollapse=$(this).find("div[class*='display_field_']").not(".control_invalid").length == 0,
-					toCollapse=$(this);
+		toCollapse=null,
+		displayFieldElement = document.querySelector('.display_field_${question.id!''}_${question.iterationNumber}'),
+		stepGroup = [];
+	if (displayFieldElement) {
+		var parent = displayFieldElement.parentElement;
+		while (parent && !parent.classList.contains('step-content')) {
+			stepGroup.push(parent);
+			parent = parent.parentElement;
+		}
+	}
+	stepGroup.forEach(function(element) {
+		if (element.classList.contains('step-group-collapsible')) {
+			var displayFields = element.querySelectorAll("div[class*='display_field_']");
+			var visibleFields = Array.from(displayFields).filter(function(el) {
+				return !el.classList.contains('control_invalid');
+			});
+			hasCollapse = visibleFields.length === 0;
+			toCollapse = element;
 		}
 	});
-	var displayField = $('.display_field_${question.id!''}_${question.iterationNumber}');
+	var displayField = document.querySelector('.display_field_${question.id!''}_${question.iterationNumber}');
 	var bOtherStepValidated = true;
 	<#if other_step_validation??>
 		<#if other_step_validation>
-			displayField.show();
-			$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
+			displayField.style.display = '';
+			document.getElementById('${question.id}_${question.iterationNumber}').value = '${question.id}_${question.iterationNumber}';
 		<#else>
-			displayField.hide();
-			displayField.find("[required]").attr("requireddisabled","");
-			displayField.find("[required]").removeAttr("required");
-			$('#${question.id}_${question.iterationNumber}').val('');
+			displayField.style.display = 'none';
+			displayField.querySelectorAll("[required]").forEach(function(el) {
+				el.removeAttribute("required");
+			});
+			document.getElementById('${question.id}_${question.iterationNumber}').value = '';
 			bOtherStepValidated = false;
 		</#if>
 	</#if>
 	<#list list_control as control>
 		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
 		input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
-		input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
+		input${control.id}_${question.iterationNumber}.addEventListener('change', handleControlChange);
+		input${control.id}_${question.iterationNumber}.addEventListener('keyup', handleControlChange);
+		input${control.id}_${question.iterationNumber}.addEventListener('paste', handleControlChange);
+		input${control.id}_${question.iterationNumber}.addEventListener('mouseup', handleControlChange);
+		input${control.id}_${question.iterationNumber}.addEventListener('input', handleControlChange);
+		
+		function handleControlChange() {
 		var nValidControlsCount = 0;
 		var nNotValidControlsCount = 0;
 		<#list list_control as itemControl>
 		var displayItemControl = ${itemControl.listIdQuestion[0]} + "_" + ${question.iterationNumber},
 				input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
-		stepGroup = $('.display_field_${question.id!''}_${question.iterationNumber}').parentsUntil('.step-content');
-		stepGroup.each( function(){
-			if( $(this).hasClass('step-group-collapsible') ){
-				hasCollapse=$(this).find("div[class*='display_field_']").not(".control_invalid").length == 0,
-					toCollapse=$(this);
+		stepGroup = document.querySelectorAll('.display_field_${question.id!''}_${question.iterationNumber}');
+		stepGroup.forEach(function(element) {
+			if (element.classList.contains('step-group-collapsible')) {
+				var displayFields = element.querySelectorAll("div[class*='display_field_']");
+				var visibleFields = Array.from(displayFields).filter(function(el) {
+					return !el.classList.contains('control_invalid');
+				});
+				hasCollapse = visibleFields.length === 0;
+				toCollapse = element;
 			}
 		});
 		var inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
 		// AND condition : if at least 1 control value isn't present, do not display question
-		if($("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid")	|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}')){
+		var controlElement = document.querySelector("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']");
+		if(controlElement.classList.contains("control_invalid") || !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}')){
 			nNotValidControlsCount++;
 		} else {
 			nValidControlsCount++;
@@ -71,14 +95,14 @@ document.addEventListener('DOMContentLoaded', function() {
 				displayField.find("[requireddisabled]").attr("required","");
 				displayField.find("[requireddisabled]").removeAttr("requireddisabled");
 				if( hasCollapse ){ toCollapse.show() }; // Show parent group if is in a collapse step-group
-				$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
+				document.getElementById('${question.id}_${question.iterationNumber}').value = '${question.id}_${question.iterationNumber}';
 			} else {
 				displayField.addClass("control_invalid");
 				displayField.hide();
 				displayField.find("[required]").attr("requireddisabled","");
 				displayField.find("[required]").removeAttr("required");
 				if( hasCollapse ){ toCollapse.hide(); } // Hide parent group if is in a collapse step-group
-				$('#${question.id}_${question.iterationNumber}').val('');
+				document.getElementById('${question.id}_${question.iterationNumber}').value = '';
 			}
 			var currentControl = "${question.id}_${question.iterationNumber}";
 			var currentInput = getInputElement(currentControl);
@@ -97,21 +121,27 @@ document.addEventListener('DOMContentLoaded', function() {
  * preventing validation errors from occurring on non-visible fields during form submission.
  * This function helps ensure that only visible fields are validated as required.
  */
- function toggleRequiredAttributesByVisibility() {
-    $("div[displayControl]").each(function () {
-        var $input = $(this).find("input, select, textarea");
+function toggleRequiredAttributesByVisibility() {
+	document.querySelectorAll("div[displayControl]").forEach(function (div) {
+		var inputs = div.querySelectorAll("input, select, textarea");
 
-        // Check if this element is visible or has the class "control_invalid"
-        if ($(this).hasClass("control_invalid") || $(this).is(":hidden")) {
-            // If hidden or marked invalid, remove required
-            $input.removeAttr("required");
-        } else {
-            // If visible, add required based on initial configuration
-            if ($input.attr("data-mandatory") === "true") {
-                $input.attr("required", "required");
-            }
-        }
-    });
+		// Check if this element is visible or has the class "control_invalid"
+		var isHidden = div.classList.contains("control_invalid") || 
+					   div.offsetParent === null || 
+					   getComputedStyle(div).display === "none";
+
+		inputs.forEach(function (input) {
+			if (isHidden) {
+				// If hidden or marked invalid, remove required
+				input.removeAttribute("required");
+			} else {
+				// If visible, add required based on initial configuration
+				if (input.getAttribute("data-mandatory") === "true") {
+					input.setAttribute("required", "required");
+				}
+			}
+		});
+	});
 }
 </script>
 <#else>
@@ -121,43 +151,55 @@ document.addEventListener('DOMContentLoaded', function() {
 function getInputElement( displayControl ){
 	var types = ['input','select','textarea'];
 	var elm = null;
-	for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++){
-		elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
+	var container = document.querySelector("div[displayControl='" + displayControl + "']");
+	if (!container) return null;
+	
+	for(var i=0; i < types.length && (elm == undefined || elm == null || elm.length <= 0); i++){
+		elm = container.querySelectorAll(types[i]);
+		if (elm.length > 0) break;
 	}
-	if( elm.is('input') ){
-		elm = $('input[name="' + elm.attr('name') + '"]');
+	
+	if (elm && elm.length > 0 && elm[0].tagName.toLowerCase() === 'input') {
+		elm = document.querySelectorAll('input[name="' + elm[0].getAttribute('name') + '"]');
 	}
-	return elm;
+	
+	return elm && elm.length > 0 ? elm : null;
 }
 
 function getFieldValue( elm ){
-	if(elm.is(':radio')){
-		var input = $('input[name="' + elm.attr('name') + '"]:checked');
-		return input.val();
-	} else if (elm.is(':checkbox'))	{
+	if(!elm || elm.length === 0) return '';
+	
+	var firstEl = elm[0];
+	
+	if(firstEl.type === 'radio'){
+		var checkedRadio = document.querySelector('input[name="' + firstEl.name + '"]:checked');
+		return checkedRadio ? checkedRadio.value : '';
+	} else if (firstEl.type === 'checkbox')	{
 		var resultChecked = [];
-		for(var i=0;i< elm.length;i++){
-			if (elm [i].checked){
+		for(var i=0; i < elm.length; i++){
+			if (elm[i].checked){
 				resultChecked.push(elm[i].value);
 			}
 		}
 		return resultChecked;
-	} else if (elm.is('select')) {
-		return elm[0].options[elm[0].selectedIndex].value;
+	} else if (firstEl.tagName.toLowerCase() === 'select') {
+		return firstEl.options[firstEl.selectedIndex].value;
 	}
 	//add other specific implementations here
 	else {
-		return elm.val();
+		return firstEl.value;
 	}
 }
 
-$( function() {
-	$("button[name='action_addIteration']").on("click", function() {
-		var target = "#last_" + $(this).attr("value");
-		var form = $(this).closest("form");
-		var newUrl = form.attr("action").replace(/#current_step$/,target);
-		form.attr("action",newUrl);
+document.addEventListener('DOMContentLoaded', function() {
+	document.querySelectorAll("button[name='action_addIteration']").forEach(function(button) {
+		button.addEventListener("click", function() {
+			var target = "#last_" + this.getAttribute("value");
+			var form = this.closest("form");
+			var newUrl = form.getAttribute("action").replace(/#current_step$/,target);
+			form.setAttribute("action",newUrl);
+		});
 	});
 });
 </script>
-<script type="text/javascript" src="js/jquery/plugins/moment.min.js"></script>
+<script src="js/jquery/plugins/moment.min.js"></script>
