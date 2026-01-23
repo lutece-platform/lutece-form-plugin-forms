@@ -404,7 +404,7 @@ window.addEventListener('message', function(event) {
 </#macro>
 <#macro formModel type='update'>
 <#include "/admin/plugins/asynchronousupload/upload_commons.html" />
-<@addRequiredJsFiles />
+<@addRequiredBOJsFiles />
 <script src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=${uploadHandler.handlerName}" ></script>
 <@row> 
 	<@columns md=6 xl=4 > 
