@@ -1,8 +1,7 @@
 <#include "/admin/plugins/asynchronousupload/upload_commons.html" />
-<@addRequiredJsFiles />
+<@addRequiredBOJsFiles />
 <#assign cssClass='' >
 <#assign helpMsg='' >
-<#assign isDisabled=false >
 <#assign hasError = false />
 <#if list_responses?? && list_responses?has_content>
 <#assign response_error = list_responses[0]>
@@ -11,19 +10,11 @@
 <#assign error = response_error.entry.error>
 <#assign cssClass='is-invalid' >
 </#if>
-<#assign nbFiles=list_responses?size >
 </#if>
-<#assign entryClasses=cssClass>
-<#list entry.CSSClass?split(' ') as laClass><#assign entryClasses += laClass + ' ' ></#list>
-<#assign idName = buildEntryName( entry, entry_iteration_number )>
-<#assign nbMaxFiles = entry.getFieldByCode('max_files').value >
-<#assign maxFileSize = entry.getFieldByCode('file_max_size').value >
-<#assign fieldName=idName >
-<#if nbMaxFiles?number = 1><#assign isMultiple=false ><#else><#assign isMultiple=true ></#if>
+<#assign fieldName=buildEntryName( entry, entry_iteration_number ) >
 <#if list_responses?? && list_responses?has_content><#list list_responses as response><#if response.file?? && response.file.title?? && response.file.title != ''><#if listFiles??><#assign listFiles = listFiles + [response.file] ><#else><#assign listFiles = [response.file] ></#if></#if></#list></#if>
 <#if !listFiles??><#assign listFiles = ''></#if>
-<#if nbMaxFiles?number = listFiles?size><#assign isDisabled=true ></#if>
-<#if entry.helpMessage?exists&&entry.helpMessage!=''><#assign helpMsg=entry.helpMessage /></#if>
-<@addFileBOInput fieldName=fieldName handler=uploadHandler label=entry.title! helpMsg=helpMsg cssClass=entryClasses submitBtnName='action_doSaveStep' multiple=isMultiple type='dropzone' disabled=isDisabled required=entry.mandatory hasError=hasError nbMaxFiles=nbMaxFiles nbFiles=nbFiles maxFileSize=maxFileSize >
-	<@addBOUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles maxFiles=nbMaxFiles />
-</@addFileBOInput>
+<@formLabel labelFor=fieldName labelKey=entry.title! mandatory=required />
+<@addFileBOInput fieldName=fieldName handler=uploadHandler cssClass=cssClass hasError=hasError />
+<#if entry.helpMessage !=''><@formHelp labelFor=fieldName>${entry.helpMessage!}</@formHelp></#if>
+<@addBOUploadedFilesBox fieldName=fieldName handler=uploadHandler listFiles=listFiles  />
