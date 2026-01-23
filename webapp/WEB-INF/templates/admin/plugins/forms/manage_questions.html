@@ -105,7 +105,7 @@
                                                         <@span class='searchable'>${composite.title!?replace('- hidden','')}</@span>
                                                      </@h>
                                                 </@div>
-                                                <@div class='mt-2 ms-auto me-1' >
+                                                <@div class='ms-auto me-1' >
                                                     <#if ( composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content ) || composite.formDisplay.displayControl??>
                                                         <#if composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content>
                                                             <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn btn-outline-secondary me-2' title='#i18n{forms.modify_form.accesscontrol.label}' buttonIcon='settings-check' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION"' />
