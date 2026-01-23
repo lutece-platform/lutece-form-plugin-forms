@@ -2,41 +2,49 @@
 <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <@addRequiredJsFiles />
 <script src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
-<script src="js/jquery/plugins/forms/moment.min.js" ></script>
 <script>
-function getInputElement(displayControl){
-var types = ['input','select','textarea'];
-var elm = null;
-for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++){
-	elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
-}
-
-if(elm.is('input')){
-	elm = $('input[name="' + elm.attr('name') + '"]');
-}
-return elm;
-}
-
-function getFieldValue(elm){
-if(elm.is(':radio'))
-{
-	var input = $('input[name="' + elm.attr('name') + '"]:checked');
-	return input.val();
-} else if (elm.is(':checkbox')){
-	var resultChecked = [];
-	for(var i=0;i< elm.length;i++){
-		if (elm [i].checked){
-			resultChecked.push(elm[i].value);
-		}
+function getInputElement( displayControl ){
+	const types = ['input','select','textarea'];
+	let elm = null;
+	const container = document.querySelector("div[displayControl='" + displayControl + "']");
+	if (!container) return [];
+	
+	for(let i=0; i<types.length && (elm == null || elm.length === 0); i++){
+		elm = container.querySelectorAll(types[i]);
 	}
-	return resultChecked;
-} else if (elm.is('select')) {
-	return elm[0].options[elm[0].selectedIndex].value;
+	
+	if( elm && elm.length > 0 && elm[0].tagName.toLowerCase() === 'input' ){
+		elm = document.querySelectorAll('input[name="' + elm[0].getAttribute('name') + '"]');
+	}
+	return elm ? Array.from(elm) : [];
 }
-//add other specific implementations here
-else {
-	return elm.val();
-}
+
+function getFieldValue(elm) {
+	if (!elm) return null;
+	
+	// Handle NodeList from querySelectorAll
+	if (elm instanceof NodeList) {
+		elm = Array.from(elm);
+	}
+	
+	// Handle array of elements (radio/checkbox)
+	if (Array.isArray(elm)) {
+		const firstElm = elm[0];
+		if (firstElm && firstElm.type === 'radio') {
+			const checked = elm.find(el => el.checked);
+			return checked ? checked.value : null;
+		} else if (firstElm && firstElm.type === 'checkbox') {
+			return elm.filter(el => el.checked).map(el => el.value);
+		}
+		return firstElm ? firstElm.value : null;
+	}
+	
+	// Handle single element
+	if (elm.tagName.toLowerCase() === 'select') {
+		return elm.options[elm.selectedIndex].value;
+	}
+	
+	return elm.value;
 }
 </script>
 <form id="form-validate" action="jsp/site/Portal.jsp?page=forms" method="post" enctype="multipart/form-data">
@@ -58,24 +66,21 @@ else {
 	#i18n{forms.create_entry.warning.upload.inprogress}
 </div>
 <script>
-	let isUploading = false;
+let isUploading = false;
+document.addEventListener('fileuploadstart', function () {
+	isUploading = true;
+});
 
-	$(document).on('fileuploadstart', function () {
-		isUploading = true;
+document.addEventListener('fileuploadstop', function () {
+	isUploading = false;
+	document.getElementById('upload-info-message').classList.add('d-none');
+});
 
-	});
-
-	$(document).on('fileuploadstop', function () {
-		isUploading = false;
-		$('#upload-info-message').addClass('d-none');
-	});
-
-	$('#form-validate').on('submit', function(e) {
-		if (isUploading) {
-			e.preventDefault();
-			$('#upload-info-message').removeClass('d-none');
-		}
-	});
-
+document.getElementById('form-validate').addEventListener('submit', function(e) {
+	if (isUploading) {
+		e.preventDefault();
+		document.getElementById('upload-info-message').classList.remove('d-none');
+	}
+});
 </script>
 </@cTpl>

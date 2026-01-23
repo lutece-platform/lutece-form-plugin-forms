@@ -9,3 +9,19 @@
 ${stepContent}
 </@boxBody>
 </@box>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+	/* Check if step-group has all field hidden due to conditionnal behavior */
+	document.querySelectorAll('.step-group').forEach(function(stepGroup) {
+		var countField = stepGroup.querySelectorAll('.form-group').length;
+		var countCond = stepGroup.querySelectorAll('div[class*="display_field_"]').length;
+		var countCondVisible = Array.from(stepGroup.querySelectorAll('div[class*="display_field_"]')).filter(function(el) {
+			return el.offsetParent !== null;
+		}).length;
+
+		if (countField === countCond && countCond > 0 && countCondVisible === 0) {
+			stepGroup.classList.add('d-none', 'step-group-collapsible');
+		}
+	});
+});
+</script>

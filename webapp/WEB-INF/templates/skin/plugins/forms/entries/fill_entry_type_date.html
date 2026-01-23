@@ -1,13 +1,8 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-  <#if getError( list_responses, entry )?? >
-    <#assign error = getError( list_responses, entry ) >
-  </#if>
-  <#if getResponse( list_responses, entry )?? >
-    <#assign response = getResponse( list_responses, entry ) >
-  </#if> 
-  
-  <div class="mb-3 row">
+<#if getError( list_responses, entry )?? ><#assign error = getError( list_responses, entry ) ></#if>
+<#if getResponse( list_responses, entry )?? ><#assign response = getResponse( list_responses, entry ) ></#if> 
+<div class="mb-3 row">
     <#assign idName = buildEntryName( entry, entry_iteration_number )>
     <label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>	
     <div class="col-12">
@@ -45,21 +40,23 @@
 		</#if>
       </div>
     </div>
-  </div>
- 
+</div>
 <#assign default=''>
-<#if field.valueTypeDate?? >
-	<#assign default=field.valueTypeDate?iso_local>
-</#if>
-								
-  <@getDate idField="${idName}" language=locale.language defaultDate=default/>	
-  <script type="text/javascript" src="js/jquery/plugins/moment.min.js"></script>
-  <script type="text/javascript">
-    $( document ).ready(function() {
-      $("#attribute${idName}").on('changeDate', function(ev){
-        $(this).datepicker('hide');
-      });
+<#if field.valueTypeDate?? ><#assign default=field.valueTypeDate?iso_local></#if>
+<@getDate idField="${idName}" language=locale.language defaultDate=default/>	
+<script src="themes/shared/plugins/forms/moment.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var dateInput = document.getElementById('${idName}');
+    if (dateInput) {
+    dateInput.addEventListener('changeDate', function(ev) {
+      var datepicker = bootstrap.Datepicker.getInstance(this);
+      if (datepicker) {
+        datepicker.hide();
+      }
     });
-  </script>
+    }
+});
+</script>
 </#if>
 </@cTpl>

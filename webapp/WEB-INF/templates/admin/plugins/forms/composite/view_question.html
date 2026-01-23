@@ -6,111 +6,121 @@ document.addEventListener('DOMContentLoaded', function() {
 	<#assign validNames = [] />
 	<#list list_validator as validator>
 		<#if !validNames?seq_contains(validator.validatorBeanName)>
-		<#assign validNames = validNames + [validator.validatorBeanName] />
-		function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue)	{
-			${validator.getJavascriptValidation()!'return true;'}
-		}
+			<#assign validNames = validNames + [validator.validatorBeanName] />
+			function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue)
+			{
+				${validator.getJavascriptValidation()!'return true;'}
+			}
 		</#if>
 	</#list>
-	var hasCollapse=false,
-		toCollapse=null,
-		displayFieldElement = document.querySelector('.display_field_${question.id!''}_${question.iterationNumber}'),
-		stepGroup = [];
-	if (displayFieldElement) {
-		var parent = displayFieldElement.parentElement;
-		while (parent && !parent.classList.contains('step-content')) {
-			stepGroup.push(parent);
+
+	function getParentsUntil(element, stopSelector) {
+		var parents = [];
+		var parent = element.parentElement;
+		while (parent && !parent.matches(stopSelector)) {
+			parents.push(parent);
 			parent = parent.parentElement;
 		}
+		return parents;
 	}
-	stepGroup.forEach(function(element) {
-		if (element.classList.contains('step-group-collapsible')) {
-			var displayFields = element.querySelectorAll("div[class*='display_field_']");
-			var visibleFields = Array.from(displayFields).filter(function(el) {
-				return !el.classList.contains('control_invalid');
-			});
-			hasCollapse = visibleFields.length === 0;
-			toCollapse = element;
+
+	var hasCollapse=false, 
+		toCollapse=null,
+		displayFieldEl = document.querySelector('.display_field_${question.id!''}_${question.iterationNumber}'),
+		stepGroup = displayFieldEl ? getParentsUntil(displayFieldEl, '.step-content') : [];
+	stepGroup.forEach(function(el){
+		if( el.classList.contains('step-group-collapsible') ){
+			hasCollapse = el.querySelectorAll("div[class*='display_field_']:not(.control_invalid)").length == 0;
+			toCollapse = el;
 		}
 	});
 	var displayField = document.querySelector('.display_field_${question.id!''}_${question.iterationNumber}');
 	var bOtherStepValidated = true;
 	<#if other_step_validation??>
 		<#if other_step_validation>
-			displayField.style.display = '';
+			if (displayField) displayField.style.display = '';
 			document.getElementById('${question.id}_${question.iterationNumber}').value = '${question.id}_${question.iterationNumber}';
 		<#else>
-			displayField.style.display = 'none';
-			displayField.querySelectorAll("[required]").forEach(function(el) {
-				el.removeAttribute("required");
-			});
+			if (displayField) {
+				displayField.style.display = 'none';
+				displayField.querySelectorAll("[required]").forEach(function(el) {
+					el.setAttribute("requireddisabled", "");
+					el.removeAttribute("required");
+				});
+			}
 			document.getElementById('${question.id}_${question.iterationNumber}').value = '';
 			bOtherStepValidated = false;
 		</#if>
 	</#if>
+	
 	<#list list_control as control>
 		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
 		input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
-		input${control.id}_${question.iterationNumber}.addEventListener('change', handleControlChange);
-		input${control.id}_${question.iterationNumber}.addEventListener('keyup', handleControlChange);
-		input${control.id}_${question.iterationNumber}.addEventListener('paste', handleControlChange);
-		input${control.id}_${question.iterationNumber}.addEventListener('mouseup', handleControlChange);
-		input${control.id}_${question.iterationNumber}.addEventListener('input', handleControlChange);
-		
-		function handleControlChange() {
-		var nValidControlsCount = 0;
-		var nNotValidControlsCount = 0;
-		<#list list_control as itemControl>
-		var displayItemControl = ${itemControl.listIdQuestion[0]} + "_" + ${question.iterationNumber},
-				input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
-		stepGroup = document.querySelectorAll('.display_field_${question.id!''}_${question.iterationNumber}');
-		stepGroup.forEach(function(element) {
-			if (element.classList.contains('step-group-collapsible')) {
-				var displayFields = element.querySelectorAll("div[class*='display_field_']");
-				var visibleFields = Array.from(displayFields).filter(function(el) {
-					return !el.classList.contains('control_invalid');
+		['change', 'keyup', 'paste', 'mouseup', 'input'].forEach(function(eventType) {
+			input${control.id}_${question.iterationNumber}.forEach(function(inputEl) {
+				inputEl.addEventListener(eventType, function(){
+					var nValidControlsCount = 0;
+					var nNotValidControlsCount = 0;
+					<#list list_control as itemControl>
+						var displayItemControl = ${itemControl.listIdQuestion[0]} + "_" + ${question.iterationNumber},
+						input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
+						stepGroup = displayFieldEl ? getParentsUntil(displayFieldEl, '.step-content') : [];
+						stepGroup.forEach(function(el){
+							if( el.classList.contains('step-group-collapsible') ){
+								hasCollapse = el.querySelectorAll("div[class*='display_field_']:not(.control_invalid)").length == 0;
+								toCollapse = el;
+							}
+						});
+						inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
+						// AND condition : if at least 1 control value isn't present, do not display question
+						var controlDiv = document.querySelector("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']");
+						if((controlDiv && controlDiv.classList.contains("control_invalid"))	|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}')){
+							nNotValidControlsCount++;
+						} else {
+							nValidControlsCount++;
+						}
+					</#list>
+					var bIsQuestionDisplayed;
+					<#if logical_operator_label == 'or'>
+						bIsQuestionDisplayed = (nValidControlsCount > 0) || bOtherStepValidated;
+					<#else>
+						bIsQuestionDisplayed = (nNotValidControlsCount == 0) && bOtherStepValidated;
+					</#if>
+					if(bIsQuestionDisplayed)
+					{
+						if (displayField) {
+							displayField.classList.remove("control_invalid");
+							displayField.style.display = '';
+							displayField.querySelectorAll("[requireddisabled]").forEach(function(el) {
+								el.setAttribute("required", "");
+								el.removeAttribute("requireddisabled");
+							});
+						}
+						if( hasCollapse && toCollapse ){ toCollapse.style.display = ''; }; // Show parent group if is in a collapse step-group
+						document.getElementById('${question.id}_${question.iterationNumber}').value = '${question.id}_${question.iterationNumber}';
+					} else {
+						if (displayField) {
+							displayField.classList.add("control_invalid");
+							displayField.style.display = 'none';
+							displayField.querySelectorAll("[required]").forEach(function(el) {
+								el.setAttribute("requireddisabled", "");
+								el.removeAttribute("required");
+							});
+						}
+						if( hasCollapse && toCollapse ){ toCollapse.style.display = 'none'; } // Hide parent group if is in a collapse step-group
+						document.getElementById('${question.id}_${question.iterationNumber}').value = '';
+					}
+					var currentControl = "${question.id}_${question.iterationNumber}";
+					var currentInput = getInputElement(currentControl);
+					if ( currentInput[0] != undefined && currentInput[0].type != 'file' ){
+						currentInput[0].dispatchEvent(new Event('change', { bubbles: true }));
+					}
 				});
-				hasCollapse = visibleFields.length === 0;
-				toCollapse = element;
-			}
+			});
 		});
-		var inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
-		// AND condition : if at least 1 control value isn't present, do not display question
-		var controlElement = document.querySelector("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']");
-		if(controlElement.classList.contains("control_invalid") || !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}')){
-			nNotValidControlsCount++;
-		} else {
-			nValidControlsCount++;
+		if (input${control.id}_${question.iterationNumber}[0]) {
+			input${control.id}_${question.iterationNumber}[0].dispatchEvent(new Event('change', { bubbles: true }));
 		}
-		</#list>
-			var bIsQuestionDisplayed;
-			<#if logical_operator_label == 'or'>
-			bIsQuestionDisplayed = (nValidControlsCount > 0) || bOtherStepValidated;
-			<#else>
-			bIsQuestionDisplayed = (nNotValidControlsCount == 0) && bOtherStepValidated;
-			</#if>
-			if(bIsQuestionDisplayed){
-				displayField.removeClass("control_invalid");
-				displayField.show();
-				displayField.find("[requireddisabled]").attr("required","");
-				displayField.find("[requireddisabled]").removeAttr("requireddisabled");
-				if( hasCollapse ){ toCollapse.show() }; // Show parent group if is in a collapse step-group
-				document.getElementById('${question.id}_${question.iterationNumber}').value = '${question.id}_${question.iterationNumber}';
-			} else {
-				displayField.addClass("control_invalid");
-				displayField.hide();
-				displayField.find("[required]").attr("requireddisabled","");
-				displayField.find("[required]").removeAttr("required");
-				if( hasCollapse ){ toCollapse.hide(); } // Hide parent group if is in a collapse step-group
-				document.getElementById('${question.id}_${question.iterationNumber}').value = '';
-			}
-			var currentControl = "${question.id}_${question.iterationNumber}";
-			var currentInput = getInputElement(currentControl);
-			if ( currentInput[0] != undefined && currentInput[0].type != 'file' ){
-				currentInput.change();
-			}
-		});
-		input${control.id}_${question.iterationNumber}.change();
 		toggleRequiredAttributesByVisibility();
 	</#list>
 });

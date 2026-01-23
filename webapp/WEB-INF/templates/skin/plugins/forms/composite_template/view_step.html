@@ -37,18 +37,19 @@
 	</div>
 </div>
 <script>
-    $( function() {
-        /* Check if step-group has all field hidden due to conditionnal behavior */
-        $(".step-group").each( function(){
-            var count_field = $(this).find( '.form-group').length,
-                count_cond =  $(this).find( 'div[class*="display_field_"]' ).length,
-                count_cond_visible = $(this).find( 'div[class*="display_field_"]:visible' ).length;
+document.addEventListener('DOMContentLoaded', function() {
+	/* Check if step-group has all field hidden due to conditionnal behavior */
+	document.querySelectorAll('.step-group').forEach(function(stepGroup) {
+		var countField = stepGroup.querySelectorAll('.form-group').length;
+		var countCond = stepGroup.querySelectorAll('div[class*="display_field_"]').length;
+		var countCondVisible = Array.from(stepGroup.querySelectorAll('div[class*="display_field_"]')).filter(function(el) {
+			return el.offsetParent !== null;
+		}).length;
 
-            if( count_field == count_cond &&  count_cond > 0 &&  count_cond_visible==0 ){
-                $(this).toggle();
-                $(this).addClass('step-group-collapsible');
-            }
-        });
-    });
+		if (countField === countCond && countCond > 0 && countCondVisible === 0) {
+			stepGroup.classList.add('d-none', 'step-group-collapsible');
+		}
+	});
+});
 </script>
 </@cTpl>  

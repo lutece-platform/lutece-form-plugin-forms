@@ -1,5 +1,5 @@
 <#if current_step_index?? && current_step_index=0><#assign current_step_index = ' &gt; ' /></#if>
-<@box>
+<@box class='step step-current' id='step-${step.id}'>
 	<@boxHeader title=step.title params='data-step="${current_step_index!}"' />
 	<@boxBody id='step-content'>
     ${stepContent}

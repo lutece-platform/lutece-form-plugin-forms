@@ -20,10 +20,10 @@
 	</div>
 </#if>
 <script>
-$( function(){
-	var dataImg = sessionStorage.getItem('data${entry.idEntry}' );
-	if( dataImg != null && dataImg !="" ){
-		img${entry.idEntry}.setAttribute('src', dataImg );
+document.addEventListener('DOMContentLoaded', function() {
+	var dataImg = sessionStorage.getItem('data${entry.idEntry}');
+	if (dataImg != null && dataImg != "") {
+		document.getElementById('img${entry.idEntry}').setAttribute('src', dataImg);
 	}
 });
 </script>

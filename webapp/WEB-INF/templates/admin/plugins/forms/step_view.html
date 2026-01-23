@@ -27,14 +27,13 @@
 		</@box>
 	</@pageColumn>
 </@pageContainer>
-<script src="js/jquery/plugins/moment.min.js" ></script>
-<script src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
+<script src="jsp/admin/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
 <script>
 function getInputElement( displayControl ){
 	const types = ['input','select','textarea'];
 	let elm = null;
 	const container = document.querySelector("div[displayControl='" + displayControl + "']");
-	if (!container) return null;
+	if (!container) return [];
 	
 	for(let i=0; i<types.length && (elm == null || elm.length === 0); i++){
 		elm = container.querySelectorAll(types[i]);
@@ -43,34 +42,36 @@ function getInputElement( displayControl ){
 	if( elm && elm.length > 0 && elm[0].tagName.toLowerCase() === 'input' ){
 		elm = document.querySelectorAll('input[name="' + elm[0].getAttribute('name') + '"]');
 	}
-	return elm;
+	return elm ? Array.from(elm) : [];
 }
 
-function getFieldValue( elm ){
-	if(!elm || elm.length === 0) return null;
+function getFieldValue(elm) {
+	if (!elm) return null;
 	
-	const firstElm = elm[0];
+	// Handle NodeList from querySelectorAll
+	if (elm instanceof NodeList) {
+		elm = Array.from(elm);
+	}
 	
-	if(firstElm.type === 'radio'){
-		const checked = document.querySelector('input[name="' + firstElm.name + '"]:checked');
-		return checked ? checked.value : null;
-	} else if (firstElm.type === 'checkbox') {
-		const resultChecked = [];
-		elm.forEach(checkbox => {
-			if (checkbox.checked) {
-				resultChecked.push(checkbox.value);
-			}
-		});
-		return resultChecked;
-	} else if (firstElm.tagName.toLowerCase() === 'select') {
-		return firstElm.options[firstElm.selectedIndex].value;
+	// Handle array of elements (radio/checkbox)
+	if (Array.isArray(elm)) {
+		const firstElm = elm[0];
+		if (firstElm && firstElm.type === 'radio') {
+			const checked = elm.find(el => el.checked);
+			return checked ? checked.value : null;
+		} else if (firstElm && firstElm.type === 'checkbox') {
+			return elm.filter(el => el.checked).map(el => el.value);
+		}
+		return firstElm ? firstElm.value : null;
 	}
-	//add other specific implementations here
-	else {
-		return firstElm.value;
+	
+	// Handle single element
+	if (elm.tagName.toLowerCase() === 'select') {
+		return elm.options[elm.selectedIndex].value;
 	}
+	
+	return elm.value;
 }
-
 
 document.addEventListener("DOMContentLoaded", function(){
 	document.querySelectorAll("button[name='action_addIteration']").forEach(button => {
@@ -142,15 +143,12 @@ document.addEventListener("DOMContentLoaded", function(){
 
 	/* Error Scroll                           */
 	// Add smooth scrolling to all links
-	const firstInvalidElements = document.querySelectorAll('.is-invalid'), currentStepId = document.querySelector('.step.step-current .step-title .step-number').textContent.trim();
+	const firstInvalidElements = document.querySelectorAll('.is-invalid');
 
 	if ( firstInvalidElements.length > 0 ) {
 		firstInvalidElements[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
-	} else if ( !isNaN(parseInt(currentStepId)) && parseInt(currentStepId) > 1 ) {
-		const current = document.querySelector('#current_step');
-		const y = current.offsetTop - 220;
-		window.scrollBy(0, y);
-	}	
+	}
+		
 });
 
 

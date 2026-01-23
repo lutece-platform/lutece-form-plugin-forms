@@ -15,30 +15,28 @@
         <#include "/skin/plugins/carto/manage_map.html" />
     </div>
 </div>	
-
 <script>
-	$(window).on('load', function(){
-		// Retrieve the map object.
-		var map = mapsPlaceholder.pop();
-		
-		var geojson = ${coordinate};
-		
-		if ( geojson["geometry"]["type"] == "Point" ) {
-			var coordinates = geojson["geometry"]["coordinates"];
-			var marker = L.marker([coordinates[1],coordinates[0]]).addTo(map);
-		}
-		else if ( geojson["geometry"]["type"] == "Polygon" ) {
-			var coordinates = geojson["geometry"]["coordinates"][0];
-			var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
-			var polygon = L.polygon(inverseCoord ).addTo(map);
-		}
-		else if ( geojson["geometry"]["type"] == "Polyline" ) {
-			var coordinates = geojson["geometry"]["coordinates"];
-			var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
-			var polyline = L.polyline(inverseCoord ).addTo(map);
-		}
-		
-	});
+document.addEventListener('DOMContentLoaded', function(){
+	// Retrieve the map object.
+	var map = mapsPlaceholder.pop();
+	
+	var geojson = ${coordinate};
+	
+	if ( geojson["geometry"]["type"] == "Point" ) {
+		var coordinates = geojson["geometry"]["coordinates"];
+		var marker = L.marker([coordinates[1],coordinates[0]]).addTo(map);
+	}
+	else if ( geojson["geometry"]["type"] == "Polygon" ) {
+		var coordinates = geojson["geometry"]["coordinates"][0];
+		var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
+		var polygon = L.polygon(inverseCoord ).addTo(map);
+	}
+	else if ( geojson["geometry"]["type"] == "Polyline" ) {
+		var coordinates = geojson["geometry"]["coordinates"];
+		var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
+		var polyline = L.polyline(inverseCoord ).addTo(map);
+	}
+	
+});
 </script>          
-
 </@cTpl>

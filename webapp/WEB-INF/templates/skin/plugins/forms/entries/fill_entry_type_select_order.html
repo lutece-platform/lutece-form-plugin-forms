@@ -77,28 +77,83 @@
 		</#if>
 	</div>
 	<script>
-		$(function () {
-			$("#sortable1, #sortable2").sortable({
-				connectWith: ".connectedSortable"
-			}).disableSelection();
-
-			$('form').submit(function () {
-				// If we are using the selection/sorting from one list to another
-				if ( "${isMultiListSelection?c}" === "true" ) {
-					// Only retrieve the selected items from the 2nd list
-					$('#${idName}').val($("#sortable2").sortable("serialize").replaceAll('&', ';'));
-				}
-				// If we are using the standard single list, with sorting only
-				else {
-					// Retrieve the items from the original/main list
-					if ($("#sortable2 li").length === 0) {
-						$('#${idName}').val($("#sortable1").sortable("serialize").replaceAll('&', ';'));
+		document.addEventListener('DOMContentLoaded', function() {
+			const sortable1 = document.getElementById('sortable1');
+			const sortable2 = document.getElementById('sortable2');
+			const hiddenInput = document.getElementById('${idName}');
+			
+			function enableDragAndDrop(container) {
+				container.querySelectorAll('li').forEach(item => {
+					item.setAttribute('draggable', 'true');
+					item.addEventListener('dragstart', handleDragStart);
+					item.addEventListener('dragend', handleDragEnd);
+				});
+				
+				container.addEventListener('dragover', handleDragOver);
+				container.addEventListener('drop', handleDrop);
+			}
+			
+			let draggedItem = null;
+			
+			function handleDragStart(e) {
+				draggedItem = this;
+				this.classList.add('opacity-50');
+			}
+			
+			function handleDragEnd(e) {
+				this.classList.remove('opacity-50');
+				draggedItem = null;
+			}
+			
+			function handleDragOver(e) {
+				e.preventDefault();
+			}
+			
+			function handleDrop(e) {
+				e.preventDefault();
+				if (draggedItem && this.classList.contains('connectedSortable')) {
+					const afterElement = getDragAfterElement(this, e.clientY);
+					if (afterElement == null) {
+						this.appendChild(draggedItem);
+					} else {
+						this.insertBefore(draggedItem, afterElement);
 					}
-					// Retrieve the items from the list containing the user's selection
-					else {
-						$('#${idName}').val($("#sortable2").sortable("serialize").replaceAll('&', ';'));
-					}
 				}
+			}
+			
+			function getDragAfterElement(container, y) {
+				const draggableElements = [...container.querySelectorAll('li:not(.opacity-50)')];
+				return draggableElements.reduce((closest, child) => {
+					const box = child.getBoundingClientRect();
+					const offset = y - box.top - box.height / 2;
+					if (offset < 0 && offset > closest.offset) {
+						return { offset: offset, element: child };
+					} else {
+						return closest;
+					}
+				}, { offset: Number.NEGATIVE_INFINITY }).element;
+			}
+			
+			function serializeList(container) {
+				const items = container.querySelectorAll('li');
+				return Array.from(items).map(item => 'field[]=' + item.id.replace('field_', '')).join(';');
+			}
+			
+			enableDragAndDrop(sortable1);
+			enableDragAndDrop(sortable2);
+			
+			document.querySelectorAll('form').forEach(form => {
+				form.addEventListener('submit', function() {
+					if ("${isMultiListSelection?c}" === "true") {
+						hiddenInput.value = serializeList(sortable2);
+					} else {
+						if (sortable2.querySelectorAll('li').length === 0) {
+							hiddenInput.value = serializeList(sortable1);
+						} else {
+							hiddenInput.value = serializeList(sortable2);
+						}
+					}
+				});
 			});
 		});
 	</script>

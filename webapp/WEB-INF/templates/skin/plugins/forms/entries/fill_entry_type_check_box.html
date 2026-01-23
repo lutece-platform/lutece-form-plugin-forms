@@ -97,7 +97,7 @@
 			</div>
 	</div>
 	<#if list_responses??>
-		<script type="text/javascript">
+		<script>
 		<#list list_responses as response>
 			var idName = '';
 			<#if entry_iteration_number?has_content >
@@ -116,7 +116,7 @@
 	<#else>
 		<#list entry.fields as field>
 			<#if field.defaultValue && field.conditionalQuestions?exists && field.conditionalQuestions?size != 0>
-				<script type="text/javascript">
+				<script>
 					var idName = '';
 					<#if entry_iteration_number?has_content >
 						idName = '_nIt' + ${entry_iteration_number} + '_';
