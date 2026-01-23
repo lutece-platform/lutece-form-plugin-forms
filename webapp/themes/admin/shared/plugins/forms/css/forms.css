@@ -514,7 +514,16 @@ table.table-hover tbody tr:hover {
 /*** 										***/
 /*** File Input								***/
 /***  										***/
-/* Jquery and BS ovveride 					  */
+/* BS ovveride 					  */
+.file-input {
+    margin-block-start: var( --spacing-xxs );
+    max-width: 100%;
+    padding: var( --spacing-m ) var( --spacing-l );
+    background-color: var(--file-dropzone-color);
+    border: 2.5px dashed var(--file-dropzone-border-color);
+    border-radius: 8px;
+    text-align: center;
+}
 
 .fileinput-button {
 	position: relative;
