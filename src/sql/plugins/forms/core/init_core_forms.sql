@@ -44,9 +44,9 @@ INSERT INTO core_user_role (role_key,id_user) VALUES ('forms_manager',2);
 -- Dumping data for table core_admin_role_resource
 --
 DELETE FROM core_admin_role_resource WHERE role_key = 'forms_manager';
-INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (1907,'forms_manager','FORMS_FORM','*','*');
-INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (1908,'forms_multiview','FORM_PANEL_CONF','*','*');
-INSERT INTO core_admin_role_resource (rbac_id,role_key,resource_type,resource_id,permission) VALUES (1909,'forms_manager','GLOBAL_FORMS_ACTION','','');
+INSERT INTO core_admin_role_resource (role_key,resource_type,resource_id,permission) VALUES ('forms_manager','FORMS_FORM','*','*');
+INSERT INTO core_admin_role_resource (role_key,resource_type,resource_id,permission) VALUES ('forms_multiview','FORM_PANEL_CONF','*','*');
+INSERT INTO core_admin_role_resource (role_key,resource_type,resource_id,permission) VALUES ('forms_manager','GLOBAL_FORMS_ACTION','','');
 --
 -- Init  table core_dashboard
 --
