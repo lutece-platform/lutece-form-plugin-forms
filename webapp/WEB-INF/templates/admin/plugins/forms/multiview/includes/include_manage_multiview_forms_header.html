@@ -1,13 +1,13 @@
 <@input type='hidden' name='current_selected_panel' value='${current_selected_panel!""}' />
 <#if form_filter_list?has_content><#list form_filter_list as form_filter>${form_filter.template!''}</#list></#if>
 <#if multiviewExportAction?? >
-<@formGroup formStyle='inline' labelFor='format_export' class='forms-filter w-100 order-3 mt-2 pt-2 border-top border-secondary' labelKey='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' groupStyle='addons' rows=2>
-<@inputGroup>
-	<@select name='format_export' id='format_export' default_value='' items=format_export_list title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content  />
-	<@button type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' hideTitle=['all'] disabled=!table_template?has_content buttonIcon='download' />
-	</@inputGroup>
-</@formGroup>
+	<@formGroup formStyle='inline' labelFor='format_export' class='forms-filter w-100 order-3 mt-2 pt-2 border-top border-secondary' labelKey='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' groupStyle='addons' rows=2>
+		<@inputGroup>
+			<@select name='format_export' id='format_export' default_value='' items=format_export_list title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' disabled=!table_template?has_content  />
+			<@button type='submit' id='action_doExportResponses' name='action_doExportResponses' title='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' hideTitle=['all'] disabled=!table_template?has_content buttonIcon='download' />
+		</@inputGroup>
+	</@formGroup>
+</#if>
 <#if multiviewConfigAction??>
 	<@aButton name='btn_multiview_config' id='btn_multiview_config' class='btn btn-outline-primary w-100 order-4 mt-5' href='${multiviewConfigAction.url!}' params='' title='${multiviewConfigAction.name}' buttonIcon='${multiviewConfigAction.iconUrl}' />
-</#if>
 </#if>
