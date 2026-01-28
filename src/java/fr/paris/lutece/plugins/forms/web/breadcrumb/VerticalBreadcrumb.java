@@ -58,8 +58,10 @@ public class VerticalBreadcrumb implements IBreadcrumb
 {
 	public static final String BEAN_NAME = "forms.verticalBreadcrumb";
     private static final String TEMPLATE_BREADCRUMB_HTML = "/util/plugins/forms/breadcrumb/vertical_breadcrumb.html";
-    private final String _strBreadcrumbBeanName;
-    private final String _strBreadcrumbDisplayBeanName;
+    private String _strBreadcrumbBeanName;
+    private String _strBreadcrumbDisplayBeanName;
+
+    VerticalBreadcrumb( ) { }
 
     /**
      * Constructor of the HorizontalBreadcrumb
