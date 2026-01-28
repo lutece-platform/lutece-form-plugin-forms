@@ -11,15 +11,15 @@
 <#if tab='questions'><#assign active = true /><#else><#assign active = false /></#if>
 <@tabLink active=active href='jsp/admin/plugins/forms/ManageForms.jsp?view=manageQuestionPublication&id_form=${form.id}' tabIcon='cog' title='#i18n{forms.modify_form.tab.labelQuestion}' />
 <#if tab='multiview'><#assign active = true /><#else><#assign active = false /></#if>
-<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp?view=manageMultiview&id_form=${form.id}' tabIcon='list-alt' title='#i18n{forms.modify_form.tab.labelMultiview}' />
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormMultiviewConfig.jsp?view=manageMultiview&id_form=${form.id}' tabIcon='list-details' title='#i18n{forms.modify_form.tab.labelMultiview}' />
 <#if tab='workflow'><#assign active = true /><#else><#assign active = false /></#if>
-<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormWorkflowConfig.jsp?view=manageWorkflow&id_form=${form.id}' tabIcon='tasks' title='#i18n{forms.modify_form.tab.labelWorkflow}' />
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageFormWorkflowConfig.jsp?view=manageWorkflow&id_form=${form.id}' tabIcon='arrow-guide' title='#i18n{forms.modify_form.tab.labelWorkflow}' />
 <#if tab='graphic'><#assign active = true /><#else><#assign active = false /></#if>
-<@tabLink active=active href='jsp/admin/plugins/forms/ManageSteps.jsp?view=graphicView&id_form=${form.id}' tabIcon='project-diagram' title='#i18n{forms.modify_form.tab.graphicView}' />
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageSteps.jsp?view=graphicView&id_form=${form.id}' tabIcon='sitemap' title='#i18n{forms.modify_form.tab.graphicView}' />
 </#if>
 <#if type='steps'>
 <#if tab='questions'><#assign active = true /><#else><#assign active = false /></#if>
-<@tabLink active=active href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' tabIcon='th-list' title='#i18n{forms.manage_questions.title}' />
+<@tabLink active=active href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' tabIcon='list' title='#i18n{forms.manage_questions.title}' />
 <#if tab='transitions' || tab='general'><#assign active = true /><#else><#assign active = false /></#if>
 <@tabLink active=active href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' tabIcon='cog' title='#i18n{forms.modify_step.labelTitle}' />
 </#if>
