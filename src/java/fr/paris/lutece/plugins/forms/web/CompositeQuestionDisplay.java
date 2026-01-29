@@ -242,7 +242,7 @@ public class CompositeQuestionDisplay implements ICompositeDisplay
             _model.put( FormsConstants.MARK_QUESTION, _question );
             if ( _formDisplay.getDisplayControl( ) != null )
             {
-                List<Control> listControl = ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ), ControlType.CONDITIONAL );
+                List<Control> listControl = new ArrayList<>(ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ), ControlType.CONDITIONAL ));
                 List<Control> listOtherStepControl = new ArrayList<>();
                 List<IValidator> listValidator = new ArrayList<>();
                 Boolean bOtherStepValidation = null;
