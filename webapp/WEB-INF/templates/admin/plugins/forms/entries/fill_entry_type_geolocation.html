@@ -13,13 +13,18 @@
 <#assign errorMsg><#if hasError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
 <#assign helpMsg><#if entry.helpMessage?? && entry.helpMessage!=''>${entry.helpMessage}</#if></#assign>
 <#assign iterationNumber = entry_iteration_number?c >
+<#assign hasCheckAddress = entry.CSSClass?? && entry.CSSClass?contains("checkaddress") />
 <#if entry.fields??>
 <#assign addressField = getFieldValueByCode( entry, "address" )>
 <#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
 <#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
 </#if>
+<#assign useAddressAutocomplete = entry.mapProvider?? && entry.mapProvider?has_content && (entry.mapProvider.key! == 'wsaddress' || entry.mapProvider.key! == 'openstreetmap') />
+<#if useAddressAutocomplete>
+    <#include "/admin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
+</#if>
 <#if entry.mapProvider??>
-    <@formGroup labelFor='${idName}' labelKey='${entry.title}' helpKey=helpKey!'' class=entryClass!  mandatory=entry.mandatory htmlRequired=false rows=2>
+    <@formGroup labelFor='${idName}_address' labelKey='${entry.title}' helpKey=helpKey!'' class=entryClass! mandatory=entry.mandatory htmlRequired=false rows=2>
     <#if list_responses?? && list_responses?has_content>
         <#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse />
         <#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse />
@@ -29,10 +34,13 @@
         <#if getError( list_responses, entry )?? ><#assign error = getError( list_responses, entry ) ></#if>
     </#if>
     <#if editModeValue == '' || editModeValue?starts_with('Address') || editModeValue?starts_with('Adresse')>
-        <@input class=inputClass name='${idName}_address' id='${idName}_address' value=addressValue! required=entry.mandatory! />
-        <@div id='labelAutocomplete'></@div>
+        <#if useAddressAutocomplete>
+            <@suggestPOIInput id="${idName}_address" name="${idName}_address" currentValue="${addressValue!}" required=entry.mandatory cssClass="form-geoloc<#if hasError> is-invalid</#if>" />
+        <#else>
+            <input type="text" class="form-control form-geoloc<#if hasError> is-invalid</#if>" name="${idName}_address" id="${idName}_address" value="${addressValue!}"<#if entry.mandatory> required</#if> />
+        </#if>
     <#else>
-        <input type="hidden" name="${idName}_address" id="${idName}"  value="${addressValue!}" <#if !entry.mandatory > required</#if> >
+        <input type="hidden" name="${idName}_address" id="${idName}" value="${addressValue!}" <#if !entry.mandatory > required</#if> >
     </#if>
     <input type="hidden" name="${idName}_idAddress" id="${idName}_idAddress" value="${idAddressValue!}">
     <input type="hidden" name="${idName}_x" id="${idName}_x" value="${xValue!}">
@@ -53,90 +61,105 @@
         <#include entry.mapProvider.htmlCode />
     </#if>
     </@formGroup>
-    <#if entry.mapProvider?has_content>
-        <#if entry.mapProvider.key='wsaddress' || entry.mapProvider.key='openstreetmap'>
-           <#include "/admin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
-            <@setupSuggestPOI />
-            <script>
-            function isInvalidAdress( adr ){
-                // Show error message
-                adr.addClass('is-invalid');
-                if (!adr.next('.invalid-feedback').length) {
-                    adr.after('<div class="invalid-feedback">#i18n{forms.message.geolocation.checkAdress}</div>');
+    <#if entry.mapProvider?has_content && useAddressAutocomplete>
+        <@setupSuggestPOI />
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var iterationNumber = '${entry_iteration_number}';
+            var numberIterInput = document.getElementById('number_iteration_geolocation');
+            if (!numberIterInput) {
+                numberIterInput = document.createElement('input');
+                numberIterInput.type = 'hidden';
+                numberIterInput.id = 'number_iteration_geolocation';
+                numberIterInput.name = 'number_iteration_geolocation';
+                var formValidate = document.getElementById('form-validate');
+                if (formValidate) {
+                    formValidate.appendChild(numberIterInput);
                 }
-                
-                // Scroll to the input field
-                adr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            if (numberIterInput) {
+                numberIterInput.value = iterationNumber;
             }
 
-            document.addEventListener('DOMContentLoaded', function() {
-                let iterationNumber = '${entry_iteration_number}';
-                if (document.getElementById('number_iteration_geolocation') == null) {
-                    let numberAddressInput = document.createElement('input');
-                    numberAddressInput.type = 'hidden';
-                    numberAddressInput.id = 'number_iteration_geolocation';
-                    numberAddressInput.name = 'number_iteration_geolocation';
-                    document.getElementById('form-validate').appendChild(numberAddressInput);
-                    document.getElementById('number_iteration_geolocation').value = iterationNumber;
-                } else {
-                    document.getElementById('number_iteration_geolocation').value = iterationNumber;
+            var hasCheckAddress = ${hasCheckAddress?c};
+            var autocompleteContainer = document.getElementById('${idName}_address');
+            var searchInput = autocompleteContainer.querySelector('.lutece-autocomplete-search-input');
+            var inputIdAddress = document.getElementById('${idName}_idAddress');
+            var inputX = document.getElementById('${idName}_x');
+            var inputY = document.getElementById('${idName}_y');
+            var inputGeometry = document.getElementById('${idName}_geometry');
+
+            var suggestPoi = new SuggestPOI(autocompleteContainer, {
+                allowFreeText: !hasCheckAddress
+            });
+
+            autocompleteContainer.addEventListener(SuggestPOI.EVT_SELECT, function(event) {
+                var poi = event.detail.poi;
+                if (poi) {
+                    inputGeometry.value = poi.type || '';
+                    inputY.value = poi.y || '';
+                    inputX.value = poi.x || '';
+                    inputIdAddress.value = poi.id || '';
+                    autocompleteContainer.classList.add('wssuggest');
+                    searchInput.classList.remove('is-invalid');
+                    var feedback = autocompleteContainer.querySelector('.invalid-feedback');
+                    if (feedback) {
+                        feedback.remove();
+                    }
+                    enableSubmitButtons();
+                    sessionStorage.setItem('wsvalidated_${entry.idEntry}', 'done');
                 }
+            });
 
-                let currStep = document.querySelector('.step-current .step-content');
-                let hasCheckAdr = currStep.querySelectorAll('input.checkaddress').length > 0;
-                let btnSendStep = currStep.querySelector('[name="action_doSaveStep"]');
+            function enableSubmitButtons() {
+                document.querySelectorAll('[name="action_doSaveStep"], [name="action_doSaveResponse"], [name="action_formResponseSummary"]').forEach(function(btn) {
+                    btn.removeAttribute('disabled');
+                });
+            }
 
-                let jAdresse = document.getElementById('${idName}_address');
-                let jAdresseId = document.getElementById('${idName}_idAddress');
-                let jAdresseX = document.getElementById('${idName}_x');
-                let jAdresseY = document.getElementById('${idName}_y');
-                let jAdresseGeometry = document.getElementById('${idName}_geometry');
+            function disableSubmitButtons() {
+                document.querySelectorAll('[name="action_doSaveStep"], [name="action_doSaveResponse"], [name="action_formResponseSummary"]').forEach(function(btn) {
+                    btn.setAttribute('disabled', 'disabled');
+                });
+            }
 
-                jAdresse.suggestPOI();
-                jAdresse.addEventListener(window.suggestPOI?.EVT_SELECT || 'poi:select', function(event) {
-                    event.preventDefault();
-                    if (event.poi != null) {
-                        jAdresseGeometry.value = event.poi.type;
-                        jAdresseY.value = event.poi.y;
-                        jAdresseX.value = event.poi.x;
-                        jAdresseId.value = event.poi.id;
-                        jAdresse.classList.add('wssuggest');
-                        jAdresse.classList.remove('is-invalid');
-                        let feedback = jAdresse.nextElementSibling;
-                        if (feedback?.classList.contains('invalid-feedback')) {
-                            feedback.remove();
-                        }
+            function showInvalidFeedback() {
+                searchInput.classList.add('is-invalid');
+                if (!autocompleteContainer.querySelector('.invalid-feedback')) {
+                    var feedback = document.createElement('div');
+                    feedback.className = 'invalid-feedback d-block';
+                    feedback.textContent = '#i18n{forms.message.geolocation.checkAdress}';
+                    autocompleteContainer.appendChild(feedback);
+                }
+            }
+
+            var wsv = sessionStorage.getItem('wsvalidated_${entry.idEntry}');
+            if (wsv === 'done') {
+                autocompleteContainer.classList.add('wssuggest');
+                enableSubmitButtons();
+            }
+
+            if (hasCheckAddress) {
+                searchInput.addEventListener('input', function() {
+                    if (autocompleteContainer.classList.contains('wssuggest')) {
+                        autocompleteContainer.classList.remove('wssuggest');
+                        disableSubmitButtons();
                     }
                 });
 
-                if (hasCheckAdr) {
-                    const addrInputValue = '${addressValue!}';
-                    
-                    jAdresse.addEventListener('input', function() {
-                        jAdresse.classList.remove('wssuggest', 'is-invalid');
-                        let feedback = jAdresse.nextElementSibling;
-                        if (feedback?.classList.contains('invalid-feedback')) {
-                            feedback.remove();
-                        }
-                    });
-                    
-                    jAdresse.addEventListener('blur', function(e) {
-                        if (jAdresse.value && !jAdresse.classList.contains('wssuggest') && jAdresse.value.trim() !== '') {
+                var form = autocompleteContainer.closest('form');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        if (!autocompleteContainer.classList.contains('wssuggest')) {
                             e.preventDefault();
-                            isInvalidAdress(jAdresse);
-                        }
-                    });
-
-                    btnSendStep.addEventListener('click', function(e) {
-                        if (jAdresse.value && !jAdresse.classList.contains('wssuggest') && addrInputValue !== jAdresse.value && jAdresse.value.trim() !== '') {
-                            e.preventDefault();
-                            isInvalidAdress(jAdresse);
+                            showInvalidFeedback();
+                            disableSubmitButtons();
                         }
                     });
                 }
-            });
-            </script>
-        </#if>
-	</#if>
+            }
+        });
+        </script>
+    </#if>
 </#if>
 <link rel="stylesheet" href="themes/admin/shared/plugins/forms/css/geoloc.css">
