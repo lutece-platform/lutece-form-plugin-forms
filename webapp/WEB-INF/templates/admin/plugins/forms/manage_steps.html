@@ -81,7 +81,7 @@
 					</@row>
 					<@manageFeature id='step-list'>
 						<#list step_list as step>
-						<#assign stepTitle=step.title!?replace('- hidden','') />
+						<#assign stepTitle=step.title!/>
 						<@manageFeatureItem id='step_${step.id}' valign='baseline' >
 							<@manageFeatureItemColumn valign='baseline' flex=false cols='12 col-md-10' auto=true>
 								<@link class='searchable' href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title=''>
@@ -104,19 +104,19 @@
 										<#list transition_list as transition>
 											<#if transition.fromStep = step.id>
 											<@listGroupItem class='py-1 d-none d-lg-block'>
-												<#assign stepTitle=step.title!?replace('- hidden','') />
+												<#assign stepTitle=step.title! />
 												<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${transition.fromStep}' title='#i18n{forms.modify_transition.title} ${stepTitle!}'>
-													<@tag title='#i18n{forms.manage_transitions.columnPriority}'>${(transition.priority)!}</@tag> ${(transition.nextStepTitle?replace('- hidden',''))!''}  
+													<@tag title='#i18n{forms.manage_transitions.columnPriority}'>${(transition.priority)!}</@tag> ${(transition.nextStepTitle?replace('- hidden',''))!''}
 													${(transition.controlTitle)!''}<#if transition.conditional> (#i18n{forms.manage_questions.columnCondition}) </#if>
 												</@link>
 											</@listGroupItem>
-											</#if>	
+											</#if>
 										</#list>
 									</@listGroup>
 									</@columns>
 								</@row>
-								</#if>	 
-							</#if>	 
+								</#if>
+							</#if>
 							</@manageFeatureItemColumn>
 							<@manageFeatureItemColumn align='end' cols='12 col-md-2'>
 								<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' label='' class='btn btn-primary me-1'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
@@ -124,7 +124,7 @@
 									<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=duplicateStep&id_step=${step.id}&token=${token}' label='' class='dropdown-item'> <@icon style='copy' /> #i18n{forms.manage_steps.action.copyStep}</@link>
 									<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=doExportJson&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='download' /> #i18n{forms.manage_steps.action.exportStep}</@link>
 									<@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='list' /> #i18n{forms.manage_steps.action.showquestions}</@link>
-									<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='trash text-danger' /> #i18n{forms.manage_steps.action.removeStep}</@link> 
+									<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='trash text-danger' /> #i18n{forms.manage_steps.action.removeStep}</@link>
 								</@button>
 							</@manageFeatureItemColumn>
 						</@manageFeatureItem>
@@ -190,14 +190,14 @@
 			</@tabContent>
 		</@formTabs>
 	</@pageColumn>
-</@pageContainer>	
+</@pageContainer>
 <script type="module">
 import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';
 const searchInput = document.querySelector("#search_step");
 const searchElementList = document.querySelectorAll("#step-list .card");
 new LuteceSearchList( searchInput, searchElementList, {
 	searchableChild: [".searchable",".list-group-item",".badge"],
-	highlight: true, 
+	highlight: true,
 });
 
 const stepsArray = [];

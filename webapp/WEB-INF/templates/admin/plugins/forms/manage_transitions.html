@@ -1,5 +1,5 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
-<#assign stepTitle=step.title!?replace("- hidden","") />
+<#assign stepTitle=step.title! />
 <#assign isOnlyOneStep=0>
 <#if step.initial><#assign isOnlyOneStep=isOnlyOneStep+1></#if>
 <#if step.final><#assign isOnlyOneStep=isOnlyOneStep+1></#if>
@@ -39,8 +39,8 @@
                         <@formGroup labelKey=' #i18n{forms.modify_step.pageTitle} ' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true rows=2>
                             <@input type='text' name='title' id='step-title' value='${stepTitle}' />
                         </@formGroup>
-                        <@formGroup helpKey='#i18n{forms.modify_step.showLabelTitle.help}' rows=2>
-                            <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.showLabelTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=!step.title?ends_with('hidden') />
+                        <@formGroup helpKey='#i18n{forms.modify_step.labelTitleDisplayed.help}' rows=2>
+                            <@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.labelTitleDisplayed}' labelFor='titleDisplayed' name='titleDisplayed' id='titleDisplayed' value='1' checked=(step?has_content && step.titleDisplayed) />
                         </@formGroup>
                         <@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}' rows=2>
                             <@input type='textarea' name='description'>${step.description!}</@input>
@@ -111,12 +111,7 @@
 <script>
 var steps=false, isOpen=false;    
 document.addEventListener('DOMContentLoaded', function(e) {
-    document.querySelector('#modify_step').addEventListener('submit', function(e) {
-        if ( !document.querySelector('#show-step-title').checked && document.querySelector('#step-title').value.indexOf('hidden') === -1 ) {
-            document.querySelector('#step-title').value = document.querySelector('#step-title').value  + ' - hidden';
-        } 
-    });
-    
+
     if (document.getElementById('initial').checked && document.getElementById('final').checked) {
         steps = true;
     }
