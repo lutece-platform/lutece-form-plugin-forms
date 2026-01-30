@@ -1,6 +1,5 @@
-<#assign stepTitle=step.title!?replace("- hidden","") />
-<@h level=2>${stepTitle}</@h>
-<@listGroup class='list-group-flush step' id='step-${step.id}' params=' tabindex=0 data-title="${stepTitle}"'>
+<@h level=2>${step.title!}</@h>
+<@listGroup class='list-group-flush step' id='step-${step.id}' params=' tabindex=0 data-title="${step.title!}"'>
 <@listGroupItem>
 ${stepContent}
 </@listGroupItem>

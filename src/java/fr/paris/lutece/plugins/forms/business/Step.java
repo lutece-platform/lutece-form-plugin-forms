@@ -60,6 +60,8 @@ public class Step implements Serializable
 
     private boolean _bIsFinal;
 
+    private boolean _bIsTitleDisplayed;
+
     /**
      * Returns the Id
      * 
@@ -181,4 +183,26 @@ public class Step implements Serializable
     {
         _bIsFinal = bIsFinal;
     }
+
+    /**
+     * Returns true if the title need to be displayed on FO
+     *
+     * @return The _bIsTitleDisplayed flag
+     */
+    public boolean isTitleDisplayed( )
+    {
+        return _bIsTitleDisplayed;
+    }
+
+    /**
+     * Sets the IsTitleDisplayed flag
+     *
+     * @param bIsTitleDisplayed
+     *            true if the title need to be displayed on FO
+     */
+    public void setTitleDisplayed( boolean bIsTitleDisplayed )
+    {
+        _bIsTitleDisplayed = bIsTitleDisplayed;
+    }
+
 }
