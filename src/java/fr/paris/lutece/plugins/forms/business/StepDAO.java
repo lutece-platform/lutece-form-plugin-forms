@@ -53,13 +53,13 @@ import java.util.stream.Collectors;
 public final class StepDAO implements IStepDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_step, title, description, id_form, is_initial, is_final FROM forms_step";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_step, title, description, id_form, is_initial, is_final, is_title_displayed FROM forms_step";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_step = ?";
     private static final String SQL_QUERY_SELECT_INITIAL_STEP = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND is_initial = 1";
     private static final String SQL_QUERY_SELECT_FINAL_STEP = SQL_QUERY_SELECTALL + " WHERE id_form = ? AND is_final = 1";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_step ( title, description, id_form, is_initial, is_final ) VALUES ( ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_step ( title, description, id_form, is_initial, is_final, is_title_displayed ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_step WHERE id_step = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_step SET id_step = ?, title = ?, description = ?, id_form = ? ,is_initial = ?, is_final = ? WHERE id_step = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_step SET id_step = ?, title = ?, description = ?, id_form = ? ,is_initial = ?, is_final = ?, is_title_displayed = ? WHERE id_step = ?";
     private static final String SQL_QUERY_SELECTALL_BY_FORM = SQL_QUERY_SELECTALL + " where id_form = ?";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_step FROM forms_step";
     private static final String SQL_QUERY_SELECTALL_ID_BY_FORM = "SELECT id_step FROM forms_step WHERE id_form = ?";
@@ -81,6 +81,7 @@ public final class StepDAO implements IStepDAO
             daoUtil.setInt( nIndex++, step.getIdForm( ) );
             daoUtil.setBoolean( nIndex++, step.isInitial( ) );
             daoUtil.setBoolean( nIndex++, step.isFinal( ) );
+            daoUtil.setBoolean( nIndex++, step.isTitleDisplayed() );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -179,6 +180,7 @@ public final class StepDAO implements IStepDAO
             daoUtil.setInt( nIndex++, step.getIdForm( ) );
             daoUtil.setBoolean( nIndex++, step.isInitial( ) );
             daoUtil.setBoolean( nIndex++, step.isFinal( ) );
+            daoUtil.setBoolean( nIndex++, step.isTitleDisplayed( ) );
 
             daoUtil.setInt( nIndex, step.getId( ) );
 
@@ -317,6 +319,7 @@ public final class StepDAO implements IStepDAO
         step.setIdForm( daoUtil.getInt( "id_form" ) );
         step.setInitial( daoUtil.getBoolean( "is_initial" ) );
         step.setFinal( daoUtil.getBoolean( "is_final" ) );
+        step.setTitleDisplayed( daoUtil.getBoolean( "is_title_displayed" ) );
 
         return step;
     }

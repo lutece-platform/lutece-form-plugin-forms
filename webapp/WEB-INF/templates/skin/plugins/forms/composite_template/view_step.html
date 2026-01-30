@@ -1,5 +1,5 @@
 <div class="card">
-	<#if !step.title?ends_with('hidden')>
+	<#if step.titleDisplayed>
 		<h3 class="card-header">${step.title}</h3>
 	</#if>
     <div id="step-content" class="card-body">

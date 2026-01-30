@@ -50,6 +50,7 @@ description varchar(255) default '',
 id_form int default '0' NOT NULL,
 is_initial SMALLINT default 0 NOT NULL,
 is_final SMALLINT default 0 NOT NULL,
+is_title_displayed SMALLINT default 1 NOT NULL,
 PRIMARY KEY (id_step)
 );
 
