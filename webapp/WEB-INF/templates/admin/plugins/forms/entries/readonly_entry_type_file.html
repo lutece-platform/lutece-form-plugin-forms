@@ -26,7 +26,11 @@
 				</#if>
 			</#if>
 			<@li>
-				<@span class='font-italic'>${response.file.title!} - ${octetNumber?string["0.##"]} ${octetUnit!} ,</@span>
+				<#if response.file.fileKey?exists>
+			        <@span class='font-italic'><@link href='${response.file.url}'>${response.file.title!}</@link> - ${octetNumber?string["0.##"]} ${octetUnit!}</@span>
+			    <#else>
+				    <@span class='font-italic'>${response.file.title!} - ${octetNumber?string["0.##"]} ${octetUnit!}</@span>
+			    </#if>
 				<#if response.file.mimeType?? && response.file.mimeType?contains('image')>
 					<#if response.file.url?? && response.file.url != ''>
 						<@img url='${response.file.url}' alt='${response.file.title}' class='img-fluid img-thumbnail ms-xs' params='style="max-height: 200px;"'/>
