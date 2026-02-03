@@ -150,14 +150,6 @@ function setStepsIndex(){
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-	// Rewrite title
-	const mainTitle = document.querySelector('#feature-title a');
-	const title = document.querySelector('#lutece-main').dataset.feature;
-	if (mainTitle) {
-		mainTitle.textContent = title;
-		mainTitle.setAttribute('href', 'jsp/admin/plugins/forms/ManageForms.jsp?plugin_name=forms');
-	}
-
 	// Set step index
 	const toc = document.getElementById('toc');
 	if( toc != null ){
@@ -210,4 +202,3 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 });
-    
