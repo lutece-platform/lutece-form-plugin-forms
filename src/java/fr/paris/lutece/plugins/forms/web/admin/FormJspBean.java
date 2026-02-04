@@ -893,7 +893,7 @@ public class FormJspBean extends AbstractJspBean
         }
         catch( JsonProcessingException e )
         {
-            AppLogService.debug( e.getMessage( ) );
+            AppLogService.error( e.getMessage( ) );
             addError( ERROR_FORM_NOT_COPIED, getLocale( ) );
         }
     }
