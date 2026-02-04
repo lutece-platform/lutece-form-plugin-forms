@@ -72,6 +72,7 @@ import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
+import fr.paris.lutece.plugins.genericattributes.business.IMapProvider;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import jakarta.transaction.Transactional;
@@ -90,7 +91,10 @@ public abstract class AbstractFormJsonService
         timestampModule.addSerializer( Timestamp.class, new TimestampSerializer( ) );
         timestampModule.addDeserializer( Timestamp.class, new TimestampDeserializer( ) );
 
-        _objectMapper = new ObjectMapper( ).configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false ).registerModule( timestampModule );
+        SimpleModule mapProviderModule = new SimpleModule( "MapProviderModule" );
+        mapProviderModule.addSerializer( IMapProvider.class, new MapProviderSerializer( ) );
+        
+        _objectMapper = new ObjectMapper( ).configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false ).registerModule( timestampModule ).registerModule( mapProviderModule );
     }
 
     /**
