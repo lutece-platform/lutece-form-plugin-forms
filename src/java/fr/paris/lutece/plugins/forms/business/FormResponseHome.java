@@ -143,7 +143,7 @@ public final class FormResponseHome
     {
         // FormResponse
         FormResponse formResponse = _dao.load( nKey, _plugin );
-        if ( formResponse.isFromSave( ) )
+        if ( formResponse==null || formResponse.isFromSave( ) )
         {
             return null;
         }

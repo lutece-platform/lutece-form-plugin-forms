@@ -37,6 +37,7 @@ package fr.paris.lutece.plugins.forms.service.event;
 public class FormResponseEvent 
 {
     private int _nformResponseId;
+    private boolean _bUpdateDateFormResponse;
 
     /**
      * Creates a new instance of FormResponseEvent
@@ -47,6 +48,21 @@ public class FormResponseEvent
     public FormResponseEvent( int nFormResponseId )
     {
     	_nformResponseId = nFormResponseId;
+        _bUpdateDateFormResponse = false;
+    }
+
+    /**
+     * Creates a new instance of FormResponseEvent
+     *
+     * @param nFormResponseId
+     *            The form response id
+     * @param bUpdateDateFormResponse
+     *            true if the update date of the form response must be updated
+     */
+    public FormResponseEvent( int nFormResponseId, boolean bUpdateDateFormResponse )
+    {
+        _nformResponseId = nFormResponseId;
+        _bUpdateDateFormResponse = bUpdateDateFormResponse;
     }
 
 	/**
@@ -58,4 +74,14 @@ public class FormResponseEvent
     {
         return _nformResponseId;
     }
+
+    /**
+     * Indicates whether the form response update date should be refreshed.
+     *
+     * @return true if the update date of the form response must be updated
+     */
+    public boolean isUpdateDateFormResponse() {
+        return _bUpdateDateFormResponse;
+    }
+
 }

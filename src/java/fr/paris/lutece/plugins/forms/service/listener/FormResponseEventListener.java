@@ -42,7 +42,6 @@ import fr.paris.lutece.plugins.forms.service.search.IFormSearchIndexer;
 import fr.paris.lutece.portal.service.event.EventAction;
 import fr.paris.lutece.portal.service.event.Type;
 import fr.paris.lutece.portal.business.event.ResourceEvent;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.event.ObservesAsync;
@@ -74,7 +73,7 @@ public class FormResponseEventListener
      */
     public void addedFormResponse( @ObservesAsync @Type(EventAction.CREATE) FormResponseEvent event )
     {
-    	indexFormResponse( event, IndexerAction.TASK_CREATE );
+    	indexFormResponse( event.getFormResponseId(), IndexerAction.TASK_CREATE );
     }
 
     /**
@@ -85,7 +84,32 @@ public class FormResponseEventListener
      */
     public void deletedFormResponse( @ObservesAsync @Type(EventAction.REMOVE) FormResponseEvent event )
     {
-    	indexFormResponse( event, IndexerAction.TASK_DELETE );
+        deletedFormResponse( event.getFormResponseId() );
+    }
+
+    /**
+     * handle the event for the deleted formResponse
+     *
+     * @param event
+     *            the event for the deleted event
+     */
+    public void deletedResource( @Observes @Type(EventAction.REMOVE) ResourceEvent event )
+    {
+        if ( checkResourceType( event ) )
+        {
+            deletedFormResponse( Integer.parseInt( event.getIdResource( ) ) );
+        }
+    }
+
+    /**
+     * handle the event for the deleted formResponse
+     *
+     * @param nIdFormResponse
+     *            the id for the updated formResponse
+     */
+    private void deletedFormResponse( int nIdFormResponse )
+    {
+        indexFormResponse( nIdFormResponse, IndexerAction.TASK_DELETE );
     }
 
     /**
@@ -96,74 +120,71 @@ public class FormResponseEventListener
      */
     public void updatedFormResponse( @ObservesAsync @Type(EventAction.UPDATE) FormResponseEvent event )
     {
-        indexFormResponse( event, IndexerAction.TASK_MODIFY );
-    }
-
-    private void indexFormResponse( FormResponseEvent event, int nIdTask )
-    {
-    	_formSearchIndexer.indexDocument( event.getFormResponseId( ), nIdTask, FormsPlugin.getPlugin( ) );
-    }
-
-    public void updatedResource( @Observes @Type(EventAction.UPDATE) ResourceEvent event )
-    {
-        updateDateFormResponse( event );
-        indexResource( event, IndexerAction.TASK_MODIFY );
+        updateFormResponse( event.getFormResponseId(), event.isUpdateDateFormResponse() );
     }
 
     /**
-     * Index the forms response
+     * handle the event for the updated formResponse
      *
      * @param event
-     *            the event
-     * @param nIdTask
-     *            The id task
+     *            the event for the updated event
      */
-    private void indexResource( ResourceEvent event, int nIdTask )
+    public void updatedResource( @Observes @Type(EventAction.UPDATE) ResourceEvent event )
     {
-        if ( !checkResourceType( event ) )
+        if ( checkResourceType( event ) )
         {
-            return;
-        }
-        try
-        {
-            int nIdResource = Integer.parseInt( event.getIdResource( ) );
-            _formSearchIndexer.indexDocument( nIdResource, nIdTask, FormsPlugin.getPlugin( ) );
-        }
-        catch( NumberFormatException e )
-        {
-            AppLogService.error( "Unable to parse given event id ressource to integer " + event.getIdResource( ), e );
+            updateFormResponse( Integer.parseInt( event.getIdResource( ) ), true );
         }
     }
+
+    /**
+     * handle the event for the updated formResponse
+     *
+     * @param nIdFormResponse
+     *            the id for the updated formResponse
+     */
+    private void updateFormResponse( int nIdFormResponse, boolean updateDateFormResponse )
+    {
+        if( updateDateFormResponse )
+        {
+            updateDateFormResponse( nIdFormResponse );
+        }
+        indexFormResponse( nIdFormResponse, IndexerAction.TASK_MODIFY );    }
 
     /**
      * Update the date update of the forms response
      *
-     * @param event
-     *            the event
+     * @param idResource
+     *            the idResource
      */
-    private void updateDateFormResponse( ResourceEvent event )
+    private void updateDateFormResponse( int idResource )
     {
-        if ( !checkResourceType( event ) )
-        {
-            return;
-        }
-        try
-        {
-            int nIdResource = Integer.parseInt( event.getIdResource( ) );
-
-            FormResponse response = FormResponseHome.findByPrimaryKey( nIdResource );
-            response.setUpdate( new Timestamp( new java.util.Date( ).getTime( ) ) );
-            FormResponseHome.update( response );
-
-        }
-        catch( NumberFormatException e )
-        {
-            AppLogService.error( "Unable to parse given event id ressource to integer " + event.getIdResource( ), e );
-        }
+        FormResponse response = FormResponseHome.findByPrimaryKey( idResource );
+        response.setUpdate( new Timestamp( new java.util.Date( ).getTime( ) ) );
+        FormResponseHome.update( response );
     }
 
+    /**
+     * Checks whether the event concerns a form response.
+     *
+     * @param event
+     *        the event to check
+     * @return true if the event concerns a form response
+     */
     private boolean checkResourceType( ResourceEvent event )
     {
         return FormResponse.RESOURCE_TYPE.equals( event.getTypeResource( ) );
     }
+
+    /**
+     * Requests indexing of the form response.
+     *
+     * @param idFormResponse the id of the form response
+     * @param nIdTask the type of task
+     */
+    private void indexFormResponse( int idFormResponse, int nIdTask )
+    {
+        _formSearchIndexer.indexDocument( idFormResponse, nIdTask, FormsPlugin.getPlugin( ) );
+    }
+
 }
