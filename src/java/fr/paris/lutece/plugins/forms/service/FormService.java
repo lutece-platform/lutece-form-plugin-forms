@@ -248,7 +248,7 @@ public class FormService
     public void saveFormResponseWithoutQuestionResponse( FormResponse formResponse )
     {
         FormResponseHome.update( formResponse );
-        fireFormResponseEventUpdate( formResponse );
+        fireFormResponseEventUpdate( formResponse, false );
     }
 
     /**
@@ -534,9 +534,22 @@ public class FormService
      */
     public void fireFormResponseEventUpdate( FormResponse formResponse )
     {
-        FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ) );
-        
-    	_formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.UPDATE ) ).fireAsync( formResponseEvent );
+        fireFormResponseEventUpdate( formResponse, true );
+    }
+
+    /**
+     * Fire the form response event update on given formResponse
+     *
+     * @param formResponse
+     *            the formResponse
+     * @param updateDateFormResponse
+     *            true if the update date of the form response must be updated
+     */
+    public void fireFormResponseEventUpdate( FormResponse formResponse, boolean updateDateFormResponse )
+    {
+        FormResponseEvent formResponseEvent = new FormResponseEvent( formResponse.getId( ), updateDateFormResponse );
+
+        _formResponseEvent.select( FormResponseEvent.class, new TypeQualifier( EventAction.UPDATE ) ).fireAsync( formResponseEvent );
     }
 
     /**
@@ -551,7 +564,7 @@ public class FormService
 
         for ( FormResponse formResponse : listFormResponse )
         {
-            fireFormResponseEventUpdate( formResponse );
+            fireFormResponseEventUpdate( formResponse, false );
         }
     }
 
