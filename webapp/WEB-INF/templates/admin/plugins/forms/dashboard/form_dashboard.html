@@ -6,7 +6,7 @@
 		<@card class='mb-1'>
 			<@row class='align-items-center'>
 				<@columns>
-					<@h level=3 class='mb-0' params='title="${form.title}" style="--tw:300px"'>
+					<@h level=3 class='mb-0' params='title="#i18n{portal.util.labelModify} ${form.title}" style="--tw:300px"'>
 						<#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
 						<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' label='${form.title}' class='truncate' />
 					</@h>
@@ -25,19 +25,19 @@
 					</#if>
 				</@div>
 				<@div class='col-auto'>
-					<div class="dropdown">
+					<@div class='dropdown'>
 						<a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
-						<!-- Download SVG icon from http://tabler.io/icons/icon/dots-vertical -->
-						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-							<path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-							<path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-							<path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-						</svg>
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
+								<path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+								<path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+								<path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
+							</svg>
 						</a>
-						<div class="dropdown-menu dropdown-menu-end">
+						<@div class="dropdown-menu dropdown-menu-end">
 						<#if form.actions?exists>
 							<#list form.actions as action>
-								<@link href='${action.url}&id_form=${form.id}' class='dropdown-item'><@icon style=action.iconUrl! /> ${action.name!}</@link>
+								<#if action.permission=='DELETE'><#assign actionClass='text-danger' /><#else><#assign actionClass='' /></#if>
+								<@link href='${action.url}&id_form=${form.id}' class='dropdown-item ${actionClass}'><@icon style=action.iconUrl! /> ${action.name!}</@link>
 							</#list>
 						</#if>
 						<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' label='#i18n{forms.manageForm.BOLink.label}' class='dropdown-item' />
@@ -49,8 +49,8 @@
 							<#assign color='warning'>
 						</#if>
 						<@link href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='#i18n{forms.manageForm.FOLink.label}' class='dropdown-item' target='_blank' />
-						</div>
-					</div>
+						</@div>
+					</@div>
 				</@div>
 			</@row>
 		</@card>
