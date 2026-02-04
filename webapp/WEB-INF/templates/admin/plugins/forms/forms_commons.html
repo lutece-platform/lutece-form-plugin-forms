@@ -815,7 +815,7 @@ document.addEventListener('DOMContentLoaded', function() {
 <@th class='bg-light ${displayTitleClass!}' id='sort${id!}_${attribute!}' params='data-field="${field}"' >
 	<@div class='d-flex'>
 		<@span>${title}</@span>
-		<@btnGroup params='aria-label=""#i18n{portal.util.labelSort}'>
+		<@btnGroup params='aria-label="#i18n{portal.util.sort.label}"'>
 			<@aButton hideTitle=['all'] color='' style='' class='btn-sort asc mx-2' href='${sort_url}true#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.asc}' >
 				<@icon style='arrow-up' />
 			</@aButton>	
