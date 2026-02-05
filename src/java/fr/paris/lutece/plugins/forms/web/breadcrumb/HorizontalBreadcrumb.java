@@ -58,8 +58,10 @@ public class HorizontalBreadcrumb implements IBreadcrumb
 {
 	public static final String BEAN_NAME = "forms.horizontalBreadcrumb";	
     private static final String TEMPLATE_BREADCRUMB_HTML = "/util/plugins/forms/breadcrumb/horizontal_breadcrumb.html";
-    private final String _strBreadcrumbBeanName;
-    private final String _strBreadcrumbDisplayBeanName;
+    private String _strBreadcrumbBeanName;
+    private String _strBreadcrumbDisplayBeanName;
+
+    HorizontalBreadcrumb( ) { }
 
     /**
      * Constructor of the HorizontalBreadcrumb
