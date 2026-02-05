@@ -1,4 +1,9 @@
 <#include "/admin/plugins/forms/edit_form_tabs.html" />
+<style>
+[id^="exportable_"], [id^="exportablePdf_"] {
+    scroll-margin-top: 100px;
+}
+</style>
 <@row>
 <@columns>
 <@box color='primary'>
@@ -105,12 +110,12 @@
 <label class="form-check form-switch" >
     <#if question.entry.exportable!>
     <input type="checkBox" class="form-check-input" name='exportable' id='exportable_${question.id}' value='${question.id}' checked
-           data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&id_form=${form.id}&id_question=${question.id}&exportable=false&token=${token}"
+           data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&id_form=${form.id}&id_question=${question.id}&exportable=false&token=${token}#exportable_${question.id}"
            onclick="location.replace(this.dataset.query);"
     />
     <#else>
     <input type="checkBox" class="form-check-input" name='exportable' id='exportable_${question.id}' value='${question.id}'
-           data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&id_form=${form.id}&id_question=${question.id}&exportable=true&token=${token}"
+           data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&id_form=${form.id}&id_question=${question.id}&exportable=true&token=${token}#exportable_${question.id}"
            onclick="location.replace(this.dataset.query);"
     />
 </#if>
@@ -122,12 +127,12 @@
 <label class="form-check form-switch" >
     <#if question.entry.exportablePdf!>
     <input type="checkBox" class="form-check-input" name='exportablePdf' id='exportablePdf_${question.id}' value='${question.id}' checked
-           data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&id_form=${form.id}&id_question=${question.id}&exportable_pdf=false&token=${token}"
+           data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&id_form=${form.id}&id_question=${question.id}&exportable_pdf=false&token=${token}#exportablePdf_${question.id}"
            onclick="location.replace(this.dataset.query);"
     />
     <#else>
     <input type="checkBox" class="form-check-input" name='exportablePdf' id='exportablePdf_${question.id}' value='${question.id}'
-           data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&id_form=${form.id}&id_question=${question.id}&exportable_pdf=true&token=${token}"
+           data-query="jsp/admin/plugins/forms/ManageFormExport.jsp?action=modifyExportableQuestion&id_form=${form.id}&id_question=${question.id}&exportable_pdf=true&token=${token}#exportablePdf_${question.id}"
            onclick="location.replace(this.dataset.query);"
     />
 </#if>
