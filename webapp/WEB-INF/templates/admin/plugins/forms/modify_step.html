@@ -5,25 +5,45 @@
 		<@pageHeader title='#i18n{forms.manageForm.pageTitle}' />
        <@formTabs tab='general' type='steps' >
 			<@tabContent>
-				<@tform method='post' name='modify_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
-					<@messages errors=errors />
+			 <@row>
+				<@columns xs=12 sm=4>
+				<@tform method='post' name='modify_step' id='modify_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
 					<@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
 					<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
-					<@formGroup labelKey='#i18n{forms.modify_step.labelTitle}' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true>
-						<@input type='text' name='title' value='${stepTitle!}' />
+					<@formGroup labelKey=' #i18n{forms.modify_step.pageTitle} ' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true rows=2>
+						<@input type='text' name='title' id='step-title' value='${stepTitle}' />
 					</@formGroup>
-					<@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}'>
+					<@formGroup helpKey='#i18n{forms.modify_step.showLabelTitle.help}' rows=2>
+						<@checkBox orientation='switch' labelKey='#i18n{forms.modify_step.showLabelTitle}' labelFor='show-step-title' name='show-step-title' id='show-step-title' value='0' checked=!step.title?ends_with('hidden') />
+					</@formGroup>
+					<@formGroup labelKey='#i18n{forms.modify_step.labelDescription}' helpKey='#i18n{forms.modify_step.labelDescription.help}' rows=2>
 						<@input type='textarea' name='description'>${step.description!}</@input>
 					</@formGroup>
-					<@formGroup labelKey='#i18n{forms.modify_step.labelInitial}' helpKey='#i18n{forms.modify_step.labelInitial.help}'>
-						<@checkBox labelFor='initial' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
-					</@formGroup>
-					<@formGroup labelKey='#i18n{forms.modify_step.labelFinal}' helpKey='#i18n{forms.modify_step.labelFinal.help}'>
-						<@checkBox labelFor='final' name='final' id='final' value='1' checked=(step?has_content && step.final) />
-					</@formGroup>
-					<@formsButton okAction='modifyStep' viewAction='manageSteps' />
+					<@row>
+						<@columns>
+							<@formGroup helpKey='#i18n{forms.modify_step.labelInitial.help}' rows=2>
+								<@checkBox orientation='switch' labelFor='initial' labelKey='#i18n{forms.modify_step.labelInitial}' name='initial' id='initial' value='1' checked=(step?has_content && step.initial) />
+							</@formGroup>
+						</@columns>
+						<@columns>
+							<@formGroup helpKey='#i18n{forms.modify_step.labelFinal.help}' rows=2>
+								<@checkBox orientation='switch' labelFor='final' labelKey='#i18n{forms.modify_step.labelFinal}' name='final' id='final' value='1' checked=(step?has_content && step.final) />
+							</@formGroup>
+						</@columns>
+					</@row>
+					<@formsButton okAction='modifyStep' viewAction='' rows=2 />
 				</@tform>
+				</@columns>
+				<#if step.final> 
+                    <@columns xs=12 sm=8 class='d-flex align-items-center justify-content-center'>
+                        <@callOut color='warning d-flex w-75 justify-content-center'>
+                            <@h level=3 class='h2'><@icon style='alert-triangle' /> #i18n{forms.manage_transitions.warning.final}</@h>
+                        </@callOut>
+                    </@columns>
+                </#if>
+			 </@row> 
 			</@tabContent>
         </@formTabs>
     </@pageColumn>
 </@pageContainer>
+<@formsToastr errors=errors />

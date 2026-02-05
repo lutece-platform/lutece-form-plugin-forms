@@ -282,27 +282,4 @@ new LuteceSearchList( searchInput, searchElementList, {
     highlight: true
 });
 </script>
-<#-- REWRITE 
-<link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
-<script src="js/jquery/plugins/toastr/toastr.min.js"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Configure and display toastr notifications
-<#if warnings?has_content>
-	<#list warnings as warning >
-		toastr.warning("${warning.message}", "");
-	</#list>	
-</#if>
-<#if errors?has_content>
-	<#list errors as error >
-		toastr.error("${error.message}", "");
-	</#list>	
-</#if>
-<#if infos?has_content>
-	<#list infos as info >
-		toastr.info("${info.message}", "");
-	</#list>	
-</#if>
-});
-</script>
--->
+<@formsToastr infos=infos warnings=warnings errors=errors />

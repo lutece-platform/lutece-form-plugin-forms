@@ -1,7 +1,7 @@
-<@tform class='form' method='post' name='modify_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp'  params='target="_top"'>
 <@pageContainer>
-    <@pageColumn>
+	<@pageColumn>
 		<@pageHeader title='#i18n{forms.modify_form_category.title}' />
+		<@tform class='form' method='post' name='modify_category' action='jsp/admin/plugins/forms/ManageFormsCategories.jsp'  params='target="_top"'>
 		<@input type='hidden' name='id_category' value='${category.id}' />
 		<@formGroup labelFor='title' labelKey='#i18n{forms.modify_form_category.labelName}' mandatory=true>
 			<@input type='text' name='name' id='name' value=category.name!'' maxlength=255 />
@@ -12,11 +12,11 @@
 		<@formGroup rows=2>
 			<@formsButton okAction='modifyCategory' viewAction='' />
 		</@formGroup>
+		</@tform>
 	</@pageColumn>
 </@pageContainer>
-</@tform>
 <@formEditor /> 
-<@toastr infos=infos warnings=warnings errors=errors />
 <script>
 <@offcanvasIframeScript triggerForm='modify_category' triggerActionId='action_createCategory' />
 </script>
+<@formsToastr infos=infos warnings=warnings errors=errors />

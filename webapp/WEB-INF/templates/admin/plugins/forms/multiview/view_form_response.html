@@ -138,7 +138,7 @@
 					<#if action_confirmation_message??>
 						<#assign contentConfirmation>${action_confirmation_message!}</#assign>
 						<@initToast>
-							<@addToast content=contentConfirmation class='bg-success text-white' />
+							<@addToast content=contentConfirmation class='bg-success text-success-fg' />
 						</@initToast>
 					</#if>
 				</@row>
@@ -155,4 +155,3 @@ document.addEventListener('DOMContentLoaded', function() {
 	setNavButtons('${form_response.id}', '<i class="bi bi-arrow-left"></i> #i18n{portal.util.labelPrevious}', '#i18n{portal.util.labelNext} <i class="bi bi-arrow-right"></i>');
 });
 </script>
-

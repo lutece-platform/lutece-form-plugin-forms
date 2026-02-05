@@ -12,7 +12,6 @@
 </@pageContainer>
 </@tform>
 <@formEditor /> 
-<@toastr infos=infos warnings=warnings errors=errors />
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 	// Initial toggle based on checkbox state
@@ -37,3 +36,4 @@ document.addEventListener('DOMContentLoaded', function() {
 	});
 });
 </script>
+<@formsToastr infos=infos warnings=warnings errors=errors />
