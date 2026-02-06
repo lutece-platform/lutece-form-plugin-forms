@@ -1,5 +1,7 @@
+<@messages errors=errors />
+<@messages infos=infos />
 <@div class='d-flex justify-content-end mb-3'>
-	<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_step=${step.id}&id_control_group=${id_control_group!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
+<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_step=${step.id}&id_control_group=${id_control_group!}' buttonIcon='plus' title='#i18n{forms.manage_questions.action.addControl}' />
 </@div>
 <#if condition_control_list?size gt 0>
 	<@table headBody=true>
@@ -17,34 +19,33 @@
 				<@td sm=1>${condition_control.targetQuestionTitle}</@td>
 				<@td sm=1>${validator.validatorDisplayName}</@td>
 				<@td sm=4>
-					<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_control=${condition_control.control.id}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' size='sm' />
-					<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${condition_control.control.id}&id_step=${id_step!}&id_rm_question=${condition_control.control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' size='sm' params=' target="_top"' />
+					<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyConditionControl&id_control=${condition_control.control.id}' title='#i18n{forms.manage_questions.action.control}' hideTitle=['all'] buttonIcon='pencil' />
+					<@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${condition_control.control.id}&id_step=${id_step!}&id_rm_question=${condition_control.control.id}' title='#i18n{forms.manage_controls.action.removeControl}' hideTitle=['all'] buttonIcon='trash' color='danger' params=' target="_top"' />
 				</@td>
 			</@tr>
 		</#list>
 	</@table>
-	<@tform method='post' id='modifyLogicalOperator' action='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl'>
-	<@inputGroup>
-		<@select name='logical_operator' items=logicalOperators default_value='${logical_operator_label!}' />
-		<@inputGroupItem>
-			<@button type='submit' name='view_modifyLogicalOperator' value='validateLogicalOperator' hideTitle=['all'] buttonIcon='check'/>
-		</@inputGroupItem>
-	</@inputGroup>
-	</@tform>
-<#else>    
-	<@alert color='warning'>
-		<@icon style='exclamation-triangle' /> #i18n{forms.manage_condition_control.labelNoConditionControl}
-	</@alert>
+	<@div class='mt-3'>
+		<@tform method='post' id='modifyLogicalOperator' action='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl'>
+			<@inputGroup>
+				<@select name='logical_operator' items=logicalOperators default_value='${logical_operator_label!}' />
+				<@button type='submit' name='view_modifyLogicalOperator' value='validateLogicalOperator' hideTitle=['all'] buttonIcon='check'/>
+			</@inputGroup>
+		</@tform>
+	</@div>
+<#else>  
+	<@box>
+		<@empty title='#i18n{forms.manage_condition_control.labelNoConditionControl}' />
+	</@box>
 </#if>    
-<@messages errors=errors />
-<@messages infos=infos />
 <script>
 window.addEventListener('message', function(event) {
 	if (event.data === 'offcanvas') {
+		document.querySelectorAll('.navbar-expand-md').forEach(function(el) {el.classList.add('d-none','bg-white'); });
 		document.querySelector('#lutece-layout-wrapper').classList.add('d-none','bg-white');
-		if( document.querySelector('.lutece-header') ){ document.querySelector('.lutece-header').remove(); }
+		if( document.querySelector('.lutece-header') ){ document.querySelectorAll('.lutece-header').remove(); }
 		if( document.querySelector('.breadcrumb') ){ document.querySelector('.breadcrumb').remove(); }
-		if( document.querySelector('.page-header') ){ document.querySelector('.page-header').remove(); }
+		if( document.querySelector('.page-header') ){ document.querySelectorAll('.page-header').remove(); }
 		if( document.querySelector('#pageHeader') ){ document.querySelector('#pageHeader').remove(); }
 		if( document.querySelector('#feature-title') ){ document.querySelector('#feature-title').remove(); }
 		if( document.querySelector('.lutece-main-footer') ){  document.querySelector('.lutece-main-footer').remove(); }
