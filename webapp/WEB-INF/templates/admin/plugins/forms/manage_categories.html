@@ -12,6 +12,7 @@
             <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm'] color='primary' hideTitle=['xs','sm','md','lg'] params='data-bs-toggle="offcanvas" data-bs-target="#modify_category" data-bs-scroll="true" data-bs-backdrop="false" data-url="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory"' />
         </@pageHeader>
         <@manageFeature>
+        <#if form_category_list?size != 0>
             <#list form_category_list as category>
                 <@manageFeatureItem>
                     <@manageFeatureItemColumn class='searchable'>#i18n{forms.manageFormCategory.columnCode} : <@span class='fw-bold mx-2'>${category.code}</@span> - #i18n{forms.manageFormCategory.columnName} : <@span class='fw-bold ms-2'>${category.name}</@span></@manageFeatureItemColumn>
@@ -21,6 +22,11 @@
                     </@manageFeatureItemColumn>
                 </@manageFeatureItem>
             </#list>
+        <#else>
+            <@box>
+                <@empty />
+            </@box> 
+          </#if>  
         </@manageFeature>
     </@pageColumn>
 </@pageContainer>
