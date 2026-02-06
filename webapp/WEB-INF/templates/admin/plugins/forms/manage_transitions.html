@@ -26,7 +26,7 @@
                     #i18n{forms.create_step.pageTitle} ${stepTitle}
                         <#if !step.final>
                         <@div class='ms-auto'>
-                            <@aButton class='btn-sm' href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}' title='#i18n{forms.manage_transitions.buttonAdd}' hideTitle=['xs','sm','md'] buttonIcon='plus' color='primary' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasTransition" data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}"' /> 
+                            <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}' title='#i18n{forms.manage_transitions.buttonAdd}' hideTitle=['xs','sm','md'] buttonIcon='plus' color='primary' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasTransition" data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}"' /> 
                         </@div>
                         </#if>
                     </@h>
@@ -69,23 +69,26 @@
                 <#else> 
                     <@columns>
                         <#list transition_list as transition>
+                            <#assign controlIcon='plus' />
+                            <#assign controlTitle='#i18n{forms.manage_questions.action.addControl}' />
                             <@box class='card-transition'>
-                            <#assign transitionClass> <#if transition.priority! == 1> bg-primary text-bg-primary</#if></#assign>
+                                <#assign transitionClass> <#if transition.priority! == 1> bg-primary text-bg-primary</#if></#assign>
                                 <@boxHeader class='py-3 ${transitionClass!}' title='#i18n{forms.manage_transitions.columnNextStep}'>
-                                    <@tag color='info'>#i18n{forms.manage_transitions.columnPriority} ${transition.priority!}<#if transition.conditional> <@icon style='question'/></#if></@tag>
+                                   <@tag color='info'>#i18n{forms.manage_transitions.columnPriority} ${transition.priority!}</@tag>
+                                   <#if transition.conditional><@tag color='info' class='ms-2'> #i18n{forms.manage_questions.columnCondition} <@icon style='help-circle' class='ms-2'/></@tag><#assign controlIcon='cog' /><#assign controlTitle='#i18n{forms.manage_controls.action.modifyControl}' /></#if>
                                 </@boxHeader>
                                 <@boxBody class='d-flex justify-content-between align-items-center'>
                                     <@h level=3 class='card-title truncate h2 mb-0'>${transition.nextStepTitle!''}</@h>   
                                     <@ul class='list-unstyled d-flex form-actions mb-0'>
-                                        <@li><@aButton class='btn-sm' href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.modify_transition.title}' hideTitle=['xs','sm','md','lg' ] buttonIcon='pencil' color='primary' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasTransition" data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}"' /> </@li>
-                                        <@li><@aButton class='btn-sm' href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION' title='#i18n{forms.manage_controls.action.modifyControl}' hideTitle=['xs','sm','md','lg'] buttonIcon='cog' color='primary' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasTransition" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION"' /> </@li>
+                                        <@li><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.modify_transition.title}' hideTitle=['xs','sm','md','lg' ] buttonIcon='pencil' color='primary' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasTransition" data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}"' /> </@li>
+                                        <@li><@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION' title='${controlTitle}' hideTitle=['xs','sm','md','lg'] buttonIcon='${controlIcon}' color='primary' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasTransition" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION"' /> </@li>
                                         <@li> 
                                             <@btnGroup>
-                                                <#if transition_index gt 0><@aButton class='btn-sm' href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveUpPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveUpPriorityTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='chevron-up' /></#if>
-                                                <#if transition_has_next><@aButton class='btn-sm' href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveDownPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveDownPriorityTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='chevron-down' iconPosition='right' /></#if>
+                                                <#if transition_index gt 0><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveUpPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveUpPriorityTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='chevron-up' /></#if>
+                                                <#if transition_has_next><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveDownPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveDownPriorityTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='chevron-down' iconPosition='right' /></#if>
                                             </@btnGroup>
                                         </@li>
-                                        <@li><@aButton class='btn-sm' href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveTransition&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.removeTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='trash' color='danger' /> </@li>
+                                        <@li><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=confirmRemoveTransition&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.removeTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='trash' color='danger' /> </@li>
                                     </@ul>
                                 </@boxBody>
                             </@box>
