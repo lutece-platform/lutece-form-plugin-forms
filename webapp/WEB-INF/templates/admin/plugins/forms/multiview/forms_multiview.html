@@ -9,6 +9,10 @@
 				<@messages errors=errors warnings=warnings />
 				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='flex' class='gap-2 flex-column'>
 					<#include "includes/include_manage_multiview_forms_header.html">
+					<@formGroup class='w-100 forms-filter order-3 d-flex justify-content-center' formStyle=''>
+						<@button type='submit' title='#i18n{portal.util.labelFilter}' buttonIcon='filter-check' />
+						<@button color='outline-danger' class='btn-reset-filter' title='#i18n{portal.util.labelDelete}' buttonIcon='filter-x' />
+					</@formGroup>
 				</@tform>
 			</@columns>
 			<@columns xs=12 md=10>
@@ -23,7 +27,6 @@
 				<#if table_template?has_content>
 					<@div id='multi-form-list' class='p-3'>
 						${table_template}
-						<@paginationAdmin paginator=paginator combo=1 showcount=0 />
 					</@div>
 				<#else>
 					<@empty title='#i18n{forms.multiviewForms.noFormResponses}' subtitle=' ' iconName='notes-off' />
@@ -34,7 +37,7 @@
 		<#if action_confirmation_message??>
 			<#assign contentConfirmation>${action_confirmation_message!}</#assign>
 			<@initToast>
-				<@addToast content=contentConfirmation class='bg-success text-white' />
+				<@addToast content=contentConfirmation class='bg-success text-success-fg' />
 			</@initToast>
 		</#if>
 	</@pageColumn>
@@ -43,19 +46,81 @@
 <@dateFilterJs />
 <@scrollTopBtn />
 <@jsHeaderSort />
-<#-- 
 <#if infos?has_content>
 <#list infos as info ><#assign msgInfo=info.message!></#list>
 <@initToast>
-	<@addToast content=msgInfo class='bg-info text-white' />
+	<@addToast content=msgInfo class='bg-info text-info-fg' />
 </@initToast>
 </#if> 
--->
+<style>
+.multiview-th {
+	max-width: 150px;
+}
+</style>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 	// Initialize the dropdown button
 	const formSelector = document.querySelector('.forms-filter #id_form')
 	formSelector.options[0].textContent = '#i18n{forms.filter.option.labelAllForms}';
+
+	// Reset filter button - check if any filter is set
+	function hasActiveFilters() {
+		const form = document.getElementById('searchForm');
+		if (!form) return false;
+		let hasFilter = false;
+		form.querySelectorAll('input:not([type="submit"]):not([type="button"]):not([type="hidden"])').forEach(input => {
+			if ((input.type === 'checkbox' || input.type === 'radio') && input.checked) {
+				hasFilter = true;
+			} else if (input.type !== 'checkbox' && input.type !== 'radio' && input.value.trim() !== '') {
+				hasFilter = true;
+			}
+		});
+		form.querySelectorAll('select').forEach(select => {
+			if (select.selectedIndex > 0) {
+				hasFilter = true;
+			}
+		});
+		form.querySelectorAll('textarea').forEach(textarea => {
+			if (textarea.value.trim() !== '') {
+				hasFilter = true;
+			}
+		});
+		return hasFilter;
+	}
+
+	function toggleResetFilterButtons() {
+		const show = hasActiveFilters();
+		document.querySelectorAll('.btn-reset-filter').forEach(btn => {
+			btn.style.display = show ? '' : 'none';
+		});
+	}
+
+	// Initial visibility check
+	toggleResetFilterButtons();
+
+	// Reset filter button click handler
+	document.querySelectorAll('.btn-reset-filter').forEach(btn => {
+		btn.addEventListener('click', function (e) {
+			e.preventDefault();
+			const form = document.getElementById('searchForm');
+			if (form) {
+				form.querySelectorAll('input:not([type="submit"]):not([type="button"]):not([type="hidden"])').forEach(input => {
+					if (input.type === 'checkbox' || input.type === 'radio') {
+						input.checked = false;
+					} else {
+						input.value = '';
+					}
+				});
+				form.querySelectorAll('select').forEach(select => {
+					select.selectedIndex = 0;
+				});
+				form.querySelectorAll('textarea').forEach(textarea => {
+					textarea.value = '';
+				});
+				form.submit();
+			}
+		});
+	});
 
 	if( document.getElementById("${filter_name!}_button") ){
 		document.getElementById("${filter_name!}_button").addEventListener('mousedown', () => {

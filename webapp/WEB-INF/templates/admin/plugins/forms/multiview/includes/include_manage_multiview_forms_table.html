@@ -19,6 +19,9 @@ ${multiviewmap!''}
 	</#list>
 </#if>
 </@table>
+<#if paginator?? && form_response_line_template_list?size gt 9>
+<@paginationAdmin paginator=paginator combo=1 showcount=0 />
+</#if>
 <#if form_response_geojson_point_list?has_content>
 <script id="geojson_points" type="application/json">{
 	"type" : "FeatureCollection",

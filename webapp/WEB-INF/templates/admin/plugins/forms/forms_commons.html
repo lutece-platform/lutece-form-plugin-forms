@@ -794,14 +794,14 @@ document.addEventListener('DOMContentLoaded', function() {
 <#-- Element visibility -->
 <#local displayTitleClass = displaySettings(hide,'table-cell') />
 <#if jsp_url?contains("?")><#assign sort_url = jsp_url + "&amp;sorted_attribute_name=" + attribute + "&amp;asc_sort=" /><#else><#assign sort_url = jsp_url + "?sorted_attribute_name=" + attribute + "&amp;asc_sort=" /></#if>
-<@th class='bg-light ${displayTitleClass!}' id='sort${id!}_${attribute!}' params='data-field="${field}"' >
+<@th class='multiview-th bg-light ${displayTitleClass!}' id='sort${id!}_${attribute!}' params='data-field="${field}"' >
 	<@div class='d-flex'>
-		<@span>${title}</@span>
+		<@span class='text-truncate' params='data-bs-toggle="tooltip" title="${title}"'>${title}</@span>
 		<@btnGroup params='aria-label="#i18n{portal.util.sort.label}"'>
-			<@aButton hideTitle=['all'] color='' style='' class='btn-sort asc mx-2' href='${sort_url}true#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.asc}' >
+			<@aButton hideTitle=['all'] color='' style='' class='btn-sort asc' href='${sort_url}true#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.asc}' >
 				<@icon style='arrow-up' />
 			</@aButton>	
-			<@aButton hideTitle=['all'] color='' style='' class='btn-sort desc mx-2' href='${sort_url}false#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.desc}' >
+			<@aButton hideTitle=['all'] color='' style='' class='btn-sort desc' href='${sort_url}false#sort${id!}_${attribute!}" title="#i18n{portal.util.sort.desc}' >
 				<@icon style='arrow-down' />
 			</@aButton>	
 		</@btnGroup>
