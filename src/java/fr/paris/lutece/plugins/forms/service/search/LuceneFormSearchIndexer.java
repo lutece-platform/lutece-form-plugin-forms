@@ -451,17 +451,14 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                 documentList.add( doc );
             }
         }
-        if ( !documentList.isEmpty( ) )
-        {
-            if( update )
-            {
-                updateDocuments( documentList, listComputingAction, plugin );
-            }
-            else
-            {
-                addDocuments( documentList, listComputingAction, plugin );
-            }
 
+        if( update )
+        {
+            updateDocuments( documentList, listComputingAction, plugin );
+        }
+        else
+        {
+            addDocuments( documentList, listComputingAction, plugin );
         }
     }
 
@@ -474,6 +471,12 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      */
     private void updateDocuments( List<Document> documentList, List<IndexerAction> listComputingAction, Plugin plugin)
     {
+        if ( documentList.isEmpty() )
+        {
+            removeListIndexerAction( listComputingAction, plugin );
+            return;
+        }
+
         provideExternalFields( documentList );
         try
         {
@@ -504,6 +507,15 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      */
     private void addDocuments( List<Document> documentList, List<IndexerAction> listComputingAction, Plugin plugin )
     {
+        if ( documentList.isEmpty() )
+        {
+            if (listComputingAction != null )
+            {
+                removeListIndexerAction(listComputingAction, plugin);
+            }
+            return;
+        }
+
         provideExternalFields( documentList );
         try
         {
