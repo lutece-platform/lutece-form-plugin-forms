@@ -461,7 +461,7 @@ $( function() {
 				</@row>
 				<@row>
 					<@columns sm=4>
-						<@formGroup id='backupStoragePeriodGroup' labelFor='backupStoragePeriod' labelKey='#i18n{forms.create_form.labelBackupStoragePeriod}' helpKey='#i18n{forms.create_form.labelBackupStoragePeriod.help}'>
+						<@formGroup id='backupStoragePeriodGroup' labelFor='backupStoragePeriod' labelKey='#i18n{forms.create_form.labelBackupStoragePeriod}' helpKey='#i18n{forms.create_form.labelBackupStoragePeriod.help}' rows=2>
 							<@input type='number' min=-1 name='backupStoragePeriod' id='backupStoragePeriod' value=form.backupStoragePeriod?string!'-1' />
 						</@formGroup>
 					</@columns>
