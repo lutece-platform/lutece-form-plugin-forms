@@ -41,15 +41,13 @@
 <script>
 window.addEventListener('message', function(event) {
 	if (event.data === 'offcanvas') {
-		document.querySelectorAll('.navbar-expand-md').forEach(function(el) {el.classList.add('d-none','bg-white'); });
-		document.querySelector('#lutece-layout-wrapper').classList.add('d-none','bg-white');
-		if( document.querySelector('.lutece-header') ){ document.querySelectorAll('.lutece-header').remove(); }
+		if( document.querySelector('.navbar-expand-md') ){ document.querySelectorAll('.navbar-expand-md').forEach(function(el) { el.remove(); }); }
+		if( document.querySelector('.lutece-header') ){ document.querySelectorAll('.lutece-header').forEach(function(el) { el.remove(); }); } 
 		if( document.querySelector('.breadcrumb') ){ document.querySelector('.breadcrumb').remove(); }
-		if( document.querySelector('.page-header') ){ document.querySelectorAll('.page-header').remove(); }
+		if( document.querySelector('.page-header') ){ document.querySelectorAll('.page-header').forEach(function(el) { el.remove(); }); } 
 		if( document.querySelector('#pageHeader') ){ document.querySelector('#pageHeader').remove(); }
 		if( document.querySelector('#feature-title') ){ document.querySelector('#feature-title').remove(); }
 		if( document.querySelector('.lutece-main-footer') ){  document.querySelector('.lutece-main-footer').remove(); }
-		document.querySelector('#lutece-layout-wrapper').classList.remove('d-none');
 	}
 });
 </script>
