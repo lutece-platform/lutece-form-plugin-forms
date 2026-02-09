@@ -83,7 +83,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
-            daoUtil.setBoolean( nIndex++, formResponse.isPublished( ) );
+            daoUtil.setInt( nIndex++, formResponse.getStatus( ) );
             daoUtil.setString( nIndex++, formResponse.getRole( ) );
             daoUtil.setString( nIndex++, formResponse.getAdmin( ) );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
@@ -146,7 +146,7 @@ public final class FormResponseDAO implements IFormResponseDAO
             Timestamp timestampCurrentTime = new Timestamp( System.currentTimeMillis( ) );
             daoUtil.setTimestamp( nIndex++, timestampCurrentTime );
             daoUtil.setBoolean( nIndex++, formResponse.isFromSave( ) );
-            daoUtil.setBoolean( nIndex++, formResponse.isPublished( ) );
+            daoUtil.setInt( nIndex++, formResponse.getStatus( ) );
             daoUtil.setString( nIndex++, formResponse.getRole( ) );
             daoUtil.setString( nIndex++, formResponse.getAdmin( ) );
             daoUtil.setTimestamp( nIndex++, formResponse.getUpdateStatus( ) );
@@ -381,7 +381,7 @@ public final class FormResponseDAO implements IFormResponseDAO
         formResponse.setFormId( daoUtil.getInt( "id_form" ) );
         formResponse.setGuid( daoUtil.getString( "guid" ) );
         formResponse.setFromSave( daoUtil.getBoolean( "from_save" ) );
-        formResponse.setPublished( daoUtil.getBoolean( "status" ) );
+        formResponse.setStatus( daoUtil.getInt( "status" ) );
         formResponse.setRole( daoUtil.getString( "role" ) );
         formResponse.setAdmin( daoUtil.getString( "admin" ) );
 

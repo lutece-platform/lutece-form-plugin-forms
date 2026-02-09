@@ -39,6 +39,7 @@ import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
 import fr.paris.lutece.plugins.forms.service.event.FormResponseEvent;
 import fr.paris.lutece.plugins.forms.service.search.IFormSearchIndexer;
+import fr.paris.lutece.plugins.workflowcore.service.event.ResourceDeletionStartedEvent;
 import fr.paris.lutece.portal.service.event.EventAction;
 import fr.paris.lutece.portal.service.event.Type;
 import fr.paris.lutece.portal.business.event.ResourceEvent;
@@ -95,9 +96,28 @@ public class FormResponseEventListener
      */
     public void deletedResource( @Observes @Type(EventAction.REMOVE) ResourceEvent event )
     {
-        if ( checkResourceType( event ) )
+        if ( checkResourceType( event.getTypeResource() ) )
         {
             deletedFormResponse( Integer.parseInt( event.getIdResource( ) ) );
+        }
+    }
+    
+    /**
+     * Handles the formResponse deletion event.
+     *
+     * @param event
+     *            the resource deletion started event
+     */
+    public void onResourceDeletionStarted( @Observes ResourceDeletionStartedEvent event )
+    {
+        if ( checkResourceType( event.getResourceType( ) ) )
+        {
+        	FormResponse response = FormResponseHome.findByPrimaryKey( event.getResourceId( ) );
+        	if ( response != null )
+        	{
+                response.setStatus( FormResponse.STATUS_DELETING );
+                FormResponseHome.update( response );
+        	}
         }
     }
 
@@ -131,7 +151,7 @@ public class FormResponseEventListener
      */
     public void updatedResource( @Observes @Type(EventAction.UPDATE) ResourceEvent event )
     {
-        if ( checkResourceType( event ) )
+        if ( checkResourceType( event.getTypeResource( ) ) )
         {
             updateFormResponse( Integer.parseInt( event.getIdResource( ) ), true );
         }
@@ -165,15 +185,15 @@ public class FormResponseEventListener
     }
 
     /**
-     * Checks whether the event concerns a form response.
+     * Checks whether the resource type concerns a form response.
      *
-     * @param event
-     *        the event to check
-     * @return true if the event concerns a form response
+     * @param resourceType
+     *        the resource type to check
+     * @return true if the resource type concerns a form response
      */
-    private boolean checkResourceType( ResourceEvent event )
+    private boolean checkResourceType( String resourceType )
     {
-        return FormResponse.RESOURCE_TYPE.equals( event.getTypeResource( ) );
+        return FormResponse.RESOURCE_TYPE.equals( resourceType );
     }
 
     /**

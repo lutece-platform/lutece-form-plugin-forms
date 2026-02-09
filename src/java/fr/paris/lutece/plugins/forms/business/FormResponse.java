@@ -54,6 +54,8 @@ public class FormResponse implements IExtendableResource, Serializable
      * Form response resource type
      */
     public static final String RESOURCE_TYPE = "FORMS_FORM_RESPONSE";
+    public static final int STATUS_PUBLISHED = 1;
+    public static final int STATUS_DELETING = 2;
     @Serial
     private static final long serialVersionUID = -7653906658667747872L;
 
@@ -69,7 +71,7 @@ public class FormResponse implements IExtendableResource, Serializable
 
     private boolean _bFromSave;
 
-    private boolean _bPublished;
+    private int _nStatus;
 
     private Timestamp _dateUpdateStatus;
 
@@ -201,20 +203,24 @@ public class FormResponse implements IExtendableResource, Serializable
     }
 
     /**
-     * @return the _bPublished
+     * check whether the formResponse is published
+     * 
+     * @return true if formResponse is published, false otherwise
      */
     public boolean isPublished( )
     {
-        return _bPublished;
+        return STATUS_PUBLISHED == _nStatus;
     }
 
     /**
      * @param bPublished
      *            the bPublished to set
+     * @deprecated use setStatus() instead
      */
+    @Deprecated
     public void setPublished( boolean bPublished )
     {
-        this._bPublished = bPublished;
+        this._nStatus = bPublished ? STATUS_PUBLISHED : 0;
     }
 
     /**
@@ -327,4 +333,24 @@ public class FormResponse implements IExtendableResource, Serializable
         return Integer.toString( _nId );
     }
 
+    /**
+     * Gets the formResponse status
+     * 
+     * @return formResponse status
+     */
+    public int getStatus( )
+    {
+        return _nStatus;
+    }
+
+    /**
+     *  Sets the formResponse status
+     * 
+     * @param nStatus
+     *            The formResponse status
+     */
+    public void setStatus( int nStatus )
+    {
+        this._nStatus = nStatus;
+    }
 }
