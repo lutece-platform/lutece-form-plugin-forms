@@ -181,6 +181,11 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
             throw new AccessDeniedException( MESSAGE_ACCESS_DENIED );
         }
 
+        if ( FormResponse.STATUS_DELETING == formResponse.getStatus( ) )
+        {
+        	return redirectToResponseList( request );
+        }
+
         boolean bRBACAuthorization = RBACService.isAuthorized( Form.RESOURCE_TYPE, Integer.toString( formResponse.getFormId( ) ),
                 FormsResourceIdService.PERMISSION_VIEW_FORM_RESPONSE, (User) getUser( ) );
         boolean bAuthorizedRecord = _formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( request, nIdFormResponse );
