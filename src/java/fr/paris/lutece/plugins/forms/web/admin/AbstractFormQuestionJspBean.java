@@ -177,9 +177,13 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
      * 
      * @param request
      *            The HTTP request
+     * @param viewManageQuestions
+     *            The manage questions view
+     * @param errorReturnUrl
+     *            The URL to go to after displaying an error message
      * @return The URL to display error message after performing the action or null if no error occurred
      */
-    protected String processQuestionCreation( HttpServletRequest request, String viewManageQuestions ) throws CodeAlreadyExistsException
+    protected String processQuestionCreation( HttpServletRequest request, String viewManageQuestions, String errorReturnUrl ) throws CodeAlreadyExistsException
     {
         int nIdStep = Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) );
         int nParentGroup = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ), 0 );
@@ -198,7 +202,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             return redirect( request, viewManageQuestions, FormsConstants.PARAMETER_ID_STEP, nIdStep );
         }
 
-        String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ) );
+        String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ), errorReturnUrl );
 
         if ( strError != null )
         {
@@ -264,9 +268,11 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
      * 
      * @param request
      *            The HTTP request
+     * @param errorReturnUrl
+     *            The URL to go to after displaying an error message
      * @return The URL to go after performing the action
      */
-    protected String processQuestionUpdate( HttpServletRequest request ) throws CodeAlreadyExistsException
+    protected String processQuestionUpdate( HttpServletRequest request, String errorRetrunUrl ) throws CodeAlreadyExistsException
     {
         String strIdStep = request.getParameter( FormsConstants.PARAMETER_ID_STEP );
         int nIdStep = NumberUtils.toInt( strIdStep, INTEGER_MINUS_ONE );
@@ -286,7 +292,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         int nIdEntry = _question.getIdEntry( );
         _entry = getFormDatabaseService( ).findEntryByPrimaryKey( nIdEntry );
 
-        String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ) );
+        String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ), errorRetrunUrl );
 
         if ( strError != null )
         {

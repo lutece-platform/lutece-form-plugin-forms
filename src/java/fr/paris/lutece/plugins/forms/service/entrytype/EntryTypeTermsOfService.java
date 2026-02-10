@@ -134,6 +134,15 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
     @Override
     public String getRequestData( Entry entry, HttpServletRequest request, Locale locale )
     {
+    	return getRequestData( entry, request, locale, null );
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRequestData( Entry entry, HttpServletRequest request, Locale locale, String errorReturnUrl )
+    {
         initCommonRequestData( entry, request );
         String strTitle = request.getParameter( PARAMETER_TITLE );
         String strLinkText = request.getParameter( PARAMETER_LINK );
@@ -143,7 +152,7 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
 
         if ( StringUtils.isNotEmpty( strFieldInError ) )
         {
-            return buildErrorUrl( strFieldInError, request, locale );
+            return buildErrorUrl( strFieldInError, request, locale, errorReturnUrl );
         }
 
         String strCSSClass = request.getParameter( PARAMETER_CSS_CLASS );
@@ -199,12 +208,16 @@ public class EntryTypeTermsOfService extends EntryTypeService implements IRespon
      *            the locale
      * @return the error URL
      */
-    private String buildErrorUrl( String strFieldInError, HttpServletRequest request, Locale locale )
+    private String buildErrorUrl( String strFieldInError, HttpServletRequest request, Locale locale, String errorReturnUrl )
     {
         Object [ ] tabRequiredFields = {
                 I18nService.getLocalizedString( strFieldInError, locale ),
         };
 
+        if( StringUtils.isNotBlank( errorReturnUrl ) )
+        {
+        	return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, errorReturnUrl, AdminMessage.TYPE_STOP );
+        }
         return AdminMessageService.getMessageUrl( request, MESSAGE_MANDATORY_FIELD, tabRequiredFields, AdminMessage.TYPE_STOP );
     }
 
