@@ -107,6 +107,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private static final String TEMPLATE_MOVE_COMPOSITE = "/admin/plugins/forms/move_composite.html";
     private static final String TEMPLATE_BREADCRUMBS = "/admin/plugins/forms/entries/all_entry_breadcrumbs.html";
 
+    // Jsp
+    private static final String JSP_MANAGE_QUESTIONS = "jsp/admin/plugins/forms/ManageQuestions.jsp";
+    
     // Properties
     private static final String PROPERTY_CREATE_GROUP_TITLE = "forms.create_group.title";
 
@@ -204,7 +207,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         _form = FormHome.findByPrimaryKey( _step.getIdForm( ) );
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( MARK_ADD_FILE_COMMENT, true );
-        model.put( MARK_ACTION, "jsp/admin/plugins/forms/ManageQuestions.jsp" );
+        model.put( MARK_ACTION, JSP_MANAGE_QUESTIONS );
         model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
 
         IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( _entry );
@@ -297,8 +300,8 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     public String doCreateQuestion( HttpServletRequest request )
     {
         try
-        {
-            String strReturnUrl = processQuestionCreation( request, VIEW_MANAGE_QUESTIONS );
+        {   	
+            String strReturnUrl = processQuestionCreation( request, VIEW_MANAGE_QUESTIONS, getErrorReturnUrlOnCreation( request ) );
 
             if ( strReturnUrl != null )
             {
@@ -319,6 +322,23 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     }
 
     /**
+     * Returns the URL to go to after displaying an error message on question creation
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL to go to after displaying an error message
+     */
+    private String getErrorReturnUrlOnCreation( HttpServletRequest request )
+    {
+    	UrlItem errorReturnUrl = new UrlItem( JSP_MANAGE_QUESTIONS );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_STEP, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_BUTTON_TYPE_ENTRY, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_ENTRY_TYPE ) ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT, request.getParameter( FormsConstants.PARAMETER_ID_DISPLAY_PARENT ) );
+    	
+    	return errorReturnUrl.getUrl( );
+    }
+    
+    /**
      * Perform the Question creation with its Entry and redirect to Entry fields management view
      * 
      * @param request
@@ -336,9 +356,9 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
     	
         try
-        {
-            String strReturnUrl = processQuestionCreation( request, VIEW_MANAGE_QUESTIONS );
-            return strReturnUrl != null ? strReturnUrl
+        {        	
+            String strReturnUrl = processQuestionCreation( request, VIEW_MANAGE_QUESTIONS, getErrorReturnUrlOnCreation( request ) );
+            return strReturnUrl != null ? redirect( request, strReturnUrl )
                     : redirect( request, VIEW_MODIFY_QUESTION, FormsConstants.PARAMETER_ID_STEP, _step.getId( ), FormsConstants.PARAMETER_ID_QUESTION,
                             _question.getId( ) );
 
@@ -370,7 +390,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
         }
         model.put( FormsConstants.MARK_FORM, _form );
         model.put( MARK_ADD_FILE_COMMENT, true );
-        model.put( MARK_ACTION, "jsp/admin/plugins/forms/ManageQuestions.jsp" );
+        model.put( MARK_ACTION, JSP_MANAGE_QUESTIONS );
         model.put( FormsConstants.MARK_BREADCRUMBS, AppTemplateService.getTemplate( TEMPLATE_BREADCRUMBS, request.getLocale( ), model ).getHtml( ) );
         
         for( Field field : FieldHome.getFieldListByIdEntry( _question.getEntry().getIdEntry( ) ) )
@@ -398,7 +418,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     {
         try
         {
-            String strReturnUrl = processQuestionUpdate( request );
+            String strReturnUrl = processQuestionUpdate( request, getErrorReturnUrlOnModification( request ) );
 
             if ( strReturnUrl != null )
             {
@@ -419,6 +439,23 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     }
 
     /**
+     * Returns the URL to go to after displaying an error message on question modification
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The URL to go to after displaying an error message
+     */
+    private String getErrorReturnUrlOnModification( HttpServletRequest request )
+    {
+    	UrlItem errorReturnUrl = new UrlItem( JSP_MANAGE_QUESTIONS );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_TARGET_VIEW, VIEW_MODIFY_QUESTION );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_STEP, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_STEP ) ) );
+    	errorReturnUrl.addParameter( FormsConstants.PARAMETER_ID_QUESTION, Integer.parseInt( request.getParameter( FormsConstants.PARAMETER_ID_QUESTION ) ) );
+    			
+    	return errorReturnUrl.getUrl( );
+    }
+    
+    /**
      * Perform the Question update with its Entry and redirect to the ModifyQuestion view
      * 
      * @param request
@@ -436,11 +473,11 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
 
         try
         {
-            String strReturnUrl = processQuestionUpdate( request );
+            String strReturnUrl = processQuestionUpdate( request, getErrorReturnUrlOnModification( request ) );
 
             if ( strReturnUrl != null )
             {
-                return strReturnUrl;
+                return redirect( request, strReturnUrl );
             }
         }
         catch( CodeAlreadyExistsException e )
