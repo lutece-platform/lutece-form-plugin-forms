@@ -1,7 +1,6 @@
 <@cTpl>
 <#assign indexIteration=-1>
 <#assign nbIterationMin=group.iterationMin>
-<#assign isShownTitle><#if group.title?ends_with('hidden')>false<#else>true</#if></#assign>
 <@cBlock class='step-group'>
 	<#list groupContent as childrenHtml>
 	<#assign currentIteration = (childrenHtml?index / nbBaseChildren)?int />
@@ -13,7 +12,7 @@
 		<#assign cClass><#if childrenHtml?index gte 1>border-top col-12 pt-m mt-l</#if><#if id_display??>display_field_${id_display} hidden</#if></#assign>
 		<#if cClass?trim !=''><div class="${cClass}"></#if>
 		<#assign legend>
-		<@cInline class='h3 group-title'>${group.title?replace('hidden','')}
+		<@cInline class='h3 group-title'>${group.title!}
 		<#if indexIteration gt 0>(${indexIteration+1})</#if>
 		<#if ( nbTotalIteration gt nbIterationMin ) && ( isIterable && indexIteration = nbTotalIteration - 1 )><div class="btn btn-group ms-auto mt-0"></#if>
 		<#if nbTotalIteration gt nbIterationMin>
@@ -29,7 +28,7 @@
 		</@cInline>
 		<#if ( nbTotalIteration gt nbIterationMin ) && ( isIterable && indexIteration = nbTotalIteration - 1 )></div></#if>
 		</#assign>
-		<@cLegend label=legend showLabel=isShownTitle?boolean class='col-12 d-flex align-items-center justify-space-between' id='group-${indexIteration+1!}' />
+		<@cLegend label=legend showLabel=group.titleDisplayed class='col-12 d-flex align-items-center justify-space-between' id='group-${indexIteration+1!}' />
 		<div class="row">
 		<#if cClass !=''></div></div></#if>
 		</#if>
