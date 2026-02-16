@@ -46,12 +46,7 @@
 <@dateFilterJs />
 <@scrollTopBtn />
 <@jsHeaderSort />
-<#if infos?has_content>
-<#list infos as info ><#assign msgInfo=info.message!></#list>
-<@initToast>
-	<@addToast content=msgInfo class='bg-info text-info-fg' />
-</@initToast>
-</#if> 
+<@formsToastr infos=infos />
 <style>
 .multiview-th {
 	max-width: 150px;
