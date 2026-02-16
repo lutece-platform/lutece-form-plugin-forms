@@ -369,7 +369,7 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
         if ( request.getParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION ) != null )
         {
-            addSortConfigParameterValues( request );
+            addSortConfigParameterValues( mapFilterValues, request );
         }
 
         return mapFilterValues;
@@ -377,19 +377,21 @@ public class MultiviewFormResponseDetailsJspBean extends AbstractJspBean
 
     /**
      * Fill the map which contains the values of all filters with informations of the sort to use
-     * 
+     *
+     * @param mapFilterValues
+     *            The map which contains parameters used to filter and their values
      * @param request
      *            The request to use to retrieve the value of the sort
      */
-    private void addSortConfigParameterValues( HttpServletRequest request )
+    private void addSortConfigParameterValues( Map<String, String> mapFilterValues, HttpServletRequest request )
     {
         String strPositionToSort = request.getParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION );
         String strAttributeName = request.getParameter( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME );
         String strAscSort = request.getParameter( FormsConstants.PARAMETER_SORT_ASC_VALUE );
 
-        _mapFilterValues.put( FormsConstants.PARAMETER_SORT_COLUMN_POSITION, strPositionToSort );
-        _mapFilterValues.put( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME, strAttributeName );
-        _mapFilterValues.put( FormsConstants.PARAMETER_SORT_ASC_VALUE, strAscSort );
+        mapFilterValues.put( FormsConstants.PARAMETER_SORT_COLUMN_POSITION, strPositionToSort );
+        mapFilterValues.put( FormsConstants.PARAMETER_SORT_ATTRIBUTE_NAME, strAttributeName );
+        mapFilterValues.put( FormsConstants.PARAMETER_SORT_ASC_VALUE, strAscSort );
     }
 
     /**
