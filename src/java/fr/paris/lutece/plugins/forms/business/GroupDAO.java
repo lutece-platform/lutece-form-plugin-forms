@@ -50,11 +50,11 @@ import org.apache.commons.collections.CollectionUtils;
 public final class GroupDAO implements IGroupDAO
 {
     // Constants
-    private static final String SQL_QUERY_SELECTALL = "SELECT id_group, title, description, id_step, iteration_min, iteration_max, iteration_add_label, iteration_remove_label FROM forms_group";
+    private static final String SQL_QUERY_SELECTALL = "SELECT id_group, title, description, id_step, iteration_min, iteration_max, iteration_add_label, iteration_remove_label, is_title_displayed FROM forms_group";
     private static final String SQL_QUERY_SELECT = SQL_QUERY_SELECTALL + " WHERE id_group = ?";
-    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_group ( title, description, id_step, iteration_min, iteration_max, iteration_add_label, iteration_remove_label ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_INSERT = "INSERT INTO forms_group ( title, description, id_step, iteration_min, iteration_max, iteration_add_label, iteration_remove_label, is_title_displayed ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) ";
     private static final String SQL_QUERY_DELETE = "DELETE FROM forms_group WHERE id_group = ? ";
-    private static final String SQL_QUERY_UPDATE = "UPDATE forms_group SET id_group = ?, title = ?, description = ?, id_step = ?, iteration_min = ?, iteration_max = ?, iteration_add_label = ?, iteration_remove_label = ? WHERE id_group = ?";
+    private static final String SQL_QUERY_UPDATE = "UPDATE forms_group SET id_group = ?, title = ?, description = ?, id_step = ?, iteration_min = ?, iteration_max = ?, iteration_add_label = ?, iteration_remove_label = ?, is_title_displayed = ? WHERE id_group = ?";
     private static final String SQL_QUERY_SELECTALL_ID = "SELECT id_group FROM forms_group";
 
     /**
@@ -74,6 +74,7 @@ public final class GroupDAO implements IGroupDAO
             daoUtil.setInt( nIndex++, group.getIterationMax( ) );
             daoUtil.setString( nIndex++, group.getIterationAddLabel( ) );
             daoUtil.setString( nIndex++, group.getIterationRemoveLabel( ) );
+            daoUtil.setBoolean( nIndex++, group.isTitleDisplayed( ) );
 
             daoUtil.executeUpdate( );
             if ( daoUtil.nextGeneratedKey( ) )
@@ -140,6 +141,8 @@ public final class GroupDAO implements IGroupDAO
             daoUtil.setInt( nIndex++, group.getIterationMax( ) );
             daoUtil.setString( nIndex++, group.getIterationAddLabel( ) );
             daoUtil.setString( nIndex++, group.getIterationRemoveLabel( ) );
+            daoUtil.setBoolean( nIndex++, group.isTitleDisplayed( ) );
+
             daoUtil.setInt( nIndex, group.getId( ) );
 
             daoUtil.executeUpdate( );
@@ -257,6 +260,7 @@ public final class GroupDAO implements IGroupDAO
         group.setIterationMax( daoUtil.getInt( "iteration_max" ) );
         group.setIterationAddLabel( daoUtil.getString( "iteration_add_label" ) );
         group.setIterationRemoveLabel( daoUtil.getString( "iteration_remove_label" ) );
+        group.setTitleDisplayed( daoUtil.getBoolean( "is_title_displayed" ) );
 
         return group;
     }
