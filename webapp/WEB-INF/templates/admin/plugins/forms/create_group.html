@@ -16,8 +16,8 @@
 			<@formGroup rows=2  labelFor='title' labelKey='#i18n{forms.create_group.labelTitle}' helpKey='#i18n{forms.create_group.labelTitle.help}' mandatory=true>
 				<@input type='text' name='title' id='group-title' value='${group.title!}' />
 			</@formGroup>
-			<@formGroup rows=2  helpKey='#i18n{forms.modify_group.labelShowTitle.help}'>
-				<@checkBox orientation='switch' labelKey='#i18n{forms.modify_group.labelShowTitle}' labelFor='show-group-title' name='show-group-title' id='show-group-title' value='0' checked=true />
+			<@formGroup rows=2  helpKey='#i18n{forms.modify_group.labelTitleDisplayed.help}'>
+				<@checkBox orientation='switch' labelKey='#i18n{forms.modify_group.labelTitleDisplayed}' labelFor='titleDisplayed' name='titleDisplayed' id='titleDisplayed' value='1' checked=true />
 			</@formGroup>
 			<@formGroup rows=2  labelFor='description' labelKey='#i18n{forms.create_group.labelDescription}' helpKey='#i18n{forms.create_group.labelDescription.help}'>
 				<@input type='textarea' name='description' class='richtext'>${group.description!}</@input>
@@ -63,12 +63,3 @@
 </@pageContainer>
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
-<script>
-document.addEventListener('DOMContentLoaded', function(e) {
-	document.querySelector('#create_group').addEventListener('submit', function(e) {
-		if ( !document.querySelector('#show-group-title').checked && document.querySelector('#group-title').value.indexOf('hidden') === -1 ) {
-			document.querySelector('#group-title').value = document.querySelector('#group-title').value  + ' - hidden';
-		} 
-	});
-});
-</script>
