@@ -106,6 +106,7 @@ iteration_min int default '1',
 iteration_max int default '1',
 iteration_add_label varchar(255) default '',
 iteration_remove_label varchar(255) default '',
+is_title_displayed SMALLINT default 1 NOT NULL,
 PRIMARY KEY (id_group)
 );
 CREATE INDEX index_fg_id_step ON forms_question ( id_step );

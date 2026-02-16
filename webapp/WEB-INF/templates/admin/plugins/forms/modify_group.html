@@ -15,10 +15,10 @@
 					<@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
 					<@input type='hidden' id='id' name='id' value='${group.id}' />
 					<@formGroup labelFor='title' labelKey='#i18n{forms.modify_group.labelTitle}' helpKey='#i18n{forms.modify_group.labelTitle.help}' mandatory=true>
-						<@input type='text' name='title' id='group-title' value='${group.title!?replace(\'- hidden\',\'\')}' />
+						<@input type='text' name='title' id='group-title' value='${group.title!}' />
 					</@formGroup>
-					<@formGroup helpKey='#i18n{forms.modify_group.labelShowTitle.help}'>
-						<@checkBox labelKey='#i18n{forms.modify_group.labelShowTitle}' labelFor='show-group-title' name='show-group-title' id='show-group-title' value='0' checked=!group.title?ends_with('hidden') />
+					<@formGroup helpKey='#i18n{forms.modify_group.labelTitleDisplayed.help}'>
+						<@checkBox labelKey='#i18n{forms.modify_group.labelTitleDisplayed}' labelFor='titleDisplayed' name='titleDisplayed' id='titleDisplayed' value='1' checked=(group?has_content && group.titleDisplayed) />
 					</@formGroup>
 					<@formGroup labelKey='#i18n{forms.modify_group.labelDescription}' helpKey='#i18n{forms.modify_group.labelDescription.help}' >
 						<@input type='textarea' name='description' class='richtext'>${group.description!}</@input>
@@ -66,11 +66,6 @@
 <@initEditor />
 <script>
 document.addEventListener('DOMContentLoaded', function(e) {
-	document.querySelector('#modify_group').addEventListener('submit', function(e) {
-		if ( !document.querySelector('#show-group-title').checked && document.querySelector('#group-title').value.indexOf('hidden') === -1 ) {
-			document.querySelector('#group-title').value = document.querySelector('#group-title').value  + ' - hidden';
-		} 
-	});
 	<#if group.iterationMin=1 && group.iterationMax=1 > 
 	document.getElementById('iteration_group').classList.toggle('d-none');
 	<#else>    
