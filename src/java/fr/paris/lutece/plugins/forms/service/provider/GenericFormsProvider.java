@@ -58,7 +58,6 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
-import fr.paris.lutece.plugins.forms.service.StepService;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeAutomaticFileReading;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCamera;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeComment;
@@ -121,13 +120,27 @@ public abstract class GenericFormsProvider {
 	private static final String MESSAGE_I18N_FO_FILE_LINK = "forms.marker.provider.url.fo.file.link";
 
 	/**
-	 * provide forms values as model (map)
-	 *
-	 * @param formResponse
-	 * @param request
-	 * @return the model map
-	 */
-	public static Map<String, Object> getValuesModel( FormResponse formResponse, HttpServletRequest request )
+     * Provides forms values as model (map), responses of iterations are merged into one FormQuestionResponse identified by the question id.
+     *
+     * @param formResponse
+     * @param request
+     * @return the model map
+     */
+    public static Map<String, Object> getValuesModel( FormResponse formResponse, HttpServletRequest request)
+    {
+        return getValuesModel( formResponse, request, true );
+    }
+    
+    /**
+     * Provides forms values as model (map). If mergeGroupedResponses is true, then responses of iterations are merged into one FormQuestionResponse identified
+     * by the question id, otherwise, responses of iterations are available with their question id and iteration number.
+     *
+     * @param formResponse
+     * @param request
+     * @param mergeGroupedResponses
+     * @return the model map
+     */
+    public static Map<String, Object> getValuesModel( FormResponse formResponse, HttpServletRequest request, boolean mergeGroupedResponses )
 	{
 		Map<String, Object> model = new HashMap<>( );
 
@@ -177,27 +190,38 @@ public abstract class GenericFormsProvider {
 				}
 			}
 
-			// in case of multiple FormQuestionResponse for the same question (when there is an iteration),
-			// we merge them into one FormQuestionResponse and update the marker
-			String strMultipleFormQuestionResponseKey = MARK_POSITION + formQuestionResponse.getQuestion().getId( ) ;
-			if (model.containsKey( strMultipleFormQuestionResponseKey ) )
-			{
-				FormQuestionResponse existingFormQuestionResponse = (FormQuestionResponse) model.get( strMultipleFormQuestionResponseKey );
+			if ( mergeGroupedResponses )
+            {
+                // in case of multiple FormQuestionResponse for the same question (when there is an iteration),
+                // we merge them into one FormQuestionResponse and update the marker
+                String strMultipleFormQuestionResponseKey = MARK_POSITION + formQuestionResponse.getQuestion( ).getId( );
+                if ( model.containsKey( strMultipleFormQuestionResponseKey ) )
+                {
+                    FormQuestionResponse existingFormQuestionResponse = (FormQuestionResponse) model.get( strMultipleFormQuestionResponseKey );
 
-				List<Response> existingResponses = existingFormQuestionResponse.getEntryResponse();
-				List<Response> newResponses = formQuestionResponse.getEntryResponse();
-				List<Response> allResponses = new ArrayList<>();
+                    List<Response> existingResponses = existingFormQuestionResponse.getEntryResponse( );
+                    List<Response> newResponses = formQuestionResponse.getEntryResponse( );
+                    List<Response> allResponses = new ArrayList<>( );
 
-				allResponses.addAll(existingResponses);
-				allResponses.addAll(newResponses);
+                    allResponses.addAll( existingResponses );
+                    allResponses.addAll( newResponses );
 
-				existingFormQuestionResponse.setEntryResponse(allResponses);
-				model.replace( strMultipleFormQuestionResponseKey, existingFormQuestionResponse);
-			}
-			else
-			{
-				model.put( strMultipleFormQuestionResponseKey , formQuestionResponse);
-			}
+                    existingFormQuestionResponse.setEntryResponse( allResponses );
+                    model.replace( strMultipleFormQuestionResponseKey, existingFormQuestionResponse );
+                }
+                else
+                {
+                    model.put( strMultipleFormQuestionResponseKey, formQuestionResponse );
+                }
+            }
+            else
+            {
+                String strFormQuestionResponseKey = MARK_POSITION + formQuestionResponse.getQuestion( ).getId( );
+                String strIteratedFormQuestionResponseKey = strFormQuestionResponseKey + MARK_POSITION_ITERATION
+                        + formQuestionResponse.getQuestion( ).getIterationNumber( );
+                model.put( strFormQuestionResponseKey, formQuestionResponse );
+                model.put( strIteratedFormQuestionResponseKey, formQuestionResponse );
+            }
 		}
 
 		// Additional markers
