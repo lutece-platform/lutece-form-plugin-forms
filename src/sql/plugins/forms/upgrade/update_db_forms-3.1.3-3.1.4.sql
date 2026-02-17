@@ -4,6 +4,8 @@
 
 ALTER TABLE forms_form ADD backup_storage_period INT DEFAULT -1 NOT NULL;
 
+-- changeset forms:update_db_forms-3.1.3-3.1.4-rev1.sql
+
 ALTER TABLE forms_step ADD is_title_displayed SMALLINT default 1 NOT NULL;
 ALTER TABLE forms_group ADD is_title_displayed SMALLINT default 1 NOT NULL;
 
