@@ -1,4 +1,3 @@
-<#if !entry.onlyDisplayInBack>
 <#assign idName = buildEntryName( entry, entry_iteration_number )>
 <#assign entryClass>files-list <#if entry.CSSClass?contains('hidden')>hidden</#if></#assign>
 <@li class=entryClass! >
@@ -53,4 +52,3 @@
 		<@span class='ms-xs font-italic'>#i18n{portal.util.labelNoItem}</@span>	
 	</#if>
 </@li>
-</#if>
