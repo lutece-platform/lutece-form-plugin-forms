@@ -7,7 +7,11 @@
 		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
 		<div class="col-12">
 			<#if user??>
-				<span class="${entry.CSSClass!} form-control-plaintext" >${user.getUserInfo(fieldMyLuteceAttributeName.value)}</span>
+				<#if mylutece_attr_template_value??>
+					<span class="${entry.CSSClass!} form-control-plaintext" >${mylutece_attr_template_value}</span>
+				<#else>
+					<span class="${entry.CSSClass!} form-control-plaintext" >${user.getUserInfo(fieldMyLuteceAttributeName.value)}</span>
+				</#if>
 			</#if>
 			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
 				<span class="form-control-plaintext">${entry.helpMessage}</span>

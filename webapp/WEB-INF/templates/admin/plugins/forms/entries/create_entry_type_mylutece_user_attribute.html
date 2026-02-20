@@ -27,6 +27,9 @@ ${breadcrumb_template}
 				<@formGroup labelFor='mylutece_attribute_name' labelKey='#i18n{forms.create_entry.labelMyLuteceUserAttribute}'>
 					<@select name='mylutece_attribute_name' id='mylutece_attribute_name' default_value='' items=entryTypeService.getLuteceUserAttributesRefList( locale ) />
 				</@formGroup>
+				<@formGroup labelFor='mylutece_attribute_template' labelKey='#i18n{forms.create_entry.labelMyLuteceUserAttributeTemplate}' helpKey='#i18n{forms.create_entry.labelHelpMyLuteceUserAttributeTemplateComment}'>
+					<@input type='textarea' name='mylutece_attribute_template' id='mylutece_attribute_template' rows=2></@input>
+				</@formGroup>
 				<@formGroup labelFor='mandatory' labelKey='#i18n{forms.create_entry.labelMandatory}'>
 					<@checkBox orientation='switch' name='mandatory' id='mandatory' value='true' />
 				</@formGroup>
