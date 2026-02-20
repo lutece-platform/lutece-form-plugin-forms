@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.web.entrytype;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
@@ -57,7 +59,10 @@ import fr.paris.lutece.portal.service.template.AppTemplateService;
 public class EntryTypeMyLuteceUserAttributeDisplayService implements IEntryDisplayService
 {
     private static final String MARK_USER = "user";
-
+    private static final String MARK_MYLUTECE_ATTRIBUTE_VALUE = "mylutece_attr_value";
+    private static final String MARK_MYLUTECE_ATTRIBUTE_TEMPLATE_VALUE = "mylutece_attr_template_value";
+    private static final String FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE = "attribute_name";
+    private static final String FIELD_MYLUTECE_ATTRIBUTE_TEMPLATE_CODE = "attribute_template";
     private String _strEntryServiceName = StringUtils.EMPTY;
 
     /**
@@ -84,7 +89,7 @@ public class EntryTypeMyLuteceUserAttributeDisplayService implements IEntryDispl
      *            The given model
      * @return the completed model
      */
-    private Map<String, Object> setModel( Entry entry, HttpServletRequest request, DisplayType displayType, Map<String, Object> model )
+    private Map<String, Object> setModel( Entry entry, HttpServletRequest request, DisplayType displayType, Map<String, Object> model, Locale locale )
     {
         model.put( FormsConstants.QUESTION_ENTRY_MARKER, entry );
 
@@ -92,6 +97,23 @@ public class EntryTypeMyLuteceUserAttributeDisplayService implements IEntryDispl
         {
             LuteceUser user = findLuteceUserFrom( request );
             model.put( MARK_USER, user );
+
+            Field fieldTemplate = entry.getFieldByCode( FIELD_MYLUTECE_ATTRIBUTE_TEMPLATE_CODE );
+            if ( null != user && null != fieldTemplate && null != fieldTemplate.getValue( ) && !"".equals( fieldTemplate.getValue( ) ) )
+            {
+                Map<String, Object> templateModel = new HashMap<>( );
+                String strAttributeValue = user.getUserInfo( entry.getFieldByCode( FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE ).getValue( ) );
+                templateModel.put( MARK_MYLUTECE_ATTRIBUTE_VALUE, strAttributeValue );
+                try
+                {
+                    model.put( MARK_MYLUTECE_ATTRIBUTE_TEMPLATE_VALUE,
+                            AppTemplateService.getTemplateFromStringFtl( fieldTemplate.getValue( ), locale, templateModel ).getHtml( ) );
+                }
+                catch( Exception e )
+                {
+                    // Invalid template, we do nothing the value from the template must be null
+                }
+            }
         }
 
         return model;
@@ -139,12 +161,12 @@ public class EntryTypeMyLuteceUserAttributeDisplayService implements IEntryDispl
         {
             case EDITION:
                 strEntryHtml = AppTemplateService
-                        .getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, request, displayType, model ) )
+                        .getTemplate( service.getTemplateHtmlForm( entry, displayType.isFront( ) ), locale, setModel( entry, request, displayType, model, locale ) )
                         .getHtml( );
                 break;
             case READONLY:
                 strEntryHtml = AppTemplateService
-                        .getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, request, displayType, model ) )
+                        .getTemplate( service.getTemplateEntryReadOnly( displayType.isFront( ) ), locale, setModel( entry, request, displayType, model, locale ) )
                         .getHtml( );
                 break;
             default: // Nothing to do

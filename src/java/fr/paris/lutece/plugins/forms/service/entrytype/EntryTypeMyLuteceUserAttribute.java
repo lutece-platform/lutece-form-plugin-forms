@@ -33,8 +33,10 @@
  */
 package fr.paris.lutece.plugins.forms.service.entrytype;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -45,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
 import fr.paris.lutece.plugins.genericattributes.business.MandatoryError;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -55,6 +58,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
+import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.util.ReferenceItem;
@@ -83,6 +87,9 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     private static final String PROPERTY_ENTRY_TITLE = "forms.entryTypeMyLuteceUserAttribute.title";
     private static final String PARAMETER_ONLY_DISPLAY_IN_BACK = "only_display_in_back";
     private static final String PARAMETER_MYLUTECE_ATTRIBUTE_NAME = "mylutece_attribute_name";
+    private static final String PARAMETER_MYLUTECE_ATTRIBUTE_TEMPLATE = "mylutece_attribute_template";
+    private static final String FIELD_MYLUTECE_ATTRIBUTE_TEMPLATE_CODE = "attribute_template";
+    private static final String MARK_MYLUTECE_ATTRIBUTE_VALUE = "mylutece_attr_value";
 
     private ReferenceList _refListUserAttributes;
 
@@ -165,6 +172,8 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
 
         GenericAttributesUtils.createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_NAME_CODE, null,
                 request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_NAME ) );
+        GenericAttributesUtils.createOrUpdateField( entry, FIELD_MYLUTECE_ATTRIBUTE_TEMPLATE_CODE, null,
+                request.getParameter( PARAMETER_MYLUTECE_ATTRIBUTE_TEMPLATE ) );
         return null;
     }
 
@@ -204,6 +213,24 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         response.setEntry( entry );
         response.setResponseValue( user.getUserInfo( strAttribute ) );
         response.setIterationNumber( getResponseIterationValue( request ) );
+
+        Field fieldTemplate = entry.getFieldByCode( FIELD_MYLUTECE_ATTRIBUTE_TEMPLATE_CODE );
+        if ( null != fieldTemplate && null != fieldTemplate.getValue( ) && !"".equals( fieldTemplate.getValue( ) ) )
+        {
+            // If a transformation template is available, convert the original value using the template
+            Map<String, Object> templateModel = new HashMap<>( );
+            String v = user.getUserInfo( strAttribute );
+            templateModel.put( MARK_MYLUTECE_ATTRIBUTE_VALUE, v );
+            try
+            {
+                String templatedValue = AppTemplateService.getTemplateFromStringFtl( fieldTemplate.getValue( ), locale, templateModel ).getHtml( );
+                response.setResponseValue( templatedValue );
+            }
+            catch( Exception e )
+            {
+                // Invalid template, we do nothing the value will be the original value
+            }
+        }
 
         listResponse.add( response );
 
