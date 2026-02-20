@@ -1,11 +1,16 @@
 <#include "all_entry_commons.html" />
 <#assign fieldMyLuteceAttributeName = getFieldByCode( entry, "attribute_name" ) >
-<#assign fieldMyLuteceAttributeTemplate = getFieldByCode( entry, "attribute_template" ) >
+<#assign fieldMyLuteceAttributeTemplate = getFieldByCode( entry, "attribute_template" )! >
+<#if fieldMyLuteceAttributeTemplate?has_content>
+	<#assign fieldMyLuteceAttributeTemplateValue = "fieldMyLuteceAttributeTemplate.value">
+<#else>
+	<#assign fieldMyLuteceAttributeTemplateValue = "">
+</#if>
 <@editFields labelErrorMessage=true exportable=entry.exportable exportablePdf=entry.exportablePdf anonym=true >
 <@formGroup labelFor='mylutece_attribute_name' labelKey='#i18n{forms.create_entry.labelMyLuteceUserAttribute}' rows=2>
 	<@select items=entryTypeService.getLuteceUserAttributesRefList(locale) name='mylutece_attribute_name' default_value=fieldMyLuteceAttributeName.value />
 </@formGroup>
 <@formGroup labelFor='mylutece_attribute_template' labelKey='#i18n{forms.create_entry.labelMyLuteceUserAttributeTemplate}' helpKey='#i18n{forms.create_entry.labelHelpMyLuteceUserAttributeTemplateComment}'>
-	<@input type='textarea' name='mylutece_attribute_template' id='mylutece_attribute_template' rows=2 value=fieldMyLuteceAttributeTemplate.value></@input>
+	<@input type='textarea' name='mylutece_attribute_template' id='mylutece_attribute_template' rows=2 value=fieldMyLuteceAttributeTemplateValue></@input>
 </@formGroup>
 </@editFields>
