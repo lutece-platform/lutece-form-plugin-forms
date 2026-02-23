@@ -34,12 +34,9 @@
 package fr.paris.lutece.plugins.forms.business.form.lock;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.util.AppException;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.sql.DAOUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.sql.SQLException;
 import java.sql.Statement;
 
 @ApplicationScoped
@@ -73,15 +70,8 @@ public class LockDAO implements ILockDAO {
             daoUtil.setString( nIndex++, lock.getIndexName() );
             daoUtil.setTimestamp( nIndex++, lock.getDateBegin() );
 
-            try {
-                daoUtil.executeUpdate();
-                return daoUtil.getGeneratedKeysResultSet().getStatement().getUpdateCount() == 1;
-            }
-            catch (AppException | SQLException e)
-            {
-                AppLogService.error( e.getMessage() );
-                return false;
-            }
+            daoUtil.executeUpdate();
+            return daoUtil.getReturnedRowCount( ) == 1;
         }
     }
 
@@ -106,15 +96,8 @@ public class LockDAO implements ILockDAO {
 
             daoUtil.setString(nIndex++, lock.getUuid() );
 
-            try {
-                daoUtil.executeUpdate();
-                return daoUtil.getGeneratedKeysResultSet().getStatement().getUpdateCount() == 1;
-            }
-            catch (AppException | SQLException e)
-            {
-                AppLogService.error( e.getMessage() );
-                return false;
-            }
+            daoUtil.executeUpdate();
+            return daoUtil.getReturnedRowCount( ) == 1;
         }
     }
 
