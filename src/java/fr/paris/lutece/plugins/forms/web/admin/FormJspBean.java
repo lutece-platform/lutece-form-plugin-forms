@@ -33,6 +33,8 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,6 +45,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
@@ -51,6 +54,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.util.ReferenceItem;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -875,7 +879,7 @@ public class FormJspBean extends AbstractJspBean
     }
 
     @Action( ACTION_EXPORT_FORM )
-    public void doExportJson( HttpServletRequest request )
+    public void doExportJson( HttpServletRequest request, HttpServletResponse response )
     {
         int nId = NumberUtils.toInt( request.getParameter( FormsConstants.PARAMETER_ID_FORM ), FormsConstants.DEFAULT_ID_VALUE );
 
@@ -889,9 +893,13 @@ public class FormJspBean extends AbstractJspBean
         {
             content = FormJsonService.getInstance( ).jsonExportForm( nId );
             Form form = FormHome.findByPrimaryKey( nId );
-            download( content.getBytes( StandardCharsets.UTF_8 ), FileUtil.normalizeFileName( form.getTitle( ) ) + ".json", "application/json" );
+            MVCUtils.addDownloadHeaderToResponse( response, FileUtil.normalizeFileName( form.getTitle( ) ) + ".json", "application/json" );
+            try ( PrintWriter writer = response.getWriter( ) )
+            {
+                writer.write( content );
+            }
         }
-        catch( JsonProcessingException e )
+        catch( IOException e )
         {
             AppLogService.error( e.getMessage( ) );
             addError( ERROR_FORM_NOT_COPIED, getLocale( ) );

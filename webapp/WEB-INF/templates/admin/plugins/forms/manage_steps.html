@@ -120,7 +120,7 @@
 											<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' label='' class='btn btn-primary me-1'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
 											<@button type='button' id='forms-action' title='Actions' dropdownMenu=true >
 												<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=duplicateStep&id_step=${step.id}&token=${token}' label='' class='dropdown-item'> <@icon style='copy' /> #i18n{forms.manage_steps.action.copyStep}</@link>
-												<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=doExportJson&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='download' /> #i18n{forms.manage_steps.action.exportStep}</@link>
+												<@link href='jsp/admin/plugins/forms/export/DoExportStepJson.jsp?id_step=${step.id}' label='' class='dropdown-item'> <@icon style='download' /> #i18n{forms.manage_steps.action.exportStep}</@link>
 												<@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='list' /> #i18n{forms.manage_steps.action.showquestions}</@link>
 												<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='trash text-danger' /> #i18n{forms.manage_steps.action.removeStep}</@link> 
 											</@button>

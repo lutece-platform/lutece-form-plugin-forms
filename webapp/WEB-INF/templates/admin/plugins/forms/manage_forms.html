@@ -79,7 +79,8 @@
                                             <#assign can_publish=true>
                                             <#assign params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasForm" data-url="${action.url}&id_form=${form.id}" title="${action.name!}"' />
                                         </#if>
-                                        <@link href='${action.url}&id_form=${form.id}&token=${token}' label='' class='dropdown-item ${perm}' params=params> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
+                                        <#assign separator = action.url?contains("?")?then("&", "?")>
+                                        <@link href='${action.url}${separator}id_form=${form.id}&token=${token}' label='' class='dropdown-item ${perm}' params=params> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
                                     </#list>
                                 </#if>
                                 <#if form.active>
