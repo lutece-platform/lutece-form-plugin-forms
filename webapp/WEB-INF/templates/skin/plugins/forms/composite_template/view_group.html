@@ -1,59 +1,43 @@
 <@cTpl>
-<#assign indexGroup=-1>
-<#assign indexIteration=0>
+<#assign indexIteration=-1>
 <#assign nbIterationMin=group.iterationMin>
-<div class="row step-group">
-	<div class="col">
-	<hr>			
+<#assign isShownTitle><#if group.title?ends_with('hidden')>false<#else>true</#if></#assign>
+<@cBlock class='step-group'>
 	<#list groupContent as childrenHtml>
-		<#assign indexIteration = ( childrenHtml?index / nbBaseChildren )?int />
+	<#assign currentIteration = (childrenHtml?index / nbBaseChildren)?int />
+	<#if currentIteration != indexIteration>
+	<#if indexIteration gte 0></fieldset></#if>
+		<#assign indexIteration = currentIteration />
 		<#assign nbTotalIteration = ( groupContent?size / nbBaseChildren )?int />
-		<#if indexGroup !=  indexIteration && indexGroup !=-1 >
-			<hr>
+		<fieldset class="step-group-item" id="group_${group.id!}_${indexIteration}"></a>
+		<#assign cClass><#if childrenHtml?index gte 1>border-top col-12 pt-m mt-l</#if><#if id_display??>display_field_${id_display} hidden</#if></#assign>
+		<#if cClass?trim !=''><div class="${cClass}"></#if>
+		<#assign legend>
+		<@cInline class='h3 group-title'>${group.title?replace('hidden','')}
+		<#if indexIteration gt 0>(${indexIteration+1})</#if>
+		<#if ( nbTotalIteration gt nbIterationMin ) && ( isIterable && indexIteration = nbTotalIteration - 1 )><div class="btn btn-group ms-auto mt-0"></#if>
+		<#if nbTotalIteration gt nbIterationMin>
+			<@cBtn class='danger ms-auto me-sm action-group' id='group_remove_${group.id!}_${indexIteration}' label=group.iterationRemoveLabel! params=' formnovalidate name="action_removeIteration" value="${group.id}_${indexIteration}"'>
+				<@parisIcon name='trash' />
+			</@cBtn>
 		</#if>
-		<#if indexGroup != indexIteration>
-			<#if group.description!=''>
-				<div class="row">
-					<div class="col">
-						<div class="d-block d-sm-none">
-							<span class="helpBoxButton visible-xs" role="button" id="">?</span>
-							<div class="helpBox xs" style="display:none;">${group.description}</div>
-						</div>
-					</div>
-				</div>
-			</#if>
-			<fieldset class="<#if id_display??> display_field_${id_display} d-none</#if>" style="position:relative;">
-				<#if !group.title?ends_with('hidden')>
-					<legend>${group.title} <#if indexIteration &gt; 0>(${indexIteration+1})</#if>
-				</#if>
-				<#if group.description!=''>
-					<div class="helpBox">${group.description}</div>
-				</#if>
-				<#assign indexGroup=indexIteration>
-				<#if indexIteration gte nbIterationMin>
-					<button class="btn btn-danger" name="action_removeIteration" value="${group.id}_${indexIteration}" type="submit">
-						<i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!} 
-					</button>
-				</#if>
-				</legend>	
+		<#if isIterable && indexIteration = nbTotalIteration - 1>
+			<@cBtn class='primary ms-auto action-group' id='group_add_${group.id!}_${indexIteration}' label=group.iterationAddLabel params='formnovalidate value="${id_group}" name="action_addIteration" '>
+				<@parisIcon name='plus' />
+			</@cBtn>
 		</#if>
-					
-				${childrenHtml}
-			</fieldset>
-		</#list>
-	</div>		
-</div>	
-<div class="row">
-	<div class="col-12 col-sm-5 offset-sm-7">
-	<#if isIterable >
-		<div class="add-iteration">
-			<button class="btn btn-primary" name="action_addIteration" value="${id_group}" type="submit">
-				<span class="fa fa-plus-circle"></span> ${group.iterationAddLabel!}
-			</button>
-		</div>	
-	</#if>
-	</div>
-</div>
+		</@cInline>
+		<#if ( nbTotalIteration gt nbIterationMin ) && ( isIterable && indexIteration = nbTotalIteration - 1 )></div></#if>
+		</#assign>
+		<@cLegend label=legend showLabel=isShownTitle?boolean class='col-12 d-flex align-items-center justify-space-between' id='group-${indexIteration+1!}' />
+		<div class="row">
+		<#if cClass !=''></div></div></#if>
+		</#if>
+		<#if group.description!=''><@cCol cols='12'>${group.description}</@cCol></#if>
+		${childrenHtml}
+	</#list>
+	<#if indexIteration gte 0></fieldset></#if>
+</@cBlock>
 <script>
 document.querySelectorAll(".helpBoxButton").forEach(function(btn) {
 	btn.addEventListener("click", function() {
