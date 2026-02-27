@@ -172,6 +172,8 @@ public class FormStepJspBean extends AbstractJspBean
     private StepService _stepService;
     @Inject
     private SecurityTokenService _securityTokenService;
+    @Inject
+    private FormGraphExportService _formGraphExportService;
 
     // Session variable to store working values
     private Form _form;
@@ -282,7 +284,7 @@ public class FormStepJspBean extends AbstractJspBean
         Map<String, Object> model = getModel( );
         model.put( FormsConstants.MARK_FORM, form );
         
-        model.put( MARK_MDGRAPH, FormGraphExportService.generate( form, AppPathService.getBaseUrl( request ) ) );
+        model.put( MARK_MDGRAPH, _formGraphExportService.generate( form, AppPathService.getBaseUrl( request ) ) );
         
         HtmlTemplate template =  AppTemplateService.getTemplate( TEMPLATE_GRAPHICAL_VIEW, getLocale(), model );
 

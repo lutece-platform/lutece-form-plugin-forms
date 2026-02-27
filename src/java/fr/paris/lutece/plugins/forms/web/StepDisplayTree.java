@@ -93,7 +93,8 @@ public class StepDisplayTree implements Serializable
     private static final String MARK_DISPLAY_CAPTCHA = "display_captcha";
     private static final String MARK_CAPTCHA = "captcha";
 
-    private static FormService _formService = CDI.current( ).select( FormService.class ).get( );
+    private transient FormService _formService;
+    private transient Instance<ICaptchaService> _captchaService;
 
     private final List<ICompositeDisplay> _listChildren = new ArrayList<>( );
     private final List<ICompositeDisplay> _listICompositeDisplay = new ArrayList<>( );
@@ -103,7 +104,6 @@ public class StepDisplayTree implements Serializable
     private final Map<Integer, List<Response>> _mapStepResponses = new HashMap<>( );
     private List<Control> _listDisplayControls = new ArrayList<>( );
     private final Map<String, Object> _model = new HashMap<>( );
-    private Instance<ICaptchaService> _captchaService = CDI.current( ).select( ICaptchaService.class, NamedLiteral.of( BeanUtils.BEAN_CAPTCHA_SERVICE ) );
 
     /**
      * Constructor
@@ -219,7 +219,7 @@ public class StepDisplayTree implements Serializable
             _listDisplayControls = new ArrayList<>( );
             for ( FormDisplay formDisplayChild : listStepFormDisplay )
             {
-                ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild, _formResponse, 0 );
+                ICompositeDisplay composite = getFormService( ).formDisplayToComposite( formDisplayChild, _formResponse, 0 );
                 _listChildren.add( composite );
                 _listDisplayControls.addAll( composite.getAllDisplayControls( ) );
             }
@@ -301,7 +301,7 @@ public class StepDisplayTree implements Serializable
 
         if ( displayType == DisplayType.EDITION_FRONTOFFICE )
         {
-            if ( !_captchaService.isResolvable( ) )
+            if ( !getCaptchaService( ).isResolvable( ) )
             {
                 _model.put( MARK_DISPLAY_CAPTCHA, false );
             }
@@ -312,7 +312,7 @@ public class StepDisplayTree implements Serializable
 
                 if ( displayCaptcha )
                 {
-                    _model.put( MARK_CAPTCHA, _captchaService.get( ).getHtmlCode( ) );
+                    _model.put( MARK_CAPTCHA, getCaptchaService( ).get( ).getHtmlCode( ) );
                 }
             }
         }
@@ -455,5 +455,33 @@ public class StepDisplayTree implements Serializable
     public void addModel( Map<String, Object> model )
     {
         _model.putAll( model );
+    }
+
+    /**
+     * Returns the FormService instance, lazily initialized from the CDI container on first access.
+     *
+     * @return the FormService instance
+     */
+    private FormService getFormService( )
+    {
+        if ( _formService == null )
+        {
+            _formService = CDI.current( ).select( FormService.class ).get( );
+        }
+        return _formService;
+    }
+
+    /**
+     * Returns the ICaptchaService CDI Instance, lazily initialized from the CDI container on first access.
+     *
+     * @return the ICaptchaService CDI Instance
+     */
+    private Instance<ICaptchaService> getCaptchaService( )
+    {
+        if ( _captchaService == null )
+        {
+            _captchaService = CDI.current( ).select( ICaptchaService.class, NamedLiteral.of( BeanUtils.BEAN_CAPTCHA_SERVICE ) );
+        }
+        return _captchaService;
     }
 }
