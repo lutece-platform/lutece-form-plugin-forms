@@ -64,8 +64,6 @@
 <#include "/admin/util/editor/editor.html" />
 <@initEditor />
 <script>
-<@offcanvasIframeScript triggerForm='create_group' triggerActionId='action_createGroup' />
-
 document.addEventListener('DOMContentLoaded', function(e) {
 	document.querySelector('#create_group').addEventListener('submit', function(e) {
 		if ( !document.querySelector('#show-group-title').checked && document.querySelector('#group-title').value.indexOf('hidden') === -1 ) {

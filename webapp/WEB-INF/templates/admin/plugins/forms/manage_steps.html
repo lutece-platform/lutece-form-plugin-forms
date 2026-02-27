@@ -31,9 +31,9 @@
 			<@tabContent>
 				<@tabPanel id='tabpanel' active=true>
 					<#if step_list?size gt 0>
-					<@row class='justify-content-end mb-3 '>
+					<@row class='justify-content-end'>
 						<@columns class='col-auto gap-2'>
-							<@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}'  buttonIcon='plus' title='#i18n{forms.manage_steps.buttonAdd}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasCreateStep" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}"' />
+							<@offcanvas targetUrl="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" useIframe=true targetElement="#offcanvasCreateStep" id="step-${form.id}"  btnIcon="plus" btnTitle="#i18n{forms.manage_steps.buttonAdd}" btnColor="primary" position="end" title="#i18n{forms.manage_steps.buttonAdd}" size="half"/>
 						</@columns>
 						<#if template_provider??>
 							<@columns class='col-auto gap-2'>
@@ -79,58 +79,57 @@
 							</@offcanvas>
 						</@columns>
 					</@row>
-					<@row id='step-list' class='row-cols-1 row-cols-sm-2 row-cols-xl-3'>
+					<@manageFeature id='step-list'>
 						<#list step_list as step>
 						<#assign stepTitle=step.title!?replace('- hidden','') />
-						<@columns>
-							<@box id='step_${step.id}'>
-								<#assign stepTitle>
-								<@link class='searchable' href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title=''><@icon style='list me-2' /> ${stepTitle}</@link>
-								<#if step.initial><@tag color='success' class='me-2'>#i18n{forms.manage_steps.columnInitial}</@tag> <#assign hasInitial=1 > </#if>
-								<#if step.final><@tag color='warning' class='me-2'>#i18n{forms.manage_steps.columnFinal}</@tag> <#assign hasFinal=1 ></#if>
-								</#assign>
-								<@boxHeader title=stepTitle  />
-								<@boxBody class='d-flex justify-content-between'>
-									<@div class='d-flex d-none d-lg-block'><#if step.description !=''>${step.description!}<#else>#i18n{manage_steps.noDescriptionLabel}</#if></@div>
-									<@div class='d-flex justify-content-between align-items-center'>
-										<#if transition_list??>
-											<#assign stepTransition = transition_list?filter( transition -> transition.fromStep = step.id ) />
-											<#if stepTransition?? && stepTransition?size gt 0>
-											<@row class='me-2'>
-												<@columns>
-												<@h level=3 class='me-5 d-none d-lg-block'>#i18n{forms.manage_transitions.title}</@h>
-												<@listGroup>
-													<#list transition_list as transition>
-														<#if transition.fromStep = step.id>
-														<@listGroupItem class='py-1 d-none d-lg-block'>
-															<#assign stepTitle=step.title!?replace('- hidden','') />
-															<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${transition.fromStep}' title='#i18n{forms.modify_transition.title} ${stepTitle!}'>
-																<@tag title='#i18n{forms.manage_transitions.columnPriority}'>${(transition.priority)!}</@tag> ${(transition.nextStepTitle?replace('- hidden',''))!''}  
-																${(transition.controlTitle)!''}<#if transition.conditional> (#i18n{forms.manage_questions.columnCondition}) </#if>
-															</@link>
-														</@listGroupItem>
-														</#if>	
-													</#list>
-												</@listGroup>
-												</@columns>
-											</@row>
-											</#if>	 
-										</#if>	 
-										<@div class='d-flex align-items-center'>
-											<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' label='' class='btn btn-primary me-1'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
-											<@button type='button' id='forms-action' title='Actions' dropdownMenu=true >
-												<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=duplicateStep&id_step=${step.id}&token=${token}' label='' class='dropdown-item'> <@icon style='copy' /> #i18n{forms.manage_steps.action.copyStep}</@link>
-												<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=doExportJson&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='download' /> #i18n{forms.manage_steps.action.exportStep}</@link>
-												<@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='list' /> #i18n{forms.manage_steps.action.showquestions}</@link>
-												<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='trash text-danger' /> #i18n{forms.manage_steps.action.removeStep}</@link> 
-											</@button>
-										</@div>
-									</@div>
-								</@boxBody>
-							</@box>
-						</@columns>
+						<@manageFeatureItem id='step_${step.id}' valign='baseline' >
+							<@manageFeatureItemColumn valign='baseline' flex=false cols='12 col-md-10' auto=true>
+								<@link class='searchable' href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' title=''>
+									<@h level=3>
+									<@icon style='list me-2' /> ${stepTitle}
+									<#if step.initial><@tag color='success' class='ms-2 fs-5'>#i18n{forms.manage_steps.columnInitial}</@tag> <#assign hasInitial=1 ></#if>
+									<#if step.final><@tag color='warning' class='ms-2 fs-5'>#i18n{forms.manage_steps.columnFinal}</@tag> <#assign hasFinal=1 ></#if>
+									</@h>
+								</@link>
+								<#if step.description !=''><@div class='text-truncate'>${step.description!}</@div></#if>
+								<#if transition_list??>
+								<#assign stepTransition = transition_list?filter( transition -> transition.fromStep = step.id ) />
+								<#if stepTransition?? && stepTransition?size gt 0>
+								<@row>
+									<@columns xs=12 md=4>
+										<@h level=4 class='d-none d-lg-block'>#i18n{forms.manage_transitions.title}</@h>
+									</@columns>
+									<@columns xs=12 md=8>
+									<@listGroup>
+										<#list transition_list as transition>
+											<#if transition.fromStep = step.id>
+											<@listGroupItem class='py-1 d-none d-lg-block'>
+												<#assign stepTitle=step.title!?replace('- hidden','') />
+												<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${transition.fromStep}' title='#i18n{forms.modify_transition.title} ${stepTitle!}'>
+													<@tag title='#i18n{forms.manage_transitions.columnPriority}'>${(transition.priority)!}</@tag> ${(transition.nextStepTitle?replace('- hidden',''))!''}  
+													${(transition.controlTitle)!''}<#if transition.conditional> (#i18n{forms.manage_questions.columnCondition}) </#if>
+												</@link>
+											</@listGroupItem>
+											</#if>	
+										</#list>
+									</@listGroup>
+									</@columns>
+								</@row>
+								</#if>	 
+							</#if>	 
+							</@manageFeatureItemColumn>
+							<@manageFeatureItemColumn align='end' cols='12 col-md-2'>
+								<@link href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=${step.id}' label='' class='btn btn-primary me-1'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
+								<@button type='button' id='forms-action' title='#i18n{portal.util.labelActions}' dropdownMenu=true >
+									<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=duplicateStep&id_step=${step.id}&token=${token}' label='' class='dropdown-item'> <@icon style='copy' /> #i18n{forms.manage_steps.action.copyStep}</@link>
+									<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?action=doExportJson&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='download' /> #i18n{forms.manage_steps.action.exportStep}</@link>
+									<@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=manageQuestions&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='list' /> #i18n{forms.manage_steps.action.showquestions}</@link>
+									<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=confirmRemoveStep&id_step=${step.id}' label='' class='dropdown-item'> <@icon style='trash text-danger' /> #i18n{forms.manage_steps.action.removeStep}</@link> 
+								</@button>
+							</@manageFeatureItemColumn>
+						</@manageFeatureItem>
 						</#list>
-					</@row>
+					</@manageFeature>
 					<#if hasFinal=0 && hasInitial=0 >
 						<#assign msg="#i18n{forms.manage_steps.warning.no.initial.final}" />
 					<#elseif hasFinal=1  && hasInitial=0>	
@@ -145,8 +144,7 @@
 				<#else>
 					<@empty subtitle='#i18n{forms.multiviewForms.view_record_history.history_empty}' title='#i18n{forms.manage_steps.warning.no.initial.final}' />
 					<@div class='d-flex justify-content-center'>
-						<!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" targetElement="#create-step" id="step-${form.id}"  btnIcon="plus" btnTitle="#i18n{forms.manage_steps.buttonAdd}" btnColor="primary" position="end" title="#i18n{forms.manage_steps.buttonAdd}" size="half"/> -->
-						 <@aButton href='jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}' class='me-2' buttonIcon='plus' title='#i18n{forms.manage_steps.buttonAdd}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasCreateStep" data-url="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}"' />
+						 <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" useframe=true targetElement="#create-step"  id="step-${form.id}"  btnIcon="plus" btnTitle="#i18n{forms.manage_steps.buttonAdd}" btnColor="primary" position="end" title="#i18n{forms.manage_steps.buttonAdd}" size="half"/>
 						<#if template_provider??>
 							<@offcanvas id="import-template" title="#i18n{forms.manage_steps.buttonImportTemplate}" position="end" btnTitle="#i18n{forms.manage_steps.buttonImportTemplate}" btnIcon="new-section" size="sm" >
 							<@tform  method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
@@ -193,22 +191,13 @@
 		</@formTabs>
 	</@pageColumn>
 </@pageContainer>	
-<@offcanvasIframe id='offcanvasCreateStep' label='#i18n{forms.manage_steps.buttonAdd}' />
-<@offcanvasIframe id='offcanvasTransition'  />
 <script type="module">
 import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';
 const searchInput = document.querySelector("#search_step");
-const searchElementList = document.querySelectorAll("#step-list .col");
+const searchElementList = document.querySelectorAll("#step-list .card");
 new LuteceSearchList( searchInput, searchElementList, {
-	searchableChild: [".searchable",".card-title"],
-	highlight: true,
-	toggleList: true,
-	toggleRow: true,
-	toggleRowSelector: '#step-list',
-	toggleLabel: '#i18n{portal.util.labelToggleList}',
-	toggleLabelOff: '#i18n{portal.util.labelToggleListOff}',
-	toggleCardClass: ['card-list','flex-row'], 
-	toggleCardHeaderClass : ['flex-row','justify-content-start','align-items-center'],  
+	searchableChild: [".searchable",".list-group-item",".badge"],
+	highlight: true, 
 });
 
 const stepsArray = [];
@@ -267,23 +256,6 @@ document.addEventListener('mouseup', function(e) {
 	});
 });
 </script>
-<@formModal />
-<@modal id='importJsonModal'>
-	<@modalHeader modalTitle='#i18n{forms.manage_steps.buttonImport}' />
-	<@modalBody>
-		<@tform class='form' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp' params='enctype="multipart/form-data"'>
-			<@input type='hidden' name='token' value='${token}' />
-			<@input type='hidden' name='id_form' value='${form.id}' />
-			<@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
-				<@input type='file' name='json_file'/>
-			</@formGroup>
-			<@formGroup>
-				<@button type='submit' name='action_doImportJson' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
-				<@button type='cancel' name='action_doCancelImport' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' cancel=true />
-			</@formGroup>
-		</@tform>
-	</@modalBody>
-</@modal>
 <#if template_provider??>
 	<@modal id='importTemplateModal'>
 		<@modalHeader modalTitle='#i18n{forms.manage_steps.buttonImportTemplate}' />

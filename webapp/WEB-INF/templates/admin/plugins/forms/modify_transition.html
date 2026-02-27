@@ -7,10 +7,7 @@
 <@formGroup labelKey='#i18n{forms.modify_transition.labelNextStep}' helpKey='#i18n{forms.modify_transition.labelNextStep.help}' mandatory=true rows=2>
     <@inputGroup>
         <@select name='nextStep' items=availableSteps default_value='${transition.nextStep}' />
-        <@button type='submit' id='action_modifyTransition' name='action_modifyTransition' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' hideTitle=['all'] />
+        <@button type='submit' id='action_modifyTransition' name='action_modifyTransition' class='form-validation' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' hideTitle=['all'] />
     </@inputGroup>
 </@formGroup>
 </@tform>
-<script>
-<@offcanvasIframeScript triggerForm='modify_transition' triggerActionId='action_modifyTransition' />
-</script>

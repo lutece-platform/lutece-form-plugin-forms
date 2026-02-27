@@ -13,13 +13,11 @@
                 <#if question == q.code?number>
                     <@li class='list-group-item d-flex align-items-center justify-content-between'>
                         <@span class='truncate'> 
-                        <@icon style='square-check' />  ${q.name!} 
+                            <@icon style='square-check' />  ${q.name!} 
                         </@span>  
-                        <#--  
                         <@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=modifyControl&removeQuestion=removeQuestion&id_step=${id_step!}&id_rm_question=${question}' title='#i18n{portal.util.labelDelete} ${q.name!}' class='btn btn-outline-danger'>
                             <@icon style='trash' /> 
                         </@link>
-                        -->
                     </@li>
                 </#if>
             </#list>
@@ -28,32 +26,18 @@
 </#if>
 </@formGroup>
 <@formGroup labelKey='#i18n{forms.modify_control.labelValidator}' helpKey='#i18n{forms.modify_control.labelValidator.help}' rows=2>
-<@inputGroup>
-    <@select name='validatorName' class='form-select' items=availableValidators default_value='${control.validatorName!}' />
-    <@button type='submit' name="view_modifyControl" value="validateValidator" showTitle=false buttonIcon='check'/>
-</@inputGroup>
+    <@inputGroup>
+        <@select name='validatorName' class='form-select' items=availableValidators default_value='${control.validatorName!}' />
+        <@button type='submit' name="view_modifyControl" value="validateValidator" showTitle=false buttonIcon='check'/>
+    </@inputGroup>
 </@formGroup>
 <@div id='control-template'>
 ${control_template}
 </@div>
 <@formGroup labelKey='#i18n{forms.modify_control.labelErrorMessage}' helpKey='#i18n{forms.modify_control.labelErrorMessage.help}' rows=2>
-<@inputGroup>
-    <@input type='textarea' name='errorMessage' value='${control.errorMessage!}' />
-</@inputGroup>
+    <@inputGroup>
+        <@input type='textarea' name='errorMessage' value='${control.errorMessage!}' />
+    </@inputGroup>
 </@formGroup>
 <@formsButton okAction='modifyControl' viewAction='' />
 </@tform>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize the form
-    const ctrl = document.getElementById('control-template');
-    if (ctrl) {
-        const labels = ctrl.querySelectorAll('.form-label')
-        labels.forEach(element => {
-            element.className = 'form-label';
-            element.nextElementSibling.classList.add('col-12');
-        });
-    }
-});
-<@offcanvasIframeScript triggerForm='modify_transition_control' triggerActionId='action_modifyControl' />
-</script>
