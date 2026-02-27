@@ -94,7 +94,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
 
     private static final String DEFAULT_GROUP_ICON = "indent";
 
-    private static FormService _formService = CDI.current( ).select( FormService.class ).get( );
+    private transient FormService _formService;
     private int _nIterationNumber;
     private int _nNbBaseChildren;
 
@@ -222,7 +222,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
     {
         for ( FormDisplay formDisplayChild : listFormDisplayChildren )
         {
-            ICompositeDisplay composite = _formService.formDisplayToComposite( formDisplayChild, formResponse, nIterationNumber );
+            ICompositeDisplay composite = getFormService( ).formDisplayToComposite( formDisplayChild, formResponse, nIterationNumber );
             _listChildren.add( composite );
         }
     }
@@ -466,7 +466,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
 
         for ( FormDisplay child : FormDisplayHome.getFormDisplayListByParent( this.getFormDisplay( ).getStepId( ), this.getFormDisplay( ).getId( ) ) )
         {
-            ICompositeDisplay compositeChild = _formService.formDisplayToComposite( child, null, 0 );
+            ICompositeDisplay compositeChild = getFormService( ).formDisplayToComposite( child, null, 0 );
             listCompositeDisplay.addAll( compositeChild.getCompositeList( ) );
         }
         return listCompositeDisplay;
@@ -600,6 +600,20 @@ public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
     @Override
     public Integer getIterationNumber() {
         return null;
+    }
+
+    /**
+     * Returns the FormService instance, lazily initialized from the CDI container on first access.
+     *
+     * @return the FormService instance
+     */
+    private FormService getFormService( )
+    {
+        if ( _formService == null )
+        {
+            _formService = CDI.current( ).select( FormService.class ).get( );
+        }
+        return _formService;
     }
 
 }

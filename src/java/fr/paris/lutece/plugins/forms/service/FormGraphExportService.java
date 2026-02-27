@@ -41,7 +41,8 @@ package fr.paris.lutece.plugins.forms.service;
 import java.util.List;
 
 import fr.paris.lutece.plugins.forms.util.FormsUtils;
-import jakarta.enterprise.inject.spi.CDI;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 
 import fr.paris.lutece.plugins.forms.business.Control;
@@ -59,7 +60,8 @@ import fr.paris.lutece.plugins.forms.web.ICompositeDisplay;
  *
  * @author seboo
  */
-public class FormGraphExportService 
+@ApplicationScoped
+public class FormGraphExportService
 {
 
     private static final String KEY_GRAPH = "flowchart LR";
@@ -79,8 +81,27 @@ public class FormGraphExportService
     private static final String TRANSITION_URL_PART = "/jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions&id_step=";
     private static final String NEWLINE = "\n";
 
-    private static final FormService _formService = CDI.current( ).select( FormService.class ).get( );
-    
+    private FormService _formService;
+
+    /**
+     * No-args constructor required by CDI for proxy generation.
+     */
+    protected FormGraphExportService()
+    {
+    }
+
+    /**
+     * Constructor
+     *
+     * @param formService
+     *            the form service
+     */
+    @Inject
+    public FormGraphExportService( FormService formService )
+    {
+        _formService = formService;
+    }
+
     /**
      * Export form as Mermaid MD graph
      * 
@@ -88,7 +109,7 @@ public class FormGraphExportService
      * @param locale
      * @return the markdown definition of the form
      */
-    public static String generate( Form form, String strBaseUrl )
+    public String generate( Form form, String strBaseUrl )
     {
         StringBuilder sb = new StringBuilder( KEY_GRAPH ).append( NEWLINE );
 
