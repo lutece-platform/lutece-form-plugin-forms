@@ -5,12 +5,12 @@
 	<@listGroupItem class='p-0' >
 		<@card class='mb-1'>
 			<@row class='align-items-center'>
-				<@columns>
-					<@h level=3 class='mb-0' params='title="#i18n{portal.util.labelModify} ${form.title}" style="--tw:300px"'>
-						<#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
-						<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' label='${form.title}' class='truncate' />
+				<@div class='col ps-0'>
+					<@h level=3 class='mb-0 d-flex align-items-center' params='title="#i18n{portal.util.labelModify} ${form.title}"'>
+						<#if !form.active><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' /><#else><@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
+						<@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' label='${form.title}' class='d-inline-block text-truncate' params='style="max-width:180px"' />
 					</@h>
-				</@columns>
+				</@div>
 				<@div class='col-auto d-flex align-items-center'>
 					<@tag class='mx-2 fs-5' title='#i18n{forms.dashboard.row_responses}'> ${form.currentNumberResponse}</@tag>
 					<#if form.actions?exists>
@@ -36,8 +36,16 @@
 						<@div class="dropdown-menu dropdown-menu-end">
 						<#if form.actions?exists>
 							<#list form.actions as action>
-								<#if action.permission=='DELETE'><#assign actionClass='text-danger' /><#else><#assign actionClass='' /></#if>
-								<@link href='${action.url}&id_form=${form.id}' class='dropdown-item ${actionClass}'><@icon style=action.iconUrl! /> ${action.name!}</@link>
+								<#assign actionUrl=action.url />
+								<#if action.permission=='DELETE'>
+									<#assign actionClass='text-danger' />
+								<#else>
+									<#assign actionClass='' />
+								</#if>
+								<#if action.permission=='PUBLISH'>
+									<#assign actionUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}"/>
+								</#if>
+								<@link href='${actionUrl}&id_form=${form.id}' class='dropdown-item ${actionClass}'><@icon style=action.iconUrl! /> ${action.name!}</@link>
 							</#list>
 						</#if>
 						<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' label='#i18n{forms.manageForm.BOLink.label}' class='dropdown-item' />
@@ -91,4 +99,3 @@
 <@empty title='#i18n{portal.util.labelNoItem}' actionTitle='#i18n{forms.manageForm.buttonAdd}' actionUrl='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm'/>
 </#if>
 </@adminDashboardWidget>
-<@formModal id='pubModal' />

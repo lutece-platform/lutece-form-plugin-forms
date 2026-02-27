@@ -9,7 +9,8 @@
 					</@inputGroup>
 				</@formGroup>
 			</@tform>
-            <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm'] color='primary' hideTitle=['xs','sm','md','lg'] params='data-bs-toggle="offcanvas" data-bs-target="#modify_category" data-bs-scroll="true" data-bs-backdrop="false" data-url="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory"' />
+            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory" id="create_category" useIframe=true targetElement="#create_category" btnIcon="plus" btnTitle="#i18n{forms.manageFormCategory.buttonAdd}" title="#i18n{forms.createFormCategory.title}" />
+            <#-- <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory' buttonIcon='plus' title='#i18n{forms.manageFormCategory.buttonAdd}' hideTitle=['xs','sm'] color='primary' hideTitle=['xs','sm','md','lg'] params='data-bs-toggle="offcanvas" data-bs-target="#modify_category" data-bs-scroll="true" data-bs-backdrop="false" data-url="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=createCategory"' /> -->
         </@pageHeader>
         <@manageFeature>
         <#if form_category_list?size != 0>
@@ -17,8 +18,8 @@
                 <@manageFeatureItem>
                     <@manageFeatureItemColumn class='searchable'>#i18n{forms.manageFormCategory.columnCode} : <@span class='fw-bold mx-2'>${category.code}</@span> - #i18n{forms.manageFormCategory.columnName} : <@span class='fw-bold ms-2'>${category.name}</@span></@manageFeatureItemColumn>
                     <@manageFeatureItemColumn class='form-actions' align='end' >
-                        <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}' title='#i18n{portal.util.labelModify}' buttonIcon='pencil' hideTitle=['xs','sm','md','lg'] params='data-bs-toggle="offcanvas" data-bs-target="#modify_category" data-bs-scroll="true" data-bs-backdrop="false" data-url="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}"' />
-                        <@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?action=confirmRemoveCategory&id_category=${category.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger' hideTitle=['xs','sm','md','lg']/>
+                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageFormsCategories.jsp?view=modifyCategory&id_category=${category.id}" useIframe=true targetElement="#modify_category" id="cat_${category.id}" title="#i18n{portal.util.labelModify}" btnTitle="#i18n{portal.util.labelModify}" btnIcon="pencil" position="end" />
+						<@aButton href='jsp/admin/plugins/forms/ManageFormsCategories.jsp?action=confirmRemoveCategory&id_category=${category.id}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger' hideTitle=['xs','sm','md','lg']/>
                     </@manageFeatureItemColumn>
                 </@manageFeatureItem>
             </#list>
@@ -30,7 +31,6 @@
         </@manageFeature>
     </@pageColumn>
 </@pageContainer>
-<@offcanvasIframe id='modify_category' label='#i18n{forms.manageFormCategory.title}' />
 <script type="module">
 import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';
 const searchInput = document.querySelector("#search_forms");

@@ -6,13 +6,13 @@
 <@pageContainer>
     <@pageColumn>
 		<@pageHeader title='${form.title!}'>
-        <@button type='button' id='forms-action' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-1' dropdownMenu=true >
-            <#if form.active>
+        <#if form.active>
+            <@button type='button' id='forms-action' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-1' dropdownMenu=true >
                 <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='text-plus me-1' />
                 <@aButton color='default dropdown-item justify-content-start' href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='external-link me-1' />
                 <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='list-alt me-1' />
-            </#if>
-        </@button>
+            </@button>
+        </#if>
         </@pageHeader>
         <@formBreadCrumb>
             <@breadcrumbItem><@link href='jsp/admin/plugins/forms/ManageSteps.jsp?view=manageSteps&id_form=${form.id}' title='Liste des étapes'>${form.title}</@link></@breadcrumbItem>
@@ -23,10 +23,10 @@
             <@tabPanel id='manageStep' active=true>
                 <@div class='container'>
                     <@h level=2 class='pb-2 border-bottom d-flex'>
-                    #i18n{forms.create_step.pageTitle} ${stepTitle}
+                    #i18n{forms.create_step.pageTitle} : ${stepTitle}
                         <#if !step.final>
                         <@div class='ms-auto'>
-                            <@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}' title='#i18n{forms.manage_transitions.buttonAdd}' hideTitle=['xs','sm','md'] buttonIcon='plus' color='primary' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasTransition" data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}"' /> 
+                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageTransitions.jsp?view=createTransition&id_step=${step.id}" useIframe=true targetElement="#offcanvasTransition" id="transition_${step.id}" title="#i18n{forms.manage_transitions.buttonAdd}" btnTitle="#i18n{forms.manage_transitions.buttonAdd}" btnIcon="plus" position="end" />
                         </@div>
                         </#if>
                     </@h>
@@ -63,25 +63,31 @@
                 <#if step.final> 
                     <@columns xs=12 sm=8 class='d-flex align-items-center justify-content-center'>
                         <@callOut color='warning d-flex w-75 justify-content-center'>
-                            <@h level=3 class='h2'><@icon style='alert-triangle' /> #i18n{forms.manage_transitions.warning.final}</@h>
+                            <@h level=2><@icon style='alert-triangle' /> #i18n{forms.manage_transitions.warning.final}</@h>
                         </@callOut>
                     </@columns>
                 <#else> 
                     <@columns>
+                        <@h level=3>#i18n{forms.manage_transitions.columnNextStep}</@h>
                         <#list transition_list as transition>
                             <#assign controlIcon='plus' />
                             <#assign controlTitle='#i18n{forms.manage_questions.action.addControl}' />
-                            <@box class='card-transition'>
-                                <#assign transitionClass> <#if transition.priority! == 1> bg-primary text-bg-primary</#if></#assign>
-                                <@boxHeader class='py-3 ${transitionClass!}' title='#i18n{forms.manage_transitions.columnNextStep}'>
-                                   <@tag color='info'>#i18n{forms.manage_transitions.columnPriority} ${transition.priority!}</@tag>
+                            <#assign transitionClass> <#if transition.priority! == 1> border-primary border-2</#if></#assign>
+                            <@box class='card-transition ${transitionClass!}'>
+                                <#assign transitionTitle> <@tag color='info' class='me-2'>#i18n{forms.manage_transitions.columnPriority} ${transition.priority!}</@tag> 
+                                <#-- <@icon style='arrow-right-circle' /> -->
+                                <@span class='fs-2'>${transition.nextStepTitle!''}</@span></#assign>
+                                <@boxHeader class='py-3' title=transitionTitle!>
                                    <#if transition.conditional><@tag color='info' class='ms-2'> #i18n{forms.manage_questions.columnCondition} <@icon style='help-circle' class='ms-2'/></@tag><#assign controlIcon='cog' /><#assign controlTitle='#i18n{forms.manage_controls.action.modifyControl}' /></#if>
                                 </@boxHeader>
                                 <@boxBody class='d-flex justify-content-between align-items-center'>
-                                    <@h level=3 class='card-title truncate h2 mb-0'>${transition.nextStepTitle!''}</@h>   
                                     <@ul class='list-unstyled d-flex form-actions mb-0'>
-                                        <@li><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.modify_transition.title}' hideTitle=['xs','sm','md','lg' ] buttonIcon='pencil' color='primary' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasTransition" data-url="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}"' /> </@li>
-                                        <@li><@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION' title='${controlTitle}' hideTitle=['xs','sm','md','lg'] buttonIcon='${controlIcon}' color='primary' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasTransition" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION"' /> </@li>
+                                        <@li>
+                                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageTransitions.jsp?view=modifyTransition&id_step=${step.id}&id_transition=${transition.id}" useIframe=true id="modifyT__step_${step.id}_transition_${transition.id}" targetElement="#modify_transition" title="#i18n{forms.modify_transition.title}" btnTitle="#i18n{portal.util.labelModify}" btnIcon="pencil" position="end" />
+						                 </@li>
+                                        <@li>
+                                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${transition.id}&control_type=TRANSITION" useIframe=true id="modifyC__step_${step.id}_transition_${transition.id}" targetElement="#modify_transition_control" title="${controlTitle}" btnTitle="${controlTitle}" btnIcon="${controlIcon}" position="end" size="half" />
+                                        </@li>
                                         <@li> 
                                             <@btnGroup>
                                                 <#if transition_index gt 0><@aButton href='jsp/admin/plugins/forms/ManageTransitions.jsp?action=moveUpPriority&id_step=${step.id}&id_transition=${transition.id}' title='#i18n{forms.manage_transitions.action.moveUpPriorityTransition}' hideTitle=['xs','sm','md','lg'] buttonIcon='chevron-up' /></#if>
@@ -102,8 +108,6 @@
         </@formTabs>
     </@pageColumn>
 </@pageContainer>
-<@offcanvasIframe id='offcanvasTransition'  />
-<@formModal />
 <script>
 var steps=false, isOpen=false;    
 document.addEventListener('DOMContentLoaded', function(e) {
@@ -130,17 +134,17 @@ document.addEventListener('DOMContentLoaded', function(e) {
         stepList = [];
     }
 
-    if (stepList.length > 0) {
+    if ( stepList.length > 0 ) {
         // Build dropdown menu HTML
         const activeTitle = document.querySelector('#forms-action');
         
         <#noparse>
-        let menuHtml = `<div class="dropdown d-inline-block mx-2 my-0 py-0 ms-auto">
+        let menuHtml=`<div class="dropdown d-inline-block mx-2 my-0 py-0 ms-auto">
             <button class="btn btn-outline-primary dropdown-toggle" type="button" id="stepDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                <i class="ti ti-list-details me-2"></i> #i18n{forms.multiviewForms.responseDetails.show.steps} 
             </button>
             <ul class="dropdown-menu" aria-labelledby="stepDropdown">`;
-        stepList.forEach(function(step) {
+        stepList.forEach( function( step ) {
             menuHtml += `<li><a class="dropdown-item" href="jsp/admin/plugins/forms/ManageQuestions.jsp?id_step=${step.id}">${step.title}</a></li>`;
         });
         menuHtml += `</ul></div>`;
@@ -148,30 +152,6 @@ document.addEventListener('DOMContentLoaded', function(e) {
 
         activeTitle.insertAdjacentHTML( "beforebegin", menuHtml );
 
-    }
-
-    const offcanvasElement = document.getElementById( 'offcanvasTransition' ); // Updated to use offcanvasTransition
-    const offcanvasElementLabel = document.getElementById( 'offcanvasTransitionLabel' ); // Updated to use offcanvasTransitionLabel
-    const iframeElement = document.getElementById( 'offcanvasIframe' );
-
-    if (offcanvasElement && iframeElement ) {
-        offcanvasElement.style.width = '30%';
-        offcanvasElement.addEventListener( 'show.bs.offcanvas', function (event) {
-            const button = event.relatedTarget;
-            const url = button.getAttribute( 'data-url' );
-            if (url) {
-                offcanvasElementLabel.textContent = button.getAttribute( 'title' );
-                iframeElement.src = url;
-                iframeElement.style.display = 'none';
-            }
-        });
-
-        iframeElement.addEventListener('load', function () {
-            iframeElement.style.display = 'block';
-            iframeElement.contentWindow.postMessage( 'offcanvas', '*');
-        });
-    } else {
-        console.error('Un des éléments nécessaires est manquant.');
     }
   
 });

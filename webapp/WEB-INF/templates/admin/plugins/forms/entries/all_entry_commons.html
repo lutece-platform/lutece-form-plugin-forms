@@ -256,8 +256,8 @@ ${breadcrumb_template}
 								<@span class='text-truncate w-50' params='title="${field.title} > ${field.value}">${field.title}' > ${field.value}</@span>
 								<@btnToolbar>
 								<#if field.defaultValue><@tag color='success'><@icon style='check' title='#i18n{forms.create_entry.manageField.rowDefaultValue}' /></@tag></#if>
-									<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp??view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true' hideTitle=['all'] buttonIcon='pencil' title="#i18n{forms.modifyField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/ModifyEntry.jsp?view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true"' />
-									<@btnGroup class='mx-1'>
+									<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp??view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" useIframe=true targetElement="#manageEntry" id="q_${question.id}_f_${field.idField}" title="#i18n{forms.modifyField.title}" hideTtitle=['all'] btnTitle="#i18n{portal.util.labelModify}" btnIcon="pencil" position="end" size="half" />
+										<@btnGroup class='mx-1'>
 										<#if cpt!=1>
 											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all']  />
 										</#if> 
@@ -287,5 +287,4 @@ ${breadcrumb_template}
 <#if anonym>
 <@anonymPattern />
 </#if>
-<@offcanvasIframe id='manageEntry' label='#i18n{forms.modify_entry.titleQuestion}' />
 </#macro>

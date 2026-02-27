@@ -11,13 +11,13 @@
 					</@inputGroup>
 				</@formGroup>
 			</@tform>
-			<@button type='button' id='forms-action' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-1' dropdownMenu=true >
-				<#if form.active>
+            <#if form.active>
+			    <@button type='button' id='forms-actions' title='#i18n{forms.dashboard.row_actions}' buttonIcon='cog me-1' dropdownMenu=true >
 					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.BOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='text-plus me-1' />
 					<@aButton color='default dropdown-item justify-content-start' href='${prod_url}jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true' title='#i18n{forms.manageForm.FOLink.label} ${form.title} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='external-link me-1' />
 					<@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/MultiviewForms.jsp?current_selected_panel=forms&id_form=${form.id}' title='#i18n{forms.manageForm.MultiviewLink.label} [#i18n{portal.site.portal_footer.newWindow}]' params='target="_blank"' buttonIcon='list-alt me-1' />
-				</#if>
-            </@button>
+                </@button>
+            </#if>
             <#if step.final && step.initial>   
                 <@tform type='inline' method='post' name='modify_step' action='jsp/admin/plugins/forms/ManageTransitions.jsp?view=manageTransitions'>
                     <@input type='hidden' name='id_form' value='${step.idForm}' />
@@ -51,8 +51,7 @@
                                 <@h level=2>#i18n{forms.manage_questions.type.step.label} "${stepTitle?replace('- hidden','')}" </@h> 
                                 <#list entry_type_list as item>
                                     <#if item.group>
-                                        <@aButton href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}' title='#i18n{forms.manage_questions.action.creategroup.label}' buttonIcon='${item.iconName}' params='data-bs-toggle="offcanvas" data-bs-target="#create_group" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}"' />
-                                        <!-- <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}" targetElement="#form_createGroup" id="step-group-${step.id}"  btnIcon=item.iconName btnTitle="#i18n{forms.manage_questions.action.creategroup.label}" btnColor="primary" hideTitle=['xs','sm'] position="end" title="#i18n{forms.manage_questions.action.creategroup.label}" size="half"/> -->
+                                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=createGroup&id_step=${step.id}" useIframe=true targetElement="#form_createGroup" id="step-group-${step.id}"  btnIcon=item.iconName btnTitle="#i18n{forms.manage_questions.action.creategroup.label}" btnColor="primary" hideTitle=['xs','sm'] position="end" title="#i18n{forms.manage_questions.action.creategroup.label}" size="half" />
                                     </#if>
                                 </#list>
                                 </@div>
@@ -89,15 +88,28 @@
                                                         <input type="radio" id="${parentd}" name="id_parent" value="${composite.formDisplay.id!}" <#if id_parent=composite.formDisplay.id>checked</#if>>
                                                     </label>
                                                     <@cInline>
-                                                    <@button type='button' buttonIcon='plus' title='#i18n{forms.manage_questions.buttonAdd}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasFieldType"' />
-                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' buttonIcon='sort' position='end' class='btn btn-primary btn-iframe' title='#i18n{forms.manage_questions.action.move}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}"' />
-                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.updategroup.label}' buttonIcon='pencil' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}"' />
+                                                    <@offcanvas id="offcanvasFieldType" btnIcon="plus" btnTitle="#i18n{forms.manage_questions.buttonAdd}" title="#i18n{forms.manage_questions.buttonAdd}" size="sm">
+                                                        <@row class='row-cols-2 g-2'>
+                                                            <#list entry_type_list?filter( item-> item.group=false) as item>
+                                                            <@columns>
+                                                                <#if !item.group>
+                                                                <@button type='submit' color='outline-primary d-flex w-100 justify-content-start' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName?keep_before(" ")} me-1' ><@span class='text-truncate'>${item.title}</@span></@button>
+                                                                </#if>
+                                                            </@columns>
+                                                            </#list>
+                                                        </@row>
+                                                    </@offcanvas>
+                                                    <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}" useIframe=true targetElement="move_composite" id="move-${composite.formDisplay.id}"  btnIcon="sort" btnTitle="#i18n{forms.manage_questions.action.move}" title="#i18n{forms.manage_questions.action.move}" hideTitle=['all'] />
+                                                    <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyGroup&id_step=${step.id}&id_group=${composite.formDisplay.compositeId}" useIframe=true id="modify-group-${composite.formDisplay.id}" btnIcon="pencil" btnTitle="#i18n{forms.manage_questions.action.updategroup.label}" title="#i18n{forms.manage_questions.action.updategroup.label}" hideTitle=['all'] size="half" />
                                                     <@aButton hideTitle=['all']  href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' />
                                                     </@cInline>
                                                 </div>
                                                 <div class="card-body p-2">
                                                     <ul class="list-unstyled">
                                         <#else>
+                                            <#assign btnClass='' /> 
+                                            <#assign isConditional=composite.formDisplay.displayControl?? /> 
+                                            <#assign isValidated=composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content /> 
                                             <@div class='d-flex justify-content-between align-items-center px-3 py-1'>
                                                 <@div class='d-flex align-items-center'>
                                                     <@h level=4 class='mb-0'>
@@ -106,13 +118,11 @@
                                                      </@h>
                                                 </@div>
                                                 <@div class='ms-auto me-1' >
-                                                    <#if ( composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content ) || composite.formDisplay.displayControl??>
-                                                        <#if composite.formDisplay.validationControlList?? && composite.formDisplay.validationControlList?has_content>
-                                                            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn btn-outline-secondary me-2' title='#i18n{forms.modify_form.accesscontrol.label}' buttonIcon='settings-check' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION"' />
-                                                        </#if>
-                                                        <#if composite.formDisplay.displayControl??>
-                                                            <@aButton href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=CONDITIONAL' class='btn btn-outline-secondary' title='#i18n{forms.manage_questions.columnCondition}' buttonIcon='settings-question' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL"'  />
-                                                        </#if>
+                                                    <#if isValidated>
+                                                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION" useIframe=true targetElement="offcanvasField" id="validate-${composite.formDisplay.id}" btnColor="outline-secondary" btnIcon="settings-question" btnTitle="#i18n{forms.manage_questions.action.control}" title="#i18n{forms.manage_questions.action.control}" btnDisabled=isValidated  size="half"  />
+                                                    </#if>
+                                                    <#if isConditional>
+                                                        <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=CONDITIONAL" useIframe=true targetElement="offcanvasField" id="cond-${composite.formDisplay.id}" btnColor="outline-secondary" btnIcon="settings-check" btnTitle="#i18n{forms.manage_questions.action.condition}" title="##i18n{forms.manage_questions.action.condition}" />
                                                     </#if>
                                                 </@div>   
                                                 <@span class="btn-toolbar">
@@ -120,11 +130,19 @@
                                                         <@aButton hideTitle=['all'] href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=modifyQuestion&id_step=${step.id}&id_question=${composite.formDisplay.compositeId}' title='#i18n{forms.manage_questions.action.modifyQuestion}' buttonIcon='pencil' />
                                                         <@aButton hideTitle=['all']  href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=getConfirmRemoveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' />
                                                     </@btnGroup>
-                                                    <@button type='button' id='forms-action' title='Actions' buttonIcon='cog' dropdownMenu=true >
-                                                        <@li><@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL' class='dropdown-item justify-content-start' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL"'><@span><@icon style='question'/> #i18n{forms.manage_questions.action.condition}</@span></@link></@li>
-                                                        <@li><@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION' class='btn-iframe dropdown-item justify-content-start' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION"'><@span><@icon style='check'/> #i18n{forms.manage_questions.action.control}</@span></@link></@li>
+                                                    <@button type='button' title='Actions' buttonIcon='cog' dropdownMenu=true >
+                                                        <@li>
+                                                            <#assign btnClass=isConditional?then('disabled','') /> 
+                                                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageConditionControl&id_step=${step.id}&id_target=${composite.formDisplay.id}&control_type=CONDITIONAL" useIframe=true targetElement="offcanvasField" btnColor="" btnDisabled=isConditional btnClass="dropdown-item justify-content-start ${btnClass}" id="cond-${composite.formDisplay.id}" btnIcon="question" btnTitle="#i18n{forms.manage_questions.action.condition}" title="#i18n{forms.manage_questions.action.condition}" size="half" />
+                                                        </@li>
+                                                        <@li>
+                                                            <#assign btnClass=isValidated?then('disabled','') /> 
+                                                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageControls.jsp?view=manageControl&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}&control_type=VALIDATION" useIframe=true targetElement="offcanvasField" btnColor="" btnDisabled=isValidated btnClass="dropdown-item justify-content-start ${btnClass}" id="validate-${composite.formDisplay.id}"  btnIcon="check" btnTitle="#i18n{forms.manage_questions.action.control}" title="#i18n{forms.manage_questions.action.control}" size="half" />
+                                                        </@li>
                                                         <@li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?action=duplicateQuestion&id_step=${step.id}&id_target=${composite.formDisplay.compositeId}' class='btn-into dropdown-item justify-content-start' ><@span><@icon style='copy'/> #i18n{forms.manage_questions.action.copy}</@span></@link></@li>
-                                                        <@li><@link href='jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}' class='btn-iframe dropdown-item justify-content-start' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasField" data-url="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}"'><@span><@icon style='sort'/> #i18n{forms.manage_questions.action.move}</@span></@link></@li>
+                                                        <@li>
+                                                            <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageQuestions.jsp?view=moveComposite&id_step=${step.id}&id_display=${composite.formDisplay.id}" useIframe=true targetElement="offcanvasField" id="move-comp-${composite.formDisplay.id}" btnColor="" btnClass="dropdown-item justify-content-start"  btnIcon="sort" btnTitle="#i18n{forms.manage_questions.action.move}" title="#i18n{forms.manage_questions.action.move}" />
+                                                        </@li>
                                                     </@button>
                                                 </@span>     
                                             </@div>
@@ -146,35 +164,25 @@
                      </@row>
                      <@row>
                         <@columns class='d-flex justify-content-center align-items-center'>
-                            <@button type='button' buttonIcon='plus' title='#i18n{forms.manage_questions.buttonAdd}' params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasFieldType"' />
+                             <@offcanvas id="offcanvasFieldType2" class="offcanvas-field" btnIcon="plus" btnTitle="#i18n{forms.manage_questions.buttonAdd}" title="#i18n{forms.manage_questions.buttonAdd}" size="sm">
+                                <@row class='row-cols-2 g-2'>
+                                <#list entry_type_list?filter( item-> item.group=false) as item>
+                                    <@columns>
+                                        <#if !item.group>
+                                            <@button type='submit' color='outline-primary d-flex w-100 justify-content-start' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName?keep_before(" ")} me-1' ><@span class='text-truncate'>${item.title}</@span></@button>
+                                        </#if>
+                                    </@columns>
+                                </#list>
+                            </@row>
+                            </@offcanvas>
                         </@columns>
                     </@row>
-                    <div class="offcanvas offcanvas-end w-25" tabindex="-1" id="offcanvasFieldType" aria-labelledby="offcanvasFieldTypeLabel">
-                        <div class="offcanvas-header">
-                            <h3 id="offcanvasFieldTypeLabel" class="h5">#i18n{forms.manage_questions.buttonAdd}</h2>
-                            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="#i18n{portal.util.labelClose}"></button>
-                        </div>
-                        <div class="offcanvas-body">
-                            <@row class='row-cols-2 g-2'>
-                            <#list entry_type_list?filter( item-> item.group=false) as item>
-                                <@columns>
-                                    <#if !item.group>
-                                        <@button type='submit' color='outline-primary d-flex w-100 justify-content-start' name='view_createQuestion' value='${item.idType}' title='#i18n{forms.manage_questions.buttonAdd} ${item.title}' buttonNested=true buttonIcon='${item.iconName?keep_before(" ")} me-1' ><@span class='text-truncate'>${item.title}</@span></@button>
-                                    </#if>
-                                </@columns>
-                            </#list>
-                        </@row>
-                        </div>
-                    </div>
                     </@tform>
                 </@div>
             </@tabContent>
         </@formTabs>
     </@pageColumn>
 </@pageContainer>
-<@offcanvasIframe id='create_group' label='#i18n{forms.manage_questions.action.creategroup.label}' />
-<@offcanvasIframe id='offcanvasField'  />
-<@formModal />
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.group-toggle').forEach(function (toggle) {
@@ -196,7 +204,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // When the modal is about to be shown, check the radio button before the button that triggered it
-    document.getElementById('offcanvasFieldType').addEventListener('show.bs.offcanvas', function (event) {
+    document.querySelectorAll('.offcanvas-field').forEach( offcanvas => {
+        offcanvas.addEventListener('show.bs.offcanvas', function (event) {
         // Button that triggered the modal
         let triggerBtn = event.relatedTarget;
         if (!triggerBtn) return;
@@ -219,30 +228,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 radio.checked = true;
             }
         }
+        });
     });
-
-    const offcanvasElement = document.getElementById( 'offcanvasField' );
-    const offcanvasElementLabel = document.getElementById( 'offcanvasFieldLabel' );
-    const iframeElement = document.getElementById( 'offcanvasIframe' );
-
-    if (offcanvasElement && iframeElement ) {
-        offcanvasElement.style.width = '30%';
-        offcanvasElement.addEventListener( 'show.bs.offcanvas', function (event) {
-            const button = event.relatedTarget;
-            const url = button.getAttribute( 'data-url' );
-            if (url) {
-                offcanvasElementLabel.textContent = button.getAttribute( 'title' );
-                iframeElement.src = url;
-                iframeElement.style.display = 'none';
-            }
-        });
-
-        iframeElement.addEventListener('load', function () {
-            iframeElement.style.display = 'block';
-            iframeElement.contentWindow.postMessage( 'offcanvas', '*');
-
-        });
-    } 
 
     let stepList = [];
 
@@ -254,7 +241,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
     if (stepList.length > 0) {
         // Build dropdown menu HTML
-        const actionButtons = document.querySelector('#forms-action');
+        const actionButtons = document.querySelector('#forms-actions');
         
         <#noparse>
         let menuHtml = `<div class="dropdown d-inline-block mx-2 my-0 py-0 ms-auto">

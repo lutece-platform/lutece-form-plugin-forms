@@ -21,12 +21,9 @@
 </@formGroup>
 ${control_template}
 <#if control.id gt 0>
-	<@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' target='_top' class='btn btn-danger'>
+	<@link href='jsp/admin/plugins/forms/ManageControls.jsp?view=confirmRemoveControl&id_control=${control.id}' title='#i18n{forms.manage_controls.action.removeControl}' class='btn btn-danger'>
 		#i18n{forms.manage_controls.action.removeControl} <@icon style='trash fa-fw' />
 	</@link>
 </#if>
 <@formsButton okAction='modifyControl' viewAction='' />
 </@tform>
-<script>
-<@offcanvasIframeScript triggerForm='modify_condition_control' triggerActionId='action_modifyControl' />
-</script>

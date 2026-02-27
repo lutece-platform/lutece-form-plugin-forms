@@ -277,88 +277,6 @@
 	</@breadcrumbs>
 </@row>
 </#macro>   
-<#macro formModal id='pubModal' title=''>
-<@modal id='${id}'>
-<#if token??><@input type='hidden' id='token' name='token' value='${token}' /></#if>
-<@modalHeader />
-<iframe id="modalIframe" src=""></iframe>
-</@modal>
-<script>
-document.getElementById('${id}').addEventListener('show.bs.modal', function (event) {
-	var button = event.relatedTarget;
-	var modalSrc = button.getAttribute('data-url');
-	var modalTitle = button.getAttribute('data-modal-title');
-	var modal = this;
-	modal.querySelector('.modal-title').textContent = modalTitle;
-	modal.querySelector('#modalIframe').setAttribute('src', modalSrc);
-	modal.querySelector('#modalIframe').contentWindow.postMessage( 'offcanvas', '*');
-});
-</script>
-</#macro>
-<#macro offcanvasIframe id='offcanvasForm' label='Offcanvas' url=''>
-<div class="offcanvas offcanvas-end" tabindex="-1" id="${id}" aria-labelledby="offcanvasFormLabel${id}" style="height:100vh; max-height: 100vh;">
-    <div class="offcanvas-header">
-        <h5 id="offcanvasFormLabel${id}">${label!}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="#i18n{portal.util.labelClose}"></button>
-    </div>
-    <div class="offcanvas-body py-0 px-1">
-        <iframe id="offcanvasIframe${id}" style="display:none; width:100%; height:100%; border:none;" src="${url}" title="${label!}"></iframe>
-    </div>
-</div>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const offcanvasElement = document.getElementById( '${id}' );
-    const offcanvasElementLabel = document.getElementById( 'offcanvasFormLabel${id}' );
-    const iframeElement = document.getElementById( 'offcanvasIframe${id}' );
-
-    if (offcanvasElement && iframeElement ) {
-        offcanvasElement.style.width = '30%';
-        offcanvasElement.addEventListener( 'show.bs.offcanvas', function (event) {
-            const button = event.relatedTarget;
-            const url = button.getAttribute( 'data-url' );
-            if (url) {
-                offcanvasElementLabel.textContent = button.getAttribute( 'title' );
-                iframeElement.src = url;
-                iframeElement.style.display = 'none';
-            }
-        });
-
-        iframeElement.addEventListener('load', function () {
-            iframeElement.style.display = 'block';
-            iframeElement.contentWindow.postMessage( 'offcanvas', '*');
-            
-        });
-    } 
-});
-</script>
-</#macro>
-<#macro offcanvasIframeScript triggerForm='modify_form' triggerActionId='action_modifyForm' >
-window.addEventListener('message', function(event) {
-    if (event.data === 'offcanvas') {
-        if( document.querySelector('header') ){  document.querySelector('header').remove(); }
-        if( document.querySelector('body') ){  document.querySelector('body').classList.add('bg-white'); }
-        if( document.querySelector('footer') ){  document.querySelector('footer').remove(); }
-        if( document.querySelector('.page-header') ){ document.querySelector('.page-header').remove(); }
-        if( document.querySelector('#page-header') ){ document.querySelector('#page-header').remove(); }
-        if( document.querySelector('.breadcrumb') ){  document.querySelector('.breadcrumb').remove(); }
-		<#if triggerForm !='' && triggerActionId!=''>
-        var formAction = document.getElementById('${triggerForm}'), btnAction = document.getElementById('${triggerActionId}');
-        btnAction.addEventListener('click', function(e){ 
-            formAction.addEventListener('submit', function(){
-                e.preventDefault();
-                formAction.setAttribute( 'target', '_top' );
-                formAction.submit(); // Corrected the method to submit the form
-            });
-        });
-		<#else>
-		<!-- offcanvasIframeScript : Manque un des deux paramètres : triggerForm ou triggerActionId -->
-		</#if>
-        if( document.querySelector('#lutece-layout-wrapper') ){document.querySelector('#lutece-layout-wrapper').classList.remove('d-none'); }
-        document.querySelector('body').classList.add('loaded'); 
-		<#nested>
-    }
-});
-</#macro>
 <#macro bottomFormFixedButtons>
 <#assign bottomParams>class="<#if commonsThemeCode='tabler'>fixed-bottom </#if>d-flex gap-2 justify-content-end bg-light bg-gradient left-0 w-100 d-flex justify-content-center py-3" style="--tblr-bg-opacity:.5;"</#assign>
 <@div params=bottomParams>
@@ -376,10 +294,10 @@ window.addEventListener('message', function(event) {
 <@button type='submit' name='${name}' title='#i18n{${label}}' cancel=!validate buttonIcon=buttonIcon color=color />
 </#macro>
 <#macro formsButton okAction='' viewAction='' rows=1>
-<@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
+<@button type='submit' id='action_${okAction}' name='action_${okAction}' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' class='form-validation' />
 <#nested>
 <#if viewAction !=''>
-	<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' />
+	<@button type='submit' name='view_${viewAction}' title='#i18n{portal.admin.message.buttonCancel}' cancel=true buttonIcon='times' class='form-validation' />
 </#if>
 </#macro>
 <#macro modalFrameScript formId actionId='action_modifyControl' title='#i18n{portal.util.labelModify}' modalId='pubModal' iframeId='modalIframe' modalHeight=70 >

@@ -10,16 +10,16 @@
 				</@formGroup>
 			</@tform>
 			<#if permission_create_forms>
-                <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm'] class='card-header-icon' color='primary' />
-                <@offcanvas id="import-json" title="#i18n{forms.manageForm.buttonImport}" position="end" btnTitle="#i18n{forms.manageForm.buttonImport}" btnIcon="upload" btnSize='md d-none d-lg-block'>
+                <@aButton href='jsp/admin/plugins/forms/ManageForms.jsp?view=createForm' buttonIcon='plus' title='#i18n{forms.manageForm.buttonAdd}' hideTitle=['xs','sm','md'] class='card-header-icon' color='primary' />
+                <@offcanvas id="import-json" title="#i18n{forms.manageForm.buttonImport}" position="end" btnTitle="#i18n{forms.manageForm.buttonImport}" btnIcon="upload" hideTitle=['xs','sm','md'] btnClass='text-truncate'>
                 <@tform id='importJsonModal' method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageForms.jsp' params='enctype="multipart/form-data"'>
                 <@input type="hidden" name="token" value="${token}" />
                     <@formGroup labelKey='#i18n{forms.manageForm.labelImportFile}' helpKey='#i18n{forms.manageForm.labelImportFile.help}' rows=2>
                         <@input type='file' name='json_file'/>
-                        </@formGroup>
-                        <@formGroup rows=2>
+                    </@formGroup>
+                    <@formGroup rows=2>
                         <@button type='submit' name='action_doImportJson' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' />
-                        <!-- <@button type='cancel' name='action_doCancelImport' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' cancel=true /> -->
+                        <@button type='cancel' name='action_doCancelImport' buttonIcon='times' title='#i18n{portal.admin.message.buttonCancel}' cancel=true />
                     </@formGroup>
                 </@tform>
                 </@offcanvas>
@@ -27,59 +27,75 @@
 		</@pageHeader>
         <#if form_list?size gt 0>
             <@messages errors=errors />
-            <@row id='forms-list' class='row-cols-1 row-cols-sm-2 row-cols-lg-3'>
+            <@manageFeature id='forms-list'>
                 <#list form_list as form>
                     <#assign can_publish=false>
-                    <@columns>
-                        <@box id='form_${form.id}' class='card-form'>
-                        <#assign formTitle>
-                        <#if form.actions?exists>
-                            <#assign formActions = form.actions?map( actions -> actions.permission)>
-                            <#assign hasFormActionUpdate = formActions?seq_contains('MODIFY') >
-                            <#if hasFormActionUpdate>
-                                <#list form.actions as action>
-                                    <#if action.permission=='MODIFY'>
-                                        <@link href='${action.url}&id_form=${form.id}' title='${form.title}' class='d-flex align-items-center p-2'>
-                                            <@span class='ms-1 fw-bold p-2'>
-                                            <#if !form.active><@icon style='times' class='text-danger' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success' title='#i18n{portal.util.labelEnabled}' /></#if>
+                    <#assign formTitle>
+                    <#if form.actions?exists>
+                        <#assign formActions = form.actions?map( actions -> actions.permission)>
+                        <#assign hasFormActionUpdate = formActions?seq_contains('MODIFY') >
+                        <#if hasFormActionUpdate>
+                            <#list form.actions as action>
+                                <#if action.permission=='MODIFY'>
+                                    <@link href='${action.url}&id_form=${form.id}' title='${form.title}'>
+                                        <@h level=3 class='mb-0 searchable text-truncate text-wrap' params='title="${form.title}"'>
+                                            <#if !form.active><@icon style='times' class='text-danger fs-2' title='#i18n{portal.util.labelDisabled}' />	<#else>	<@icon style='check' class='text-success fs-2' title='#i18n{portal.util.labelEnabled}' /></#if>
                                             ${form.title}
-                                            </@span>
-                                            <#-- <#if form.description!=''><@span class='d-none d-lg-inline-block text-truncate ms-2' params='title="${form.description!}" style="max-width: var(--tw);"'>${form.description!}</@span></#if> -->
-                                            <small class="py-2 searchable fw-light mx-2 d-none d-lg-inline-block">#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></small>
-                                         </@link>
-                                        <#break>
-                                    </#if> 
-                                </#list>
-                            <#else>
-                                <@span class='ms-1 fw-bold p-2'>${form.title}</@span>
-                                <#-- <#if form.description!=''><@span class='d-none d-lg-inline-block text-truncate ms-2' params='title="${form.description!}" style="max-width: var(--tw);"'>${form.description!}</@span></#if> -->
-                                <small class="py-2 searchable fw-light fs-6 mx-2 d-none d-lg-inline-block">#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></small>
-                            </#if>
+                                        </@h>
+                                        <@p class='searchable fs-5 fw-light mb-0 d-none d-lg-inline-block'>#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></@p>
+                                     </@link>
+                                    <#break>
+                                </#if> 
+                            </#list>
+                        <#else>
+                            <@h level=3 class='mb-0 searchable'>${form.title}</@h>   
+                            <@p class='searchable fs-5 fw-light mb-0 d-none d-lg-inline-block'>#i18n{forms.manageForm.columnCreationDate} <@span class='fw-bold'>${form.creationDate}</@span></@p>
                         </#if>
-                        </#assign>
-                        <@boxBody class='d-flex justify-content-space-between align-items-center p-0'>
-                             <@h level=3 class='d-flex justify-content-start align-items-center mb-0' params='title="${form.title}" style="--tw:300px"'>
-                                ${formTitle}
-                            </@h>
-                            <@div class='form-actions d-flex justify-content-end align-items-center flex-wrap p-2'>
-                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}' label='' class='btn btn-primary'><@icon style='cog' /><@span class='visually-hidden'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
-                                <@button type='button' id='forms-action' class='overflow-visible' title='#i18n{portal.util.labelActions}' dropdownMenu=true >
+                    </#if>
+                    </#assign>
+                    <@manageFeatureItem id='form_${form.id}' >
+                        <@manageFeatureItemColumn auto=true flex=false>${formTitle}</@manageFeatureItemColumn>
+                        <@manageFeatureItemColumn align='end'>  
+                            <#if form.actions?exists><#list form.actions as action><#if action.permission=='PUBLISH'><#assign can_publish=true><#break></#if></#list></#if>
+                            <#if can_publish>
+                                <#setting locale=locale.language>
+                                <#assign publishBtnTitle>
+                                <#if form.active>
+                                    <@icon style='check'  />
+                                    <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
+                                        #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
+                                    <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
+                                        #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
+                                    <#elseif form.availabilityStartDate??>
+                                        #i18n{forms.manageForm.columnPeriodDisponibilitySince} ${form.availabilityStartDate} 
+                                    <#elseif form.availabilityEndDate??>
+                                        #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
+                                    </#if>
+                                <#else>
+                                    <#if form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime>
+                                        <@icon style='clock' /> #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}
+                                    <#else>    
+                                        <@icon style='x'  /> #i18n{forms.manageForm.unavailable}
+                                    </#if> 
+                                </#if>
+                                </#assign>
+                                <#assign publishBtnType>outline-<#if form.active>success<#else><#if form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime>info<#else>danger</#if></#if></#assign>
+                                <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&id_form=${form.id}" useIframe=true targetElement="#modify_form" id="publish-${form.id}" title="#i18n{forms.action.publish.name}" btnTitle=publishBtnTitle! btnColor=publishBtnType! btnClass="text-truncate searchable d-inline-block" params='style="max-width:400px;"'/>
+                            </#if>  
+                            <@div class='form-actions d-lg-flex justify-content-end align-items-center flex-wrap py-2'>
+                                <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}' label='' class='btn btn-primary ms-lg-2'><@icon style='cog' /><@span class='d-block d-md-none'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
+                                <@button type='button' class='overflow-visible ms-2' title='#i18n{portal.util.labelActions}' dropdownMenu=true >
                                 <#if form.actions?exists>
                                     <#list form.actions as action>
                                         <#assign color='primary' />
                                         <#assign perm=action.permission?lower_case />
-                                        <#assign params='' />
                                         <#if action.permission=='DELETE'>
                                             <#assign color = 'danger' />
                                             <#assign perm='' />
                                         <#else>
                                             <#assign color = 'primary' />
                                         </#if>
-                                        <#if action.permission=='PUBLISH'>
-                                            <#assign can_publish=true>
-                                            <#assign params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasForm" data-url="${action.url}&id_form=${form.id}" title="${action.name!}"' />
-                                        </#if>
-                                        <@link href='${action.url}&id_form=${form.id}&token=${token}' label='' class='dropdown-item ${perm}' params=params> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
+                                        <@link href='${action.url}&id_form=${form.id}&token=${token}' label='' class='dropdown-item ${perm}'> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
                                     </#list>
                                 </#if>
                                 <#if form.active>
@@ -104,44 +120,14 @@
                                     <@aButton color='default dropdown-item justify-content-start' href='jsp/admin/plugins/forms/modules/breadcrumbaccordion/ManageBreadcrumbAccordion.jsp?view=modifyBreadcrumb&id_form=${form.id}' title='#i18n{module.forms.breadcrumbaccordion.manage_breadcrumbAccordion.title}' buttonIcon='stack' />
                                 </#if>
                                 </@button>
-                                <#if can_publish>
-                                    <@aButton color='transparent searchable text-start d-none d-xl-block' href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}' title='#i18n{forms.action.publish.name}' hideTitle=['all']  params='data-bs-toggle="offcanvas" data-bs-target="#offcanvasForm" data-url="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&amp;id_form=${form.id}"' >
-                                        <#setting locale=locale.language>
-                                        <#if form.active>
-                                            <@icon style='check' class='text-success' />
-                                            <@span class='text-truncate'>
-                                                <#if form.availabilityStartDate?? && form.availabilityEndDate?? && form.availabilityStartDate==form.availabilityEndDate>
-                                                    #i18n{forms.manageForm.columnPeriodDisponibilityThe} ${form.availabilityStartDate}
-                                                <#elseif form.availabilityStartDate?? && form.availabilityEndDate??>
-                                                    #i18n{forms.manageForm.columnPeriodDisponibilityFromTo} ${form.availabilityStartDate} #i18n{forms.manageForm.columnPeriodDisponibilityTo} ${form.availabilityEndDate}
-                                                <#elseif form.availabilityStartDate??>
-                                                    #i18n{forms.manageForm.columnPeriodDisponibilitySince} ${form.availabilityStartDate} 
-                                                <#elseif form.availabilityEndDate??>
-                                                    #i18n{forms.manageForm.columnPeriodDisponibilityUntil} ${form.availabilityEndDate} 
-                                                </#if>
-                                            </@span>
-                                        <#else>
-                                            <#if form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime>
-                                                <@span>
-                                                    <@icon style='clock' class='text-info' /> 
-                                                    <@span class='text-info truncate'>#i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}</@span>
-                                                </@span>   
-                                            <#else>    
-                                                <@span>
-                                                    <@icon style='x' class='text-danger' /> 
-                                                    <@span class='text-danger' >#i18n{forms.manageForm.unavailable}</@span>
-                                                </@span>
-                                            </#if> 
-                                        </#if>
-                                    </@aButton>
-                                </#if>
                             </@div>  
-                        </@boxBody>
-                    </@box>
-                </@columns>
+                    </@manageFeatureItemColumn>
+                </@manageFeatureItem>
                 </#list>
-            </@row>
-            <@paginationAdmin paginator=paginator combo=1 showcount=0 />
+            </@manageFeature>
+            <#if form_list?size gt 10>
+                <@paginationAdmin paginator=paginator combo=1 showcount=0 />
+            </#if>
         <#else>
             <@card>
             <#if permission_create_forms>
@@ -153,21 +139,13 @@
         </#if>
     </@pageColumn>
 </@pageContainer>
-<@offcanvasIframe />
 <script type="module">
 import LuteceSearchList from './themes/shared/modules/luteceSearchList.js';
 const searchInput = document.querySelector("#search_forms");
-const searchElementList = document.querySelectorAll("#forms-list .col");
+const searchElementList = document.querySelectorAll("#forms-list .card");
 new LuteceSearchList( searchInput, searchElementList, {
-    searchableChild: [".searchable",".card-title"],
-    highlight: true,
-    toggleList: true,
-    toggleRow: true,
-    toggleRowSelector: '#forms-list',
-    toggleLabel: '#i18n{portal.util.labelToggleList}',
-    toggleLabelOff: '#i18n{portal.util.labelToggleListOff}',
-    toggleCardClass: ['card-list'], 
-    toggleCardHeaderClass : ['flex-row','justify-content-space-between','align-items-center'],  
+	searchableChild: [".searchable"],
+	highlight: true, 
 });
 
 document.addEventListener('DOMContentLoaded', function () {

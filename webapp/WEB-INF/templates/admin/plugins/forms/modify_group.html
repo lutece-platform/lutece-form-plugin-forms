@@ -60,8 +60,6 @@
 </@pageContainer>
 <@initEditor />
 <script>
-<@offcanvasIframeScript triggerForm='modify_group' triggerActionId='action_modifyGroup' />
-
 document.addEventListener('DOMContentLoaded', function(e) {
 	document.querySelector('#modify_group').addEventListener('submit', function(e) {
 		if ( !document.querySelector('#show-group-title').checked && document.querySelector('#group-title').value.indexOf('hidden') === -1 ) {
