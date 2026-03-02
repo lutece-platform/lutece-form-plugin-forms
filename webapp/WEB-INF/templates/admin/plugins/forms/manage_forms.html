@@ -95,7 +95,8 @@
                                         <#else>
                                             <#assign color = 'primary' />
                                         </#if>
-                                        <@link href='${action.url}&id_form=${form.id}&token=${token}' label='' class='dropdown-item ${perm}'> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
+                                        <#assign separator = action.url?contains("?")?then("&", "?")>
+                                        <@link href='${action.url}${separator}id_form=${form.id}&token=${token}' label='' class='dropdown-item ${perm}'> <@span class='text-${color}'><@icon style=action.iconUrl! /> ${action.name!}</@span></@link>
                                     </#list>
                                 </#if>
                                 <#if form.active>
