@@ -80,16 +80,19 @@ import fr.paris.lutece.portal.service.file.IFileStoreServiceProvider;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.util.file.FileUtil;
 import fr.paris.lutece.util.url.UrlItem;
 
 public abstract class GenericFormsProvider {
 
 	// PROPERTY
 	private static final String PROPERTY_EXPORT_IMAGES_IN_BASE64 = "forms.export.image.base64";
+	private static final String PROPERTY_BOOKMARKS_BY_QUESTION_CODE = "forms.bookmarks.byQuestionCode";
 
 	// MARKS
 	private static final String MARK_POSITION = "position_";
 	private static final String MARK_POSITION_ITERATION = "_";
+	private static final String MARK_CODE = "code_";
 	private static final String MARK_URL_ADMIN_RESPONSE = "url_admin_forms_response_detail";
 	private static final String MARK_URL_FO_RESPONSE = "url_fo_forms_response_detail";
 	private static final String MARK_CREATION_DATE = "creation_date";
@@ -195,6 +198,7 @@ public abstract class GenericFormsProvider {
                 // in case of multiple FormQuestionResponse for the same question (when there is an iteration),
                 // we merge them into one FormQuestionResponse and update the marker
                 String strMultipleFormQuestionResponseKey = MARK_POSITION + formQuestionResponse.getQuestion( ).getId( );
+                String strMultipleFormQuestionCodeResponseKey = MARK_CODE + FileUtil.normalizeFileName( formQuestionResponse.getQuestion( ).getCode( ) );
                 if ( model.containsKey( strMultipleFormQuestionResponseKey ) )
                 {
                     FormQuestionResponse existingFormQuestionResponse = (FormQuestionResponse) model.get( strMultipleFormQuestionResponseKey );
@@ -208,10 +212,12 @@ public abstract class GenericFormsProvider {
 
                     existingFormQuestionResponse.setEntryResponse( allResponses );
                     model.replace( strMultipleFormQuestionResponseKey, existingFormQuestionResponse );
+                    model.replace( strMultipleFormQuestionCodeResponseKey, existingFormQuestionResponse );
                 }
                 else
                 {
                     model.put( strMultipleFormQuestionResponseKey, formQuestionResponse );
+                    model.put( strMultipleFormQuestionCodeResponseKey, formQuestionResponse );
                 }
             }
             else
@@ -221,6 +227,12 @@ public abstract class GenericFormsProvider {
                         + formQuestionResponse.getQuestion( ).getIterationNumber( );
                 model.put( strFormQuestionResponseKey, formQuestionResponse );
                 model.put( strIteratedFormQuestionResponseKey, formQuestionResponse );
+
+                String strFormQuestionCodeResponseKey = MARK_CODE + FileUtil.normalizeFileName( formQuestionResponse.getQuestion( ).getCode( ) );
+                String strIteratedFormQuestionCodeResponseKey = strFormQuestionCodeResponseKey + MARK_POSITION_ITERATION
+                        + formQuestionResponse.getQuestion( ).getIterationNumber( );
+                model.put( strFormQuestionCodeResponseKey, formQuestionResponse );
+                model.put( strIteratedFormQuestionCodeResponseKey, formQuestionResponse );
             }
 		}
 
@@ -258,7 +270,6 @@ public abstract class GenericFormsProvider {
 		return model;
 	}
 
-
 	/**
 	 * Get the question titles as model, for the given form
 	 *
@@ -266,9 +277,10 @@ public abstract class GenericFormsProvider {
 	 *            The form
 	 * @return the map of markers
 	 */
-	public static Map<String, Object> getTitlesModel( Form form )
+	public static Map<String, Object> getTitlesModel( Form form)
 	{
 		Map<String, Object> model = new HashMap<>( );
+		boolean bByQuestionCodes = AppPropertiesService.getPropertyBoolean( PROPERTY_BOOKMARKS_BY_QUESTION_CODE, true );
 
 		if (form != null )
 		{
@@ -276,23 +288,31 @@ public abstract class GenericFormsProvider {
 
 			for ( Question formQuestion : listFormQuestions )
 			{
-				model.put( MARK_POSITION + formQuestion.getId( ), formQuestion.getTitle( ) );
+			    if (bByQuestionCodes)
+			    {
+			        model.put( MARK_CODE + formQuestion.getCode( ), formQuestion.getTitle( ) );
+			    } else
+			    {
+			        model.put( MARK_POSITION + formQuestion.getId( ), formQuestion.getTitle( ) );
+			    }
 			}
 		}
 
 		return model;
 	}
 
-	/**
-	 * Get the reference list of available InfoMarkers
-	 *
-	 * @param form
-	 *            The form
-	 * @return the collection of the Markers
-	 */
+    /**
+     * Get the reference list of available InfoMarkers. By default, the markers are base on the question codes, you can use question ids by setting the config
+     * property forms.bookmarks.byQuestionCode to false.
+     *
+     * @param form
+     *            The form
+     * @return the collection of the Markers
+     */
 	public static Collection<InfoMarker> getProviderMarkerDescriptions( Form form )
 	{
 		Collection<InfoMarker> descriptionMarkersList = new ArrayList<>( );
+		boolean bByQuestionCodes = AppPropertiesService.getPropertyBoolean( PROPERTY_BOOKMARKS_BY_QUESTION_CODE, true );
 
 		if ( form != null )
 		{
@@ -309,7 +329,7 @@ public abstract class GenericFormsProvider {
 				{
 					if( FormsConstants.MARK_QUESTION.equals( composite.getCompositeType() ) )
 					{
-						descriptionMarkersList.addAll( buildMarkerForQuestion( QuestionHome.findByPrimaryKey( composite.getCompositeId() ) , null ));
+						descriptionMarkersList.addAll( buildMarkerForQuestion( QuestionHome.findByPrimaryKey( composite.getCompositeId() ) , null, bByQuestionCodes ));
 					}
 					else if( FormsConstants.MARK_GROUP.equals(composite.getCompositeType()) )
 					{
@@ -322,7 +342,7 @@ public abstract class GenericFormsProvider {
 						{
 							if( FormsConstants.MARK_QUESTION.equals(compositeGroup.getCompositeType()) )
 							{
-								descriptionMarkersList.addAll( buildMarkerForQuestion( QuestionHome.findByPrimaryKey( compositeGroup.getCompositeId() ) , group ));
+								descriptionMarkersList.addAll( buildMarkerForQuestion( QuestionHome.findByPrimaryKey( compositeGroup.getCompositeId() ) , group, bByQuestionCodes ));
 							}
 						}
 					}
@@ -359,13 +379,13 @@ public abstract class GenericFormsProvider {
 		return descriptionMarkersList;
 	}
 
-	private static Collection<InfoMarker> buildMarkerForQuestion(Question question, Group group)
+	private static Collection<InfoMarker> buildMarkerForQuestion(Question question, Group group, boolean useQuestionCodes)
 	{
 		Collection<InfoMarker> descriptionMarkersList = new ArrayList<>( );
 
 		if( group == null || group.getIterationMax() == 1 )
 		{
-			InfoMarker marker = new InfoMarker( MARK_POSITION + question.getId( ) );
+			InfoMarker marker = useQuestionCodes ? new InfoMarker( MARK_CODE + FileUtil.normalizeFileName( question.getCode( ) ) ) : new InfoMarker( MARK_POSITION + question.getId( ) );
 			marker.setDescription( question.getTitle( ) );
 			descriptionMarkersList.add(marker);
 		}
@@ -373,7 +393,7 @@ public abstract class GenericFormsProvider {
 		{
 			for (int i = 0 ; i < group.getIterationMax(); i++ )
 			{
-				InfoMarker marker = new InfoMarker( MARK_POSITION + question.getId( ) + MARK_POSITION_ITERATION + i );
+				InfoMarker marker = useQuestionCodes ? new InfoMarker( MARK_CODE + FileUtil.normalizeFileName( question.getCode( ) ) + MARK_POSITION_ITERATION + i ) : new InfoMarker( MARK_POSITION + question.getId( ) + MARK_POSITION_ITERATION + i );
 				marker.setDescription( question.getTitle( ) + " " + ( i + 1 ) );
 				descriptionMarkersList.add(marker);
 			}
