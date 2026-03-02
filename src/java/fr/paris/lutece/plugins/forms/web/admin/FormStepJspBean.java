@@ -33,17 +33,21 @@
  */
 package fr.paris.lutece.plugins.forms.web.admin;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
@@ -712,7 +716,7 @@ public class FormStepJspBean extends AbstractJspBean
     }
 
     @Action( ACTION_EXPORT_STEP )
-    public void doExportJson( HttpServletRequest request )
+    public void doExportJson( HttpServletRequest request, HttpServletResponse response )
     {
         int nIdStep = -1;
         try
@@ -733,9 +737,13 @@ public class FormStepJspBean extends AbstractJspBean
                 return;
             }
             String content = FormJsonService.getInstance( ).jsonExportStep( step.getIdForm( ), step.getId( ) );
-            download( content.getBytes( StandardCharsets.UTF_8 ), FileUtil.normalizeFileName( step.getTitle( ) ) + ".json", "application/json" );
+            MVCUtils.addDownloadHeaderToResponse( response, FileUtil.normalizeFileName( step.getTitle( ) ) + ".json", "application/json" );
+            try ( PrintWriter writer = response.getWriter( ) )
+            {
+                writer.write( content );
+            }
         }
-        catch( JsonProcessingException e )
+        catch( IOException e )
         {
             AppLogService.debug( e.getMessage( ) );
             addError( ERROR_STEP_NOT_COPIED, getLocale( ) );

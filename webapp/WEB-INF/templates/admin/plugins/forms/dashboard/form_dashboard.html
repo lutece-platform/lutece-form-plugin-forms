@@ -37,7 +37,8 @@
 								<#if action.permission=='PUBLISH'>
 									<#assign actionUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}"/>
 								</#if>
-								<@link href='${actionUrl}&id_form=${form.id}' class='dropdown-item ${actionClass}'><@icon style=action.iconUrl! /> ${action.name!}</@link>
+                                <#assign separator = action.url?contains("?")?then("&", "?")>
+								<@link href='${actionUrl}${separator}id_form=${form.id}' class='dropdown-item ${actionClass}'><@icon style=action.iconUrl! /> ${action.name!}</@link>
 							</#list>
 						</#if>
 						<@link href='jsp/admin/plugins/forms/ManageFormResponse.jsp?view=stepView&id_form=${form.id}&init=true' label='#i18n{forms.manageForm.BOLink.label}' class='dropdown-item' />
