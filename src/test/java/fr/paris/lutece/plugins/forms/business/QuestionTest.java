@@ -33,21 +33,26 @@
  */
 package fr.paris.lutece.plugins.forms.business;
 
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.junit.jupiter.api.Test;
 
-import fr.paris.lutece.test.LuteceTestCase;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class QuestionTest extends LuteceTestCase
+public class QuestionTest
 {
 	@Test
     public void testCopy( )
     {
         Question orig = new Question( );
         RandomValueFieldPopulator.randomlyPopulateFields( orig );
+        orig.setEntry( new Entry( ) );
         assertNotEquals( 0, orig.getIterationNumber( ) );
         Question copy = new Question( orig );
-        assertTrue( EqualsBuilder.reflectionEquals( orig, copy, "_nIterationNumber" ) );
+        assertTrue( EqualsBuilder.reflectionEquals( orig, copy, "_nIterationNumber", "_entry" ) );
+        assertTrue( EqualsBuilder.reflectionEquals( orig.getEntry( ), copy.getEntry( ) ) );
         assertEquals( 0, copy.getIterationNumber( ) );
     }
 }

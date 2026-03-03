@@ -35,6 +35,9 @@ package fr.paris.lutece.plugins.forms.business;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.genericattributes.business.Entry;
+import fr.paris.lutece.plugins.genericattributes.business.EntryHome;
+import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.test.LuteceTestCase;
@@ -48,8 +51,8 @@ public class QuestionBusinessTest extends LuteceTestCase
     private static final String TITLE2 = "Title2";
     private static final String DESCRIPTION1 = "Description1";
     private static final String DESCRIPTION2 = "Description2";
-    private static final int IDENTRY1 = 1;
-    private static final int IDENTRY2 = 2;
+    private static final String RESOURCE_TYPE = "FORMS_FORM";
+    private static final int ENTRY_TYPE_ID = 1;
 
     /**
      * test Question
@@ -57,13 +60,20 @@ public class QuestionBusinessTest extends LuteceTestCase
     @Test
     public void testBusiness( )
     {
+        Entry entry = new Entry( );
+        EntryType entryType = new EntryType( );
+        entryType.setIdType( ENTRY_TYPE_ID );
+        entry.setEntryType( entryType );
+        entry.setResourceType( RESOURCE_TYPE );
+        EntryHome.create( entry );
+
         // Initialize an object
         Question question = new Question( );
         question.setCode( "code" );
         question.setColumnTitle( "column_title" );
         question.setTitle( TITLE1 );
         question.setDescription( DESCRIPTION1 );
-        question.setIdEntry( IDENTRY1 );
+        question.setIdEntry( entry.getIdEntry( ) );
 
         // Create test
         QuestionHome.create( question );
@@ -75,7 +85,6 @@ public class QuestionBusinessTest extends LuteceTestCase
         // Update test
         question.setTitle( TITLE2 );
         question.setDescription( DESCRIPTION2 );
-        question.setIdEntry( IDENTRY2 );
         question.setIterationNumber( 1000 );
         QuestionHome.update( question );
         questionStored = QuestionHome.findByPrimaryKey( question.getId( ) );
