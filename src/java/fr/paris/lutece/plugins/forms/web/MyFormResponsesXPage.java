@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -79,6 +80,9 @@ public class MyFormResponsesXPage extends MVCApplication
     // Templates
     private static final String TEMPLATE_VIEW_FORMRESPONSES_LIST = "/skin/plugins/forms/list_formresponses.html";
 
+    @Inject
+    private FormResponseService _formResponseService;
+
     /**
      * Return the default XPage with the list of all available Form
      * 
@@ -98,7 +102,7 @@ public class MyFormResponsesXPage extends MVCApplication
 
         Map<String, Object> model = getModel( );
         Locale locale = getLocale( request );
-        model.put( MARK_RESPONSE_LIST, FormResponseService.getInstance( ).getFormResponseListForUser( user ) );
+        model.put( MARK_RESPONSE_LIST, _formResponseService.getFormResponseListForUser( user ) );
 
         XPage xPage = getXPage( TEMPLATE_VIEW_FORMRESPONSES_LIST, locale, model );
         xPage.setTitle( I18nService.getLocalizedString( MESSAGE_LIST_FORMRESPONSES_PAGETITLE, locale ) );

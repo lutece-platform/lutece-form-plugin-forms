@@ -47,32 +47,22 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.sql.TransactionManager;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
 
 /**
  * FormResponseService
  *
  */
+@ApplicationScoped
 public class FormResponseService
 {
+    @Inject
     private FormService _formService;
 
-    private static FormResponseService _formResponseService;
-
-    private FormResponseService( )
-    {
-        _formService = CDI.current( ).select( FormService.class ).get( );	
-    }
-
-    public static FormResponseService getInstance( )
-    {
-        if ( _formResponseService == null )
-        {
-            _formResponseService = new FormResponseService( );
-        }
-
-        return _formResponseService;
-    }
+    @Inject
+    private WorkflowService _workflowService;
 
     public List<FormResponseData> getFormResponseListForUser( LuteceUser user )
     {
@@ -115,7 +105,7 @@ public class FormResponseService
             List<Integer> listIdResource = new ArrayList<>( );
             listIdResource.add( formResponse.getId( ) );
 
-            CDI.current( ).select( WorkflowService.class ).get( ).doRemoveWorkFlowResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE ); 
+            _workflowService.doRemoveWorkFlowResource( formResponse.getId( ), FormResponse.RESOURCE_TYPE );
 
             TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
         }
