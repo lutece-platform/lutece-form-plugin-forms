@@ -25,15 +25,7 @@
 					</#if>
 				</@div>
 				<@div class='col-auto'>
-					<@div class='dropdown'>
-						<a href="#" class="btn-action" data-bs-toggle="dropdown" aria-expanded="false">
-							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-1">
-								<path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-								<path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-								<path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"></path>
-							</svg>
-						</a>
-						<@div class="dropdown-menu dropdown-menu-end">
+					<@button type='button' class='btn-action' buttonIcon='dots-vertical fs-2' dropdownMenu=true>
 						<#if form.actions?exists>
 							<#list form.actions as action>
 								<#assign actionUrl=action.url />
@@ -57,8 +49,7 @@
 							<#assign color='warning'>
 						</#if>
 						<@link href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true${inactiveBypass}' label='#i18n{forms.manageForm.FOLink.label}' class='dropdown-item' target='_blank' />
-						</@div>
-					</@div>
+					</@button>
 				</@div>
 			</@row>
 		</@card>
