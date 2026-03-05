@@ -2,7 +2,7 @@
 <#assign fieldMyLuteceAttributeName = getFieldByCode( entry, "attribute_name" ) >
 <#assign fieldMyLuteceAttributeTemplate = getFieldByCode( entry, "attribute_template" )! >
 <#if fieldMyLuteceAttributeTemplate?has_content>
-	<#assign fieldMyLuteceAttributeTemplateValue = "fieldMyLuteceAttributeTemplate.value">
+	<#assign fieldMyLuteceAttributeTemplateValue = fieldMyLuteceAttributeTemplate.value>
 <#else>
 	<#assign fieldMyLuteceAttributeTemplateValue = "">
 </#if>
