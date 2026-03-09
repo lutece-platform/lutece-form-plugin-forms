@@ -37,6 +37,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import fr.paris.lutece.plugins.forms.business.*;
@@ -94,13 +95,16 @@ public class FormResponseManager implements Serializable
      */
     private void initValidatedStep( )
     {
-        for ( FormResponseStep formResponseStep : _formResponse.getSteps( ) )
+        List<FormResponseStep> steps = new ArrayList<>( _formResponse.getSteps( ) );
+        steps.sort( Comparator.comparingInt( FormResponseStep::getOrder ) );
+
+        for ( FormResponseStep formResponseStep : steps )
         {
             int nStepOrder = formResponseStep.getOrder( );
 
             if ( nStepOrder != FormsConstants.ORDER_NOT_SET )
             {
-                _listValidatedStep.add( nStepOrder, formResponseStep.getStep( ) );
+                _listValidatedStep.add( formResponseStep.getStep( ) );
             }
             for ( FormQuestionResponse formQuestionResponse : formResponseStep.getQuestions( ) )
             {
