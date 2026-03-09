@@ -58,6 +58,7 @@ import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
+import fr.paris.lutece.plugins.forms.service.FormService;
 import fr.paris.lutece.plugins.forms.service.FormGraphExportService;
 import fr.paris.lutece.plugins.forms.service.FormsResourceIdService;
 import fr.paris.lutece.plugins.forms.service.StepService;
@@ -168,6 +169,8 @@ public class FormStepJspBean extends AbstractJspBean
     private static final String ERROR_REMOVE_INITIAL_STEP = "forms.error.step.remove.initial";
 
     // Others
+    @Inject
+    private FormService _formService;
     @Inject
     private StepService _stepService;
     @Inject
@@ -393,6 +396,7 @@ public class FormStepJspBean extends AbstractJspBean
         }
 
         StepHome.create( _step );
+        _formService.removeBackupsByForm( _step.getIdForm( ) );
         addInfo( INFO_STEP_CREATED, getLocale( ) );
 
         int previousStep = Integer.parseInt( request.getParameter( PARAMETER_PREVIOUS_STEP ) );
@@ -556,6 +560,7 @@ public class FormStepJspBean extends AbstractJspBean
 
         _stepService.removeStep( nIdStep );
         FormResponseStepHome.removeByStep( nIdStep );
+        _formService.removeBackupsByForm( nIdForm );
 
         addInfo( INFO_STEP_REMOVED, getLocale( ) );
 

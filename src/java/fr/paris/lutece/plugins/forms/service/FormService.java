@@ -328,6 +328,31 @@ public class FormService
     }
 
     /**
+     * Removes all backup form responses (from_save = 1) linked to a given Form,
+     * including their question responses
+     *
+     * @param nIdForm
+     *            The identifier of the form
+     */
+    @Transactional
+    public void removeBackupsByForm( int nIdForm )
+    {
+        List<FormResponse> listBackups = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( nIdForm )
+                .stream( ).filter( FormResponse::isFromSave ).collect( Collectors.toList( ) );
+
+        for ( FormResponse backup : listBackups )
+        {
+            for ( FormQuestionResponse formQuestionResponse : FormQuestionResponseHome.getFormQuestionResponseListByFormResponse( backup.getId( ) ) )
+            {
+                FormQuestionResponseHome.remove( formQuestionResponse );
+            }
+
+            FormResponseStepHome.removeByFormResponse( backup.getId( ) );
+            FormResponseHome.remove( backup.getId( ) );
+        }
+    }
+
+    /**
      * Get the full children composite list of the given step
      * 
      * @param nIdStep
