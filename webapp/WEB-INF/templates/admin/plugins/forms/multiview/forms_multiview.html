@@ -8,11 +8,8 @@
 			<@columns xs=12 md=2  class='mt-2'>
 				<@messages errors=errors warnings=warnings />
 				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='flex' class='gap-2 flex-column'>
+					
 					<#include "includes/include_manage_multiview_forms_header.html">
-					<@formGroup class='w-100 forms-filter order-3 d-flex justify-content-center' formStyle=''>
-						<@button type='submit' title='#i18n{portal.util.labelFilter}' buttonIcon='filter-check' />
-						<@button color='outline-danger' class='btn-reset-filter' title='#i18n{portal.util.labelDelete}' buttonIcon='filter-x' />
-					</@formGroup>
 				</@tform>
 			</@columns>
 			<@columns xs=12 md=10>
