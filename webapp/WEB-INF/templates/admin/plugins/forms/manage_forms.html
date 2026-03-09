@@ -75,12 +75,12 @@
                                     <#if form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime>
                                         <@icon style='clock' /> #i18n{forms.manageForm.columnPeriodDisponibilityFrom} ${form.availabilityStartDate}
                                     <#else>    
-                                        <@icon style='x'  /> #i18n{forms.manageForm.unavailable}
+                                        <@icon style='x' /> #i18n{forms.manageForm.unavailable}
                                     </#if> 
                                 </#if>
                                 </#assign>
                                 <#assign publishBtnType>outline-<#if form.active>success<#else><#if form.availabilityStartDate?? &&  form.availabilityStartDate gt .now?datetime>info<#else>danger</#if></#if></#assign>
-                                <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&id_form=${form.id}" useIframe=true targetElement="#modify_form" id="publish-${form.id}" title="#i18n{forms.action.publish.name}" btnTitle=publishBtnTitle! btnColor=publishBtnType! btnClass="text-truncate searchable d-inline-block" params='style="max-width:400px;"'/>
+                                <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageForms.jsp?view=modifyPublication&id_form=${form.id}" useIframe=true targetElement="#modify_form" id="publish-${form.id}" title="#i18n{forms.action.publish.name}" btnTitle=publishBtnTitle! btnColor=publishBtnType! btnClass="text-truncate searchable d-inline-block align-self-center" params='style="max-width:400px;"'/>
                             </#if>  
                             <@div class='form-actions d-lg-flex justify-content-end align-items-center flex-wrap py-2'>
                                 <@link href='jsp/admin/plugins/forms/ManageForms.jsp?view=modifyForm&id_form=${form.id}&token=${token}' label='' class='btn btn-primary ms-lg-2'><@icon style='cog' /><@span class='d-block d-md-none'> #i18n{forms.manage_steps.action.modifyStep}</@span></@link>
