@@ -1,5 +1,9 @@
 <@input type='hidden' name='current_selected_panel' value='${current_selected_panel!""}' />
 <#if form_filter_list?has_content><#list form_filter_list as form_filter>${form_filter.template!''}</#list></#if>
+<@formGroup class='w-100 forms-filter order-3 d-flex justify-content-center' formStyle=''>
+	<@button type='submit' title='#i18n{portal.util.labelFilter}' buttonIcon='filter-check' />
+	<@button color='outline-danger' class='btn-reset-filter' title='#i18n{portal.util.labelDelete}' buttonIcon='filter-x' />
+</@formGroup>
 <#if multiviewExportAction?? >
 	<@formGroup formStyle='inline' labelFor='format_export' class='forms-filter w-100 order-3 mt-2 pt-2 border-top border-secondary' labelKey='#i18n{forms.adminFeature.multiviewForms.export.buttonName}' groupStyle='addons' rows=2>
 		<@inputGroup>
