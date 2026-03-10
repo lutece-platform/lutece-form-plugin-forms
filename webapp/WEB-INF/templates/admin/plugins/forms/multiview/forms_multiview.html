@@ -1,29 +1,24 @@
-<@pageContainer params='data-feature="#i18n{forms.adminFeature.manageForms.name}"' >
+<@pageContainer params='data-feature="#i18n{forms.adminFeature.manageForms.name}"' class='' >
     <@pageColumn>
 		<@pageHeader id='multiviewFormsHeader' title='#i18n{forms.multiviewForms.boxTitle}' />
 		<@formBreadCrumb>
 			<@breadcrumbItem>#i18n{forms.multiviewForms.boxTitle}</@breadcrumbItem>
 		</@formBreadCrumb>
 		<@row>
-			<@columns xs=12 md=2  class='mt-2'>
+			<@columns xs=12 md=3 class='mt-2'>
 				<@messages errors=errors warnings=warnings />
 				<@tform action='jsp/admin/plugins/forms/MultiviewForms.jsp' id='searchForm' type='flex' class='gap-2 flex-column'>
-					
 					<#include "includes/include_manage_multiview_forms_header.html">
 				</@tform>
 			</@columns>
-			<@columns xs=12 md=10>
+			<@columns xs=12 md=9>
 				<@tabs>
 					<@tabList>
-						<#list form_panel_list as form_panel>
-							<#if form_panel.template??>
-								${form_panel.template}
-							</#if>
-						</#list>
+					<#list form_panel_list as form_panel><#if form_panel.template??>${form_panel.template}</#if></#list>
 					</@tabList>
 				<#if table_template?has_content>
 					<@div id='multi-form-list' class='p-3'>
-						${table_template}
+					${table_template}
 					</@div>
 				<#else>
 					<@empty title='#i18n{forms.multiviewForms.noFormResponses}' subtitle=' ' iconName='notes-off' />
@@ -38,11 +33,6 @@
 <@scrollTopBtn />
 <@jsHeaderSort />
 <@formsToastr infos=infos />
-<style>
-.multiview-th {
-	max-width: 150px;
-}
-</style>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 	// Initialize the dropdown button

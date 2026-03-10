@@ -73,6 +73,10 @@ table.table-hover tbody tr:hover {
 }
 
 /* Table Header 			*/
+.multiview-th{
+	max-width: 150px;
+}
+
 .th-active {
 	background-color: var(--tblr-primary);
 }
