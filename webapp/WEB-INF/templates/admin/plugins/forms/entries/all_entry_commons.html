@@ -244,7 +244,7 @@ ${breadcrumb_template}
 					<@boxBody>#i18n{forms.create_entry.messageUseRefList}</@boxBody>
 				<#else>
 					<@boxHeader title='#i18n{forms.create_entry.manageField.title}'>
-						<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true&view_createField=&id_question=${question.id}' hideTitle=['xs','sm','md','lg'] buttonIcon='plus' title="#i18n{forms.createField.title}" params=' data-bs-toggle="offcanvas" data-bs-target="#manageEntry" data-url="jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true&view_createField=&id_question=${question.id}"' />
+						<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp?option_no_display_title=true&view_createField=&id_question=${question.id}" useIframe=true targetElement="#manageEntry" id="q_${question.id}_c" title="#i18n{forms.createField.title}" hideTtitle=['all'] btnTitle="#i18n{forms.createField.title}" btnIcon="plus" position="end" size="half" />
 					</@boxHeader>
 					<@boxBody>
 						<@ul class='list-group'>
@@ -257,7 +257,7 @@ ${breadcrumb_template}
 								<@btnToolbar>
 								<#if field.defaultValue><@tag color='success'><@icon style='check' title='#i18n{forms.create_entry.manageField.rowDefaultValue}' /></@tag></#if>
 									<@offcanvas targetUrl="jsp/admin/plugins/forms/ModifyEntry.jsp??view=modifyField&id_question=${question.id}&id_field=${field.idField}&option_no_display_title=true" useIframe=true targetElement="#manageEntry" id="q_${question.id}_f_${field.idField}" title="#i18n{forms.modifyField.title}" hideTtitle=['all'] btnTitle="#i18n{portal.util.labelModify}" btnIcon="pencil" position="end" size="half" />
-										<@btnGroup class='mx-1'>
+									<@btnGroup class='mx-1'>
 										<#if cpt!=1>
 											<@aButton href='jsp/admin/plugins/forms/ModifyEntry.jsp?action=moveFieldUp&id_question=${question.id}&id_field=${field.idField}#list' title='#i18n{forms.create_entry.manageField.titleMoveUp}' buttonIcon='chevron-up' hideTitle=['all']  />
 										</#if> 
