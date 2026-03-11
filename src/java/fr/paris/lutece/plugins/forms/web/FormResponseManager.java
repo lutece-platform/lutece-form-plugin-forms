@@ -43,11 +43,13 @@ import java.util.stream.Collectors;
 import fr.paris.lutece.plugins.forms.business.*;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.plugins.forms.service.EntryServiceManager;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.validation.IValidator;
 import fr.paris.lutece.plugins.genericattributes.business.GenericAttributeError;
+import fr.paris.lutece.plugins.genericattributes.business.Response;
 
 /**
  *
@@ -403,6 +405,16 @@ public class FormResponseManager implements Serializable
             {
                 if ( formQuestionResponse.getQuestion( ).isVisible( ) )
                 {
+                    if ( formQuestionResponse.getQuestion( ).getEntry( ).isMandatory( ) && isResponseEmpty( formQuestionResponse ) )
+                    {
+                        GenericAttributeError error = new GenericAttributeError( );
+                        error.setIsDisplayableError( true );
+                        error.setMandatoryError( true );
+                        formQuestionResponse.setError( error );
+                        goTo( _listValidatedStep.indexOf( step ) );
+                        return false;
+                    }
+
                     List<Control> listControl = ControlHome.getControlByQuestionAndType( formQuestionResponse.getQuestion( ).getId( ),
                             ControlType.VALIDATION.getLabel( ) );
 
@@ -429,6 +441,23 @@ public class FormResponseManager implements Serializable
         }
 
         return true;
+    }
+
+    /**
+     * Tests whether a form question response is empty (no response value and no file).
+     *
+     * @param formQuestionResponse
+     *            the form question response to test
+     * @return {@code true} if all entry responses are blank or absent
+     */
+    private boolean isResponseEmpty( FormQuestionResponse formQuestionResponse )
+    {
+        List<Response> entryResponses = formQuestionResponse.getEntryResponse( );
+        if ( CollectionUtils.isEmpty( entryResponses ) )
+        {
+            return true;
+        }
+        return entryResponses.stream( ).allMatch( r -> StringUtils.isBlank( r.getResponseValue( ) ) && r.getFile( ) == null );
     }
 
 }
