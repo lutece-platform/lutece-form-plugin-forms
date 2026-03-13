@@ -42,11 +42,17 @@ import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
 import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 /**
  * This class performs a CSV export
  *
  */
+@ApplicationScoped
+@Named( "forms.csvExport" )
 public class CSVExport implements IFormatExport
 {
     private static final String CONSTANT_MIME_TYPE_CSV = "application/csv";
@@ -65,7 +71,10 @@ public class CSVExport implements IFormatExport
      * @param strFormatExportDescription
      *            The export format description
      */
-    public CSVExport( String strFormatExportName, String strFormatExportDisplayName, String strFormatExportDescription )
+    @Inject
+    public CSVExport( @ConfigProperty( name = "forms.export.csv.formatExportName" ) String strFormatExportName,
+            @ConfigProperty( name = "forms.export.csv.formatExportDisplayName" ) String strFormatExportDisplayName,
+            @ConfigProperty( name = "forms.export.csv.formatExportDescription" ) String strFormatExportDescription )
     {
         _strFormatExportName = strFormatExportName;
         _strFormatExportDisplayName = I18nService.getLocalizedString( strFormatExportDisplayName, I18nService.getDefaultLocale( ) );
