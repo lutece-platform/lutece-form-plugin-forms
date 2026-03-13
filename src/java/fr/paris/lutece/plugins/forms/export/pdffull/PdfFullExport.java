@@ -43,7 +43,13 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.export.IFormatExport;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.util.file.FileUtil;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
+@ApplicationScoped
+@Named( "forms.fullExport" )
 public class PdfFullExport implements IFormatExport
 {
     private final String _strFormatExportName;
@@ -60,7 +66,10 @@ public class PdfFullExport implements IFormatExport
      * @param strFormatExportDescription
      *            The export format description
      */
-    public PdfFullExport( String strFormatExportName, String strFormatExportDisplayName, String strFormatExportDescription )
+    @Inject
+    public PdfFullExport( @ConfigProperty( name = "forms.export.pdfFull.formatExportName" ) String strFormatExportName,
+            @ConfigProperty( name = "forms.export.pdfFull.formatExportDisplayName" ) String strFormatExportDisplayName,
+            @ConfigProperty( name = "forms.export.pdfFull.formatExportDescription" ) String strFormatExportDescription )
     {
         _strFormatExportName = strFormatExportName;
         _strFormatExportDisplayName = I18nService.getLocalizedString( strFormatExportDisplayName, I18nService.getDefaultLocale( ) );
