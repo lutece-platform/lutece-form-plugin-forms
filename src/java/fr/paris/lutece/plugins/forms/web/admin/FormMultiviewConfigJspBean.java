@@ -92,6 +92,9 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
     private static final String VIEW_MANAGE_MULTIVIEW = "manageMultiview";
     private static final String VIEW_MANAGE_FORMS = "ManageForms.jsp?view=manageExport";
 
+    // Infos
+    private static final String INFO_MULTIVIEW_UPDATED = "forms.info.multiview.updated";
+
     // Marks
     private static final String MARK_FORM = "form";
     private static final String MARK_FILTERABLE_QUESTIONLIST = "filterableQuestionList";
@@ -186,6 +189,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         Map<String, String> mapParameters = new LinkedHashMap<>( );
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nId ) );
 
+        addInfo( INFO_MULTIVIEW_UPDATED, getLocale( ) );
         return redirect( request, VIEW_MANAGE_MULTIVIEW, mapParameters );
     }
     
@@ -221,6 +225,7 @@ public class FormMultiviewConfigJspBean extends AbstractJspBean
         Map<String, String> mapParameters = new LinkedHashMap<>( );
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nId ) );
 
+        addInfo( INFO_MULTIVIEW_UPDATED, getLocale( ) );
         return redirect( request, VIEW_MANAGE_MULTIVIEW, mapParameters );
     }
 
