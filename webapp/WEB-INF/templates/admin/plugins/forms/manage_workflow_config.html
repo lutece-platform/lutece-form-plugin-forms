@@ -15,7 +15,7 @@
 						<@th params='data-field="correct"'>#i18n{forms.create_entry.labelResponsesCorrection}</@th>
 						<@th params='data-field="complete"'>#i18n{forms.create_entry.labelResponsesComplete}</@th>
 					</@tr>
-					<@tableHeadBodySeparator />	
+					<@tableHeadBodySeparator />
 					<#list questionList as question>
 						<@tr>
 							<@td>${question.step.title!}</@td>
@@ -34,13 +34,14 @@
 							</@td>
 						</@tr>
 					</#list>
-				</@table> 
+				</@table>
 				<@bottomFormFixedButtons>
-					<@headerButton name='action_modifyWorkflowConfig' label='forms.modify_form.buttonValidate' /> 
+					<@headerButton name='action_modifyWorkflowConfig' label='forms.modify_form.buttonValidate' />
 				</@bottomFormFixedButtons>
 			</@tform>
 			</@tabPanel>
 		</@tabContent>
-		</@formTabs>	
+		</@formTabs>
 	</@pageColumn>
 </@pageContainer>
+<@formsToastr infos=infos warnings=warnings errors=errors />
