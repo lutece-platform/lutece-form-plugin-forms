@@ -55,3 +55,25 @@
 <script src="js/admin/lib/table/bootstrap-table.min.js"></script>
 <script src="js/admin/lib/table/extensions/group-by-v2/bootstrap-table-group-by.js"></script>
 <script src="js/admin/lib/table/locale/bootstrap-table-fr-FR.min.js"></script>
+
+<link rel="stylesheet" type="text/css" href="js/jquery/plugins/toastr/toastr.min.css" >
+<script src="js/jquery/plugins/toastr/toastr.min.js"></script>
+<script>
+	$( function(){
+    <#if warnings?has_content>
+        <#list warnings as warning >
+            toastr.warning("${warning.message}", "");
+        </#list>
+    </#if>
+    <#if errors?has_content>
+        <#list errors as error >
+            toastr.error("${error.message}", "");
+        </#list>
+    </#if>
+    <#if infos?has_content>
+        <#list infos as info >
+            toastr.info("${info.message}", "");
+        </#list>
+    </#if>
+    });
+</script>
