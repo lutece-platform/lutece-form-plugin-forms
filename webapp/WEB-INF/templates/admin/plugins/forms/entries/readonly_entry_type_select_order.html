@@ -4,7 +4,11 @@
     	<#if list_responses?has_content>
     		<#list list_responses?sort_by('sortOrder') as response>
     			<@p>
-    				<#if response.field??>${response.sortOrder}: ${response.field.title!''}</#if>
+    				<#if response.field??>
+						${response.sortOrder}: ${response.field.title!''}
+					<#else>
+						${response.sortOrder}: ${response.responseValue!''}
+					</#if>
     			</@p>
     		</#list>
     	</#if>
