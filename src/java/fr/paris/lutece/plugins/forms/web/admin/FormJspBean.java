@@ -40,6 +40,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -827,9 +828,15 @@ public class FormJspBean extends AbstractJspBean
             }
             Entry entry = question.getEntry( );
             _formService.saveOrUpdateField( entry, IEntryTypeService.FIELD_PUBLISHED, null, String.valueOf( published ) );
+            QuestionHome.update( question );
         }
 
-        return redirectView( request, VIEW_MANAGE_FORMS );
+        Map<String, String> mapParameters = new LinkedHashMap<>( );
+        mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nId ) );
+
+        addInfo( INFO_FORM_UPDATED, getLocale( ) );
+
+        return redirect( request, VIEW_MANAGE_QUESTION_PUBLICATION, mapParameters );
     }
 
     private File getLogoFromRequest( HttpServletRequest request )

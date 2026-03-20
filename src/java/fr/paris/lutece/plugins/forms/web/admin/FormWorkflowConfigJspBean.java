@@ -74,6 +74,9 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
     private static final String VIEW_MANAGE_WORKFLOW = "manageWorkflow";
     private static final String VIEW_MANAGE_FORMS = "ManageForms.jsp?view=manageExport";
 
+    // Infos
+    private static final String INFO_WORKFLOW_UPDATED = "forms.info.workflow.updated";
+
     // Marks
     private static final String MARK_FORM = "form";
     private static final String MARK_QUESTIONLIST = "questionList";
@@ -145,6 +148,7 @@ public class FormWorkflowConfigJspBean extends AbstractJspBean
         Map<String, String> mapParameters = new LinkedHashMap<>( );
         mapParameters.put( FormsConstants.PARAMETER_ID_FORM, String.valueOf( nId ) );
 
+        addInfo( INFO_WORKFLOW_UPDATED, getLocale( ) );
         return redirect( request, VIEW_MANAGE_WORKFLOW, mapParameters );
     }
 }
