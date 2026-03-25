@@ -19,7 +19,7 @@
 	<#if groupValidated==true>
 		<@inputGroup>
 			<@select name='displayOrder' items=list_positions default_value='${displayOrder!}' />
-			<@button type='submit' id='action_moveComposite' name='action_moveComposite' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' hideTitle=['all'] /> 
+			<@button type='submit' id='action_moveComposite' name='action_moveComposite' class='form-validation' buttonIcon='check' title='#i18n{portal.admin.message.buttonValidate}' hideTitle=['all'] />
 		</@inputGroup>
 	<#else>
 		<@tag color='danger'>
