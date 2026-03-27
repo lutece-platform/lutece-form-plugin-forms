@@ -55,6 +55,7 @@ import fr.paris.lutece.plugins.forms.business.FormMessageHome;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponse;
 import fr.paris.lutece.plugins.forms.business.FormQuestionResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
+import fr.paris.lutece.plugins.forms.business.FormResponseFilter;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.plugins.forms.business.FormResponseStep;
 import fr.paris.lutece.plugins.forms.business.FormResponseStepHome;
@@ -337,8 +338,10 @@ public class FormService
     @Transactional
     public void removeBackupsByForm( int nIdForm )
     {
-        List<FormResponse> listBackups = FormResponseHome.selectAllFormResponsesUncompleteByIdForm( nIdForm )
-                .stream( ).filter( FormResponse::isFromSave ).collect( Collectors.toList( ) );
+        FormResponseFilter filter = new FormResponseFilter( );
+        filter.setIdForm( List.of( nIdForm ) );
+        filter.setFromSave( true );
+        List<FormResponse> listBackups = FormResponseHome.getFormResponseByFilter( filter );
 
         for ( FormResponse backup : listBackups )
         {
