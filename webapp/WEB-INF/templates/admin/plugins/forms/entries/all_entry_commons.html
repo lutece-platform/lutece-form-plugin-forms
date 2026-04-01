@@ -61,12 +61,13 @@ function changeVisibilityDateValue(){
 changeVisibilityDateValue();
 </script>
 </#macro>
-<#macro editFields options=false hasTitle=true required=true onlyInBack=true autocomplete=false datalist=[] comments=true helpMessage=true labelErrorMessage=false image=false editor=false confirm=false anonym=false exportable=false exportablePdf=false refList='' placeholder='' maxSize=0 defaultValue='' >
+<#macro editFields options=false hasTitle=true required=true onlyInBack=true autocomplete=false datalist=[] comments=true helpMessage=true labelErrorMessage=false image=false editor=false confirm=false anonym=false exportable=false exportablePdf=false refList='' placeholder='' maxSize=0 defaultValue='' multipart=false >
 <#if editor>
 <#include "/admin/util/editor/editor.html" />
 </#if>
 ${breadcrumb_template}
-<@tform id='modifyEntryForm' action="${action}">
+<#if multipart><#assign formParams='enctype="multipart/form-data"'><#else><#assign formParams=''></#if>
+<@tform id='modifyEntryForm' action="${action}" params=formParams>
 <#assign xs=12 />
 <#assign md=12 />
 <#assign lg=12 />
