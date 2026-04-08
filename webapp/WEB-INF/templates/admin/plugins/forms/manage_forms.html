@@ -26,7 +26,7 @@
             </#if>
 		</@pageHeader>
         <#if form_list?size gt 0>
-            <@messages errors=errors />
+            <@messages errors=errors infos=infos />
             <@manageFeature id='forms-list'>
                 <#list form_list as form>
                     <#assign can_publish=false>
