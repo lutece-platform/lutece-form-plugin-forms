@@ -33,7 +33,7 @@
                     <@row>
                     <@columns xs=12 sm=4>
                         <@tform method='post' name='modify_step' id='modify_step' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
-                        <@messages errors=errors />
+                        <@messages errors=errors infos=infos />
                         <@input type='hidden' id='id_form' name='id_form' value='${step.idForm}' />
                         <@input type='hidden' id='id_step' name='id_step' value='${step.id}' />
                         <@formGroup labelKey=' #i18n{forms.modify_step.pageTitle} ' helpKey='#i18n{forms.modify_step.labelTitle.help}' mandatory=true rows=2>

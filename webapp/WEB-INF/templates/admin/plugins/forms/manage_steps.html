@@ -26,7 +26,8 @@
 				</@button>
 			</#if>
 		</@pageHeader>
-		<@formBreadCrumb><@breadcrumbItem>${form.title!} </@breadcrumbItem></@formBreadCrumb>	
+		<@formBreadCrumb><@breadcrumbItem>${form.title!} </@breadcrumbItem></@formBreadCrumb>
+		<@messages errors=errors infos=infos warnings=warnings />
 		<@formTabs tab='steps'>
 			<@tabContent>
 				<@tabPanel id='tabpanel' active=true>
