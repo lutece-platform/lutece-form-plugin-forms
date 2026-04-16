@@ -144,7 +144,7 @@
 				<#else>
 					<@empty subtitle='#i18n{forms.multiviewForms.view_record_history.history_empty}' title='#i18n{forms.manage_steps.warning.no.initial.final}' />
 					<@div class='d-flex justify-content-center'>
-						 <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" useframe=true targetElement="#create-step"  id="step-${form.id}"  btnIcon="plus" btnTitle="#i18n{forms.manage_steps.buttonAdd}" btnColor="primary" position="end" title="#i18n{forms.manage_steps.buttonAdd}" size="half"/>
+						 <@offcanvas targetUrl="jsp/admin/plugins/forms/ManageSteps.jsp?view=createStep&id_form=${form.id}" useIframe=true targetElement="#offcanvasCreateStep"  id="step-${form.id}"  btnIcon="plus" btnTitle="#i18n{forms.manage_steps.buttonAdd}" btnColor="primary" position="end" title="#i18n{forms.manage_steps.buttonAdd}" size="half"/>
 						<#if template_provider??>
 							<@offcanvas id="import-template" title="#i18n{forms.manage_steps.buttonImportTemplate}" position="end" btnTitle="#i18n{forms.manage_steps.buttonImportTemplate}" btnIcon="new-section" size="sm" >
 							<@tform  method='post' name='upload_form' action='jsp/admin/plugins/forms/ManageSteps.jsp'>
