@@ -54,6 +54,22 @@ document.addEventListener('DOMContentLoaded', function() {
 		</#if>
 	</#if>
 	
+	/* Move conditional field inside the controlling fieldset if controller is radio/checkbox */
+	(function() {
+		<#list list_control as control>
+		var ctrlInputs = getInputElement(${control.listIdQuestion[0]} + "_" + ${question.iterationNumber});
+		if (ctrlInputs.length > 0 && displayField) {
+			var ctrlType = ctrlInputs[0].type;
+			if (ctrlType === 'radio' || ctrlType === 'checkbox') {
+				var ctrlFieldset = ctrlInputs[0].closest('fieldset');
+				if (ctrlFieldset && !ctrlFieldset.contains(displayField)) {
+					ctrlFieldset.appendChild(displayField);
+				}
+			}
+		}
+		</#list>
+	})();
+
 	<#list list_control as control>
 		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
 		input${control.id}_${question.iterationNumber} = getInputElement(displayControl);

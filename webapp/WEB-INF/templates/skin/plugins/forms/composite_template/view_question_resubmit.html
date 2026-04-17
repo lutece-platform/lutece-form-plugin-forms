@@ -90,43 +90,51 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 function getInputElement( displayControl ){
 	var types = ['input','select','textarea'];
-	var elm = null;
-	for(var i=0;i<types.length && (elm == undefined || elm == null || elm.length <=0);i++){
-		elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
+	var container = document.querySelector("div[displayControl='" + displayControl + "']");
+	if (!container) return [];
+	for(var i=0;i<types.length;i++){
+		var elms = container.querySelectorAll(types[i]);
+		if(elms && elms.length > 0){
+			if(elms[0].tagName.toLowerCase() === 'input'){
+				return Array.from(document.querySelectorAll('input[name="' + elms[0].name + '"]'));
+			}
+			return Array.from(elms);
+		}
 	}
-	if( elm.is('input') ){
-		elm = $('input[name="' + elm.attr('name') + '"]');
-	}
-	return elm;
+	return [];
 }
 
 function getFieldValue( elm ){
-	if(elm.is(':radio')){
-		var input = $('input[name="' + elm.attr('name') + '"]:checked');
-		return input.val();
-	} else if (elm.is(':checkbox'))	{
+	if(!elm || elm.length === 0) return null;
+	var first = elm[0];
+	if(first.type === 'radio'){
+		var checked = document.querySelector('input[name="' + first.name + '"]:checked');
+		return checked ? checked.value : null;
+	} else if (first.type === 'checkbox') {
 		var resultChecked = [];
-		for(var i=0;i< elm.length;i++){
-			if (elm [i].checked){
+		for(var i=0;i<elm.length;i++){
+			if(elm[i].checked){
 				resultChecked.push(elm[i].value);
 			}
 		}
 		return resultChecked;
-	} else if (elm.is('select')) {
-		return elm[0].options[elm[0].selectedIndex].value;
+	} else if (first.tagName.toLowerCase() === 'select') {
+		return first.options[first.selectedIndex].value;
 	}
 	//add other specific implementations here
 	else {
-		return elm.val();
+		return first.value;
 	}
 }
 
-$( function() {
-	$("button[name='action_addIteration']").on("click", function() {
-		var target = "#last_" + $(this).attr("value");
-		var form = $(this).closest("form");
-		var newUrl = form.attr("action").replace(/#current_step$/,target);
-		form.attr("action",newUrl);
+document.addEventListener('DOMContentLoaded', function() {
+	document.querySelectorAll("button[name='action_addIteration']").forEach(function(button) {
+		button.addEventListener("click", function() {
+			var target = "#last_" + this.getAttribute("value");
+			var form = this.closest("form");
+			var newUrl = form.getAttribute("action").replace(/#current_step$/,target);
+			form.setAttribute("action",newUrl);
+		});
 	});
 });
 </script>
