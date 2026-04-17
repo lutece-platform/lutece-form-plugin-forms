@@ -1,4 +1,48 @@
 <@cTpl>
+<#if dskey('portal.theme.site_property.bannerForm.showFormImg.checkbox')?number=1 && form.logo??><style>.banner{ background: transparent url("data:${form.logo.mimeType};base64,${form.logoBase64}") top left/contain no-repeat !important; }</style></#if>
+<#if dskey('portal.theme.site_property.bannerForm.showFormTitle.checkbox')?number=0><style>.banner > header > h1{ display: none !important; }</style></#if>
+<@cBreadCrumb home='Accueil'>
+	<@chItem class='breadcrumb-item active' params='aria-current="page"' />
+</@cBreadCrumb>
+<!-- #current_step : Add for breadcrumbs -->
+<@cForm id='form-validate' action='jsp/site/Portal.jsp?page=forms' params='enctype="multipart/form-data"'>
+<#if warnings??>
+<@cContainer>
+	<#if warnings?size gt 0 >
+	<#assign first = warnings[0] />
+	<#assign messageWarning>
+	<#if first?is_string>
+		<#list warnings as warning >${warning!' #i18n{portal.util.message.titleWarning} '}</#list>
+	<#else>
+		<#list warnings as warning ><#if warning.message??>${warning.message!' #i18n{portal.util.message.titleWarning} '}</#if></#list>
+	</#if>
+	</#assign>
+		<@cAlert type='warning' class='mb-m' id='messages_warnings_div' title=messageWarning! dismissible=true />
+	</#if>
+</@cContainer>
+</#if>
+<#if messageInfo??>
+<@cContainer>
+<#assign messageId = 'save-step-info'>
+<#if user?? && form.backupEnabled><#if hasBackupResponse><#assign messageId = 'save-step-status'></#if></#if>
+<@cAlert id=messageId! title=messageInfo! />
+</@cContainer>
+</#if>
+<#if form.countResponses>
+<@cStepDone step='0' title='#i18n{forms.multiviewForms.view_record_history.information}' idx=0 actionName='' >
+	<@cRow>
+		<@cCol>
+			<@cText>#i18n{forms.message.numberResponse.label}<@cText type='strong'>${form.currentNumberResponse}</@cText></@cText>
+		</@cCol>
+	</@cRow>
+</@cStepDone>
+</#if>
+${formTopBreadcrumb!}
+${stepContent!}
+${formBottomBreadcrumb!} 
+</@cForm>
+<@cAlert id='upload-info-message' title='#i18n{forms.create_entry.warning.upload.inprogress}' class='warning d-none'  />
+<script src="themes/shared/plugins/forms/moment.min.js" ></script>
 <#include "/skin/plugins/asynchronousupload/upload_commons.html" />
 <@addRequiredJsFiles />
 <script src="jsp/site/plugins/asynchronousupload/GetMainUploadJs.jsp?handler=formsAsynchronousUploadHandler" ></script>
@@ -46,41 +90,124 @@ function getFieldValue(elm) {
 	
 	return elm.value;
 }
-</script>
-<form id="form-validate" action="jsp/site/Portal.jsp?page=forms" method="post" enctype="multipart/form-data">
-	<#if form.logo??>
-		<img id="form_logo" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt=""/>
-	</#if>
-	<@messages warnings=warnings />
-	<#if messageInfo?? >
-	<div class="alert alert-info" role="alert">
-		${messageInfo}
-	</div>
-	</#if>
-	${formTopBreadcrumb!}
-	<#if form.countResponses>#i18n{forms.create_entry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
-	${stepContent!}
-	${formBottomBreadcrumb!}
-</form>
-<div id="upload-info-message" class="alert alert-warning text-center d-none" role="alert">
-	#i18n{forms.create_entry.warning.upload.inprogress}
-</div>
-<script>
-let isUploading = false;
-document.addEventListener('fileuploadstart', function () {
-	isUploading = true;
-});
 
-document.addEventListener('fileuploadstop', function () {
-	isUploading = false;
-	document.getElementById('upload-info-message').classList.add('d-none');
-});
-
-document.getElementById('form-validate').addEventListener('submit', function(e) {
-	if (isUploading) {
-		e.preventDefault();
-		document.getElementById('upload-info-message').classList.remove('d-none');
+function getParentsUntil(element, stopSelector) {
+	var parents = [];
+	var parent = element.parentElement;
+	while (parent && !parent.matches(stopSelector)) {
+		parents.push(parent);
+		parent = parent.parentElement;
 	}
+	return parents;
+}
+
+/**
+ * Toggles the "required" attribute on input fields based on their visibility.
+ * If an input field is hidden (determined by a CSS class or style), the "required" attribute is removed,
+ * preventing validation errors from occurring on non-visible fields during form submission.
+ * This function helps ensure that only visible fields are validated as required.
+ */
+function toggleRequiredAttributesByVisibility() {
+	document.querySelectorAll("div[displayControl]").forEach(function (div) {
+		var inputs = div.querySelectorAll("input, select, textarea");
+
+		// Check if this element is visible or has the class "control_invalid"
+		var isHidden = div.classList.contains("control_invalid") || 
+					   div.offsetParent === null || 
+					   getComputedStyle(div).display === "none";
+
+		inputs.forEach(function (input) {
+			if (isHidden) {
+				// If hidden or marked invalid, remove required
+				input.removeAttribute("required");
+			} else {
+				// If visible, add required based on initial configuration
+				if (input.getAttribute("data-mandatory") === "true") {
+					input.setAttribute("required", "required");
+				}
+			}
+		});
+	});
+}
+
+function stepGroupDisplay( stepGroup ){
+	const displayControls = stepGroup.querySelectorAll('[displaycontrol]').length
+	const displayControlsInvalid = stepGroup.querySelectorAll('.control_invalid[displaycontrol]').length
+	if( displayControls === displayControlsInvalid ){
+		stepGroup.classList.add('d-none');
+	} else {
+		stepGroup.classList.remove('d-none');
+	};
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+	document.querySelectorAll('.action-group').forEach(button => {
+		button.addEventListener('click', function() {
+			const idParts = this.id.split('_');
+			const actionType = idParts[1]; // "add" or "remove"
+			const lastIndex = idParts.length - 1 ;
+			if( actionType === 'add' ) {
+				idParts[lastIndex] = String(parseInt(idParts[lastIndex]) + 1);
+			} else {
+				idParts[lastIndex] = String(parseInt(idParts[lastIndex]) - 1);
+				idParts[1] = 'add';
+			}
+			const newId = idParts.join('_');
+			const formVal = document.getElementById('form-validate');
+			const newUrl = formVal.action + '#' + newId;
+			formVal.action = newUrl;
+		});
+	});
+
+	/* File Upload */
+	let isUploading = false;
+		
+	document.addEventListener('fileuploadstart', function () {
+		isUploading = true;
+	});
+
+	document.addEventListener('fileuploadstop', function () {
+		isUploading = false;
+		document.getElementById('upload-info-message').classList.add('d-none');
+	});
+
+	document.getElementById('form-validate').addEventListener('submit', function(e) {
+		if ( isUploading ){
+			e.preventDefault();
+			document.getElementById('upload-info-message').classList.remove('d-none');
+		}
+	});
+
+	/* Check if step-group has all field hidden due to conditionnal behavior */
+	document.querySelectorAll('.step-group').forEach(function(stepGroup) {
+		var countField = stepGroup.querySelectorAll('.form-group').length;
+		var countCond = stepGroup.querySelectorAll('div[class*="display_field_"]').length;
+		var countCondVisible = Array.from(stepGroup.querySelectorAll('div[class*="display_field_"]')).filter(function(el) {
+			return el.offsetParent !== null;
+		}).length;
+
+		if (countField === countCond && countCond > 0 && countCondVisible === 0) {
+			stepGroup.classList.add('d-none', 'step-group-collapsible');
+		}
+	});
+
+	// Title and breadcrumb
+	if( document.querySelector('.banner h1') ){
+		document.querySelector('.banner h1').innerHTML = "${form.title?js_string}";
+	}
+	var stepTitleEl = document.querySelector('#current_step .title span:not(.step-number)');
+	var stepTitle = stepTitleEl ? stepTitleEl.textContent.trim() : '';
+	document.querySelector('.breadcrumb-item.active').innerHTML = "${form.title?js_string}" + (stepTitle ? " - " + stepTitle : "");
+	document.querySelector('title').innerHTML = "${form.title?js_string}" + (stepTitle ? " - " + stepTitle : "");
+	
+	// Hide step groups that have no inputs
+	const stepGroups = document.querySelectorAll(".step-group");
+	if( stepGroups.length > 1 ){
+		stepGroups.forEach( function( stepGroup ){
+			stepGroupDisplay( stepGroup )
+		});
+	}
+
 });
 </script>
 </@cTpl>
