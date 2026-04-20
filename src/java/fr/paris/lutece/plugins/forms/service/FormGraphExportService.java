@@ -83,6 +83,8 @@ public class FormGraphExportService
 
     private FormService _formService;
 
+    private EntryServiceManager _entryServiceManager;
+
     /**
      * No-args constructor required by CDI for proxy generation.
      */
@@ -95,11 +97,14 @@ public class FormGraphExportService
      *
      * @param formService
      *            the form service
+     * @param entryServiceManager
+     *            the entry service manager
      */
     @Inject
-    public FormGraphExportService( FormService formService )
+    public FormGraphExportService( FormService formService, EntryServiceManager entryServiceManager )
     {
         _formService = formService;
+        _entryServiceManager = entryServiceManager;
     }
 
     /**
@@ -178,7 +183,7 @@ public class FormGraphExportService
             for ( Control control : listControl )
             {
         	// validator
-        	IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+        	IValidator validator = _entryServiceManager.getValidator( control.getValidatorName( ) );
         	sb.append ( NEWLINE ).append ( validator.getValidatorDisplayName ( ) ).append( " : ").append ( control.getValue ( ) );
             }
             

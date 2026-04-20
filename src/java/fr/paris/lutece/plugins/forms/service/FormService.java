@@ -125,6 +125,9 @@ public class FormService
     private StepService _stepService;
 
     @Inject
+    private EntryServiceManager _entryServiceManager;
+
+    @Inject
     @Named( "forms.luceneLockManager" )
     private FormsDistributedLockManager _distributedLockManager;
 
@@ -378,7 +381,7 @@ public class FormService
 
             if ( question != null && question.isVisible( ) )
             {
-                IEntryDataService dataService = EntryServiceManager.getInstance( ).getEntryDataService( question.getEntry( ).getEntryType( ) );
+                IEntryDataService dataService = _entryServiceManager.getEntryDataService( question.getEntry( ).getEntryType( ) );
                 formQuestionResponse.setIdFormResponse( formResponseStep.getFormResponseId( ) );
                 dataService.save( formQuestionResponse );
             }

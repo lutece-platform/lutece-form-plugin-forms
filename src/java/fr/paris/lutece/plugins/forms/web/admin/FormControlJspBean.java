@@ -161,6 +161,8 @@ public class FormControlJspBean extends AbstractJspBean
     private Event<ControlEvent> _controlCreatedEvent;
     @Inject
     private Event<ControlEvent> _controlRemovedEvent;
+    @Inject
+    private EntryServiceManager _entryServiceManager;
     
     /**
      * Build the Manage View
@@ -195,7 +197,7 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( MARK_PAGINATOR, paginator );
         model.put( MARK_NB_ITEMS_PER_PAGE, StringUtils.EMPTY + _nItemsPerPage );
         model.put( FormsConstants.PARAMETER_CONTROL_TYPE, _controlType.name( ) );
-        model.put( FormsConstants.MARK_VALIDATOR_MANAGER, EntryServiceManager.getInstance( ) );
+        model.put( FormsConstants.MARK_VALIDATOR_MANAGER, _entryServiceManager );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
         model.put( MARK_LIST_CONTROL, listControl );
@@ -325,7 +327,7 @@ public class FormControlJspBean extends AbstractJspBean
         model.put( FormsConstants.PARAMETER_CONTROL_TYPE, _controlType.name( ) );
         model.put( FormsConstants.MARK_STEP_HOME, StepHome.class );
         model.put( FormsConstants.MARK_QUESTION_HOME, QuestionHome.class );
-        model.put( FormsConstants.MARK_VALIDATOR_MANAGER, EntryServiceManager.getInstance( ) );
+        model.put( FormsConstants.MARK_VALIDATOR_MANAGER, _entryServiceManager );
         model.put( FormsConstants.MARK_QUESTION, _question );
         model.put( FormsConstants.MARK_STEP, _step );
 
@@ -530,14 +532,14 @@ public class FormControlJspBean extends AbstractJspBean
             Question q = QuestionHome.findByPrimaryKey( _control.getListIdQuestion( ).iterator( ).next( ) );
             EntryType ent = q.getEntry( ).getEntryType( );
 
-            ReferenceList refListAvailableValidator = EntryServiceManager.getInstance( ).getRefListAvailableValidator( ent );
+            ReferenceList refListAvailableValidator = _entryServiceManager.getRefListAvailableValidator( ent );
             for ( int idQuest : _control.getListIdQuestion( ) )
             {
                 Question question = QuestionHome.findByPrimaryKey( idQuest );
                 if ( question != null && question.getEntry( ) != null )
                 {
                     EntryType entryType = question.getEntry( ).getEntryType( );
-                    ReferenceList refListAvailableValidatorTemp = EntryServiceManager.getInstance( ).getRefListAvailableValidator( entryType );
+                    ReferenceList refListAvailableValidatorTemp = _entryServiceManager.getRefListAvailableValidator( entryType );
                     ReferenceList refListAvailTemp = new ReferenceList( );
                     for ( ReferenceItem refList : refListAvailableValidatorTemp )
                     {
@@ -562,7 +564,7 @@ public class FormControlJspBean extends AbstractJspBean
 
         if ( StringUtils.isNotEmpty( _control.getValidatorName( ) ) )
         {
-            IValidator validator = EntryServiceManager.getInstance( ).getValidator( _control.getValidatorName( ) );
+            IValidator validator = _entryServiceManager.getValidator( _control.getValidatorName( ) );
             strValidatorTemplate = validator.getDisplayHtml( _control );
         }
         if(_controlType.name() == "TRANSITION") {
@@ -734,8 +736,8 @@ public class FormControlJspBean extends AbstractJspBean
                 Question question = QuestionHome.findByPrimaryKey( nIdQuest );
                 if ( question.getEntry( ) != null )
                 {
-                    List<IValidator> listValidator = EntryServiceManager.getInstance( ).getListAvailableValidator( question.getEntry( ).getEntryType( ) );
-                    IValidator controlValidator = EntryServiceManager.getInstance( ).getValidator( _control.getValidatorName( ) );
+                    List<IValidator> listValidator = _entryServiceManager.getListAvailableValidator( question.getEntry( ).getEntryType( ) );
+                    IValidator controlValidator = _entryServiceManager.getValidator( _control.getValidatorName( ) );
 
                     if ( !listValidator.contains( controlValidator ) )
                     {

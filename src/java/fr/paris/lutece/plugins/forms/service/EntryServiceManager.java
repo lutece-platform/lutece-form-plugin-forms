@@ -41,42 +41,74 @@ import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDataService;
 import fr.paris.lutece.plugins.forms.web.entrytype.IEntryDisplayService;
 import fr.paris.lutece.plugins.genericattributes.business.EntryType;
 import fr.paris.lutece.util.ReferenceList;
+import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
 import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 /**
- * This is the manager class for different entry type
+ * Manager for entry-type-specific display/data services and validators.
+ *
+ * Discovers every {@link IEntryDisplayService}, {@link IEntryDataService} and
+ * {@link IValidator} bean exposed by CDI producers and exposes them by name.
+ *
+ * Prefer {@code @Inject EntryServiceManager} over {@link #getInstance()} in new
+ * code. The static accessor is kept as a bridge for static utilities and
+ * non-CDI-managed classes (e.g. {@code FormResponseManager},
+ * {@code FormsResponseUtils}) that cannot use field injection yet; those will
+ * migrate as part of the factorisation work (plan lot L6).
  */
-public final class EntryServiceManager
+@ApplicationScoped
+@Named( EntryServiceManager.BEAN_NAME )
+public class EntryServiceManager
 {
-    private final List<IEntryDisplayService> _listEntryDisplayService;
+    public static final String BEAN_NAME = "forms.entryServiceManager";
 
-    private final List<IEntryDataService> _listEntryDataService;
+    @Inject
+    @Any
+    private Instance<IEntryDisplayService> _entryDisplayServiceInstance;
 
-    private final List<IValidator> _listValidator;
+    @Inject
+    @Any
+    private Instance<IEntryDataService> _entryDataServiceInstance;
 
-    /**
-     * Constructor for EntryServiceManager class
-     */
-    private EntryServiceManager( )
+    @Inject
+    @Any
+    private Instance<IValidator> _validatorInstance;
+
+    private List<IEntryDisplayService> _listEntryDisplayService;
+    private List<IEntryDataService> _listEntryDataService;
+    private List<IValidator> _listValidator;
+
+    @PostConstruct
+    void init( )
     {
-        _listEntryDisplayService = CDI.current( ).select( IEntryDisplayService.class ).stream( ).toList( );
-        _listEntryDataService = CDI.current( ).select( IEntryDataService.class ).stream( ).toList( );
-        _listValidator = CDI.current( ).select( IValidator.class ).stream( ).toList( );
+        _listEntryDisplayService = _entryDisplayServiceInstance.stream( ).toList( );
+        _listEntryDataService = _entryDataServiceInstance.stream( ).toList( );
+        _listValidator = _validatorInstance.stream( ).toList( );
     }
 
     /**
-     * Gives the instance
-     * 
-     * @return the instance
+     * Gives the CDI-managed instance.
+     *
+     * @return the {@link EntryServiceManager} bean resolved through the current
+     *         CDI container
+     * @deprecated Prefer {@code @Inject EntryServiceManager _entryServiceManager}
+     *         in CDI-managed classes. This bridge is retained for static
+     *         utilities and non-CDI callers during the migration window.
      */
+    @Deprecated( since = "4.0.3" )
     public static EntryServiceManager getInstance( )
     {
-        return EntryServiceManagerHolder._instance;
+        return CDI.current( ).select( EntryServiceManager.class ).get( );
     }
 
     /**
      * Get the right IEntryDisplayService
-     * 
+     *
      * @param entryType
      *            The entrytype
      * @return the IEntryDisplayService
@@ -96,7 +128,7 @@ public final class EntryServiceManager
 
     /**
      * Get the right IEntryDataService
-     * 
+     *
      * @param entryType
      *            The entrytype
      * @return the IEntryDataService
@@ -116,7 +148,7 @@ public final class EntryServiceManager
 
     /**
      * Get the right IValidator
-     * 
+     *
      * @param strValidatorName
      *            The validator name
      * @return the IValidator
@@ -136,7 +168,7 @@ public final class EntryServiceManager
 
     /**
      * Get the available IValidator list for the given entryType
-     * 
+     *
      * @param entryType
      *            The entrytype
      * @return the ReferenceList of IValidator
@@ -155,7 +187,7 @@ public final class EntryServiceManager
 
     /**
      * Get the available IValidator list for the given entryType
-     * 
+     *
      * @param entryType
      *            The entrytype
      * @return the List of IValidator
@@ -173,14 +205,5 @@ public final class EntryServiceManager
         }
 
         return listAvailableValidator;
-    }
-
-    /**
-     * This class holds the EntryServiceManager instance
-     *
-     */
-    private static class EntryServiceManagerHolder
-    {
-        private static EntryServiceManager _instance = new EntryServiceManager( );
     }
 }

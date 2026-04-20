@@ -140,6 +140,8 @@ public class FormResponseXPage extends MVCApplication
     private WorkflowService _workflowService;
     @Inject
     private SecurityTokenService _securityTokenService;
+    @Inject
+    private EntryServiceManager _entryServiceManager;
 
     @View( value = VIEW_FORM_RESPONSE, defaultView = true )
     public XPage getFormResponseView( HttpServletRequest request ) throws SiteMessageException
@@ -185,7 +187,7 @@ public class FormResponseXPage extends MVCApplication
         formResponse.getSteps().stream()
                 .flatMap(step -> step.getQuestions().stream())
                 .forEach(fqr -> {
-                    IEntryDisplayService displayService = EntryServiceManager.getInstance()
+                    IEntryDisplayService displayService = _entryServiceManager
                             .getEntryDisplayService(fqr.getQuestion().getEntry().getEntryType());
                     if (displayService instanceof EntryTypeFileDisplayService) {
                         displayService.getEntryTemplateDisplay(request, fqr.getQuestion().getEntry(), locale, model, DisplayType.READONLY_FRONTOFFICE);
