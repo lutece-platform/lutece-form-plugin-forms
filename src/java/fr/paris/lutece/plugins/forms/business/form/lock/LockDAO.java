@@ -49,7 +49,7 @@ public class LockDAO implements ILockDAO {
 
     private static final String SQL_QUERY_RELEASE = "UPDATE forms_lucene_lock SET is_locked=false, date_begin=NULL, expired_date=NULL WHERE uuid=? ";
 
-    private static final String SQL_QUERY_REFRESH = "UPDATE forms_lucene_lock SET expired_date=NULL WHERE uuid=? ";
+    private static final String SQL_QUERY_REFRESH = "UPDATE forms_lucene_lock SET expired_date=? WHERE uuid=? ";
 
     private static final String SQL_QUERY_CLOSE_ALL = "UPDATE forms_lucene_lock SET is_locked=false";
 

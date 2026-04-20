@@ -39,6 +39,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
@@ -102,7 +105,9 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private static final String FILTER_DATE_FORMAT = AppPropertiesService.getProperty( "forms.index.date.format", "dd/MM/yyyy" );
     private static final int TAILLE_LOT = AppPropertiesService.getPropertyInt( "forms.index.writer.commit.size", 100 );
     private static final boolean CLOSE_WRITER = AppPropertiesService.getPropertyBoolean( "forms.index.writer.multi.apps", true );
-    private static final long MS_TIMEOUT_LOCK = AppPropertiesService.getPropertyLong( "forms.index.writer.ms.timeout.lock", 3600000L );
+    private static final long MS_TIMEOUT_LOCK = AppPropertiesService.getPropertyLong( "forms.index.writer.ms.timeout.lock", 900000L );
+    /** Renew the lock well before its TTL expires. A third of the TTL leaves two missed heartbeats of safety margin. */
+    private static final long MS_HEARTBEAT_INTERVAL = Math.max( MS_TIMEOUT_LOCK / 3, 10_000L );
 
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
@@ -158,6 +163,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             LockResult lockResult = _lockManager.acquireLock( LOCKNAME, MS_TIMEOUT_LOCK );
             log.append("Full indexing launch");
 
+            ScheduledExecutorService heartbeat = startLockHeartbeat( lockResult );
             try
             {
                 IndexerActionHome.removeAll( plugin );
@@ -177,6 +183,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             }
             finally
             {
+                stopLockHeartbeat( heartbeat );
                 closeIndexing();
                 _lockManager.releaseLock( lockResult );
             }
@@ -200,6 +207,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             LockResult lockResult = _lockManager.acquireLock(LOCKNAME, MS_TIMEOUT_LOCK);
 
             log.append("Incremental indexing launch");
+            ScheduledExecutorService heartbeat = startLockHeartbeat( lockResult );
             try {
                 initIndexing( false );
                 processIndexing();
@@ -207,6 +215,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                 AppLogService.error(e.getMessage(), e);
                 log.append("Incremental indexing with error");
             } finally {
+                stopLockHeartbeat( heartbeat );
                 closeIndexing();
                 _lockManager.releaseLock(lockResult);
             }
@@ -216,6 +225,47 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         }
 
         return log.toString();
+    }
+
+    /**
+     * Start a background heartbeat that renews the distributed indexing lock at
+     * {@link #MS_HEARTBEAT_INTERVAL}, so an indexing run that outlives the initial
+     * {@link #MS_TIMEOUT_LOCK} TTL is still protected from another node reclaiming
+     * the lock mid-write. The thread is a daemon; a refresh failure is logged but
+     * does not interrupt the ongoing indexing (the worst outcome is that another
+     * node re-indexes shortly after, which is idempotent).
+     *
+     * @param lockResult the lock handle to renew
+     * @return the scheduler to be passed to {@link #stopLockHeartbeat(ScheduledExecutorService)}
+     */
+    private ScheduledExecutorService startLockHeartbeat( final LockResult lockResult )
+    {
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor( runnable -> {
+            Thread thread = new Thread( runnable, "forms-lucene-lock-heartbeat" );
+            thread.setDaemon( true );
+            return thread;
+        } );
+        executor.scheduleAtFixedRate( ( ) -> {
+            try
+            {
+                _lockManager.refreshLock( lockResult, MS_TIMEOUT_LOCK );
+            }
+            catch ( Exception e )
+            {
+                AppLogService.error(
+                        "Failed to renew Lucene indexing lock; another instance may reclaim it before the current indexing completes",
+                        e );
+            }
+        }, MS_HEARTBEAT_INTERVAL, MS_HEARTBEAT_INTERVAL, TimeUnit.MILLISECONDS );
+        return executor;
+    }
+
+    private void stopLockHeartbeat( ScheduledExecutorService executor )
+    {
+        if ( executor != null )
+        {
+            executor.shutdownNow( );
+        }
     }
 
     /**
