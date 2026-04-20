@@ -45,6 +45,7 @@ import org.junit.jupiter.api.Test;
 
 import fr.paris.lutece.test.mocks.MockHttpServletRequest;
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnFormResponseDateCreationMock;
@@ -56,6 +57,7 @@ import fr.paris.lutece.plugins.forms.business.form.panel.FormPanel;
 import fr.paris.lutece.plugins.forms.business.form.panel.configuration.FormPanelConfiguration;
 import fr.paris.lutece.plugins.forms.service.FormsMultiviewAuthorizationService;
 import fr.paris.lutece.plugins.forms.service.IFormsMultiviewAuthorizationService;
+import fr.paris.lutece.portal.business.user.AdminUser;
 import fr.paris.lutece.test.LuteceTestCase;
 
 /**
@@ -63,10 +65,24 @@ import fr.paris.lutece.test.LuteceTestCase;
  */
 public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
 {
+    private static final String ATTRIBUTE_ADMIN_USER = "lutece_admin_user";
+
     // Variables
     private FormPanel _formPanel;
     @Inject
     private FormColumnFactory _formColumnFactory;
+
+    /**
+     * Build a request with a minimal admin user in session so that AdminUserService.getAdminUser(...) does not return null.
+     */
+    private HttpServletRequest buildAuthenticatedRequest( )
+    {
+        MockHttpServletRequest request = new MockHttpServletRequest( );
+        AdminUser adminUser = new AdminUser( );
+        adminUser.setAccessCode( "admin" );
+        request.getSession( true ).setAttribute( ATTRIBUTE_ADMIN_USER, adminUser );
+        return request;
+    }
 
     /**
      * {@inheritDoc}
@@ -104,7 +120,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService(
                 _formPanel.getFormPanelConfiguration( ), formListFacade, _formColumnFactory );
 
-        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
+        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( buildAuthenticatedRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.TRUE ) );
     }
 
@@ -123,7 +139,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService(
                 _formPanel.getFormPanelConfiguration( ), formListFacade, _formColumnFactory );
 
-        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
+        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( buildAuthenticatedRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );
     }
 
@@ -141,7 +157,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService(
                 _formPanel.getFormPanelConfiguration( ), formListFacade, _formColumnFactory );
 
-        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
+        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( buildAuthenticatedRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );
     }
 
@@ -159,7 +175,7 @@ public class FormsMultiviewAuthorizationServiceTest extends LuteceTestCase
         IFormsMultiviewAuthorizationService formsMultiviewAuthorizationService = new FormsMultiviewAuthorizationService( null, formListFacade,
                 _formColumnFactory );
 
-        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( new MockHttpServletRequest( ), nIdFormResponse );
+        boolean bIsUserAuthorize = formsMultiviewAuthorizationService.isUserAuthorizedOnFormResponse( buildAuthenticatedRequest( ), nIdFormResponse );
         assertThat( bIsUserAuthorize, is( Boolean.FALSE ) );
     }
 }
