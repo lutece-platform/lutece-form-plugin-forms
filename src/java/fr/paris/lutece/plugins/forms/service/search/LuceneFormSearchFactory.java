@@ -38,188 +38,317 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
+import org.apache.commons.io.file.PathUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.SearcherFactory;
+import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import org.apache.commons.io.file.PathUtils;
 
 /**
- * Factory for the search on Directory
+ * Shared factory for Lucene resources used by the forms index.
+ *
+ * Thread-safety: all state transitions on the writer, the long-lived search
+ * Directory and the {@link SearcherManager} go through {@link #_lock}. This
+ * guarantees that:
+ * - {@link #getIndexWriter(Boolean, boolean)} never hands out an
+ *   {@link IndexWriter} that is being closed or recreated concurrently;
+ * - {@link #swapIndex()} closes every open resource before moving files on
+ *   disk so no reader/writer is observing a half-moved directory;
+ * - the {@link SearcherManager} is rebuilt atomically after each swap.
+ *
+ * In a multi-instance deployment with a shared index volume, the single-writer
+ * invariant across JVMs is enforced by the {@code LuceneLockManagerDB}
+ * distributed lock held by {@code LuceneFormSearchIndexer}; this class only
+ * guarantees intra-JVM serialisation.
  */
 @ApplicationScoped
 public class LuceneFormSearchFactory
 {
-    // Constants
     private static final String PATH_INDEX = "forms.internalIndexer.lucene.indexPath";
     private static final String PATH_INDEX_IN_WEBAPP = "forms.internalIndexer.lucene.indexInWebapp";
     private static final String PATH_SUFFIX_TEMPORARY_PATH = "Temp";
 
-
-    // Variables
     @Inject
     @Named( value = "forms.luceneFrenchAnalyzer" )
     private Analyzer _analyzer;
 
-    private IndexWriter _indexWriter;
+    /** Guards all state transitions below. */
+    private final Object _lock = new Object( );
 
-    /**
-     * Return the Analyzer to use for the search
-     * 
-     * @return the Analyzer to use for the search
-     */
+    /** Current write handle, {@code null} when no indexing session is open. */
+    private volatile IndexWriter _indexWriter;
+
+    /** Long-lived Directory held open for the read path so {@link SearcherManager} has a stable target. */
+    private volatile Directory _searchDirectory;
+
+    /** Pooled searchers for the main index. {@code null} until the first search, or while the index does not yet exist. */
+    private volatile SearcherManager _searcherManager;
+
     public Analyzer getAnalyzer( )
     {
         return _analyzer;
     }
 
     /**
-     * Create the IndexWriter with its configuration
-     * 
-     * @param bCreateIndex
-     *            The boolean which tell if the index must be created
-     * @param mainDirectory
-     *            The boolean which tell if the index must be created on the main Directory or in a temporary Directory
-     * @return the created IndexWriter
+     * Create (or return the cached) {@link IndexWriter} on either the main or the temporary directory.
+     * Concurrent callers serialise through the factory lock; existing temporary writers are closed
+     * before switching target.
      */
-    public IndexWriter getIndexWriter( Boolean bCreateIndex, boolean mainDirectory)
+    public IndexWriter getIndexWriter( Boolean bCreateIndex, boolean mainDirectory )
     {
-
-        if( !mainDirectory && _indexWriter != null && _indexWriter.isOpen( ) )
+        synchronized ( _lock )
         {
-            try {
-                _indexWriter.close();
-            } catch (IOException e) {
-                AppLogService.error( "Unable to close a old Lucene Index Writer", e );
-            }
-        }
-
-        if ( _indexWriter == null || !_indexWriter.isOpen( ) )
-        {
-            try
+            if ( !mainDirectory && _indexWriter != null && _indexWriter.isOpen( ) )
             {
-                Directory luceneDirectory;
-                if ( mainDirectory )
-                {
-                    luceneDirectory = getDirectory();
-                }
-                else
-                {
-                    luceneDirectory = getDirectoryTemp();
-                }
-
-                IndexWriterConfig conf = new IndexWriterConfig( getAnalyzer( ) );
-
-                if ( Boolean.TRUE.equals( bCreateIndex ) || !DirectoryReader.indexExists( luceneDirectory ) )
-                {
-                    conf.setOpenMode( OpenMode.CREATE );
-                }
-                else
-                {
-                    conf.setOpenMode( OpenMode.APPEND );
-                }
-                _indexWriter = new IndexWriter( luceneDirectory, conf );
+                closeWriterQuietly( );
             }
-            catch( IOException e )
+
+            if ( _indexWriter == null || !_indexWriter.isOpen( ) )
             {
-                AppLogService.error( "Unable to create a new Lucene Index Writer", e );
-                return null;
-            }
-        }
-        return _indexWriter;
+                try
+                {
+                    Directory luceneDirectory = mainDirectory ? getDirectory( ) : getDirectoryTemp( );
 
+                    IndexWriterConfig conf = new IndexWriterConfig( getAnalyzer( ) );
+                    if ( Boolean.TRUE.equals( bCreateIndex ) || !DirectoryReader.indexExists( luceneDirectory ) )
+                    {
+                        conf.setOpenMode( OpenMode.CREATE );
+                    }
+                    else
+                    {
+                        conf.setOpenMode( OpenMode.APPEND );
+                    }
+                    _indexWriter = new IndexWriter( luceneDirectory, conf );
+                }
+                catch ( IOException e )
+                {
+                    AppLogService.error( "Unable to create a new Lucene Index Writer", e );
+                    return null;
+                }
+            }
+            return _indexWriter;
+        }
     }
 
-
     /**
-     * Return path to the directory
+     * Resolve the configured index path (main or temporary). Package-visible so the
+     * plugin initialisation can surface a warning if the path is JVM-local.
      *
-     * @param tempDirectory if true return path for the temporary directory
-     * @return String Path
+     * @param tempDirectory {@code true} to append the temporary suffix
+     * @return the absolute or webapp-relative path string
      */
-    public String getPathDirectory(boolean tempDirectory)
+    public String getPathDirectory( boolean tempDirectory )
     {
-        String strIndex;
-
         boolean indexInWebapp = AppPropertiesService.getPropertyBoolean( PATH_INDEX_IN_WEBAPP, true );
-        if ( indexInWebapp )
-        {
-            strIndex = AppPathService.getPath( PATH_INDEX );
-        }
-        else
-        {
-            strIndex = AppPropertiesService.getProperty( PATH_INDEX );
-        }
-
-        if (!tempDirectory)
-        {
-            return strIndex;
-        }
-        else {
-            return strIndex + PATH_SUFFIX_TEMPORARY_PATH;
-        }
+        String strIndex = indexInWebapp ? AppPathService.getPath( PATH_INDEX ) : AppPropertiesService.getProperty( PATH_INDEX );
+        return tempDirectory ? strIndex + PATH_SUFFIX_TEMPORARY_PATH : strIndex;
     }
 
     /**
-     * Return the Directory to use for the search
-     * 
-     * @return the Directory to use for the search
-     * @throws IOException
-     *             - if the path string cannot be converted to a Path
+     * Open a fresh {@link FSDirectory} on the main path. The caller owns the
+     * returned handle and is responsible for closing it. Used by callers that
+     * need a one-off Directory for {@link DirectoryReader#indexExists(Directory)}
+     * or for writer construction.
      */
     public Directory getDirectory( ) throws IOException
     {
         return FSDirectory.open( Paths.get( getPathDirectory( false ) ) );
     }
 
-    /**
-     * Return the temporary Directory to use for the search
-     *
-     * @return the Directory to use for the search
-     * @throws IOException
-     *             - if the path string cannot be converted to a Path
-     */
     public Directory getDirectoryTemp( ) throws IOException
     {
         return FSDirectory.open( Paths.get( getPathDirectory( true ) ) );
     }
 
     /**
-     * Delete the old main directory and move the temporary to the main Path
-     *
+     * Acquire a pooled {@link IndexSearcher} on the main index. Must be paired
+     * with {@link #releaseSearcher(IndexSearcher)}. Returns {@code null} if the
+     * index does not yet exist on disk.
+     */
+    public IndexSearcher acquireSearcher( ) throws IOException
+    {
+        SearcherManager sm = ensureSearcherManager( );
+        if ( sm == null )
+        {
+            return null;
+        }
+        try
+        {
+            sm.maybeRefresh( );
+        }
+        catch ( IOException e )
+        {
+            AppLogService.error( "Unable to refresh Lucene SearcherManager", e );
+        }
+        return sm.acquire( );
+    }
+
+    public void releaseSearcher( IndexSearcher searcher ) throws IOException
+    {
+        if ( searcher == null )
+        {
+            return;
+        }
+        SearcherManager sm = _searcherManager;
+        if ( sm != null )
+        {
+            sm.release( searcher );
+        }
+    }
+
+    /**
+     * Signal that the main index has just been updated so subsequent
+     * {@link #acquireSearcher()} calls observe the new view. Safe to call
+     * when no reader has been opened yet (no-op in that case).
+     */
+    public void refreshSearcher( )
+    {
+        SearcherManager sm = _searcherManager;
+        if ( sm == null )
+        {
+            return;
+        }
+        try
+        {
+            sm.maybeRefresh( );
+        }
+        catch ( IOException e )
+        {
+            AppLogService.error( "Unable to refresh Lucene SearcherManager", e );
+        }
+    }
+
+    /**
+     * Swap the freshly built temporary directory onto the main location.
+     * Holds the factory lock for the whole operation so neither writers nor
+     * the {@link SearcherManager} observe a partially-moved directory; both
+     * are closed before the move and lazily reopened by the next caller.
      */
     public void swapIndex( )
     {
+        synchronized ( _lock )
+        {
+            closeWriterQuietly( );
+            closeSearcherManagerQuietly( );
+            closeSearchDirectoryQuietly( );
 
-        if ( _indexWriter != null && _indexWriter.isOpen() ) {
-            try {
-                _indexWriter.close();
-            } catch (IOException e) {
-                AppLogService.error("Unable to close index writer ", e);
+            Path mainPath = Paths.get( getPathDirectory( false ) );
+            Path tempPath = Paths.get( getPathDirectory( true ) );
+            try
+            {
+                PathUtils.deleteDirectory( mainPath );
+                Files.move( tempPath, mainPath );
+            }
+            catch ( IOException e )
+            {
+                AppLogService.error( "Unable to swap lucene path", e );
             }
         }
+    }
 
-        Path mainPath = Paths.get( getPathDirectory( false ) );
-        Path tempPath = Paths.get( getPathDirectory( true ) );
-
-        try {
-        	PathUtils.deleteDirectory( mainPath );
-            Files.move( tempPath, mainPath );
-
-        } catch (IOException e) {
-            AppLogService.error( "Unable to swap lucene path", e );
+    /**
+     * Release every held resource. Invoked at application shutdown.
+     */
+    @PreDestroy
+    public void shutdown( )
+    {
+        synchronized ( _lock )
+        {
+            closeWriterQuietly( );
+            closeSearcherManagerQuietly( );
+            closeSearchDirectoryQuietly( );
         }
+    }
 
+    private SearcherManager ensureSearcherManager( ) throws IOException
+    {
+        SearcherManager sm = _searcherManager;
+        if ( sm != null )
+        {
+            return sm;
+        }
+        synchronized ( _lock )
+        {
+            if ( _searcherManager != null )
+            {
+                return _searcherManager;
+            }
+            if ( _searchDirectory == null )
+            {
+                _searchDirectory = FSDirectory.open( Paths.get( getPathDirectory( false ) ) );
+            }
+            if ( !DirectoryReader.indexExists( _searchDirectory ) )
+            {
+                return null;
+            }
+            _searcherManager = new SearcherManager( _searchDirectory, new SearcherFactory( ) );
+            return _searcherManager;
+        }
+    }
+
+    private void closeWriterQuietly( )
+    {
+        IndexWriter writer = _indexWriter;
+        if ( writer != null && writer.isOpen( ) )
+        {
+            try
+            {
+                writer.close( );
+            }
+            catch ( IOException e )
+            {
+                AppLogService.error( "Unable to close Lucene IndexWriter", e );
+            }
+        }
+        _indexWriter = null;
+    }
+
+    private void closeSearcherManagerQuietly( )
+    {
+        SearcherManager sm = _searcherManager;
+        if ( sm != null )
+        {
+            try
+            {
+                sm.close( );
+            }
+            catch ( IOException e )
+            {
+                AppLogService.error( "Unable to close Lucene SearcherManager", e );
+            }
+        }
+        _searcherManager = null;
+    }
+
+    private void closeSearchDirectoryQuietly( )
+    {
+        Directory dir = _searchDirectory;
+        if ( dir != null )
+        {
+            try
+            {
+                dir.close( );
+            }
+            catch ( IOException e )
+            {
+                AppLogService.error( "Unable to close Lucene search Directory", e );
+            }
+        }
+        _searchDirectory = null;
     }
 }

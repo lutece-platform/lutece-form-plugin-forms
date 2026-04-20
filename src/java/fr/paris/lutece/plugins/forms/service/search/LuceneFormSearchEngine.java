@@ -56,8 +56,6 @@ import jakarta.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.BooleanClause;
@@ -68,7 +66,6 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.SortedNumericSortField;
 import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.store.Directory;
 
 @ApplicationScoped
 public class LuceneFormSearchEngine implements IFormSearchEngine
@@ -87,72 +84,72 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         ArrayList<Integer> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
-        try ( Directory directory = _luceneFormSearchFactory.getDirectory( ) )
+        try
         {
-            if ( !DirectoryReader.indexExists( directory ) )
+            searcher = _luceneFormSearchFactory.acquireSearcher( );
+            if ( searcher == null )
             {
                 AppLogService.error( "Forms Lucene index not found." );
                 return listResults;
             }
 
-            try ( IndexReader ir = DirectoryReader.open( directory ) )
-            {
-                searcher = new IndexSearcher( ir );
+            Collection<String> queries = new ArrayList<>( );
+            Collection<String> fields = new ArrayList<>( );
+            Collection<BooleanClause.Occur> flags = new ArrayList<>( );
 
-                Collection<String> queries = new ArrayList<>( );
-                Collection<String> fields = new ArrayList<>( );
-                Collection<BooleanClause.Occur> flags = new ArrayList<>( );
-			    
-                QueryParser qpContent = new QueryParser( SearchItem.FIELD_CONTENTS, IndexationService.getAnalyser( ) );
-                QueryParser qpDateCreation = new QueryParser( FormResponseSearchItem.FIELD_DATE_CREATION, IndexationService.getAnalyser( ) );
-                QueryParser qpDateUpdate = new QueryParser( FormResponseSearchItem.FIELD_DATE_UPDATE, IndexationService.getAnalyser( ) );
-                QueryParser qpGuid = new QueryParser( FormResponseSearchItem.FIELD_GUID, IndexationService.getAnalyser( ) );
-			    
-                qpContent.setDefaultOperator( QueryParser.Operator.AND );
-                qpDateCreation.setDefaultOperator( QueryParser.Operator.AND );
-                qpDateUpdate.setDefaultOperator( QueryParser.Operator.AND );
-                qpGuid.setDefaultOperator( QueryParser.Operator.AND );
-			    
-                String searchedText = normalizeSearchText( formSearchConfig.getSearchedText( ) );
-			    
-                Query queryContent = qpContent.parse( searchedText );
-                Query queryDateCreation = qpDateCreation.parse( searchedText );
-                Query queryDateUpdate = qpDateUpdate.parse( searchedText );
-                Query queryGuid = qpGuid.parse( searchedText );
-			    
-                queries.add( queryContent.toString( ) );
-                queries.add( queryDateCreation.toString( ) );
-                queries.add( queryDateUpdate.toString( ) );
-                queries.add( queryGuid.toString( ) );
-			    
-                fields.add( SearchItem.FIELD_CONTENTS );
-                fields.add( FormResponseSearchItem.FIELD_DATE_CREATION );
-                fields.add( FormResponseSearchItem.FIELD_DATE_UPDATE );
-                fields.add( FormResponseSearchItem.FIELD_GUID );
-			    
-                flags.add( BooleanClause.Occur.SHOULD );
-                flags.add( BooleanClause.Occur.SHOULD );
-                flags.add( BooleanClause.Occur.SHOULD );
-                flags.add( BooleanClause.Occur.SHOULD );
-			    
-                Query queryMulti = MultiFieldQueryParser.parse( queries.toArray( new String [ queries.size( )] ), fields.toArray( new String [ fields.size( )] ),
-                        flags.toArray( new BooleanClause.Occur [ flags.size( )] ), IndexationService.getAnalyser( ) );
-			    
-                // Get results documents
-                TopDocs topDocs = searcher.search( queryMulti, LuceneSearchEngine.MAX_RESPONSES );
-                ScoreDoc [ ] hits = topDocs.scoreDocs;
-			    
-                for ( int i = 0; i < hits.length; i++ )
-                {
-                    Document document = searcher.doc( hits [i].doc );
-                    SearchItem si = new SearchItem( document );
-                    listResults.add( Integer.parseInt( si.getId( ) ) );
-                }
-			}
+            QueryParser qpContent = new QueryParser( SearchItem.FIELD_CONTENTS, IndexationService.getAnalyser( ) );
+            QueryParser qpDateCreation = new QueryParser( FormResponseSearchItem.FIELD_DATE_CREATION, IndexationService.getAnalyser( ) );
+            QueryParser qpDateUpdate = new QueryParser( FormResponseSearchItem.FIELD_DATE_UPDATE, IndexationService.getAnalyser( ) );
+            QueryParser qpGuid = new QueryParser( FormResponseSearchItem.FIELD_GUID, IndexationService.getAnalyser( ) );
+
+            qpContent.setDefaultOperator( QueryParser.Operator.AND );
+            qpDateCreation.setDefaultOperator( QueryParser.Operator.AND );
+            qpDateUpdate.setDefaultOperator( QueryParser.Operator.AND );
+            qpGuid.setDefaultOperator( QueryParser.Operator.AND );
+
+            String searchedText = normalizeSearchText( formSearchConfig.getSearchedText( ) );
+
+            Query queryContent = qpContent.parse( searchedText );
+            Query queryDateCreation = qpDateCreation.parse( searchedText );
+            Query queryDateUpdate = qpDateUpdate.parse( searchedText );
+            Query queryGuid = qpGuid.parse( searchedText );
+
+            queries.add( queryContent.toString( ) );
+            queries.add( queryDateCreation.toString( ) );
+            queries.add( queryDateUpdate.toString( ) );
+            queries.add( queryGuid.toString( ) );
+
+            fields.add( SearchItem.FIELD_CONTENTS );
+            fields.add( FormResponseSearchItem.FIELD_DATE_CREATION );
+            fields.add( FormResponseSearchItem.FIELD_DATE_UPDATE );
+            fields.add( FormResponseSearchItem.FIELD_GUID );
+
+            flags.add( BooleanClause.Occur.SHOULD );
+            flags.add( BooleanClause.Occur.SHOULD );
+            flags.add( BooleanClause.Occur.SHOULD );
+            flags.add( BooleanClause.Occur.SHOULD );
+
+            Query queryMulti = MultiFieldQueryParser.parse( queries.toArray( new String [ queries.size( )] ),
+                    fields.toArray( new String [ fields.size( )] ),
+                    flags.toArray( new BooleanClause.Occur [ flags.size( )] ), IndexationService.getAnalyser( ) );
+
+            TopDocs topDocs = searcher.search( queryMulti, LuceneSearchEngine.MAX_RESPONSES );
+            ScoreDoc [ ] hits = topDocs.scoreDocs;
+
+            for ( int i = 0; i < hits.length; i++ )
+            {
+                Document document = searcher.doc( hits [i].doc );
+                SearchItem si = new SearchItem( document );
+                listResults.add( Integer.parseInt( si.getId( ) ) );
+            }
         }
-        catch( Exception e )
+        catch ( Exception e )
         {
             AppLogService.error( e.getMessage( ), e );
+        }
+        finally
+        {
+            releaseSearcherQuietly( searcher );
         }
 
         return listResults;
@@ -196,48 +193,64 @@ public class LuceneFormSearchEngine implements IFormSearchEngine
         List<FormResponseSearchItem> listResults = new ArrayList<>( );
         IndexSearcher searcher = null;
 
-        try ( Directory directory = _luceneFormSearchFactory.getDirectory( ) )
+        try
         {
-            if ( !DirectoryReader.indexExists( directory ) )
+            searcher = _luceneFormSearchFactory.acquireSearcher( );
+            if ( searcher == null )
             {
                 AppLogService.error( "Forms Lucene index not found." );
                 return listResults;
             }
 
-            try ( IndexReader ir = DirectoryReader.open( directory ) )
+            TopDocs topDocs;
+            if ( sort != null )
             {
-                searcher = new IndexSearcher( ir );
-                TopDocs topDocs = null;
-                // Get results documents
-                if ( sort != null )
-                {
-                    topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES, sort );
-                }
-                else
-                {
-                    topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
-                }
-                ScoreDoc [ ] hits = topDocs.scoreDocs;
-			    
-                int nMaxIndex = hits.length;
-                if ( nPageSize > 0 )
-                {
-                    nMaxIndex = Math.min( nStartIndex + nPageSize, hits.length );
-                }
-                formPanel.setTotalFormResponseItemCount( hits.length );
-                for ( int i = nStartIndex; i < nMaxIndex; i++ )
-                {
-                    Document document = searcher.doc( hits [i].doc );
-                    listResults.add( new FormResponseSearchItem( document ) );
-                }
-			}
+                topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES, sort );
+            }
+            else
+            {
+                topDocs = searcher.search( query, LuceneSearchEngine.MAX_RESPONSES );
+            }
+            ScoreDoc [ ] hits = topDocs.scoreDocs;
+
+            int nMaxIndex = hits.length;
+            if ( nPageSize > 0 )
+            {
+                nMaxIndex = Math.min( nStartIndex + nPageSize, hits.length );
+            }
+            formPanel.setTotalFormResponseItemCount( hits.length );
+            for ( int i = nStartIndex; i < nMaxIndex; i++ )
+            {
+                Document document = searcher.doc( hits [i].doc );
+                listResults.add( new FormResponseSearchItem( document ) );
+            }
         }
-        catch( IOException e )
+        catch ( IOException e )
         {
             AppLogService.error( e.getMessage( ), e );
         }
+        finally
+        {
+            releaseSearcherQuietly( searcher );
+        }
 
         return listResults;
+    }
+
+    private void releaseSearcherQuietly( IndexSearcher searcher )
+    {
+        if ( searcher == null )
+        {
+            return;
+        }
+        try
+        {
+            _luceneFormSearchFactory.releaseSearcher( searcher );
+        }
+        catch ( IOException e )
+        {
+            AppLogService.error( "Unable to release Lucene searcher", e );
+        }
     }
 
     /**

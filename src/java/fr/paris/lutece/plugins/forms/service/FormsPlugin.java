@@ -39,6 +39,8 @@ import fr.paris.lutece.plugins.forms.web.file.FormsFileImageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 import fr.paris.lutece.portal.service.plugin.PluginService;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 /**
  * class FormPlugin
@@ -51,6 +53,10 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
     // Generated serial UID
     private static final long serialVersionUID = 363631628732516426L;
 
+    private static final String PROPERTY_INDEX_PATH = "forms.internalIndexer.lucene.indexPath";
+    private static final String PROPERTY_INDEX_IN_WEBAPP = "forms.internalIndexer.lucene.indexInWebapp";
+    private static final String SYSTEM_PROPERTY_TMPDIR = "java.io.tmpdir";
+
     /**
      * {@inheritDoc}
      */
@@ -59,6 +65,8 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
     {
         // ImageResourceManager
         FormsFileImageService.getInstance( ).register( );
+
+        warnIfIndexPathIsNodeLocal( );
     }
 
     /**
@@ -69,5 +77,40 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
     public static Plugin getPlugin( )
     {
         return PluginService.getPlugin( PLUGIN_NAME );
+    }
+
+    /**
+     * Emit a startup warning when the Lucene index is likely to be JVM-local,
+     * which breaks search consistency in a multi-instance deployment.
+     *
+     * Two red flags trigger the warning:
+     * - {@code forms.internalIndexer.lucene.indexInWebapp=true} (path resolved
+     *   under the exploded webapp, which is local to each node);
+     * - or the configured path contains/starts with {@code java.io.tmpdir}
+     *   (default value in {@code forms.properties}, still JVM-local).
+     *
+     * Operators running a single-instance deployment can safely ignore the
+     * message; the warning is meant to flag the misconfiguration explicitly
+     * before it surfaces as inconsistent search results in production.
+     */
+    private void warnIfIndexPathIsNodeLocal( )
+    {
+        boolean indexInWebapp = AppPropertiesService.getPropertyBoolean( PROPERTY_INDEX_IN_WEBAPP, true );
+        String configuredPath = AppPropertiesService.getProperty( PROPERTY_INDEX_PATH, "" );
+        String systemTmpDir = System.getProperty( SYSTEM_PROPERTY_TMPDIR, "" );
+
+        boolean underSystemTmpdir = !systemTmpDir.isEmpty( ) && configuredPath.startsWith( systemTmpDir );
+        boolean referencesTmpdirLiteral = configuredPath.contains( SYSTEM_PROPERTY_TMPDIR );
+
+        if ( indexInWebapp || underSystemTmpdir || referencesTmpdirLiteral )
+        {
+            AppLogService.error(
+                    "[forms] Lucene index path appears to be JVM-local (indexInWebapp=" + indexInWebapp
+                            + ", configuredPath=" + configuredPath + "). "
+                            + "In a multi-instance deployment, set forms.internalIndexer.lucene.indexInWebapp=false "
+                            + "and point forms.internalIndexer.lucene.indexPath at a shared volume (NFS, PV, etc.) "
+                            + "shared by every instance; otherwise each node will maintain a separate index and "
+                            + "search results will differ depending on which instance serves the request." );
+        }
     }
 }

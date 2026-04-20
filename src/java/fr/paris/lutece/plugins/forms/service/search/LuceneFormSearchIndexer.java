@@ -490,6 +490,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             _indexWriter.deleteDocuments( luceneQueryList.toArray(new Query[luceneQueryList.size()]) );
             _indexWriter.addDocuments( documentList);
             _indexWriter.commit();
+            _luceneFormSearchFactory.refreshSearcher( );
             removeListIndexerAction( listComputingAction , plugin );
         }
         catch( IOException e )
@@ -521,6 +522,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         {
             _indexWriter.addDocuments( documentList );
             _indexWriter.commit();
+            _luceneFormSearchFactory.refreshSearcher( );
             if( listComputingAction != null)
             {
                 removeListIndexerAction( listComputingAction , plugin );
@@ -637,6 +639,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
 
             _indexWriter.deleteDocuments( queryList );
             _indexWriter.commit();
+            _luceneFormSearchFactory.refreshSearcher( );
             removeListIndexerAction( listActionDelete , plugin );
         }
         catch( IOException e )
