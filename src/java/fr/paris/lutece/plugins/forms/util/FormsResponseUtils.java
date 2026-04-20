@@ -36,14 +36,10 @@ package fr.paris.lutece.plugins.forms.util;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.inject.Instance;
@@ -87,7 +83,6 @@ import fr.paris.lutece.plugins.workflowcore.service.state.StateService;
 import fr.paris.lutece.portal.business.file.FileHome;
 import fr.paris.lutece.portal.business.physicalfile.PhysicalFileHome;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.util.AppPathService;
@@ -96,14 +91,11 @@ import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
 import fr.paris.lutece.portal.web.l10n.LocaleService;
 import fr.paris.lutece.util.url.UrlItem;
 
-public class FormsResponseUtils 
+public class FormsResponseUtils
 {
-    private static ConcurrentMap<Integer, Object> _lockFormId = new ConcurrentHashMap<>( );
-    private static Map<Integer, Integer> _responsePerFormMap = new HashMap<>( );
-
 	private FormsResponseUtils( )
 	{
-		
+
 	}
 	
 	 /**
@@ -464,60 +456,35 @@ public class FormsResponseUtils
         return listResponsesTemp;
     }
     
-    public static synchronized Object getLockOnForm( Form form )
-    {
-        _lockFormId.putIfAbsent( form.getId( ), new Object( ) );
-        return _lockFormId.get( form.getId( ) );
-    } 
     /**
-     * Increase the number of response of the Form
-     * 
-     * @param form
-     */
-    public static void increaseNumberResponse( Form form )
-    {        
-       if ( form.getMaxNumberResponse( ) != 0 )
-       {
-        	synchronized( FormsResponseUtils.getLockOnForm( form ) )
-             {
-        		int nNumberReponseForm = _responsePerFormMap.get( form.getId( ) );
-        		_responsePerFormMap.put( form.getId( ), nNumberReponseForm + 1 );
-              }
-        }
-        
-    }
-    
-    /**
-     * check if form is reached the number max of response
-     * 
-     * @param form
-     *            the form
-     * @param request
-     *            the request
-     * @throws SiteMessageException
-     *             the exception
+     * Check whether the given form can still accept new responses.
+     *
+     * The count is read live from the database on every call: we do not cache it in memory
+     * because that cache cannot be kept consistent across a multi-instance deployment.
+     * Callers that need to serialise concurrent submissions against the quota must wrap
+     * this check + the actual insert inside a distributed lock
+     * (see {@code FormsDistributedLockManager}).
+     *
+     * @param form the form
+     * @return {@code true} if a new response can still be accepted, {@code false} if the quota is reached
      */
     public static boolean checkNumberMaxResponseForm( Form form )
     {
-    	
-	    if ( form.getMaxNumberResponse( ) != 0 )
-	    {
-	      	synchronized( FormsResponseUtils.getLockOnForm( form ) )
-	        {
-	      		return ( _responsePerFormMap.computeIfAbsent( form.getId( ), FormHome::getNumberOfResponseForms ) < form.getMaxNumberResponse( ) );
-	        }
-	    }
-	    return true;
+        if ( form.getMaxNumberResponse( ) != 0 )
+        {
+            return FormHome.getNumberOfResponseForms( form.getId( ) ) < form.getMaxNumberResponse( );
+        }
+        return true;
     }
     
     /**
      * check if user can answer the form again
-     * 
+     *
      * @param form
      *            the form
-     * @param request
-     *            the request
-     * @throws SiteMessageException
+     * @param strGuid
+     *            the guid of the current user
+     * @return {@code true} if the user is still allowed to submit, {@code false} otherwise
      */
     public static boolean checkIfUserResponseForm( Form form, String strGuid )
     {

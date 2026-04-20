@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 
@@ -64,8 +65,11 @@ import fr.paris.lutece.plugins.forms.business.QuestionHome;
 import fr.paris.lutece.plugins.forms.business.Step;
 import fr.paris.lutece.plugins.forms.business.StepHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
+import fr.paris.lutece.plugins.forms.exception.LockException;
 import fr.paris.lutece.plugins.forms.exception.MaxFormResponseException;
 import fr.paris.lutece.plugins.forms.service.event.FormResponseEvent;
+import fr.paris.lutece.plugins.forms.service.lock.FormsDistributedLockManager;
+import fr.paris.lutece.plugins.forms.service.lock.LockResult;
 import fr.paris.lutece.plugins.forms.service.workflow.IFormWorkflowService;
 import fr.paris.lutece.plugins.forms.util.FormsConstants;
 import fr.paris.lutece.plugins.forms.util.FormsResponseUtils;
@@ -94,6 +98,7 @@ import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.event.EventAction;
 import fr.paris.lutece.portal.service.event.Type.TypeQualifier;
 import fr.paris.lutece.portal.service.rbac.RBACService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workgroup.AdminWorkgroupService;
 import fr.paris.lutece.util.sql.TransactionManager;
 
@@ -105,6 +110,11 @@ public class FormService
 {
     public static final String BEAN_NAME = "forms.formService";
 
+    private static final String QUOTA_LOCK_PREFIX = "forms.quota.form.";
+    private static final long QUOTA_LOCK_TIMEOUT_MS = 30_000L;
+    private static final int QUOTA_LOCK_MAX_RETRIES = 5;
+    private static final long QUOTA_LOCK_BACKOFF_MS = 100L;
+
     @Inject
     private IFormWorkflowService _formWorkflowService;
 
@@ -113,6 +123,10 @@ public class FormService
 
     @Inject
     private StepService _stepService;
+
+    @Inject
+    @Named( "forms.luceneLockManager" )
+    private FormsDistributedLockManager _distributedLockManager;
 
     /**
      * Saves the specified form
@@ -127,44 +141,124 @@ public class FormService
      */
     public void saveForm( Form form, FormResponse formResponse )
     {
-    	TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
-	    try
-	    {
-	    	if (  (form.getMaxNumberResponse( ) != 0 || form.isOneResponseByUser( ))
-	    			&& ( formResponse.getId() == 0 || !formResponse.isFromSave( )) )
-	        {
-	    		synchronized( FormsResponseUtils.getLockOnForm( form ) )
-	            {
-	            	if ( !(FormsResponseUtils.checkNumberMaxResponseForm( form ) ) )
-	                {
-	            		throw new MaxFormResponseException( "The maximum number of response has been reached for the form: "+ form.getTitle( ) );
-	                }
-	            	if(!(FormsResponseUtils.checkIfUserResponseForm( form,  formResponse.getGuid() ) )) {       
-		            	
-	            		throw new MaxFormResponseException( "The maximum number of response has been reached for the user with the guid: "+formResponse.getGuid() );    
-		            }
-	            	saveForm(formResponse );
-	                if (form.getMaxNumberResponse( ) != 0) 
-	                {
-	                	FormsResponseUtils.increaseNumberResponse( form );
-	                }
-	            }	        
-	        }
-	    	else
-	    	{	    		
-	        	saveForm( formResponse );
-	        }
-	    	
-	        TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+        boolean quotaGuarded = ( form.getMaxNumberResponse( ) != 0 || form.isOneResponseByUser( ) )
+                && ( formResponse.getId( ) == 0 || !formResponse.isFromSave( ) );
 
-	     }
-	     catch( Exception e )
-	     {
-	    	 TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
-	         throw e ;
-	     }         
-        
-	    fireFormResponseEventCreation( formResponse );         
+        if ( quotaGuarded )
+        {
+            saveFormUnderQuotaLock( form, formResponse );
+        }
+        else
+        {
+            saveFormInTransaction( formResponse );
+        }
+
+        fireFormResponseEventCreation( formResponse );
+    }
+
+    /**
+     * Quota-protected path: acquire a cluster-wide lock scoped to this form, then
+     * re-check the quota against the database (the only source of truth) and
+     * persist the response inside a single transaction. The lock covers the
+     * check + insert + commit so the next instance can only observe committed rows.
+     */
+    private void saveFormUnderQuotaLock( Form form, FormResponse formResponse )
+    {
+        LockResult lockResult = acquireQuotaLock( form );
+        try
+        {
+            TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+            try
+            {
+                if ( !FormsResponseUtils.checkNumberMaxResponseForm( form ) )
+                {
+                    throw new MaxFormResponseException(
+                            "The maximum number of response has been reached for the form: " + form.getTitle( ) );
+                }
+                if ( !FormsResponseUtils.checkIfUserResponseForm( form, formResponse.getGuid( ) ) )
+                {
+                    throw new MaxFormResponseException(
+                            "The maximum number of response has been reached for the user with the guid: "
+                                    + formResponse.getGuid( ) );
+                }
+                saveForm( formResponse );
+                TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+            }
+            catch ( Exception e )
+            {
+                TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+                throw e;
+            }
+        }
+        finally
+        {
+            releaseQuotaLock( lockResult );
+        }
+    }
+
+    private void saveFormInTransaction( FormResponse formResponse )
+    {
+        TransactionManager.beginTransaction( FormsPlugin.getPlugin( ) );
+        try
+        {
+            saveForm( formResponse );
+            TransactionManager.commitTransaction( FormsPlugin.getPlugin( ) );
+        }
+        catch ( Exception e )
+        {
+            TransactionManager.rollBack( FormsPlugin.getPlugin( ) );
+            throw e;
+        }
+    }
+
+    /**
+     * Acquire the quota lock for this form. Retries briefly on contention so two simultaneous
+     * submissions serialise cleanly; gives up after a short window and treats sustained
+     * contention as if the quota were reached (safer than accepting an unguarded insert).
+     */
+    private LockResult acquireQuotaLock( Form form )
+    {
+        String lockName = QUOTA_LOCK_PREFIX + form.getId( );
+        LockException lastFailure = null;
+        for ( int attempt = 0; attempt < QUOTA_LOCK_MAX_RETRIES; attempt++ )
+        {
+            try
+            {
+                return _distributedLockManager.acquireLock( lockName, QUOTA_LOCK_TIMEOUT_MS );
+            }
+            catch ( LockException e )
+            {
+                lastFailure = e;
+                try
+                {
+                    Thread.sleep( QUOTA_LOCK_BACKOFF_MS );
+                }
+                catch ( InterruptedException ie )
+                {
+                    Thread.currentThread( ).interrupt( );
+                    throw new MaxFormResponseException(
+                            "Interrupted while acquiring quota lock for form " + form.getId( ), ie );
+                }
+            }
+        }
+        throw new MaxFormResponseException(
+                "Could not acquire quota lock for form " + form.getId( ) + " (contention timeout)", lastFailure );
+    }
+
+    private void releaseQuotaLock( LockResult lockResult )
+    {
+        if ( lockResult == null )
+        {
+            return;
+        }
+        try
+        {
+            _distributedLockManager.releaseLock( lockResult );
+        }
+        catch ( LockException e )
+        {
+            AppLogService.error( "Failed to release quota lock " + lockResult.getNameLock( ), e );
+        }
     }
     /**
      * Save the response of form
