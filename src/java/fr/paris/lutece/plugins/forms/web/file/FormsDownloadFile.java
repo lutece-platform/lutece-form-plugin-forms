@@ -181,9 +181,10 @@ public final class FormsDownloadFile
             response.setContentType( strMimeType );
             response.setContentLength( byteFileOutPut.length );
 
-            OutputStream outputStream = response.getOutputStream( );
-            outputStream.write( byteFileOutPut );
-            outputStream.close( );
+            try ( OutputStream outputStream = response.getOutputStream( ) )
+            {
+                outputStream.write( byteFileOutPut );
+            }
         }
         catch( IOException e )
         {
