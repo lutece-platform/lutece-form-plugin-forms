@@ -39,75 +39,90 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 import java.sql.Statement;
 
+/**
+ * JDBC-escape {@code {fn TIMESTAMPADD(SQL_TSI_SECOND, ?, CURRENT_TIMESTAMP)}} is portable
+ * across HSQLDB, MySQL, PostgreSQL and Oracle; all timestamp comparisons use the DB clock
+ * so JVM clock skew between cluster members cannot steal a still-valid lock or extend a
+ * stale one beyond its real TTL.
+ */
 @ApplicationScoped
-public class LockDAO implements ILockDAO {
+public class LockDAO implements ILockDAO
+{
+    private static final String SQL_QUERY_ACQUIRE =
+            "UPDATE forms_lucene_lock " +
+            "SET instance_name=?, is_locked=true, date_begin=CURRENT_TIMESTAMP, " +
+            "    expired_date={fn TIMESTAMPADD(SQL_TSI_SECOND, ?, CURRENT_TIMESTAMP)}, uuid=? " +
+            "WHERE index_name=? AND (is_locked=false OR expired_date < CURRENT_TIMESTAMP)";
 
-    // Constants
+    private static final String SQL_QUERY_RELEASE =
+            "UPDATE forms_lucene_lock SET is_locked=false, date_begin=NULL, expired_date=NULL WHERE uuid=?";
 
-    private static final String SQL_QUERY_ACQUIRE = "UPDATE forms_lucene_lock set instance_name=?, is_locked=?, date_begin=?, expired_date=?, uuid=? " +
-            " where index_name=? and (is_locked=false OR expired_date<?) ";
+    /**
+     * Refresh ONLY if this row is still ours AND not yet expired from the DB's view.
+     * Returning no row update means the lock was reclaimed by someone else — the caller
+     * must abort to avoid a double-writer situation on the shared index.
+     */
+    private static final String SQL_QUERY_REFRESH =
+            "UPDATE forms_lucene_lock " +
+            "SET expired_date={fn TIMESTAMPADD(SQL_TSI_SECOND, ?, CURRENT_TIMESTAMP)} " +
+            "WHERE uuid=? AND is_locked=true AND expired_date > CURRENT_TIMESTAMP";
 
-    private static final String SQL_QUERY_RELEASE = "UPDATE forms_lucene_lock SET is_locked=false, date_begin=NULL, expired_date=NULL WHERE uuid=? ";
-
-    private static final String SQL_QUERY_REFRESH = "UPDATE forms_lucene_lock SET expired_date=? WHERE uuid=? ";
-
-    private static final String SQL_QUERY_CLOSE_ALL = "UPDATE forms_lucene_lock SET is_locked=false";
-
+    private static final String SQL_QUERY_RELEASE_BY_INSTANCE =
+            "UPDATE forms_lucene_lock SET is_locked=false, date_begin=NULL, expired_date=NULL " +
+            "WHERE instance_name=? AND is_locked=true";
 
     @Override
-    public boolean acquire(Lock lock, Plugin plugin )
+    public boolean acquire( String indexName, String instanceName, String uuid, long ttlSeconds, Plugin plugin )
     {
-
         try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_ACQUIRE, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
-            daoUtil.setString( nIndex++, lock.getInstanceName() );
-            daoUtil.setBoolean( nIndex++, lock.isLocked() );
-            daoUtil.setTimestamp( nIndex++, lock.getDateBegin() );
-            daoUtil.setTimestamp( nIndex++, lock.getExpiredDate() );
-            daoUtil.setString( nIndex++, lock.getUuid() );
+            daoUtil.setString( nIndex++, instanceName );
+            daoUtil.setLong( nIndex++, ttlSeconds );
+            daoUtil.setString( nIndex++, uuid );
+            daoUtil.setString( nIndex++, indexName );
 
-            daoUtil.setString( nIndex++, lock.getIndexName() );
-            daoUtil.setTimestamp( nIndex++, lock.getDateBegin() );
-
-            daoUtil.executeUpdate();
+            daoUtil.executeUpdate( );
             return daoUtil.getReturnedRowCount( ) == 1;
         }
     }
 
     @Override
-    public void release(Lock lock, Plugin plugin )
+    public void release( String uuid, Plugin plugin )
     {
-
-        try (DAOUtil daoUtil = new DAOUtil(SQL_QUERY_RELEASE, plugin)) {
-            daoUtil.setString(1, lock.getUuid() );
-            daoUtil.executeUpdate();
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_RELEASE, plugin ) )
+        {
+            daoUtil.setString( 1, uuid );
+            daoUtil.executeUpdate( );
         }
-
     }
 
     @Override
-    public boolean refresh(Lock lock, Plugin plugin )
+    public boolean refresh( String uuid, long ttlSeconds, Plugin plugin )
     {
-        try (DAOUtil daoUtil = new DAOUtil(SQL_QUERY_REFRESH, plugin))
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_REFRESH, Statement.RETURN_GENERATED_KEYS, plugin ) )
         {
             int nIndex = 1;
-            daoUtil.setTimestamp(nIndex++, lock.getExpiredDate() );
+            daoUtil.setLong( nIndex++, ttlSeconds );
+            daoUtil.setString( nIndex++, uuid );
 
-            daoUtil.setString(nIndex++, lock.getUuid() );
-
-            daoUtil.executeUpdate();
+            daoUtil.executeUpdate( );
             return daoUtil.getReturnedRowCount( ) == 1;
         }
     }
 
     @Override
-    public void closeAll(Plugin plugin ) {
-
-        try (DAOUtil daoUtil = new DAOUtil(SQL_QUERY_CLOSE_ALL, plugin)) {
-            daoUtil.executeUpdate();
+    public int releaseByInstance( String instanceName, Plugin plugin )
+    {
+        if ( instanceName == null || instanceName.isBlank( ) )
+        {
+            return 0;
         }
-
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_RELEASE_BY_INSTANCE, Statement.RETURN_GENERATED_KEYS, plugin ) )
+        {
+            daoUtil.setString( 1, instanceName );
+            daoUtil.executeUpdate( );
+            return daoUtil.getReturnedRowCount( );
+        }
     }
-
 }

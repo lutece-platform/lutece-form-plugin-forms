@@ -55,7 +55,9 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
 
     private static final String PROPERTY_INDEX_PATH = "forms.internalIndexer.lucene.indexPath";
     private static final String PROPERTY_INDEX_IN_WEBAPP = "forms.internalIndexer.lucene.indexInWebapp";
+    private static final String PROPERTY_SITE_NAME = "lutece.name";
     private static final String SYSTEM_PROPERTY_TMPDIR = "java.io.tmpdir";
+    private static final String QUARTZ_PLUGIN_NAME = "quartz-scheduler";
 
     /**
      * {@inheritDoc}
@@ -67,6 +69,7 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
         FormsFileImageService.getInstance( ).register( );
 
         warnIfIndexPathIsNodeLocal( );
+        logClusterDeploymentEvidence( );
     }
 
     /**
@@ -112,5 +115,24 @@ public final class FormsPlugin extends PluginDefaultImplementation implements Se
                             + "shared by every instance; otherwise each node will maintain a separate index and "
                             + "search results will differ depending on which instance serves the request." );
         }
+    }
+
+    /**
+     * Log the evidence for (or against) a multi-instance deployment so operators can
+     * cross-check the actual runtime against their intended topology. We surface three
+     * signals: the site name ({@code lutece.name}, identical on every node of the same
+     * site), the runtime instance id (unique per JVM, see {@link FormsInstanceId}) and
+     * the presence of the Quartz scheduler plugin.
+     */
+    private void logClusterDeploymentEvidence( )
+    {
+        String siteName = AppPropertiesService.getProperty( PROPERTY_SITE_NAME, "" );
+        Plugin quartzPlugin = PluginService.getPlugin( QUARTZ_PLUGIN_NAME );
+        boolean quartzAvailable = quartzPlugin != null && quartzPlugin.isInstalled( );
+
+        AppLogService.info( "[forms] startup audit: " + PROPERTY_SITE_NAME + "="
+                + ( siteName.isEmpty( ) ? "<unset>" : siteName )
+                + ", instanceId=" + FormsInstanceId.VALUE
+                + ", plugin-" + QUARTZ_PLUGIN_NAME + "=" + ( quartzAvailable ? "available" : "absent" ) );
     }
 }

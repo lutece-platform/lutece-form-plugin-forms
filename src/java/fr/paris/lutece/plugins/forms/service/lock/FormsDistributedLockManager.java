@@ -74,7 +74,29 @@ public interface FormsDistributedLockManager
     LockResult refreshLock( LockResult lockResult, long timeoutMs ) throws LockException;
 
     /**
-     * Release all locks (administrative reset, typically at shutdown).
+     * Release every lock currently owned by THIS JVM (equivalent to {@link #releaseOwnInstanceLocks}).
+     *
+     * Previous contract was "release ALL locks in the table" — removed because in a cluster it
+     * let any single node cancel indexing runs held by its peers. Blanket-release must never be
+     * exposed through this interface; use a DB admin script if an operator truly needs it.
      */
     void close( );
+
+    /**
+     * Release every lock currently owned by the current instance — safe recovery
+     * from a previous crash of this very JVM. Typically called once at plugin startup.
+     *
+     * Implementations MUST NOT release locks owned by other instances: that would
+     * let this node reclaim a lock still actively held by another live node and
+     * corrupt the shared resource.
+     *
+     * Default implementation is a no-op so alternative implementations remain
+     * source-compatible.
+     *
+     * @return the number of locks released
+     */
+    default int releaseOwnInstanceLocks( )
+    {
+        return 0;
+    }
 }

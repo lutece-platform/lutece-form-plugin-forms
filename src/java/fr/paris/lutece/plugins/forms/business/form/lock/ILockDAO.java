@@ -35,37 +35,46 @@ package fr.paris.lutece.plugins.forms.business.form.lock;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 
-public interface ILockDAO {
-
+/**
+ * Low-level DB operations on the {@code forms_lucene_lock} table.
+ *
+ * All timestamp arithmetic is computed DB-side ({@code CURRENT_TIMESTAMP}), so JVM clock skew
+ * between instances of a cluster cannot cause a valid lock to appear expired (or vice versa).
+ */
+public interface ILockDAO
+{
     /**
-     * acquire a lock
+     * Try to acquire the row for {@code indexName}. Succeeds if the row is currently
+     * unlocked or if its {@code expired_date} is in the past (reclaim after crash).
      *
-     * @param lock
-     * @param plugin
-     * @return true if the lock is acquire, false if not
+     * @param indexName    lock key
+     * @param instanceName runtime-unique identifier of THIS JVM (see {@code FormsInstanceId})
+     * @param uuid         handle tying the caller to the row, used by {@link #refresh}/{@link #release}
+     * @param ttlSeconds   how long the lock stays valid from now, in seconds
+     * @param plugin       plugin handle for the DB pool
+     * @return {@code true} if the row was taken, {@code false} if another instance already holds it
      */
-    public boolean acquire(Lock lock, Plugin plugin );
+    boolean acquire( String indexName, String instanceName, String uuid, long ttlSeconds, Plugin plugin );
 
     /**
-     * release a lock
+     * Release the row owned by {@code uuid}. No-op if the handle is unknown.
+     */
+    void release( String uuid, Plugin plugin );
+
+    /**
+     * Extend the expiration of the row owned by {@code uuid}, but ONLY if it still
+     * belongs to us (row not stolen after TTL expiration). Returns {@code false} if
+     * the lock has been lost — the caller must abort its critical section.
      *
-     * @param lock
-     * @param plugin
+     * @return {@code true} if still ours and extended, {@code false} if lost
      */
-    public void release(Lock lock, Plugin plugin );
+    boolean refresh( String uuid, long ttlSeconds, Plugin plugin );
 
     /**
-     * refresh expired date for a lock
-     * @param lock
-     * @param plugin
-     * @return return true if the lock is extended, false if the lock was been lost
+     * Release every row currently owned by the given instance. Safe in cluster:
+     * rows owned by other instances are never touched.
+     *
+     * @return the number of rows released
      */
-    public boolean refresh(Lock lock, Plugin plugin );
-
-    /**
-     * Release all
-     * @param plugin
-     */
-    public void closeAll(Plugin plugin );
-
+    int releaseByInstance( String instanceName, Plugin plugin );
 }

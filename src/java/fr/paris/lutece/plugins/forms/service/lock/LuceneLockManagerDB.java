@@ -34,104 +34,117 @@
 package fr.paris.lutece.plugins.forms.service.lock;
 
 import fr.paris.lutece.plugins.forms.business.form.lock.ILockDAO;
-import fr.paris.lutece.plugins.forms.business.form.lock.Lock;
 import fr.paris.lutece.plugins.forms.exception.LockException;
+import fr.paris.lutece.plugins.forms.service.FormsInstanceId;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
-import fr.paris.lutece.portal.web.l10n.LocaleService;
+import fr.paris.lutece.portal.service.util.AppLogService;
+import jakarta.annotation.PreDestroy;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import java.sql.Timestamp;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.time.Instant;
 import java.util.UUID;
 
 @ApplicationScoped
 @Named( "forms.luceneLockManager" )
-public class LuceneLockManagerDB implements LuceneLockManager {
-
-    private final ILockDAO _lockDao;
+public class LuceneLockManagerDB implements LuceneLockManager
+{
     private static final Plugin _plugin = PluginService.getPlugin( "forms" );
 
-    private static final String PROPERTY_SITE_NAME = "lutece.name";
+    private final ILockDAO _lockDao;
 
-
-    /**
-     * constructor
-     */
     @Inject
     LuceneLockManagerDB( ILockDAO lockDao )
     {
         _lockDao = lockDao;
     }
 
-
-
     @Override
-    public LockResult acquireLock(String indexName, long timeoutMs) throws LockException {
+    public LockResult acquireLock( String indexName, long timeoutMs ) throws LockException
+    {
+        String uuid = UUID.randomUUID( ).toString( );
+        long ttlSeconds = toCeilSeconds( timeoutMs );
 
-        Calendar calendar = new GregorianCalendar( LocaleService.getDefault( ) );
-        Timestamp dateBegin = new Timestamp( calendar.getTimeInMillis( ) );
-
-        calendar.setTimeInMillis(dateBegin.getTime() + timeoutMs);
-        Timestamp expiredDate = new Timestamp( calendar.getTimeInMillis( ) );
-
-        Lock lock = new Lock();
-        lock.setIndexName(indexName);
-        lock.setInstanceName(AppPropertiesService.getProperty( PROPERTY_SITE_NAME ));
-        lock.setIsLocked(true);
-        lock.setDateBegin(dateBegin);
-        lock.setExpiredDate(expiredDate);
-        lock.setUuid(UUID.randomUUID().toString());
-
-        if(_lockDao.acquire(lock,_plugin))
+        if ( _lockDao.acquire( indexName, FormsInstanceId.VALUE, uuid, ttlSeconds, _plugin ) )
         {
-            return LockResult.createLockSuccess(lock.getIndexName(), lock.getUuid(), lock.getExpiredDate());
+            // The real expired_date lives DB-side now; expose a best-effort local estimate so
+            // callers keep a roughly-correct handle (not used for any safety-critical decision).
+            Timestamp estimatedExpiry = Timestamp.from( Instant.now( ).plusSeconds( ttlSeconds ) );
+            return LockResult.createLockSuccess( indexName, uuid, estimatedExpiry );
         }
-        else
-        {
-            throw new LockException( );
-        }
+        throw new LockException( );
     }
 
     @Override
-    public void releaseLock(LockResult lockResult) throws LockException {
-
-        Lock lock = new Lock();
-        lock.setUuid(lockResult.getIdLock());
-
-        _lockDao.release(lock, _plugin);
+    public void releaseLock( LockResult lockResult ) throws LockException
+    {
+        _lockDao.release( lockResult.getIdLock( ), _plugin );
     }
 
     @Override
-    public LockResult refreshLock(LockResult lockResult, long timeoutMs) throws LockException {
+    public LockResult refreshLock( LockResult lockResult, long timeoutMs ) throws LockException
+    {
+        long ttlSeconds = toCeilSeconds( timeoutMs );
 
-        Calendar calendar = new GregorianCalendar( LocaleService.getDefault( ) );
-        Timestamp currentDate = new Timestamp( calendar.getTimeInMillis( ) );
-
-        calendar.setTimeInMillis(currentDate.getTime() + timeoutMs);
-        Timestamp expiredDate = new Timestamp( calendar.getTimeInMillis( ) );
-
-        Lock lock = new Lock();
-        lock.setExpiredDate(expiredDate);
-        lock.setUuid(lockResult.getIdLock());
-
-        if(_lockDao.refresh(lock,_plugin))
+        if ( _lockDao.refresh( lockResult.getIdLock( ), ttlSeconds, _plugin ) )
         {
-            return LockResult.refreshLockSuccess(lockResult, expiredDate);
+            Timestamp estimatedExpiry = Timestamp.from( Instant.now( ).plusSeconds( ttlSeconds ) );
+            return LockResult.refreshLockSuccess( lockResult, estimatedExpiry );
         }
-        else
-        {
-            throw new LockException( );
-        }
+        throw new LockException( );
+    }
+
+    /**
+     * Release every lock currently held by THIS JVM. Kept to honour the interface contract;
+     * it is deliberately scoped to the current instance — blanket-releasing every row in the
+     * cluster would let this node cancel indexing runs owned by peers.
+     */
+    @Override
+    public void close( )
+    {
+        releaseOwnInstanceLocks( );
     }
 
     @Override
-    public void close() {
-        _lockDao.closeAll( _plugin );
+    public int releaseOwnInstanceLocks( )
+    {
+        return _lockDao.releaseByInstance( FormsInstanceId.VALUE, _plugin );
     }
 
+    /**
+     * Graceful-shutdown hook: release every lock still owned by THIS JVM before the CDI
+     * container stops. Covers orderly redeploys / {@code SIGTERM}; hard crashes are
+     * recovered by the TTL + heartbeat mechanism in the DAO's acquire path.
+     */
+    @PreDestroy
+    void releaseOwnLocksOnShutdown( )
+    {
+        try
+        {
+            int released = releaseOwnInstanceLocks( );
+            if ( released > 0 )
+            {
+                AppLogService.info( "[forms] released " + released + " lock(s) owned by instance "
+                        + FormsInstanceId.VALUE + " on shutdown" );
+            }
+        }
+        catch ( Exception e )
+        {
+            AppLogService.error( "[forms] failed to release locks on shutdown for instance "
+                    + FormsInstanceId.VALUE, e );
+        }
+    }
+
+    /**
+     * SQL {@code TIMESTAMPADD(SQL_TSI_SECOND, ?, ...)} has second granularity; round millis up
+     * so a submillisecond TTL never becomes zero (which would make the lock immediately expired).
+     */
+    private static long toCeilSeconds( long ms )
+    {
+        long seconds = ( ms + 999L ) / 1000L;
+        return Math.max( 1L, seconds );
+    }
 }

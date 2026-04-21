@@ -42,9 +42,12 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.BeforeDestroyed;
+import jakarta.enterprise.event.Observes;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -108,6 +111,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     private static final long MS_TIMEOUT_LOCK = AppPropertiesService.getPropertyLong( "forms.index.writer.ms.timeout.lock", 900000L );
     /** Renew the lock well before its TTL expires. A third of the TTL leaves two missed heartbeats of safety margin. */
     private static final long MS_HEARTBEAT_INTERVAL = Math.max( MS_TIMEOUT_LOCK / 3, 10_000L );
+    /** Hard ceiling on a single indexing run. Beyond this we abort to free the lock for peers, even if the loop hasn't finished. */
+    private static final long MS_MAX_INDEXING_DURATION = AppPropertiesService.getPropertyLong( "forms.index.writer.ms.max.duration", 30L * 60L * 1000L );
 
     @Inject
     private LuceneFormSearchFactory _luceneFormSearchFactory;
@@ -117,6 +122,14 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     @Inject
     private Instance<ILucenDocumentExternalFieldProvider> _externalFieldProviderInstance;
     private LuceneLockManager _lockManager;
+
+    /**
+     * Flip-once flag set either by the heartbeat (lock lost), by the timeout guard (MS_MAX_INDEXING_DURATION
+     * exceeded) or by the shutdown observer. Checked at every batch boundary in the indexing loops so a
+     * doomed run exits without opening new Lucene writes that could race another instance.
+     */
+    private final AtomicBoolean _abortCurrentRun = new AtomicBoolean( false );
+    private volatile long _runStartTimeMs;
 
     /**
      * Constructor
@@ -163,6 +176,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             LockResult lockResult = _lockManager.acquireLock( LOCKNAME, MS_TIMEOUT_LOCK );
             log.append("Full indexing launch");
 
+            beginRun( );
             ScheduledExecutorService heartbeat = startLockHeartbeat( lockResult );
             try
             {
@@ -174,7 +188,14 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                 deleteIndex();
                 indexFormResponseList( listFormResponsesId, plugin );
 
-                _luceneFormSearchFactory.swapIndex();
+                if ( shouldAbort( ) )
+                {
+                    log.append( "; aborted before swap (" + abortReason( ) + "), partial index discarded" );
+                }
+                else
+                {
+                    _luceneFormSearchFactory.swapIndex();
+                }
             }
             catch (Exception e)
             {
@@ -207,10 +228,15 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             LockResult lockResult = _lockManager.acquireLock(LOCKNAME, MS_TIMEOUT_LOCK);
 
             log.append("Incremental indexing launch");
+            beginRun( );
             ScheduledExecutorService heartbeat = startLockHeartbeat( lockResult );
             try {
                 initIndexing( false );
                 processIndexing();
+                if ( shouldAbort( ) )
+                {
+                    log.append( "; aborted mid-run (" + abortReason( ) + ")" );
+                }
             } catch (Exception e) {
                 AppLogService.error(e.getMessage(), e);
                 log.append("Incremental indexing with error");
@@ -231,12 +257,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
      * Start a background heartbeat that renews the distributed indexing lock at
      * {@link #MS_HEARTBEAT_INTERVAL}, so an indexing run that outlives the initial
      * {@link #MS_TIMEOUT_LOCK} TTL is still protected from another node reclaiming
-     * the lock mid-write. The thread is a daemon; a refresh failure is logged but
-     * does not interrupt the ongoing indexing (the worst outcome is that another
-     * node re-indexes shortly after, which is idempotent).
-     *
-     * @param lockResult the lock handle to renew
-     * @return the scheduler to be passed to {@link #stopLockHeartbeat(ScheduledExecutorService)}
+     * the lock mid-write. On refresh failure the flag {@link #_abortCurrentRun} is
+     * set so the indexing loop exits at the next batch boundary: continuing would
+     * risk a double-writer scenario because another instance can acquire the lock
+     * as soon as the DAO reports the row reclaimed.
      */
     private ScheduledExecutorService startLockHeartbeat( final LockResult lockResult )
     {
@@ -252,9 +276,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
             }
             catch ( Exception e )
             {
-                AppLogService.error(
-                        "Failed to renew Lucene indexing lock; another instance may reclaim it before the current indexing completes",
-                        e );
+                signalAbort( "lock refresh failed: " + e.getClass( ).getSimpleName( ) );
             }
         }, MS_HEARTBEAT_INTERVAL, MS_HEARTBEAT_INTERVAL, TimeUnit.MILLISECONDS );
         return executor;
@@ -266,6 +288,59 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         {
             executor.shutdownNow( );
         }
+    }
+
+    private volatile String _abortReason;
+
+    private void beginRun( )
+    {
+        _abortCurrentRun.set( false );
+        _abortReason = null;
+        _runStartTimeMs = System.currentTimeMillis( );
+    }
+
+    /**
+     * @return {@code true} if the current run must stop as soon as possible: lock lost,
+     *         run exceeded {@link #MS_MAX_INDEXING_DURATION}, or shutdown requested.
+     */
+    private boolean shouldAbort( )
+    {
+        if ( _abortCurrentRun.get( ) )
+        {
+            return true;
+        }
+        if ( _runStartTimeMs > 0L && System.currentTimeMillis( ) - _runStartTimeMs > MS_MAX_INDEXING_DURATION )
+        {
+            signalAbort( "exceeded max indexing duration of " + MS_MAX_INDEXING_DURATION + "ms" );
+            return true;
+        }
+        return false;
+    }
+
+    private void signalAbort( String reason )
+    {
+        if ( _abortCurrentRun.compareAndSet( false, true ) )
+        {
+            _abortReason = reason;
+            AppLogService.error( "[forms] indexing aborted: " + reason
+                    + " — partial writes will be dropped to keep the shared index consistent" );
+        }
+    }
+
+    private String abortReason( )
+    {
+        return _abortReason != null ? _abortReason : "unknown";
+    }
+
+    /**
+     * Event observer that fires before any {@code @ApplicationScoped} bean is destroyed. We use it
+     * rather than {@code @PreDestroy} to guarantee ordering: the abort flag is raised while the
+     * indexing thread (and the lock manager) are still alive, so the loop can exit cleanly and
+     * {@link #_lockManager} can still be called to release the lock.
+     */
+    void onBeforeShutdown( @Observes @BeforeDestroyed( ApplicationScoped.class ) Object event )
+    {
+        signalAbort( "application shutdown" );
     }
 
     /**
@@ -287,6 +362,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     {
         List<FormResponse> listFormResponses = new ArrayList<>(TAILLE_LOT);
         for (Integer nIdFormResponse : listFormResponsesId) {
+            if ( shouldAbort( ) )
+            {
+                return;
+            }
             FormResponse response = FormResponseHome.findByPrimaryKeyForIndex(nIdFormResponse);
             if (response != null)
             {
@@ -297,6 +376,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                 indexFormResponseList(listFormResponses, null, false, plugin);
                 listFormResponses.clear();
             }
+        }
+        if ( shouldAbort( ) )
+        {
+            return;
         }
         indexFormResponseList(listFormResponses, null, false, plugin);
     }
@@ -409,6 +492,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         List<FormResponse> listFormResponses = new ArrayList<>( TAILLE_LOT );
         for ( IndexerAction actionAdd : listActionAdd )
         {
+            if ( shouldAbort( ) )
+            {
+                return;
+            }
             FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( actionAdd.getIdFormResponse() );
             listComputingAction.add( actionAdd );
             if ( response != null )
@@ -422,6 +509,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                 listComputingAction.clear();
             }
         }
+        if ( shouldAbort( ) )
+        {
+            return;
+        }
         indexFormResponseList( listFormResponses, listComputingAction, false, plugin );
         listComputingAction.clear();
 
@@ -429,6 +520,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         listFormResponses.clear();
         for ( IndexerAction actionUpdate : listActionUpdate )
         {
+            if ( shouldAbort( ) )
+            {
+                return;
+            }
             FormResponse response = FormResponseHome.findByPrimaryKeyForIndex( actionUpdate.getIdFormResponse() );
             listComputingAction.add( actionUpdate );
             if ( response != null )
@@ -441,6 +536,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                 listFormResponses.clear( );
                 listComputingAction.clear();
             }
+        }
+        if ( shouldAbort( ) )
+        {
+            return;
         }
         indexFormResponseList( listFormResponses, listComputingAction, true, plugin );
         listComputingAction.clear();
