@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.forms.service;
 
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.plugins.forms.business.Form;
 import fr.paris.lutece.plugins.forms.business.FormHome;
 import fr.paris.lutece.plugins.forms.business.FormResponse;
@@ -54,6 +55,8 @@ public class FormsBackupPurgeDaemon extends Daemon {
     @Override
     public void run() {
 
+        StringBuilder lastRunlog = new StringBuilder();
+
         List<Form> formsList = FormHome.getFormList();
         for ( Form form : formsList)
         {
@@ -73,8 +76,18 @@ public class FormsBackupPurgeDaemon extends Daemon {
                 {
                     _formService.removeFormBackup(formResponse);
                 }
+
+                if( !formResponses.isEmpty() )
+                {
+                    StringBuilder log = new StringBuilder();
+                    log.append( "Purge of " ).append( formResponses.size() ).append( " backup(s) for form " ).append( form.getTitle() );
+                    AppLogService.info( log.toString() );
+                    lastRunlog.append( log ).append( "\n" );
+                }
             }
         }
+
+        setLastRunLogs( lastRunlog.toString() );
     }
 
 }
