@@ -40,6 +40,7 @@ import fr.paris.lutece.plugins.forms.business.FormResponseFilter;
 import fr.paris.lutece.plugins.forms.business.FormResponseHome;
 import fr.paris.lutece.portal.service.daemon.Daemon;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -53,6 +54,8 @@ public class FormsBackupPurgeDaemon extends Daemon {
 
     @Override
     public void run() {
+
+        StringBuilder lastRunlog = new StringBuilder();
 
         List<Form> formsList = FormHome.getFormList();
         for ( Form form : formsList)
@@ -73,8 +76,18 @@ public class FormsBackupPurgeDaemon extends Daemon {
                 {
                     _formService.removeFormBackup(formResponse);
                 }
+
+                if( !formResponses.isEmpty() )
+                {
+                    StringBuilder log = new StringBuilder();
+                    log.append( "Purge of " ).append( formResponses.size() ).append( " backup(s) for form " ).append( form.getTitle() );
+                    AppLogService.info( log.toString() );
+                    lastRunlog.append( log ).append( "\n" );
+                }
             }
         }
+
+        setLastRunLogs( lastRunlog.toString() );
     }
 
 }
