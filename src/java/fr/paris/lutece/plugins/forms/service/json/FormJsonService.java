@@ -66,31 +66,59 @@ import fr.paris.lutece.plugins.forms.business.Transition;
 import fr.paris.lutece.plugins.forms.business.TransitionHome;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfig;
 import fr.paris.lutece.plugins.forms.business.export.FormExportConfigHome;
-import fr.paris.lutece.plugins.forms.service.FormDatabaseService;
+import fr.paris.lutece.plugins.forms.service.IFormDatabaseService;
 import fr.paris.lutece.plugins.genericattributes.business.Field;
 import fr.paris.lutece.plugins.genericattributes.business.ReferenceItemFieldHome;
 import fr.paris.lutece.plugins.referencelist.business.ReferenceItemHome;
 import fr.paris.lutece.portal.service.i18n.I18nService;
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.spi.CDI;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 
 /**
  * Json service to handle import/export
  */
+@ApplicationScoped
 public class FormJsonService extends AbstractFormJsonService
 {
     private static final String PROPERTY_COPY_FORM_TITLE = "forms.copyForm.title";
 
-    public static final FormJsonService INSTANCE = new FormJsonService( );
-
-    private FormJsonService( )
+    /**
+     * No-arg constructor required by CDI for client-proxy generation. The proxy
+     * instance is never used as the target of business method calls — CDI routes
+     * every invocation to the contextual instance built via the {@code @Inject}
+     * constructor — so the {@code null} dependency passed up to the abstract
+     * parent is unobservable at runtime.
+     */
+    protected FormJsonService( )
     {
-        super( CDI.current( ).select( FormDatabaseService.class ).get( ) );
+        super( null );
     }
 
+    /**
+     * CDI constructor-injection entry point.
+     *
+     * @param formDatabaseService
+     *            the database service
+     */
+    @Inject
+    public FormJsonService( IFormDatabaseService formDatabaseService )
+    {
+        super( formDatabaseService );
+    }
+
+    /**
+     * Returns the unique instance of the {@link FormJsonService} service.
+     *
+     * @return the singleton instance managed by the CDI container
+     * @deprecated Use {@code @Inject } to obtain the {@link FormJsonService} instance.
+     *             This method will be removed in future versions.
+     */
+    @Deprecated( since = "4.0", forRemoval = true )
     public static FormJsonService getInstance( )
     {
-        return INSTANCE;
+        return CDI.current( ).select( FormJsonService.class ).get( );
     }
 
     /**
