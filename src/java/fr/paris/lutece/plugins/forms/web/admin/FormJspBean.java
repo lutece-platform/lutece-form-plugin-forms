@@ -237,7 +237,9 @@ public class FormJspBean extends AbstractJspBean
     private SecurityTokenService _securityTokenService;
     @Inject
     @Named(BeanUtils.BEAN_CAPTCHA_SERVICE)
-    private Instance<ICaptchaService> _captchaService; 
+    private Instance<ICaptchaService> _captchaService;
+    @Inject
+    private FormJsonService _formJsonService;
 
     /**
      * Build the Manage View
@@ -485,8 +487,8 @@ public class FormJspBean extends AbstractJspBean
         {
             try
             {
-                String json = FormJsonService.getInstance( ).jsonExportForm( nId );
-                FormJsonService.getInstance( ).jsonImportForm( json, getLocale( ) );
+                String json = _formJsonService.jsonExportForm( nId );
+                _formJsonService.jsonImportForm( json, getLocale( ) );
                 addInfo( INFO_FORM_COPIED, getLocale( ) );
             }
             catch( JsonProcessingException e )
@@ -898,7 +900,7 @@ public class FormJspBean extends AbstractJspBean
         String content;
         try
         {
-            content = FormJsonService.getInstance( ).jsonExportForm( nId );
+            content = _formJsonService.jsonExportForm( nId );
             Form form = FormHome.findByPrimaryKey( nId );
             MVCUtils.addDownloadHeaderToResponse( response, FileUtil.normalizeFileName( form.getTitle( ) ) + ".json", "application/json" );
             try ( PrintWriter writer = response.getWriter( ) )
@@ -921,7 +923,7 @@ public class FormJspBean extends AbstractJspBean
         MultipartItem fileItem = multipartRequest.getFile( PARAMETER_JSON_FILE );
         try
         {
-            FormJsonService.getInstance( ).jsonImportForm( new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
+            _formJsonService.jsonImportForm( new String( fileItem.get( ), StandardCharsets.UTF_8 ), getLocale( ) );
             addInfo( INFO_FORM_CREATED, getLocale( ) );
         }
         catch( JsonProcessingException e )
