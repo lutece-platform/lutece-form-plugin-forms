@@ -154,15 +154,17 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
                     {
                         IFileStoreServiceProvider fss = FileService.getInstance( ).getFileStoreServiceProvider( response.getFile( ).getOrigin( ) );
                         File file = fss.getFile( response.getFile( ).getFileKey( ) );
+                        if ( file != null )
+                        {
+                            file.setUrl( displayType.isFront( ) ? fss.getFileDownloadUrlFO( file.getFileKey( ) ) : fss.getFileDownloadUrlBO( file.getFileKey( ) ) );
 
-                        file.setUrl(displayType.isFront( ) ? fss.getFileDownloadUrlFO( file.getFileKey()) : fss.getFileDownloadUrlBO(file.getFileKey()));
-
-                        PhysicalFile physicalFile = file.getPhysicalFile();
-                        FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
-                        ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
-                                + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
-                                request );
-                        listFiles.add( fileItem );
+                            PhysicalFile physicalFile = file.getPhysicalFile( );
+                            FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
+                            ( ( AbstractEntryTypeUpload ) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
+                                            + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
+                                    request );
+                            listFiles.add( fileItem );
+                        }
                     }
                     else if ( response.getFile( ).getPhysicalFile( ) != null )
                     {
