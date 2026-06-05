@@ -1,172 +1,191 @@
 <@cTpl>
-<#assign editModeValue = "">
-<#assign viewNumberValue = "1">
+<#assign editModeValue = ''>
+<#assign viewNumberValue = '1'>
 <#if entry.fields??>
-	<#assign addressField = getFieldValueByCode( entry, "address" )>
-	<#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
-	<#assign editModeValue = getFieldValueByCode( entry, "editMode" )>
+    <#assign addressField = getFieldValueByCode(entry, "address")>
+    <#assign viewNumberValue = getFieldValueByCode(entry, "viewNumber")>
+    <#assign editModeValue = getFieldValueByCode(entry, "editMode")>
 </#if>
-<#assign addressValue = "" />
-<#assign idAddressValue = "" />
-<#assign xValue = "" />
-<#assign yValue = "" />
-<#assign geometryValue = "" />
-<#assign hasError = false />
-<#assign idName = buildEntryName( entry, entry_iteration_number )>
-<#if getError( list_responses, entry )?? >
-	<#assign error = getError( list_responses, entry ) >
-	<#if error?? && error.isDisplayableError>
-		<#assign hasError = true />
-	</#if>
-</#if>
-<#assign idName = buildEntryName( entry, entry_iteration_number )>
-<#assign iterationNumber = entry_iteration_number?c >
-<#assign hasCheckAddress = entry.CSSClass?? && entry.CSSClass?contains("checkaddress") />
-<#assign useAddressAutocomplete = entry.mapProvider?? && entry.mapProvider?has_content && (entry.mapProvider.key! == 'wsaddress' || entry.mapProvider.key! == 'openstreetmap') />
+
+<#assign idName = buildEntryName(entry, entry_iteration_number)>
+<#assign iterationNumber = entry_iteration_number?c>
+<#assign hasCheckAddress = entry.CSSClass?? && entry.CSSClass?contains("checkaddress")>
+<#assign useAddressAutocomplete = entry.mapProvider?? && entry.mapProvider?has_content && (entry.mapProvider.key! == 'wsaddress' || entry.mapProvider.key! == 'openstreetmap')>
+
 <#if useAddressAutocomplete>
-	<#include "/skin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
+    <#include "/skin/plugins/address/modules/autocomplete/include/suggestPOI.html" />
 </#if>
+
+<#assign addressValue = ''>
+<#assign idAddressValue = ''>
+<#assign xValue = ''>
+<#assign yValue = ''>
+<#assign geometryValue = ''>
+<#assign hasError = false>
+<#assign geoErrorMsg = ''>
+
+<#if getError(list_responses, entry)??>
+    <#assign respError = getError(list_responses, entry)>
+    <#if respError.isDisplayableError>
+        <#assign hasError = true>
+        <#if respError.mandatoryError>
+            <#assign geoErrorMsg = '#i18n{forms.message.mandatory.entry}'>
+        <#else>
+            <#assign geoErrorMsg = respError.errorMessage>
+        </#if>
+    </#if>
+</#if>
+
 <#if entry.mapProvider??>
-	<div class="mb-3 row ${entry.mapProvider.key!} ${entry.CSSClass!}">
-		<label for="${idName}_address-input">${entry.title}<#if entry.mandatory><span class="main-warning-color" aria-hidden="true"> *</span></#if></label>
-		<#if list_responses?? && list_responses?has_content>
-			<#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse />
-			<#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse />
-			<#assign xValue = getResponseContainingTheFieldWithCode(list_responses, "X").toStringValueResponse />
-			<#assign yValue = getResponseContainingTheFieldWithCode(list_responses, "Y").toStringValueResponse />
-			<#assign geometryValue = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse />
-			<#if getError( list_responses, entry )?? >
-				<#assign error = getError( list_responses, entry ) >
-			</#if>
-		</#if>
-		<#if editModeValue == "" || editModeValue == "Address" || editModeValue == "Adresse" >
-			<#if useAddressAutocomplete>
-				<@suggestPOIInput id="${idName}_address" name="${idName}_address" currentValue="${addressValue!}" required=entry.mandatory cssClass="form-geoloc<#if hasError> is-invalid</#if>" />
-			<#else>
-				<input type="text" class="form-control form-geoloc<#if hasError> is-invalid</#if>" name="${idName}_address" id="${idName}_address" value="${addressValue!}"<#if entry.mandatory> required</#if> />
-			</#if>
-		<#else>
-			<input type="hidden" name="${idName}_address" id="${idName}" value="${addressValue!}" <#if !entry.mandatory > required</#if> >
-		</#if>
-		<input type="hidden" name="${idName}_idAddress" id="${idName}_idAddress" value="${idAddressValue!}">
-		<input type="hidden" name="${idName}_x" id="${idName}_x" value="${xValue!}">
-		<input type="hidden" name="${idName}_y" id="${idName}_y" value="${yValue!}">
-		<input type="hidden" name="${idName}_geometry" id="${idName}_geometry" value="${geometryValue!}">
-		<#if hasError>
-			<div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
-		</#if>
-		<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-			<small class="form-text text-muted">${entry.helpMessage}</small>
-		</#if>
-	</div>
-	<#if entry.mapProvider?has_content>
-		<p hidden>${entry.mapProvider.key!}</p>
-		<#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
-			<#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter >
-		</#if>
-		<#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)?? && entry.mapProvider.getParameter(viewNumberValue?number).addressParam?? >
-			<#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam >
-		</#if>
-		<#include entry.mapProvider.htmlCode />
-		<#if useAddressAutocomplete>
-			<@setupSuggestPOI />
-			<script>
-			document.addEventListener('DOMContentLoaded', function() {
-				var iterationNumber = '${entry_iteration_number}';
-				var numberIterInput = document.getElementById('number_iteration_geolocation');
-				if (!numberIterInput) {
-					numberIterInput = document.createElement('input');
-					numberIterInput.type = 'hidden';
-					numberIterInput.id = 'number_iteration_geolocation';
-					numberIterInput.name = 'number_iteration_geolocation';
-					var formValidate = document.getElementById('form-validate');
-					if (formValidate) {
-						formValidate.appendChild(numberIterInput);
-					}
-				}
-				numberIterInput.value = iterationNumber;
 
-				var hasCheckAddress = ${hasCheckAddress?c};
-				var autocompleteContainer = document.getElementById('${idName}_address');
-				var searchInput = autocompleteContainer.querySelector('.lutece-autocomplete-search-input');
-				var inputIdAddress = document.getElementById('${idName}_idAddress');
-				var inputX = document.getElementById('${idName}_x');
-				var inputY = document.getElementById('${idName}_y');
-				var inputGeometry = document.getElementById('${idName}_geometry');
+    <#if list_responses?? && list_responses?has_content>
+        <#assign addressValue = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse>
+        <#assign idAddressValue = getResponseContainingTheFieldWithCode(list_responses, "idAddress").toStringValueResponse>
+        <#assign xValue = getResponseContainingTheFieldWithCode(list_responses, "X").toStringValueResponse>
+        <#assign yValue = getResponseContainingTheFieldWithCode(list_responses, "Y").toStringValueResponse>
+        <#assign geometryValue = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse>
+    </#if>
 
-				var suggestPoi = new SuggestPOI(autocompleteContainer, {
-					allowFreeText: !hasCheckAddress
-				});
+    <#assign rowClass = 'mb-3 ' + entry.mapProvider.key!'' + ' ' + (entry.CSSClass!'')>
+    <#assign addressInputClass = 'form-geoloc' + hasError?then(' is-invalid', '')>
+    <#assign addressInputId = idName + '_address'>
 
-				autocompleteContainer.addEventListener(SuggestPOI.EVT_SELECT, function(event) {
-					var poi = event.detail.poi;
-					if (poi) {
-						inputGeometry.value = poi.type || '';
-						inputY.value = poi.y || '';
-						inputX.value = poi.x || '';
-						inputIdAddress.value = poi.id || '';
-						autocompleteContainer.classList.add('wssuggest');
-						searchInput.classList.remove('is-invalid');
-						var feedback = autocompleteContainer.querySelector('.invalid-feedback');
-						if (feedback) {
-							feedback.remove();
-						}
-						enableSubmitButtons();
-						sessionStorage.setItem('wsvalidated_${entry.idEntry}', 'done');
-					}
-				});
+    <@cRow class=rowClass>
+        <@cCol>
+            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=addressInputId + '-input' />
 
-				function enableSubmitButtons() {
-					document.querySelectorAll('[name="action_doSaveStep"], [name="action_doSaveResponse"], [name="action_formResponseSummary"]').forEach(function(btn) {
-						btn.removeAttribute('disabled');
-					});
-				}
+            <#if editModeValue == '' || editModeValue == 'Address' || editModeValue == 'Adresse'>
+                <#if useAddressAutocomplete>
+                    <@suggestPOIInput id=addressInputId name=idName + '_address' currentValue=addressValue required=entry.mandatory cssClass=addressInputClass />
+                <#else>
+                    <@cInput type='text' name=idName + '_address' id=addressInputId value=addressValue class='form-control ' + addressInputClass required=entry.mandatory />
+                </#if>
+            <#else>
+                <@cInput type='hidden' name=idName + '_address' id=idName value=addressValue required=!entry.mandatory class='' />
+            </#if>
 
-				function disableSubmitButtons() {
-					document.querySelectorAll('[name="action_doSaveStep"], [name="action_doSaveResponse"], [name="action_formResponseSummary"]').forEach(function(btn) {
-						btn.setAttribute('disabled', 'disabled');
-					});
-				}
+            <@cInput type='hidden' name=idName + '_idAddress' id=idName + '_idAddress' value=idAddressValue class='' />
+            <@cInput type='hidden' name=idName + '_x' id=idName + '_x' value=xValue class='' />
+            <@cInput type='hidden' name=idName + '_y' id=idName + '_y' value=yValue class='' />
+            <@cInput type='hidden' name=idName + '_geometry' id=idName + '_geometry' value=geometryValue class='' />
 
-				function showInvalidFeedback() {
-					searchInput.classList.add('is-invalid');
-					if (!autocompleteContainer.querySelector('.invalid-feedback')) {
-						var feedback = document.createElement('div');
-						feedback.className = 'invalid-feedback d-block';
-						feedback.textContent = '#i18n{forms.message.geolocation.checkAdress}';
-						autocompleteContainer.appendChild(feedback);
-					}
-				}
+            <#if hasError>
+                <@cInline class='invalid-feedback'>${geoErrorMsg}</@cInline>
+            </#if>
 
-				var wsv = sessionStorage.getItem('wsvalidated_${entry.idEntry}');
-				if (wsv === 'done') {
-					autocompleteContainer.classList.add('wssuggest');
-					enableSubmitButtons();
-				}
+            <#if !hasError && entry.helpMessage?? && entry.helpMessage != ''>
+                <@cInline type='small' class='form-text text-muted'>${entry.helpMessage}</@cInline>
+            </#if>
+        </@cCol>
+    </@cRow>
 
-				if (hasCheckAddress) {
-					searchInput.addEventListener('input', function() {
-						if (autocompleteContainer.classList.contains('wssuggest')) {
-							autocompleteContainer.classList.remove('wssuggest');
-							disableSubmitButtons();
-						}
-					});
+    <#if entry.mapProvider?has_content>
+        <@cText params='hidden'>${entry.mapProvider.key!}</@cText>
 
-					var form = autocompleteContainer.closest('form');
-					if (form) {
-						form.addEventListener('submit', function(e) {
-							if (!autocompleteContainer.classList.contains('wssuggest')) {
-								e.preventDefault();
-								showInvalidFeedback();
-								disableSubmitButtons();
-							}
-						});
-					}
-				}
-			});
-			</script>
-		</#if>
-	</#if>
+        <#if viewNumberValue?has_content && entry.mapProvider.getParameter(viewNumberValue?number)??>
+            <#if entry.mapProvider.getParameter(viewNumberValue?number).mapParameter??>
+                <#assign map_parameter = entry.mapProvider.getParameter(viewNumberValue?number).mapParameter>
+            </#if>
+            <#if entry.mapProvider.getParameter(viewNumberValue?number).addressParam??>
+                <#assign add_parameter = entry.mapProvider.getParameter(viewNumberValue?number).addressParam>
+            </#if>
+        </#if>
+
+        <#include entry.mapProvider.htmlCode />
+
+        <#if useAddressAutocomplete>
+            <@setupSuggestPOI />
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const iterationNumber = '${entry_iteration_number}';
+                let numberIterInput = document.getElementById('number_iteration_geolocation');
+                if (!numberIterInput) {
+                    numberIterInput = document.createElement('input');
+                    numberIterInput.type = 'hidden';
+                    numberIterInput.id = 'number_iteration_geolocation';
+                    numberIterInput.name = 'number_iteration_geolocation';
+                    const formValidate = document.getElementById('form-validate');
+                    if (formValidate) {
+                        formValidate.appendChild(numberIterInput);
+                    }
+                }
+                numberIterInput.value = iterationNumber;
+
+                const hasCheckAddress = ${hasCheckAddress?c};
+                const autocompleteContainer = document.getElementById('${addressInputId}');
+                if (!autocompleteContainer) return;
+                const searchInput = autocompleteContainer.querySelector('.lutece-autocomplete-search-input');
+                const inputIdAddress = document.getElementById('${idName}_idAddress');
+                const inputX = document.getElementById('${idName}_x');
+                const inputY = document.getElementById('${idName}_y');
+                const inputGeometry = document.getElementById('${idName}_geometry');
+
+                new SuggestPOI(autocompleteContainer, { allowFreeText: !hasCheckAddress });
+
+                autocompleteContainer.addEventListener(SuggestPOI.EVT_SELECT, function(event) {
+                    const poi = event.detail.poi;
+                    if (!poi) return;
+                    inputGeometry.value = poi.type || '';
+                    inputY.value = poi.y || '';
+                    inputX.value = poi.x || '';
+                    inputIdAddress.value = poi.id || '';
+                    autocompleteContainer.classList.add('wssuggest');
+                    if (searchInput) searchInput.classList.remove('is-invalid');
+                    const feedback = autocompleteContainer.querySelector('.invalid-feedback');
+                    if (feedback) feedback.remove();
+                    enableSubmitButtons();
+                    sessionStorage.setItem('wsvalidated_${entry.idEntry}', 'done');
+                });
+
+                function setSubmitDisabled(disabled) {
+                    document.querySelectorAll('[name="action_doSaveStep"], [name="action_doSaveResponse"], [name="action_formResponseSummary"]').forEach(function(btn) {
+                        if (disabled) {
+                            btn.setAttribute('disabled', 'disabled');
+                        } else {
+                            btn.removeAttribute('disabled');
+                        }
+                    });
+                }
+                function enableSubmitButtons() { setSubmitDisabled(false); }
+                function disableSubmitButtons() { setSubmitDisabled(true); }
+
+                function showInvalidFeedback() {
+                    if (searchInput) searchInput.classList.add('is-invalid');
+                    if (!autocompleteContainer.querySelector('.invalid-feedback')) {
+                        const feedback = document.createElement('div');
+                        feedback.className = 'invalid-feedback d-block';
+                        feedback.textContent = '#i18n{forms.message.geolocation.checkAdress}';
+                        autocompleteContainer.appendChild(feedback);
+                    }
+                }
+
+                if (sessionStorage.getItem('wsvalidated_${entry.idEntry}') === 'done') {
+                    autocompleteContainer.classList.add('wssuggest');
+                    enableSubmitButtons();
+                }
+
+                if (hasCheckAddress && searchInput) {
+                    searchInput.addEventListener('input', function() {
+                        if (autocompleteContainer.classList.contains('wssuggest')) {
+                            autocompleteContainer.classList.remove('wssuggest');
+                            disableSubmitButtons();
+                        }
+                    });
+
+                    const form = autocompleteContainer.closest('form');
+                    if (form) {
+                        form.addEventListener('submit', function(e) {
+                            if (!autocompleteContainer.classList.contains('wssuggest')) {
+                                e.preventDefault();
+                                showInvalidFeedback();
+                                disableSubmitButtons();
+                            }
+                        });
+                    }
+                }
+            });
+            </script>
+        </#if>
+    </#if>
 </#if>
-
 </@cTpl>

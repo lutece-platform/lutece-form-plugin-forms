@@ -1,72 +1,71 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<#assign hasError = false />
-	<#if getError( list_responses, entry )?? >
-		<#assign error = getError( list_responses, entry ) >
-		<#if error?? && error.isDisplayableError>
-			<#assign hasError = true />
-		</#if>
-	</#if>
-	<div class="form-group">
-		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-		<label class="control-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div id="${idName}">
-			<div class="slot-entry">
-				<#if list_responses?has_content>
-					<#assign beginHourCode = "begin_hour">
-					<#assign endHourCode = "end_hour">
-					<#list list_responses?chunk(2) as row>
-						<#if row[0].field.code == beginHourCode>
-							<#assign beginHour = row[0].toStringValueResponse>
-						</#if>
-						<#if row[1].field.code == beginHourCode>
-							<#assign beginHour = row[1].toStringValueResponse>
-						</#if>
-						<#if row[0].field.code == endHourCode>
-							<#assign endHour = row[0].toStringValueResponse>
-						</#if>
-						<#if row[1].field.code == endHourCode>
-							<#assign endHour = row[1].toStringValueResponse>
-						</#if>
-						<label>#i18n{forms.message.slot.preposition.from}</label>
-						<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" value="${beginHour!}" />
-						<label>#i18n{forms.message.slot.preposition.to}</label>
-						<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" value="${endHour!}" />
-					</#list>
-					<#if hasError>
-						<div class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></div>
-					</#if>
-				<#else>
-					<label>#i18n{forms.message.slot.preposition.from}</label>
-					<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_begin" name="${idName}_begin" min="00:00" max="23:59" />
-					<label>#i18n{forms.message.slot.preposition.to}</label>
-					<input type="time" class="<#if hasError> is-invalid</#if>" id="${idName}_end" name="${idName}_end" min="00:00" max="23:59" />
-					<#if hasError>
-						<span class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></span>
-					</#if>
-				</#if>
-			</div>
-		</div>
-		</br>
-		<#if entry.helpMessage?exists && entry.helpMessage != ''>
-			<span class="help-block">${entry.helpMessage}</span>
-		</#if>
-	</div>
+
+    <#assign idName = buildEntryName(entry, entry_iteration_number)>
+
+    <#assign hasError = false>
+    <#assign slotErrorMsg = ''>
+    <#if getError(list_responses, entry)??>
+        <#assign respError = getError(list_responses, entry)>
+        <#if respError.isDisplayableError>
+            <#assign hasError = true>
+            <#if respError.mandatoryError>
+                <#assign slotErrorMsg = '#i18n{forms.message.mandatory.entry}'>
+            <#else>
+                <#assign slotErrorMsg = respError.errorMessage>
+            </#if>
+        </#if>
+    </#if>
+
+    <#assign beginHour = ''>
+    <#assign endHour = ''>
+    <#if list_responses?has_content>
+        <#list list_responses as response>
+            <#if response.field?? && response.field.code == 'begin_hour'>
+                <#assign beginHour = response.toStringValueResponse!''>
+            </#if>
+            <#if response.field?? && response.field.code == 'end_hour'>
+                <#assign endHour = response.toStringValueResponse!''>
+            </#if>
+        </#list>
+    </#if>
+
+    <#assign timeClass = 'form-control' + hasError?then(' is-invalid', '')>
+
+    <@cRow class='mb-3'>
+        <@cCol>
+            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName />
+        </@cCol>
+        <@cCol>
+            <@cBlock id=idName>
+                <@cBlock class='slot-entry'>
+                    <@cLabel label='#i18n{forms.message.slot.preposition.from}' for=idName + '_begin' />
+                    <@cInput type='time' id=idName + '_begin' name=idName + '_begin' value=beginHour class=timeClass params='min="00:00" max="23:59"' />
+                    <@cLabel label='#i18n{forms.message.slot.preposition.to}' for=idName + '_end' />
+                    <@cInput type='time' id=idName + '_end' name=idName + '_end' value=endHour class=timeClass params='min="00:00" max="23:59"' />
+                </@cBlock>
+                <#if hasError>
+                    <@cInline class='invalid-feedback d-block'>${slotErrorMsg}</@cInline>
+                </#if>
+            </@cBlock>
+            <#if entry.helpMessage?? && entry.helpMessage != ''>
+                <@cInline class='form-text'>${entry.helpMessage}</@cInline>
+            </#if>
+        </@cCol>
+    </@cRow>
+
 </#if>
 
 <style>
-	.slot-entry {
-		display: flex;
-		align-items: center;
-	}
-
-	.slot-entry > * {
-		margin-right: 10px;
-	}
-
-	.slot-entry > *:last-child {
-		margin-right: 0;
-	}
+.slot-entry {
+    display: flex;
+    align-items: center;
+}
+.slot-entry > * {
+    margin-right: 10px;
+}
+.slot-entry > *:last-child {
+    margin-right: 0;
+}
 </style>
-
 </@cTpl>

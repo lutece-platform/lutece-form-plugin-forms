@@ -1,141 +1,150 @@
 <@cTpl>
-<#assign classDisp><#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if></#assign>
-<#assign param>displayControl="${question.id}_${question.iterationNumber}" </#assign>
-<#assign entryCSSClass>${classDisp} mt-3<#if question.entry.CSSClass??><#if question.entry.CSSClass?trim?starts_with('col-')> ${question.entry.CSSClass}<#else> col-12</#if></#if></#assign>
-<@columns class=entryCSSClass params=param>
+<#assign classDisp = ''>
+<#if id_display??><#assign classDisp = 'display_field_' + id_display + '_' + question.iterationNumber?c></#if>
+<#assign entryCSSClass = classDisp + ' mt-3'>
+<#if question.entry.CSSClass??>
+    <#if question.entry.CSSClass?trim?starts_with('col-')>
+        <#assign entryCSSClass = entryCSSClass + ' ' + question.entry.CSSClass>
+    <#else>
+        <#assign entryCSSClass = entryCSSClass + ' col-12'>
+    </#if>
+</#if>
+<#assign questionKey = question.id?c + '_' + question.iterationNumber?c>
+<#assign displayControlAttr = 'displayControl="' + questionKey + '"'>
+<@cCol class=entryCSSClass params=displayControlAttr>
 ${questionContent}
-</@columns>
+</@cCol>
 <#if validator??>
-<@input name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='' type='hidden' /> 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-<#if other_step_validation??>
-	<#if other_step_validation>
-		document.querySelectorAll('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').forEach(function(el) { el.style.display = ''; });
-		document.getElementById('${question.id}_${question.iterationNumber}').value = '${question.id}_${question.iterationNumber}';
-	<#else>
-		document.querySelectorAll('.display_field_${control.idControlTarget!''}_${question.iterationNumber}').forEach(function(el) { el.style.display = 'none'; });
-		document.getElementById('${question.id}_${question.iterationNumber}').value = '';
-	</#if>
-<#else>
-	<#assign validNames = [] />
-	<#if !validNames?seq_contains(validator.validatorBeanName)>
-		<#assign validNames = validNames + [validator.validatorBeanName] />
-		function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue){
-			${validator.getJavascriptValidation()!'return true;'}
-		}
-	</#if>
-	var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
-		input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
-	
-	function handleChange${control.id}_${question.iterationNumber}() {
-		var inputValue = getFieldValue(input${control.id}_${question.iterationNumber}), 
-			hasCollapse = false, 
-			toCollapse = null,
-			displayFields = document.querySelectorAll('.display_field_${control.idControlTarget!''}_${question.iterationNumber}');
-		
-		displayFields.forEach(function(field) {
-			var parent = field.parentElement;
-			while (parent && !parent.classList.contains('step-content')) {
-				if (parent.classList.contains('step-group-collapsible')) {
-					hasCollapse = true;
-					toCollapse = parent;
-				}
-				parent = parent.parentElement;
-			}
-		});
-		
-		var controlDiv = document.querySelector("div[displayControl='${control.listIdQuestion[0]}_${question.iterationNumber}']");
-		if (!controlDiv.classList.contains("control_invalid") && validator_${control.validatorName?replace('.','_')}(inputValue, '${control.value}')) {
-			displayFields.forEach(function(el) {
-				el.classList.remove("control_invalid");
-				el.style.display = '';
-			});
-			if (hasCollapse && toCollapse) { toCollapse.style.display = ''; }
-			document.getElementById('${question.id}_${question.iterationNumber}').value = '${question.id}_${question.iterationNumber}';
-		} else {
-			displayFields.forEach(function(el) {
-				el.classList.add("control_invalid");
-				el.style.display = 'none';
-				el.querySelectorAll('input[type="text"], select').forEach(function(input) { input.value = ''; });
-				el.querySelectorAll('input[type="checkbox"]').forEach(function(input) { input.checked = false; });
-			});
-			if (hasCollapse && toCollapse) { toCollapse.style.display = 'none'; }
-			document.getElementById('${question.id}_${question.iterationNumber}').value = '';
-		}
-		
-		var currentControl = "${question.id}_${question.iterationNumber}";
-		var currentInput = getInputElement(currentControl);
-		if (currentInput[0] != undefined && currentInput[0].type != 'file') {
-			currentInput.forEach(function(el) {
-				el.dispatchEvent(new Event('change', { bubbles: true }));
-			});
-		}
-	}
-	
-	input${control.id}_${question.iterationNumber}.forEach(function(el) {
-		['change', 'keyup', 'paste', 'mouseup', 'input'].forEach(function(evt) {
-			el.addEventListener(evt, handleChange${control.id}_${question.iterationNumber});
-		});
-	});
-	handleChange${control.id}_${question.iterationNumber}();
-</#if>
-});
-</script>
-<#else>
-<@input name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='${question.id}_${question.iterationNumber}' type='hidden' />
-</#if>
+    <@cInput type='hidden' name='displayed_questions' id=questionKey value='' class='' />
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const questionKey = '${questionKey}';
+        const questionInput = document.getElementById(questionKey);
 
+        <#if other_step_validation??>
+            <#assign targetClass = 'display_field_' + (control.idControlTarget!'') + '_' + question.iterationNumber?c>
+            <#if other_step_validation>
+                document.querySelectorAll('.${targetClass}').forEach(function(el) { el.style.display = ''; });
+                if (questionInput) questionInput.value = questionKey;
+            <#else>
+                document.querySelectorAll('.${targetClass}').forEach(function(el) { el.style.display = 'none'; });
+                if (questionInput) questionInput.value = '';
+            </#if>
+        <#else>
+            <#assign validNames = []>
+            <#if !validNames?seq_contains(validator.validatorBeanName)>
+                <#assign validNames = validNames + [validator.validatorBeanName]>
+                function validator_${validator.validatorBeanName?replace('.','_')}(inputValue, controlValue) {
+                    ${validator.getJavascriptValidation()!'return true;'}
+                }
+            </#if>
 
+            const displayControl = ${control.listIdQuestion[0]} + '_' + ${question.iterationNumber};
+            const controlInputs = getInputElement(displayControl);
+
+            function handleChange() {
+                const inputValue = getFieldValue(controlInputs);
+                let hasCollapse = false;
+                let toCollapse = null;
+                const displayFields = document.querySelectorAll('.display_field_${control.idControlTarget!''}_${question.iterationNumber}');
+
+                displayFields.forEach(function(field) {
+                    let parent = field.parentElement;
+                    while (parent && !parent.classList.contains('step-content')) {
+                        if (parent.classList.contains('step-group-collapsible')) {
+                            hasCollapse = true;
+                            toCollapse = parent;
+                        }
+                        parent = parent.parentElement;
+                    }
+                });
+
+                const controlDiv = document.querySelector('div[displayControl="${control.listIdQuestion[0]}_${question.iterationNumber}"]');
+                if (controlDiv && !controlDiv.classList.contains('control_invalid') && validator_${control.validatorName?replace('.','_')}(inputValue, '${control.value}')) {
+                    displayFields.forEach(function(el) {
+                        el.classList.remove('control_invalid');
+                        el.style.display = '';
+                    });
+                    if (hasCollapse && toCollapse) toCollapse.style.display = '';
+                    if (questionInput) questionInput.value = questionKey;
+                } else {
+                    displayFields.forEach(function(el) {
+                        el.classList.add('control_invalid');
+                        el.style.display = 'none';
+                        el.querySelectorAll('input[type="text"], select').forEach(function(input) { input.value = ''; });
+                        el.querySelectorAll('input[type="checkbox"]').forEach(function(input) { input.checked = false; });
+                    });
+                    if (hasCollapse && toCollapse) toCollapse.style.display = 'none';
+                    if (questionInput) questionInput.value = '';
+                }
+
+                const currentInputs = getInputElement(questionKey);
+                if (currentInputs[0] && currentInputs[0].type !== 'file') {
+                    currentInputs.forEach(function(el) {
+                        el.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                }
+            }
+
+            controlInputs.forEach(function(el) {
+                ['change', 'keyup', 'paste', 'mouseup', 'input'].forEach(function(evt) {
+                    el.addEventListener(evt, handleChange);
+                });
+            });
+            handleChange();
+        </#if>
+    });
+    </script>
+<#else>
+    <@cInput type='hidden' name='displayed_questions' id=questionKey value=questionKey class='' />
+</#if>
 <script>
-function getInputElement( displayControl ){
-	var types = ['input','select','textarea'];
-	var container = document.querySelector("div[displayControl='" + displayControl + "']");
-	if (!container) return [];
-	for(var i=0;i<types.length;i++){
-		var elms = container.querySelectorAll(types[i]);
-		if(elms && elms.length > 0){
-			if(elms[0].tagName.toLowerCase() === 'input'){
-				return Array.from(document.querySelectorAll('input[name="' + elms[0].name + '"]'));
-			}
-			return Array.from(elms);
-		}
-	}
-	return [];
+function getInputElement(displayControl) {
+    const types = ['input', 'select', 'textarea'];
+    const container = document.querySelector('div[displayControl="' + displayControl + '"]');
+    if (!container) return [];
+    for (let i = 0; i < types.length; i++) {
+        const elms = container.querySelectorAll(types[i]);
+        if (elms && elms.length > 0) {
+            if (elms[0].tagName.toLowerCase() === 'input') {
+                return Array.from(document.querySelectorAll('input[name="' + elms[0].name + '"]'));
+            }
+            return Array.from(elms);
+        }
+    }
+    return [];
 }
 
-function getFieldValue( elm ){
-	if(!elm || elm.length === 0) return null;
-	var first = elm[0];
-	if(first.type === 'radio'){
-		var checked = document.querySelector('input[name="' + first.name + '"]:checked');
-		return checked ? checked.value : null;
-	} else if (first.type === 'checkbox') {
-		var resultChecked = [];
-		for(var i=0;i<elm.length;i++){
-			if(elm[i].checked){
-				resultChecked.push(elm[i].value);
-			}
-		}
-		return resultChecked;
-	} else if (first.tagName.toLowerCase() === 'select') {
-		return first.options[first.selectedIndex].value;
-	}
-	//add other specific implementations here
-	else {
-		return first.value;
-	}
+function getFieldValue(elm) {
+    if (!elm || elm.length === 0) return null;
+    const first = elm[0];
+    if (first.type === 'radio') {
+        const checked = document.querySelector('input[name="' + first.name + '"]:checked');
+        return checked ? checked.value : null;
+    }
+    if (first.type === 'checkbox') {
+        const resultChecked = [];
+        for (let i = 0; i < elm.length; i++) {
+            if (elm[i].checked) resultChecked.push(elm[i].value);
+        }
+        return resultChecked;
+    }
+    if (first.tagName.toLowerCase() === 'select') {
+        return first.options[first.selectedIndex].value;
+    }
+    return first.value;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-	document.querySelectorAll("button[name='action_addIteration']").forEach(function(button) {
-		button.addEventListener("click", function() {
-			var target = "#last_" + this.getAttribute("value");
-			var form = this.closest("form");
-			var newUrl = form.getAttribute("action").replace(/#current_step$/,target);
-			form.setAttribute("action",newUrl);
-		});
-	});
+    document.querySelectorAll('button[name="action_addIteration"]').forEach(function(button) {
+        button.addEventListener('click', function() {
+            const target = '#last_' + this.getAttribute('value');
+            const form = this.closest('form');
+            if (!form) return;
+            const newUrl = form.getAttribute('action').replace(/#current_step$/, target);
+            form.setAttribute('action', newUrl);
+        });
+    });
 });
 </script>
 </@cTpl>

@@ -1,24 +1,18 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-	<div class="mb-3 row">
-	    <label class="col-12 col-form-label">
-	        ${entry.title!''}
-	    </label>
-	    <#if list_responses?has_content>
-	        <#assign first = true>
-	        <#list list_responses as response>
-	            <#if first>
-	                <#assign first = false>
-	                <div class="col-12">
-	            <#else>
-	                <div class="col-12">
-	            </#if>
-	            <#if response.file?exists>
-	                ${response.file.title} (${response.file.size} O)
-	            </#if>
-	            </div>
-	        </#list>
-	    </#if>
-	</div>
+    <@cRow class='mb-3'>
+        <@cCol>
+            <@cLabel label=entry.title!'' />
+        </@cCol>
+        <#if list_responses?has_content>
+            <#list list_responses as response>
+                <@cCol>
+                    <#if response.file??>
+                        ${response.file.title} (${response.file.size} O)
+                    </#if>
+                </@cCol>
+            </#list>
+        </#if>
+    </@cRow>
 </#if>
 </@cTpl>

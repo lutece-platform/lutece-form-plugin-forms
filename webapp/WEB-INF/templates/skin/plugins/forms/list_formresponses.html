@@ -1,28 +1,32 @@
 <@cTpl>
-<h2>#i18n{forms.xpage.myformresponses.view.pageTitle}</h2>
-<div class="table-responsive">
-	<table class="table table-striped">
-		<thead>
-			<th>#i18n{forms.xpage.myformresponses.view.labelForm}</th>
-			<th>#i18n{forms.xpage.myformresponses.view.labelDateUpdate}</th>
-			<th>#i18n{forms.xpage.myformresponses.view.labelState}</th>
-			<th>#i18n{forms.xpage.myformresponses.view.labelActions}</th>
-		</thead>
-		<tbody>
-			<#list response_list as response>
-				<tr>
-					<td>${response.formTitle}</td>
-					<td>${response.dateUpdate?date}</td>
-					<td>${response.workflowState!}</td>
-					<td>
-						<a class="btn btn-sm btn-primary" href="jsp/site/Portal.jsp?page=formsResponse&id_response=${response.idFormResponse}" title="#i18n{forms.xpage.myformresponses.view.labelView}">
-							<i class="fa fa-eye me-1 mr-1" aria-hidden="true"></i>
-							<span class="d-none">#i18n{forms.xpage.myformresponses.view.labelView}</span> 
-						</a>
-					</td>
-				</tr>
-			</#list>
-		</tbody>
-	</table>
-</div>
-</@cTpl>	
+<@cTitle level=2>#i18n{forms.xpage.myformresponses.view.pageTitle}</@cTitle>
+
+<@cBlock class='table-responsive'>
+    <@cTable class='table-striped'>
+        <@cThead>
+            <@cTr>
+                <@cTh>#i18n{forms.xpage.myformresponses.view.labelForm}</@cTh>
+                <@cTh>#i18n{forms.xpage.myformresponses.view.labelDateUpdate}</@cTh>
+                <@cTh>#i18n{forms.xpage.myformresponses.view.labelState}</@cTh>
+                <@cTh>#i18n{forms.xpage.myformresponses.view.labelActions}</@cTh>
+            </@cTr>
+        </@cThead>
+        <@cTbody>
+            <#list response_list as response>
+                <#assign viewHref = 'jsp/site/Portal.jsp?page=formsResponse&id_response=' + response.idFormResponse?c>
+                <@cTr>
+                    <@cTd>${response.formTitle}</@cTd>
+                    <@cTd>${response.dateUpdate?date}</@cTd>
+                    <@cTd>${response.workflowState!}</@cTd>
+                    <@cTd>
+                        <@cBtn href=viewHref class='primary btn-sm' label='' params='title="#i18n{forms.xpage.myformresponses.view.labelView}"'>
+                            <@cIcon name='eye' class='me-1' />
+                            <@cInline class='d-none'>#i18n{forms.xpage.myformresponses.view.labelView}</@cInline>
+                        </@cBtn>
+                    </@cTd>
+                </@cTr>
+            </#list>
+        </@cTbody>
+    </@cTable>
+</@cBlock>
+</@cTpl>

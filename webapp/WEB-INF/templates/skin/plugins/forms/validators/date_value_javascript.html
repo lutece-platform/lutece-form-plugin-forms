@@ -1,28 +1,21 @@
-if(inputValue !== undefined && inputValue !== '')
-{
-	var lang = window.navigator.language;
-	moment.locale(lang);
-	
-	var dateControl = moment(controlValue);
-	if(Array.isArray(inputValue))
-	{
-		for(var i=0;i<inputValue.length;i++)
-		{
-			var dateInput = moment(inputValue[i]);
-			if ( !(dateInput.getTime() ${operation} dateControl.getTime() ) )
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	else
-	{
-		var dateInput = moment(inputValue);
-		return dateInput ${operation} dateControl;
-	}
+if (inputValue === undefined || inputValue === '') {
+    return false;
 }
-else
-{
-	return false;
+
+const lang = window.navigator.language;
+moment.locale(lang);
+
+const dateControl = moment(controlValue);
+
+if (Array.isArray(inputValue)) {
+    for (let i = 0; i < inputValue.length; i++) {
+        const dateInput = moment(inputValue[i]);
+        if (!(dateInput.valueOf() ${operation} dateControl.valueOf())) {
+            return false;
+        }
+    }
+    return true;
 }
+
+const dateInput = moment(inputValue);
+return dateInput ${operation} dateControl;

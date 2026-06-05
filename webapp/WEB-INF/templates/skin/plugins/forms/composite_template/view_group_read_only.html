@@ -1,17 +1,20 @@
 <@cTpl>
-<fieldset <#if id_display??>class="display_field_${id_display}" hidden</#if>>
- <legend>
- 	${group.title}
- </legend>
- <div class="step-group-value-content">
-  <#list groupContentByIteration as iterationNumber, groupContent >
-   <#if groupContent?size != 0>
-    <hr>
-    <#list groupContent as childrenHtml>
-     ${childrenHtml}
-    </#list>
-   </#if>
-  </#list>
- </div>
-</fieldset>
+<#assign fieldsetClass = ''>
+<#assign fieldsetParams = ''>
+<#if id_display??>
+    <#assign fieldsetClass = 'display_field_' + id_display>
+    <#assign fieldsetParams = 'hidden'>
+</#if>
+<@cFieldset legend=group.title class=fieldsetClass params=fieldsetParams>
+    <@cBlock class='step-group-value-content'>
+        <#list groupContentByIteration as iterationNumber, groupContent>
+            <#if groupContent?size != 0>
+                <hr>
+                <#list groupContent as childrenHtml>
+                    ${childrenHtml}
+                </#list>
+            </#if>
+        </#list>
+    </@cBlock>
+</@cFieldset>
 </@cTpl>

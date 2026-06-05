@@ -1,33 +1,31 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-	<div class="mb-3 row">
-	    <#if getFieldByCode( entry, "illustration_image")??>
-		    <#assign illustration_image_entry=getFieldByCode( entry, "illustration_image")>
-		    <#assign image_id = illustration_image_entry.value>
-		    <#list fields_list_by_id_entries as key, value>
-			    <#if key = illustration_image_entry.idField>
-			        <img src="${value!''}" alt="${illustration_image_entry.title!''}" style="max-width:100%;">
-			    </#if>
-		    </#list>
-	    </#if>
-   	</div>
-	<div class="mb-3 row">
-	    <label class="col-12 col-form-label">
-	        ${entry.title!''}
-	    </label>
-	    <#if list_responses?has_content>
-	        <#assign first = true>
-	        <#list list_responses as response>
-	            <#if first>
-	                <#assign first = false>
-	                <div class="col-12">
-	            <#else>
-	                <div class="col-12">
-	            </#if>
-	                ${response.toStringValueResponse!''}
-	            </div>
-	        </#list>
-	    </#if>
-	</div>
+
+    <#if getFieldByCode(entry, "illustration_image")??>
+        <#assign illustration_image_entry = getFieldByCode(entry, "illustration_image")>
+        <#list fields_list_by_id_entries as key, value>
+            <#if key == illustration_image_entry.idField>
+                <@cRow class='mb-3'>
+                    <@cCol>
+                        <@cImg src=value alt=illustration_image_entry.title!'' title=illustration_image_entry.title!'' />
+                    </@cCol>
+                </@cRow>
+            </#if>
+        </#list>
+    </#if>
+
+    <@cRow class='mb-3'>
+        <@cCol>
+            <@cLabel label=entry.title!'' />
+        </@cCol>
+        <#if list_responses?has_content>
+            <#list list_responses as response>
+                <@cCol>
+                    ${response.toStringValueResponse!''}
+                </@cCol>
+            </#list>
+        </#if>
+    </@cRow>
+
 </#if>
 </@cTpl>

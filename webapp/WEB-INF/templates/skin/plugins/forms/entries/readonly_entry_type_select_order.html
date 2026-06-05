@@ -1,21 +1,21 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-	<div class="mb-3 row">
-	    <label class="col-12 col-form-label">
-	        ${entry.title!''}
-	    </label>
-	    <#if list_responses?has_content>
-	        <#list list_responses?sort_by('sortOrder') as response>
-                <div class="col-12">
-                ${response.sortOrder}:
-	            <#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>
-	            	${entryTypeService.getResponseValueForRecap(null, null, response, null)}
-	            <#else>
-	            	${response.toStringValueResponse!''}
-	            </#if>
-	            </div>
-	        </#list>
-	    </#if>
-	</div>
+    <@cRow class='mb-3'>
+        <@cCol>
+            <@cLabel label=entry.title!'' />
+        </@cCol>
+        <#if list_responses?has_content>
+            <#list list_responses?sort_by('sortOrder') as response>
+                <@cCol>
+                    ${response.sortOrder}:
+                    <#if entryTypeService.getResponseValueForRecap(null, null, response, null)??>
+                        ${entryTypeService.getResponseValueForRecap(null, null, response, null)}
+                    <#else>
+                        ${response.toStringValueResponse!''}
+                    </#if>
+                </@cCol>
+            </#list>
+        </#if>
+    </@cRow>
 </#if>
 </@cTpl>

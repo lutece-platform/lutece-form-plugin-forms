@@ -1,21 +1,22 @@
 <@cTpl>
-<h2>#i18n{forms.publicdashboard.title}</h2>
-<div class="table-responsive">
-	<table class="table table-striped">
-		<tbody>
-			<#list list_formsresponse as formRep>
-				<#list formRep.steps as step>
-					<#list step.questions as question>
-						<tr>
-							<td>${question.question.title!}</td>
-							<#list question.entryResponse as response>
-								<td>${response.responseValue!}</td>
-							</#list>
-						</tr>
-					</#list>
-				</#list>
-			</#list>
-		</tbody>
-	</table>
-</div>
+<@cTitle level=2>#i18n{forms.publicdashboard.title}</@cTitle>
+
+<@cBlock class='table-responsive'>
+    <@cTable class='table-striped'>
+        <@cTbody>
+            <#list list_formsresponse as formRep>
+                <#list formRep.steps as step>
+                    <#list step.questions as question>
+                        <@cTr>
+                            <@cTd>${question.question.title!}</@cTd>
+                            <#list question.entryResponse as response>
+                                <@cTd>${response.responseValue!}</@cTd>
+                            </#list>
+                        </@cTr>
+                    </#list>
+                </#list>
+            </#list>
+        </@cTbody>
+    </@cTable>
+</@cBlock>
 </@cTpl>

@@ -1,31 +1,42 @@
- <@cTpl>
- <@messages warnings=warnings />
- <form id="summary_validate" action="jsp/site/Portal.jsp?page=forms" method="post">
- <input name="id_form" value="${id_form}" type="hidden" />
-  <div id="form-response-summary" class="box-body">
-    <h3>${form.title!}</h3>
-  	<#if form.countResponses>#i18n{forms.create_entry.manageField.labelFieldNumber}: ${form.currentNumberResponse}</#if>
-    <#if list_summary_step_display?has_content>
-      <#list list_summary_step_display as summary_step_display>
-        ${summary_step_display}
-      </#list>
-    </#if>
-    <#if display_captcha>
-  		${captcha}
-  	</#if>
-  </div>
-  <div class="card-footer">
-  	<#assign label_button="#i18n{forms.summary.validate}" />
-  	<#if form.labelFinalButton?has_content>
-  		<#assign label_button=form.labelFinalButton />
-  	</#if>
-  	<input type="hidden" name="token" value = "${token}">
-    <button type="submit" class="btn btn-primary btn-sm"  name="action_doSaveResponseSummary" >
-      <i class="fa fa-check"></i>&nbsp;${label_button}
-    </button>
-	<a class="btn btn-default btn-sm" href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${id_form}" title="#i18n{forms.summary.step.previous}">
-		<i class="fa fa-times"></i>&nbsp;<span class="">#i18n{forms.summary.step.previous}</span>
-	</a>
-  </div>
-</form>
+<@cTpl>
+
+<#if warnings?? && warnings?size gt 0>
+    <#list warnings as warning>
+        <@cAlert type='warning' title=warning.message! />
+    </#list>
+</#if>
+
+<@cForm id='summary_validate' action='jsp/site/Portal.jsp?page=forms' method='post'>
+    <@cInput type='hidden' name='id_form' value=id_form class='' />
+
+    <@cBlock id='form-response-summary' class='box-body'>
+        <@cTitle level=3>${form.title!}</@cTitle>
+        <#if form.countResponses>
+            #i18n{forms.create_entry.manageField.labelFieldNumber}: ${form.currentNumberResponse}
+        </#if>
+        <#if list_summary_step_display?has_content>
+            <#list list_summary_step_display as summary_step_display>
+                ${summary_step_display}
+            </#list>
+        </#if>
+        <#if display_captcha>
+            ${captcha}
+        </#if>
+    </@cBlock>
+
+    <@cBlock class='card-footer'>
+        <#assign labelButton = '#i18n{forms.summary.validate}'>
+        <#if form.labelFinalButton?has_content>
+            <#assign labelButton = form.labelFinalButton>
+        </#if>
+        <@cInput type='hidden' name='token' value=token class='' />
+
+        <@cBtn type='submit' class='primary btn-sm' label='' params='name="action_doSaveResponseSummary"'>
+            <@cIcon name='check' /> ${labelButton}
+        </@cBtn>
+        <@cBtn href='jsp/site/Portal.jsp?page=forms&view=stepView&id_form=' + id_form?c class='secondary btn-sm' label='' params='title="#i18n{forms.summary.step.previous}"'>
+            <@cIcon name='x' /> #i18n{forms.summary.step.previous}
+        </@cBtn>
+    </@cBlock>
+</@cForm>
 </@cTpl>

@@ -1,31 +1,52 @@
 <@cTpl>
-<#assign fieldMyLuteceAttributeName = getFieldByCode( entry, "attribute_name" ) >
+<#assign fieldMyLuteceAttributeName = getFieldByCode(entry, "attribute_name")>
 
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<#assign idName = buildEntryName( entry, entry_iteration_number )>
-	<div class="mb-3 row ${entry.CSSClass!}">
-		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-12">
-			<#if user??>
-				<#if mylutece_attr_template_value??>
-					<span class="${entry.CSSClass!} form-control-plaintext" >${mylutece_attr_template_value}</span>
-				<#else>
-					<span class="${entry.CSSClass!} form-control-plaintext" >${user.getUserInfo(fieldMyLuteceAttributeName.value)}</span>
-				</#if>
-			</#if>
-			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="form-control-plaintext">${entry.helpMessage}</span>
-			</#if>
-			 <#if list_responses??>
-			  <#list list_responses as response>
-				<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-				  <#assign error = response.entry.error>
-				  <span class="invalid-feedback d-block"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></span>
-				</#if>
-			  </#list>
-			</#if>
-		</div>
-	</div>
-</#if>
 
+    <#assign idName = buildEntryName(entry, entry_iteration_number)>
+
+    <#assign attrValue = ''>
+    <#if user??>
+        <#if mylutece_attr_template_value??>
+            <#assign attrValue = mylutece_attr_template_value>
+        <#else>
+            <#assign attrValue = user.getUserInfo(fieldMyLuteceAttributeName.value)>
+        </#if>
+    </#if>
+
+    <#assign attrErrorMsg = ''>
+    <#if list_responses??>
+        <#list list_responses as response>
+            <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+                <#assign respError = response.entry.error>
+                <#if respError.mandatoryError>
+                    <#assign attrErrorMsg = '#i18n{forms.message.mandatory.entry}'>
+                <#else>
+                    <#assign attrErrorMsg = respError.errorMessage>
+                </#if>
+            </#if>
+        </#list>
+    </#if>
+
+    <#assign valueClass = (entry.CSSClass!'') + ' form-control-plaintext'>
+    <#assign rowClass = 'mb-3 ' + (entry.CSSClass!'')>
+
+    <@cRow class=rowClass>
+        <@cCol>
+            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName />
+        </@cCol>
+        <@cCol>
+            <#if user??>
+                <@cInline class=valueClass>${attrValue}</@cInline>
+            </#if>
+            <#if attrErrorMsg == '' && entry.helpMessage?? && entry.helpMessage != ''>
+                <@cInline class='form-control-plaintext'>${entry.helpMessage}</@cInline>
+            </#if>
+            <#if attrErrorMsg != ''>
+                <@cInline class='invalid-feedback d-block'>${attrErrorMsg}</@cInline>
+            </#if>
+        </@cCol>
+    </@cRow>
+
+</#if>
 </@cTpl>

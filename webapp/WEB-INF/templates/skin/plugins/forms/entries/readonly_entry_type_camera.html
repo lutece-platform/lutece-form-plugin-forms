@@ -1,30 +1,30 @@
 <@cTpl>
+<#assign imgId = 'img' + entry.idEntry?c>
+
 <#if !entry.onlyDisplayInBack>
-	<div class="mb-3 row">
-	    <label class="col-12 col-form-label">${entry.title!''}</label>
-	    <#if list_responses?has_content>
-	        <#assign first = true>
-	        <#list list_responses as response>
-	            <#if first>
-	                <#assign first = false>
-	                <div class="col-12">
-	            <#else>
-	                <div class="col-12">
-	            </#if>
-					<#if response.file?exists>
-						<img src="" id="img${entry.idEntry}" alt="" title="${entry.title!''}" class="img-fluid img-responsive img-thumbnail" >
-					</#if>
-	            	</div>
-	        </#list>
-	    </#if>
-	</div>
+    <@cRow class='mb-3'>
+        <@cCol>
+            <@cLabel label=entry.title!'' />
+        </@cCol>
+        <#if list_responses?has_content>
+            <#list list_responses as response>
+                <@cCol>
+                    <#if response.file??>
+                        <@cImg src='' id=imgId alt='' title=entry.title!'' class='img-thumbnail' />
+                    </#if>
+                </@cCol>
+            </#list>
+        </#if>
+    </@cRow>
 </#if>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-	var dataImg = sessionStorage.getItem('data${entry.idEntry}');
-	if (dataImg != null && dataImg != "") {
-		document.getElementById('img${entry.idEntry}').setAttribute('src', dataImg);
-	}
+    const dataImg = sessionStorage.getItem('data${entry.idEntry?c}');
+    const img = document.getElementById('${imgId}');
+    if (img && dataImg) {
+        img.setAttribute('src', dataImg);
+    }
 });
 </script>
 </@cTpl>

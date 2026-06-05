@@ -1,43 +1,46 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-	<div class="mb-3 row">
-	    <label class="col-12 col-form-label">
-	        ${entry.title!''}
-	    </label>
-	    <@table>
-	      <#assign x=getFieldValueByCode(entry, "array_row")?number>
-	      <#list 1..x+1 as i>
-	        <@tr>
-	        	<#assign y=getFieldValueByCode(entry, "array_column")?number>
-		        <#list 1..y+1 as j>
-		          <@td>
-		          <#assign title="">
-		          <#assign responseValue = "">
-		          <#list entry.fields as field>
-		            <#assign value=i+"_"+j>
-		            <#if field.value == value>
-		              <#assign title=field.title!>
-		              <#if list_responses??>
-		                <#list list_responses as response>
-		                  <#if response.field?has_content && response.field.value == value && response.toStringValueResponse?has_content>
-		                    <#assign responseValue = response.toStringValueResponse>
-		                  </#if>
-		                </#list>
-		              </#if>
-		            </#if>
-		          </#list>
-		            <#if j==1 && i!=1>
-		              <b>${title!}</b>
-		            <#elseif i == 1 && j != 1>
-		              <b>${title!}</b>
-		            <#else>
-		              ${responseValue!''}
-		            </#if>
-		          </@td>
-	          	</#list>
-	        </@tr>
-	      </#list>  
-		</@table>
-	</div>
+
+    <#assign rowsCount = getFieldValueByCode(entry, "array_row")?number>
+    <#assign colsCount = getFieldValueByCode(entry, "array_column")?number>
+
+    <@cRow class='mb-3'>
+        <@cCol>
+            <@cLabel label=entry.title!'' />
+        </@cCol>
+        <@cCol>
+            <@cTable>
+                <#list 1..rowsCount + 1 as i>
+                    <@cTr>
+                        <#list 1..colsCount + 1 as j>
+                            <#assign cellTitle = ''>
+                            <#assign responseValue = ''>
+                            <#list entry.fields as field>
+                                <#assign cellKey = i + '_' + j>
+                                <#if field.value == cellKey>
+                                    <#assign cellTitle = field.title!''>
+                                    <#if list_responses??>
+                                        <#list list_responses as response>
+                                            <#if response.field?has_content && response.field.value == cellKey && response.toStringValueResponse?has_content>
+                                                <#assign responseValue = response.toStringValueResponse>
+                                            </#if>
+                                        </#list>
+                                    </#if>
+                                </#if>
+                            </#list>
+                            <@cTd>
+                                <#if i == 1 || j == 1>
+                                    <@cInline type='strong'>${cellTitle}</@cInline>
+                                <#else>
+                                    ${responseValue}
+                                </#if>
+                            </@cTd>
+                        </#list>
+                    </@cTr>
+                </#list>
+            </@cTable>
+        </@cCol>
+    </@cRow>
+
 </#if>
 </@cTpl>

@@ -1,21 +1,14 @@
 <@cTpl>
-<#if getError( list_responses, entry )?? >
-  <#assign error = getError( list_responses, entry ) >
-</#if> 
+<#assign labelClass><#list entry.CSSClass?split(' ') as ecc>${ecc}</#list></#assign>
+<#if getError( list_responses, entry )?? ><#assign error = getError( list_responses, entry ) ></#if> 
+<#assign errorMsg><#if error?? && error.isDisplayableError><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></#if></#assign>
 <#assign name = buildEntryName( entry, entry_iteration_number )>
 <#assign fieldAgreement = getFieldByCode( entry, "agreement" ) >
-<#if list_responses?? && getResponseContainingTheFieldWithCode( list_responses, "agreement" )?? >
-  <#assign responseAgreement = getResponseContainingTheFieldWithCode( list_responses, "agreement" ) >
-</#if>
-
-<div class="mb-3 row">
-	<div class="col-12">
-		<input type="checkbox" name="${name}" id="${name}_${fieldAgreement.idField}" value="${fieldAgreement.idField}" <#if responseAgreement?? && responseAgreement.toStringValueResponse == "true">checked="checked" </#if> class="${entry.CSSClass!}<#if error?? > is-invalid</#if>" />
-		<#assign fieldLink = getFieldByCode( entry, "link" ) >
-		<a href="jsp/site/Portal.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}" onclick="javascript:openFormsTermsOfService(this.href); return false;" target="_blank">${fieldLink.value}</a>
-		<#if error?? && error.isDisplayableError>
-		  <span class="invalid-feedback"><#if error.mandatoryError>${error.errorMessage}</#if></span>
-		</#if>
-	</div>
-</div>
+<#if list_responses?? && getResponseContainingTheFieldWithCode( list_responses, "agreement" )?? ><#assign responseAgreement = getResponseContainingTheFieldWithCode( list_responses, "agreement" ) ></#if>
+<#list entry.fields as field> <#assign idName = buildEntryName( entry, entry_iteration_number )></#list>  
+<#assign fieldLink = getFieldByCode( entry, "link" ) >
+<#assign helpMsg><#if entry.helpMessage?exists&&entry.helpMessage!=''><@cFormHelp id=idName! label=entry.helpMessage! /></#if></#assign>
+<#if errorMsg!=''><#assign labelClass='is-invalid'></#if>
+<#assign tosLabel>${entry.title!} <@cLink label=fieldLink.value href='jsp/site/Portal.jsp?page=formsTermsOfService&id_entry=${entry.idEntry}' target='_blank'  params='onclick="javascript:openFormsTermsOfService(this.href); return false;" rel="noopener"'><@cInline class='visually-hidden visually-hidden-focusable'>[#i18n{portal.site.portal_footer.newWindow}]</@cInline></@cLink></#assign>
+<@cCheckbox name=name! label=tosLabel id='${name}_${fieldAgreement.idField}' value='${fieldAgreement.idField!}' class='form-check mt-xs' labelClass='custom-tos ${labelClass}' inline=entry.fieldInLine! checked=(responseAgreement?? && responseAgreement.toStringValueResponse="true") helpMsg=helpMsg errorMsg=errorMsg required=true html5Required=false />
 </@cTpl>

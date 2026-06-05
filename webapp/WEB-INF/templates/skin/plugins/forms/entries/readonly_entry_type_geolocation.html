@@ -1,106 +1,112 @@
 <@cTpl>
-<#assign idName = buildEntryName( entry, entry_iteration_number )>
-<#assign iterationNumber = entry_iteration_number?c >
+<#assign idName = buildEntryName(entry, entry_iteration_number)>
+<#assign iterationNumber = entry_iteration_number?c>
+
 <#if !entry.onlyDisplayInBack>
-	<div class="mb-3 row">
-		<label class="col-12 col-form-label" for="${idName}_address">${entry.title}<#if entry.mandatory> *</#if></label>
-		<#assign responseX = "" >
-		<#assign responseY = "" >
-		<#if getResponseContainingTheFieldWithCode( list_responses, "address" )?? >
-			<#assign responseAddress = getResponseContainingTheFieldWithCode( list_responses, "address" ).toStringValueResponse >
-		</#if>
-		<#if getResponseContainingTheFieldWithCode( list_responses, "geometry" )?? >
-			<#assign responseGeometry = getResponseContainingTheFieldWithCode( list_responses, "geometry" ).toStringValueResponse >
-		</#if>
-		<#if getResponseContainingTheFieldWithCode( list_responses, "X" )?? >
-			<#assign responseX = getResponseContainingTheFieldWithCode( list_responses, "X" ).toStringValueResponse >
-		</#if>
-		<#if getResponseContainingTheFieldWithCode( list_responses, "Y" )?? >
-			<#assign responseY = getResponseContainingTheFieldWithCode( list_responses, "Y" ).toStringValueResponse >
-		</#if>
-		<#if responseX == "" || responseX == "0" || responseY == "" || responseY == "0">
-			#i18n{forms.entryType.geolocalisation.message.noGeolocation}
-		<#else>
-			${(responseAddress)!}
-			<input type="hidden" id="${idName}_address" name="${idName}_address" value="${(responseAddress)!}">
-			<input type="hidden" id="${idName}_geometry" name="${idName}_geometry" value="${(responseGeometry)!}"/>
-			<input type="hidden" id="${idName}_x" name="${idName}_x" value="${(responseX)!}">
-			<input type="hidden" id="${idName}_y" name="${idName}_y" value="${(responseY)!}">
-			<#assign editModeValue = "ReadOnly">
-			<#assign viewNumberValue = "1">
-			<#assign viewNumberValue = getFieldValueByCode( entry, "viewNumber" )>
-			<#if entry.mapProvider?? &&  entry.mapProvider.key='openstreetmap'>
-				<div id="${idName}_gmap" data-map="${iterationNumber}" class="col-md-5"
-					 style="height:300px; border:1px solid black;margin:5px 0;"></div>
-				<input type="hidden" name="leafletMap"/>
-			</#if>
-		</#if>
-		<span class="form-control-plaintext">${entry.helpMessage}</span>
-	</div>
+
+    <#assign responseAddress = ''>
+    <#assign responseGeometry = ''>
+    <#assign responseX = ''>
+    <#assign responseY = ''>
+
+    <#if getResponseContainingTheFieldWithCode(list_responses, "address")??>
+        <#assign responseAddress = getResponseContainingTheFieldWithCode(list_responses, "address").toStringValueResponse>
+    </#if>
+    <#if getResponseContainingTheFieldWithCode(list_responses, "geometry")??>
+        <#assign responseGeometry = getResponseContainingTheFieldWithCode(list_responses, "geometry").toStringValueResponse>
+    </#if>
+    <#if getResponseContainingTheFieldWithCode(list_responses, "X")??>
+        <#assign responseX = getResponseContainingTheFieldWithCode(list_responses, "X").toStringValueResponse>
+    </#if>
+    <#if getResponseContainingTheFieldWithCode(list_responses, "Y")??>
+        <#assign responseY = getResponseContainingTheFieldWithCode(list_responses, "Y").toStringValueResponse>
+    </#if>
+
+    <#assign hasNoLocation = responseX == '' || responseX == '0' || responseY == '' || responseY == '0'>
+
+    <@cRow class='mb-3'>
+        <@cCol>
+            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName + '_address' />
+        </@cCol>
+        <@cCol>
+            <#if hasNoLocation>
+                #i18n{forms.entryType.geolocalisation.message.noGeolocation}
+            <#else>
+                ${responseAddress}
+                <@cInput type='hidden' id=idName + '_address' name=idName + '_address' value=responseAddress class='' />
+                <@cInput type='hidden' id=idName + '_geometry' name=idName + '_geometry' value=responseGeometry class='' />
+                <@cInput type='hidden' id=idName + '_x' name=idName + '_x' value=responseX class='' />
+                <@cInput type='hidden' id=idName + '_y' name=idName + '_y' value=responseY class='' />
+
+                <#if entry.mapProvider?? && entry.mapProvider.key == 'openstreetmap'>
+                    <@cBlock id=idName + '_gmap' class='col-md-5' params='data-map="${iterationNumber}" style="height:300px; border:1px solid black; margin:5px 0;"'></@cBlock>
+                    <@cInput type='hidden' name='leafletMap' class='' />
+                </#if>
+            </#if>
+            <@cInline class='form-control-plaintext'>${entry.helpMessage!''}</@cInline>
+        </@cCol>
+    </@cRow>
 </#if>
 
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+window.addEventListener('load', function() {
+    const iterationNumber = '${entry_iteration_number}';
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-	  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-		integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script type="text/javascript">
-	var mapData = [];
-	/* this script is running for each iteration and we want to instantiate the map only at the last one */
-	window.onload = function () {
-		let iterationNumber = '${entry_iteration_number}';
-		if (document.getElementById('number_iteration_geolocation') == null) {
-			let numberAddressInput = document.createElement('input');
-			numberAddressInput.type = 'hidden';
-			numberAddressInput.id = 'number_iteration_geolocation';
-			numberAddressInput.name = 'number_iteration_geolocation';
-			document.getElementsByTagName('div')[0].appendChild(numberAddressInput);
-			document.getElementById('number_iteration_geolocation').value = iterationNumber;
-		} else {
-			document.getElementById('number_iteration_geolocation').value = iterationNumber;
-		}
-		if (parseInt(document.getElementById('number_iteration_geolocation').value) === document.getElementsByName("leafletMap").length - 1) {
-			for (let i = 0; i < document.getElementsByName("leafletMap").length; i++) {
-				const prefix = "nIt" + i + "_attribute" + "${entry.idEntry}";
-				const idMap = prefix + '_gmap';
-				let lat = 48.853;
-				let lon = 2.35;
-				let hasMarker = false;
-				if (document.getElementById(prefix + '_x').value !== "" && document.getElementById(prefix + '_y').value !== "") {
-					lat = document.getElementById(prefix + '_y').value;
-					lon = document.getElementById(prefix + '_x').value;
-					hasMarker = true;
-				}
-				const iterationData = {
-					idMap: idMap,
-					center: [lat, lon],
-					zoom: 10,
-					hasMarker: hasMarker
-				};
-				console.log(iterationData);
-				mapData.push(iterationData);
-			}
-			const L_tiles = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-			const L_options = {
-				attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-				minZoom: 0,
-				maxZoom: 18,
-				ext: 'png'
-			};
-			const initMap = (mapElement) => {
-				const id = parseInt(mapElement.dataset.map);
-				const data = mapData[id];
-				const map = L.map(mapElement).setView(data.center, data.zoom);
-				L.tileLayer(L_tiles, L_options).addTo(map);
-				if (data.hasMarker) {
-					L.marker(data.center).addTo(map);
+    let numberInput = document.getElementById('number_iteration_geolocation');
+    if (!numberInput) {
+        numberInput = document.createElement('input');
+        numberInput.type = 'hidden';
+        numberInput.id = 'number_iteration_geolocation';
+        numberInput.name = 'number_iteration_geolocation';
+        const firstDiv = document.getElementsByTagName('div')[0];
+        if (firstDiv) firstDiv.appendChild(numberInput);
+    }
+    numberInput.value = iterationNumber;
 
-				}
-			};
-			const allMapElements = document.querySelectorAll("[data-map]");
-			allMapElements.forEach(initMap);
-		}
-	};
+    const leafletMarkers = document.getElementsByName('leafletMap');
+    if (parseInt(numberInput.value, 10) !== leafletMarkers.length - 1) return;
+
+    const mapData = [];
+    for (let i = 0; i < leafletMarkers.length; i++) {
+        const prefix = 'nIt' + i + '_attribute${entry.idEntry?c}';
+        const xEl = document.getElementById(prefix + '_x');
+        const yEl = document.getElementById(prefix + '_y');
+        let lat = 48.853;
+        let lon = 2.35;
+        let hasMarker = false;
+        if (xEl && yEl && xEl.value !== '' && yEl.value !== '') {
+            lat = yEl.value;
+            lon = xEl.value;
+            hasMarker = true;
+        }
+        mapData.push({
+            idMap: prefix + '_gmap',
+            center: [lat, lon],
+            zoom: 10,
+            hasMarker: hasMarker
+        });
+    }
+
+    const tilesUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    const tilesOptions = {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+        minZoom: 0,
+        maxZoom: 18,
+        ext: 'png'
+    };
+
+    document.querySelectorAll('[data-map]').forEach(function(mapElement) {
+        const id = parseInt(mapElement.dataset.map, 10);
+        const data = mapData[id];
+        if (!data) return;
+        const map = L.map(mapElement).setView(data.center, data.zoom);
+        L.tileLayer(tilesUrl, tilesOptions).addTo(map);
+        if (data.hasMarker) {
+            L.marker(data.center).addTo(map);
+        }
+    });
+});
 </script>
-
 </@cTpl>

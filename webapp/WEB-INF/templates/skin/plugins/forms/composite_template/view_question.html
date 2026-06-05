@@ -1,7 +1,12 @@
 <@cTpl>
-<div class="row <#if question??>display_field_${question.id}_${question.iterationNumber}</#if>" displayControl="${question.id}_${question.iterationNumber}">${questionContent}</div>
+<#assign classDisp><#if question??>display_field_${question.id}_${question.iterationNumber}</#if></#assign>
+<#assign displayFieldId>df_${question.id}_${question.iterationNumber}</#assign>
+<#assign param>displayControl="${question.id}_${question.iterationNumber}" id="${displayFieldId}"</#assign>
+<#assign entryCSSClass><#if question.entry.CSSClass??><#if question.entry.CSSClass?trim?starts_with('col-')>${question.entry.CSSClass}<#else>col-12</#if></#if> ${classDisp}</#assign>
+<#if questionContent?? && questionContent != ''>
+<@cCol class=entryCSSClass params=param>${questionContent!}</@cCol>
 <#if list_validator??>
-<input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='' hidden />
+<@cInput name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='' type='hidden' /> 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 	<#assign validNames = [] />
@@ -45,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (displayField) {
 				displayField.style.display = 'none';
 				displayField.querySelectorAll("[required]").forEach(function(el) {
-					el.setAttribute("requireddisabled", "");
+					el.setAttribute("required", "");
 					el.removeAttribute("required");
 				});
 			}
@@ -70,9 +75,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		</#list>
 	})();
 
+	var targetFieldId = '${displayFieldId}';
 	<#list list_control as control>
 		var displayControl = ${control.listIdQuestion[0]} + "_" + ${question.iterationNumber},
 		input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
+		/* Set aria-controls and initial aria-expanded on controlling inputs */
+		input${control.id}_${question.iterationNumber}.forEach(function(el) {
+			var ac = el.getAttribute('aria-controls') || '';
+			if (ac.indexOf(targetFieldId) === -1) el.setAttribute('aria-controls', (ac ? ac + ' ' : '') + targetFieldId);
+			el.setAttribute('aria-expanded', displayField ? displayField.style.display !== 'none' : 'false');
+		});
 		['change', 'keyup', 'paste', 'mouseup', 'input'].forEach(function(eventType) {
 			input${control.id}_${question.iterationNumber}.forEach(function(inputEl) {
 				inputEl.addEventListener(eventType, function(){
@@ -127,6 +139,10 @@ document.addEventListener('DOMContentLoaded', function() {
 						if( hasCollapse && toCollapse ){ toCollapse.style.display = 'none'; } // Hide parent group if is in a collapse step-group
 						document.getElementById('${question.id}_${question.iterationNumber}').value = '';
 					}
+					/* Update aria-expanded on all controlling inputs */
+					document.querySelectorAll('[aria-controls~="' + targetFieldId + '"]').forEach(function(ctrl) {
+						ctrl.setAttribute('aria-expanded', String(bIsQuestionDisplayed));
+					});
 					var currentControl = "${question.id}_${question.iterationNumber}";
 					var currentInput = getInputElement(currentControl);
 					if ( currentInput[0] != undefined && currentInput[0].type != 'file' ){
@@ -172,6 +188,7 @@ function toggleRequiredAttributesByVisibility() {
 }
 </script>
 <#else>
-<input name='displayed_questions' id='${question.id}_${question.iterationNumber}' value='${question.id}_${question.iterationNumber}' hidden />
+<@cInput name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='${question.id}_${question.iterationNumber}' type='hidden' />
+</#if>
 </#if>
 </@cTpl>

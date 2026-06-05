@@ -1,42 +1,39 @@
 <@cTpl>
-<div class="mb-3 row">
-	<label class="col-12 col-form-label">${entry.title!''}</label>
-	<div class="col-12">
-        <p>
-        <#assign coordinate = "" >
-        <#assign datalayer = "" >
-        <#if getResponseContainingTheFieldWithCode( list_responses, "coordinates_geojson" )?? >
-        <#assign coordinate = getResponseContainingTheFieldWithCode( list_responses, "coordinates_geojson" ).toStringValueResponse >
-        </#if>
-        <#if getResponseContainingTheFieldWithCode( list_responses, "DataLayer" )?? >
-        <#assign datalayer = getResponseContainingTheFieldWithCode( list_responses, "DataLayer" ).toStringValueResponse >
-        </#if>
-        </p>
+<#assign coordinate = ''>
+<#assign datalayer = ''>
+<#if getResponseContainingTheFieldWithCode(list_responses, "coordinates_geojson")??>
+    <#assign coordinate = getResponseContainingTheFieldWithCode(list_responses, "coordinates_geojson").toStringValueResponse>
+</#if>
+<#if getResponseContainingTheFieldWithCode(list_responses, "DataLayer")??>
+    <#assign datalayer = getResponseContainingTheFieldWithCode(list_responses, "DataLayer").toStringValueResponse>
+</#if>
+
+<@cRow class='mb-3'>
+    <@cCol>
+        <@cLabel label=entry.title!'' />
+    </@cCol>
+    <@cCol>
         <#include "/skin/plugins/carto/manage_map.html" />
-    </div>
-</div>	
+    </@cCol>
+</@cRow>
+
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-	// Retrieve the map object.
-	var map = mapsPlaceholder.pop();
-	
-	var geojson = ${coordinate};
-	
-	if ( geojson["geometry"]["type"] == "Point" ) {
-		var coordinates = geojson["geometry"]["coordinates"];
-		var marker = L.marker([coordinates[1],coordinates[0]]).addTo(map);
-	}
-	else if ( geojson["geometry"]["type"] == "Polygon" ) {
-		var coordinates = geojson["geometry"]["coordinates"][0];
-		var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
-		var polygon = L.polygon(inverseCoord ).addTo(map);
-	}
-	else if ( geojson["geometry"]["type"] == "Polyline" ) {
-		var coordinates = geojson["geometry"]["coordinates"];
-		var inverseCoord = L.GeoJSON.coordsToLatLngs(coordinates);
-		var polyline = L.polyline(inverseCoord ).addTo(map);
-	}
-	
+document.addEventListener('DOMContentLoaded', function() {
+    const map = mapsPlaceholder.pop();
+    if (!map) return;
+    const geojson = ${coordinate};
+    const geomType = geojson && geojson.geometry && geojson.geometry.type;
+
+    if (geomType === 'Point') {
+        const c = geojson.geometry.coordinates;
+        L.marker([c[1], c[0]]).addTo(map);
+    } else if (geomType === 'Polygon') {
+        const c = L.GeoJSON.coordsToLatLngs(geojson.geometry.coordinates[0]);
+        L.polygon(c).addTo(map);
+    } else if (geomType === 'Polyline') {
+        const c = L.GeoJSON.coordsToLatLngs(geojson.geometry.coordinates);
+        L.polyline(c).addTo(map);
+    }
 });
-</script>          
+</script>
 </@cTpl>

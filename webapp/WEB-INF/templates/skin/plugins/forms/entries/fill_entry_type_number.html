@@ -1,80 +1,77 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<#if getError( list_responses, entry )?? >
-		<#assign error = getError( list_responses, entry ) >
-	</#if>
-	<#assign suffix = '' >
-	<#if entry.fields?? && entry.fields?has_content>
-		<#assign suffix = getFieldValueByCode( entry, 'suffix') >
-	</#if>
-				
-	<div class="mb-3 row">
-		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-12">
-			<div class="input-group">
-				<#assign inputClass="form-control input-sm" />
-				<#assign params>
-					<#if entry.mandatory>
-						required 
-					</#if>
-					<#assign field_min=getFieldByCode( entry, "min")>
-					<#if field_min.value??>
-						min="${field_min.value?number}"
-					</#if>
-					<#assign field_max=getFieldByCode( entry, "max")>
-					<#if field_max.value??>
-						max="${field_max.value?number}"
-					</#if>
-					<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-					<#if placeholder!=''>
-						placeholder='${placeholder}'
-					</#if>
-					<#if getFieldByCode( entry, "autocomplete")??>
-					<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
-					</#if>
-					<#if field_autocomplete?? && field_autocomplete.value??>
-						autocomplete="${field_autocomplete.value}"
-					</#if>
-				</#assign>
-				<#if list_responses?has_content>
-					<#list list_responses as response>
-					<#if response.entry.idEntry == entry.idEntry>
-						<#if response.responseValue??>
-							<#assign inputValue = response.responseValue />
-						</#if>
-						<#if response.entry.error??>
-							<#assign inputValue += 'is-invalid' />
-						</#if>
-						</#if>
-					</#list>
-				<#else>
-					<#assign field=getFieldByCode( entry, "text_config")>
-					<#if field.value??>
-						<#assign inputValue = field.value />
-					<#else>
-						 <#assign inputValue = '' />
-					</#if>
-				</#if>
-				<input type="number" class="${inputClass} ${entry.CSSClass!} <#if error??>is-invalid</#if>" name="${idName}" id="${idName}" value="${inputValue}" ${params} />
-				<#if suffix!=''>
-					<span class="input-group-text">${suffix}</span>
-				</#if>
-				<#if list_responses??>
-					<#list list_responses as response>
-						<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-							<#assign error = response.entry.error>
-							<span class="invalid-feedback"><#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if></span>
-						</#if>
-					</#list>
-				</#if>
-			</div>
-			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="form-control-plaintext">${entry.helpMessage}</span>
-			</#if>
 
-		</div>
-	</div>
+    <#assign idName = buildEntryName(entry, entry_iteration_number)>
+
+    <#assign suffixValue = ''>
+    <#if entry.fields?? && entry.fields?has_content>
+        <#assign suffixValue = getFieldValueByCode(entry, 'suffix')!''>
+    </#if>
+
+    <#assign minValue = 0>
+    <#assign hasMin = false>
+    <#assign minField = getFieldByCode(entry, "min")>
+    <#if minField.value??>
+        <#assign minValue = minField.value?number>
+        <#assign hasMin = true>
+    </#if>
+
+    <#assign maxValue = 0>
+    <#assign hasMax = false>
+    <#assign maxField = getFieldByCode(entry, "max")>
+    <#if maxField.value??>
+        <#assign maxValue = maxField.value?number>
+        <#assign hasMax = true>
+    </#if>
+
+    <#assign placeholderValue = getFieldValueByCode(entry, "placeholder")!''>
+
+    <#assign autocompleteValue = ''>
+    <#if getFieldByCode(entry, "autocomplete")??>
+        <#assign autocompleteField = getFieldByCode(entry, "autocomplete")>
+        <#if autocompleteField.value??>
+            <#assign autocompleteValue = autocompleteField.value>
+        </#if>
+    </#if>
+
+    <#assign inputValue = ''>
+    <#assign inputErrorMsg = ''>
+    <#if list_responses?has_content>
+        <#list list_responses as response>
+            <#if response.entry.idEntry == entry.idEntry>
+                <#if response.responseValue??>
+                    <#assign inputValue = response.responseValue>
+                </#if>
+                <#if response.entry.error?? && response.entry.error.isDisplayableError>
+                    <#assign respError = response.entry.error>
+                    <#if respError.mandatoryError>
+                        <#assign inputErrorMsg = '#i18n{forms.message.mandatory.entry}'>
+                    <#else>
+                        <#assign inputErrorMsg = respError.errorMessage>
+                    </#if>
+                </#if>
+            </#if>
+        </#list>
+    <#else>
+        <#assign textConfigField = getFieldByCode(entry, "text_config")>
+        <#if textConfigField.value??>
+            <#assign inputValue = textConfigField.value>
+        </#if>
+    </#if>
+
+    <#assign inputClass = 'form-control input-sm ' + (entry.CSSClass!'')>
+    <#assign inputHelp = (inputErrorMsg != '')?then('', entry.helpMessage!'')>
+
+    <@cField label=entry.title required=entry.mandatory>
+        <#if suffixValue != ''>
+            <@cInputGroup>
+                <@cInput type='number' name=idName id=idName value=inputValue class=inputClass autocomplete=autocompleteValue placeholder=placeholderValue required=entry.mandatory min=(hasMin?then(minValue, 0)) max=(hasMax?then(maxValue, 0)) errorMsg=inputErrorMsg helpMsg=inputHelp />
+                <@cInputGroupAddonText>${suffixValue}</@cInputGroupAddonText>
+            </@cInputGroup>
+        <#else>
+            <@cInput type='number' name=idName id=idName value=inputValue class=inputClass autocomplete=autocompleteValue placeholder=placeholderValue required=entry.mandatory min=(hasMin?then(minValue, 0)) max=(hasMax?then(maxValue, 0)) errorMsg=inputErrorMsg helpMsg=inputHelp />
+        </#if>
+    </@cField>
 
 </#if>
 </@cTpl>

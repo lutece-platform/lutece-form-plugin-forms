@@ -1,17 +1,16 @@
 <@cTpl>
-<section class="p-2">
-<h2 class="my-3">${portlet_name!}</h2>
-<#if forms_list??>
-	<#list forms_list as form>
-		<div class="card mb-3">
-			<a href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true">
-				<div class="card-body">
-					<h5 class="card-title">${form.title!}</h5>
-					<p class="card-text">${form.description!}</p>
-				</div>
-			</a>
-		</div>
-	</#list>
-</#if>
-</section>
+<@cSection class='p-2'>
+    <@cTitle level=2 class='my-3'>${portlet_name!}</@cTitle>
+    <#if forms_list??>
+        <#list forms_list as form>
+            <#assign formHref = 'jsp/site/Portal.jsp?page=forms&view=stepView&id_form=' + form.id?c + '&init=true'>
+            <@cLink href=formHref class='card mb-3' label=''>
+                <@cBlock class='card-body'>
+                    <@cTitle level=5 class='card-title'>${form.title!}</@cTitle>
+                    <@cText class='card-text'>${form.description!}</@cText>
+                </@cBlock>
+            </@cLink>
+        </#list>
+    </#if>
+</@cSection>
 </@cTpl>

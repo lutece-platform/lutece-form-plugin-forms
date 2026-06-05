@@ -1,61 +1,50 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<div class="mb-3 row">
-		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-12">
-			<#assign inputClass = '${entry.CSSClass!}' />
-			<#if list_responses??>
-				<#list list_responses as response>
-					<#if response.entry.idEntry == entry.idEntry && response.entry.error??>
-						<#assign inputClass = 'is-invalid' />
-						<#break>
-					</#if>
-				</#list>
-			</#if>
-			<select class="form-control input-sm ${inputClass}" name="${idName}" id="${idName}"<#if entry.mandatory> required</#if>>
-				<option value="">#i18n{form.xpage.form.noValue}</option>
-				<#list entry.fields as field>
-					<#if field.code == 'answer_choice'>
-						<option  value="${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if>
-							<#if list_responses?has_content>
-								<#list list_responses as response>
-									<#if response.entry.idEntry == entry.idEntry && response.field??>
-										<#if response.field.idField == field.idField>
-											selected ="selected"
-											<#break>
-										</#if>
-									</#if>
-								</#list>
-							<#else>
-								<#if field.defaultValue>
-									selected ="selected"
-								</#if>
-							</#if>
-							>
-								${field.title}
-						</option>
-					</#if>
-				</#list>
-			</select>
-			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="form-control-plaintext">${entry.helpMessage}</span>
-			</#if>
-			<#if list_responses??>
-				<#list list_responses as response>
-					<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-						<span class="invalid-feedback">
-							<#assign error = response.entry.error>
-							<#if error.mandatoryError>
-								#i18n{forms.message.mandatory.entry}
-							<#else>
-								${error.errorMessage}
-							</#if>
-						</span>	
-					</#if>
-				</#list>
-			</#if>
-		</div>
-	</div>
+
+    <#assign idName = buildEntryName(entry, entry_iteration_number)>
+
+    <#assign selectErrorMsg = ''>
+    <#if list_responses??>
+        <#list list_responses as response>
+            <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+                <#assign respError = response.entry.error>
+                <#if respError.mandatoryError>
+                    <#assign selectErrorMsg = '#i18n{forms.message.mandatory.entry}'>
+                <#else>
+                    <#assign selectErrorMsg = respError.errorMessage>
+                </#if>
+            </#if>
+        </#list>
+    </#if>
+
+    <#assign selectClass = 'form-select ' + (entry.CSSClass!'') + (selectErrorMsg != '')?then(' is-invalid', '')>
+    <#assign selectHelp = (selectErrorMsg != '')?then('', entry.helpMessage!'')>
+
+    <@cField label=entry.title required=entry.mandatory>
+        <@cSelect name=idName id=idName class=selectClass required=entry.mandatory errorMsg=selectErrorMsg helpMsg=selectHelp>
+            <@cOption value='' label='#i18n{form.xpage.form.noValue}' />
+            <#list entry.fields as field>
+                <#if field.code == 'answer_choice'>
+                    <#assign isSelected = false>
+                    <#if list_responses?has_content>
+                        <#list list_responses as response>
+                            <#if response.entry.idEntry == entry.idEntry && response.field?? && response.field.idField == field.idField>
+                                <#assign isSelected = true>
+                                <#break>
+                            </#if>
+                        </#list>
+                    <#elseif field.defaultValue>
+                        <#assign isSelected = true>
+                    </#if>
+                    <#assign optionParams = ''>
+                    <#if field.comment?? && field.comment != ''>
+                        <#assign optionParams = 'title="${field.comment}"'>
+                    </#if>
+                    <@cOption value=field.idField?c label=field.title selected=isSelected params=optionParams />
+                </#if>
+            </#list>
+        </@cSelect>
+    </@cField>
+
 </#if>
 </@cTpl>

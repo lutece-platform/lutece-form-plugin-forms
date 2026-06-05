@@ -1,15 +1,37 @@
 <@cTpl>
-<h2>#i18n{form.xpage.listForms.pagetitle}</h2> 
-<#list form_list as form>
-	<#if form.active>
- <ul>
-	<li>
-		<#if form.logo??>
-			<img class="img-fluid thumbnail" src="data:${form.logo.mimeType};base64,${form.logoBase64}" title="${form.title}" alt=""/>
-		</#if>
-		<a href="jsp/site/Portal.jsp?page=forms&view=stepView&id_form=${form.id}&init=true" >${form.title}</a> <#if form.countResponses>(${form.currentNumberResponse} #i18n{form.xpage.response.label})</#if>
-	</li>
-</ul>
-	</#if>
-</#list>
+<@cContainer>
+    <@cRow>
+        <@cCol>
+            <@cBreadCrumb home='#i18n{portal.util.labelHome}'>
+                <@chItem class='breadcrumb-item active' params='aria-current="page"'>#i18n{form.xpage.listForms.labelFormList}</@chItem>
+            </@cBreadCrumb>
+         </@cCol>
+    </@cRow>   
+    <@cRow>
+        <@cCol>
+            <@cTitle level=2>#i18n{form.xpage.listForms.pagetitle}</@cTitle>
+            <#if form_list?size == 0>
+                <@cAlert type='info' title='#i18n{form.xpage.listForms.noForm}' />
+            <#else>
+                <@chList class='list-group list-group-flush'>
+                    <#list form_list as form>
+                        <#if form.active>
+                            <#assign formHref = 'jsp/site/Portal.jsp?page=forms&view=stepView&id_form=' + form.id?c + '&init=true'>
+                            <@chItem class='list-group-item d-flex align-items-center mb-3 justify-content-between'>
+                                <#if form.logo??>
+                                    <@cImg class='thumbnail' src='data:${form.logo.mimeType};base64,${form.logoBase64}' title=form.title alt='' />
+                                </#if>
+                                <@cLink href=formHref label=form.title />
+                                <#if form.countResponses>
+                                    <@cInline>(${form.currentNumberResponse} #i18n{form.xpage.response.label})</@cInline>
+                                </#if>
+                            </@chItem>
+                        </#if>
+                    </#list>
+                </@chList>
+            </#if>
+        </@cCol>
+    </@cRow>
+</@cContainer>
+<style>.banner.credits{display: none}</style>
 </@cTpl>

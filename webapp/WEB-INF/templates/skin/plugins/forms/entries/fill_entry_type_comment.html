@@ -1,9 +1,9 @@
- 
- <@cTpl>
- <div class="form-control-plaintext ${entry.CSSClass!}"> 
-	${entry.comment}
-	<#if url_download_fo??>
-		<a href="${url_download_fo}">${filename}</a>
-	</#if>
- </div>	
+<@cTpl>
+<#assign commentClass = 'form-control-plaintext ' + (entry.CSSClass!'')>
+<@cBlock class=commentClass>
+    ${entry.comment}
+    <#if url_download_fo??>
+        <@cLink href=url_download_fo label=filename!'' />
+    </#if>
+</@cBlock>
 </@cTpl>

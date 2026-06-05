@@ -1,131 +1,140 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<#assign hide="">
-	<#list entry.fields as field>
-		<#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
-			<#assign idName = 'div'>
-			<#if entry_iteration_number?has_content>
-				<#assign idName = 'div_nIt' + entry_iteration_number + '_'>
-			</#if>
-			<#assign idConditional = idName + field.idField>
-			<#assign hide=hide+"hideId(${idConditional}.id);">
-		</#if>
-	</#list>
-	${entry.CSSClass!}
-	
-		<div class="mb-3 row">
-			<label class="col-12 col-form-label" for="form${entry.idEntry}" id="form${entry.idEntry}">${entry.title}<#if entry.mandatory> *</#if></label>
-			<div class="col-12">
-			<#assign inLine = entry.fieldInLine>
-			<#list entry.fields as field>
-				<#if field.code == 'answer_choice'>
-					<#assign idName = buildEntryName( entry, entry_iteration_number )>
-					<#if entry.fieldInLine>
-						<div class="form-check form-check-inline">
-					<#else>
-						<div class="form-check">
-					</#if>
-						<label for="${idName}_${field.idField}" <#if field.comment?? && field.comment != ''>title="${field.comment}"</#if> >
-							<#if field.fileImage.url??>
-								<@img url=field.fileImage.url title=field.title alt=field.title params='width="100" height="100"' />
-								<div class="radiobutton-above">
-							</#if> 
-							<input type="radio" id="${idName}_${field.idField}" name="${idName}" value="${field.idField}"<#if entry.mandatory> required</#if>
-							<#if list_responses?? && list_responses?has_content>
-								<#list list_responses as response>
-									<#if response.entry.idEntry == entry.idEntry && response.field??>
-										<#if response.field.idField == field.idField>checked="checked"<#break></#if>
-									</#if>
-								</#list>
-							<#else>
-								<#if field.defaultValue>checked="checked"</#if>
-							</#if> onclick="${hide} <#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0>
-								<#assign idName = 'div'>
-								<#if entry_iteration_number?has_content>
-									<#assign idName = 'div_nIt' + entry_iteration_number + '_'>
-								</#if>
-								<#assign idConditional = idName + field.idField>
-								displayId(${idConditional}.id);</#if>"
-							/>
-					 <#if !field.noDisplayTitle>
-					 	${field.title}
-					 </#if>
-					 <#if field.fileImage.url??>
-						</div>
-					</#if>
-						</label>
-					</div>
-						
-						<#if field.conditionalQuestions?exists&&field.conditionalQuestions?size!=0 && !inLine>
-							<#if list_entry_children??>
-								<#list list_entry_children as children>
-									<#if children.idField == field.idField && children.conditionalEntries??>${children.conditionalEntries}</#if>
-								</#list>
-							</#if>
-						</#if>
-					</#if>
-				</#list>
-				<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="form-control-plaintext">${entry.helpMessage}</span>
-				</#if>
-				<#if list_responses??>
-					<#list list_responses as response>
-						<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-							<span class="invalid-feedback d-block">
-							<#assign error = response.entry.error>
-								<#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if>
-							</span>
-						</#if>
-					</#list>
-				</#if>
-			</div>
-		</div>
-	 
-	
-	<#if inLine>
-		<#if list_entry_children??>
-			<#list list_entry_children as children>
-				<#if children.conditionalEntries??>${children.conditionalEntries}</#if>
-			</#list>
-		</#if>
-	</#if>
-	
-	<#if list_responses??>
-		<script type="text/javascript">
-			<#list list_responses as response>
-				var idName = '';
-				<#if entry_iteration_number?has_content >
-					idName = '_nIt' + ${entry_iteration_number} + '_';
-				</#if>
-				<#if response.entry.idEntry == entry.idEntry && response.field??>
-					var baliseId = "div" + idName + ${response.field.idField};
-					if( document.getElementById(baliseId) != null)
-					{
-						document.getElementById(baliseId).style.visibility='visible';
-						document.getElementById(baliseId).style.display='block';
-					}
-				</#if>
-			</#list>
-		</script>
-	<#else>
-		<#list entry.fields as field>
-			<#if field.defaultValue && field.conditionalQuestions?exists && field.conditionalQuestions?size != 0>
-				<script type="text/javascript">
-					var idName = '';
-					<#if entry_iteration_number?has_content >
-						idName = '_nIt' + ${entry_iteration_number} + '_';
-					</#if>
-					var baliseId = "div" + idName + ${field.idField};
-					
-					if(document.getElementById && document.getElementById(baliseId) != null)
-					{
-						document.getElementById(baliseId).style.visibility='visible';
-						document.getElementById(baliseId).style.display='block';
-					}
-				</script>
-			</#if>
-		</#list>
-	</#if>
-</#if>
 
+    <#assign idName = buildEntryName(entry, entry_iteration_number)>
+    <#assign inLine = entry.fieldInLine>
+
+    <#assign iterPrefix = ''>
+    <#if entry_iteration_number?has_content>
+        <#assign iterPrefix = '_nIt' + entry_iteration_number + '_'>
+    </#if>
+
+    <#assign hideHandler = ''>
+    <#list entry.fields as field>
+        <#if field.conditionalQuestions?? && field.conditionalQuestions?size != 0>
+            <#assign hideHandler = hideHandler + "hideId('div${iterPrefix}${field.idField?c}');">
+        </#if>
+    </#list>
+
+    <#assign groupErrorMsg = ''>
+    <#if list_responses??>
+        <#list list_responses as response>
+            <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+                <#assign respError = response.entry.error>
+                <#if respError.mandatoryError>
+                    <#assign groupErrorMsg = '#i18n{forms.message.mandatory.entry}'>
+                <#else>
+                    <#assign groupErrorMsg = respError.errorMessage>
+                </#if>
+            </#if>
+        </#list>
+    </#if>
+    <#assign hasError = groupErrorMsg != ''>
+
+    <@cRow class='mb-3'>
+        <@cCol>
+            <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for='form' + entry.idEntry?c />
+        </@cCol>
+        <@cCol>
+            <#list entry.fields as field>
+                <#if field.code == 'answer_choice'>
+
+                    <#assign rbId = idName + '_' + field.idField?c>
+
+                    <#assign rbChecked = false>
+                    <#if list_responses?? && list_responses?has_content>
+                        <#list list_responses as response>
+                            <#if response.entry.idEntry == entry.idEntry && response.field?? && response.field.idField == field.idField>
+                                <#assign rbChecked = true>
+                                <#break>
+                            </#if>
+                        </#list>
+                    <#elseif field.defaultValue>
+                        <#assign rbChecked = true>
+                    </#if>
+
+                    <#assign hasConditional = field.conditionalQuestions?? && field.conditionalQuestions?size != 0>
+                    <#assign onclickHandler = hideHandler>
+                    <#if hasConditional>
+                        <#assign onclickHandler = onclickHandler + "displayId('div${iterPrefix}${field.idField?c}');">
+                    </#if>
+
+                    <#assign rbParams = ''>
+                    <#if field.comment?? && field.comment != ''>
+                        <#assign rbParams = 'title="${field.comment}"'>
+                    </#if>
+                    <#if onclickHandler != ''>
+                        <#if rbParams != ''>
+                            <#assign rbParams = rbParams + ' '>
+                        </#if>
+                        <#assign rbParams = rbParams + 'onclick="${onclickHandler}"'>
+                    </#if>
+
+                    <#assign rbLabel><#if !field.noDisplayTitle>${field.title}<#else>&nbsp;</#if></#assign>
+
+                    <#if field.fileImage.url??>
+                        <@cImg src=field.fileImage.url title=field.title alt=field.title params='width="100" height="100"' />
+                    </#if>
+
+                    <@cRadio name=idName id=rbId value=field.idField?c label=rbLabel checked=rbChecked required=entry.mandatory inline=inLine params=rbParams />
+
+                    <#if hasConditional && !inLine>
+                        <#if list_entry_children??>
+                            <#list list_entry_children as children>
+                                <#if children.idField == field.idField && children.conditionalEntries??>${children.conditionalEntries}</#if>
+                            </#list>
+                        </#if>
+                    </#if>
+                </#if>
+            </#list>
+
+            <#if entry.helpMessage?? && entry.helpMessage != ''>
+                <@cInline class='form-control-plaintext'>${entry.helpMessage}</@cInline>
+            </#if>
+
+            <#if hasError>
+                <@cInline class='invalid-feedback d-block'>${groupErrorMsg}</@cInline>
+            </#if>
+        </@cCol>
+    </@cRow>
+
+    <#if inLine && list_entry_children??>
+        <#list list_entry_children as children>
+            <#if children.conditionalEntries??>${children.conditionalEntries}</#if>
+        </#list>
+    </#if>
+
+    <#if list_responses??>
+        <script>
+            (function() {
+                <#list list_responses as response>
+                    <#if response.entry.idEntry == entry.idEntry && response.field??>
+                        (function() {
+                            const el = document.getElementById('div${iterPrefix}${response.field.idField?c}');
+                            if (el) {
+                                el.style.visibility = 'visible';
+                                el.style.display = 'block';
+                            }
+                        })();
+                    </#if>
+                </#list>
+            })();
+        </script>
+    <#else>
+        <#list entry.fields as field>
+            <#if field.defaultValue && field.conditionalQuestions?? && field.conditionalQuestions?size != 0>
+                <script>
+                    (function() {
+                        const el = document.getElementById('div${iterPrefix}${field.idField?c}');
+                        if (el) {
+                            el.style.visibility = 'visible';
+                            el.style.display = 'block';
+                        }
+                    })();
+                </script>
+            </#if>
+        </#list>
+    </#if>
+
+</#if>
 </@cTpl>

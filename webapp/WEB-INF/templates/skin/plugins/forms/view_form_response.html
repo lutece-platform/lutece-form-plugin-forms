@@ -1,23 +1,48 @@
 <@cTpl>
-<@messages errors=errors warnings=warnings infos=infos />
-<div class="card">
-    <h3 class="card-header">${formResponse.id}</h3>
-</div>
-<#list formResponse.steps as formQuestionResponseSteps>
-	<#list formQuestionResponseSteps.questions as questionResponse>
-		${questionResponse.question.title} : 
-    	<#list questionResponse.entryResponse as response>
-    		${response.responseValue!}
-    	</#list>
-    	</br>
+
+<#if errors?? && errors?size gt 0>
+    <#list errors as error>
+        <@cAlert type='danger' title=error.message! />
     </#list>
-</#list>
+</#if>
+<#if warnings?? && warnings?size gt 0>
+    <#list warnings as warning>
+        <@cAlert type='warning' title=warning.message! />
+    </#list>
+</#if>
+<#if infos?? && infos?size gt 0>
+    <#list infos as info>
+        <@cAlert type='info' title=info.message! />
+    </#list>
+</#if>
+
+<@cBlock class='card'>
+    <@cBlock class='card-header'>
+        <@cTitle level=3 class='card-title mb-0'>${formResponse.id}</@cTitle>
+    </@cBlock>
+</@cBlock>
+
+<@chList>
+    <#list formResponse.steps as formQuestionResponseSteps>
+        <#list formQuestionResponseSteps.questions as questionResponse>
+            <@chItem>
+                ${questionResponse.question.title} :
+                <#list questionResponse.entryResponse as response>
+                    ${response.responseValue!}
+                </#list>
+            </@chItem>
+        </#list>
+    </#list>
+</@chList>
+
 <#if workflow_action_list?has_content>
-    <h2>#i18n{forms.multiviewForms.view_record_history.actions}</h2>
+    <@cTitle level=2>#i18n{forms.multiviewForms.view_record_history.actions}</@cTitle>
     <#list workflow_action_list as action>
-        <@link class='btn btn-block btn-default' href='jsp/site/Portal.jsp?page=formsResponse&action=doProcessAction&id_action=${action.id}&id_response=${formResponse.id}&token=${token}' >
-            <@img class='img-circle img-action' url='image?resource_type=workflow_icon_img&id=${action.icon.id}' title=action.name alt=action.name /> ${action.name}  
-        </@link>
+        <#assign actionHref = 'jsp/site/Portal.jsp?page=formsResponse&action=doProcessAction&id_action=' + action.id?c + '&id_response=' + formResponse.id?c + '&token=' + token>
+        <#assign actionIconSrc = 'image?resource_type=workflow_icon_img&id=' + action.icon.id?c>
+        <@cBtn href=actionHref class='secondary w-100' label=''>
+            <@cImg src=actionIconSrc class='rounded-circle img-action' title=action.name alt=action.name /> ${action.name}
+        </@cBtn>
     </#list>
 </#if>
 </@cTpl>

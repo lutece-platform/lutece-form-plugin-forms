@@ -1,23 +1,14 @@
-if(inputValue !== undefined && inputValue !== null)
-{
-	if(Array.isArray(inputValue))
-	{
-		for(var i=0;i<inputValue.length;i++)
-		{
-			if(inputValue[i].localeCompare(controlValue) == 0)
-			{
-				return true;
-				break;
-			}
-		}
-		return false;
-	}
-	else
-	{
-		return inputValue.localeCompare(controlValue) == 0;
-	}
+if (inputValue === undefined || inputValue === null) {
+    return false;
 }
-else
-{
-	return false;
+
+if (Array.isArray(inputValue)) {
+    for (let i = 0; i < inputValue.length; i++) {
+        if (inputValue[i].localeCompare(controlValue) === 0) {
+            return true;
+        }
+    }
+    return false;
 }
+
+return inputValue.localeCompare(controlValue) === 0;

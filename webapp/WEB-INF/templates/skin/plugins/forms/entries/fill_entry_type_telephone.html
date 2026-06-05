@@ -1,50 +1,56 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<#if getError( list_responses, entry )?? >
-		<#assign error = getError( list_responses, entry ) >
-	</#if>
-	<#if getResponse( list_responses, entry )?? >
-		<#assign response = getResponse( list_responses, entry ) >
-	</#if>
-	<#assign idName = buildEntryName( entry, entry_iteration_number )>
-	<#assign fLabel>${entry.title}<#if entry.mandatory><abbr class="main-warning-color" tabindex="0" title="#i18n{themeparisfr.labelMandatory}">*</abbr></#if></#assign>
-	
-	<div class="mb-3 row">
-		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory><span aria-hidden="true"> *</span></#if></label>
-		<div class="col-12">
-			<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-			<#assign field = getFieldByCode( entry, "autocomplete" ) >
-			<#assign mandatoryMsg>
-				<#if entry.errorMessage?has_content>
-					${entry.errorMessage}
-				<#else>
-					#i18n{forms.message.mandatory.entry}
-				</#if>
-			</#assign>
-			<input type="tel" name="${idName}" id="${idName}"<#if entry.mandatory> required</#if> class="form-control input-sm ${entry.CSSClass!}<#if error??> is-invalid</#if>" value="${(response.toStringValueResponse)!}"<#if field??>autocomplete="${field.value!}"</#if><#if placeholder!=''> placeholder='${placeholder}' </#if> oninvalid="this.setCustomValidity('${mandatoryMsg?js_string}')" oninput="this.setCustomValidity('')">
-			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="form-control-plaintext">${entry.helpMessage}</span>
-			</#if>
-			<#if list_responses??>
-				<#list list_responses as response>
-					<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-						<span class="invalid-feedback">
-							<#assign error = response.entry.error>
-							<#if error.mandatoryError>
-								<#if entry.errorMessage?? && entry.errorMessage!="">
-									${entry.errorMessage}
-								<#else>
-									#i18n{forms.message.mandatory.entry}
-								</#if>
-							<#else>
-								${error.errorMessage}
-							</#if>
-						</span>
-					</#if>
-				</#list>
-			</#if>
-	    </div>
-	</div>
-</#if>
 
+    <#assign idName = buildEntryName(entry, entry_iteration_number)>
+    <#assign placeholderValue = getFieldValueByCode(entry, "placeholder")!''>
+
+    <#assign autocompleteValue = ''>
+    <#if getFieldByCode(entry, "autocomplete")??>
+        <#assign autocompleteField = getFieldByCode(entry, "autocomplete")>
+        <#if autocompleteField.value??>
+            <#assign autocompleteValue = autocompleteField.value>
+        </#if>
+    </#if>
+
+    <#assign currentValue = ''>
+    <#if getResponse(list_responses, entry)??>
+        <#assign currentResponse = getResponse(list_responses, entry)>
+        <#if currentResponse.toStringValueResponse??>
+            <#assign currentValue = currentResponse.toStringValueResponse>
+        </#if>
+    </#if>
+
+    <#assign inputErrorMsg = ''>
+    <#if list_responses??>
+        <#list list_responses as response>
+            <#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
+                <#assign respError = response.entry.error>
+                <#if respError.mandatoryError>
+                    <#if entry.errorMessage?? && entry.errorMessage != ''>
+                        <#assign inputErrorMsg = entry.errorMessage>
+                    <#else>
+                        <#assign inputErrorMsg = '#i18n{forms.message.mandatory.entry}'>
+                    </#if>
+                <#else>
+                    <#assign inputErrorMsg = respError.errorMessage>
+                </#if>
+            </#if>
+        </#list>
+    </#if>
+
+    <#assign mandatoryMsgRaw = entry.errorMessage!''>
+    <#if mandatoryMsgRaw == ''>
+        <#assign mandatoryMsgRaw = '#i18n{forms.message.mandatory.entry}'>
+    </#if>
+    <#assign mandatoryMsgJs = mandatoryMsgRaw?js_string>
+    <#assign inputParams = "oninvalid=\"this.setCustomValidity('${mandatoryMsgJs}')\" oninput=\"this.setCustomValidity('')\"">
+
+    <#assign inputClass = 'form-control input-sm ' + (entry.CSSClass!'')>
+    <#assign inputHelp = (inputErrorMsg != '')?then('', entry.helpMessage!'')>
+
+    <@cField label=entry.title required=entry.mandatory>
+        <@cInput type='tel' name=idName id=idName value=currentValue class=inputClass autocomplete=autocompleteValue placeholder=placeholderValue required=entry.mandatory params=inputParams errorMsg=inputErrorMsg helpMsg=inputHelp />
+    </@cField>
+
+</#if>
 </@cTpl>

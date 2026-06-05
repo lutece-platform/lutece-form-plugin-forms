@@ -1,55 +1,94 @@
 <@cTpl>
-<div class="card">
-	<#if step.titleDisplayed>
-		<h3 class="card-header">${step.title}</h3>
-	</#if>
-    <div id="step-content" class="card-body">
-        ${stepContent}
-        <#if display_captcha>${captcha}</#if>
-	</div>
-	<div class="card-footer">
-	    <input type="hidden" name="token" value = "${token!}">
-		<input name="page" value="forms" type="hidden">
-		<input name="id_form" value="${step.idForm}" type="hidden">
-		<input name="id_step" value="${step.id}" type="hidden">
-		<#if !step.initial><button class="btn btn-primary btn-sm" name="action_doReturnStep" type="submit" formnovalidate >#i18n{forms.step.previous}</button></#if>
-	<#if step.final>
-	<#if form.displaySummary >
-		<button class="btn btn-primary btn-sm" name="action_formResponseSummary" type="submit">#i18n{forms.step.see.summary}</button>
-	<#else>
-	<#assign label_button="#i18n{forms.step.save}" />
+<#--   ^																	-->
+<#--  / \ 																	-->
+<#-- / ! \  WARNING ! current_step_index error						        -->
+<#-- ----- 																	-->
+<#-- Please check that the module module-forms-breadcrumbaccordion 			-->
+<#-- is installed and active. Forms with the Theme paris.fr must 			-->
+<#-- have "module-forms-breadcrumbaccordion" selected in breadcrumb type 	-->
+<#assign hasSteps=!(step.initial && step.final)>
+<#assign showTitle=!step.title?ends_with('hidden')>
+<#assign doPrevAction='' />
+<#assign doNextAction='' />
+<#assign doSaveAction='' />
+<#assign labelNextAction='' />
+<#assign labelPrevAction='' />
+<#assign labelSaveAction='' />
+<#assign doSaveForBackUpAction='' />
+<#assign labelForBackUpAction='' />
+<#assign doResetBackUpAction='' />
+<#assign labelResetBackupAction='' />
+<@cInput type='hidden' name='token' value=token!'' class='' />
+<@cInput type='hidden' name='page' value='forms' class='' />
+<@cInput type='hidden' name='id_form' value=step.idForm?c class='' />
+<@cInput type='hidden' name='id_step' value=step.id?c class='' />
+<#if !step.initial >
+<#assign doPrevAction='action_doReturnStep'>
+<#assign labelPrevAction>#i18n{forms.step.previous}</#assign>
+</#if>
+<#if step.final>
+	<#assign labelSaveAction>#i18n{forms.step.save}</#assign>
 	<#if form.labelFinalButton?has_content>
-	<#assign label_button=form.labelFinalButton />
+		<#assign labelSaveAction=form.labelFinalButton />
 	</#if>
-		<button class="btn btn-primary btn-sm" name="action_doSaveResponse" type="submit">${label_button}</button>
-	</#if>
+	<#if form.displaySummary>
+		<#assign doSaveAction='action_formResponseSummary' />
+		<#assign labelSaveAction>#i18n{forms.step.see.summary}</#assign>
 	<#else>
-		<button class="btn btn-primary btn-sm" name="action_doSaveStep" type="submit">#i18n{forms.step.next}</button>
+		<#assign doSaveAction='action_doSaveResponse' />
 	</#if>
-	<#if user?? && form.backupEnabled>
-		<div class="d-grid d-md-flex justify-content-md-end">
-			<#if hasBackupResponse>
-				<button class="btn btn-info btn-sm me-md-1" name="action_doResetBackup" type="submit" >#i18n{forms.step.resetResponse}</button>
-			</#if>
-			<button class="btn btn-info btn-sm" name="action_doSaveForBackup" type="submit" >#i18n{forms.step.saveResponse}</button>
-		</div>
+<#else>
+	<#assign doNextAction='action_doSaveStep' />
+	<#assign labelNextAction>#i18n{forms.step.next}</#assign>
+</#if>
+<#if user?? && form.backupEnabled>
+	<#assign doSaveForBackUpAction='action_doSaveForBackup' />
+	<#if hasBackupResponse?? && hasBackupResponse>
+		<#assign doResetBackUpAction='action_doResetBackup' />
 	</#if>
-	</div>
-</div>
+</#if>
+<#assign stepParams></#assign>
+<#if !current_step_index??><#assign current_step_index=0 /></#if>
+<@cStepCurrent step=current_step_index title=step.title showTitle=showTitle actionNextStep=doNextAction labelNextStep=labelNextAction actionPrevStep=doPrevAction labelPrevStep=labelPrevAction actionSaveStep=doSaveAction labelSaveStep=labelSaveAction actionSaveForBackUpStep=doSaveForBackUpAction labelForBackUpStep=labelForBackUpAction actionResetBackUpStep=doResetBackUpAction labelResetBackUpStep=labelResetBackUpAction showPrevStep=false hasSteps=hasSteps params=stepParams >
+${stepContent}
+<#if display_captcha>
+<@cCol class='step-group'>
+	<@input type='hidden' name='validate_captcha' value='1' />
+	<@cRow>
+		<@cCol class='col-12 col-sm-10 offset-sm-1 col-md-6 offset-md-3'>	
+			${captcha}
+		</@cCol>
+	</@cRow>
+</@cCol>
+</#if>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-	/* Check if step-group has all field hidden due to conditionnal behavior */
-	document.querySelectorAll('.step-group').forEach(function(stepGroup) {
-		var countField = stepGroup.querySelectorAll('.form-group').length;
-		var countCond = stepGroup.querySelectorAll('div[class*="display_field_"]').length;
-		var countCondVisible = Array.from(stepGroup.querySelectorAll('div[class*="display_field_"]')).filter(function(el) {
-			return el.offsetParent !== null;
-		}).length;
+<#if user?? && form.backupEnabled>
+window.__sessionTimeoutConfig = window.__sessionTimeoutConfig || {};
+window.__sessionTimeoutConfig.processTimeoutDuration = 600;
+window.__sessionTimeoutConfig.saveEnabled = true;
+window.__sessionTimeoutConfig.saveAction = function() {
+	var form = document.getElementById('form-validate');
+	if (!form) return Promise.resolve();
+	var fd = new FormData(form);
+	fd.append('action_doSaveForBackup', '');
+	return fetch(form.action, { method: 'POST', body: fd });
+};
+</#if>
 
-		if (countField === countCond && countCond > 0 && countCondVisible === 0) {
-			stepGroup.classList.add('d-none', 'step-group-collapsible');
-		}
-	});
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.step-group').forEach(function(stepGroup) {
+        const countField = stepGroup.querySelectorAll('.form-group').length;
+        const condFields = stepGroup.querySelectorAll('div[class*="display_field_"]');
+        const countCond = condFields.length;
+        const countCondVisible = Array.from(condFields).filter(function(el) {
+            return el.offsetParent !== null;
+        }).length;
+
+        if (countField === countCond && countCond > 0 && countCondVisible === 0) {
+            stepGroup.classList.add('d-none', 'step-group-collapsible');
+        }
+    });
 });
 </script>
-</@cTpl>  
+</@cStepCurrent>
+</@cTpl>

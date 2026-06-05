@@ -1,61 +1,68 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack || is_completeness_bo>
-	<#macro getTextAreaContent responseContent has_error entry >
-		<#assign field_height=getFieldValueByCode( entry, "height")>
-		<#assign field_width=getFieldValueByCode( entry, "width")>
-		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-		<#assign placeholder = getFieldValueByCode(entry, "placeholder") >
-		<#if getFieldByCode( entry, "autocomplete")??>
-		<#assign field_autocomplete = getFieldByCode( entry, "autocomplete" ) >
-		</#if>
-		<#if has_error>
-			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="form-control is-invalid" 
-				<#if placeholder!=''> placeholder='${placeholder}' </#if>
-				<#if field_autocomplete?? && field_autocomplete.value??> autocomplete="${field_autocomplete.value}"</#if><#if entry.mandatory> required</#if>>${responseContent}</textarea>
-		<#else>
-			<textarea name="${idName}" id="${idName}" cols="${field_width?number}" rows="${field_height?number}" class="${entry.CSSClass!} form-control" 
-				<#if placeholder!=''> placeholder='${placeholder}' </#if>
-				<#if field_autocomplete?? && field_autocomplete.value??> autocomplete="${field_autocomplete.value}"</#if><#if entry.mandatory> required</#if>>${responseContent}</textarea>
-		</#if>
-	</#macro>
-	
-	<div class="mb-3 row">
-		<#assign idName = buildEntryName( entry, entry_iteration_number )>
-		<label class="col-12 col-form-label" for="${idName}">${entry.title}<#if entry.mandatory> *</#if></label>
-		<div class="col-12">
-			<#assign field=getFieldByCode( entry, "text_config")>
-			<#if list_responses?? && list_responses?has_content>
-				<#list list_responses as response>
-					<#if response.entry.idEntry == entry.idEntry && response.toStringValueResponse??>
-						<#if response.entry.error??>
-							<@getTextAreaContent responseContent=response.toStringValueResponse has_error=true entry=entry />
-						<#else>
-							<@getTextAreaContent responseContent=response.toStringValueResponse has_error=false entry=entry />
-						</#if>
-					</#if>
-				</#list>
-			<#else>
-				<#if field.value?exists>
-					<@getTextAreaContent responseContent=field.value has_error=false entry=entry />
-				<#else>
-					<@getTextAreaContent responseContent="" has_error=false entry=entry />
-				</#if>
-			</#if>
-			<#if entry.helpMessage?exists&&entry.helpMessage!=''>
-				<span class="form-control-plaintext">${entry.helpMessage}</span>
-			</#if>
-			<#if list_responses??>
-				<#list list_responses as response>
-				<#if response.entry.idEntry == entry.idEntry && response.entry.error?? && response.entry.error.isDisplayableError>
-				<span class="invalid-feedback">
-					<#assign error = response.entry.error>
-					<#if error.mandatoryError>#i18n{forms.message.mandatory.entry}<#else>${error.errorMessage}</#if>
-				</span>
-				</#if>
-				</#list>
-			</#if>
-		</div>
-	</div>
-</#if>
 
+    <#assign idName = buildEntryName(entry, entry_iteration_number)>
+    <#assign fieldHeight = getFieldValueByCode(entry, "height")!''>
+    <#assign fieldWidth = getFieldValueByCode(entry, "width")!''>
+    <#assign placeholderValue = getFieldValueByCode(entry, "placeholder")!''>
+
+    <#assign autocompleteValue = ''>
+    <#if getFieldByCode(entry, "autocomplete")??>
+        <#assign autocompleteField = getFieldByCode(entry, "autocomplete")>
+        <#if autocompleteField.value??>
+            <#assign autocompleteValue = autocompleteField.value>
+        </#if>
+    </#if>
+
+    <#assign responseContent = ''>
+    <#assign responseHasError = false>
+    <#assign textareaErrorMsg = ''>
+    <#if list_responses?? && list_responses?has_content>
+        <#list list_responses as response>
+            <#if response.entry.idEntry == entry.idEntry>
+                <#if response.toStringValueResponse??>
+                    <#assign responseContent = response.toStringValueResponse>
+                </#if>
+                <#if response.entry.error??>
+                    <#assign responseHasError = true>
+                    <#if response.entry.error.isDisplayableError>
+                        <#assign respError = response.entry.error>
+                        <#if respError.mandatoryError>
+                            <#assign textareaErrorMsg = '#i18n{forms.message.mandatory.entry}'>
+                        <#else>
+                            <#assign textareaErrorMsg = respError.errorMessage>
+                        </#if>
+                    </#if>
+                </#if>
+            </#if>
+        </#list>
+    <#else>
+        <#assign textConfigField = getFieldByCode(entry, "text_config")>
+        <#if textConfigField.value??>
+            <#assign responseContent = textConfigField.value>
+        </#if>
+    </#if>
+
+    <#assign textareaClass = 'form-control'>
+    <#if !responseHasError && entry.CSSClass??>
+        <#assign textareaClass = entry.CSSClass + ' form-control'>
+    </#if>
+
+    <#assign textareaParams = ''>
+    <#if fieldWidth != '' && fieldWidth?number gt 0>
+        <#assign textareaParams = 'cols="' + fieldWidth?number?c + '"'>
+    </#if>
+
+    <#assign rowsValue = 0>
+    <#if fieldHeight != '' && fieldHeight?number gt 0>
+        <#assign rowsValue = fieldHeight?number>
+    </#if>
+
+    <#assign textareaHelp = (textareaErrorMsg != '')?then('', entry.helpMessage!'')>
+
+    <@cField label=entry.title required=entry.mandatory>
+        <@cTextArea name=idName id=idName class=textareaClass placeholder=placeholderValue autocomplete=autocompleteValue required=entry.mandatory rows=rowsValue params=textareaParams errorMsg=textareaErrorMsg helpMsg=textareaHelp>${responseContent}</@cTextArea>
+    </@cField>
+
+</#if>
 </@cTpl>

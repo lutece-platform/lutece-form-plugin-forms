@@ -1,13 +1,12 @@
 <@cTpl>
 <#if !entry.onlyDisplayInBack>
-	<div class="mb-3 row">
-	    <label class="col-12 col-form-label" for=""></label>
-	    <div class="col-12">
-	        <p class="form-control-plaintext">${entry.comment}</p>
-	        <#if url_download_fo??>
-				<a href="${url_download_fo}">${filename}</a>
-			</#if>
-	    </div>		
-	</div>	
+    <@cRow class='mb-3'>
+        <@cCol>
+            <@cText class='form-control-plaintext'>${entry.comment}</@cText>
+            <#if url_download_fo??>
+                <@cLink href=url_download_fo label=filename!'' />
+            </#if>
+        </@cCol>
+    </@cRow>
 </#if>
 </@cTpl>
