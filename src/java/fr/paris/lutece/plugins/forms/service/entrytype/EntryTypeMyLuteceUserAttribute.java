@@ -129,7 +129,14 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
         entry.setComment( StringUtils.EMPTY );
         entry.setMandatory( Boolean.parseBoolean( request.getParameter( PARAMETER_MANDATORY ) ) );
         entry.setCSSClass( request.getParameter( PARAMETER_CSS_CLASS ) );
-        entry.setTitle( request.getParameter( PARAMETER_TITLE ) );
+        // Only override the localized default title (set above) when an explicit
+        // non-blank title is submitted, otherwise the entry - and therefore the
+        // question - would get a null title and break the forms_question.title NOT NULL constraint.
+        String strTitle = request.getParameter( PARAMETER_TITLE );
+        if ( StringUtils.isNotBlank( strTitle ) )
+        {
+            entry.setTitle( strTitle );
+        }
         entry.setHelpMessage( request.getParameter( PARAMETER_HELP_MESSAGE ) );
         entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
         entry.setOnlyDisplayInBack( strOnlyDisplayInBack != null );

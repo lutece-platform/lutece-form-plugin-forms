@@ -199,7 +199,8 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         if ( _entry == null )
         {
             addError( ERROR_QUESTION_NOT_CREATED, getLocale( ) );
-            return redirect( request, viewManageQuestions, FormsConstants.PARAMETER_ID_STEP, nIdStep );
+            // Same contract as below : return the error URL, the caller performs the redirect.
+            return errorReturnUrl;
         }
 
         String strError = EntryTypeServiceManager.getEntryTypeService( _entry ).getRequestData( _entry, request, getLocale( ), errorReturnUrl );
@@ -207,6 +208,23 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         if ( strError != null )
         {
             return strError;
+        }
+
+        // Compute the future question title the same way as below, and reject a blank
+        // one before persisting anything. The question's title column is NOT NULL, and
+        // the entry is created before the question : without this guard a blank title
+        // both crashes the question insert and leaves an orphan entry behind.
+        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) )
+                ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
+                : _entry.getTitle( );
+
+        if ( StringUtils.isBlank( strTitle ) )
+        {
+            addError( ERROR_QUESTION_NOT_CREATED, getLocale( ) );
+            // Return the error URL (do NOT call redirect() here) : redirect() commits the
+            // response and returns null, which the caller interprets as a success and then
+            // redirects a second time -> IllegalStateException "response already committed".
+            return errorReturnUrl;
         }
 
         _entry.setIdResource( _step.getIdForm( ) );
@@ -236,8 +254,6 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         }
 
         _question = new Question( );
-        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
-                : _entry.getTitle( );
         _question.setTitle( strTitle );
         _question.setColumnTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
