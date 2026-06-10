@@ -19,6 +19,7 @@
 				<#if table_template?has_content>
 					<@div id='multi-form-list' class='p-3'>
 					${table_template}
+					<@paginationAdmin paginator=paginator combo=1 showcount=0 />
 					</@div>
 				<#else>
 					<@empty title='#i18n{forms.multiviewForms.noFormResponses}' subtitle=' ' iconName='notes-off' />
