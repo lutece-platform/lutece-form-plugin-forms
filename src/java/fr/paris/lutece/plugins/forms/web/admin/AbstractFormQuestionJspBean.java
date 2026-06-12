@@ -236,8 +236,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         }
 
         _question = new Question( );
-        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
-                : _entry.getTitle( );
+        String strTitle = buildQuestionTitle( _entry );
         _question.setTitle( strTitle );
         _question.setColumnTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
@@ -326,8 +325,7 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
             }
         }
 
-        String strTitle = Boolean.TRUE.equals( _entry.getEntryType( ).getComment( ) ) ? I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) )
-                : _entry.getTitle( );
+        String strTitle = buildQuestionTitle( _entry );
         _question.setTitle( strTitle );
         _question.setCode( _entry.getCode( ) );
         _question.setDescription( _entry.getComment( ) );
@@ -335,6 +333,25 @@ public abstract class AbstractFormQuestionJspBean extends AbstractJspBean
         getFormDatabaseService( ).updateQuestion( _question );
         return null;
 
+    }
+
+    /**
+     * Builds a non-null title for a question from its backing entry. Comment entries use the dedicated localized label,
+     * other entries use their own title and fall back to their code when the title is blank. This guarantees a non-null
+     * value for the mandatory forms_question.title column whatever the entry type.
+     *
+     * @param entry
+     *            the entry backing the question
+     * @return a non-null question title
+     */
+    private String buildQuestionTitle( Entry entry )
+    {
+        if ( Boolean.TRUE.equals( entry.getEntryType( ).getComment( ) ) )
+        {
+            return I18nService.getLocalizedString( ENTRY_COMMENT_TITLE, getLocale( ) );
+        }
+
+        return StringUtils.defaultString( StringUtils.defaultIfBlank( entry.getTitle( ), entry.getCode( ) ) );
     }
 
     protected String createGroup( HttpServletRequest request, String viewReturnOk )

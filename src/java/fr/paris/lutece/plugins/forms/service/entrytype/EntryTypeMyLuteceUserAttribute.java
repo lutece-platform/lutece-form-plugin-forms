@@ -118,18 +118,27 @@ public class EntryTypeMyLuteceUserAttribute extends AbstractEntryTypeMyLuteceUse
     @Override
     public String getRequestData( Entry entry, HttpServletRequest request, Locale locale )
     {
+        return getRequestData( entry, request, locale, null );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getRequestData( Entry entry, HttpServletRequest request, Locale locale, String errorReturnUrl )
+    {
         initCommonRequestData( entry, request );
         String strCode = request.getParameter( PARAMETER_ENTRY_CODE );
         entry.setCode( strCode );
 
         String strOnlyDisplayInBack = request.getParameter( PARAMETER_ONLY_DISPLAY_IN_BACK );
 
-        entry.setTitle( I18nService.getLocalizedString( PROPERTY_ENTRY_TITLE, locale ) );
-
         entry.setComment( StringUtils.EMPTY );
         entry.setMandatory( Boolean.parseBoolean( request.getParameter( PARAMETER_MANDATORY ) ) );
         entry.setCSSClass( request.getParameter( PARAMETER_CSS_CLASS ) );
-        entry.setTitle( request.getParameter( PARAMETER_TITLE ) );
+
+        String strTitle = request.getParameter( PARAMETER_TITLE );
+        entry.setTitle( StringUtils.isNotBlank( strTitle ) ? strTitle : I18nService.getLocalizedString( PROPERTY_ENTRY_TITLE, locale ) );
         entry.setHelpMessage( request.getParameter( PARAMETER_HELP_MESSAGE ) );
         entry.setIndexed( request.getParameter( PARAMETER_INDEXED ) != null );
         entry.setOnlyDisplayInBack( strOnlyDisplayInBack != null );
