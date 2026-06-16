@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.forms.service.entrytype;
 
 import java.util.List;
 
+import fr.paris.lutece.plugins.forms.util.FormsEntryUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.AbstractEntryTypeText;
@@ -106,14 +107,6 @@ public class EntryTypeText extends AbstractEntryTypeText implements IResponseCom
     @Override
     public boolean isResponseChanged( List<Response> listResponseReference, List<Response> listResponseNew )
     {
-        String strResponseReference = listResponseReference.get( 0 ).getResponseValue( );
-        String strResponseNew = listResponseNew.get( 0 ).getResponseValue( );
-
-        if ( strResponseReference == null )
-        {
-            return strResponseNew != null;
-        }
-
-        return !strResponseReference.equals( strResponseNew );
+        return FormsEntryUtils.isFirstResponseValueChanged( listResponseReference, listResponseNew );
     }
 }
