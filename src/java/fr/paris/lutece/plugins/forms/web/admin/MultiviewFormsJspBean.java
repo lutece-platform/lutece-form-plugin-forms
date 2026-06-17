@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +60,7 @@ import fr.paris.lutece.plugins.forms.business.MultiviewConfig;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsAction;
 import fr.paris.lutece.plugins.forms.business.action.GlobalFormsActionHome;
 import fr.paris.lutece.plugins.forms.business.form.FormItemSortConfig;
+import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.business.form.column.FormColumnFactory;
 import fr.paris.lutece.plugins.forms.business.form.column.IFormColumn;
 import fr.paris.lutece.plugins.forms.business.form.filter.FormFilter;
@@ -139,6 +139,8 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     private static final String PARAMETER_DISPLAY_ASSIGNEE_COLUMN = "display_assignee_column";
     private static final String PARAMETER_CHANGE_PANEL = "change_panel";
     private static final String PARAMETER_UPLOAD_TEMPLATE_PDF = "upload_template";
+    private static final String PARAMETER_DATE_FROM_SUFFIX = "_from";
+    private static final String PARAMETER_DATE_TO_SUFFIX = "_to";
 
     // Marks
     private static final String MARK_LOCALE = "locale";
@@ -171,13 +173,17 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     @View( value = VIEW_MULTIVIEW_FORMS, defaultView = true )
     public String getMultiviewFormsView( HttpServletRequest request )
     {
-        // Retrieve the list of all filters, columns and panels if the pagination and
-        // the sort are not used
         boolean bIsSessionLost = isSessionLost( );
-        if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
+        boolean bHasFilterParameters = hasFilterParameters( request );
+        if ( bIsSessionLost )
         {
             initFormRelatedLists( request );
             manageSelectedPanel( );
+        }
+        else if( bHasFilterParameters )
+        {
+            _listFormFilterDisplay.stream( ).filter( formFilterDisplay -> hasFilterParameter( request, formFilterDisplay ) )
+                    .forEach( formFilterDisplay -> formFilterDisplay.createFormParameters( request ) );
         }
         _listAuthorizedFormPanelDisplay = _listFormPanelDisplay.stream( )
                 .filter( fpd -> RBACService.isAuthorized( fpd.getFormPanel( ).getFormPanelConfiguration( ), FormPanelConfigIdService.PERMISSION_VIEW,
@@ -190,9 +196,25 @@ public class MultiviewFormsJspBean extends AbstractJspBean
         buildFormPanelDisplayWithData( request, getIndexStart( ), _nItemsPerPage, _formItemSortConfig );
 
         // Build the template of each form filter display
-        if ( isPaginationAndSortNotUsed( request ) || bIsSessionLost )
+        // if session is lost, we rebuild all filter template.
+        // else, for each filter in request, we build the template of this filter
+        if ( bIsSessionLost )
         {
-            _listFormFilterDisplay.stream( ).forEach( formFilterDisplay -> formFilterDisplay.buildTemplate( request , getLocale()) );
+            for ( IFormFilterDisplay formFilterDisplay : _listFormFilterDisplay )
+            {
+                formFilterDisplay.buildTemplate( request, getLocale() );
+            }
+            Collections.sort( _listFormFilterDisplay, new FormListPositionComparator( ) );
+        }
+        else if ( bHasFilterParameters )
+        {
+            for ( IFormFilterDisplay formFilterDisplay : _listFormFilterDisplay )
+            {
+                if ( hasFilterParameter( request, formFilterDisplay ) )
+                {
+                    formFilterDisplay.buildTemplate( request, getLocale() );
+                }
+            }
             Collections.sort( _listFormFilterDisplay, new FormListPositionComparator( ) );
         }
 
@@ -414,16 +436,43 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     }
 
     /**
-     * Return the boolean which tell if the pagination and the sort are not used
-     * 
-     * @param request
-     *            The request to retrieve the information from
-     * @return the boolean which tell if the pagination and the sort are not used
+     * Check if a parameter is already fill in session.
+     * @param request the current http request
+     * @return true if there is at least one filter, false is there is none.
      */
-    private boolean isPaginationAndSortNotUsed( HttpServletRequest request )
+    private boolean hasFilterParameters( HttpServletRequest request )
     {
-        return request.getParameter( PARAMETER_PAGE_INDEX ) == null && request.getParameter( FormsConstants.PARAMETER_SORT_COLUMN_POSITION ) == null;
+        if ( CollectionUtils.isEmpty( _listFormFilterDisplay ) )
+        {
+            return false;
+        }
+
+        for ( IFormFilterDisplay formFilterDisplay : _listFormFilterDisplay )
+        {
+            if ( hasFilterParameter( request, formFilterDisplay ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
+
+    /**
+     * Check if the request has the filter
+     * @param request the current http request
+     * @param formFilterDisplay the filter to check
+     * @return true if the filter is already in session, false if not.
+     */
+    private boolean hasFilterParameter( HttpServletRequest request, IFormFilterDisplay formFilterDisplay )
+    {
+        String strParameterName = formFilterDisplay.getParameterName( );
+
+        return request.getParameterMap( ).containsKey( strParameterName )
+                || request.getParameterMap( ).containsKey( strParameterName + PARAMETER_DATE_FROM_SUFFIX )
+                || request.getParameterMap( ).containsKey( strParameterName + PARAMETER_DATE_TO_SUFFIX );
+    }
+
 
     /**
      * Build the list of all columns, filters and forms panels and all of their display equivalents
