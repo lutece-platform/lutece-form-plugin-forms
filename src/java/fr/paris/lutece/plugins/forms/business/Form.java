@@ -102,6 +102,7 @@ public class Form implements AdminWorkgroupResource, RBACResource, Comparator<Fo
     @Size( max = 255, message = "#i18n{forms.validation.form.Breadcrumb.size}" )
     private String _strBreadcrumbName;
 
+    @NotEmpty( message = "#i18n{forms.validation.form.ReturnUrl.notEmpty}" )
     @Size( max = 255, message = "#i18n{forms.validation.form.ReturnUrl.size}" )
     private String _strReturnUrl;
 

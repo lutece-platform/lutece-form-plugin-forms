@@ -419,7 +419,7 @@
 	<@columns md=6 xl=4>
 		<@card>
 		<@fieldSet legend='#i18n{forms.create_form.labelDisplaySummary}'>
-			<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' rows=2>
+			<@formGroup labelKey='#i18n{forms.create_form.labelReturnUrl}' helpKey='#i18n{forms.create_form.labelReturnUrl.help}' mandatory=true rows=2>
 				<@input type='text' name='returnUrl' value='${form.returnUrl!}' />
 			</@formGroup>
 			<@formGroup labelKey='#i18n{forms.create_form.labelLabelFinalButton}' rows=2>
