@@ -199,6 +199,9 @@ const searchElementList = document.querySelectorAll("#step-list .card");
 new LuteceSearchList( searchInput, searchElementList, {
 	searchableChild: [".searchable",".list-group-item",".badge"],
 	highlight: true,
+	// Keep the filter value across form submits / page reloads.
+    persist: true,
+    persistKey: "lutece-admin-forms-step-search",
 });
 
 const stepsArray = [];

@@ -147,6 +147,9 @@ const searchElementList = document.querySelectorAll("#forms-list .card");
 new LuteceSearchList( searchInput, searchElementList, {
 	searchableChild: [".searchable"],
 	highlight: true, 
+    // Keep the filter value across form submits / page reloads.
+    persist: true,
+    persistKey: "lutece-admin-forms-list-search",
 });
 
 document.addEventListener('DOMContentLoaded', function () {

@@ -266,7 +266,10 @@ const searchInput = document.querySelector("#search_step");
 const searchElementList = document.querySelectorAll("#main-form-content li");
 new LuteceSearchList( searchInput, searchElementList, {
     searchableChild: [".card-header",".form-label",".searchable"],
-    highlight: true
+    highlight: true,
+    // Keep the filter value across form submits / page reloads.
+    persist: true,
+    persistKey: "lutece-admin-forms-question-search",
 });
 </script>
 <@formsToastr infos=infos warnings=warnings errors=errors />
