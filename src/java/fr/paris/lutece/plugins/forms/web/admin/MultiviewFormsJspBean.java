@@ -186,14 +186,15 @@ public class MultiviewFormsJspBean extends AbstractJspBean
     {
         boolean bIsSessionLost = isSessionLost( );
         boolean bHasFilterParameters = hasFilterParameters( request );
+        boolean bIsChangePanel = Boolean.parseBoolean( request.getParameter( PARAMETER_CHANGE_PANEL ) );
+
         if ( formSelectedAsChanged( request ) )
         {
             resetCurrentPaginatorPageIndex( );
         }
-        if ( bIsSessionLost )
+        if ( bIsSessionLost ||  bIsChangePanel )
         {
             initFormRelatedLists( request );
-            manageSelectedPanel( );
         }
         else if ( bHasFilterParameters )
         {
@@ -209,6 +210,11 @@ public class MultiviewFormsJspBean extends AbstractJspBean
                 .filter( fpd -> RBACService.isAuthorized( fpd.getFormPanel( ).getFormPanelConfiguration( ), FormPanelConfigIdService.PERMISSION_VIEW,
                         (User) AdminUserService.getAdminUser( request ) ) )
                 .collect( Collectors.toList( ) );
+
+        if ( bIsSessionLost || bIsChangePanel )
+        {
+            manageSelectedPanel( );
+        }
 
         // Build the Column for the Panel and save their values for the active panel
         initiatePaginatorProperties( request );
