@@ -12,18 +12,20 @@
 
     <#assign sortableClass = 'connectedSortable ' + (entry.CSSClass!'')>
 
+    <#-- Single column (cols='12') when sorting one list, two side-by-side columns when selecting between two lists. -->
+    <#-- Each @cCol is opened and closed in the same scope: a macro tag cannot be split across #if/#else branches. -->
+    <#assign colSize = isMultiListSelection?then('12 col-md-6', '12')>
+
     <@cRow class='mb-3'>
         <@cInput type='hidden' name=idName id=idName class='' />
         <@cCol>
             <@cLabel label=entry.title + (entry.mandatory)?then(' *', '') for=idName />
         </@cCol>
 
-        <#if isMultiListSelection>
-            <@cCol cols='12 col-md-6'>
+        <@cCol cols=colSize>
+            <#if isMultiListSelection>
                 <@cLabel label='#i18n{forms.create_entry.sortableList.availableItems}' for='sortable1' />
-        <#else>
-            <@cCol>
-        </#if>
+            </#if>
             <@chList id='sortable1' class=sortableClass params=sortableParams>
                 <#list entry.fields as field>
                     <#if field.code == 'answer_choice'>
@@ -41,11 +43,12 @@
                     </#if>
                 </#list>
             </@chList>
-        <#if isMultiListSelection>
-            </@cCol>
-            <@cCol cols='12 col-md-6'>
+        </@cCol>
+
+        <@cCol cols=colSize>
+            <#if isMultiListSelection>
                 <@cLabel label='#i18n{forms.create_entry.sortableList.selectedItems}' for='sortable2' />
-        </#if>
+            </#if>
             <@chList id='sortable2' class=sortableClass params=sortableParams>
                 <#if list_responses?has_content>
                     <#list list_responses?sort_by('sortOrder') as response>
