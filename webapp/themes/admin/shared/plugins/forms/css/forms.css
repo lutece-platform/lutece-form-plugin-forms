@@ -9,14 +9,14 @@
 #page-header{
     position: sticky;
     top: 112px;
-    z-index: 1050;
+    z-index: 100;
     background-color: var(--tblr-bg-surface-secondary);
 }
 
 #page-header + .row{
 	position: sticky;
     top: 162px;
-    z-index: 1050;
+    z-index: 100;
     background-color: var(--tblr-bg-surface-secondary);
 }
 
@@ -376,6 +376,10 @@ table.table-hover tbody tr:hover {
 
 	#page-header + .row{
 		position: initial;
+	}
+
+	.layout-fluid #form-response-details {
+		display: block;
 	}
 	
 	#toc{
