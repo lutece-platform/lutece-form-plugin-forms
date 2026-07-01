@@ -5,6 +5,21 @@
 }
 
 /* MultiView 																	*/
+/* core override */
+#page-header{
+    position: sticky;
+    top: 112px;
+    z-index: 1050;
+    background-color: var(--tblr-bg-surface-secondary);
+}
+
+#page-header + .row{
+	position: sticky;
+    top: 162px;
+    z-index: 1050;
+    background-color: var(--tblr-bg-surface-secondary);
+}
+
 /* MultiView - Search filters 													*/
 .btn.dropdown-select{
 	display: block;
@@ -98,6 +113,19 @@ table.table-hover tbody tr:hover {
 	color: var(--tblr-primary);
 }
 
+.layout-fluid #form-response-details{
+	display: grid;
+	grid-template-columns: 15vw 84vw;
+}
+
+.layout-fluid #form-response-details:has( #toc[style="display: none;"]) {
+	grid-template-columns: 1fr;
+}
+
+.layout-fluid #form-response-details #toc-side-toggle {
+	display: none;
+}
+
 /* Multiview - Aside - timeline */
 .timeline-form {
 	list-style-type: none;
@@ -145,7 +173,7 @@ table.table-hover tbody tr:hover {
 #response-sidebar {
 	position: sticky;
 	left: 16vw;
-	top: 15px;
+	top: 200px;
 	overflow-y: auto;
 	height: auto;
 }
@@ -165,10 +193,9 @@ table.table-hover tbody tr:hover {
 /* Multiview - Step TOC 	*/
 #toc-box {
 	position: fixed;
-	top:200px;
+	top:222px;
 	left:0;
-	overflow-y: auto;
-	height: 60vh;
+	height: 80vh;
 	width: 15vw;
 	z-index: 1;
 }
@@ -176,7 +203,7 @@ table.table-hover tbody tr:hover {
 #toc-expand-toggle {
     position: fixed;
     z-index: 99;
-    top: 200px;
+    top: 222px;
     left: 0;
     background-color: var(--tblr-light);
     padding: 5px;
@@ -186,6 +213,11 @@ table.table-hover tbody tr:hover {
 
 #toc-expand-toggle:hover {
 	cursor: pointer;
+}
+
+#step-toc{
+	overflow-y: auto;
+	height: 60vh;
 }
 
 /* Admin Map - Module forms-multiviewmapleaflet		*/
