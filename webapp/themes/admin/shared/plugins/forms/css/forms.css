@@ -370,13 +370,25 @@ table.table-hover tbody tr:hover {
 /* RESPONSIVE FIX 								*/
 /* Small Devices, Tablets						*/
 @media only screen and (max-width :768px) {
-	#step-toc .nav-pills span {
-			width: 50px;
-		}
+	#page-header{
+		position: initial;
+	}
+
+	#page-header + .row{
+		position: initial;
+	}
 	
-		#multiview-no-forms {
-			height: auto
-		}
+	#toc{
+		display: none
+	}
+
+	#step-toc .nav-pills span {
+		width: 50px;
+	}
+
+	#multiview-no-forms {
+		height: auto
+	}
 }
 
 /* Small devices (landscape phones, 576px and up) 			*/
