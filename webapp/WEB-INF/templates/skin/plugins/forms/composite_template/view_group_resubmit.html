@@ -1,5 +1,5 @@
 <#if visible>
-<div class="row step-group">
+<div class="row step-group" id="step-group-${id_group}">
 	<div class="col-12">
 		<#list groupContentByIteration as iterationNumber, groupContent >
 			<#if groupContent?size != 0>
@@ -9,6 +9,11 @@
 						<#if group.description!=''>
 							<div class="helpBox">${group.description}</div>
 						</#if>
+						<#if iterationNumber gte group.iterationMin>
+							<button class="btn btn-danger" name="action_removeIteration" value="${group.id}_${iterationNumber}" type="submit">
+								<i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!}
+							</button>
+						</#if>
 					</legend>
 					<#list groupContent as childrenHtml>
 						${childrenHtml}
@@ -16,6 +21,44 @@
 				</fieldset>
 			</#if>
 		</#list>
+		<#if isIterable >
+			<div class="row m-5">
+				<div class="col-12 col-sm-5 offset-sm-7">
+					<div class="add-iteration">
+						<button class="btn btn-primary" name="action_addIteration" value="${id_group}" type="submit">
+							<span class="fa fa-plus-circle"></span> ${group.iterationAddLabel!}
+						</button>
+					</div>
+				</div>
+			</div>
+		</#if>
 	</div>
 </div>
+<script>
+$(function(){
+
+	// Handle the display of the conditional groups of fields
+	const group = $('#step-group-${id_group}');
+	const allFields = group.find('div[displayControl]');
+	const condFields = group.find('div[class*="display_field_"]');
+	if ( allFields.length === 0 || allFields.length !== condFields.length ) {
+		return;
+	}
+
+	function syncGroupVisibility(){
+		const conds = group.find('div[class*="display_field_"]');
+		if ( conds.filter('.control_invalid').length === conds.length ) {
+			group.hide();
+		} else {
+			group.show();
+		}
+	}
+
+	// trigger the group visibility
+	$('input, select, textarea').on('change keyup paste mouseup input', function() {
+		setTimeout(syncGroupVisibility, 0);
+	});
+	syncGroupVisibility();
+});
+</script>
 </#if>
