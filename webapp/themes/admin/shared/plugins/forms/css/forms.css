@@ -6,14 +6,15 @@
 
 /* MultiView 																	*/
 /* core override */
-#page-header{
+/* View response */
+.forms-response #page-header{
     position: sticky;
     top: 112px;
     z-index: 100;
     background-color: var(--tblr-bg-surface-secondary);
 }
 
-#page-header + .row{
+.forms-response #page-header + .row{
 	position: sticky;
     top: 162px;
     z-index: 100;
@@ -21,6 +22,11 @@
 }
 
 /* MultiView - Search filters 													*/
+#searchForm{
+    position: fixed;
+    max-width: 15%;
+}
+
 .btn.dropdown-select{
 	display: block;
 	width: 100%;
@@ -60,11 +66,11 @@
 	justify-content: space-between;
 }
 
-.filter-forms #id_form {
+#id_form {
 	max-width: 32rem
 }
 
-.filter-forms .forms-filter label .form-control,
+.forms-filter label .form-control,
 table.table-hover tbody tr:hover {
 	cursor: pointer
 }
@@ -88,6 +94,23 @@ table.table-hover tbody tr:hover {
 }
 
 /* Table Header 			*/
+#multi-form-list {
+    overflow-y: hidden;
+    height: 65vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#multi-form-list .table-responsive {
+    max-height: 55vh;
+}
+
+#multi-form-list .table-responsive table thead {
+    position: sticky;
+    top: 0;
+}
+
 .multiview-th{
 	max-width: 150px;
 }

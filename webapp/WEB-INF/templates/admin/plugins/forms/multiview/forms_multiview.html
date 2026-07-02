@@ -1,4 +1,4 @@
-<@pageContainer params='data-feature="#i18n{forms.adminFeature.manageForms.name}"' class='' >
+<@pageContainer params='data-feature="#i18n{forms.adminFeature.manageForms.name}"' class='forms-multiview' >
     <@pageColumn>
 		<@pageHeader id='multiviewFormsHeader' title='#i18n{forms.multiviewForms.boxTitle}' />
 		<@formBreadCrumb>
@@ -18,7 +18,7 @@
 					</@tabList>
 				<#if table_template?has_content>
 					<@div id='multi-form-list' class='p-3'>
-					${table_template}
+					${table_template}												
 					<@paginationAdmin paginator=paginator combo=1 showcount=0 />
 					</@div>
 				<#else>

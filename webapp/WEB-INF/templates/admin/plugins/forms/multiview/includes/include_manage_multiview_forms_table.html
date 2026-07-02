@@ -1,5 +1,5 @@
 ${multiviewmap!''}
-<@table>
+<@table headBody=true>
 <#if form_response_column_header_template_list?has_content>
 	<#list form_response_column_header_template_list as form_response_column_header_template>
 		${form_response_column_header_template}
@@ -36,4 +36,3 @@ sessionStorage.setItem('multiview_current_list', '${response_map?join(",")}' );
 sessionStorage.setItem('multiview_base_url', '${redirect_details_base_url}' );
 </script>
 </#if>
-

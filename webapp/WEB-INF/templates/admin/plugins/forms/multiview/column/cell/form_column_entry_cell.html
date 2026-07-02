@@ -1,1 +1,1 @@
-<@td><#list entry_values as entry_value><#if entry_value?index gte 1><br/> </#if>${entry_value!''}</#list></@td>
+<@td><#list entry_values as entry_value><#if entry_value?index gte 1><br/></#if><#if entry_value?trim?length gt 50><span class="btn btn-sm btn-secondary" data-bs-toggle="popover" data-bs-title="Contenu" data-bs-trigger="hover" data-bs-html="true" data-bs-content='${entry_value!}'>#i18n{portal.util.labelShow} <i class="ti ti-eye"></i></span><#else>${entry_value!?trim}</#if></#list></@td>
