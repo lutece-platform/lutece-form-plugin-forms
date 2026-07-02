@@ -4,8 +4,6 @@
     background-color: rgba(var(--tblr-scrollbar-color,var(--tblr-body-color-rgb)),0.16);
 }
 
-/* MultiView 																	*/
-/* core override */
 /* View response */
 .forms-response #page-header{
     position: sticky;
@@ -14,17 +12,11 @@
     background-color: var(--tblr-bg-surface-secondary);
 }
 
-.forms-response #page-header + .row{
+.forms-response #page-header + nav{
 	position: sticky;
     top: 162px;
     z-index: 100;
     background-color: var(--tblr-bg-surface-secondary);
-}
-
-/* MultiView - Search filters 													*/
-#searchForm{
-    position: fixed;
-    max-width: 15%;
 }
 
 .btn.dropdown-select{

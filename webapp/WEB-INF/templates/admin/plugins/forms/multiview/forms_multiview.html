@@ -36,6 +36,9 @@
 <@formsToastr infos=infos />
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+	// Set body class for multiview forms page
+	document.body.classList.add('overflow-y-hidden');
+
 	// Initialize the dropdown button
 	const formSelector = document.querySelector('.forms-filter #id_form')
 	formSelector.options[0].textContent = '#i18n{forms.filter.option.labelAllForms}';

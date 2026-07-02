@@ -265,17 +265,15 @@
 <#if typeToast?? && typeToast != ''><@initToast><@addToast content=messageToast class='bg-${typeToast} text-${typeToast}-fg' /></@initToast></#if>
 </#macro>    
 <#macro formBreadCrumb home='jsp/admin/plugins/forms/ManageForms.jsp' homeLabel=false>
-<@row>
-	<@breadcrumbs id='breadforms' params=' style="margin-bottom:1em; background-color:transparent;"'>
-		<@breadcrumbItem>
-			<@link href=home title='#i18n{forms.form.returnPage} #i18n{forms.manageForm.title}'>
-				<@icon style='home' />
-				<#if homeLabel>#i18n{forms.manageForm.title}</#if>
-			</@link>
-		</@breadcrumbItem>
-		<#nested>
-	</@breadcrumbs>
-</@row>
+<@breadcrumbs id='breadforms' params=' style="margin-bottom:1em; background-color:transparent;"'>
+	<@breadcrumbItem>
+		<@link href=home title='#i18n{forms.form.returnPage} #i18n{forms.manageForm.title}'>
+			<@icon style='home' />
+			<#if homeLabel>#i18n{forms.manageForm.title}</#if>
+		</@link>
+	</@breadcrumbItem>
+	<#nested>
+</@breadcrumbs>
 </#macro>   
 <#macro bottomFormFixedButtons>
 <#assign bottomParams>class="<#if commonsThemeCode='tabler'>fixed-bottom </#if>d-flex gap-2 justify-content-end bg-light bg-gradient left-0 w-100 d-flex justify-content-center py-3" style="--tblr-bg-opacity:.5;"</#assign>
