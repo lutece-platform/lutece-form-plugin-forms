@@ -37,6 +37,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -247,21 +248,24 @@ public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
             _model.put( FormsConstants.MARK_QUESTION, _question );
             if ( _formDisplay.getDisplayControl( ) != null )
             {
-                List<Control> listControl = new ArrayList<>(ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ), ControlType.CONDITIONAL ));
-                List<Control> listOtherStepControl = new ArrayList<>();
-                List<IValidator> listValidator = new ArrayList<>();
+                final List<Control> listAllControl = new ArrayList<>(ControlHome.getControlByControlTargetAndType( _formDisplay.getId( ), ControlType.CONDITIONAL ));
+                final Map<Control, IValidator> mapControlValidator = new LinkedHashMap<>( );
+                final List<Control> listOtherStepControl = new ArrayList<>();
                 Boolean bOtherStepValidation = null;
                 int nIdControlGroup = 0;
                 int nValidControlsCount = 0;
                 int nNotValidControlsCount = 0;
-                for (Control control : listControl) {
-                	if (nIdControlGroup == 0) {
-            			nIdControlGroup = control.getIdControlGroup();
-            		}
-                	IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
-                	listValidator.add(validator);
-                	control.setValue(validator.getJavascriptControlValue( control ));
-                	if ( CollectionUtils.isNotEmpty( control.getListIdQuestion( ) ) && CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
+                for (Control control : listAllControl) {
+                    if (nIdControlGroup == 0) {
+                        nIdControlGroup = control.getIdControlGroup();
+                    }
+                    final IValidator validator = EntryServiceManager.getInstance( ).getValidator( control.getValidatorName( ) );
+                    if ( validator != null )
+                    {
+                        mapControlValidator.put( control, validator );
+                        control.setValue( validator.getJavascriptControlValue( control ) );
+                    }
+                    if ( CollectionUtils.isNotEmpty( control.getListIdQuestion( ) ) && CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
                     {
                         int questionControlStep = QuestionHome.findByPrimaryKey( control.getListIdQuestion( ).iterator( ).next( ) ).getIdStep( );
                         if ( questionControlStep != _question.getIdStep( ) )
@@ -269,30 +273,35 @@ public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
                             List<FormQuestionResponse> listFormQuestionReponseToCheck = listFormQuestionResponse.stream( )
                                     .filter( questionReponse -> control.getListIdQuestion( ).contains( questionReponse.getQuestion( ).getId( ) ) )
                                     .collect( Collectors.toList( ) );
-                            if (validator.validate( listFormQuestionReponseToCheck, control )) {
-                            	nValidControlsCount++;
+                            if (validator != null && validator.validate( listFormQuestionReponseToCheck, control )) {
+                                nValidControlsCount++;
                             } else {
-                            	nNotValidControlsCount++;
+                                nNotValidControlsCount++;
                             }
                             listOtherStepControl.add(control);
                         }
                     }
                 }
-                
-                // remove controls from other steps
-                listControl.removeAll(listOtherStepControl);
-                
-                _model.put(FormsConstants.MARK_LIST_CONTROL, listControl);
-                _model.put( FormsConstants.MARK_LIST_VALIDATOR, listValidator );
-                
-                ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
+
+                listOtherStepControl.forEach( mapControlValidator::remove );
+
+                _model.put(FormsConstants.MARK_LIST_CONTROL, new ArrayList<>( mapControlValidator.keySet( ) ));
+                _model.put( FormsConstants.MARK_LIST_VALIDATOR, new ArrayList<>( mapControlValidator.values( ) ) );
+                _model.put( FormsConstants.MARK_ID_DISPLAY, _formDisplay.getDisplayControl( ).getIdControlTarget( ) );
+
+                final ControlGroup controlGroup = ControlGroupHome.findByPrimaryKey(nIdControlGroup).orElse(null);
                 _model.put( FormsConstants.MARK_LOGICAL_OPERATOR_LABEL, (controlGroup != null ? controlGroup.getLogicalOperator().getLabel() : LogicalOperator.AND.getLabel()) );
+
                 if (controlGroup != null && LogicalOperator.OR.getLabel().equals(controlGroup.getLogicalOperator().getLabel())) {
-                	bOtherStepValidation = nValidControlsCount > 0;
+                    bOtherStepValidation = nValidControlsCount > 0;
                 } else {
-                	bOtherStepValidation = nNotValidControlsCount == 0;
+                    bOtherStepValidation = nNotValidControlsCount == 0;
                 }
-                _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, bOtherStepValidation);
+
+                if ( !listOtherStepControl.isEmpty( ) )
+                {
+                    _model.put( FormsConstants.MARK_OTHER_STEP_VALIDATION, bOtherStepValidation);
+                }
             }
 
             HtmlTemplate htmlTemplateQuestion = AppTemplateService.getTemplate( findTemplateFor( displayType ), locale, _model );

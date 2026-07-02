@@ -250,7 +250,7 @@ public class CompositeGroupDisplay implements ICompositeDisplay, Serializable
             }
         }
 
-        _model.put( MARK_VISIBLE, isVisible( ) );
+        _model.put( MARK_VISIBLE, this.isVisible() || displayType == DisplayType.RESUBMIT_FRONTOFFICE || displayType == DisplayType.COMPLETE_FRONTOFFICE );
         _model.put( MARK_GROUP, _group );
         _model.put( MARK_GROUP_CONTENT, listChildrenHtml );
         _model.put( MARK_GROUP_CONTENT_BY_ITERATION, listChildrenHtmlByIteration );
