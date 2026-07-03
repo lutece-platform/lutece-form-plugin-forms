@@ -1,42 +1,47 @@
+<@cTpl>
 <#if visible>
-<div class="row step-group" id="step-group-${id_group}">
-	<div class="col-12">
-		<#list groupContentByIteration as iterationNumber, groupContent >
+<@cBlock class='row step-group' id='step-group-${id_group}'>
+	<@cBlock class='col-12'>
+		<#list groupContentByIteration as iterationNumber, groupContent>
 			<#if groupContent?size != 0>
-				<fieldset class="<#if id_display??> display_field_${id_display} d-none</#if>" style="position:relative;">
+				<@cFieldset id='group_${group.id!}_${iterationNumber}' class='<#if id_display??>display_field_${id_display} d-none</#if>' params='style="position:relative;"'>
 					<hr>
-					<legend>${group.title} <#if iterationNumber &gt; 0>(${iterationNumber+1})</#if>
-						<#if group.description!=''>
-							<div class="helpBox">${group.description}</div>
-						</#if>
-						<#if iterationNumber gte group.iterationMin>
-							<button class="btn btn-danger" name="action_removeIteration" value="${group.id}_${iterationNumber}" type="submit">
-								<i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!}
-							</button>
-						</#if>
-					</legend>
+					<#assign legend>
+						<@cInline class='h3 group-title'>
+							${group.title!}
+							<#if iterationNumber gt 0>(${iterationNumber + 1})</#if>
+							<#if group.description != ''><@cInline type='div' class='helpBox'>${group.description}</@cInline></#if>
+							<#if iterationNumber gte group.iterationMin>
+								<#assign removeParams = 'formnovalidate name="action_removeIteration" value="${group.id}_${iterationNumber}"'>
+								<@cBtn class='danger ms-auto me-sm action-group' id='group_remove_${group.id}_${iterationNumber}' label=group.iterationRemoveLabel! params=removeParams>
+									<@cIcon name='trash' />
+								</@cBtn>
+							</#if>
+						</@cInline>
+					</#assign>
+					<@cLegend label=legend showLabel=true class='col-12 d-flex align-items-center justify-space-between' id='legend-group_${group.id!}_${iterationNumber}' />
 					<#list groupContent as childrenHtml>
 						${childrenHtml}
 					</#list>
-				</fieldset>
+				</@cFieldset>
 			</#if>
 		</#list>
-		<#if isIterable >
-			<div class="row m-5">
-				<div class="col-12 col-sm-5 offset-sm-7">
-					<div class="add-iteration">
-						<button class="btn btn-primary" name="action_addIteration" value="${id_group}" type="submit">
-							<span class="fa fa-plus-circle"></span> ${group.iterationAddLabel!}
-						</button>
-					</div>
-				</div>
-			</div>
+		<#if isIterable>
+			<@cBlock class='row m-5'>
+				<@cBlock class='col-12 col-sm-5 offset-sm-7'>
+					<@cBlock class='add-iteration'>
+						<#assign addParams = 'formnovalidate value="${id_group}" name="action_addIteration"'>
+						<@cBtn class='primary action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params=addParams>
+							<@cIcon name='plus' />
+						</@cBtn>
+					</@cBlock>
+				</@cBlock>
+			</@cBlock>
 		</#if>
-	</div>
-</div>
+	</@cBlock>
+</@cBlock>
 <script>
 (function(){
-
 	function init(){
 		// Handle the display of the conditional groups of fields
 		const group = document.getElementById('step-group-${id_group}');
@@ -75,3 +80,4 @@
 })();
 </script>
 </#if>
+</@cTpl>
