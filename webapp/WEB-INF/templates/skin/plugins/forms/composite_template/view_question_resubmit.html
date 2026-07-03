@@ -1,160 +1,207 @@
+<@cTpl>
 <#assign classDisp><#if id_display??>display_field_${id_display}_${question.iterationNumber}</#if></#assign>
 <#assign param>displayControl="${question.id}_${question.iterationNumber}" </#assign>
 <#assign entryCSSClass>${classDisp} mt-3<#if question.entry.CSSClass??><#if question.entry.CSSClass?trim?starts_with('col-')> ${question.entry.CSSClass}<#else> col-12</#if></#if></#assign>
-<@columns class=entryCSSClass params=param>
+<@cCol class=entryCSSClass params=param>
 	${questionContent}
-</@columns>
+</@cCol>
 <#if list_validator??>
-	<@input name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='' type='hidden' />
+	<@cInput name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='' type='hidden' />
 	<script>
-	$(function() {
-		<#-- define one JS validator function per distinct validator bean (mirrors view_question.html) -->
-		<#assign validNames = [] />
-		<#list list_validator as validator>
-			<#if !validNames?seq_contains(validator.validatorBeanName)>
-				<#assign validNames = validNames + [validator.validatorBeanName] />
-				function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue){
-					${validator.getJavascriptValidation()!'return true;'}
-				}
-			</#if>
-		</#list>
-
-		let hasCollapse=false;
-		let toCollapse=null
-		let stepGroup = $('.display_field_${id_display!''}_${question.iterationNumber}').parentsUntil('.step-content');
-		stepGroup.each( function(){
-			if( $(this).hasClass('step-group-collapsible') ){
-				hasCollapse=true,
-				toCollapse=$(this);
-			}
-		});
-		const displayField = $('.display_field_${id_display!''}_${question.iterationNumber}');
-
-		<#-- cross-step controls are evaluated server-side (other_step_validation) and only force display -->
-		let bOtherStepValidated = true;
-		<#if other_step_validation??>
-			<#if other_step_validation>
-				displayField.show();
-				$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
-			<#else>
-				displayField.hide();
-				displayField.find("[required]").attr("requireddisabled","");
-				displayField.find("[required]").removeAttr("required");
-				$('#${question.id}_${question.iterationNumber}').val('');
-				bOtherStepValidated = false;
-			</#if>
-		</#if>
-
-		<#-- same-step controls : bind on every controlling question and re-evaluate the whole AND/OR set on change -->
-		<#list list_control as control>
-			var displayControl = resolveDisplayControl(${control.listIdQuestion[0]}, ${question.iterationNumber}),
-				input${control.id}_${question.iterationNumber} = getInputElement(displayControl);
-			input${control.id}_${question.iterationNumber}.bind('change keyup paste mouseup input', function(){
-				var nValidControlsCount = 0;
-				var nNotValidControlsCount = 0;
-				<#list list_control as itemControl>
-					var displayItemControl = resolveDisplayControl(${itemControl.listIdQuestion[0]}, ${question.iterationNumber}),
-						input${itemControl.id}_${question.iterationNumber} = getInputElement(displayItemControl);
-					stepGroup = $('.display_field_${id_display!''}_${question.iterationNumber}').parentsUntil('.step-content');
-					stepGroup.each( function(){
-						if( $(this).hasClass('step-group-collapsible') ){
-							hasCollapse=$(this).find("div[class*='display_field_']").not(".control_invalid").length == 0,
-							toCollapse=$(this);
-						}
-					});
-					var inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
-					if($("div[displayControl='" + displayItemControl + "']").hasClass("control_invalid")
-							|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}'))
-					{
-						nNotValidControlsCount++;
-					} else {
-						nValidControlsCount++;
+	(function() {
+		function init() {
+			<#assign validNames = [] />
+			<#list list_validator as validator>
+				<#if !validNames?seq_contains(validator.validatorBeanName)>
+					<#assign validNames = validNames + [validator.validatorBeanName] />
+					function validator_${validator.validatorBeanName?replace('.','_')}(inputValue,controlValue){
+						${validator.getJavascriptValidation()!'return true;'}
 					}
-				</#list>
-				let bIsQuestionDisplayed;
-				<#if logical_operator_label == 'or'>
-					bIsQuestionDisplayed = (nValidControlsCount > 0) || bOtherStepValidated;
-				<#else>
-					bIsQuestionDisplayed = (nNotValidControlsCount == 0) && bOtherStepValidated;
 				</#if>
-				if(bIsQuestionDisplayed)
-				{
-					displayField.removeClass("control_invalid");
-					displayField.show();
-					displayField.find("[requireddisabled]").attr("required","");
-					displayField.find("[requireddisabled]").removeAttr("requireddisabled");
-					if( hasCollapse ){ toCollapse.show() };
-					$('#${question.id}_${question.iterationNumber}').val('${question.id}_${question.iterationNumber}');
-				} else {
-					displayField.addClass("control_invalid");
-					displayField.hide();
-					displayField.find("[required]").attr("requireddisabled","");
-					displayField.find("[required]").removeAttr("required");
-					if( hasCollapse ){ toCollapse.hide(); }
-					$('#${question.id}_${question.iterationNumber}').val('');
-				}
-				const currentControl = "${question.id}_${question.iterationNumber}";
-				const currentInput = getInputElement(currentControl);
-				if ( currentInput[0] !== undefined && currentInput[0].type !== 'file' ){
-					currentInput.change();
+			</#list>
+
+			// walk up the ancestors of the given elements, up to (excluding) the stop selector
+			function parentsUntil( elements, stopSelector ){
+				const parents = [];
+				elements.forEach(function(element){
+					let node = element.parentElement;
+					while ( node !== null && !node.matches(stopSelector) ){
+						if ( parents.indexOf(node) === -1 ){
+							parents.push(node);
+						}
+						node = node.parentElement;
+					}
+				});
+				return parents;
+			}
+
+			const displayField = Array.from(document.querySelectorAll('.display_field_${id_display!''}_${question.iterationNumber}'));
+			const hiddenInput = document.getElementById('${question.id}_${question.iterationNumber}');
+
+			// descendants of the display field matching the given selector
+			function findWithin( selector ){
+				const found = [];
+				displayField.forEach(function(el){
+					el.querySelectorAll(selector).forEach(function(child){ found.push(child); });
+				});
+				return found;
+			}
+
+			let hasCollapse = false;
+			let toCollapse = null;
+			let stepGroup = parentsUntil(displayField, '.step-content');
+			stepGroup.forEach(function(node){
+				if ( node.classList.contains('step-group-collapsible') ){
+					hasCollapse = true;
+					toCollapse = node;
 				}
 			});
-			input${control.id}_${question.iterationNumber}.change();
-		</#list>
-	});
+
+			let bOtherStepValidated = true;
+			<#if other_step_validation??>
+				<#if other_step_validation>
+					displayField.forEach(function(el){ el.style.display = ''; });
+					if ( hiddenInput !== null ){ hiddenInput.value = '${question.id}_${question.iterationNumber}'; }
+				<#else>
+					displayField.forEach(function(el){ el.style.display = 'none'; });
+					findWithin('[required]').forEach(function(el){ el.setAttribute('requireddisabled',''); el.removeAttribute('required'); });
+					if ( hiddenInput !== null ){ hiddenInput.value = ''; }
+					bOtherStepValidated = false;
+				</#if>
+			</#if>
+
+			<#list list_control as control>
+			{
+				const controlInput = getInputElement(resolveDisplayControl(${control.listIdQuestion[0]}, ${question.iterationNumber}));
+				const handler = function(){
+					let nValidControlsCount = 0;
+					let nNotValidControlsCount = 0;
+					<#list list_control as itemControl>
+					{
+						const displayItemControl = resolveDisplayControl(${itemControl.listIdQuestion[0]}, ${question.iterationNumber});
+						const inputItem = getInputElement(displayItemControl);
+						stepGroup = parentsUntil(displayField, '.step-content');
+						stepGroup.forEach(function(node){
+							if ( node.classList.contains('step-group-collapsible') ){
+								hasCollapse = Array.from(node.querySelectorAll("div[class*='display_field_']")).filter(function(el){ return !el.classList.contains('control_invalid'); }).length === 0;
+								toCollapse = node;
+							}
+						});
+						const inputValue = getFieldValue(inputItem);
+						const ctrlDiv = document.querySelector("div[displayControl='" + displayItemControl + "']");
+						if( ( ctrlDiv !== null && ctrlDiv.classList.contains("control_invalid") )
+								|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}') )
+						{
+							nNotValidControlsCount++;
+						} else {
+							nValidControlsCount++;
+						}
+					}
+					</#list>
+					let bIsQuestionDisplayed;
+					<#if logical_operator_label == 'or'>
+						bIsQuestionDisplayed = (nValidControlsCount > 0) || bOtherStepValidated;
+					<#else>
+						bIsQuestionDisplayed = (nNotValidControlsCount == 0) && bOtherStepValidated;
+					</#if>
+					if(bIsQuestionDisplayed)
+					{
+						displayField.forEach(function(el){ el.classList.remove("control_invalid"); el.style.display = ''; });
+						findWithin("[requireddisabled]").forEach(function(el){ el.setAttribute("required",""); el.removeAttribute("requireddisabled"); });
+						if( hasCollapse && toCollapse !== null ){ toCollapse.style.display = ''; }
+						if ( hiddenInput !== null ){ hiddenInput.value = '${question.id}_${question.iterationNumber}'; }
+					} else {
+						displayField.forEach(function(el){ el.classList.add("control_invalid"); el.style.display = 'none'; });
+						findWithin("[required]").forEach(function(el){ el.setAttribute("requireddisabled",""); el.removeAttribute("required"); });
+						if( hasCollapse && toCollapse !== null ){ toCollapse.style.display = 'none'; }
+						if ( hiddenInput !== null ){ hiddenInput.value = ''; }
+					}
+					const currentInput = getInputElement("${question.id}_${question.iterationNumber}");
+					if ( currentInput[0] !== undefined && currentInput[0].type !== 'file' ){
+						currentInput.forEach(function(el){ el.dispatchEvent(new Event('change')); });
+					}
+				};
+				controlInput.forEach(function(el){
+					['change','keyup','paste','mouseup','input'].forEach(function(eventName){
+						el.addEventListener(eventName, handler);
+					});
+				});
+				controlInput.forEach(function(el){ el.dispatchEvent(new Event('change')); });
+			}
+			</#list>
+		}
+
+		if ( document.readyState !== 'loading' ) { init(); } else { document.addEventListener('DOMContentLoaded', init); }
+	})();
 	</script>
 <#else>
-	<@input name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='${question.id}_${question.iterationNumber}' type='hidden' />
+	<@cInput name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='${question.id}_${question.iterationNumber}' type='hidden' />
 </#if>
 
 
 <script>
 function resolveDisplayControl( controllerId, iteration ){
-	if( $("div[displayControl='" + controllerId + "_" + iteration + "']").length > 0 ){
+	if( document.querySelector("div[displayControl='" + controllerId + "_" + iteration + "']") !== null ){
 		return controllerId + "_" + iteration;
 	}
 	return controllerId + "_0";
 }
 
 function getInputElement( displayControl ){
-	const types = ['input','select','textarea'];
-	let elm = null;
-	for(let i=0; i<types.length && (elm === undefined || elm == null || elm.length <=0); i++){
-		elm = $("div[displayControl=" + displayControl + "]").find(types[i]);
+	const container = document.querySelector("div[displayControl='" + displayControl + "']");
+	let elements = [];
+	if ( container !== null ){
+		const types = ['input','select','textarea'];
+		for( let i = 0; i < types.length && elements.length === 0; i++ ){
+			elements = Array.from(container.querySelectorAll(types[i]));
+		}
 	}
-	if( elm.is('input') ){
-		elm = $('input[name="' + elm.attr('name') + '"]');
+	// for a group of inputs sharing a name (radio / checkbox), widen the selection to the whole group
+	if ( elements.length > 0 && elements[0].tagName === 'INPUT' && elements[0].getAttribute('name') !== null ){
+		elements = Array.from(document.querySelectorAll('input[name="' + elements[0].getAttribute('name') + '"]'));
 	}
-	return elm;
+	return elements;
 }
 
-function getFieldValue( elm ){
-	if(elm.is(':radio')){
-		const input = $('input[name="' + elm.attr('name') + '"]:checked');
-		return input.val();
-	} else if (elm.is(':checkbox'))	{
+function getFieldValue( elements ){
+	if ( elements.length === 0 ){
+		return undefined;
+	}
+	const first = elements[0];
+	if ( first.type === 'radio' ){
+		const checked = document.querySelector('input[name="' + first.getAttribute('name') + '"]:checked');
+		return checked !== null ? checked.value : undefined;
+	} else if ( first.type === 'checkbox' ){
 		const resultChecked = [];
-		for(let i=0;i< elm.length;i++){
-			if (elm [i].checked){
-				resultChecked.push(elm[i].value);
+		for( let i = 0; i < elements.length; i++ ){
+			if ( elements[i].checked ){
+				resultChecked.push(elements[i].value);
 			}
 		}
 		return resultChecked;
-	} else if (elm.is('select')) {
-		return elm[0].options[elm[0].selectedIndex].value;
+	} else if ( first.tagName === 'SELECT' ){
+		return first.options[first.selectedIndex].value;
 	}
 	//add other specific implementations here
 	else {
-		return elm.val();
+		return first.value;
 	}
 }
 
-$( function() {
-	$("button[name='action_addIteration']").on("click", function() {
-		const target = "#last_" + $(this).attr("value");
-		const form = $(this).closest("form");
-		const newUrl = form.attr("action").replace(/#current_step$/,target);
-		form.attr("action",newUrl);
-	});
-});
+(function() {
+	function init() {
+		document.querySelectorAll("button[name='action_addIteration']").forEach(function(button){
+			button.addEventListener("click", function() {
+				const target = "#last_" + button.getAttribute("value");
+				const form = button.closest("form");
+				if ( form !== null ){
+					const newUrl = form.getAttribute("action").replace(/#current_step$/,target);
+					form.setAttribute("action",newUrl);
+				}
+			});
+		});
+	}
+	if ( document.readyState !== 'loading' ) { init(); } else { document.addEventListener('DOMContentLoaded', init); }
+})();
 </script>
+</@cTpl>
