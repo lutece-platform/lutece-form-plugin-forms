@@ -77,6 +77,7 @@ import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
+import fr.paris.lutece.plugins.forms.util.IndexerDaemonSignalHelper;
 import fr.paris.lutece.plugins.forms.util.LuceneUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -139,6 +140,8 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
         indexerAction.setIdFormResponse( nIdFormResponse );
         indexerAction.setIdTask( nIdTask );
         IndexerActionHome.create( indexerAction, plugin );
+        // signal the indexer daemon that there is work to do
+        IndexerDaemonSignalHelper.signal( );
     }
 
     /**
