@@ -35,30 +35,42 @@
 	</div>
 </div>
 <script>
-$(function(){
-
-	// Handle the display of the conditional groups of fields
-	const group = $('#step-group-${id_group}');
-	const allFields = group.find('div[displayControl]');
-	const condFields = group.find('div[class*="display_field_"]');
-	if ( allFields.length === 0 || allFields.length !== condFields.length ) {
-		return;
-	}
-
-	function syncGroupVisibility(){
-		const conds = group.find('div[class*="display_field_"]');
-		if ( conds.filter('.control_invalid').length === conds.length ) {
-			group.hide();
-		} else {
-			group.show();
+(function(){
+	function init(){
+		// Handle the display of the conditional groups of fields
+		const group = document.getElementById('step-group-${id_group}');
+		if ( group === null ) {
+			return;
 		}
+		const allFields = group.querySelectorAll('div[displayControl]');
+		const condFields = group.querySelectorAll('div[class*="display_field_"]');
+		if ( allFields.length === 0 || allFields.length !== condFields.length ) {
+			return;
+		}
+
+		function syncGroupVisibility(){
+			const allInvalid = Array.from(condFields).every(function(field){
+				return field.classList.contains('control_invalid');
+			});
+			group.style.display = allInvalid ? 'none' : '';
+		}
+
+		// trigger the group visibility on any field change
+		document.querySelectorAll('input, select, textarea').forEach(function(field){
+			['change','keyup','paste','mouseup','input'].forEach(function(eventName){
+				field.addEventListener(eventName, function(){
+					setTimeout(syncGroupVisibility, 0);
+				});
+			});
+		});
+		syncGroupVisibility();
 	}
 
-	// trigger the group visibility
-	$('input, select, textarea').on('change keyup paste mouseup input', function() {
-		setTimeout(syncGroupVisibility, 0);
-	});
-	syncGroupVisibility();
-});
+	if ( document.readyState !== 'loading' ) {
+		init();
+	} else {
+		document.addEventListener('DOMContentLoaded', init);
+	}
+})();
 </script>
 </#if>
