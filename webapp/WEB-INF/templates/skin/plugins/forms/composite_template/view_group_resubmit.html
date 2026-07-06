@@ -1,83 +1,64 @@
-<@cTpl>
 <#if visible>
-<@cBlock class='row step-group' id='step-group-${id_group}'>
-	<@cBlock class='col-12'>
-		<#list groupContentByIteration as iterationNumber, groupContent>
+<div class="row step-group" id="step-group-${id_group}">
+	<div class="col-12">
+		<#list groupContentByIteration as iterationNumber, groupContent >
 			<#if groupContent?size != 0>
 				<fieldset class="<#if id_display??> display_field_${id_display} d-none</#if>" style="position:relative;">
 					<hr>
-					<#assign legend>
-						<@cInline class='h3 group-title'>
-							${group.title!}
-							<#if iterationNumber gt 0>(${iterationNumber + 1})</#if>
-							<#if group.description != ''><@cInline type='div' class='helpBox'>${group.description}</@cInline></#if>
-							<#if iterationNumber gte group.iterationMin>
-								<#assign removeParams = 'formnovalidate name="action_removeIteration" value="${group.id}_${iterationNumber}"'>
-								<@cBtn class='danger ms-auto me-sm action-group' id='group_remove_${group.id}_${iterationNumber}' label=group.iterationRemoveLabel! params=removeParams>
-									<@cIcon name='trash' />
-								</@cBtn>
-							</#if>
-						</@cInline>
-					</#assign>
-					<@cLegend label=legend showLabel=true class='col-12 d-flex align-items-center justify-space-between' id='legend-group_${group.id!}_${iterationNumber}' />
+					<legend>${group.title} <#if iterationNumber &gt; 0>(${iterationNumber+1})</#if>
+						<#if group.description!=''>
+							<div class="helpBox">${group.description}</div>
+						</#if>
+						<#if iterationNumber gte group.iterationMin>
+							<button class="btn btn-danger" name="action_removeIteration" value="${group.id}_${iterationNumber}" type="submit">
+								<i class="fa fa-trash" aria-hidden="true"></i> ${group.iterationRemoveLabel!}
+							</button>
+						</#if>
+					</legend>
 					<#list groupContent as childrenHtml>
 						${childrenHtml}
 					</#list>
 				</fieldset>
 			</#if>
 		</#list>
-		<#if isIterable>
-			<@cBlock class='row m-5'>
-				<@cBlock class='col-12 col-sm-5 offset-sm-7'>
-					<@cBlock class='add-iteration'>
-						<#assign addParams = 'formnovalidate value="${id_group}" name="action_addIteration"'>
-						<@cBtn class='primary action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params=addParams>
-							<@cIcon name='plus' />
-						</@cBtn>
-					</@cBlock>
-				</@cBlock>
-			</@cBlock>
+		<#if isIterable >
+			<div class="row m-5">
+				<div class="col-12 col-sm-5 offset-sm-7">
+					<div class="add-iteration">
+						<button class="btn btn-primary" name="action_addIteration" value="${id_group}" type="submit">
+							<span class="fa fa-plus-circle"></span> ${group.iterationAddLabel!}
+						</button>
+					</div>
+				</div>
+			</div>
 		</#if>
-	</@cBlock>
-</@cBlock>
+	</div>
+</div>
 <script>
-(function(){
-	function init(){
-		// Handle the display of the conditional groups of fields
-		const group = document.getElementById('step-group-${id_group}');
-		if ( group === null ) {
-			return;
-		}
-		const allFields = group.querySelectorAll('div[displayControl]');
-		const condFields = group.querySelectorAll('div[class*="display_field_"]');
-		if ( allFields.length === 0 || allFields.length !== condFields.length ) {
-			return;
-		}
+$(function(){
 
-		function syncGroupVisibility(){
-			const allInvalid = Array.from(condFields).every(function(field){
-				return field.classList.contains('control_invalid');
-			});
-			group.style.display = allInvalid ? 'none' : '';
-		}
-
-		// trigger the group visibility on any field change
-		document.querySelectorAll('input, select, textarea').forEach(function(field){
-			['change','keyup','paste','mouseup','input'].forEach(function(eventName){
-				field.addEventListener(eventName, function(){
-					setTimeout(syncGroupVisibility, 0);
-				});
-			});
-		});
-		syncGroupVisibility();
+	// Handle the display of the conditional groups of fields
+	const group = $('#step-group-${id_group}');
+	const allFields = group.find('div[displayControl]');
+	const condFields = group.find('div[class*="display_field_"]');
+	if ( allFields.length === 0 || allFields.length !== condFields.length ) {
+		return;
 	}
 
-	if ( document.readyState !== 'loading' ) {
-		init();
-	} else {
-		document.addEventListener('DOMContentLoaded', init);
+	function syncGroupVisibility(){
+		const conds = group.find('div[class*="display_field_"]');
+		if ( conds.filter('.control_invalid').length === conds.length ) {
+			group.hide();
+		} else {
+			group.show();
+		}
 	}
-})();
+
+	// trigger the group visibility
+	$('input, select, textarea').on('change keyup paste mouseup input', function() {
+		setTimeout(syncGroupVisibility, 0);
+	});
+	syncGroupVisibility();
+});
 </script>
 </#if>
-</@cTpl>
