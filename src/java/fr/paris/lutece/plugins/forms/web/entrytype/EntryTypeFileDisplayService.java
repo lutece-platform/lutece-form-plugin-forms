@@ -160,7 +160,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
 
                             PhysicalFile physicalFile = file.getPhysicalFile( );
                             FileItem fileItem = new GenAttFileItem( physicalFile.getValue( ), file.getTitle( ) );
-                            ( ( AbstractEntryTypeUpload ) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
+                            ( ( AbstractEntryTypeUpload ) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, IEntryTypeService.PREFIX_ITERATION_ATTRIBUTE
                                             + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
                                     request );
                             listFiles.add( fileItem );
@@ -169,7 +169,7 @@ public class EntryTypeFileDisplayService implements IEntryDisplayService
                     else if ( response.getFile( ).getPhysicalFile( ) != null )
                     {
                         FileItem fileItem = new GenAttFileItem( response.getFile( ).getPhysicalFile( ).getValue( ), response.getFile( ).getTitle( ) );
-                        ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, "nIt"
+                        ( (AbstractEntryTypeUpload) service ).getAsynchronousUploadHandler( ).addFileItemToUploadedFilesList( fileItem, IEntryTypeService.PREFIX_ITERATION_ATTRIBUTE
                                 + response.getIterationNumber( ) + "_" + IEntryTypeService.PREFIX_ATTRIBUTE + Integer.toString( response.getEntry( ).getIdEntry( ) ),
                                 request );
                         listFiles.add( fileItem );
