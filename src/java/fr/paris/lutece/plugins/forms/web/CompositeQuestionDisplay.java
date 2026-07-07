@@ -78,7 +78,6 @@ import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServ
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
 import fr.paris.lutece.portal.service.image.ImageResourceManager;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 import static fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService.SUFFIX_CONFIRM_FIELD;
@@ -265,11 +264,6 @@ public class CompositeQuestionDisplay implements ICompositeDisplay, Serializable
                     {
                         mapControlValidator.put( control, validator );
                         control.setValue( validator.getJavascriptControlValue( control ) );
-                    }
-                    else
-                    {
-                        AppLogService.error( "Forms: validator '" + control.getValidatorName( ) + "' not found for control " + control.getId( )
-                                + " (question " + _question.getId( ) + ") : conditional control ignored on client side" );
                     }
                     if ( CollectionUtils.isNotEmpty( control.getListIdQuestion( ) ) && CollectionUtils.isNotEmpty( listFormQuestionResponse ) )
                     {
