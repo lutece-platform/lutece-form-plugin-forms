@@ -61,13 +61,12 @@
 			group.style.display = allInvalid ? 'none' : '';
 		}
 
-		// trigger the group visibility on any field change
-		document.querySelectorAll('input, select, textarea').forEach(function(field){
-			['change','keyup','paste','mouseup','input'].forEach(function(eventName){
-				field.addEventListener(eventName, function(){
-					setTimeout(syncGroupVisibility, 0);
-				});
-			});
+		// the group visibility only depends on the 'control_invalid' class toggled on the
+		// conditional fields by the question display controls : observe those class changes
+		// directly instead of listening to every field of the page
+		const observer = new MutationObserver(syncGroupVisibility);
+		condFields.forEach(function(field){
+			observer.observe(field, { attributes: true, attributeFilter: ['class'] });
 		});
 		syncGroupVisibility();
 	}
