@@ -57,7 +57,7 @@
 			var inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
 			// AND condition : if at least 1 control value isn't present, do not display question
 			if($("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']").hasClass("control_invalid")
-					|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}'))
+					|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value?js_string}'))
 			{
 				nNotValidControlsCount++;
 			} else {

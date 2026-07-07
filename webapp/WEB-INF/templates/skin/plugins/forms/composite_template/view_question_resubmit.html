@@ -92,7 +92,7 @@
 						const inputValue = getFieldValue(inputItem);
 						const ctrlDiv = document.querySelector("div[displayControl='" + displayItemControl + "']");
 						if( ( ctrlDiv !== null && ctrlDiv.classList.contains("control_invalid") )
-								|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}') )
+								|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value?js_string}') )
 						{
 							nNotValidControlsCount++;
 						} else {
