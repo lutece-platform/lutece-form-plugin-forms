@@ -36,15 +36,17 @@ package fr.paris.lutece.plugins.forms.web.http;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import fr.paris.lutece.plugins.genericattributes.service.entrytype.IEntryTypeService;
+
 /**
- * 
+ *
  * Wrapper of ServletRequest for entry of type iterable Group
  *
  */
 public class IterationHttpServletRequestWrapper extends HttpServletRequestWrapper
 {
     // Pattern
-    private static final String PATTERN_PARAM_PREFIX_ITERATION = "nIt%s_";
+    private static final String PATTERN_PARAM_PREFIX_ITERATION = IEntryTypeService.PREFIX_ITERATION_ATTRIBUTE + "%s_";
 
     public static final String ATTRIBUTE_RESPONSE_ITERATION_NUMBER = "response_iteration_number";
 
