@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
 						inputValue = getFieldValue(input${itemControl.id}_${question.iterationNumber});
 						// AND condition : if at least 1 control value isn't present, do not display question
 						var controlDiv = document.querySelector("div[displayControl='${itemControl.listIdQuestion[0]}_${question.iterationNumber}']");
-						if((controlDiv && controlDiv.classList.contains("control_invalid"))	|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value}')){
+						if((controlDiv && controlDiv.classList.contains("control_invalid"))	|| !validator_${itemControl.validatorName?replace('.','_')}( inputValue, '${itemControl.value?js_string}')){
 							nNotValidControlsCount++;
 						} else {
 							nValidControlsCount++;
