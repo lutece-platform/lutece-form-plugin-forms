@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2025, City of Paris
+ * Copyright (c) 2002-2026, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,8 +44,15 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 import fr.paris.lutece.plugins.forms.exception.LockException;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumber;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.service.lock.LockResult;
 import fr.paris.lutece.plugins.forms.service.lock.LuceneLockManager;
+import fr.paris.lutece.plugins.forms.util.NaturalSortKeyBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -53,6 +60,7 @@ import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.document.LongPoint;
 import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.SortedDocValuesField;
+import org.apache.lucene.document.SortedSetDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
@@ -72,11 +80,6 @@ import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerAction;
 import fr.paris.lutece.plugins.forms.business.form.search.IndexerActionHome;
 import fr.paris.lutece.plugins.forms.service.FormsPlugin;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeCheckBox;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeRadioButton;
-import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeSelect;
 import fr.paris.lutece.plugins.forms.util.LuceneUtils;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.business.Response;
@@ -109,6 +112,13 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
     @Autowired( required = false )
     private StateService _stateService;
     private LuceneLockManager _lockManager;
+
+    /**
+     * {@link java.text.Collator}, used internally by {@link NaturalSortKeyBuilder}, is not thread-safe. A ThreadLocal
+     * gives each indexing thread its own builder instance without re-creating the underlying collators for every
+     * document.
+     */
+    private static final ThreadLocal<NaturalSortKeyBuilder> SORT_KEY_BUILDER = ThreadLocal.withInitial( NaturalSortKeyBuilder::new );
 
     /**
      * Constructor
@@ -774,7 +784,7 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                                 }
                             }
                             else
-                                if ( entryTypeService instanceof EntryTypeNumbering )
+                                if ( entryTypeService instanceof EntryTypeNumbering  || entryTypeService instanceof EntryTypeNumber)
                                 {
                                     try
                                     {
@@ -792,7 +802,11 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                                     if ( entryTypeService instanceof EntryTypeSelect || entryTypeService instanceof EntryTypeRadioButton || entryTypeService instanceof EntryTypeCheckBox )
                                     {
                                         doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_SELECT_SUFFIX, response.getResponseValue( ), Field.Store.YES ) );
-                                        doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_SELECT_SUFFIX, new BytesRef( response.getResponseValue( ) ) ) );
+                                        String sortIndexList = LuceneUtils.createLuceneEntryKey( strQuestionCode, response.getIterationNumber( ) );
+
+
+                                        doc.add( new SortedSetDocValuesField( sortIndexList,
+                                                new BytesRef( SORT_KEY_BUILDER.get( ).build( response.getResponseValue( ) ) ) ) );
                                         if ( responseField != null && StringUtils.isNotEmpty( responseField.getTitle( ) ) )
                                         {
                                             doc.add( new StringField( fieldNameBuilder.toString( ) + FormResponseSearchItem.FIELD_SELECT_TITLE , responseField.getTitle( ), Field.Store.YES ) );
@@ -801,7 +815,10 @@ public class LuceneFormSearchIndexer implements IFormSearchIndexer
                                 else
                                 {
                                     doc.add( new StringField( fieldNameBuilder.toString( ), response.getResponseValue( ), Field.Store.YES ) );
-                                    doc.add( new SortedDocValuesField( fieldNameBuilder.toString( ), new BytesRef( response.getResponseValue( ) ) ) );
+
+
+                                    doc.add( new SortedSetDocValuesField( fieldNameBuilder.toString( ),
+                                            new BytesRef( SORT_KEY_BUILDER.get( ).build( response.getResponseValue( ) ) ) ) );
                                 }
 
                         }

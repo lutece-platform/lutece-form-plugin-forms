@@ -47,6 +47,7 @@ import fr.paris.lutece.plugins.forms.business.form.column.FormColumnCell;
 import fr.paris.lutece.plugins.forms.business.form.column.impl.FormColumnEntry;
 import fr.paris.lutece.plugins.forms.business.form.search.FormResponseSearchItem;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeDate;
+import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumber;
 import fr.paris.lutece.plugins.forms.service.entrytype.EntryTypeNumbering;
 import fr.paris.lutece.plugins.genericattributes.business.Entry;
 import fr.paris.lutece.plugins.genericattributes.service.entrytype.EntryTypeServiceManager;
@@ -91,7 +92,7 @@ public class FormColumnDisplayEntry extends AbstractFormColumnDisplay
             Question question = QuestionHome.findByCode( strEntryCode ).get( 0 );
             Entry entry = question.getEntry( );
             IEntryTypeService entryTypeService = EntryTypeServiceManager.getEntryTypeService( entry );
-            if ( entryTypeService instanceof EntryTypeNumbering )
+            if ( entryTypeService instanceof EntryTypeNumbering || entryTypeService instanceof EntryTypeNumber)
             {
                 strAttributeSort += FormResponseSearchItem.FIELD_INT_SUFFIX;
             }
