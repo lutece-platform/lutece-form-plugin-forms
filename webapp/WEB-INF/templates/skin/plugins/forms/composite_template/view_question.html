@@ -190,5 +190,7 @@ function toggleRequiredAttributesByVisibility() {
 <#else>
 <@cInput name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='${question.id}_${question.iterationNumber}' type='hidden' />
 </#if>
+<#else>
+<@cInput name='displayed_questions' id='${question.id}_${question.iterationNumber}' class='' value='${question.id}_${question.iterationNumber}' type='hidden' />
 </#if>
 </@cTpl>
