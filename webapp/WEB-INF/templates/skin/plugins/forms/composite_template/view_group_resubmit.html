@@ -1,12 +1,12 @@
 <@cTpl>
 <#if visible>
 <#assign fieldsetClass = ''>
-<#if id_display??><#assign fieldsetClass = 'display_field_' + id_display + ' d-none'></#if>
+<#if id_display??><#assign fieldsetClass = 'display_field_' + id_display + ' d-none position-relative'></#if>
 <@cBlock class='row step-group' id='step-group-${id_group}'>
 	<@cBlock class='col-12'>
 		<#list groupContentByIteration as iterationNumber, groupContent>
 			<#if groupContent?size != 0>
-				<@cFieldset id='group_${group.id!}_${iterationNumber}' class=fieldsetClass params='style="position:relative;"'>
+				<@cFieldset id='group_${group.id!}_${iterationNumber}' class=fieldsetClass>
 					<hr>
 					<#assign legend>
 						<@cInline class='h3 group-title'>
@@ -20,6 +20,18 @@
 								</@cBtn>
 							</#if>
 						</@cInline>
+						<#if isIterable>
+							<@cBlock class='row m-5'>
+								<@cBlock class='col-12 col-sm-5 offset-sm-7'>
+									<@cBlock class='add-iteration'>
+										<#assign addParams = 'formnovalidate value="${id_group}" name="action_addIteration"'>
+										<@cBtn class='primary action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params=addParams>
+											<@cIcon name='plus' />
+										</@cBtn>
+									</@cBlock>
+								</@cBlock>
+							</@cBlock>
+						</#if>
 					</#assign>
 					<@cLegend label=legend showLabel=true class='col-12 d-flex align-items-center justify-space-between' id='legend-group_${group.id!}_${iterationNumber}' />
 					<#list groupContent as childrenHtml>
@@ -28,18 +40,6 @@
 				</@cFieldset>
 			</#if>
 		</#list>
-		<#if isIterable>
-			<@cBlock class='row m-5'>
-				<@cBlock class='col-12 col-sm-5 offset-sm-7'>
-					<@cBlock class='add-iteration'>
-						<#assign addParams = 'formnovalidate value="${id_group}" name="action_addIteration"'>
-						<@cBtn class='primary action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params=addParams>
-							<@cIcon name='plus' />
-						</@cBtn>
-					</@cBlock>
-				</@cBlock>
-			</@cBlock>
-		</#if>
 	</@cBlock>
 </@cBlock>
 <script>
