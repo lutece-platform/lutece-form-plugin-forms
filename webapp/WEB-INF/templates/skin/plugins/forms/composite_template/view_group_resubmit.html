@@ -7,27 +7,25 @@
 		<#list groupContentByIteration as iterationNumber, groupContent>
 			<#if groupContent?size != 0>
 				<@cFieldset id='group_${group.id!}_${iterationNumber}' class=fieldsetClass>
-					<hr>
 					<#assign legend>
-						<@cInline class='h3 group-title'>
-							${group.title!}
-							<#if iterationNumber gt 0>(${iterationNumber + 1})</#if>
-							<#if group.description != ''><@cInline type='div' class='helpBox'>${group.description}</@cInline></#if>
-							<#if iterationNumber gte group.iterationMin>
-								<#assign removeParams = 'formnovalidate name="action_removeIteration" value="${group.id}_${iterationNumber}"'>
-								<@cBtn class='danger ms-auto me-sm action-group' id='group_remove_${group.id}_${iterationNumber}' label=group.iterationRemoveLabel! params=removeParams>
-									<@cIcon name='trash' />
-								</@cBtn>
-							</#if>
-							<#if isIterable>
-								<#assign addParams = 'formnovalidate value="${id_group}" name="action_addIteration"'>
-								<@cBtn class='primary ms-auto action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params=addParams>
-									<@cIcon name='plus' />
-								</@cBtn>
-							</#if>
-						</@cInline>
+						<@cBlock class='h3 group-title w-75 pe-m'>
+							${group.title!}<#if iterationNumber gt 0> (${iterationNumber + 1})</#if>
+							<#if group.description != ''><br><@cInline type='small' class='group-desc'>${group.description}</@cInline></#if>
+						</@cBlock>
+						<#if iterationNumber gte group.iterationMin>
+							<#assign removeParams = 'formnovalidate name="action_removeIteration" value="${group.id}_${iterationNumber}"'>
+							<@cBtn class='danger ms-auto mt-0 me-m action-group' id='group_remove_${group.id}_${iterationNumber}' label=group.iterationRemoveLabel! params=removeParams>
+								<@cIcon name='trash' />
+							</@cBtn>
+						</#if>
+						<#if isIterable>
+							<#assign addParams = 'formnovalidate value="${id_group}" name="action_addIteration"'>
+							<@cBtn class='primary ms-auto action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params=addParams>
+								<@cIcon name='plus' />
+							</@cBtn>
+						</#if>
 					</#assign>
-					<@cLegend label=legend showLabel=true class='col-12 d-flex align-items-center justify-space-between' id='legend-group_${group.id!}_${iterationNumber}' />
+					<@cLegend label=legend showLabel=true id='legend-group_${group.id!}_${iterationNumber}' />
 					<#list groupContent as childrenHtml>
 						${childrenHtml}
 					</#list>
