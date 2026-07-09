@@ -19,13 +19,13 @@
 									<@cIcon name='trash' />
 								</@cBtn>
 							</#if>
+							<#if isIterable>
+								<#assign addParams = 'formnovalidate value="${id_group}" name="action_addIteration"'>
+								<@cBtn class='primary ms-auto action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params=addParams>
+									<@cIcon name='plus' />
+								</@cBtn>
+							</#if>
 						</@cInline>
-						<#if isIterable>
-							<#assign addParams = 'formnovalidate value="${id_group}" name="action_addIteration"'>
-							<@cBtn class='primary ms-auto action-group' id='group_add_${id_group}' label=group.iterationAddLabel! params=addParams>
-								<@cIcon name='plus' />
-							</@cBtn>
-						</#if>
 					</#assign>
 					<@cLegend label=legend showLabel=true class='col-12 d-flex align-items-center justify-space-between' id='legend-group_${group.id!}_${iterationNumber}' />
 					<#list groupContent as childrenHtml>
