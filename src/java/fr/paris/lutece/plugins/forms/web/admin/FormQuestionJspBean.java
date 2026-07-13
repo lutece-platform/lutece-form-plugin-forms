@@ -135,7 +135,7 @@ public class FormQuestionJspBean extends AbstractFormQuestionJspBean
     private static final String PUBLIC_IMAGE_RESOURCE = "public_image_resource";
     private static final String ILLUSTRATION_IMAGE = "illustration_image";
     private static final FormService _formService = SpringContextService.getBean( FormService.BEAN_NAME );
-    private static final int TECHNICAL_ADMIN_RIGHT_LEVEL = 0;
+    private static final int TECHNICAL_ADMIN_RIGHT_LEVEL = 1;
     private Form _form;
 
     /**
