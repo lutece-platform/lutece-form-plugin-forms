@@ -90,9 +90,7 @@ public abstract class GenericFormsProvider {
 	private static final String PROPERTY_BOOKMARKS_BY_QUESTION_CODE = "forms.bookmarks.byQuestionCode";
 
 	// MARKS
-	private static final String MARK_POSITION = "position_";
 	private static final String MARK_POSITION_ITERATION = "_";
-	private static final String MARK_CODE = "code_";
 	private static final String MARK_URL_ADMIN_RESPONSE = "url_admin_forms_response_detail";
 	private static final String MARK_URL_FO_RESPONSE = "url_fo_forms_response_detail";
 	private static final String MARK_CREATION_DATE = "creation_date";
@@ -197,8 +195,8 @@ public abstract class GenericFormsProvider {
             {
                 // in case of multiple FormQuestionResponse for the same question (when there is an iteration),
                 // we merge them into one FormQuestionResponse and update the marker
-                String strMultipleFormQuestionResponseKey = MARK_POSITION + formQuestionResponse.getQuestion( ).getId( );
-                String strMultipleFormQuestionCodeResponseKey = MARK_CODE + FileUtil.normalizeFileName( formQuestionResponse.getQuestion( ).getCode( ) );
+                String strMultipleFormQuestionResponseKey = FormsConstants.MARK_POSITION + formQuestionResponse.getQuestion( ).getId( );
+                String strMultipleFormQuestionCodeResponseKey = FormsConstants.MARK_CODE + FileUtil.normalizeFileName( formQuestionResponse.getQuestion( ).getCode( ) );
                 if ( model.containsKey( strMultipleFormQuestionResponseKey ) )
                 {
                     FormQuestionResponse existingFormQuestionResponse = (FormQuestionResponse) model.get( strMultipleFormQuestionResponseKey );
@@ -222,13 +220,13 @@ public abstract class GenericFormsProvider {
             }
             else
             {
-                String strFormQuestionResponseKey = MARK_POSITION + formQuestionResponse.getQuestion( ).getId( );
+                String strFormQuestionResponseKey = FormsConstants.MARK_POSITION + formQuestionResponse.getQuestion( ).getId( );
                 String strIteratedFormQuestionResponseKey = strFormQuestionResponseKey + MARK_POSITION_ITERATION
                         + formQuestionResponse.getQuestion( ).getIterationNumber( );
                 model.put( strFormQuestionResponseKey, formQuestionResponse );
                 model.put( strIteratedFormQuestionResponseKey, formQuestionResponse );
 
-                String strFormQuestionCodeResponseKey = MARK_CODE + FileUtil.normalizeFileName( formQuestionResponse.getQuestion( ).getCode( ) );
+                String strFormQuestionCodeResponseKey = FormsConstants.MARK_CODE + FileUtil.normalizeFileName( formQuestionResponse.getQuestion( ).getCode( ) );
                 String strIteratedFormQuestionCodeResponseKey = strFormQuestionCodeResponseKey + MARK_POSITION_ITERATION
                         + formQuestionResponse.getQuestion( ).getIterationNumber( );
                 model.put( strFormQuestionCodeResponseKey, formQuestionResponse );
@@ -290,10 +288,10 @@ public abstract class GenericFormsProvider {
 			{
 			    if (bByQuestionCodes)
 			    {
-			        model.put( MARK_CODE + formQuestion.getCode( ), formQuestion.getTitle( ) );
+			        model.put( FormsConstants.MARK_CODE + formQuestion.getCode( ), formQuestion.getTitle( ) );
 			    } else
 			    {
-			        model.put( MARK_POSITION + formQuestion.getId( ), formQuestion.getTitle( ) );
+			        model.put( FormsConstants.MARK_POSITION + formQuestion.getId( ), formQuestion.getTitle( ) );
 			    }
 			}
 		}
@@ -385,7 +383,7 @@ public abstract class GenericFormsProvider {
 
 		if( group == null || group.getIterationMax() == 1 )
 		{
-			InfoMarker marker = useQuestionCodes ? new InfoMarker( MARK_CODE + FileUtil.normalizeFileName( question.getCode( ) ) ) : new InfoMarker( MARK_POSITION + question.getId( ) );
+			InfoMarker marker = useQuestionCodes ? new InfoMarker( FormsConstants.MARK_CODE + FileUtil.normalizeFileName( question.getCode( ) ) ) : new InfoMarker( FormsConstants.MARK_POSITION + question.getId( ) );
 			marker.setDescription( question.getTitle( ) );
 			descriptionMarkersList.add(marker);
 		}
@@ -393,7 +391,7 @@ public abstract class GenericFormsProvider {
 		{
 			for (int i = 0 ; i < group.getIterationMax(); i++ )
 			{
-				InfoMarker marker = useQuestionCodes ? new InfoMarker( MARK_CODE + FileUtil.normalizeFileName( question.getCode( ) ) + MARK_POSITION_ITERATION + i ) : new InfoMarker( MARK_POSITION + question.getId( ) + MARK_POSITION_ITERATION + i );
+				InfoMarker marker = useQuestionCodes ? new InfoMarker( FormsConstants.MARK_CODE + FileUtil.normalizeFileName( question.getCode( ) ) + MARK_POSITION_ITERATION + i ) : new InfoMarker( FormsConstants.MARK_POSITION + question.getId( ) + MARK_POSITION_ITERATION + i );
 				marker.setDescription( question.getTitle( ) + " " + ( i + 1 ) );
 				descriptionMarkersList.add(marker);
 			}
